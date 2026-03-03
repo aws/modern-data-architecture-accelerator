@@ -37,17 +37,18 @@ describe('GlueCrawlerL3Construct Exception Tests', () => {
     }).toThrow('Security configuration name is required for crawler configuration');
   });
 
-  test('should throw error when notificationTopicArn is not provided', () => {
+  test('should work when projectName is undefined', () => {
     const constructProps: GlueCrawlerL3ConstructProps = {
       crawlerConfigs: { testCrawler: crawlerDefinition },
+      projectName: undefined,
       securityConfigurationName: 'test-security-config',
-      projectName: 'test-project',
+      notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:MyTopic',
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
       naming: testApp.naming,
     };
 
     expect(() => {
-      new GlueCrawlerL3Construct(stack, 'test-construct-no-topic', constructProps);
-    }).toThrow('Notification topic ARN is required for crawler configuration');
+      new GlueCrawlerL3Construct(stack, 'test-construct-no-project', constructProps);
+    }).not.toThrow();
   });
 });

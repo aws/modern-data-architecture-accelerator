@@ -95,7 +95,7 @@ export interface GlueWorkflowL3ConstructProps extends MdaaL3ConstructProps {
    *
    * Validation: Must be valid project name; required for workflow project association and resource coordination
    **/
-  readonly projectName: string;
+  readonly projectName?: string;
 }
 /**
  * Customize the Lambda Event Target
@@ -147,8 +147,8 @@ export class GlueWorkflowTarget implements IRuleTarget {
 export class GlueWorkflowL3Construct extends MdaaL3Construct {
   protected readonly props: GlueWorkflowL3ConstructProps;
 
-  private readonly projectKmsKey: IMdaaKmsKey;
-  private readonly projectName: string;
+  private readonly kmsKey: IMdaaKmsKey;
+  private readonly projectName?: string;
 
   private eventBridgePolicy?: ManagedPolicy;
   private eventBridgeRole?: IRole;
@@ -159,7 +159,7 @@ export class GlueWorkflowL3Construct extends MdaaL3Construct {
     if (!this.props.kmsArn) {
       throw new Error('Project KMS key must be defined');
     }
-    this.projectKmsKey = MdaaKmsKey.fromKeyArn(this.scope, 'project-kms', this.props.kmsArn);
+    this.kmsKey = MdaaKmsKey.fromKeyArn(this.scope, 'project-kms', this.props.kmsArn);
     this.projectName = this.props.projectName;
 
     // Build our workflows!
@@ -168,7 +168,7 @@ export class GlueWorkflowL3Construct extends MdaaL3Construct {
         throw new Error('Project Security Configuration must be defined');
       }
       const workflow = this.createWorkflowFromDefinition(workflowDefinition, this.props.securityConfigurationName);
-      if (workflow.name) {
+      if (workflow.name && this.projectName) {
         const workflowName = (workflowDefinition.rawWorkflowDef.Workflow as PropsNode).Name;
         DataOpsProjectUtils.createProjectSSMParam(
           this.scope,
@@ -272,7 +272,7 @@ export class GlueWorkflowL3Construct extends MdaaL3Construct {
       this.scope,
       this.props.naming,
       `${workflowName}-events`,
-      this.projectKmsKey,
+      this.kmsKey,
       this.getEventBridgeRole(),
     );
 

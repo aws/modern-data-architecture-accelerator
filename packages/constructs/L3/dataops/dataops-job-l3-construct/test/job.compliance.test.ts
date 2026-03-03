@@ -26,7 +26,7 @@ describe('MDAA Compliance Stack Tests', () => {
 
   function createConstructorProps(stack: Stack, testApp: MdaaTestApp): GlueJobL3ConstructProps {
     return {
-      projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
       securityConfigurationName: 'test-security-configuration',
       projectName: 'test-project',
       notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:MyTopic',
@@ -34,7 +34,7 @@ describe('MDAA Compliance Stack Tests', () => {
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
       naming: testApp.naming,
       deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/some-deployment-role',
-      projectBucketName: 'some-project-bucket-name',
+      bucketName: 'some-project-bucket-name',
       jobConfigs: {
         testJob: testJobProps,
       },
@@ -300,18 +300,18 @@ describe('MDAA Compliance Stack Tests', () => {
       }).toThrow('Deployment role ARN is required for job configuration');
     });
 
-    test('Should throw error when projectBucketName is missing', () => {
+    test('Should throw error when bucketName is missing', () => {
       const testApp = new MdaaTestApp();
-      const props = { ...createConstructorProps(testApp.testStack, testApp), projectBucketName: undefined };
+      const props = { ...createConstructorProps(testApp.testStack, testApp), bucketName: undefined };
 
       expect(() => {
         new GlueJobL3Construct(testApp.testStack, 'test-no-bucket', props);
       }).toThrow('Project bucket name is required for job configuration');
     });
 
-    test('Should throw error when projectKMSArn is missing', () => {
+    test('Should throw error when kmsArn is missing', () => {
       const testApp = new MdaaTestApp();
-      const props = { ...createConstructorProps(testApp.testStack, testApp), projectKMSArn: undefined };
+      const props = { ...createConstructorProps(testApp.testStack, testApp), kmsArn: undefined };
 
       expect(() => {
         new GlueJobL3Construct(testApp.testStack, 'test-no-kms', props);
@@ -325,15 +325,6 @@ describe('MDAA Compliance Stack Tests', () => {
       expect(() => {
         new GlueJobL3Construct(testApp.testStack, 'test-no-security', props);
       }).toThrow('Security configuration name is required for job monitoring event rule');
-    });
-
-    test('Should throw error when notificationTopicArn is missing', () => {
-      const testApp = new MdaaTestApp();
-      const props = { ...createConstructorProps(testApp.testStack, testApp), notificationTopicArn: undefined };
-
-      expect(() => {
-        new GlueJobL3Construct(testApp.testStack, 'test-no-notification', props);
-      }).toThrow('Notification topic ARN is required for job monitoring event rule');
     });
   });
 });

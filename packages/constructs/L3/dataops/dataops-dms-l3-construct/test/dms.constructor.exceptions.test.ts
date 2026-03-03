@@ -13,7 +13,6 @@ describe('DMSL3Construct Constructor Exception Tests', () => {
 
   const baseProps: DMSL3ConstructProps = {
     projectName: 'test-project',
-    projectBucket: 'test-project-bucket',
     kmsArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
     roleHelper: new MdaaRoleHelper(stack, testApp.naming),
     naming: testApp.naming,
@@ -28,11 +27,11 @@ describe('DMSL3Construct Constructor Exception Tests', () => {
     }).toThrow('Please provide kmsArn');
   });
 
-  test('throws error when projectBucket is undefined', () => {
-    const props = { ...baseProps, projectBucket: undefined };
+  test('should work when projectName is undefined', () => {
+    const props = { ...baseProps, projectName: undefined };
 
     expect(() => {
-      new DMSL3Construct(stack, 'test-construct-2', props);
-    }).toThrow('Please provide projectBucket');
+      new DMSL3Construct(stack, 'test-construct-no-project', props);
+    }).not.toThrow();
   });
 });

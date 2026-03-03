@@ -2861,6 +2861,10 @@
         }
     },
     "properties": {
+        "bucketName": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
+            "type": "string"
+        },
         "dashboards": {
             "description": "Q-ENHANCED-PROPERTY\nOptional array of CloudWatch dashboard definitions for observability and monitoring. Each dashboard can display metrics, logs, and text widgets from multiple Lambda functions and modules using SSM references for cross-module integration.\n\nUse cases: Unified observability dashboards; Cross-module metric aggregation; Log insights visualization\n\nAWS: CloudWatch dashboard creation with SSM-based metric references and widget layout\n\nValidation: Must be array of valid DashboardProps objects if provided; dashboards inherit project context",
             "items": {
@@ -2868,7 +2872,7 @@
             },
             "type": "array"
         },
-        "deploymentRole": {
+        "deploymentRoleArn": {
             "description": "Q-ENHANCED-PROPERTY\nRequired IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.\n\nUse cases: Deployment operations; Resource management; IAM permissions; Secure deployment\n\nAWS: IAM role ARN for DataOps deployment operations and resource management\n\nValidation: Must be valid IAM role ARN; required for deployment operations and resource management",
             "type": "string"
         },
@@ -2880,16 +2884,12 @@
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
-        "projectBucket": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
+        "notificationTopicArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
             "type": "string"
         },
         "projectName": {
             "description": "Q-ENHANCED-PROPERTY\nRequired name of the DataOps project that will contain and manage the dashboards. Provides organizational context and enables resource sharing, permissions management, and operational coordination within the DataOps framework.\n\nUse cases: DataOps project organization; Resource sharing and permissions; Operational coordination and monitoring\n\nAWS: DataOps project reference for dashboard organization and resource management\n\nValidation: Must be valid DataOps project name; required; project must exist or be created in the same deployment",
-            "type": "string"
-        },
-        "projectTopicArn": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
             "type": "string"
         },
         "sagemakerBlueprint": {
@@ -2905,9 +2905,6 @@
             "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         }
     },
-    "required": [
-        "projectName"
-    ],
     "type": "object"
 }
 

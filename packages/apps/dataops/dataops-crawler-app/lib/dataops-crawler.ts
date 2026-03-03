@@ -24,7 +24,7 @@ export class GlueCrawlerCDKApp extends MdaaCdkApp {
         crawlerConfigs: appConfig.crawlerConfigs,
         securityConfigurationName: appConfig.securityConfigurationName,
         projectName: appConfig.projectName,
-        notificationTopicArn: appConfig.projectTopicArn,
+        notificationTopicArn: appConfig.notificationTopicArn,
       },
       ...l3ConstructProps,
     };

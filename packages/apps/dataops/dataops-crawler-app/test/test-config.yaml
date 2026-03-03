@@ -1,5 +1,13 @@
-
+# (Optional) Name of the Data Ops Project
+# Name the project the resources of which will be used by this crawler.
+# Other resources within the project can be referenced in the crawler config using
+# the "project:" prefix on the config value.
 projectName: dataops-project-test
+
+# Alternatively, if projectName is not provided, you can supply parameters directly:
+# securityConfigurationName: my-security-config  # Glue security configuration for crawler encryption
+# notificationTopicArn: arn:aws:sns:region:account:topic-name  # SNS topic for crawler status notifications
+
 crawlers:
   test-crawler:
     executionRoleArn: some-arn

@@ -222,4 +222,26 @@ describe('DataOpsDataQualityL3Construct Exception Tests', () => {
       new DataOpsDataQualityL3Construct(testApp8.testStack, 'test-missing-value', constructProps);
     }).toThrow('value is required for Mean rule');
   });
+
+  test('should work when projectName is undefined', () => {
+    const testApp9 = new MdaaTestApp();
+    const constructProps: DataOpsDataQualityL3ConstructProps = {
+      projectName: undefined,
+      rulesetConfigs: {
+        'test-ruleset': {
+          targetTable: {
+            databaseName: 'test_database',
+            tableName: 'test_table',
+          },
+          ruleset: 'Rules = [IsComplete "id"]',
+        },
+      },
+      roleHelper: new MdaaRoleHelper(testApp9.testStack, testApp9.naming),
+      naming: testApp9.naming,
+    };
+
+    expect(() => {
+      new DataOpsDataQualityL3Construct(testApp9.testStack, 'test-no-project', constructProps);
+    }).not.toThrow();
+  });
 });

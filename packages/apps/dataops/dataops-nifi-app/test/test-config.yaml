@@ -1,8 +1,11 @@
-# (Required) Name of the Data Ops Project
+# (Optional) Name of the Data Ops Project
 # Name the the project the resources of which will be used by these functions.
 # Other resources within the project can be referenced in the functions config using
 # the "project:" prefix on the config value.
 projectName: dataops-project-test
+
+# Alternatively, if projectName is not provided, you can supply the parameter directly:
+# kmsArn: arn:aws:kms:region:account:key/key-id  # KMS key for encrypting EKS cluster resources and Nifi configuration
 
 nifi:
   # This is a set of Role/Principal Arns which will be granted access to the Kubernetes cluster
@@ -92,8 +95,8 @@ nifi:
       # This should be the SAML identities of the federated admin users.
       # If deleted in Nifi UI, admin identities will be constantly recreated by a background process until removed from this config.
       adminIdentities:
-        - "some-admin-identity"
-        - "some-other-admin-identity"
+        - 'some-admin-identity'
+        - 'some-other-admin-identity'
       # (Optional) - A list of other Nifi clusters within this config which will automatically be provided
       # security group connectivity as well as remote access to this cluster.
       peerClusters:
@@ -111,7 +114,7 @@ nifi:
       externalNodeIdentities:
         - CN=test-external-node1
         - CN=test-external-node2
-      # (Optional) Additional identities which will be added to the cluster. 
+      # (Optional) Additional identities which will be added to the cluster.
       # Note that identities may already exist if they have been used to login to the cluster via SAML federation.
       # Using this option ensures the identities will exist and can be referenced in "groups" or "authorizations".
       # Otherwise, these identities will not be automatically granted any permissions.
@@ -142,11 +145,11 @@ nifi:
         - resource: /data/ROOT_ID
           # This policy will be a WRITE policy
           action: WRITE
-      # (Optional) Below are configurations used by a background manager process to automatically add identities and groups to 
+      # (Optional) Below are configurations used by a background manager process to automatically add identities and groups to
       # policies based on policy resource pattern matching. This alleviates the need to manually add critical identities and groups
       # to policies as they are created within Nifi. Note that this functionality only adds authorizations, but will not remove them
-      # (this must still be done within the Nifi UI/). 
-        # If deleted in Nifi UI, authorizations will be constantly recreated by a background process until removed from this config.
+      # (this must still be done within the Nifi UI/).
+      # If deleted in Nifi UI, authorizations will be constantly recreated by a background process until removed from this config.
       authorizations:
         # The policyResourcePattern can be a literal pattern or a regex.
         # This policy pattern will also have the Nifi Flow Root ID substituted automatically, as
@@ -160,7 +163,7 @@ nifi:
             - test_group
           # The 'test-identity'
           identities:
-            - "test-identity-1"
+            - 'test-identity-1'
         # This authorization will match any policy with a /data/ resource prefix
         - policyResourcePattern: /data/.*
           # This authorization will be added both to "READ" and "WRITE" policies matching the resource pattern
@@ -172,12 +175,12 @@ nifi:
             - test_group
           # The "test-identity-1" will automatically be added to this policy
           identities:
-            - "test-identity-1"
+            - 'test-identity-1'
 
       # The Nifi cluster will be configured for authentication of users via SAML federation
       saml:
         # The IDP Metadata URL where the SAML metadata can be fetched from the IDP
-        idpMetadataUrl: "https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123"
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'
 
       # Allows mounting of the Nifi EFS from outside of the EKS cluster
       # This list will be combined with the global 'additionalEfsIngressSecurityGroupIds' list to determine the
@@ -204,12 +207,12 @@ nifi:
       # is discouraged by rule AWS-Solutions-IAM4
       clusterRoleAwsManagedPolicies:
         - policyName: AmazonS3ReadOnlyAccess
-          suppressionReason: "AmazonS3ReadOnlyAccess authorized for use"
+          suppressionReason: 'AmazonS3ReadOnlyAccess authorized for use'
 
       # List of Customer Managed policies which will be added to the Nifi cluster role, which is used by the Nifi cluster to
       # access AWS services. Note that the managed policy must already exist.
       clusterRoleManagedPolicies:
-        - "customer-managed-policy-1"
+        - 'customer-managed-policy-1'
 
     test2:
       nodeCount: 2
@@ -217,9 +220,9 @@ nifi:
       # The Nifi cluster will be configured for authentication of users via SAML federation
       saml:
         # The IDP Metadata URL where the SAML metadata can be fetched from the IDP
-        idpMetadataUrl: "https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123"
-      adminIdentities: 
-       - "example_admin_identity"
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'
+      adminIdentities:
+        - 'example_admin_identity'
       # (Optional) - The port on which Nifi HTTPS interface will listen.
       # If not specified, defaults to 8443
       httpsPort: 8444
@@ -240,8 +243,8 @@ nifi:
     # Note that Registry does not currently support SAML federation.
     # If deleted in Registry UI, admin identities will be constantly recreated by a background process until removed from this config.
     adminIdentities:
-      - "CN=some-admin-identity"
-      - "CN=some-other-admin-identity"
+      - 'CN=some-admin-identity'
+      - 'CN=some-other-admin-identity'
     # (Optional) External Nifi node identities which will automatically be added to policies required for interacting with this Registry instance.
     # They will also be added to an 'external-nodes' group which can be referenced by 'authorizations'.
     # Note that nodes from clusters created by this config do not need to be specified here. The will automatically be provided acccess to the Registry instance.
@@ -250,7 +253,7 @@ nifi:
     externalNodeIdentities:
       - CN=test-external-node1
       - CN=test-external-node2
-    # (Optional) Additional identities which will be added to the Registry instance. 
+    # (Optional) Additional identities which will be added to the Registry instance.
     # Note that identities may already exist if they have been used to login to the cluster via SAML federation.
     # Using this option ensures the identities will exist and can be referenced in "groups" or "authorizations".
     # Otherwise, these identities will not be automatically granted any permissions.
@@ -285,7 +288,7 @@ nifi:
           # These identities will be granted WRITE access to the bucket
           identities:
             - test-identity-2
-    
+
     # (Optional) A set of policies which will be automatically created if they don't exist, and if matched
     # by an authorization in the 'authorizations' section. Empty policies will not be created.
     # If deleted in Registry UI, policies will be constantly recreated by a background process until removed from this config.
@@ -297,8 +300,8 @@ nifi:
     # (Optional) Below are configurations used by a background manager process to automatically add identities and groups to
     # policies based on policy resource pattern matching. This alleviates the need to manually add critical identities and groups
     # to policies as they are created within Nifi Registry. Note that this functionality only adds authorizations, but will not remove them
-    # (this must still be done within the Registry UI/). 
-      # If deleted in Registry UI, authorizations will be constantly recreated by a background process until removed from this config.
+    # (this must still be done within the Registry UI/).
+    # If deleted in Registry UI, authorizations will be constantly recreated by a background process until removed from this config.
     authorizations:
       # The policyResourcePattern can be a literal pattern or a regex.
       - policyResourcePattern: /data/
@@ -310,7 +313,7 @@ nifi:
           - test_group
         # The 'test-identity'
         identities:
-          - "test-identity-1"
+          - 'test-identity-1'
       # This authorization will match any policy with a /data/ resource prefix
       - policyResourcePattern: /data/.*
         # This authorization will be added both to "READ" and "WRITE" policies matching the resource pattern
@@ -322,4 +325,4 @@ nifi:
           - test_group
         # The "test-identity-1" will automatically be added to this policy
         identities:
-          - "test-identity-1"
+          - 'test-identity-1'

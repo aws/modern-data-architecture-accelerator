@@ -39,7 +39,18 @@ dataops-job: # Module Name can be customized
 Job configs can be templated in order to reuse job definitions across multiple jobs for which perhaps only a few parameters change (such as input/output paths). Templates can be stored separate from job configs, or stored together with job configs in the same file.
 
 ```yaml
+# (Optional) Name of the Data Ops Project
+# Name the project the resources of which will be used by this job.
+# Other resources within the project can be referenced in the job config using
+# the "project:" prefix on the config value.
 projectName: dataops-project-test
+
+# Alternatively, if projectName is not provided, you can supply parameters directly:
+# kmsArn: arn:aws:kms:region:account:key/key-id  # KMS key for encrypting job artifacts and logs
+# deploymentRoleArn: arn:aws:iam::account:role/role-name  # IAM role for Glue job execution
+# bucketName: my-project-bucket  # S3 bucket for storing job scripts and temporary data
+# securityConfigurationName: my-security-config  # Glue security configuration for encryption settings
+# notificationTopicArn: arn:aws:sns:region:account:topic-name  # SNS topic for job status notifications
 
 templates:
   # An example job template. Can be referenced from other jobs. Will not itself be deployed.

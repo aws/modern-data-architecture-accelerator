@@ -1,4 +1,6 @@
-# Name of the associated glue data-ops project
+# (Optional) Name of the associated glue data-ops project
+# Other resources within the project can be referenced in the config using
+# the "project:" prefix on the config value.
 projectName: glue-project
 
 # List of recipes to be created
@@ -51,13 +53,13 @@ datasets:
     input:
       databaseInputDefinition:
         glueConnectionName: project:connections/connectionJdbc
-        databaseTableName: "mydb_admin.allusers"
+        databaseTableName: 'mydb_admin.allusers'
 
   mdaa-s3-dataset:
     input:
       s3InputDefinition:
         bucket: ssm:/path_to_bucket_name
-        key: "data/raw_data/input_data.csv.snappy"
+        key: 'data/raw_data/input_data.csv.snappy'
 
   mdaa-catalog-dataset:
     input:
@@ -69,10 +71,10 @@ datasets:
 jobs:
   # Template for recipe job
   test-recipe-job6:
-    type: "RECIPE"
+    type: 'RECIPE'
 
     # data brew project associated with this job.
-    projectName: "mdaa-test-project"
+    projectName: 'mdaa-test-project'
 
     # Source dataset for the job - Either define new one or just specify the name of existing dataset
     dataset:
@@ -87,11 +89,11 @@ jobs:
     outputs:
       - location:
           bucket: ssm:/path_to_bucket_name
-          key: "data/databrew/transformed/"
-        compressionFormat: "SNAPPY"
-        format: "PARQUET"
+          key: 'data/databrew/transformed/'
+        compressionFormat: 'SNAPPY'
+        format: 'PARQUET'
         overwrite: true
-        partitionColumns: ["id"]
+        partitionColumns: ['id']
 
     # Execution role for the job
     executionRole:
@@ -102,12 +104,12 @@ jobs:
 
     # Schedule for the job
     schedule:
-      name: "mdaa-test-job-schedule"
-      cronExpression: "Cron(50 21 * * ? *)"
+      name: 'mdaa-test-job-schedule'
+      cronExpression: 'Cron(50 21 * * ? *)'
 
   # Template for PROFILE job
   test-profile-job:
-    type: "PROFILE"
+    type: 'PROFILE'
 
     # Source dataset for the job - Either define new one or just specify the name of existing dataset
     dataset:
@@ -116,7 +118,7 @@ jobs:
     # Output location for the profile job
     outputLocation:
       bucket: ssm:/path_to_bucket_name
-      key: "data/databrew/profile/"
+      key: 'data/databrew/profile/'
 
     # Execution role for the job
     executionRole:
@@ -127,5 +129,5 @@ jobs:
 
     # Schedule for the job
     schedule:
-      name: "mdaa-test-profile-schedule"
-      cronExpression: "Cron(50 21 * * ? *)"
+      name: 'mdaa-test-profile-schedule'
+      cronExpression: 'Cron(50 21 * * ? *)'

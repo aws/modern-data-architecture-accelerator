@@ -1,3 +1,7 @@
+# (Optional) Name of the Data Ops Project
+# Name the project the resources of which can be used by this data quality app.
+# Other resources within the project can be referenced in the config using
+# the "project:" prefix on the config value.
 projectName: test-dataops-project
 
 rulesets:
@@ -11,10 +15,10 @@ rulesets:
         column: customer_id
       - ruleType: Uniqueness
         column: email
-        comparisonOperator: ">"
+        comparisonOperator: '>'
         threshold: 0.95
       - ruleType: RowCount
-        comparisonOperator: ">"
+        comparisonOperator: '>'
         value: 100
 
   order-data-quality:

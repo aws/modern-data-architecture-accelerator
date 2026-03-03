@@ -3654,7 +3654,11 @@
         }
     },
     "properties": {
-        "deploymentRole": {
+        "bucketName": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
+            "type": "string"
+        },
+        "deploymentRoleArn": {
             "description": "Q-ENHANCED-PROPERTY\nRequired IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.\n\nUse cases: Deployment operations; Resource management; IAM permissions; Secure deployment\n\nAWS: IAM role ARN for DataOps deployment operations and resource management\n\nValidation: Must be valid IAM role ARN; required for deployment operations and resource management",
             "type": "string"
         },
@@ -3670,16 +3674,12 @@
             "$ref": "#/definitions/NifiProps",
             "description": "Q-ENHANCED-PROPERTY\nRequired Apache Nifi cluster configuration defining data flow orchestration and processing capabilities including cluster setup, security, networking, and data flow management. Provides complete Nifi deployment with event-driven processing and real-time data integration.\n\nUse cases: Data flow orchestration; Real-time processing; Event-driven data integration and flow management\n\nAWS: Apache Nifi cluster deployment for data flow orchestration and real-time processing capabilities\n\nValidation: Must be valid NifiProps; required; defines all Nifi cluster characteristics and processing capabilities"
         },
-        "projectBucket": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
+        "notificationTopicArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
             "type": "string"
         },
         "projectName": {
             "description": "Q-ENHANCED-PROPERTY\nRequired DataOps project name for Nifi cluster association enabling project-based organization and resource management. Links the Nifi deployment to a specific DataOps project for organized data flow management and governance within the data operations framework.\n\nUse cases: Project-based organization; Resource management; DataOps project association for governance\n\nAWS: DataOps project association for Nifi cluster organization and resource management\n\nValidation: Must be non-empty string; required; links Nifi deployment to specific DataOps project",
-            "type": "string"
-        },
-        "projectTopicArn": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
             "type": "string"
         },
         "sagemakerBlueprint": {
@@ -3696,8 +3696,7 @@
         }
     },
     "required": [
-        "nifi",
-        "projectName"
+        "nifi"
     ],
     "type": "object"
 }

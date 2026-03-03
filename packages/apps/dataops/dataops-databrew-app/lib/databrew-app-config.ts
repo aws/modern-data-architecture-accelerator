@@ -21,7 +21,7 @@ export interface DataBrewConfigContents extends MdaaDataOpsConfigContents {
    *
    * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
    **/
-  readonly projectName: string;
+  readonly projectName?: string;
 
   /**
    * Q-ENHANCED-PROPERTY

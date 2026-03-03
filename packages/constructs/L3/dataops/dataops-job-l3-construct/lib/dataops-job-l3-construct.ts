@@ -331,7 +331,7 @@ export interface GlueJobL3ConstructProps extends MdaaL3ConstructProps {
   /**
    * The name of the Data Ops project bucket where job resources will be deployed and which will be used as a temporary job location
    */
-  readonly projectBucketName?: string;
+  readonly bucketName?: string;
   /**
    * Map of job names to job configurations
    */
@@ -343,7 +343,7 @@ export interface GlueJobL3ConstructProps extends MdaaL3ConstructProps {
   /**
    * Name of the dataops project to which the job will be associated.
    */
-  readonly projectName: string;
+  readonly projectName?: string;
 
   /**
    * Notification topic Arn
@@ -353,12 +353,12 @@ export interface GlueJobL3ConstructProps extends MdaaL3ConstructProps {
   /**
    * Dataops project KMS key ARN.
    */
-  readonly projectKMSArn?: string;
+  readonly kmsArn?: string;
 }
 
 export class GlueJobL3Construct extends MdaaL3Construct {
   protected readonly props: GlueJobL3ConstructProps;
-  private readonly projectKmsKey: IKey;
+  private readonly kmsKey: IKey;
 
   constructor(scope: Construct, id: string, props: GlueJobL3ConstructProps) {
     super(scope, id, props);
@@ -368,20 +368,20 @@ export class GlueJobL3Construct extends MdaaL3Construct {
       throw new Error('Deployment role ARN is required for job configuration');
     }
     const deploymentRole = MdaaRole.fromRoleArn(this.scope, `deployment-role`, this.props.deploymentRoleArn);
-    if (!this.props.projectBucketName) {
+    if (!this.props.bucketName) {
       throw new Error('Project bucket name is required for job configuration');
     }
-    const projectBucket = MdaaBucket.fromBucketName(this.scope, `project-bucket`, this.props.projectBucketName);
-    if (!this.props.projectKMSArn) {
+    const bucket = MdaaBucket.fromBucketName(this.scope, `project-bucket`, this.props.bucketName);
+    if (!this.props.kmsArn) {
       throw new Error('Project KMS Key is required for job configuration');
     }
-    this.projectKmsKey = Key.fromKeyArn(this, this.props.projectName, this.props.projectKMSArn);
+    this.kmsKey = Key.fromKeyArn(this, this.props.projectName ?? 'kms-key', this.props.kmsArn);
 
     // Build our jobs!
     const allJobs = this.props.jobConfigs;
     Object.keys(allJobs).forEach(jobName => {
       const jobConfig = allJobs[jobName];
-      this.createJob(jobName, jobConfig, deploymentRole, projectBucket);
+      this.createJob(jobName, jobConfig, deploymentRole, bucket);
     });
     //CDK S3 Deployment automatically adds inline policy to project deployment role.
     this.scope.node.children.forEach(child => {
@@ -402,7 +402,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
 
   private deployAdditionalFiles(
     additionalFilesSources: ISource[],
-    projectBucket: IBucket,
+    bucket: IBucket,
     deploymentRole: IRole,
     deploymentId: string,
     deploymentPath: string,
@@ -411,7 +411,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     // Deploy Source asset(s) to /deployment/libs/<job> location.
     return new BucketDeployment(this.scope, deploymentId, {
       sources: additionalFilesSources,
-      destinationBucket: projectBucket,
+      destinationBucket: bucket,
       destinationKeyPrefix: deploymentPath,
       role: deploymentRole,
       extract: extract,
@@ -421,7 +421,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
   private addAdditionalScripts(
     jobName: string,
     jobConfig: JobConfig,
-    projectBucket: IBucket,
+    bucket: IBucket,
     deploymentRole: IRole,
     defaultArguments: ConfigurationElement,
   ) {
@@ -447,7 +447,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
       const deploymentPath = `deployment/libs/${jobName}`;
       const additionalFileDeployment = this.deployAdditionalFiles(
         additionalFilesSources,
-        projectBucket,
+        bucket,
         deploymentRole,
         `job-deployment-${jobName}-additional-script`,
         deploymentPath,
@@ -474,7 +474,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
   private addAdditionalJars(
     jobName: string,
     jobConfig: JobConfig,
-    projectBucket: IBucket,
+    bucket: IBucket,
     deploymentRole: IRole,
     defaultArguments: ConfigurationElement,
   ) {
@@ -489,7 +489,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
 
       const additionalFileDeployment = this.deployAdditionalFiles(
         additionalFilesSources,
-        projectBucket,
+        bucket,
         deploymentRole,
         `job-deployment-${jobName}-additional-jar`,
         deploymentPath,
@@ -513,7 +513,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
   private addAdditionalFiles(
     jobName: string,
     jobConfig: JobConfig,
-    projectBucket: IBucket,
+    bucket: IBucket,
     deploymentRole: IRole,
     defaultArguments: ConfigurationElement,
   ) {
@@ -527,7 +527,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
       const deploymentPath = `deployment/files/${jobName}`;
       const additionalFileDeployment = this.deployAdditionalFiles(
         additionalFilesSources,
-        projectBucket,
+        bucket,
         deploymentRole,
         `job-deployment-${jobName}-additional-file`,
         deploymentPath,
@@ -547,7 +547,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     }
   }
 
-  private createJob(jobName: string, jobConfig: JobConfig, deploymentRole: IRole, projectBucket: IBucket) {
+  private createJob(jobName: string, jobConfig: JobConfig, deploymentRole: IRole, bucket: IBucket) {
     const defaultArguments = jobConfig.defaultArguments ? jobConfig.defaultArguments : {};
     const scriptPath = path.dirname(jobConfig.command.scriptLocation.trim());
     const scriptName = path.basename(jobConfig.command.scriptLocation.trim());
@@ -556,15 +556,15 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     const scriptDeploymentPath = `deployment/jobs/${jobName}`;
     const scriptDeployment = new BucketDeployment(this.scope, `job-deployment-${jobName}`, {
       sources: [scriptSource],
-      destinationBucket: projectBucket,
+      destinationBucket: bucket,
       destinationKeyPrefix: scriptDeploymentPath,
       role: deploymentRole,
       extract: true,
     });
 
-    this.addAdditionalScripts(jobName, jobConfig, projectBucket, deploymentRole, defaultArguments);
-    this.addAdditionalJars(jobName, jobConfig, projectBucket, deploymentRole, defaultArguments);
-    this.addAdditionalFiles(jobName, jobConfig, projectBucket, deploymentRole, defaultArguments);
+    this.addAdditionalScripts(jobName, jobConfig, bucket, deploymentRole, defaultArguments);
+    this.addAdditionalJars(jobName, jobConfig, bucket, deploymentRole, defaultArguments);
+    this.addAdditionalFiles(jobName, jobConfig, bucket, deploymentRole, defaultArguments);
     MdaaNagSuppressions.addCodeResourceSuppressions(
       this.scope,
       [
@@ -619,7 +619,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
       };
     }
 
-    defaultArguments['--TempDir'] = `s3://${this.props.projectBucketName}/temp/jobs/${jobName}`;
+    defaultArguments['--TempDir'] = `s3://${this.props.bucketName}/temp/jobs/${jobName}`;
 
     // add continuous logging unless explicitly disabled
     if (jobConfig.continuousLogging) {
@@ -664,7 +664,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
       workerType: jobConfig.workerType,
       naming: this.props.naming,
     });
-    if (job.name) {
+    if (job.name && this.props.projectName) {
       DataOpsProjectUtils.createProjectSSMParam(
         this.scope,
         this.props.naming,
@@ -709,7 +709,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
       naming: this.props.naming,
       logGroupName: logGroupName,
       logGroupNamePathPrefix: logGroupNamePathPrefix,
-      encryptionKey: this.projectKmsKey,
+      encryptionKey: this.kmsKey,
       retention: logGroupRetentionDays,
     };
     new MdaaLogGroup(this, logGroupName, logProps);

@@ -38,6 +38,9 @@
       "path": "../../../L2/construct"
     },
     {
+      "path": "../dataops-project-l3-construct"
+    },
+    {
       "path": "../../core/l3-construct"
     },
     {

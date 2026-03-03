@@ -2,13 +2,19 @@
 
 ## [1.5.0] - 2026-02-28
 
-### General Configuration Changes
+### General Changes
 
 - SSM parameters can now be referenced using simplified scope prefixes:
   - `ssm-org:<path>` resolves to `ssm:/{{org}}/<path>`
   - `ssm-domain:<path>` resolves to `ssm:/{{org}}/{{domain}}/<path>`
   - `ssm-env:<path>` resolves to `ssm:/{{org}}/{{domain}}/{{env}}/<path>`
 - SSM parameters created by SageMaker Unified Studio blueprints can be referenced using `blueprint:` prefix in configuration values
+- sample configurations that help users to quickly get started are in [starter_kits](starter_kits) while the examples are now on [AWS Samples](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator)
+- Users can now provide variables placeholders in the predeploy and postdeploy hook commands
+- CLI now validates `-d`, `-e`, and `-m` filter values upfront and errors if they don't match any configured domains, environments, or modules
+- CLI now supports !include tag to reference external files in YAML configurations
+- Simplified installer stack: removed user requirements for CodePipeline/S3 source and CodeStar ARN, and replaced `npm install` with running `mdaa` from npmjs.org.
+- Added baseline diff support: new `--cdk-out`, `--baseline`, and `--diff-out` CLI flags enable comparing CloudFormation templates against stored baselines without requiring AWS deployment
 
 ### Governance Module Changes
 
@@ -60,17 +66,14 @@
   - Glue Databases created by dataops project can be automatically created as SMUS/DataZone Data Sources
   - Project admin, data engineer, and execution roles can be added as members to the SMUS/DataZone project
 
-### New Features
+### Opensearch Module Changes
 - Users can now use SAML-based authentication system to enable enterprise-grade identity federation to Opensearch domain
 
-### General Changes
+### DataOps Modules
 
-- sample configurations that help users to quickly get started are in [starter_kits](starter_kits) while the examples are now on [AWS Samples](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator)
-- Users can now provide variables placeholders in the predeploy and postdeploy hook commands
-- CLI now validates `-d`, `-e`, and `-m` filter values upfront and errors if they don't match any configured domains, environments, or modules
-- CLI now supports !include tag to reference external files in YAML configurations
-- Simplified installer stack: removed user requirements for CodePipeline/S3 source and CodeStar ARN, and replaced `npm install` with running `mdaa` from npmjs.org.
-- Added baseline diff support: new `--cdk-out`, `--baseline`, and `--diff-out` CLI flags enable comparing CloudFormation templates against stored baselines without requiring AWS deployment
+- All DataOps Modules can now be deployed independently without a DataOps Project
+  - `projectName` config parameter has been made optional
+  - Where project resources were automatically used when deployed with a DataOps Project, these resources can now be directly specified in module configs
 
 ## [1.4.0] - 2026-01-30
 

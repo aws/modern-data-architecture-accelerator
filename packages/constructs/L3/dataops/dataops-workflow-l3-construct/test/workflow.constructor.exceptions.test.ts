@@ -46,4 +46,22 @@ describe('GlueWorkflowL3Construct Constructor Exception Tests', () => {
       new GlueWorkflowL3Construct(stack, 'test-construct-2', props);
     }).toThrow('Project Security Configuration must be defined');
   });
+
+  test('should work when projectName is undefined', () => {
+    const testApp3 = new MdaaTestApp();
+    const stack3 = testApp3.testStack;
+
+    const props: GlueWorkflowL3ConstructProps = {
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
+      workflowDefinitions: [validWorkflowDefinition],
+      projectName: undefined,
+      securityConfigurationName: 'testing-config',
+      roleHelper: new MdaaRoleHelper(stack3, testApp3.naming),
+      naming: testApp3.naming,
+    };
+
+    expect(() => {
+      new GlueWorkflowL3Construct(stack3, 'test-construct-no-project', props);
+    }).not.toThrow();
+  });
 });

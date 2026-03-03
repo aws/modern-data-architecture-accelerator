@@ -36,7 +36,7 @@ export interface MdaaDataOpsConfigContents extends MdaaBaseConfigContents {
    *
    * Validation: Must be valid project name; required for project coordination and resource organization
    **/
-  readonly projectName: string;
+  readonly projectName?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Required S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.
@@ -47,7 +47,7 @@ export interface MdaaDataOpsConfigContents extends MdaaBaseConfigContents {
    *
    * Validation: Must be valid S3 bucket name; required for project storage and artifact management
    **/
-  readonly projectBucket?: string;
+  readonly bucketName?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Required SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.
@@ -58,7 +58,7 @@ export interface MdaaDataOpsConfigContents extends MdaaBaseConfigContents {
    *
    * Validation: Must be valid SNS topic ARN; required for notifications and workflow coordination
    **/
-  readonly projectTopicArn?: string;
+  readonly notificationTopicArn?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Required IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.
@@ -69,7 +69,7 @@ export interface MdaaDataOpsConfigContents extends MdaaBaseConfigContents {
    *
    * Validation: Must be valid IAM role ARN; required for deployment operations and resource management
    **/
-  readonly deploymentRole?: string;
+  readonly deploymentRoleArn?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Required KMS key ARN for DataOps encryption enabling data protection and security compliance. Provides the customer-managed KMS key for encrypting DataOps resources, data, and operational artifacts ensuring data protection and compliance.
@@ -85,19 +85,19 @@ export interface MdaaDataOpsConfigContents extends MdaaBaseConfigContents {
 
 export class MdaaDataOpsConfigParser<T extends MdaaDataOpsConfigContents> extends MdaaAppConfigParser<T> {
   public readonly securityConfigurationName?: string;
-  public readonly projectName: string;
-  public readonly projectBucket?: string;
-  public readonly projectTopicArn?: string;
-  public readonly deploymentRole?: string;
+  public readonly projectName?: string;
+  public readonly bucketName?: string;
+  public readonly notificationTopicArn?: string;
+  public readonly deploymentRoleArn?: string;
   public readonly kmsArn?: string;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps, configSchema: Schema) {
     super(stack, props, configSchema, [new ProjectConfigTransformer(props.naming)]);
     this.securityConfigurationName = this.configContents.securityConfigurationName;
     this.projectName = this.configContents.projectName;
-    this.projectBucket = this.configContents.projectBucket;
-    this.projectTopicArn = this.configContents.projectTopicArn;
-    this.deploymentRole = this.configContents.deploymentRole;
+    this.bucketName = this.configContents.bucketName;
+    this.notificationTopicArn = this.configContents.notificationTopicArn;
+    this.deploymentRoleArn = this.configContents.deploymentRoleArn;
     this.kmsArn = this.configContents.kmsArn;
   }
 }
@@ -111,25 +111,27 @@ class ProjectConfigTransformer implements IMdaaConfigTransformer {
 
   public transformConfig(config: ConfigurationElement): ConfigurationElement {
     const projectName = config['projectName'];
-    if (typeof projectName !== 'string')
-      throw new Error(`Project name is expected to be a string, not ${typeof projectName})`);
-    const moddedConfig = config;
-    moddedConfig['securityConfigurationName'] = moddedConfig['securityConfigurationName']
-      ? moddedConfig['securityConfigurationName']
-      : 'project:securityConfiguration/default';
-    moddedConfig['projectBucket'] = moddedConfig['projectBucket']
-      ? moddedConfig['projectBucket']
-      : 'project:projectBucket/default';
-    moddedConfig['projectTopicArn'] = moddedConfig['projectTopicArn']
-      ? moddedConfig['projectTopicArn']
-      : 'project:projectTopicArn/default';
-    moddedConfig['deploymentRole'] = moddedConfig['deploymentRole']
-      ? moddedConfig['deploymentRole']
-      : 'project:deploymentRole/default';
-    moddedConfig['kmsArn'] = moddedConfig['kmsArn'] ? moddedConfig['kmsArn'] : 'project:kmsArn/default';
+    if (projectName && typeof projectName === 'string') {
+      const moddedConfig = config;
+      moddedConfig['securityConfigurationName'] = moddedConfig['securityConfigurationName']
+        ? moddedConfig['securityConfigurationName']
+        : 'project:securityConfiguration/default';
+      moddedConfig['bucketName'] = moddedConfig['bucketName']
+        ? moddedConfig['bucketName']
+        : 'project:projectBucket/default';
+      moddedConfig['notificationTopicArn'] = moddedConfig['notificationTopicArn']
+        ? moddedConfig['notificationTopicArn']
+        : 'project:projectTopicArn/default';
+      moddedConfig['deploymentRoleArn'] = moddedConfig['deploymentRoleArn']
+        ? moddedConfig['deploymentRoleArn']
+        : 'project:deploymentRole/default';
+      moddedConfig['kmsArn'] = moddedConfig['kmsArn'] ? moddedConfig['kmsArn'] : 'project:kmsArn/default';
 
-    const projectConfigValTransformer = new ProjectConfigValueTransformer(projectName, this.naming);
-    return new MdaaConfigTransformer(projectConfigValTransformer).transformConfig(moddedConfig);
+      const projectConfigValTransformer = new ProjectConfigValueTransformer(projectName, this.naming);
+      return new MdaaConfigTransformer(projectConfigValTransformer).transformConfig(moddedConfig);
+    } else {
+      return config;
+    }
   }
 }
 

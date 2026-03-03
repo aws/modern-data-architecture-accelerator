@@ -27,7 +27,7 @@ describe('MDAA DynamoDB Construct Tests', () => {
   };
 
   const constructProps: DynamodbL3ConstructProps = {
-    projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
+    kmsArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
     tableDefinitions: { 'test-table': dynamoDefinition },
     projectName: 'test-project',
     roleHelper: new MdaaRoleHelper(stack, testApp.naming),
@@ -79,11 +79,11 @@ describe('MDAA DynamoDB Construct Tests', () => {
     });
   });
 
-  test('Should throw error when projectKMSArn is missing', () => {
+  test('Should throw error when kmsArn is missing', () => {
     const testApp2 = new MdaaTestApp();
     const propsWithoutKMS: DynamodbL3ConstructProps = {
       ...constructProps,
-      projectKMSArn: undefined,
+      kmsArn: undefined,
       roleHelper: new MdaaRoleHelper(testApp2.testStack, testApp2.naming),
       naming: testApp2.naming,
     };

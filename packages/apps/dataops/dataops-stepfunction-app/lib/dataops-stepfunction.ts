@@ -23,7 +23,7 @@ export class StepFunctionCDKApp extends MdaaCdkApp {
       ...{
         stepfunctionDefinitions: appConfig.stepfunctionDefinitions,
         projectName: appConfig.projectName,
-        projectKMSArn: appConfig.kmsArn,
+        kmsArn: appConfig.kmsArn,
       },
       ...l3ConstructProps,
     };

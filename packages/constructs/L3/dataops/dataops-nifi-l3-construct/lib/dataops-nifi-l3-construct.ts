@@ -442,7 +442,7 @@ interface AddRegistryProps extends AddNifiServiceProps {
 
 export class NifiL3Construct extends MdaaL3Construct {
   protected readonly props: NifiL3ConstructProps;
-  private readonly projectKmsKey: IKey;
+  private readonly kmsKey: IKey;
 
   private static readonly CERT_MANAGER_NAMESPACE = 'cert-manager';
   private static readonly EXTERNAL_DNS_NAMESPACE = 'external-dns';
@@ -457,7 +457,7 @@ export class NifiL3Construct extends MdaaL3Construct {
     if (!this.props.kmsArn) {
       throw new Error('Project kms key must be defined');
     }
-    this.projectKmsKey = MdaaKmsKey.fromKeyArn(this.scope, 'project-kms', this.props.kmsArn);
+    this.kmsKey = MdaaKmsKey.fromKeyArn(this.scope, 'project-kms', this.props.kmsArn);
 
     const vpc = Vpc.fromVpcAttributes(this, 'vpc', {
       vpcId: this.props.nifi.vpcId,
@@ -480,7 +480,7 @@ export class NifiL3Construct extends MdaaL3Construct {
 
     const [privateCaArn, privateCa] = this.createAcmPca();
     const hostedZone = this.createHostedZone(vpc);
-    const eksCluster = this.createEksCluster(vpc, subnets, this.projectKmsKey, clusterSecurityGroup, privateCaArn);
+    const eksCluster = this.createEksCluster(vpc, subnets, this.kmsKey, clusterSecurityGroup, privateCaArn);
 
     const servicesFargateProfile = eksCluster.addFargateProfile('services-fargate-profile', {
       fargateProfileName: 'services',
@@ -553,7 +553,7 @@ export class NifiL3Construct extends MdaaL3Construct {
       const [zkManifest, zkK8sChart, zkSecurityGroup] = this.addZookeeper(
         vpc,
         subnets,
-        this.projectKmsKey,
+        this.kmsKey,
         eksCluster,
         hostedZone,
         caIssuerCdk8sChart,
@@ -585,7 +585,7 @@ export class NifiL3Construct extends MdaaL3Construct {
           registryProps: this.props.nifi.registry,
           vpc: vpc,
           subnets: subnets,
-          kmsKey: this.projectKmsKey,
+          kmsKey: this.kmsKey,
           eksCluster: eksCluster,
           registryHostname: registryHostname,
           hostedZone,
@@ -694,7 +694,7 @@ export class NifiL3Construct extends MdaaL3Construct {
       'registry-keystore-password-secret',
       this.props.naming,
       'registry-keystore-password',
-      this.projectKmsKey,
+      this.kmsKey,
     );
     const registryAdminCredentialsSecret = NifiCluster.createSecret(
       this,
@@ -708,7 +708,7 @@ export class NifiL3Construct extends MdaaL3Construct {
       sid: 'KmsDecrypt',
       effect: Effect.ALLOW,
       actions: ['kms:Decrypt'],
-      resources: [this.projectKmsKey.keyArn],
+      resources: [this.kmsKey.keyArn],
     });
 
     const secretsManagerStatement = new PolicyStatement({
@@ -748,13 +748,9 @@ export class NifiL3Construct extends MdaaL3Construct {
       kmsKey: addRegistryProps.kmsKey,
       efsSecurityGroup: efsSecurityGroup,
     })[0];
-    const efsManagedPolicy = NifiCluster.createEfsAccessPolicy(
-      'registry',
-      this,
-      this.props.naming,
-      this.projectKmsKey,
-      [registryEfsPvs],
-    );
+    const efsManagedPolicy = NifiCluster.createEfsAccessPolicy('registry', this, this.props.naming, this.kmsKey, [
+      registryEfsPvs,
+    ]);
 
     addRegistryProps.fargateProfile.podExecutionRole.addManagedPolicy(efsManagedPolicy);
 
@@ -826,7 +822,7 @@ export class NifiL3Construct extends MdaaL3Construct {
       'ca-keystore-password-secret',
       this.props.naming,
       'ca-keystore-password',
-      this.projectKmsKey,
+      this.kmsKey,
     );
     const caExternalSecretsRole = NifiCluster.createExternalSecretsServiceRole(
       this,
@@ -834,7 +830,7 @@ export class NifiL3Construct extends MdaaL3Construct {
       this.props.naming,
       NifiL3Construct.CERT_MANAGER_NAMESPACE,
       eksCluster,
-      this.projectKmsKey,
+      this.kmsKey,
       [caKeystorePasswordSecret],
     );
 
@@ -927,7 +923,7 @@ export class NifiL3Construct extends MdaaL3Construct {
       ...addNifiClusterProps.nifiClusterOptions,
       eksCluster: addNifiClusterProps.eksCluster,
       clusterName: addNifiClusterProps.nifiClusterName,
-      kmsKey: this.projectKmsKey,
+      kmsKey: this.kmsKey,
       vpc: addNifiClusterProps.vpc,
       subnets: addNifiClusterProps.subnets,
       naming: this.props.naming.withSuffix(addNifiClusterProps.nifiClusterName),
@@ -975,14 +971,14 @@ export class NifiL3Construct extends MdaaL3Construct {
       'zk-keystore-password-secret',
       this.props.naming,
       'zk-keystore-password',
-      this.projectKmsKey,
+      this.kmsKey,
     );
 
     const kmsKeyStatement = new PolicyStatement({
       sid: 'KmsDecrypt',
       effect: Effect.ALLOW,
       actions: ['kms:Decrypt'],
-      resources: [this.projectKmsKey.keyArn],
+      resources: [this.kmsKey.keyArn],
     });
 
     const secretsManagerStatement = new PolicyStatement({
@@ -1023,7 +1019,7 @@ export class NifiL3Construct extends MdaaL3Construct {
       'zookeeper',
       this,
       this.props.naming,
-      this.projectKmsKey,
+      this.kmsKey,
       zkEfsPvs,
     );
     fargateProfile.podExecutionRole.addManagedPolicy(efsManagedPolicy);
@@ -1144,7 +1140,7 @@ export class NifiL3Construct extends MdaaL3Construct {
         'mgmt-instance-keystore-secret',
         this.props.naming,
         'mgmt-instance-keystore-password',
-        this.projectKmsKey,
+        this.kmsKey,
       );
       const secretsManagerStatement = new PolicyStatement({
         sid: 'GetSecretValue',
@@ -1156,7 +1152,7 @@ export class NifiL3Construct extends MdaaL3Construct {
         sid: 'ProjectKms',
         effect: Effect.ALLOW,
         actions: ['kms:Decrypt'],
-        resources: [this.projectKmsKey.keyArn],
+        resources: [this.kmsKey.keyArn],
       });
       const issueCertStatement = new PolicyStatement({
         sid: 'IssueCert',

@@ -22,7 +22,7 @@ export interface DataBrewL3ConstructProps extends MdaaL3ConstructProps {
    *
    * Validation: Must be valid project name; required for DataBrew project association and resource coordination
    **/
-  readonly projectName: string;
+  readonly projectName?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Optional map of recipe names to recipe configurations for DataBrew data transformation enabling visual data preparation and transformation workflows. Provides recipe definitions with transformation steps for visual data preparation, cleansing, and transformation operations within DataBrew projects.

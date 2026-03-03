@@ -1,8 +1,11 @@
-# (Required) Name of the Data Ops Project
+# (Optional) Name of the Data Ops Project
 # Name the project the resources of which can be used by this dynamodb app.
 # Other resources within the project can be referenced in the dynamodb config using
 # the "project:" prefix on the config value.
 projectName: dataops-project-sample
+
+# Alternatively, if projectName is not provided, you can supply the parameter directly:
+# kmsArn: arn:aws:kms:region:account:key/key-id  # KMS key for table encryption
 # List of dynamodb definitions
 tableDefinitions:
   table-complex:
@@ -29,4 +32,3 @@ tableDefinitions:
       type: S
     # if PAY_PER_REQUEST don't indicate read/write capacity
     billingMode: PAY_PER_REQUEST
-

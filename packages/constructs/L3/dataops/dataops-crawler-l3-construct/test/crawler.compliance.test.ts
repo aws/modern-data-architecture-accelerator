@@ -149,18 +149,4 @@ describe('MDAA Compliance Stack Tests', () => {
       new GlueCrawlerL3Construct(testApp2.testStack, 'test-crawler-no-security', propsWithoutSecurity);
     }).toThrow('Security configuration name is required for crawler configuration');
   });
-
-  test('Should throw error when notificationTopicArn is missing', () => {
-    const testApp3 = new MdaaTestApp();
-    const propsWithoutNotification: GlueCrawlerL3ConstructProps = {
-      ...constructProps,
-      notificationTopicArn: undefined,
-      roleHelper: new MdaaRoleHelper(testApp3.testStack, testApp3.naming),
-      naming: testApp3.naming,
-    };
-
-    expect(() => {
-      new GlueCrawlerL3Construct(testApp3.testStack, 'test-crawler-no-notification', propsWithoutNotification);
-    }).toThrow('Notification topic ARN is required for crawler configuration');
-  });
 });

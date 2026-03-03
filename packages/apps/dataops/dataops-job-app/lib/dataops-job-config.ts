@@ -50,7 +50,7 @@ export interface GlueJobConfigContents extends MdaaDataOpsConfigContents {
    *
    * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
    **/
-  readonly projectName: string;
+  readonly projectName?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Required map of job names to job definitions enabling multiple ETL processing workflows and data transformation operations. Provides job configuration for different data sources, transformation logic, and output destinations within the data lake architecture.

@@ -2,7 +2,7 @@
 
 The Data Ops DynamoDB CDK application is used to deploy the resources required to orchestrate data operations on the data lake (primarily Glue Crawlers, Glue Jobs, Step Functions and Lambdas).
 
-***
+---
 
 ## Deployed Resources and Compliance Details
 
@@ -10,9 +10,9 @@ The Data Ops DynamoDB CDK application is used to deploy the resources required t
 
 **DynamoDB** - DynamoDB tables will be created for each table specification in the configs
 
-* DynamoDB table configs can be handcrafted using the simple yaml files
+- DynamoDB table configs can be handcrafted using the simple yaml files
 
-***
+---
 
 ## Configuration
 
@@ -21,10 +21,10 @@ The Data Ops DynamoDB CDK application is used to deploy the resources required t
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          dataops-dynamodb: # Module Name can be customized
-            module_path: "@aws-mdaa/dataops-dynamodb" # Must match module NPM package name
-            module_configs:
-              - ./dataops-dynamodb.yaml # Filename/path can be customized
+dataops-dynamodb: # Module Name can be customized
+  module_path: '@aws-mdaa/dataops-dynamodb' # Must match module NPM package name
+  module_configs:
+    - ./dataops-dynamodb.yaml # Filename/path can be customized
 ```
 
 ### Module Config (./dataops-stepfunction.yaml)
@@ -36,12 +36,14 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 DynamoDB configs are stored under the ./dynamodb/ directory, relative to the dynamodb config. Multiple dynamodb tables can be defined in a single config file or across multiple files, as long as they have globally unique names.
 
 ```yaml
-
-# (Required) Name of the Data Ops Project
+# (Optional) Name of the Data Ops Project
 # Name the project the resources of which can be used by this dynamodb app.
 # Other resources within the project can be referenced in the dynamodb config using
 # the "project:" prefix on the config value.
 projectName: dataops-project-sample
+
+# Alternatively, if projectName is not provided, you can supply the parameter directly:
+# kmsArn: arn:aws:kms:region:account:key/key-id  # KMS key for table encryption
 # List of dynamodb definitions
 tableDefinitions:
   table-complex:

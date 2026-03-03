@@ -172,8 +172,8 @@ export interface StepFunctionL3ConstructProps extends MdaaL3ConstructProps {
    *
    * Validation: Must be valid project name; required for project coordination and resource organization
    **/
-  readonly projectName: string;
-  readonly projectKMSArn?: string;
+  readonly projectName?: string;
+  readonly kmsArn?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Required array of Step Functions definitions for workflow orchestration deployment enabling state machine configuration and management. Provides state machine specifications including definitions, roles, logging, and EventBridge integration for DataOps workflow automation.
@@ -190,15 +190,15 @@ export interface StepFunctionL3ConstructProps extends MdaaL3ConstructProps {
 export class StepFunctionL3Construct extends MdaaL3Construct {
   protected readonly props: StepFunctionL3ConstructProps;
 
-  private readonly projectKmsKey: IKey;
+  private readonly kmsKey: IKey;
 
   constructor(scope: Construct, id: string, props: StepFunctionL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
-    if (!this.props.projectKMSArn) {
+    if (!this.props.kmsArn) {
       throw new Error('Project KMS ARN is required for Step Function L3 Construct');
     }
-    this.projectKmsKey = Key.fromKeyArn(this, this.props.projectName, this.props.projectKMSArn);
+    this.kmsKey = Key.fromKeyArn(this, this.props.projectName ?? 'kms-key', this.props.kmsArn);
 
     // Build our stepfunctions!
     this.props.stepfunctionDefinitions?.map(stepfunctionDefinition => {
@@ -210,7 +210,7 @@ export class StepFunctionL3Construct extends MdaaL3Construct {
       }
 
       const stepfunction = this.createStepFunctionFromDefinition(stepfunctionDefinition, logGroup);
-      if (stepfunction.stateMachineName) {
+      if (stepfunction.stateMachineName && this.props.projectName) {
         DataOpsProjectUtils.createProjectSSMParam(
           this.scope,
           this.props.naming,
@@ -241,7 +241,7 @@ export class StepFunctionL3Construct extends MdaaL3Construct {
       naming: this.props.naming,
       logGroupName: stepfunctionProps.stateMachineName,
       logGroupNamePathPrefix: `/aws/stepfunction/`,
-      encryptionKey: this.projectKmsKey,
+      encryptionKey: this.kmsKey,
       retention: logGroupRetentionDays,
     });
   }
@@ -287,12 +287,7 @@ export class StepFunctionL3Construct extends MdaaL3Construct {
     functionName: string,
     stepFunction: IStateMachine,
   ) {
-    const dlq = EventBridgeHelper.createDlq(
-      this.scope,
-      this.props.naming,
-      `${functionName}-events`,
-      this.projectKmsKey,
-    );
+    const dlq = EventBridgeHelper.createDlq(this.scope, this.props.naming, `${functionName}-events`, this.kmsKey);
 
     const eventBridgeRuleProps = EventBridgeHelper.createNamedEventBridgeRuleProps(eventBridgeProps, functionName);
 

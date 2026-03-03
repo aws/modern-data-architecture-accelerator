@@ -20,7 +20,11 @@ The DataOps Dashboard App creates CloudWatch dashboards that aggregate metrics a
 ### Basic Dashboard
 
 ```yaml
+# (Optional) Name of the DataOps Project
+# Other resources within the project can be referenced in the config using
+# the "project:" prefix on the config value.
 projectName: my-project
+
 dashboards:
   - dashboardName: etl-observability
     widgets:
@@ -36,11 +40,11 @@ dashboards:
 
 ```yaml
 - type: metric
-  title: "Error Count"
+  title: 'Error Count'
   width: 12
   height: 6
   metrics:
-    - metricRef: "ssm:/mdaa/org/dev/metrics/lambda_csv_parquet/error-count"
+    - metricRef: 'ssm:/mdaa/org/dev/metrics/lambda_csv_parquet/error-count'
       stat: Sum
 ```
 
@@ -48,14 +52,14 @@ dashboards:
 
 ```yaml
 - type: metric
-  title: "Lambda Duration"
+  title: 'Lambda Duration'
   width: 12
   height: 6
   metrics:
     - namespace: AWS/Lambda
       metricName: Duration
       dimensions:
-        FunctionName: "{{function:lambda_csv_parquet}}"
+        FunctionName: '{{function:lambda_csv_parquet}}'
       stat: Average
 ```
 
@@ -63,11 +67,11 @@ dashboards:
 
 ```yaml
 - type: log_insights
-  title: "Recent Errors"
+  title: 'Recent Errors'
   width: 24
   height: 6
   logGroupNames:
-    - "{{function:lambda_csv_parquet:logGroup}}"
+    - '{{function:lambda_csv_parquet:logGroup}}'
   queryString: |
     fields @timestamp, @message
     | filter @message like /ERROR/
@@ -83,7 +87,7 @@ Use `{{function:functionName}}` to reference a Lambda function name from SSM:
 
 ```yaml
 dimensions:
-  FunctionName: "{{function:lambda_csv_parquet}}"
+  FunctionName: '{{function:lambda_csv_parquet}}'
 ```
 
 Resolves to: `/mdaa/lambda/lambda_csv_parquet/name`
@@ -94,7 +98,7 @@ Use `{{function:functionName:logGroup}}` to reference a Lambda function's log gr
 
 ```yaml
 logGroupNames:
-  - "{{function:lambda_csv_parquet:logGroup}}"
+  - '{{function:lambda_csv_parquet:logGroup}}'
 ```
 
 Resolves to: `/mdaa/lambda/lambda_csv_parquet/log-group`
@@ -104,10 +108,11 @@ Resolves to: `/mdaa/lambda/lambda_csv_parquet/log-group`
 Reference metrics created by other modules using SSM syntax:
 
 ```yaml
-metricRef: "ssm:/mdaa/{org}/{env}/metrics/{functionName}/{metricName}"
+metricRef: 'ssm:/mdaa/{org}/{env}/metrics/{functionName}/{metricName}'
 ```
 
 The construct will automatically resolve:
+
 - Namespace from: `/mdaa/{org}/{env}/metrics/{functionName}/{metricName}/namespace`
 - Name from: `/mdaa/{org}/{env}/metrics/{functionName}/{metricName}/name`
 
@@ -133,7 +138,7 @@ cdk deploy
 
 ```yaml
 - type: text
-  markdown: "# Dashboard Title"
+  markdown: '# Dashboard Title'
   width: 24
   height: 2
 ```
@@ -142,7 +147,7 @@ cdk deploy
 
 ```yaml
 - type: metric
-  title: "Metric Title"
+  title: 'Metric Title'
   width: 12
   height: 6
   period: 300
@@ -156,11 +161,11 @@ cdk deploy
 
 ```yaml
 - type: log_insights
-  title: "Query Title"
+  title: 'Query Title'
   width: 24
   height: 6
   logGroupNames:
-    - "/aws/lambda/my-function"
+    - '/aws/lambda/my-function'
   queryString: |
     fields @timestamp, @message
     | sort @timestamp desc
@@ -171,6 +176,7 @@ cdk deploy
 Widgets are automatically laid out in rows with a maximum width of 24 units. When adding a widget would exceed 24 units, a new row is started automatically.
 
 Example:
+
 - Widget 1: width 12 (row 1)
 - Widget 2: width 12 (row 1)
 - Widget 3: width 12 (row 2, new row started)

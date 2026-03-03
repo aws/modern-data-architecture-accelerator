@@ -27,6 +27,7 @@
     "@aws-mdaa/construct": "1.4.0",
     "@aws-mdaa/l3-construct": "1.4.0",
     "@aws-mdaa/testing": "1.4.0",
+    "@aws-mdaa/dataops-project-l3-construct": "1.4.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -42,6 +43,7 @@
   "peerDependencies": {
     "@aws-mdaa/construct": "1.4.0",
     "@aws-mdaa/l3-construct": "1.4.0",
+    "@aws-mdaa/dataops-project-l3-construct": "1.4.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "10.0.96"
   },
@@ -51,6 +53,7 @@
   },
   "dependencies": {
     "@aws-mdaa/construct": "1.4.0",
+    "@aws-mdaa/dataops-project-l3-construct": "1.4.0",
     "@aws-mdaa/l3-construct": "1.4.0",
     "@aws-mdaa/naming": "1.4.0",
     "aws-cdk-lib": "2.220.0",

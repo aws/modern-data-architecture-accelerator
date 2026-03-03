@@ -2785,7 +2785,11 @@
         }
     },
     "properties": {
-        "deploymentRole": {
+        "bucketName": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
+            "type": "string"
+        },
+        "deploymentRoleArn": {
             "description": "Q-ENHANCED-PROPERTY\nRequired IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.\n\nUse cases: Deployment operations; Resource management; IAM permissions; Secure deployment\n\nAWS: IAM role ARN for DataOps deployment operations and resource management\n\nValidation: Must be valid IAM role ARN; required for deployment operations and resource management",
             "type": "string"
         },
@@ -2797,16 +2801,12 @@
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
-        "projectBucket": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
+        "notificationTopicArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
             "type": "string"
         },
         "projectName": {
             "description": "Q-ENHANCED-PROPERTY\nRequired DataOps project name for resource coordination and shared infrastructure enabling project-based resource organization and management. Provides the project identifier that coordinates shared resources across DataOps applications and workflows.\n\nUse cases: Project coordination; Resource organization; Shared infrastructure; Project management\n\nAWS: DataOps project name for resource coordination and shared infrastructure management\n\nValidation: Must be valid project name; required for project coordination and resource organization",
-            "type": "string"
-        },
-        "projectTopicArn": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
             "type": "string"
         },
         "sagemakerBlueprint": {
@@ -2830,7 +2830,6 @@
         }
     },
     "required": [
-        "projectName",
         "tableDefinitions"
     ],
     "type": "object"

@@ -50,24 +50,24 @@ class TestDataOpsSharedApp extends MdaaCdkApp {
         description: 'DataOps project name',
       });
     }
-    if (configParser.projectBucket) {
+    if (configParser.bucketName) {
       new MdaaStringParameter(stack, 'ProjectBucketParam', {
         parameterName: l3ConstructProps.naming.ssmPath('project-bucket', true, false),
-        stringValue: configParser.projectBucket,
+        stringValue: configParser.bucketName,
         description: 'DataOps project bucket reference',
       });
     }
-    if (configParser.projectTopicArn) {
+    if (configParser.notificationTopicArn) {
       new MdaaStringParameter(stack, 'ProjectTopicParam', {
         parameterName: l3ConstructProps.naming.ssmPath('project-topic-arn', true, false),
-        stringValue: configParser.projectTopicArn,
+        stringValue: configParser.notificationTopicArn,
         description: 'DataOps project topic ARN reference',
       });
     }
-    if (configParser.deploymentRole) {
+    if (configParser.deploymentRoleArn) {
       new MdaaStringParameter(stack, 'DeploymentRoleParam', {
         parameterName: l3ConstructProps.naming.ssmPath('deployment-role', true, false),
-        stringValue: configParser.deploymentRole,
+        stringValue: configParser.deploymentRoleArn,
         description: 'DataOps deployment role reference',
       });
     }

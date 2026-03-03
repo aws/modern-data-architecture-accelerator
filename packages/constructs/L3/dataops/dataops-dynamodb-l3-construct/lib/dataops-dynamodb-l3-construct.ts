@@ -102,8 +102,8 @@ export interface DynamodbL3ConstructProps extends MdaaL3ConstructProps {
    *
    * Validation: Must be valid project name; required for project coordination and resource organization
    **/
-  readonly projectName: string;
-  readonly projectKMSArn?: string;
+  readonly projectName?: string;
+  readonly kmsArn?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Required map of DynamoDB table definitions for NoSQL database deployment enabling table configuration and management. Provides table specifications including schema, capacity, billing, and TTL settings for DataOps NoSQL database operations and data storage.
@@ -120,27 +120,29 @@ export interface DynamodbL3ConstructProps extends MdaaL3ConstructProps {
 export class DynamodbL3Construct extends MdaaL3Construct {
   protected readonly props: DynamodbL3ConstructProps;
 
-  private readonly projectKmsKey: IKey;
+  private readonly kmsKey: IKey;
 
   constructor(scope: Construct, id: string, props: DynamodbL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
 
-    if (!this.props.projectKMSArn) {
+    if (!this.props.kmsArn) {
       throw new Error('Project KMS ARN is required for DynamoDB L3 construct');
     }
-    this.projectKmsKey = Key.fromKeyArn(this, this.props.projectName, this.props.projectKMSArn);
+    this.kmsKey = Key.fromKeyArn(this, this.props.projectName ?? 'kms-key', this.props.kmsArn);
 
     // Build our Dynamodb tables!
     for (const [tableName, tableProps] of Object.entries(this.props.tableDefinitions)) {
       const dynamodb = this.createDynamodbFromDefinition(tableName, tableProps);
-      DataOpsProjectUtils.createProjectSSMParam(
-        this.scope,
-        this.props.naming,
-        this.props.projectName,
-        `dynamodb/name/${tableName}`,
-        dynamodb.tableName,
-      );
+      if (this.props.projectName) {
+        DataOpsProjectUtils.createProjectSSMParam(
+          this.scope,
+          this.props.naming,
+          this.props.projectName,
+          `dynamodb/name/${tableName}`,
+          dynamodb.tableName,
+        );
+      }
     }
   }
 
@@ -150,7 +152,7 @@ export class DynamodbL3Construct extends MdaaL3Construct {
       tableName: tableName,
       createParams: false,
       createOutputs: false,
-      encryptionKey: this.projectKmsKey,
+      encryptionKey: this.kmsKey,
       ...dynamodbProps,
     });
   }

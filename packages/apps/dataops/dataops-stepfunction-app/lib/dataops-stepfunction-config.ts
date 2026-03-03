@@ -21,7 +21,7 @@ export interface StepFunctionConfigContents extends MdaaDataOpsConfigContents {
    *
    * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
    **/
-  readonly projectName: string;
+  readonly projectName?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Required array of Step Functions definitions enabling complex serverless workflow orchestration and state machine coordination. Provides state machine configuration for conditional execution, error handling, and service integration patterns within the data processing architecture.

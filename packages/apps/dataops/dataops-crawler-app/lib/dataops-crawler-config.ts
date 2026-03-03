@@ -21,7 +21,7 @@ export interface GlueCrawlerConfigContents extends MdaaDataOpsConfigContents {
    *
    * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
    **/
-  readonly projectName: string;
+  readonly projectName?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Required map of crawler names to crawler definitions enabling multiple data source discovery and cataloging operations. Provides crawler configuration for different data sources, formats, and discovery patterns within the data lake architecture.

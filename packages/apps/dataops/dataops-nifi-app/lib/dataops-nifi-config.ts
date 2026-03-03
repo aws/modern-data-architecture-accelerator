@@ -22,7 +22,7 @@ export interface NifiConfigContents extends MdaaDataOpsConfigContents {
    *
    * Validation: Must be non-empty string; required; links Nifi deployment to specific DataOps project
    **/
-  readonly projectName: string;
+  readonly projectName?: string;
 
   /**
    * Q-ENHANCED-PROPERTY

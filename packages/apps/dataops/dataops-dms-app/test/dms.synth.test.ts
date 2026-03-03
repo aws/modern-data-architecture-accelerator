@@ -36,3 +36,34 @@ test('SynthTest', () => {
     ],
   });
 });
+
+test('SynthTest without projectName', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './test/test-config-noproject.yaml',
+  };
+  const app = new DMSCDKApp({ context: context });
+  const stack = app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+  const template = Template.fromStack(stack);
+  template.resourceCountIs('AWS::DMS::Endpoint', 2);
+  template.hasResourceProperties('AWS::IAM::Role', {
+    RoleName: 'dms-vpc-role',
+    ManagedPolicyArns: [
+      {
+        'Fn::Join': [
+          '',
+          ['arn:', { Ref: 'AWS::Partition' }, ':iam::aws:policy/service-role/AmazonDMSVPCManagementRole'],
+        ],
+      },
+    ],
+  });
+});

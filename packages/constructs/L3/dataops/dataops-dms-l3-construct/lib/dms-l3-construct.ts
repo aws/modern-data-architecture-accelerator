@@ -39,7 +39,6 @@ import {
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Effect, IRole, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
-import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct';
@@ -442,18 +441,7 @@ export interface DMSL3ConstructProps extends MdaaL3ConstructProps {
    *
    * Validation: Must be valid project name; required for DMS project association and resource coordination
    **/
-  readonly projectName: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project bucket name for DMS temporary storage enabling intermediate data storage during migration operations. Provides S3 bucket for storing temporary migration data, logs, and intermediate files during database migration and replication processes.
-   *
-   * Use cases: Temporary storage; Migration data; Intermediate files; Log storage
-   *
-   * AWS: S3 bucket name for DMS temporary storage and migration data management
-   *
-   * Validation: Must be valid S3 bucket name; required for DMS temporary storage and migration operations
-   **/
-  readonly projectBucket?: string;
+  readonly projectName?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Required KMS key ARN for DMS resource encryption enabling customer-controlled encryption and enhanced security compliance. Provides customer-managed KMS key for encrypting DMS replication instances, storage, and migration data ensuring data protection and security compliance.
@@ -513,7 +501,6 @@ export class DMSL3Construct extends MdaaL3Construct {
 
   protected readonly props: DMSL3ConstructProps;
   protected readonly projectKms: IKey;
-  protected readonly projectBucket: IBucket;
 
   constructor(scope: Construct, id: string, props: DMSL3ConstructProps) {
     super(scope, id, props);
@@ -522,10 +509,7 @@ export class DMSL3Construct extends MdaaL3Construct {
       throw new Error('Please provide kmsArn');
     }
     this.projectKms = Key.fromKeyArn(this.scope, 'project-kms', this.props.kmsArn);
-    if (!this.props.projectBucket) {
-      throw new Error('Please provide projectBucket');
-    }
-    this.projectBucket = Bucket.fromBucketName(this.scope, `project-bucket`, this.props.projectBucket);
+
     const dmsRole = props.dms.dmsRoleArn
       ? Role.fromRoleArn(this, 'dms-role', props.dms.dmsRoleArn)
       : this.createDmsRole();

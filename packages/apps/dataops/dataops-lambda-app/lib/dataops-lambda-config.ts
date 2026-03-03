@@ -23,7 +23,7 @@ export interface LambdaFunctionConfigContents extends MdaaDataOpsConfigContents 
    * Validation: Must be valid DataOps project name; required; project must exist or be created in the same deployment
    **/
 
-  readonly projectName: string;
+  readonly projectName?: string;
 
   /**
    * Q-ENHANCED-PROPERTY

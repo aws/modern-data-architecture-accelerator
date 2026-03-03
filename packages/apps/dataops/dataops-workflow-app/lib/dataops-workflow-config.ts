@@ -21,7 +21,7 @@ export interface GlueWorkflowConfigContents extends MdaaDataOpsConfigContents {
    *
    * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
    **/
-  readonly projectName: string;
+  readonly projectName?: string;
   /**
    * Q-ENHANCED-PROPERTY
    * Required array of workflow definitions enabling complex ETL pipeline orchestration and job coordination. Provides workflow configuration for job sequencing, trigger management, and conditional execution patterns within the data processing architecture.

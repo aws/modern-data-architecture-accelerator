@@ -32,7 +32,7 @@ describe('GlueJobL3Construct Constructor Exception Tests', () => {
 
   function createBaseProps(): Omit<
     GlueJobL3ConstructProps,
-    'deploymentRoleArn' | 'projectBucketName' | 'projectKMSArn' | 'securityConfigurationName' | 'notificationTopicArn'
+    'deploymentRoleArn' | 'bucketName' | 'kmsArn' | 'securityConfigurationName' | 'notificationTopicArn'
   > {
     return {
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
@@ -47,8 +47,8 @@ describe('GlueJobL3Construct Constructor Exception Tests', () => {
   test('should throw error when deploymentRoleArn is missing', () => {
     const props: GlueJobL3ConstructProps = {
       ...createBaseProps(),
-      projectBucketName: 'test-bucket',
-      projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      bucketName: 'test-bucket',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
       securityConfigurationName: 'test-security-config',
       notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:test-topic',
     };
@@ -58,11 +58,11 @@ describe('GlueJobL3Construct Constructor Exception Tests', () => {
     }).toThrow('Deployment role ARN is required for job configuration');
   });
 
-  test('should throw error when projectBucketName is missing', () => {
+  test('should throw error when bucketName is missing', () => {
     const props: GlueJobL3ConstructProps = {
       ...createBaseProps(),
       deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/deployment-role',
-      projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
       securityConfigurationName: 'test-security-config',
       notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:test-topic',
     };
@@ -72,11 +72,11 @@ describe('GlueJobL3Construct Constructor Exception Tests', () => {
     }).toThrow('Project bucket name is required for job configuration');
   });
 
-  test('should throw error when projectKMSArn is missing', () => {
+  test('should throw error when kmsArn is missing', () => {
     const props: GlueJobL3ConstructProps = {
       ...createBaseProps(),
       deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/deployment-role',
-      projectBucketName: 'test-bucket',
+      bucketName: 'test-bucket',
       securityConfigurationName: 'test-security-config',
       notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:test-topic',
     };
@@ -90,8 +90,8 @@ describe('GlueJobL3Construct Constructor Exception Tests', () => {
     const props: GlueJobL3ConstructProps = {
       ...createBaseProps(),
       deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/deployment-role',
-      projectBucketName: 'test-bucket',
-      projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      bucketName: 'test-bucket',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
       notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:test-topic',
     };
 
@@ -100,32 +100,34 @@ describe('GlueJobL3Construct Constructor Exception Tests', () => {
     }).toThrow('Security configuration name is required for job monitoring event rule');
   });
 
-  test('should throw error when notificationTopicArn is missing', () => {
-    const props: GlueJobL3ConstructProps = {
-      ...createBaseProps(),
-      deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/deployment-role',
-      projectBucketName: 'test-bucket',
-      projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
-      securityConfigurationName: 'test-security-config',
-    };
-
-    expect(() => {
-      new GlueJobL3Construct(stack, 'test-construct', props);
-    }).toThrow('Notification topic ARN is required for job monitoring event rule');
-  });
-
   test('should successfully create construct when all required properties are provided', () => {
     const props: GlueJobL3ConstructProps = {
       ...createBaseProps(),
       deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/deployment-role',
-      projectBucketName: 'test-bucket',
-      projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      bucketName: 'test-bucket',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
       securityConfigurationName: 'test-security-config',
       notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:test-topic',
     };
 
     expect(() => {
       new GlueJobL3Construct(stack, 'test-construct', props);
+    }).not.toThrow();
+  });
+
+  test('should work when projectName is undefined', () => {
+    const props: GlueJobL3ConstructProps = {
+      ...createBaseProps(),
+      projectName: undefined,
+      deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/deployment-role',
+      bucketName: 'test-bucket',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      securityConfigurationName: 'test-security-config',
+      notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:test-topic',
+    };
+
+    expect(() => {
+      new GlueJobL3Construct(stack, 'test-construct-no-project', props);
     }).not.toThrow();
   });
 });

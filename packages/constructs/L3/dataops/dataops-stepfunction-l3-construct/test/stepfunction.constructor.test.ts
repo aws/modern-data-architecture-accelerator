@@ -29,9 +29,9 @@ describe('StepFunctionL3Construct Constructor Exception Tests', () => {
   const testApp = new MdaaTestApp();
   const stack = testApp.testStack;
 
-  test('should throw error when projectKMSArn is undefined', () => {
+  test('should throw error when kmsArn is undefined', () => {
     const constructProps: StepFunctionL3ConstructProps = {
-      projectKMSArn: undefined,
+      kmsArn: undefined,
       stepfunctionDefinitions: [validStepfunctionDefinition],
       projectName: 'test-project',
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
@@ -43,9 +43,9 @@ describe('StepFunctionL3Construct Constructor Exception Tests', () => {
     }).toThrow('Project KMS ARN is required for Step Function L3 Construct');
   });
 
-  test('should throw error when projectKMSArn is empty string', () => {
+  test('should throw error when kmsArn is empty string', () => {
     const constructProps: StepFunctionL3ConstructProps = {
-      projectKMSArn: '',
+      kmsArn: '',
       stepfunctionDefinitions: [validStepfunctionDefinition],
       projectName: 'test-project',
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
@@ -55,6 +55,20 @@ describe('StepFunctionL3Construct Constructor Exception Tests', () => {
     expect(() => {
       new StepFunctionL3Construct(stack, 'test-construct-empty', constructProps);
     }).toThrow('Project KMS ARN is required for Step Function L3 Construct');
+  });
+
+  test('should work when projectName is undefined', () => {
+    const constructProps: StepFunctionL3ConstructProps = {
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      stepfunctionDefinitions: [validStepfunctionDefinition],
+      projectName: undefined,
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+    };
+
+    expect(() => {
+      new StepFunctionL3Construct(stack, 'test-construct-no-project', constructProps);
+    }).not.toThrow();
   });
 });
 
@@ -70,7 +84,7 @@ describe('StepFunctionL3Construct Log Group Retention Tests', () => {
 
   test('should use specified retention days when provided', () => {
     const constructProps: StepFunctionL3ConstructProps = {
-      projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
       stepfunctionDefinitions: [
         {
           ...validStepfunctionDefinition,
@@ -92,7 +106,7 @@ describe('StepFunctionL3Construct Log Group Retention Tests', () => {
 
   test('should use infinite retention when logGroupRetentionDays is 0', () => {
     const constructProps: StepFunctionL3ConstructProps = {
-      projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
       stepfunctionDefinitions: [
         {
           ...validStepfunctionDefinition,
@@ -119,7 +133,7 @@ describe('StepFunctionL3Construct Log Group Retention Tests', () => {
 
   test('should use default TWO_YEARS retention when logGroupRetentionDays is undefined', () => {
     const constructProps: StepFunctionL3ConstructProps = {
-      projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
       stepfunctionDefinitions: [validStepfunctionDefinition],
       projectName: 'test-project',
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),

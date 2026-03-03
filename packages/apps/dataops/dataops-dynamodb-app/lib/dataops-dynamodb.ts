@@ -23,7 +23,7 @@ export class DynamodbCDKApp extends MdaaCdkApp {
       ...{
         tableDefinitions: appConfig.tableDefinitions,
         projectName: appConfig.projectName,
-        projectKMSArn: appConfig.kmsArn,
+        kmsArn: appConfig.kmsArn,
       },
       ...l3ConstructProps,
     };

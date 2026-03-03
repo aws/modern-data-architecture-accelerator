@@ -173,7 +173,7 @@ export interface GlueCrawlerL3ConstructProps extends MdaaL3ConstructProps {
    *
    * Validation: Must be valid project name; required for crawler project association and resource coordination
    **/
-  readonly projectName: string;
+  readonly projectName?: string;
   readonly notificationTopicArn?: string;
 }
 
@@ -218,18 +218,17 @@ export class GlueCrawlerL3Construct extends MdaaL3Construct {
         naming: this.props.naming,
       });
 
-      if (crawler.name) {
-        if (!this.props.notificationTopicArn) {
-          throw new Error('Notification topic ARN is required for crawler configuration');
-        }
+      if (crawler.name && this.props.notificationTopicArn) {
         const eventRule = this.createCrawlerMonitoringEventRule(`${crawlerName}-monitor`, [crawler.name]);
-        DataOpsProjectUtils.createProjectSSMParam(
-          this.scope,
-          this.props.naming,
-          this.props.projectName,
-          `crawler/name/${crawlerName}`,
-          crawler.name,
-        );
+        if (this.props.projectName) {
+          DataOpsProjectUtils.createProjectSSMParam(
+            this.scope,
+            this.props.naming,
+            this.props.projectName,
+            `crawler/name/${crawlerName}`,
+            crawler.name,
+          );
+        }
         eventRule.addTarget(
           new SnsTopic(MdaaSnsTopic.fromTopicArn(this.scope, `${crawlerName}-topic`, this.props.notificationTopicArn)),
         );

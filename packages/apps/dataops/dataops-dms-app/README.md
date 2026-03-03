@@ -2,7 +2,7 @@
 
 AWS Database Migration Service provides functionality to migrate data from source data stores (such as RDBMS) to destination data stores (such as RDBMS, or S3).
 
-***
+---
 
 ## Deployed Resources and Compliance Details
 
@@ -14,7 +14,7 @@ AWS Database Migration Service provides functionality to migrate data from sourc
 
 **DMS Replication Task** - Tasks move data between DMS Endpoints, and are executed using Replication Instance compute.
 
-***
+---
 
 ## Configuration
 
@@ -30,11 +30,13 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 ```
 
 ### Requiring a VPC role
+
 DMS requires the existence of a `dms-vpc-role` role. If this role doesn't already exist, in the first DMS module configuration you need to add the following flag:
 
 ```yaml
 createDmsVpcRole: true
 ```
+
 See its use in the full example below.
 
 For more information about this requirement, see DMS [documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DMS_migration-IAM.dms-vpc-role.html) for more details.
@@ -44,8 +46,13 @@ For more information about this requirement, see DMS [documentation](https://doc
 [Config Schema Docs](SCHEMA.md)
 
 ```yaml
-# Name of the DataOps Project 
+# (Optional) Name of the DataOps Project
+# Other resources within the project can be referenced in the config using
+# the "project:" prefix on the config value.
 projectName: test-project
+
+# Alternatively, if projectName is not provided, you can supply the parameter directly:
+# kmsArn: arn:aws:kms:region:account:key/key-id  # KMS key for encrypting DMS replication instances and migration data
 
 # Contains all DMS related configuration
 dms:
@@ -76,9 +83,9 @@ dms:
     test-source:
       # The type of endpoint--one of 'source' or 'target'
       endpointType: source
-      # The endpoint engine name. 
-      # One of mysql | oracle | postgres | mariadb | aurora | aurora-postgresql | 
-      # opensearch | redshift | redshift-serverless |s3 | db2 | azuredb | sybase | 
+      # The endpoint engine name.
+      # One of mysql | oracle | postgres | mariadb | aurora | aurora-postgresql |
+      # opensearch | redshift | redshift-serverless |s3 | db2 | azuredb | sybase |
       # dynamodb | mongodb | kinesis | kafka | elasticsearch | docdb | sqlserver | neptune
       engineName: sqlserver
       # The appropriate settings for the provided engine name.
@@ -119,7 +126,7 @@ dms:
             rule-name: '1'
             object-locator:
               schema-name: Test
-              table-name: "%"
+              table-name: '%'
             rule-action: include
           - rule-type: selection
             rule-id: '2'

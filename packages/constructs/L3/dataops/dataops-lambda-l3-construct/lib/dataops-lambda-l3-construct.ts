@@ -1035,7 +1035,7 @@ export interface LambdaFunctionL3ConstructProps extends MdaaL3ConstructProps {
 
 export class LambdaFunctionL3Construct extends MdaaL3Construct {
   protected readonly props: LambdaFunctionL3ConstructProps;
-  private readonly projectKmsKey: IKey;
+  private readonly kmsKey: IKey;
   public readonly functionsMap: { [name: string]: LambdaFunction } = {};
 
   constructor(scope: Construct, id: string, props: LambdaFunctionL3ConstructProps) {
@@ -1045,11 +1045,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     if (!this.props.kmsArn) {
       throw new Error('Project kms key must be defined');
     }
-    this.projectKmsKey = MdaaKmsKey.fromKeyArn(
-      props.overrideScope ? this : this.scope,
-      'project-kms',
-      this.props.kmsArn,
-    );
+    this.kmsKey = MdaaKmsKey.fromKeyArn(props.overrideScope ? this : this.scope, 'project-kms', this.props.kmsArn);
 
     const generatedLayers = Object.fromEntries(
       this.props.layers?.map(layerProps => {
@@ -1098,7 +1094,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
       this.props.overrideScope ? this : this.scope,
       this.props.naming,
       functionProps.functionName,
-      this.projectKmsKey,
+      this.kmsKey,
       role,
     );
 
@@ -1107,7 +1103,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
       functionName: functionProps.functionName,
       description: functionProps.description,
       role: role,
-      environmentEncryption: this.projectKmsKey,
+      environmentEncryption: this.kmsKey,
       naming: this.props.naming,
       deadLetterQueue: dlq,
       retryAttempts: functionProps.retryAttempts,
@@ -1430,7 +1426,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
       this.props.overrideScope ? this : this.scope,
       this.props.naming,
       `${functionName}-events`,
-      this.projectKmsKey,
+      this.kmsKey,
     );
 
     const eventBridgeRuleProps = EventBridgeHelper.createNamedEventBridgeRuleProps(eventBridgeProps, functionName);

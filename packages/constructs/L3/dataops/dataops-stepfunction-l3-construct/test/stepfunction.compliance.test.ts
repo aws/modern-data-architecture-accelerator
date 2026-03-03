@@ -287,7 +287,7 @@ describe('MDAA Compliance Stack Tests', () => {
   };
 
   const constructProps: StepFunctionL3ConstructProps = {
-    projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
+    kmsArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
     stepfunctionDefinitions: [stepfunctionDefinition],
     projectName: 'test-project',
 
@@ -405,11 +405,11 @@ describe('MDAA Compliance Stack Tests', () => {
   });
 
   describe('Error condition tests', () => {
-    test('Should throw error when projectKMSArn is missing', () => {
+    test('Should throw error when kmsArn is missing', () => {
       const testApp2 = new MdaaTestApp();
       const propsWithoutKMS: StepFunctionL3ConstructProps = {
         ...constructProps,
-        projectKMSArn: undefined,
+        kmsArn: undefined,
         roleHelper: new MdaaRoleHelper(testApp2.testStack, testApp2.naming),
         naming: testApp2.naming,
       };

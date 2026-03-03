@@ -1189,15 +1189,11 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     const lakeFormationLocationRole = this.createLakeFormationRole();
     const datazoneUserRole = this.createDatazoneUserRole();
 
-    const projectKmsKey = this.createProjectKmsKey([
-      projectDeploymentRole,
-      datazoneUserRole,
-      lakeFormationLocationRole,
-    ]);
+    const kmsKey = this.createkmsKey([projectDeploymentRole, datazoneUserRole, lakeFormationLocationRole]);
 
     const s3OutputKmsKey = props.s3OutputKmsKeyArn
       ? MdaaKmsKey.fromKeyArn(this.scope, 's3OutputKmsKey', props.s3OutputKmsKeyArn)
-      : projectKmsKey;
+      : kmsKey;
 
     const projectSecurityGroups = Object.fromEntries(
       Object.entries(props.securityGroupConfigs || {}).map(entry => {
@@ -1214,7 +1210,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
 
     // Create project bucket
     const projectBucket = this.createProjectBucket(
-      projectKmsKey,
+      kmsKey,
       s3OutputKmsKey,
       projectDeploymentRole,
       datazoneUserRole,
@@ -1228,10 +1224,10 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     this.projectLevelLFTagsConstruct = createLakeFormationTags(this, this.props);
 
     this.createProjectDatabases(this.props.databases || {}, projectBucket, datazoneResources);
-    this.createProjectSecurityConfig(projectKmsKey, s3OutputKmsKey);
+    this.createProjectSecurityConfig(kmsKey, s3OutputKmsKey);
 
     // create project SNS topic
-    const topic = this.createSNSTopic(projectKmsKey);
+    const topic = this.createSNSTopic(kmsKey);
 
     // subcribe SNS topic if failure notification config is enabled
     this.subscribeSNSTopic(topic, this.props.failureNotifications);
@@ -1568,11 +1564,11 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     });
   }
 
-  private createProjectSecurityConfig(projectKmsKey: IMdaaKmsKey, s3OutputKmsKey: IKey): SecurityConfiguration {
+  private createProjectSecurityConfig(kmsKey: IMdaaKmsKey, s3OutputKmsKey: IKey): SecurityConfiguration {
     //Create project security Config
     const projectSecurityConfig = new MdaaSecurityConfig(this.scope, `security-config`, {
-      cloudWatchKmsKey: projectKmsKey,
-      jobBookMarkKmsKey: projectKmsKey,
+      cloudWatchKmsKey: kmsKey,
+      jobBookMarkKmsKey: kmsKey,
       s3OutputKmsKey: s3OutputKmsKey,
       naming: this.props.naming,
     });
@@ -1913,7 +1909,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     };
   }
 
-  private createProjectKmsKey(keyUserRoles: Role[]): IMdaaKmsKey {
+  private createkmsKey(keyUserRoles: Role[]): IMdaaKmsKey {
     //Allow CloudWatch logs to us the project key to encrypt/decrypt log data using this key
     const cloudwatchStatement = new PolicyStatement({
       sid: 'CloudWatchLogsEncryption',
@@ -1994,7 +1990,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
   }
 
   private createProjectBucket(
-    projectKmsKey: IKey,
+    kmsKey: IKey,
     s3OutputKmsKey: IKey,
     projectDeploymentRole: IRole,
     datazoneUserRole: Role,
@@ -2006,7 +2002,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
 
     //This project bucket will be used for all project-specific data
     const projectBucket = new MdaaBucket(this.scope, `Bucketproject`, {
-      encryptionKey: projectKmsKey,
+      encryptionKey: kmsKey,
       additionalKmsKeyArns: [s3OutputKmsKey.keyArn],
       naming: this.props.naming,
     });
@@ -2086,12 +2082,12 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     return this.getAllRoles().map(x => x.id());
   }
 
-  private createSNSTopic(projectKmsKey: IMdaaKmsKey): MdaaSnsTopic {
+  private createSNSTopic(kmsKey: IMdaaKmsKey): MdaaSnsTopic {
     // create SNS topic
     const snsProps: MdaaSnsTopicProps = {
       naming: this.props.naming,
       topicName: 'dataops-sns-topic',
-      masterKey: projectKmsKey,
+      masterKey: kmsKey,
     };
     const topic = new MdaaSnsTopic(this.scope, 'dataops-sns-topic', snsProps);
     //Allow EventBridge events to be published to the Topic

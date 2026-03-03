@@ -6,10 +6,10 @@
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { Construct } from 'constructs';
 import * as glue from 'aws-cdk-lib/aws-glue';
-import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { NagSuppressions } from 'cdk-nag';
 import { buildRulesetString, DataQualityRule } from './dqdl-builder';
 import { validateRulesetName } from './validators';
+import { DataOpsProjectUtils } from '@aws-mdaa/dataops-project-l3-construct';
 
 // Re-export for public API
 export { DataQualityRule } from './dqdl-builder';
@@ -143,7 +143,7 @@ export interface DataOpsDataQualityL3ConstructProps extends MdaaL3ConstructProps
    *
    * Validation: Must be valid project name; required
    */
-  readonly projectName: string;
+  readonly projectName?: string;
 }
 
 /**
@@ -177,7 +177,7 @@ export class DataOpsDataQualityL3Construct extends MdaaL3Construct {
   private createRuleset(
     rulesetName: string,
     config: DataQualityRulesetDefinition,
-    projectName: string,
+    projectName?: string,
   ): glue.CfnDataQualityRuleset {
     // Build ruleset string (DQDL)
     const rulesetString = buildRulesetString(config.ruleset);
@@ -201,31 +201,36 @@ export class DataOpsDataQualityL3Construct extends MdaaL3Construct {
       ruleset.addPropertyOverride('TargetTable.CatalogId', config.targetTable.catalogId);
     }
 
-    // Create SSM parameters for ruleset metadata
-    const rulesetNameParam = new ssm.StringParameter(this, `${rulesetName}-name-param`, {
-      parameterName: this.props.naming.ssmPath(`${projectName}/data-quality-ruleset/${rulesetName}`, false, false),
-      stringValue: rulesetName,
-      description: `Glue Data Quality Ruleset name for ${rulesetName}`,
-    });
+    if (projectName) {
+      // Create SSM parameters for ruleset metadata
+      const rulesetNameParam = DataOpsProjectUtils.createProjectSSMParam(
+        this,
+        this.props.naming,
+        projectName,
+        `data-quality-ruleset/${rulesetName}`,
+        rulesetName,
+        `${rulesetName}-name-param`,
+        `Glue Data Quality Ruleset name for ${rulesetName}`,
+      );
+      const targetTableParam = DataOpsProjectUtils.createProjectSSMParam(
+        this,
+        this.props.naming,
+        projectName,
+        `data-quality-ruleset/${rulesetName}-target`,
+        `${config.targetTable.databaseName}.${config.targetTable.tableName}`,
+        `${rulesetName}-target-param`,
+        `Target table for ruleset ${rulesetName}`,
+      );
 
-    const targetTableParam = new ssm.StringParameter(this, `${rulesetName}-target-param`, {
-      parameterName: this.props.naming.ssmPath(
-        `${projectName}/data-quality-ruleset/${rulesetName}-target`,
-        false,
-        false,
-      ),
-      stringValue: `${config.targetTable.databaseName}.${config.targetTable.tableName}`,
-      description: `Target table for ruleset ${rulesetName}`,
-    });
-
-    // Suppress CDK Nag warnings for SSM parameters
-    for (const param of [rulesetNameParam, targetTableParam]) {
-      NagSuppressions.addResourceSuppressions(param, [
-        {
-          id: 'AwsSolutions-SSM4',
-          reason: 'Parameter stores non-sensitive configuration metadata.',
-        },
-      ]);
+      // Suppress CDK Nag warnings for SSM parameters
+      for (const param of [rulesetNameParam, targetTableParam]) {
+        NagSuppressions.addResourceSuppressions(param, [
+          {
+            id: 'AwsSolutions-SSM4',
+            reason: 'Parameter stores non-sensitive configuration metadata.',
+          },
+        ]);
+      }
     }
 
     this.rulesets[rulesetName] = ruleset;

@@ -27,3 +27,25 @@ test('SynthTest', () => {
   // only one of the two jobs has continuous logging enabled
   template.resourceCountIs('AWS::Logs::LogGroup', 1);
 });
+
+test('SynthTest without projectName', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './test/test-config-noproject.yaml',
+  };
+  const app = new GlueJobCDKApp({ context: context });
+  const stack = app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+
+  const template = Template.fromStack(stack);
+  // only one of the two jobs has continuous logging enabled
+  template.resourceCountIs('AWS::Logs::LogGroup', 1);
+});

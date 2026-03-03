@@ -2,36 +2,33 @@
 
 The Data Ops Nifi CDK App is used to deploy the resources required to orchestrate data operations on the data lake using Nifi clusters and flows.
 
-***
+---
 
 ## Deployed Resources and Compliance Details
 
 ![dataops-nifi](../../../constructs/L3/dataops/dataops-nifi-l3-construct/docs/dataops-nifi.png)
 
-* **EKS Cluster** - A single EKS cluster is provisioned hosting Zookeeper and multiple Nifi clusters. The cluster is configured to run all pods on managed Fargate compute. All secrets are encrypted with the Data Ops project KMS Key. Additional services are deployed onto the EKS cluster to support Nifi:
+- **EKS Cluster** - A single EKS cluster is provisioned hosting Zookeeper and multiple Nifi clusters. The cluster is configured to run all pods on managed Fargate compute. All secrets are encrypted with the Data Ops project KMS Key. Additional services are deployed onto the EKS cluster to support Nifi:
+  - **Internal CA** - A CA is provisioned internally (using a cert-manager Helm chart) on the EKS cluster for minting of all SSL certs required by both Nifi and Zookeeper. This internal CA will optionally use an external ACM Private CA to mint its certificate. CA certificate and private key secrets are stored internally within the cluster (encrypted by KMS).
+  - **External Secrets** - An external secrets integration is deployed (using a Helm chart) onto the EKS cluster to allow consumption of AWS Secrets Manager secrets into the cluster.
+  - **External DNS** - An external-dns integration is deployed (using a CDK8S chart) to facilitate automatic updating of Route53 private hosted zone with Nifi cluster node hostnames.
+  - **Zookeeper Cluster** - A secured Zookeeper cluster is deployed (using a CDK8S chart) to facilitate Nifi cluster coordination. All Zookeeper communications are TLS-encrypted using certs minted by the internal CA.
 
-  * **Internal CA** - A CA is provisioned internally (using a cert-manager Helm chart) on the EKS cluster for minting of all SSL certs required by both Nifi and Zookeeper. This internal CA will optionally use an external ACM Private CA to mint its certificate. CA certificate and private key secrets are stored internally within the cluster (encrypted by KMS).
-  * **External Secrets** - An external secrets integration is deployed (using a Helm chart) onto the EKS cluster to allow consumption of AWS Secrets Manager secrets into the cluster.
-  * **External DNS** - An external-dns integration is deployed (using a CDK8S chart) to facilitate automatic updating of Route53 private hosted zone with Nifi cluster node hostnames.
-  * **Zookeeper Cluster** - A secured Zookeeper cluster is deployed (using a CDK8S chart) to facilitate Nifi cluster coordination. All Zookeeper communications are TLS-encrypted using certs minted by the internal CA.
+- **Route53 Private Hosted Zone** - Used to provide resolution of Nifi cluster node hostnames.
 
-* **Route53 Private Hosted Zone** - Used to provide resolution of Nifi cluster node hostnames.
+- **Nifi Clusters** - Multiple Nifi clusters are deployed onto EKS as separate StatefulSets (using CDK8S charts), running in separate Namespaces. Each Nifi cluster has its own ServiceAccount connected to a separate IAM Role, which can be used by the cluster to access AWS services. All Nifi communications are TLS-encrypted using certs minted by the internal CA. Additionally, each Nifi cluster may be configured to federate user access from a SAML identity provider (including AWS IAM Identity Center/SSO).
+  - **Nifi EFS** - Each cluster node/pod is provided with PersistentVolumes running on a cluster-specific EFS FileSystem, with separate Access Points per cluster node. The Filesystem is encrypted using the DataOps project KMS key.
+  - **Nifi Node Certs** -- Each cluster node is provisioned with a TLS certificate (signed by the internal CA) used for all interactions with other Nifi nodes and Zookeeper. The certificates and keys are mounted as JKS key stores into the Nifi pods from a Kubernetes Secret. The passwords for the JKS stores is stored in AWS Secrets Manager, and published to the Nifi container as a secret environment variable.
+  - **Nifi Security Group** - A security group is provisioned for each Nifi cluster providing ingress/egress control to/from the cluster.
+  - **Nifi Service Account Role** - An IAM role is provisioned for each cluster, bound to the Nifi StatefulSet as a ServiceAccount. This role may be granted access to AWS resources using either AWS or Customer Managed Policies.
 
-* **Nifi Clusters** - Multiple Nifi clusters are deployed onto EKS as separate StatefulSets (using CDK8S charts), running in separate Namespaces. Each Nifi cluster has its own ServiceAccount connected to a separate IAM Role, which can be used by the cluster to access AWS services. All Nifi communications are TLS-encrypted using certs minted by the internal CA. Additionally, each Nifi cluster may be configured to federate user access from a SAML identity provider (including AWS IAM Identity Center/SSO).
+- **Nifi Registry** - Nifi Registry is optionally deployed as a Kubernetes Deployment. Each Nifi cluster deployed by this module will be automatically integrated with this Nifi Registry.
+  - **Nifi Registry EFS** - Nifi Registry is provided with a PersistentVolume running on an EFS FileSystem. The Filesystem is encrypted using the DataOps project KMS key.
+  - **Nifi Registry Certs** - Nifi Registry is provisioned with a TLS certificate (signed by the internal CA) used for all interactions with other Nifi nodes and Zookeeper. The certificate and key is mounted as JKS key stores into the Registry pod from a Kubernetes Secret. The passwords for the JKS stores is stored in AWS Secrets Manager, and published to the Nifi container as a secret environment variable.
+  - **Nifi Registry Security Group** - A security group is provisioned for Registry providing ingress/egress control to/from the services.
+  - **Nifi Registry Service Account Role** - An IAM role is provisioned for Registry, bound to the Nifi StatefulSet as a ServiceAccount. This role may be granted access to AWS resources using either AWS or Customer Managed Policies.
 
-  * **Nifi EFS** - Each cluster node/pod is provided with PersistentVolumes running on a cluster-specific EFS FileSystem, with separate Access Points per cluster node. The Filesystem is encrypted using the DataOps project KMS key.
-  * **Nifi Node Certs** -- Each cluster node is provisioned with a TLS certificate (signed by the internal CA) used for all interactions with other Nifi nodes and Zookeeper. The certificates and keys are mounted as JKS key stores into the Nifi pods from a Kubernetes Secret. The passwords for the JKS stores is stored in AWS Secrets Manager, and published to the Nifi container as a secret environment variable.
-  * **Nifi Security Group** - A security group is provisioned for each Nifi cluster providing ingress/egress control to/from the cluster.
-  * **Nifi Service Account Role** - An IAM role is provisioned for each cluster, bound to the Nifi StatefulSet as a ServiceAccount. This role may be granted access to AWS resources using either AWS or Customer Managed Policies.
-
-* **Nifi Registry** - Nifi Registry is optionally deployed as a Kubernetes Deployment. Each Nifi cluster deployed by this module will be automatically integrated with this Nifi Registry.
-
-  * **Nifi Registry EFS** - Nifi Registry is provided with a PersistentVolume running on an EFS FileSystem. The Filesystem is encrypted using the DataOps project KMS key.
-  * **Nifi Registry Certs** - Nifi Registry  is provisioned with a TLS certificate (signed by the internal CA) used for all interactions with other Nifi nodes and Zookeeper. The certificate and key is mounted as JKS key stores into the Registry pod from a Kubernetes Secret. The passwords for the JKS stores is stored in AWS Secrets Manager, and published to the Nifi container as a secret environment variable.
-  * **Nifi Registry Security Group** - A security group is provisioned for Registry providing ingress/egress control to/from the services.
-  * **Nifi Registry Service Account Role** - An IAM role is provisioned for Registry, bound to the Nifi StatefulSet as a ServiceAccount. This role may be granted access to AWS resources using either AWS or Customer Managed Policies.
-
-***
+---
 
 ## Configuration
 
@@ -53,11 +50,14 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 ### Sample Nifi Config
 
 ```yaml
-# (Required) Name of the Data Ops Project
+# (Optional) Name of the Data Ops Project
 # Name the the project the resources of which will be used by these functions.
 # Other resources within the project can be referenced in the functions config using
 # the "project:" prefix on the config value.
 projectName: dataops-project-test
+
+# Alternatively, if projectName is not provided, you can supply the parameter directly:
+# kmsArn: arn:aws:kms:region:account:key/key-id  # KMS key for encrypting EKS cluster resources and Nifi configuration
 
 nifi:
   # This is a set of Role/Principal Arns which will be granted access to the Kubernetes cluster
@@ -147,8 +147,8 @@ nifi:
       # This should be the SAML identities of the federated admin users.
       # If deleted in Nifi UI, admin identities will be constantly recreated by a background process until removed from this config.
       adminIdentities:
-        - "some-admin-identity"
-        - "some-other-admin-identity"
+        - 'some-admin-identity'
+        - 'some-other-admin-identity'
       # (Optional) - A list of other Nifi clusters within this config which will automatically be provided
       # security group connectivity as well as remote access to this cluster.
       peerClusters:
@@ -166,7 +166,7 @@ nifi:
       externalNodeIdentities:
         - CN=test-external-node1
         - CN=test-external-node2
-      # (Optional) Additional identities which will be added to the cluster. 
+      # (Optional) Additional identities which will be added to the cluster.
       # Note that identities may already exist if they have been used to login to the cluster via SAML federation.
       # Using this option ensures the identities will exist and can be referenced in "groups" or "authorizations".
       # Otherwise, these identities will not be automatically granted any permissions.
@@ -197,11 +197,11 @@ nifi:
         - resource: /data/ROOT_ID
           # This policy will be a WRITE policy
           action: WRITE
-      # (Optional) Below are configurations used by a background manager process to automatically add identities and groups to 
+      # (Optional) Below are configurations used by a background manager process to automatically add identities and groups to
       # policies based on policy resource pattern matching. This alleviates the need to manually add critical identities and groups
       # to policies as they are created within Nifi. Note that this functionality only adds authorizations, but will not remove them
-      # (this must still be done within the Nifi UI/). 
-        # If deleted in Nifi UI, authorizations will be constantly recreated by a background process until removed from this config.
+      # (this must still be done within the Nifi UI/).
+      # If deleted in Nifi UI, authorizations will be constantly recreated by a background process until removed from this config.
       authorizations:
         # The policyResourcePattern can be a literal pattern or a regex.
         # This policy pattern will also have the Nifi Flow Root ID substituted automatically, as
@@ -215,7 +215,7 @@ nifi:
             - test_group
           # The 'test-identity'
           identities:
-            - "test-identity-1"
+            - 'test-identity-1'
         # This authorization will match any policy with a /data/ resource prefix
         - policyResourcePattern: /data/.*
           # This authorization will be added both to "READ" and "WRITE" policies matching the resource pattern
@@ -227,12 +227,12 @@ nifi:
             - test_group
           # The "test-identity-1" will automatically be added to this policy
           identities:
-            - "test-identity-1"
+            - 'test-identity-1'
 
       # The Nifi cluster will be configured for authentication of users via SAML federation
       saml:
         # The IDP Metadata URL where the SAML metadata can be fetched from the IDP
-        idpMetadataUrl: "https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123"
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'
 
       # Allows mounting of the Nifi EFS from outside of the EKS cluster
       # This list will be combined with the global 'additionalEfsIngressSecurityGroupIds' list to determine the
@@ -259,12 +259,12 @@ nifi:
       # is discouraged by rule AWS-Solutions-IAM4
       clusterRoleAwsManagedPolicies:
         - policyName: AmazonS3ReadOnlyAccess
-          suppressionReason: "AmazonS3ReadOnlyAccess authorized for use"
+          suppressionReason: 'AmazonS3ReadOnlyAccess authorized for use'
 
       # List of Customer Managed policies which will be added to the Nifi cluster role, which is used by the Nifi cluster to
       # access AWS services. Note that the managed policy must already exist.
       clusterRoleManagedPolicies:
-        - "customer-managed-policy-1"
+        - 'customer-managed-policy-1'
 
     test2:
       nodeCount: 2
@@ -272,9 +272,9 @@ nifi:
       # The Nifi cluster will be configured for authentication of users via SAML federation
       saml:
         # The IDP Metadata URL where the SAML metadata can be fetched from the IDP
-        idpMetadataUrl: "https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123"
-      adminIdentities: 
-       - "example_admin_identity"
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'
+      adminIdentities:
+        - 'example_admin_identity'
       # (Optional) - The port on which Nifi HTTPS interface will listen.
       # If not specified, defaults to 8443
       httpsPort: 8444
@@ -295,8 +295,8 @@ nifi:
     # Note that Registry does not currently support SAML federation.
     # If deleted in Registry UI, admin identities will be constantly recreated by a background process until removed from this config.
     adminIdentities:
-      - "CN=some-admin-identity"
-      - "CN=some-other-admin-identity"
+      - 'CN=some-admin-identity'
+      - 'CN=some-other-admin-identity'
     # (Optional) External Nifi node identities which will automatically be added to policies required for interacting with this Registry instance.
     # They will also be added to an 'external-nodes' group which can be referenced by 'authorizations'.
     # Note that nodes from clusters created by this config do not need to be specified here. The will automatically be provided acccess to the Registry instance.
@@ -305,7 +305,7 @@ nifi:
     externalNodeIdentities:
       - CN=test-external-node1
       - CN=test-external-node2
-    # (Optional) Additional identities which will be added to the Registry instance. 
+    # (Optional) Additional identities which will be added to the Registry instance.
     # Note that identities may already exist if they have been used to login to the cluster via SAML federation.
     # Using this option ensures the identities will exist and can be referenced in "groups" or "authorizations".
     # Otherwise, these identities will not be automatically granted any permissions.
@@ -340,7 +340,7 @@ nifi:
           # These identities will be granted WRITE access to the bucket
           identities:
             - test-identity-2
-    
+
     # (Optional) A set of policies which will be automatically created if they don't exist, and if matched
     # by an authorization in the 'authorizations' section. Empty policies will not be created.
     # If deleted in Registry UI, policies will be constantly recreated by a background process until removed from this config.
@@ -352,8 +352,8 @@ nifi:
     # (Optional) Below are configurations used by a background manager process to automatically add identities and groups to
     # policies based on policy resource pattern matching. This alleviates the need to manually add critical identities and groups
     # to policies as they are created within Nifi Registry. Note that this functionality only adds authorizations, but will not remove them
-    # (this must still be done within the Registry UI/). 
-      # If deleted in Registry UI, authorizations will be constantly recreated by a background process until removed from this config.
+    # (this must still be done within the Registry UI/).
+    # If deleted in Registry UI, authorizations will be constantly recreated by a background process until removed from this config.
     authorizations:
       # The policyResourcePattern can be a literal pattern or a regex.
       - policyResourcePattern: /data/
@@ -365,7 +365,7 @@ nifi:
           - test_group
         # The 'test-identity'
         identities:
-          - "test-identity-1"
+          - 'test-identity-1'
       # This authorization will match any policy with a /data/ resource prefix
       - policyResourcePattern: /data/.*
         # This authorization will be added both to "READ" and "WRITE" policies matching the resource pattern
@@ -377,16 +377,16 @@ nifi:
           - test_group
         # The "test-identity-1" will automatically be added to this policy
         identities:
-          - "test-identity-1"
+          - 'test-identity-1'
 ```
 
 ### Nifi Cluster SAML Integration
 
 Each Nifi cluster will be configured to integrate with a SAML IDP to provide user access. The following information should be configured on the SAML IDP side (per cluster):
 
-* **Application start URL**: https://nifi-0.< private_hosted_zone_name >:8443/nifi
-* **Relay state URL**: https://nifi-0.< private_hosted_zone_name >:8443/nifi
-* **Application ACS Url**: https://nifi-0.< private_hosted_zone_name >:8443/nifi-api/access/saml/login/consumer
-* **Application SAML audience**: org:apache:nifi:saml:sp-< nifi-cluster-name >
+- **Application start URL**: https://nifi-0.< private_hosted_zone_name >:8443/nifi
+- **Relay state URL**: https://nifi-0.< private_hosted_zone_name >:8443/nifi
+- **Application ACS Url**: https://nifi-0.< private_hosted_zone_name >:8443/nifi-api/access/saml/login/consumer
+- **Application SAML audience**: org:apache:nifi:saml:sp-< nifi-cluster-name >
 
 'nifi-0' is the first cluster node and will always exist regardless of cluster node count.

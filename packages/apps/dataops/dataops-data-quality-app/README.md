@@ -8,10 +8,10 @@ The Data Ops Data Quality CDK application is used to deploy AWS Glue Data Qualit
 
 **Glue Data Quality Rulesets** - Data quality rulesets will be created for each ruleset specification in the configs
 
-* Automatically validates data in Glue Catalog tables
-* Supports DQDL (Data Quality Definition Language) rules
-* Supports structured rule objects for common validation patterns
-* Publishes ruleset metadata to SSM Parameter Store
+- Automatically validates data in Glue Catalog tables
+- Supports DQDL (Data Quality Definition Language) rules
+- Supports structured rule objects for common validation patterns
+- Publishes ruleset metadata to SSM Parameter Store
 
 **SSM Parameters** - Parameters storing ruleset names and target table information for reference by other resources
 
@@ -35,7 +35,7 @@ dataops-data-quality: # Module Name can be customized
 ### Sample Data Quality Config
 
 ```yaml
-# (required) Name of the Data Ops Project this Data Quality ruleset is associated with.
+# (Optional) Name of the Data Ops Project this Data Quality ruleset is associated with.
 # The project name is used for resource naming and SSM parameter paths.
 projectName: my-dataops-project
 
@@ -62,17 +62,17 @@ rulesets:
       # Check that email column is at least 95% unique
       - RuleType: Uniqueness
         Column: email
-        Operator: ">"
+        Operator: '>'
         Threshold: 0.95
       # Check that table has more than 100 rows
       - RuleType: RowCount
-        Operator: ">"
+        Operator: '>'
         Value: 100
       # Check that status column only contains allowed values
       - RuleType: ColumnValues
         Column: status
         Operator: in
-        Values: ["active", "inactive", "pending"]
+        Values: ['active', 'inactive', 'pending']
 
   # Example 2: Using raw DQDL string
   order-data-quality:
@@ -104,21 +104,21 @@ rulesets:
       # Check mean price is above threshold
       - RuleType: Mean
         Column: price
-        Operator: ">"
+        Operator: '>'
         Value: 10
       # Check standard deviation of price
       - RuleType: StandardDeviation
         Column: price
-        Operator: "<"
+        Operator: '<'
         Value: 100
       # Check column data type
       - RuleType: ColumnDataType
         Column: price
-        DataType: "decimal"
+        DataType: 'decimal'
       # Custom SQL validation
       - RuleType: CustomSql
-        Sql: "SELECT COUNT(*) FROM primary WHERE price > 0"
-        Operator: "="
+        Sql: 'SELECT COUNT(*) FROM primary WHERE price > 0'
+        Operator: '='
         Value: 1000
 ```
 
@@ -127,34 +127,42 @@ rulesets:
 The following rule types are supported:
 
 ### Completeness Rules
+
 - **IsComplete**: Check if a column has no null values
 - **Completeness**: Check if a column meets a completeness threshold (percentage)
 
 ### Uniqueness Rules
+
 - **IsUnique**: Check if a column has all unique values
 - **Uniqueness**: Check if a column meets a uniqueness threshold (percentage)
 - **IsPrimaryKey**: Check if a column is a valid primary key (unique and complete)
 
 ### Schema Rules
+
 - **ColumnExists**: Check if a column exists in the table
 - **ColumnDataType**: Check if a column has the expected data type
 - **ColumnLength**: Check if a column's length meets criteria
 
 ### Value Rules
+
 - **ColumnValues**: Check if column values are in an allowed set
 
 ### Count Rules
+
 - **RowCount**: Check if table row count meets criteria
 - **ColumnCount**: Check if table column count meets criteria
 
 ### Statistical Rules
+
 - **Mean**: Check if column mean meets criteria
 - **StandardDeviation**: Check if column standard deviation meets criteria
 
 ### Freshness Rules
+
 - **DataFreshness**: Check if data is recent based on a timestamp column
 
 ### Custom Rules
+
 - **CustomSql**: Run custom SQL queries for complex validation logic
 
 ## Important Notes

@@ -2,21 +2,21 @@
 
 The Data Ops Workflow CDK application is used to deploy the resources required to orchestrate data operations on the data lake (primarily Glue Workflows).
 
-***
+---
 
 ## Deployed Resources and Compliance Details
 
 ![dataops-workflow](../../../constructs/L3/dataops/dataops-workflow-l3-construct/docs/dataops-workflow.png)
 
 **Glue Workflows** - Glue Workflows will be created for each workflow specification in the configs
-  
-* Workflow configs can be created directly from the output of the `aws glue get-workflow --name <name> --include-graph` command
+
+- Workflow configs can be created directly from the output of the `aws glue get-workflow --name <name> --include-graph` command
 
 **EventBridge Rules** - EventBridge rules for triggering Workflows with events such as S3 Object Created Events
 
-* EventBridge Notifications must be enabled on any bucket for which a rule is specified
+- EventBridge Notifications must be enabled on any bucket for which a rule is specified
 
-***
+---
 
 ## Configuration
 
@@ -40,12 +40,15 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 Workflow configs are stored under the ./workflows/ directory, relative to the workflow config. Multiple workflows can be defined in a single config file or across multiple files, as long as they have globally unique names.
 
 ```yaml
-
-# (Required) Name of the Data Ops Project
+# (Optional) Name of the Data Ops Project
 # Name the the project the resources of which will be used by this workflow.
 # Other resources within the project can be referenced in the workflow config using
 # the "project:" prefix on the config value.
 projectName: dataops-project-test
+
+# Alternatively, if projectName is not provided, you can supply parameters directly:
+# kmsArn: arn:aws:kms:region:account:key/key-id  # KMS key for encrypting workflow data
+# securityConfigurationName: my-security-config  # Glue security configuration for workflow jobs
 # List of workflow definitions as produced by 'aws glue get-workflow --name <name> --include-graph'
 workflowDefinitions:
   # Integration with Event Bridge for the purpose
@@ -67,21 +70,21 @@ workflowDefinitions:
           # Optional - Can specify a custom event bus for S3 rules, but note that S3 EventBridge notifications
           # are initially sent only to the default bus in the account, and would need to be
           # forwarded to the custom bus before this rule would match.
-          eventBusArn: "arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name"
+          eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name'
       # List of generic Event Bridge rules which will trigger this workflow
       eventBridgeRules:
         testing-event-bridge:
-          description: "testing"
-          eventBusArn: "arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name"
+          description: 'testing'
+          eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name'
           eventPattern:
             source:
-              - "glue.amazonaws.com"
+              - 'glue.amazonaws.com'
             detail:
               some_event_key: some_event_value
         testing-event-bridge-schedule:
-          description: "testing"
+          description: 'testing'
           # (Optional) - Rules can be scheduled using a crontab expression
-          scheduleExpression: "cron(0 20 * * ? *)"
+          scheduleExpression: 'cron(0 20 * * ? *)'
           # (Optional) - If specified, this input will be passed as the event payload to the function.
           # If not specified, the matched event payload will be passed as input.
           input:
@@ -155,9 +158,8 @@ workflowDefinitions:
                   Name: Start_wf-with-schedule
                   WorkflowName: schedule-based-wf
                   Type: SCHEDULED
-                  Schedule: "cron(5 12 * * ? *)"
+                  Schedule: 'cron(5 12 * * ? *)'
                   State: CREATED
                   Actions:
                     - CrawlerName: project:crawler/name/test-crawler
-
 ```

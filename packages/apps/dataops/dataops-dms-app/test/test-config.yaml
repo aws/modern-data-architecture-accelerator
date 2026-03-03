@@ -1,5 +1,10 @@
-# Name of the DataOps Project 
+# (Optional) Name of the DataOps Project
+# Other resources within the project can be referenced in the config using
+# the "project:" prefix on the config value.
 projectName: test-project
+
+# Alternatively, if projectName is not provided, you can supply the parameter directly:
+# kmsArn: arn:aws:kms:region:account:key/key-id  # KMS key for encrypting DMS replication instances and migration data
 
 # Contains all DMS related configuration
 dms:
@@ -25,16 +30,16 @@ dms:
       subnetIds:
         - test_subnet_id1
         - test_subnet_id2
-  
+
   # Endpoints which will be created by the config
   endpoints:
     # Each endpoint has a unique name
     test-source:
       # The type of endpoint--one of 'source' or 'target'
       endpointType: source
-      # The endpoint engine name. 
-      # One of mysql | oracle | postgres | mariadb | aurora | aurora-postgresql | 
-      # opensearch | redshift | redshift-serverless |s3 | db2 | azuredb | sybase | 
+      # The endpoint engine name.
+      # One of mysql | oracle | postgres | mariadb | aurora | aurora-postgresql |
+      # opensearch | redshift | redshift-serverless |s3 | db2 | azuredb | sybase |
       # dynamodb | mongodb | kinesis | kafka | elasticsearch | docdb | sqlserver | neptune
       engineName: sqlserver
       # The appropriate settings for the provided engine name.
@@ -52,7 +57,7 @@ dms:
       s3Settings:
         bucketName: test_target_bucket
         serverSideEncryptionKmsKeyId: test_target_kms_key_id
-  
+
   # Replication tasks which will be created by the config.
   replicationTasks:
     # Each replication task has a unique name
@@ -75,7 +80,7 @@ dms:
             rule-name: '1'
             object-locator:
               schema-name: Test
-              table-name: "%"
+              table-name: '%'
             rule-action: include
           - rule-type: selection
             rule-id: '2'

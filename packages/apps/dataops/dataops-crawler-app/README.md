@@ -2,18 +2,18 @@
 
 The Data Ops Crawler CDK application is used to deploy the resources required to support and perform data operations on top of a Data Lake, primarily using Glue Crawlers and Glue Jobs.
 
-***
+---
 
 ## Deployed Resources and Compliance Details
 
 ![dataops-crawler](../../../constructs/L3/dataops/dataops-crawler-l3-construct/docs/dataops-crawler.png)
 
 **Glue Crawlers** - Glue Crawlers will be created for each crawler specification in the configs
-  
-* Automatically configured to use project security config
-* Can optionally be VPC bound (via Glue connection)
 
-***
+- Automatically configured to use project security config
+- Can optionally be VPC bound (via Glue connection)
+
+---
 
 ## Configuration
 
@@ -35,11 +35,15 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 ### Sample Crawler Config
 
 ```yaml
-  # (required) Name of the Data Ops Project this Crawler will run within. 
-  # Resources provided by the Project, such as security configuration, encryption keys, and execution roles
-  # will automatically be wired into the Crawler config. Other resources provided by the project can
-  # be optionally referenced by the Crawler config using a "project:" prefix on the config value.
+# (Optional) Name of the Data Ops Project this Crawler will run within.
+# Resources provided by the Project, such as security configuration, encryption keys, and execution roles
+# will automatically be wired into the Crawler config. Other resources provided by the project can
+# be optionally referenced by the Crawler config using a "project:" prefix on the config value.
 projectName: dataops-project-test
+
+# Alternatively, if projectName is not provided, you can supply parameters directly:
+# securityConfigurationName: my-security-config  # Glue security configuration for crawler encryption
+# notificationTopicArn: arn:aws:sns:region:account:topic-name  # SNS topic for crawler status notifications
 crawlers:
   test-crawler:
     # (required) the role used to execute the crawler
@@ -64,5 +68,4 @@ crawlers:
       CrawlerOutput:
         Partitions:
           AddOrUpdateBehavior: InheritFromTable
-
 ```
