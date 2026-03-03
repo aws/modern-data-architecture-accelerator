@@ -6,37 +6,21 @@
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                             | Pattern | Type   | Deprecated | Definition                                       | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| -------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [bucketName](#bucketName )                                         | No      | string | No         | -                                                | Q-ENHANCED-PROPERTY<br />Required S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.<br /><br />Use cases: Project storage; Data artifacts; Script storage; Centralized storage management<br /><br />AWS: S3 bucket for DataOps project storage and artifact management<br /><br />Validation: Must be valid S3 bucket name; required for project storage and artifact management                                                                                                                      |
-| - [deploymentRoleArn](#deploymentRoleArn )                           | No      | string | No         | -                                                | Q-ENHANCED-PROPERTY<br />Required IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.<br /><br />Use cases: Deployment operations; Resource management; IAM permissions; Secure deployment<br /><br />AWS: IAM role ARN for DataOps deployment operations and resource management<br /><br />Validation: Must be valid IAM role ARN; required for deployment operations and resource management                                                                                                      |
-| - [functions](#functions )                                           | No      | array  | No         | -                                                | Q-ENHANCED-PROPERTY<br />Optional array of Lambda function definitions for serverless data processing operations within the DataOps project. Each function can process data events, perform transformations, and integrate with other AWS services for data workflows.<br /><br />Use cases: Event-driven data processing; Serverless ETL operations; Data transformation and validation workflows<br /><br />AWS: AWS Lambda function creation with DataOps integration, event sources, and IAM permissions<br /><br />Validation: Must be array of valid FunctionProps objects if provided; functions inherit project context and permissions<br />  *                                |
-| - [kmsArn](#kmsArn )                                                 | No      | string | No         | -                                                | Q-ENHANCED-PROPERTY<br />Required KMS key ARN for DataOps encryption enabling data protection and security compliance. Provides the customer-managed KMS key for encrypting DataOps resources, data, and operational artifacts ensuring data protection and compliance.<br /><br />Use cases: Data encryption; Security compliance; Key management; Data protection<br /><br />AWS: KMS key ARN for DataOps encryption and data protection compliance<br /><br />Validation: Must be valid KMS key ARN; required for encryption and data protection compliance                                                                                                                          |
-| - [layers](#layers )                                                 | No      | array  | No         | -                                                | Q-ENHANCED-PROPERTY<br />Optional array of Lambda layer definitions for shared code, libraries, and dependencies across multiple functions. Enables code reuse, dependency management, and consistent runtime environments for efficient serverless data processing operations.<br /><br />Use cases: Shared code libraries; Dependency management; Runtime environment consistency across functions<br /><br />AWS: AWS Lambda layers for shared code and dependency management across multiple functions<br /><br />Validation: Must be array of valid LayerProps objects if provided; layers can be referenced by functions<br />  *                                                 |
-| - [nag_suppressions](#nag_suppressions )                             | No      | object | No         | In #/definitions/MdaaNagSuppressionConfigs       | Q-ENHANCED-PROPERTY<br />Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.<br /><br />Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions<br /><br />AWS: CDK Nag suppressions for compliance rule management and security exception documentation<br /><br />Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management          |
-| - [notificationTopicArn](#notificationTopicArn )                     | No      | string | No         | -                                                | Q-ENHANCED-PROPERTY<br />Required SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.<br /><br />Use cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication<br /><br />AWS: SNS topic ARN for DataOps notifications and workflow coordination<br /><br />Validation: Must be valid SNS topic ARN; required for notifications and workflow coordination                                                                                                                         |
-| - [projectName](#projectName )                                       | No      | string | No         | -                                                | Q-ENHANCED-PROPERTY<br />Required name of the DataOps project that will contain and manage the Lambda functions. Provides organizational context and enables resource sharing, permissions management, and operational coordination within the DataOps framework.<br /><br />Use cases: DataOps project organization; Resource sharing and permissions; Operational coordination and monitoring<br /><br />AWS: DataOps project reference for Lambda function organization and resource management<br /><br />Validation: Must be valid DataOps project name; required; project must exist or be created in the same deployment                                                         |
-| - [sagemakerBlueprint](#sagemakerBlueprint )                         | No      | object | No         | In #/definitions/MdaaSageMakerBluePrintConfig    | Q-ENHANCED-PROPERTY<br />Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access<br /><br />AWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode                         |
-| - [securityConfigurationName](#securityConfigurationName )           | No      | string | No         | -                                                | Q-ENHANCED-PROPERTY<br />Required Glue security configuration name for DataOps job security enabling encryption and access control for data processing operations. Provides the security configuration that will be used by Glue jobs for encryption at rest, in transit, and CloudWatch logs encryption.<br /><br />Use cases: Glue job security; Encryption configuration; Security compliance; Data protection<br /><br />AWS: Glue security configuration for DataOps job encryption and security compliance<br /><br />Validation: Must be valid security configuration name; required for Glue job security and encryption                                                        |
-| - [service_catalog_product_config](#service_catalog_product_config ) | No      | object | No         | In #/definitions/MdaaServiceCatalogProductConfig | Q-ENHANCED-PROPERTY<br />Optional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access<br /><br />AWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode |
+| Property                                                             | Pattern | Type   | Deprecated | Definition                                       | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| -------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [agentBucketArn](#agentBucketArn )                                 | No      | string | No         | -                                                | Q-ENHANCED-PROPERTY<br />Optional S3 bucket ARN for Bedrock agent storage enabling agent artifact management and data storage capabilities. When provided, uses existing S3 bucket for agent resources; otherwise creates dedicated bucket for agent data, models, and artifacts.<br /><br />Use cases: Agent storage; Artifact management; Data storage; Resource organization<br /><br />AWS: S3 bucket ARN for Bedrock agent storage and artifact management<br /><br />Validation: Must be valid S3 bucket ARN if provided; enables agent storage and artifact management capabilities                                                                                                           |
+| - [agents](#agents )                                                 | No      | object | No         | In #/definitions/NamedAgentProps                 | Q-ENHANCED-PROPERTY<br />Optional map of Bedrock agent configurations for AI agent deployment enabling conversational AI and task automation capabilities. Provides agent configuration including foundation models, action groups, and knowledge base integration for intelligent automation and user interaction.<br /><br />Use cases: AI agent deployment; Conversational AI; Task automation; Intelligent user interaction<br /><br />AWS: Bedrock agents for AI-powered conversational interfaces and intelligent task automation<br /><br />Validation: Must be valid NamedAgentProps if provided; enables AI agent deployment and conversational capabilities<br />  *                       |
+| + [dataAdminRoles](#dataAdminRoles )                                 | No      | array  | No         | -                                                | Q-ENHANCED-PROPERTY<br />Required array of admin role references for Bedrock resource access control enabling role-based administration and security management. Provides IAM roles that will be granted administrative access to Bedrock agent resources including KMS keys, S3 buckets, and other infrastructure components.<br /><br />Use cases: Administrative access; Role-based security; Resource access control; Bedrock administration<br /><br />AWS: IAM role references for Bedrock resource administrative access and security management<br /><br />Validation: Must be array of valid MdaaRoleRef objects; required for Bedrock resource access control and administration           |
+| - [guardrails](#guardrails )                                         | No      | object | No         | In #/definitions/NamedGuardrailProps             | Q-ENHANCED-PROPERTY<br />Optional guardrail configurations for AI safety and content filtering enabling responsible AI deployment and content moderation. Provides guardrail setup for content filtering, safety controls, and responsible AI practices ensuring appropriate AI behavior and content generation.<br /><br />Use cases: AI safety; Content filtering; Responsible AI; Content moderation<br /><br />AWS: Bedrock guardrails for AI safety controls and responsible AI deployment<br /><br />Validation: Must be valid NamedGuardrailProps if provided; enables AI safety controls and content filtering<br />  *                                                                      |
+| - [kmsKeyArn](#kmsKeyArn )                                           | No      | string | No         | -                                                | Q-ENHANCED-PROPERTY<br />Optional KMS key ARN for Bedrock resource encryption enabling customer-controlled encryption and enhanced security compliance. When provided, uses existing KMS key for encrypting agent resources; otherwise creates customer-managed key for data protection and security compliance.<br /><br />Use cases: Resource encryption; Customer-controlled keys; Security compliance; Data protection<br /><br />AWS: KMS key ARN for Bedrock resource encryption and customer-controlled data protection<br /><br />Validation: Must be valid KMS key ARN if provided; enables customer-controlled encryption for Bedrock resources                                            |
+| - [knowledgeBases](#knowledgeBases )                                 | No      | object | No         | In #/definitions/NamedKnowledgeBaseProps         | Q-ENHANCED-PROPERTY<br />Optional knowledge base configurations for document-based AI capabilities enabling intelligent document processing and question-answering systems. Provides knowledge base setup with document ingestion, embedding generation, and retrieval capabilities for AI-powered information systems.<br /><br />Use cases: Knowledge management; Document processing; Question-answering systems; Information retrieval<br /><br />AWS: Bedrock knowledge bases for document-based AI capabilities and intelligent information systems<br /><br />Validation: Must be valid NamedKnowledgeBaseProps if provided; enables knowledge base deployment and document AI<br />  *       |
+| - [lambdaFunctions](#lambdaFunctions )                               | No      | object | No         | In #/definitions/LambdaFunctionProps             | Q-ENHANCED-PROPERTY<br />Optional Lambda function configurations for Bedrock agent action groups enabling custom business logic and external system integration. Provides Lambda functions and layers for agent action groups enabling custom functionality, API integrations, and business process automation within AI agents.<br /><br />Use cases: Custom business logic; API integrations; Action group implementation; External system connectivity<br /><br />AWS: Lambda functions for Bedrock agent action groups and custom business logic implementation<br /><br />Validation: Must be valid LambdaFunctionProps if provided; enables custom action group functionality and integrations |
+| - [nag_suppressions](#nag_suppressions )                             | No      | object | No         | In #/definitions/MdaaNagSuppressionConfigs       | Q-ENHANCED-PROPERTY<br />Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.<br /><br />Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions<br /><br />AWS: CDK Nag suppressions for compliance rule management and security exception documentation<br /><br />Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management                       |
+| - [sagemakerBlueprint](#sagemakerBlueprint )                         | No      | object | No         | In #/definitions/MdaaSageMakerBluePrintConfig    | Q-ENHANCED-PROPERTY<br />Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access<br /><br />AWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode                                      |
+| - [service_catalog_product_config](#service_catalog_product_config ) | No      | object | No         | In #/definitions/MdaaServiceCatalogProductConfig | Q-ENHANCED-PROPERTY<br />Optional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access<br /><br />AWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode              |
+| - [vectorStores](#vectorStores )                                     | No      | object | No         | In #/definitions/NamedVectorStoreProps           | Q-ENHANCED-PROPERTY<br />Optional vector store configurations for knowledge base deployment enabling semantic search and retrieval-augmented generation capabilities. Provides vector database configuration for knowledge bases supporting similarity search, document retrieval, and RAG-based AI applications.<br /><br />Use cases: Vector storage; Semantic search; Knowledge retrieval; RAG applications<br /><br />AWS: Vector stores for Bedrock knowledge bases and semantic search capabilities<br /><br />Validation: Must be valid NamedVectorStoreProps if provided; enables vector storage and semantic search functionality<br />  *                                                  |
 
-## <a name="bucketName"></a>1. Property `root > bucketName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Q-ENHANCED-PROPERTY
-Required S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.
-
-Use cases: Project storage; Data artifacts; Script storage; Centralized storage management
-
-AWS: S3 bucket for DataOps project storage and artifact management
-
-Validation: Must be valid S3 bucket name; required for project storage and artifact management
-
-## <a name="deploymentRoleArn"></a>2. Property `root > deploymentRoleArn`
+## <a name="agentBucketArn"></a>1. Property `root > agentBucketArn`
 
 |              |          |
 | ------------ | -------- |
@@ -44,15 +28,70 @@ Validation: Must be valid S3 bucket name; required for project storage and artif
 | **Required** | No       |
 
 **Description:** Q-ENHANCED-PROPERTY
-Required IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.
+Optional S3 bucket ARN for Bedrock agent storage enabling agent artifact management and data storage capabilities. When provided, uses existing S3 bucket for agent resources; otherwise creates dedicated bucket for agent data, models, and artifacts.
 
-Use cases: Deployment operations; Resource management; IAM permissions; Secure deployment
+Use cases: Agent storage; Artifact management; Data storage; Resource organization
 
-AWS: IAM role ARN for DataOps deployment operations and resource management
+AWS: S3 bucket ARN for Bedrock agent storage and artifact management
 
-Validation: Must be valid IAM role ARN; required for deployment operations and resource management
+Validation: Must be valid S3 bucket ARN if provided; enables agent storage and artifact management capabilities
 
-## <a name="functions"></a>3. Property `root > functions`
+## <a name="agents"></a>2. Property `root > agents`
+
+|                           |                                                                                     |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                            |
+| **Required**              | No                                                                                  |
+| **Additional properties** | [Each additional property must conform to the schema](#agents_additionalProperties) |
+| **Defined in**            | #/definitions/NamedAgentProps                                                       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional map of Bedrock agent configurations for AI agent deployment enabling conversational AI and task automation capabilities. Provides agent configuration including foundation models, action groups, and knowledge base integration for intelligent automation and user interaction.
+
+Use cases: AI agent deployment; Conversational AI; Task automation; Intelligent user interaction
+
+AWS: Bedrock agents for AI-powered conversational interfaces and intelligent task automation
+
+Validation: Must be valid NamedAgentProps if provided; enables AI agent deployment and conversational capabilities
+  *
+
+| Property                            | Pattern | Type   | Deprecated | Definition                         | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ----------------------------------- | ------- | ------ | ---------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [](#agents_additionalProperties ) | No      | object | No         | In #/definitions/BedrockAgentProps | Q-ENHANCED-INTERFACE<br />Comprehensive configuration for Bedrock agent properties with foundation model integration, knowledge bases, and action groups. Defines complete agent behavior including model selection, instructions, knowledge integration, and task execution capabilities.<br /><br />Use cases: Agent configuration; Model integration; Knowledge augmentation; Task automation<br /><br />AWS: Amazon Bedrock agent configuration for AI agent deployment and management<br /><br />Validation: foundationModel, instruction, and role are required; various optional configurations available |
+
+### <a name="agents_additionalProperties"></a>2.1. Property `root > agents > BedrockAgentProps`
+
+|                           |                                 |
+| ------------------------- | ------------------------------- |
+| **Type**                  | `object`                        |
+| **Required**              | No                              |
+| **Additional properties** | Not allowed                     |
+| **Defined in**            | #/definitions/BedrockAgentProps |
+
+**Description:** Q-ENHANCED-INTERFACE
+Comprehensive configuration for Bedrock agent properties with foundation model integration, knowledge bases, and action groups. Defines complete agent behavior including model selection, instructions, knowledge integration, and task execution capabilities.
+
+Use cases: Agent configuration; Model integration; Knowledge augmentation; Task automation
+
+AWS: Amazon Bedrock agent configuration for AI agent deployment and management
+
+Validation: foundationModel, instruction, and role are required; various optional configurations available
+
+| Property                                                                                   | Pattern | Type    | Deprecated | Definition                                                    | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [actionGroups](#agents_additionalProperties_actionGroups )                               | No      | array   | No         | -                                                             | Q-ENHANCED-PROPERTY<br />Optional array of action groups for agent task execution enabling API integration and function calling capabilities. Provides task automation and external system integration for agent functionality extension and operational capabilities.<br /><br />Use cases: Task automation; API integration; Function calling; External system connectivity<br /><br />AWS: Bedrock agent action groups for task execution and external system integration capabilities<br /><br />Validation: Must be array of valid AgentActionGroupProperty if provided; enables task execution and integration<br />  *                     |
+| - [agentAliasName](#agents_additionalProperties_agentAliasName )                           | No      | string  | No         | -                                                             | Q-ENHANCED-PROPERTY<br />Optional agent alias name for version management and deployment control enabling production deployment and version routing. Provides alias-based access to specific agent versions for production deployment and traffic management.<br /><br />Use cases: Version management; Production deployment; Traffic routing; Alias-based access<br /><br />AWS: Bedrock agent alias for version management and production deployment control<br /><br />Validation: Must be valid alias name if provided; enables version management and deployment control                                                                    |
+| - [autoPrepare](#agents_additionalProperties_autoPrepare )                                 | No      | boolean | No         | -                                                             | Q-ENHANCED-PROPERTY<br />Optional flag controlling automatic DRAFT version updates after agent configuration changes enabling streamlined development workflow. Provides automatic version management for agent development and testing with simplified deployment processes.<br /><br />Use cases: Development workflow; Automatic versioning; Testing facilitation; Deployment automation<br /><br />AWS: Bedrock agent auto-prepare setting for automatic DRAFT version management and development workflow<br /><br />Validation: Boolean value; enables automatic DRAFT version updates for streamlined development                          |
+| - [description](#agents_additionalProperties_description )                                 | No      | string  | No         | -                                                             | Q-ENHANCED-PROPERTY<br />Optional agent description providing documentation and context for agent purpose and capabilities. Enables clear documentation of agent functionality and use cases for operational understanding and management clarity.<br /><br />Use cases: Agent documentation; Operational context; Purpose clarification; Management understanding<br /><br />AWS: Bedrock agent description for documentation and operational context management<br /><br />Validation: Must be descriptive string if provided; enhances agent documentation and understanding                                                                   |
+| + [foundationModel](#agents_additionalProperties_foundationModel )                         | No      | string  | No         | -                                                             | Q-ENHANCED-PROPERTY<br />Required foundation model specification for agent orchestration and reasoning capabilities. Defines the underlying AI model that powers agent reasoning, decision-making, and response generation for agent functionality.<br /><br />Use cases: Model selection; AI capabilities; Reasoning power; Response generation<br /><br />AWS: Bedrock foundation model for agent orchestration and AI reasoning capabilities<br /><br />Validation: Must be valid foundation model identifier; required for agent AI capabilities and reasoning                                                                                |
+| - [guardrail](#agents_additionalProperties_guardrail )                                     | No      | object  | No         | In #/definitions/AgentGuardrailAssociation                    | Q-ENHANCED-PROPERTY<br />Optional guardrail association for agent safety and content filtering enabling responsible AI implementation and content controls. Provides safety mechanisms and content filtering for responsible agent operation and user protection.<br /><br />Use cases: Safety controls; Content filtering; Responsible AI; User protection<br /><br />AWS: Bedrock agent guardrail for safety controls and responsible AI implementation<br /><br />Validation: Must be valid AgentGuardrailAssociation if provided; enables safety and content filtering<br />  *                                                               |
+| - [idleSessionTtlInSeconds](#agents_additionalProperties_idleSessionTtlInSeconds )         | No      | number  | No         | -                                                             | Q-ENHANCED-PROPERTY<br />Optional idle session timeout in seconds controlling conversation context retention enabling resource management and privacy controls. Provides session lifecycle management for agent conversations with automatic cleanup and resource optimization.<br /><br />Use cases: Session management; Resource optimization; Privacy controls; Context retention<br /><br />AWS: Bedrock agent idle session TTL for conversation context management and resource optimization<br /><br />Validation: Must be positive integer if provided; controls session timeout and resource management                                   |
+| + [instruction](#agents_additionalProperties_instruction )                                 | No      | string  | No         | -                                                             | Q-ENHANCED-PROPERTY<br />Required agent instructions defining behavior, interaction patterns, and response guidelines for consistent agent operation. Provides the core behavioral framework that guides agent responses and user interactions for predictable and effective operation.<br /><br />Use cases: Behavior definition; Interaction guidelines; Response consistency; Operational framework<br /><br />AWS: Bedrock agent instructions for behavior definition and consistent operation guidelines<br /><br />Validation: Must be instruction string; required for agent behavior and interaction guidance                             |
+| - [knowledgeBases](#agents_additionalProperties_knowledgeBases )                           | No      | array   | No         | -                                                             | Q-ENHANCED-PROPERTY<br />Optional array of knowledge base associations for agent knowledge integration enabling information retrieval and RAG capabilities. Provides knowledge augmentation for agent responses with external knowledge sources and information retrieval.<br /><br />Use cases: Knowledge augmentation; Information retrieval; RAG implementation; External knowledge integration<br /><br />AWS: Bedrock agent knowledge base associations for knowledge integration and retrieval capabilities<br /><br />Validation: Must be array of valid AgentKnowledgeBaseAssociation if provided; enables knowledge integration<br />  * |
+| - [promptOverrideConfiguration](#agents_additionalProperties_promptOverrideConfiguration ) | No      | object  | No         | In #/definitions/CfnAgent.PromptOverrideConfigurationProperty | Q-ENHANCED-PROPERTY<br />Optional prompt override configuration for customizing agent prompt templates enabling advanced prompt engineering and response customization. Provides fine-grained control over agent prompting for specialized use cases and response optimization.<br /><br />Use cases: Prompt engineering; Response customization; Advanced configuration; Specialized behavior<br /><br />AWS: Bedrock agent prompt override for advanced prompt engineering and response customization<br /><br />Validation: Must be valid PromptOverrideConfigurationProperty if provided; enables advanced prompt control<br />  *            |
+| + [role](#agents_additionalProperties_role )                                               | No      | object  | No         | In #/definitions/MdaaRoleRef                                  | Reference to role which will be used as execution role on all agent(s).<br />The role must have assume-role trust with bedrock.amazonaws.com.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+
+#### <a name="agents_additionalProperties_actionGroups"></a>2.1.1. Property `root > agents > additionalProperties > actionGroups`
 
 |              |         |
 | ------------ | ------- |
@@ -60,13 +99,13 @@ Validation: Must be valid IAM role ARN; required for deployment operations and r
 | **Required** | No      |
 
 **Description:** Q-ENHANCED-PROPERTY
-Optional array of Lambda function definitions for serverless data processing operations within the DataOps project. Each function can process data events, perform transformations, and integrate with other AWS services for data workflows.
+Optional array of action groups for agent task execution enabling API integration and function calling capabilities. Provides task automation and external system integration for agent functionality extension and operational capabilities.
 
-Use cases: Event-driven data processing; Serverless ETL operations; Data transformation and validation workflows
+Use cases: Task automation; API integration; Function calling; External system connectivity
 
-AWS: AWS Lambda function creation with DataOps integration, event sources, and IAM permissions
+AWS: Bedrock agent action groups for task execution and external system integration capabilities
 
-Validation: Must be array of valid FunctionProps objects if provided; functions inherit project context and permissions
+Validation: Must be array of valid AgentActionGroupProperty if provided; enables task execution and integration
   *
 
 |                      | Array restrictions |
@@ -77,11 +116,3155 @@ Validation: Must be array of valid FunctionProps objects if provided; functions 
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be   | Description              |
-| --------------------------------- | ------------------------ |
-| [FunctionProps](#functions_items) | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be                                             | Description              |
+| --------------------------------------------------------------------------- | ------------------------ |
+| [AgentActionGroupProperty](#agents_additionalProperties_actionGroups_items) | Q-ENHANCED-INTERFACE ... |
 
-### <a name="functions_items"></a>3.1. root > functions > FunctionProps
+##### <a name="agents_additionalProperties_actionGroups_items"></a>2.1.1.1. root > agents > additionalProperties > actionGroups > AgentActionGroupProperty
+
+|                           |                                        |
+| ------------------------- | -------------------------------------- |
+| **Type**                  | `object`                               |
+| **Required**              | No                                     |
+| **Additional properties** | Not allowed                            |
+| **Defined in**            | #/definitions/AgentActionGroupProperty |
+
+**Description:** Q-ENHANCED-INTERFACE
+Configuration for Bedrock agent action groups providing API integration and execution capabilities. Defines action groups that enable agents to perform specific tasks through API calls and function execution with complete configuration control.
+
+Use cases: Agent action configuration; API integration; Function execution; Task automation
+
+AWS: Amazon Bedrock agent action group for task execution and API integration capabilities
+
+Validation: actionGroupName and actionGroupExecutor are required; actionGroupState must be ENABLED or DISABLED
+
+| Property                                                                                      | Pattern | Type   | Deprecated | Definition                                            | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| --------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [actionGroupExecutor](#agents_additionalProperties_actionGroups_items_actionGroupExecutor ) | No      | object | No         | In #/definitions/CfnAgent.ActionGroupExecutorProperty | Q-ENHANCED-PROPERTY<br />Required action group executor configuration defining how the action group performs tasks and integrates with external systems. Provides the execution mechanism for action group operations including Lambda functions and API integrations.<br /><br />Use cases: Task execution; Lambda integration; API connectivity; External system integration<br /><br />AWS: Bedrock agent action group executor for task execution and external system integration<br /><br />Validation: Must be valid ActionGroupExecutorProperty; required for action group execution capabilities<br />  *    |
+| + [actionGroupName](#agents_additionalProperties_actionGroups_items_actionGroupName )         | No      | string | No         | -                                                     | Q-ENHANCED-PROPERTY<br />Required name for the agent action group providing unique identification within the agent configuration. Enables action group organization and management for agent task execution and API integration capabilities.<br /><br />Use cases: Action group identification; Agent organization; Task categorization; Configuration management<br /><br />AWS: Bedrock agent action group name for identification and organization within agent configuration<br /><br />Validation: Must be unique action group name string; required for action group identification                           |
+| - [actionGroupState](#agents_additionalProperties_actionGroups_items_actionGroupState )       | No      | string | No         | -                                                     | Q-ENHANCED-PROPERTY<br />Optional action group state controlling availability for agent invocation with ENABLED or DISABLED values. Provides runtime control over action group availability for dynamic agent behavior and operational management.<br /><br />Use cases: Runtime control; Action group management; Dynamic behavior; Operational flexibility<br /><br />AWS: Bedrock agent action group state for runtime availability and operational control<br /><br />Validation: Must be ENABLED or DISABLED if provided; defaults to ENABLED for action group availability                                     |
+| - [apiSchema](#agents_additionalProperties_actionGroups_items_apiSchema )                     | No      | object | No         | In #/definitions/APISchemaProperty                    | Q-ENHANCED-PROPERTY<br />Optional API schema configuration for action group external API integration enabling API connectivity. Provides OpenAPI schema definition for external API integration and agent-to-API communication capabilities.<br /><br />Use cases: API integration; External connectivity; Schema validation; API documentation<br /><br />AWS: Bedrock agent API schema for external API integration and connectivity capabilities<br /><br />Validation: Must be valid APISchemaProperty if provided; enables external API integration<br />  *                                                    |
+| - [description](#agents_additionalProperties_actionGroups_items_description )                 | No      | string | No         | -                                                     | Q-ENHANCED-PROPERTY<br />Optional description for the action group providing documentation and context for agent configuration. Enables clear documentation of action group purpose and functionality for operational understanding and management.<br /><br />Use cases: Documentation; Configuration context; Operational understanding; Management clarity<br /><br />AWS: Bedrock agent action group description for documentation and operational context<br /><br />Validation: Must be descriptive string if provided; enhances action group documentation and understanding                                  |
+| - [functionSchema](#agents_additionalProperties_actionGroups_items_functionSchema )           | No      | object | No         | In #/definitions/CfnAgent.FunctionSchemaProperty      | Q-ENHANCED-PROPERTY<br />Optional function schema configuration defining parameters for agent function invocation enabling structured function calls. Provides function parameter definition for agent-to-function communication and structured task execution.<br /><br />Use cases: Function parameter definition; Structured invocation; Parameter validation; Function integration<br /><br />AWS: Bedrock agent function schema for structured function invocation and parameter management<br /><br />Validation: Must be valid FunctionSchemaProperty if provided; enables structured function calls<br />  * |
+
+###### <a name="agents_additionalProperties_actionGroups_items_actionGroupExecutor"></a>2.1.1.1.1. Property `root > agents > additionalProperties > actionGroups > actionGroups items > actionGroupExecutor`
+
+|                           |                                                    |
+| ------------------------- | -------------------------------------------------- |
+| **Type**                  | `object`                                           |
+| **Required**              | Yes                                                |
+| **Additional properties** | Not allowed                                        |
+| **Defined in**            | #/definitions/CfnAgent.ActionGroupExecutorProperty |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required action group executor configuration defining how the action group performs tasks and integrates with external systems. Provides the execution mechanism for action group operations including Lambda functions and API integrations.
+
+Use cases: Task execution; Lambda integration; API connectivity; External system integration
+
+AWS: Bedrock agent action group executor for task execution and external system integration
+
+Validation: Must be valid ActionGroupExecutorProperty; required for action group execution capabilities
+  *
+
+| Property                                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                 |
+| ----------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| - [customControl](#agents_additionalProperties_actionGroups_items_actionGroupExecutor_customControl ) | No      | string | No         | -          | To return the action group invocation results directly in the \`InvokeInlineAgent\` response, specify \`RETURN_CONTROL\` .        |
+| - [lambda](#agents_additionalProperties_actionGroups_items_actionGroupExecutor_lambda )               | No      | string | No         | -          | The Amazon Resource Name (ARN) of the Lambda function containing the business logic that is carried out upon invoking the action. |
+
+###### <a name="agents_additionalProperties_actionGroups_items_actionGroupExecutor_customControl"></a>2.1.1.1.1.1. Property `root > agents > additionalProperties > actionGroups > actionGroups items > actionGroupExecutor > customControl`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** To return the action group invocation results directly in the `InvokeInlineAgent` response, specify `RETURN_CONTROL` .
+
+###### <a name="agents_additionalProperties_actionGroups_items_actionGroupExecutor_lambda"></a>2.1.1.1.1.2. Property `root > agents > additionalProperties > actionGroups > actionGroups items > actionGroupExecutor > lambda`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** The Amazon Resource Name (ARN) of the Lambda function containing the business logic that is carried out upon invoking the action.
+
+###### <a name="agents_additionalProperties_actionGroups_items_actionGroupName"></a>2.1.1.1.2. Property `root > agents > additionalProperties > actionGroups > actionGroups items > actionGroupName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required name for the agent action group providing unique identification within the agent configuration. Enables action group organization and management for agent task execution and API integration capabilities.
+
+Use cases: Action group identification; Agent organization; Task categorization; Configuration management
+
+AWS: Bedrock agent action group name for identification and organization within agent configuration
+
+Validation: Must be unique action group name string; required for action group identification
+
+###### <a name="agents_additionalProperties_actionGroups_items_actionGroupState"></a>2.1.1.1.3. Property `root > agents > additionalProperties > actionGroups > actionGroups items > actionGroupState`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional action group state controlling availability for agent invocation with ENABLED or DISABLED values. Provides runtime control over action group availability for dynamic agent behavior and operational management.
+
+Use cases: Runtime control; Action group management; Dynamic behavior; Operational flexibility
+
+AWS: Bedrock agent action group state for runtime availability and operational control
+
+Validation: Must be ENABLED or DISABLED if provided; defaults to ENABLED for action group availability
+
+###### <a name="agents_additionalProperties_actionGroups_items_apiSchema"></a>2.1.1.1.4. Property `root > agents > additionalProperties > actionGroups > actionGroups items > apiSchema`
+
+|                           |                                 |
+| ------------------------- | ------------------------------- |
+| **Type**                  | `object`                        |
+| **Required**              | No                              |
+| **Additional properties** | Not allowed                     |
+| **Defined in**            | #/definitions/APISchemaProperty |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional API schema configuration for action group external API integration enabling API connectivity. Provides OpenAPI schema definition for external API integration and agent-to-API communication capabilities.
+
+Use cases: API integration; External connectivity; Schema validation; API documentation
+
+AWS: Bedrock agent API schema for external API integration and connectivity capabilities
+
+Validation: Must be valid APISchemaProperty if provided; enables external API integration
+  *
+
+| Property                                                                                            | Pattern | Type        | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------------------------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [openApiSchemaPath](#agents_additionalProperties_actionGroups_items_apiSchema_openApiSchemaPath ) | No      | string      | No         | -          | Q-ENHANCED-PROPERTY<br />Optional relative path to JSON or YAML formatted OpenAPI schema file for agent action group API definition. Enables file-based API schema loading for flexible agent configuration and external API integration providing schema validation.<br /><br />Use cases: File-based schema loading; OpenAPI integration; Flexible API definition; Schema management<br /><br />AWS: OpenAPI schema file path for Bedrock agent action group API configuration and integration<br /><br />Validation: Must be valid relative file path to JSON/YAML OpenAPI schema if provided |
+| - [payload](#agents_additionalProperties_actionGroups_items_apiSchema_payload )                     | No      | string      | No         | -          | The JSON or YAML-formatted payload defining the OpenAPI schema for the action group.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [s3](#agents_additionalProperties_actionGroups_items_apiSchema_s3 )                               | No      | Combination | No         | -          | Contains details about the S3 object containing the OpenAPI schema for the action group.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+
+###### <a name="agents_additionalProperties_actionGroups_items_apiSchema_openApiSchemaPath"></a>2.1.1.1.4.1. Property `root > agents > additionalProperties > actionGroups > actionGroups items > apiSchema > openApiSchemaPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional relative path to JSON or YAML formatted OpenAPI schema file for agent action group API definition. Enables file-based API schema loading for flexible agent configuration and external API integration providing schema validation.
+
+Use cases: File-based schema loading; OpenAPI integration; Flexible API definition; Schema management
+
+AWS: OpenAPI schema file path for Bedrock agent action group API configuration and integration
+
+Validation: Must be valid relative file path to JSON/YAML OpenAPI schema if provided
+
+###### <a name="agents_additionalProperties_actionGroups_items_apiSchema_payload"></a>2.1.1.1.4.2. Property `root > agents > additionalProperties > actionGroups > actionGroups items > apiSchema > payload`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** The JSON or YAML-formatted payload defining the OpenAPI schema for the action group.
+
+###### <a name="agents_additionalProperties_actionGroups_items_apiSchema_s3"></a>2.1.1.1.4.3. Property `root > agents > additionalProperties > actionGroups > actionGroups items > apiSchema > s3`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Contains details about the S3 object containing the OpenAPI schema for the action group.
+
+| Any of(Option)                                                                                         |
+| ------------------------------------------------------------------------------------------------------ |
+| [IResolvable](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0)                   |
+| [CfnAgent.S3IdentifierProperty](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i1) |
+
+###### <a name="agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0"></a>2.1.1.1.4.3.1. Property `root > agents > additionalProperties > actionGroups > actionGroups items > apiSchema > s3 > anyOf > IResolvable`
+
+|                           |                           |
+| ------------------------- | ------------------------- |
+| **Type**                  | `object`                  |
+| **Required**              | No                        |
+| **Additional properties** | Not allowed               |
+| **Defined in**            | #/definitions/IResolvable |
+
+**Description:** Interface for values that can be resolvable later
+
+Tokens are special objects that participate in synthesis.
+
+| Property                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [creationStack](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0_creationStack ) | No      | array of string  | No         | -          | The creation stack of this resolvable which will be appended to errors<br />thrown during resolution.<br /><br />This may return an array with a single informational element indicating how<br />to get this property populated, if it was skipped for performance reasons. |
+| - [typeHint](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0_typeHint )           | No      | enum (of string) | No         | -          | The type that this token will likely resolve to.                                                                                                                                                                                                                             |
+
+###### <a name="agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0_creationStack"></a>2.1.1.1.4.3.1.1. Property `root > agents > additionalProperties > actionGroups > actionGroups items > apiSchema > s3 > anyOf > item 0 > creationStack`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | Yes               |
+
+**Description:** The creation stack of this resolvable which will be appended to errors
+thrown during resolution.
+
+This may return an array with a single informational element indicating how
+to get this property populated, if it was skipped for performance reasons.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                  | Description |
+| ---------------------------------------------------------------------------------------------------------------- | ----------- |
+| [creationStack items](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0_creationStack_items) | -           |
+
+###### <a name="agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0_creationStack_items"></a>2.1.1.1.4.3.1.1.1. root > agents > additionalProperties > actionGroups > actionGroups items > apiSchema > s3 > anyOf > item 0 > creationStack > creationStack items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0_typeHint"></a>2.1.1.1.4.3.1.2. Property `root > agents > additionalProperties > actionGroups > actionGroups items > apiSchema > s3 > anyOf > item 0 > typeHint`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** The type that this token will likely resolve to.
+
+Must be one of:
+* "number"
+* "string"
+* "string-list"
+
+###### <a name="agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i1"></a>2.1.1.1.4.3.2. Property `root > agents > additionalProperties > actionGroups > actionGroups items > apiSchema > s3 > anyOf > CfnAgent.S3IdentifierProperty`
+
+|                           |                                             |
+| ------------------------- | ------------------------------------------- |
+| **Type**                  | `object`                                    |
+| **Required**              | No                                          |
+| **Additional properties** | Not allowed                                 |
+| **Defined in**            | #/definitions/CfnAgent.S3IdentifierProperty |
+
+**Description:** The identifier information for an Amazon S3 bucket.
+
+| Property                                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                      |
+| ----------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------- |
+| - [s3BucketName](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i1_s3BucketName ) | No      | string | No         | -          | The name of the S3 bucket.             |
+| - [s3ObjectKey](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i1_s3ObjectKey )   | No      | string | No         | -          | The S3 object key for the S3 resource. |
+
+###### <a name="agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i1_s3BucketName"></a>2.1.1.1.4.3.2.1. Property `root > agents > additionalProperties > actionGroups > actionGroups items > apiSchema > s3 > anyOf > item 1 > s3BucketName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** The name of the S3 bucket.
+
+###### <a name="agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i1_s3ObjectKey"></a>2.1.1.1.4.3.2.2. Property `root > agents > additionalProperties > actionGroups > actionGroups items > apiSchema > s3 > anyOf > item 1 > s3ObjectKey`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** The S3 object key for the S3 resource.
+
+###### <a name="agents_additionalProperties_actionGroups_items_description"></a>2.1.1.1.5. Property `root > agents > additionalProperties > actionGroups > actionGroups items > description`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional description for the action group providing documentation and context for agent configuration. Enables clear documentation of action group purpose and functionality for operational understanding and management.
+
+Use cases: Documentation; Configuration context; Operational understanding; Management clarity
+
+AWS: Bedrock agent action group description for documentation and operational context
+
+Validation: Must be descriptive string if provided; enhances action group documentation and understanding
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema"></a>2.1.1.1.6. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema`
+
+|                           |                                               |
+| ------------------------- | --------------------------------------------- |
+| **Type**                  | `object`                                      |
+| **Required**              | No                                            |
+| **Additional properties** | Not allowed                                   |
+| **Defined in**            | #/definitions/CfnAgent.FunctionSchemaProperty |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional function schema configuration defining parameters for agent function invocation enabling structured function calls. Provides function parameter definition for agent-to-function communication and structured task execution.
+
+Use cases: Function parameter definition; Structured invocation; Parameter validation; Function integration
+
+AWS: Bedrock agent function schema for structured function invocation and parameter management
+
+Validation: Must be valid FunctionSchemaProperty if provided; enables structured function calls
+  *
+
+| Property                                                                                 | Pattern | Type        | Deprecated | Definition | Title/Description                                                   |
+| ---------------------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------------------------------------------------------- |
+| + [functions](#agents_additionalProperties_actionGroups_items_functionSchema_functions ) | No      | Combination | No         | -          | A list of functions that each define an action in the action group. |
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions"></a>2.1.1.1.6.1. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | Yes              |
+| **Additional properties** | Any type allowed |
+
+**Description:** A list of functions that each define an action in the action group.
+
+| Any of(Option)                                                                                   |
+| ------------------------------------------------------------------------------------------------ |
+| [IResolvable](#agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i0) |
+| [item 1](#agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1)      |
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i0"></a>2.1.1.1.6.1.1. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions > anyOf > IResolvable`
+
+|                           |                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                      |
+| **Required**              | No                                                                                                                                            |
+| **Additional properties** | Not allowed                                                                                                                                   |
+| **Same definition as**    | [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0) |
+
+**Description:** Interface for values that can be resolvable later
+
+Tokens are special objects that participate in synthesis.
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1"></a>2.1.1.1.6.1.2. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions > anyOf > item 1`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                         | Description |
+| ------------------------------------------------------------------------------------------------------- | ----------- |
+| [item 1 items](#agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items) | -           |
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items"></a>2.1.1.1.6.1.2.1. root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions > anyOf > item 1 > item 1 items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Any of(Option)                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------- |
+| [IResolvable](#agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i0)               |
+| [CfnAgent.FunctionProperty](#agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1) |
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i0"></a>2.1.1.1.6.1.2.1.1. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions > anyOf > item 1 > item 1 items > anyOf > IResolvable`
+
+|                           |                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                      |
+| **Required**              | No                                                                                                                                            |
+| **Additional properties** | Not allowed                                                                                                                                   |
+| **Same definition as**    | [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0) |
+
+**Description:** Interface for values that can be resolvable later
+
+Tokens are special objects that participate in synthesis.
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1"></a>2.1.1.1.6.1.2.1.2. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions > anyOf > item 1 > item 1 items > anyOf > CfnAgent.FunctionProperty`
+
+|                           |                                         |
+| ------------------------- | --------------------------------------- |
+| **Type**                  | `object`                                |
+| **Required**              | No                                      |
+| **Additional properties** | Not allowed                             |
+| **Defined in**            | #/definitions/CfnAgent.FunctionProperty |
+
+**Description:** Defines parameters that the agent needs to invoke from the user to complete the function.
+
+Corresponds to an action in an action group.
+
+This data type is used in the following API operations:
+
+- [CreateAgentActionGroup request](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_CreateAgentActionGroup.html#API_agent_CreateAgentActionGroup_RequestSyntax)
+- [CreateAgentActionGroup response](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_CreateAgentActionGroup.html#API_agent_CreateAgentActionGroup_ResponseSyntax)
+- [UpdateAgentActionGroup request](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_UpdateAgentActionGroup.html#API_agent_UpdateAgentActionGroup_RequestSyntax)
+- [UpdateAgentActionGroup response](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_UpdateAgentActionGroup.html#API_agent_UpdateAgentActionGroup_ResponseSyntax)
+- [GetAgentActionGroup response](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_GetAgentActionGroup.html#API_agent_GetAgentActionGroup_ResponseSyntax)
+
+| Property                                                                                                                                       | Pattern | Type        | Deprecated | Definition | Title/Description                                                             |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------------------------------------------------------------------- |
+| - [description](#agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_description )                 | No      | string      | No         | -          | A description of the function and its purpose.                                |
+| + [name](#agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_name )                               | No      | string      | No         | -          | A name for the function.                                                      |
+| - [parameters](#agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_parameters )                   | No      | Combination | No         | -          | The parameters that the agent elicits from the user to fulfill the function.  |
+| - [requireConfirmation](#agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_requireConfirmation ) | No      | string      | No         | -          | Contains information if user confirmation is required to invoke the function. |
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_description"></a>2.1.1.1.6.1.2.1.2.1. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions > anyOf > item 1 > item 1 items > anyOf > item 1 > description`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** A description of the function and its purpose.
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_name"></a>2.1.1.1.6.1.2.1.2.2. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions > anyOf > item 1 > item 1 items > anyOf > item 1 > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** A name for the function.
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_parameters"></a>2.1.1.1.6.1.2.1.2.3. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions > anyOf > item 1 > item 1 items > anyOf > item 1 > parameters`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** The parameters that the agent elicits from the user to fulfill the function.
+
+| Any of(Option)                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [IResolvable](#agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_parameters_anyOf_i0)                                                         |
+| [Record%3Cstring%2CIResolvable%7CCfnAgent.ParameterDetailProperty%3E](#agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_parameters_anyOf_i1) |
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_parameters_anyOf_i0"></a>2.1.1.1.6.1.2.1.2.3.1. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions > anyOf > item 1 > item 1 items > anyOf > item 1 > parameters > anyOf > IResolvable`
+
+|                           |                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                      |
+| **Required**              | No                                                                                                                                            |
+| **Additional properties** | Not allowed                                                                                                                                   |
+| **Same definition as**    | [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0) |
+
+**Description:** Interface for values that can be resolvable later
+
+Tokens are special objects that participate in synthesis.
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_parameters_anyOf_i1"></a>2.1.1.1.6.1.2.1.2.3.2. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions > anyOf > item 1 > item 1 items > anyOf > item 1 > parameters > anyOf > Record%3Cstring%2CIResolvable%7CCfnAgent.ParameterDetailProperty%3E`
+
+|                           |                                                                                   |
+| ------------------------- | --------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                          |
+| **Required**              | No                                                                                |
+| **Additional properties** | Any type allowed                                                                  |
+| **Defined in**            | #/definitions/Record%3Cstring%2CIResolvable%7CCfnAgent.ParameterDetailProperty%3E |
+
+###### <a name="agents_additionalProperties_actionGroups_items_functionSchema_functions_anyOf_i1_items_anyOf_i1_requireConfirmation"></a>2.1.1.1.6.1.2.1.2.4. Property `root > agents > additionalProperties > actionGroups > actionGroups items > functionSchema > functions > anyOf > item 1 > item 1 items > anyOf > item 1 > requireConfirmation`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Contains information if user confirmation is required to invoke the function.
+
+#### <a name="agents_additionalProperties_agentAliasName"></a>2.1.2. Property `root > agents > additionalProperties > agentAliasName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional agent alias name for version management and deployment control enabling production deployment and version routing. Provides alias-based access to specific agent versions for production deployment and traffic management.
+
+Use cases: Version management; Production deployment; Traffic routing; Alias-based access
+
+AWS: Bedrock agent alias for version management and production deployment control
+
+Validation: Must be valid alias name if provided; enables version management and deployment control
+
+#### <a name="agents_additionalProperties_autoPrepare"></a>2.1.3. Property `root > agents > additionalProperties > autoPrepare`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional flag controlling automatic DRAFT version updates after agent configuration changes enabling streamlined development workflow. Provides automatic version management for agent development and testing with simplified deployment processes.
+
+Use cases: Development workflow; Automatic versioning; Testing facilitation; Deployment automation
+
+AWS: Bedrock agent auto-prepare setting for automatic DRAFT version management and development workflow
+
+Validation: Boolean value; enables automatic DRAFT version updates for streamlined development
+
+#### <a name="agents_additionalProperties_description"></a>2.1.4. Property `root > agents > additionalProperties > description`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional agent description providing documentation and context for agent purpose and capabilities. Enables clear documentation of agent functionality and use cases for operational understanding and management clarity.
+
+Use cases: Agent documentation; Operational context; Purpose clarification; Management understanding
+
+AWS: Bedrock agent description for documentation and operational context management
+
+Validation: Must be descriptive string if provided; enhances agent documentation and understanding
+
+#### <a name="agents_additionalProperties_foundationModel"></a>2.1.5. Property `root > agents > additionalProperties > foundationModel`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required foundation model specification for agent orchestration and reasoning capabilities. Defines the underlying AI model that powers agent reasoning, decision-making, and response generation for agent functionality.
+
+Use cases: Model selection; AI capabilities; Reasoning power; Response generation
+
+AWS: Bedrock foundation model for agent orchestration and AI reasoning capabilities
+
+Validation: Must be valid foundation model identifier; required for agent AI capabilities and reasoning
+
+#### <a name="agents_additionalProperties_guardrail"></a>2.1.6. Property `root > agents > additionalProperties > guardrail`
+
+|                           |                                         |
+| ------------------------- | --------------------------------------- |
+| **Type**                  | `object`                                |
+| **Required**              | No                                      |
+| **Additional properties** | Not allowed                             |
+| **Defined in**            | #/definitions/AgentGuardrailAssociation |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional guardrail association for agent safety and content filtering enabling responsible AI implementation and content controls. Provides safety mechanisms and content filtering for responsible agent operation and user protection.
+
+Use cases: Safety controls; Content filtering; Responsible AI; User protection
+
+AWS: Bedrock agent guardrail for safety controls and responsible AI implementation
+
+Validation: Must be valid AgentGuardrailAssociation if provided; enables safety and content filtering
+  *
+
+| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| + [id](#agents_additionalProperties_guardrail_id )           | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required guardrail identifier for agent safety and content filtering integration. Provides the specific guardrail that will be applied to agent interactions for responsible AI implementation and content safety controls.<br /><br />Use cases: Guardrail identification; Safety integration; Content filtering; Responsible AI implementation<br /><br />AWS: Bedrock guardrail ID for agent safety controls and content filtering integration<br /><br />Validation: Must be valid guardrail identifier; required for agent safety and content filtering                  |
+| - [version](#agents_additionalProperties_guardrail_version ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional guardrail version specification for version-controlled safety implementation enabling consistent guardrail behavior. Provides version control for guardrail configuration ensuring consistent safety controls across agent deployments.<br /><br />Use cases: Version control; Consistent safety; Guardrail management; Deployment consistency<br /><br />AWS: Bedrock guardrail version for version-controlled safety implementation and consistency<br /><br />Validation: Must be valid guardrail version if provided; enables version-controlled safety controls |
+
+##### <a name="agents_additionalProperties_guardrail_id"></a>2.1.6.1. Property `root > agents > additionalProperties > guardrail > id`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required guardrail identifier for agent safety and content filtering integration. Provides the specific guardrail that will be applied to agent interactions for responsible AI implementation and content safety controls.
+
+Use cases: Guardrail identification; Safety integration; Content filtering; Responsible AI implementation
+
+AWS: Bedrock guardrail ID for agent safety controls and content filtering integration
+
+Validation: Must be valid guardrail identifier; required for agent safety and content filtering
+
+##### <a name="agents_additionalProperties_guardrail_version"></a>2.1.6.2. Property `root > agents > additionalProperties > guardrail > version`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional guardrail version specification for version-controlled safety implementation enabling consistent guardrail behavior. Provides version control for guardrail configuration ensuring consistent safety controls across agent deployments.
+
+Use cases: Version control; Consistent safety; Guardrail management; Deployment consistency
+
+AWS: Bedrock guardrail version for version-controlled safety implementation and consistency
+
+Validation: Must be valid guardrail version if provided; enables version-controlled safety controls
+
+#### <a name="agents_additionalProperties_idleSessionTtlInSeconds"></a>2.1.7. Property `root > agents > additionalProperties > idleSessionTtlInSeconds`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional idle session timeout in seconds controlling conversation context retention enabling resource management and privacy controls. Provides session lifecycle management for agent conversations with automatic cleanup and resource optimization.
+
+Use cases: Session management; Resource optimization; Privacy controls; Context retention
+
+AWS: Bedrock agent idle session TTL for conversation context management and resource optimization
+
+Validation: Must be positive integer if provided; controls session timeout and resource management
+
+#### <a name="agents_additionalProperties_instruction"></a>2.1.8. Property `root > agents > additionalProperties > instruction`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required agent instructions defining behavior, interaction patterns, and response guidelines for consistent agent operation. Provides the core behavioral framework that guides agent responses and user interactions for predictable and effective operation.
+
+Use cases: Behavior definition; Interaction guidelines; Response consistency; Operational framework
+
+AWS: Bedrock agent instructions for behavior definition and consistent operation guidelines
+
+Validation: Must be instruction string; required for agent behavior and interaction guidance
+
+#### <a name="agents_additionalProperties_knowledgeBases"></a>2.1.9. Property `root > agents > additionalProperties > knowledgeBases`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional array of knowledge base associations for agent knowledge integration enabling information retrieval and RAG capabilities. Provides knowledge augmentation for agent responses with external knowledge sources and information retrieval.
+
+Use cases: Knowledge augmentation; Information retrieval; RAG implementation; External knowledge integration
+
+AWS: Bedrock agent knowledge base associations for knowledge integration and retrieval capabilities
+
+Validation: Must be array of valid AgentKnowledgeBaseAssociation if provided; enables knowledge integration
+  *
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                    | Description              |
+| ---------------------------------------------------------------------------------- | ------------------------ |
+| [AgentKnowledgeBaseAssociation](#agents_additionalProperties_knowledgeBases_items) | Q-ENHANCED-INTERFACE ... |
+
+##### <a name="agents_additionalProperties_knowledgeBases_items"></a>2.1.9.1. root > agents > additionalProperties > knowledgeBases > AgentKnowledgeBaseAssociation
+
+|                           |                                             |
+| ------------------------- | ------------------------------------------- |
+| **Type**                  | `object`                                    |
+| **Required**              | No                                          |
+| **Additional properties** | Not allowed                                 |
+| **Defined in**            | #/definitions/AgentKnowledgeBaseAssociation |
+
+**Description:** Q-ENHANCED-INTERFACE
+Configuration for Bedrock agent knowledge base association providing knowledge integration and retrieval capabilities. Defines knowledge base connectivity for agent information retrieval and knowledge-augmented generation with state control.
+
+Use cases: Knowledge integration; Information retrieval; RAG implementation; Knowledge management
+
+AWS: Amazon Bedrock knowledge base association for agent knowledge integration and retrieval
+
+Validation: description and id are required; knowledgeBaseState must be valid state if provided
+
+| Property                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| --------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [description](#agents_additionalProperties_knowledgeBases_items_description )               | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required description of the knowledge base association providing context and documentation for agent knowledge integration. Enables clear understanding of knowledge base purpose and integration scope for operational management and configuration clarity.<br /><br />Use cases: Association documentation; Integration context; Operational understanding; Configuration clarity<br /><br />AWS: Bedrock knowledge base association description for documentation and operational context<br /><br />Validation: Must be descriptive string; required for knowledge base association documentation |
+| + [id](#agents_additionalProperties_knowledgeBases_items_id )                                 | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required unique identifier for the knowledge base association enabling specific knowledge base integration with the agent. Provides the knowledge base that will be integrated with the agent for information retrieval and knowledge-augmented generation.<br /><br />Use cases: Knowledge base identification; Integration specification; Retrieval configuration; RAG implementation<br /><br />AWS: Bedrock knowledge base ID for agent integration and knowledge retrieval capabilities<br /><br />Validation: Must be valid knowledge base identifier; required for knowledge base integration   |
+| - [knowledgeBaseState](#agents_additionalProperties_knowledgeBases_items_knowledgeBaseState ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional knowledge base state controlling usage during agent invocation enabling dynamic knowledge integration control. Provides runtime control over knowledge base usage for flexible agent behavior and operational management.<br /><br />Use cases: Runtime control; Dynamic integration; Knowledge management; Operational flexibility<br /><br />AWS: Bedrock knowledge base state for runtime usage control and dynamic integration management<br /><br />Validation: Must be valid knowledge base state if provided; controls knowledge base usage during invocation                          |
+
+###### <a name="agents_additionalProperties_knowledgeBases_items_description"></a>2.1.9.1.1. Property `root > agents > additionalProperties > knowledgeBases > knowledgeBases items > description`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required description of the knowledge base association providing context and documentation for agent knowledge integration. Enables clear understanding of knowledge base purpose and integration scope for operational management and configuration clarity.
+
+Use cases: Association documentation; Integration context; Operational understanding; Configuration clarity
+
+AWS: Bedrock knowledge base association description for documentation and operational context
+
+Validation: Must be descriptive string; required for knowledge base association documentation
+
+###### <a name="agents_additionalProperties_knowledgeBases_items_id"></a>2.1.9.1.2. Property `root > agents > additionalProperties > knowledgeBases > knowledgeBases items > id`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required unique identifier for the knowledge base association enabling specific knowledge base integration with the agent. Provides the knowledge base that will be integrated with the agent for information retrieval and knowledge-augmented generation.
+
+Use cases: Knowledge base identification; Integration specification; Retrieval configuration; RAG implementation
+
+AWS: Bedrock knowledge base ID for agent integration and knowledge retrieval capabilities
+
+Validation: Must be valid knowledge base identifier; required for knowledge base integration
+
+###### <a name="agents_additionalProperties_knowledgeBases_items_knowledgeBaseState"></a>2.1.9.1.3. Property `root > agents > additionalProperties > knowledgeBases > knowledgeBases items > knowledgeBaseState`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional knowledge base state controlling usage during agent invocation enabling dynamic knowledge integration control. Provides runtime control over knowledge base usage for flexible agent behavior and operational management.
+
+Use cases: Runtime control; Dynamic integration; Knowledge management; Operational flexibility
+
+AWS: Bedrock knowledge base state for runtime usage control and dynamic integration management
+
+Validation: Must be valid knowledge base state if provided; controls knowledge base usage during invocation
+
+#### <a name="agents_additionalProperties_promptOverrideConfiguration"></a>2.1.10. Property `root > agents > additionalProperties > promptOverrideConfiguration`
+
+|                           |                                                            |
+| ------------------------- | ---------------------------------------------------------- |
+| **Type**                  | `object`                                                   |
+| **Required**              | No                                                         |
+| **Additional properties** | Not allowed                                                |
+| **Defined in**            | #/definitions/CfnAgent.PromptOverrideConfigurationProperty |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional prompt override configuration for customizing agent prompt templates enabling advanced prompt engineering and response customization. Provides fine-grained control over agent prompting for specialized use cases and response optimization.
+
+Use cases: Prompt engineering; Response customization; Advanced configuration; Specialized behavior
+
+AWS: Bedrock agent prompt override for advanced prompt engineering and response customization
+
+Validation: Must be valid PromptOverrideConfigurationProperty if provided; enables advanced prompt control
+  *
+
+| Property                                                                                                 | Pattern | Type        | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                |
+| -------------------------------------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [overrideLambda](#agents_additionalProperties_promptOverrideConfiguration_overrideLambda )             | No      | string      | No         | -          | The ARN of the Lambda function to use when parsing the raw foundation model output in parts of the agent sequence.<br /><br />If you specify this field, at least one of the \`promptConfigurations\` must contain a \`parserMode\` value that is set to \`OVERRIDDEN\` . For more information, see [Parser Lambda function in Amazon Bedrock Agents](https://docs.aws.amazon.com/bedrock/latest/userguide/lambda-parser.html) . |
+| + [promptConfigurations](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations ) | No      | Combination | No         | -          | Contains configurations to override a prompt template in one part of an agent sequence.<br /><br />For more information, see [Advanced prompts](https://docs.aws.amazon.com/bedrock/latest/userguide/advanced-prompts.html) .                                                                                                                                                                                                    |
+
+##### <a name="agents_additionalProperties_promptOverrideConfiguration_overrideLambda"></a>2.1.10.1. Property `root > agents > additionalProperties > promptOverrideConfiguration > overrideLambda`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** The ARN of the Lambda function to use when parsing the raw foundation model output in parts of the agent sequence.
+
+If you specify this field, at least one of the `promptConfigurations` must contain a `parserMode` value that is set to `OVERRIDDEN` . For more information, see [Parser Lambda function in Amazon Bedrock Agents](https://docs.aws.amazon.com/bedrock/latest/userguide/lambda-parser.html) .
+
+##### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations"></a>2.1.10.2. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | Yes              |
+| **Additional properties** | Any type allowed |
+
+**Description:** Contains configurations to override a prompt template in one part of an agent sequence.
+
+For more information, see [Advanced prompts](https://docs.aws.amazon.com/bedrock/latest/userguide/advanced-prompts.html) .
+
+| Any of(Option)                                                                                        |
+| ----------------------------------------------------------------------------------------------------- |
+| [IResolvable](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i0) |
+| [item 1](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1)      |
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i0"></a>2.1.10.2.1. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > IResolvable`
+
+|                           |                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                      |
+| **Required**              | No                                                                                                                                            |
+| **Additional properties** | Not allowed                                                                                                                                   |
+| **Same definition as**    | [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0) |
+
+**Description:** Interface for values that can be resolvable later
+
+Tokens are special objects that participate in synthesis.
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1"></a>2.1.10.2.2. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                              | Description |
+| ------------------------------------------------------------------------------------------------------------ | ----------- |
+| [item 1 items](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items) | -           |
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items"></a>2.1.10.2.2.1. root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Any of(Option)                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------- |
+| [IResolvable](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i0)                          |
+| [CfnAgent.PromptConfigurationProperty](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1) |
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i0"></a>2.1.10.2.2.1.1. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > IResolvable`
+
+|                           |                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                      |
+| **Required**              | No                                                                                                                                            |
+| **Additional properties** | Not allowed                                                                                                                                   |
+| **Same definition as**    | [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0) |
+
+**Description:** Interface for values that can be resolvable later
+
+Tokens are special objects that participate in synthesis.
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1"></a>2.1.10.2.2.1.2. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > CfnAgent.PromptConfigurationProperty`
+
+|                           |                                                    |
+| ------------------------- | -------------------------------------------------- |
+| **Type**                  | `object`                                           |
+| **Required**              | No                                                 |
+| **Additional properties** | Not allowed                                        |
+| **Defined in**            | #/definitions/CfnAgent.PromptConfigurationProperty |
+
+**Description:** Contains configurations to override a prompt template in one part of an agent sequence.
+
+For more information, see [Advanced prompts](https://docs.aws.amazon.com/bedrock/latest/userguide/advanced-prompts.html) .
+
+| Property                                                                                                                                                              | Pattern | Type        | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [additionalModelRequestFields](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_additionalModelRequestFields ) | No      | object      | No         | -          | If the Converse or ConverseStream operations support the model, \`additionalModelRequestFields\` contains additional inference parameters, beyond the base set of inference parameters in the \`inferenceConfiguration\` field.<br /><br />For more information, see [Inference request parameters and response fields for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .                                                            |
+| - [basePromptTemplate](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_basePromptTemplate )                     | No      | string      | No         | -          | Defines the prompt template with which to replace the default prompt template.<br /><br />You can use placeholder variables in the base prompt template to customize the prompt. For more information, see [Prompt template placeholder variables](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-placeholders.html) . For more information, see [Configure the prompt templates](https://docs.aws.amazon.com/bedrock/latest/userguide/advanced-prompts-configure.html) . |
+| - [foundationModel](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_foundationModel )                           | No      | string      | No         | -          | The agent's foundation model.                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [inferenceConfiguration](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration )             | No      | Combination | No         | -          | Contains inference parameters to use when the agent invokes a foundation model in the part of the agent sequence defined by the \`promptType\` .<br /><br />For more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .                                                                                                                                                                       |
+| - [parserMode](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_parserMode )                                     | No      | string      | No         | -          | Specifies whether to override the default parser Lambda function when parsing the raw foundation model output in the part of the agent sequence defined by the \`promptType\` .<br /><br />If you set the field as \`OVERRIDDEN\` , the \`overrideLambda\` field in the [PromptOverrideConfiguration](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_PromptOverrideConfiguration.html) must be specified with the ARN of a Lambda function.                         |
+| - [promptCreationMode](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_promptCreationMode )                     | No      | string      | No         | -          | Specifies whether to override the default prompt template for this \`promptType\` .<br /><br />Set this value to \`OVERRIDDEN\` to use the prompt that you provide in the \`basePromptTemplate\` . If you leave it as \`DEFAULT\` , the agent uses a default prompt template.                                                                                                                                                                                                          |
+| - [promptState](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_promptState )                                   | No      | string      | No         | -          | Specifies whether to allow the inline agent to carry out the step specified in the \`promptType\` .<br /><br />If you set this value to \`DISABLED\` , the agent skips that step. The default state for each \`promptType\` is as follows.<br /><br />- \`PRE_PROCESSING\` – \`ENABLED\`<br />- \`ORCHESTRATION\` – \`ENABLED\`<br />- \`KNOWLEDGE_BASE_RESPONSE_GENERATION\` – \`ENABLED\`<br />- \`POST_PROCESSING\` – \`DISABLED\`                                                  |
+| - [promptType](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_promptType )                                     | No      | string      | No         | -          | The step in the agent sequence that this prompt configuration applies to.                                                                                                                                                                                                                                                                                                                                                                                                              |
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_additionalModelRequestFields"></a>2.1.10.2.2.1.2.1. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > additionalModelRequestFields`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** If the Converse or ConverseStream operations support the model, `additionalModelRequestFields` contains additional inference parameters, beyond the base set of inference parameters in the `inferenceConfiguration` field.
+
+For more information, see [Inference request parameters and response fields for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_basePromptTemplate"></a>2.1.10.2.2.1.2.2. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > basePromptTemplate`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Defines the prompt template with which to replace the default prompt template.
+
+You can use placeholder variables in the base prompt template to customize the prompt. For more information, see [Prompt template placeholder variables](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-placeholders.html) . For more information, see [Configure the prompt templates](https://docs.aws.amazon.com/bedrock/latest/userguide/advanced-prompts-configure.html) .
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_foundationModel"></a>2.1.10.2.2.1.2.3. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > foundationModel`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** The agent's foundation model.
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration"></a>2.1.10.2.2.1.2.4. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > inferenceConfiguration`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Contains inference parameters to use when the agent invokes a foundation model in the part of the agent sequence defined by the `promptType` .
+
+For more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .
+
+| Any of(Option)                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [IResolvable](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i0)                             |
+| [CfnAgent.InferenceConfigurationProperty](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1) |
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i0"></a>2.1.10.2.2.1.2.4.1. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > inferenceConfiguration > anyOf > IResolvable`
+
+|                           |                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                      |
+| **Required**              | No                                                                                                                                            |
+| **Additional properties** | Not allowed                                                                                                                                   |
+| **Same definition as**    | [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0) |
+
+**Description:** Interface for values that can be resolvable later
+
+Tokens are special objects that participate in synthesis.
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1"></a>2.1.10.2.2.1.2.4.2. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > inferenceConfiguration > anyOf > CfnAgent.InferenceConfigurationProperty`
+
+|                           |                                                       |
+| ------------------------- | ----------------------------------------------------- |
+| **Type**                  | `object`                                              |
+| **Required**              | No                                                    |
+| **Additional properties** | Not allowed                                           |
+| **Defined in**            | #/definitions/CfnAgent.InferenceConfigurationProperty |
+
+**Description:** Base inference parameters to pass to a model in a call to [Converse](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html) or [ConverseStream](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_ConverseStream.html) . For more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .
+
+If you need to pass additional parameters that the model supports, use the `additionalModelRequestFields` request field in the call to `Converse` or `ConverseStream` . For more information, see [Model parameters](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .
+
+| Property                                                                                                                                                                | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [maximumLength](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_maximumLength ) | No      | number          | No         | -          | The maximum number of tokens allowed in the generated response.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [stopSequences](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_stopSequences ) | No      | array of string | No         | -          | A list of stop sequences.<br /><br />A stop sequence is a sequence of characters that causes the model to stop generating the response.                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [temperature](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_temperature )     | No      | number          | No         | -          | The likelihood of the model selecting higher-probability options while generating a response.<br /><br />A lower value makes the model more likely to choose higher-probability options, while a higher value makes the model more likely to choose lower-probability options.<br /><br />The default value is the default value for the model that you are using. For more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) . |
+| - [topK](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_topK )                   | No      | number          | No         | -          | While generating a response, the model determines the probability of the following token at each point of generation.<br /><br />The value that you set for \`topK\` is the number of most-likely candidates from which the model chooses the next token in the sequence. For example, if you set \`topK\` to 50, the model selects the next token from among the top 50 most likely choices.                                                                                                                           |
+| - [topP](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_topP )                   | No      | number          | No         | -          | The percentage of most-likely candidates that the model considers for the next token.<br /><br />For example, if you choose a value of 0.8 for \`topP\` , the model selects from the top 80% of the probability distribution of tokens that could be next in the sequence.<br /><br />The default value is the default value for the model that you are using. For more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .     |
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_maximumLength"></a>2.1.10.2.2.1.2.4.2.1. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > inferenceConfiguration > anyOf > item 1 > maximumLength`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** The maximum number of tokens allowed in the generated response.
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_stopSequences"></a>2.1.10.2.2.1.2.4.2.2. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > inferenceConfiguration > anyOf > item 1 > stopSequences`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** A list of stop sequences.
+
+A stop sequence is a sequence of characters that causes the model to stop generating the response.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                                                                                  | Description |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [stopSequences items](#agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_stopSequences_items) | -           |
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_stopSequences_items"></a>2.1.10.2.2.1.2.4.2.2.1. root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > inferenceConfiguration > anyOf > item 1 > stopSequences > stopSequences items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_temperature"></a>2.1.10.2.2.1.2.4.2.3. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > inferenceConfiguration > anyOf > item 1 > temperature`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** The likelihood of the model selecting higher-probability options while generating a response.
+
+A lower value makes the model more likely to choose higher-probability options, while a higher value makes the model more likely to choose lower-probability options.
+
+The default value is the default value for the model that you are using. For more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_topK"></a>2.1.10.2.2.1.2.4.2.4. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > inferenceConfiguration > anyOf > item 1 > topK`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** While generating a response, the model determines the probability of the following token at each point of generation.
+
+The value that you set for `topK` is the number of most-likely candidates from which the model chooses the next token in the sequence. For example, if you set `topK` to 50, the model selects the next token from among the top 50 most likely choices.
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_inferenceConfiguration_anyOf_i1_topP"></a>2.1.10.2.2.1.2.4.2.5. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > inferenceConfiguration > anyOf > item 1 > topP`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** The percentage of most-likely candidates that the model considers for the next token.
+
+For example, if you choose a value of 0.8 for `topP` , the model selects from the top 80% of the probability distribution of tokens that could be next in the sequence.
+
+The default value is the default value for the model that you are using. For more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_parserMode"></a>2.1.10.2.2.1.2.5. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > parserMode`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Specifies whether to override the default parser Lambda function when parsing the raw foundation model output in the part of the agent sequence defined by the `promptType` .
+
+If you set the field as `OVERRIDDEN` , the `overrideLambda` field in the [PromptOverrideConfiguration](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_PromptOverrideConfiguration.html) must be specified with the ARN of a Lambda function.
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_promptCreationMode"></a>2.1.10.2.2.1.2.6. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > promptCreationMode`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Specifies whether to override the default prompt template for this `promptType` .
+
+Set this value to `OVERRIDDEN` to use the prompt that you provide in the `basePromptTemplate` . If you leave it as `DEFAULT` , the agent uses a default prompt template.
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_promptState"></a>2.1.10.2.2.1.2.7. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > promptState`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Specifies whether to allow the inline agent to carry out the step specified in the `promptType` .
+
+If you set this value to `DISABLED` , the agent skips that step. The default state for each `promptType` is as follows.
+
+- `PRE_PROCESSING` – `ENABLED`
+- `ORCHESTRATION` – `ENABLED`
+- `KNOWLEDGE_BASE_RESPONSE_GENERATION` – `ENABLED`
+- `POST_PROCESSING` – `DISABLED`
+
+###### <a name="agents_additionalProperties_promptOverrideConfiguration_promptConfigurations_anyOf_i1_items_anyOf_i1_promptType"></a>2.1.10.2.2.1.2.8. Property `root > agents > additionalProperties > promptOverrideConfiguration > promptConfigurations > anyOf > item 1 > item 1 items > anyOf > item 1 > promptType`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** The step in the agent sequence that this prompt configuration applies to.
+
+#### <a name="agents_additionalProperties_role"></a>2.1.11. Property `root > agents > additionalProperties > role`
+
+|                           |                           |
+| ------------------------- | ------------------------- |
+| **Type**                  | `object`                  |
+| **Required**              | Yes                       |
+| **Additional properties** | Not allowed               |
+| **Defined in**            | #/definitions/MdaaRoleRef |
+
+**Description:** Reference to role which will be used as execution role on all agent(s).
+The role must have assume-role trust with bedrock.amazonaws.com.
+
+| Property                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ----------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [arn](#agents_additionalProperties_role_arn )             | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Full IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.<br /><br />Use cases: Cross-account role references; External role integration; Precise role identification with account/region context<br /><br />AWS: AWS IAM role ARN for cross-account permissions and explicit role targeting<br /><br />Validation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)                                                |
+| - [id](#agents_additionalProperties_role_id )               | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />IAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.<br /><br />Use cases: Stable role references across name changes; Precise role identification; Role references in automated systems<br /><br />AWS: AWS IAM role unique ID for stable role identification<br /><br />Validation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)                                                                                 |
+| - [immutable](#agents_additionalProperties_role_immutable ) | No      | boolean | No         | -          | Q-ENHANCED-PROPERTY<br />Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.<br /><br />Use cases: External role protection; System role preservation; Landing Zone Accelerator role integration<br /><br />AWS: Role modification protection flag for IAM role management<br /><br />Validation: Boolean value, defaults to false if not specified                                                                                                   |
+| - [name](#agents_additionalProperties_role_name )           | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />IAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.<br /><br />Use cases: Same-account role references; MDAA-generated role references; Simple role configuration<br /><br />AWS: AWS IAM role name for role lookup and permission assignment<br /><br />Validation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)                                                                                               |
+| - [refId](#agents_additionalProperties_role_refId )         | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Unique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.<br /><br />Use cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging<br /><br />AWS: Logical identifier for IAM role references in MDAA configurations<br /><br />Validation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended |
+| - [sso](#agents_additionalProperties_role_sso )             | No      | boolean | No         | -          | Q-ENHANCED-PROPERTY<br />Flag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.<br /><br />Use cases: AWS Identity Center integration; Federated user access; SSO-managed role references<br /><br />AWS: AWS Identity Center (SSO) role resolution for federated access<br /><br />Validation: Boolean value, implies immutable=true when set to true                                                                                                    |
+
+##### <a name="agents_additionalProperties_role_arn"></a>2.1.11.1. Property `root > agents > additionalProperties > role > arn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Full IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.
+
+Use cases: Cross-account role references; External role integration; Precise role identification with account/region context
+
+AWS: AWS IAM role ARN for cross-account permissions and explicit role targeting
+
+Validation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)
+
+##### <a name="agents_additionalProperties_role_id"></a>2.1.11.2. Property `root > agents > additionalProperties > role > id`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+IAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.
+
+Use cases: Stable role references across name changes; Precise role identification; Role references in automated systems
+
+AWS: AWS IAM role unique ID for stable role identification
+
+Validation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)
+
+##### <a name="agents_additionalProperties_role_immutable"></a>2.1.11.3. Property `root > agents > additionalProperties > role > immutable`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Q-ENHANCED-PROPERTY
+Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.
+
+Use cases: External role protection; System role preservation; Landing Zone Accelerator role integration
+
+AWS: Role modification protection flag for IAM role management
+
+Validation: Boolean value, defaults to false if not specified
+
+##### <a name="agents_additionalProperties_role_name"></a>2.1.11.4. Property `root > agents > additionalProperties > role > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+IAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.
+
+Use cases: Same-account role references; MDAA-generated role references; Simple role configuration
+
+AWS: AWS IAM role name for role lookup and permission assignment
+
+Validation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)
+
+##### <a name="agents_additionalProperties_role_refId"></a>2.1.11.5. Property `root > agents > additionalProperties > role > refId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Unique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.
+
+Use cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging
+
+AWS: Logical identifier for IAM role references in MDAA configurations
+
+Validation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended
+
+##### <a name="agents_additionalProperties_role_sso"></a>2.1.11.6. Property `root > agents > additionalProperties > role > sso`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Q-ENHANCED-PROPERTY
+Flag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.
+
+Use cases: AWS Identity Center integration; Federated user access; SSO-managed role references
+
+AWS: AWS Identity Center (SSO) role resolution for federated access
+
+Validation: Boolean value, implies immutable=true when set to true
+
+## <a name="dataAdminRoles"></a>3. Property `root > dataAdminRoles`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | Yes     |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required array of admin role references for Bedrock resource access control enabling role-based administration and security management. Provides IAM roles that will be granted administrative access to Bedrock agent resources including KMS keys, S3 buckets, and other infrastructure components.
+
+Use cases: Administrative access; Role-based security; Resource access control; Bedrock administration
+
+AWS: IAM role references for Bedrock resource administrative access and security management
+
+Validation: Must be array of valid MdaaRoleRef objects; required for Bedrock resource access control and administration
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be      | Description              |
+| ------------------------------------ | ------------------------ |
+| [MdaaRoleRef](#dataAdminRoles_items) | Q-ENHANCED-INTERFACE ... |
+
+### <a name="dataAdminRoles_items"></a>3.1. root > dataAdminRoles > MdaaRoleRef
+
+|                           |                                           |
+| ------------------------- | ----------------------------------------- |
+| **Type**                  | `object`                                  |
+| **Required**              | No                                        |
+| **Additional properties** | Not allowed                               |
+| **Same definition as**    | [role](#agents_additionalProperties_role) |
+
+**Description:** Q-ENHANCED-INTERFACE
+Configuration interface for referencing IAM roles across MDAA modules using multiple identification methods. Enables flexible role resolution for cross-module dependencies, external role integration, and SSO-managed roles while supporting both mutable and immutable role references.
+
+Use cases: Cross-module IAM role sharing; External role integration from Landing Zone Accelerator; SSO-managed role references for federated access
+
+AWS: References AWS IAM roles for service permissions, cross-account access, and federated identity integration
+
+Validation: At least one of name, arn, or id must be provided; arn must be valid IAM role ARN format; name must be valid IAM role name
+
+## <a name="guardrails"></a>4. Property `root > guardrails`
+
+|                           |                                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                |
+| **Required**              | No                                                                                      |
+| **Additional properties** | [Each additional property must conform to the schema](#guardrails_additionalProperties) |
+| **Defined in**            | #/definitions/NamedGuardrailProps                                                       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional guardrail configurations for AI safety and content filtering enabling responsible AI deployment and content moderation. Provides guardrail setup for content filtering, safety controls, and responsible AI practices ensuring appropriate AI behavior and content generation.
+
+Use cases: AI safety; Content filtering; Responsible AI; Content moderation
+
+AWS: Bedrock guardrails for AI safety controls and responsible AI deployment
+
+Validation: Must be valid NamedGuardrailProps if provided; enables AI safety controls and content filtering
+  *
+
+| Property                                | Pattern | Type   | Deprecated | Definition                             | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------------------- | ------- | ------ | ---------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [](#guardrails_additionalProperties ) | No      | object | No         | In #/definitions/BedrockGuardrailProps | Q-ENHANCED-INTERFACE<br />Comprehensive Bedrock guardrail configuration with content filtering, grounding controls, and sensitive information protection. Defines complete guardrail behavior including content safety, contextual grounding, PII protection, and custom messaging for responsible AI implementation.<br /><br />Use cases: Comprehensive AI safety; Content filtering; PII protection; Responsible AI implementation<br /><br />AWS: Amazon Bedrock guardrail configuration for AI safety and responsible AI deployment<br /><br />Validation: contentFilters is required; all other properties are optional with specific validation requirements |
+
+### <a name="guardrails_additionalProperties"></a>4.1. Property `root > guardrails > BedrockGuardrailProps`
+
+|                           |                                     |
+| ------------------------- | ----------------------------------- |
+| **Type**                  | `object`                            |
+| **Required**              | No                                  |
+| **Additional properties** | Not allowed                         |
+| **Defined in**            | #/definitions/BedrockGuardrailProps |
+
+**Description:** Q-ENHANCED-INTERFACE
+Comprehensive Bedrock guardrail configuration with content filtering, grounding controls, and sensitive information protection. Defines complete guardrail behavior including content safety, contextual grounding, PII protection, and custom messaging for responsible AI implementation.
+
+Use cases: Comprehensive AI safety; Content filtering; PII protection; Responsible AI implementation
+
+AWS: Amazon Bedrock guardrail configuration for AI safety and responsible AI deployment
+
+Validation: contentFilters is required; all other properties are optional with specific validation requirements
+
+| Property                                                                                       | Pattern | Type   | Deprecated | Definition                                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [blockedInputMessaging](#guardrails_additionalProperties_blockedInputMessaging )             | No      | string | No         | -                                            | Q-ENHANCED-PROPERTY<br />Optional custom message displayed when user input is blocked by guardrail filters providing user feedback and guidance. Enables customized user communication when content is blocked for better user experience and clear safety messaging.<br /><br />Use cases: User feedback; Custom messaging; Safety communication; User experience enhancement<br /><br />AWS: Bedrock guardrail blocked input messaging for user feedback and safety communication<br /><br />Validation: Must be informative message string if provided; enhances user experience when content is blocked                                         |
+| - [blockedOutputsMessaging](#guardrails_additionalProperties_blockedOutputsMessaging )         | No      | string | No         | -                                            | Q-ENHANCED-PROPERTY<br />Optional custom message displayed when model output is blocked by guardrail filters providing user feedback and transparency. Enables customized communication when AI responses are blocked for transparency and user understanding of safety controls.<br /><br />Use cases: Output blocking feedback; Transparency; Safety communication; User understanding<br /><br />AWS: Bedrock guardrail blocked output messaging for transparency and safety communication<br /><br />Validation: Must be informative message string if provided; enhances transparency when outputs are blocked                                 |
+| + [contentFilters](#guardrails_additionalProperties_contentFilters )                           | No      | object | No         | In #/definitions/ContentFilters              | Q-ENHANCED-PROPERTY<br />Required content filter configuration defining content safety controls across multiple categories. Provides content filtering for sexual content, violence, hate speech, insults, misconduct, and prompt attacks with configurable strength levels for each category.<br /><br />Use cases: Content safety; Multi-category filtering; content control; Responsible AI safety<br /><br />AWS: Bedrock guardrail content filters for content safety and responsible AI implementation<br /><br />Validation: Must be valid ContentFilters; required for guardrail content safety and filtering capabilities<br />  *         |
+| - [contextualGroundingFilters](#guardrails_additionalProperties_contextualGroundingFilters )   | No      | object | No         | In #/definitions/GroundingFilters            | Q-ENHANCED-PROPERTY<br />Optional contextual grounding filter configuration ensuring AI responses are grounded in source material and relevant to queries. Provides accuracy controls for response grounding and query relevance with configurable threshold-based filtering.<br /><br />Use cases: Response grounding; Source material adherence; Query relevance; Factual accuracy control<br /><br />AWS: Bedrock guardrail contextual grounding filters for response accuracy and relevance control<br /><br />Validation: Must be valid GroundingFilters if provided; enables response grounding and relevance control<br />  *                |
+| - [description](#guardrails_additionalProperties_description )                                 | No      | string | No         | -                                            | Q-ENHANCED-PROPERTY<br />Optional guardrail description providing documentation and context for guardrail purpose and configuration. Enables clear documentation of guardrail functionality and safety controls for operational understanding and management clarity.<br /><br />Use cases: Guardrail documentation; Configuration context; Operational understanding; Management clarity<br /><br />AWS: Bedrock guardrail description for documentation and operational context management<br /><br />Validation: Must be descriptive string if provided; enhances guardrail documentation and understanding                                      |
+| - [sensitiveInformationFilters](#guardrails_additionalProperties_sensitiveInformationFilters ) | No      | object | No         | In #/definitions/SensitiveInformationFilters | Q-ENHANCED-PROPERTY<br />Optional sensitive information filter configuration for PII detection and custom pattern matching enabling data privacy protection. Provides PII detection, custom regex patterns, and sensitive information filtering for data privacy compliance.<br /><br />Use cases: PII protection; Data privacy compliance; Sensitive information filtering; Custom pattern detection<br /><br />AWS: Bedrock guardrail sensitive information filters for PII protection and data privacy compliance<br /><br />Validation: Must be valid SensitiveInformationFilters if provided; enables PII protection and data privacy<br />  * |
+
+#### <a name="guardrails_additionalProperties_blockedInputMessaging"></a>4.1.1. Property `root > guardrails > additionalProperties > blockedInputMessaging`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional custom message displayed when user input is blocked by guardrail filters providing user feedback and guidance. Enables customized user communication when content is blocked for better user experience and clear safety messaging.
+
+Use cases: User feedback; Custom messaging; Safety communication; User experience enhancement
+
+AWS: Bedrock guardrail blocked input messaging for user feedback and safety communication
+
+Validation: Must be informative message string if provided; enhances user experience when content is blocked
+
+#### <a name="guardrails_additionalProperties_blockedOutputsMessaging"></a>4.1.2. Property `root > guardrails > additionalProperties > blockedOutputsMessaging`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional custom message displayed when model output is blocked by guardrail filters providing user feedback and transparency. Enables customized communication when AI responses are blocked for transparency and user understanding of safety controls.
+
+Use cases: Output blocking feedback; Transparency; Safety communication; User understanding
+
+AWS: Bedrock guardrail blocked output messaging for transparency and safety communication
+
+Validation: Must be informative message string if provided; enhances transparency when outputs are blocked
+
+#### <a name="guardrails_additionalProperties_contentFilters"></a>4.1.3. Property `root > guardrails > additionalProperties > contentFilters`
+
+|                           |                              |
+| ------------------------- | ---------------------------- |
+| **Type**                  | `object`                     |
+| **Required**              | Yes                          |
+| **Additional properties** | Not allowed                  |
+| **Defined in**            | #/definitions/ContentFilters |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required content filter configuration defining content safety controls across multiple categories. Provides content filtering for sexual content, violence, hate speech, insults, misconduct, and prompt attacks with configurable strength levels for each category.
+
+Use cases: Content safety; Multi-category filtering; content control; Responsible AI safety
+
+AWS: Bedrock guardrail content filters for content safety and responsible AI implementation
+
+Validation: Must be valid ContentFilters; required for guardrail content safety and filtering capabilities
+  *
+
+| Property                                                                        | Pattern | Type   | Deprecated | Definition                                                            | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [hate](#guardrails_additionalProperties_contentFilters_hate )                 | No      | object | No         | In #/definitions/ContentFilterConfig                                  | Q-ENHANCED-PROPERTY<br />Optional hate speech filter configuration controlling detection and blocking of hate speech content in inputs and outputs. Provides content safety controls for hate speech with configurable strength levels for hate speech prevention.<br /><br />Use cases: Hate speech prevention; Content safety; Inclusive environment; User protection from harmful content<br /><br />AWS: Bedrock guardrail hate speech filter for content safety and hate speech prevention<br /><br />Validation: Must be valid ContentFilterConfig if provided; controls hate speech detection and blocking                   |
+| - [insults](#guardrails_additionalProperties_contentFilters_insults )           | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Q-ENHANCED-PROPERTY<br />Optional insults filter configuration controlling detection and blocking of insulting content in inputs and outputs. Provides content safety controls for insulting language with configurable strength levels for respectful communication enforcement.<br /><br />Use cases: Insult prevention; Respectful communication; Content safety; Professional interaction maintenance<br /><br />AWS: Bedrock guardrail insults filter for content safety and respectful communication enforcement<br /><br />Validation: Must be valid ContentFilterConfig if provided; controls insult detection and blocking |
+| - [misconduct](#guardrails_additionalProperties_contentFilters_misconduct )     | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Q-ENHANCED-PROPERTY<br />Optional misconduct filter configuration controlling detection and blocking of misconduct-related content in inputs and outputs. Provides content safety controls for misconduct material with configurable strength levels for ethical behavior enforcement.<br /><br />Use cases: Misconduct prevention; Ethical behavior; Content safety; Professional standards maintenance<br /><br />AWS: Bedrock guardrail misconduct filter for content safety and ethical behavior enforcement<br /><br />Validation: Must be valid ContentFilterConfig if provided; controls misconduct detection and blocking   |
+| - [promptAttack](#guardrails_additionalProperties_contentFilters_promptAttack ) | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Q-ENHANCED-PROPERTY<br />Optional prompt attack filter configuration controlling detection and blocking of prompt injection attacks in inputs and outputs. Provides security controls against prompt manipulation with configurable strength levels for AI system protection.<br /><br />Use cases: Prompt injection prevention; AI security; System protection; Attack mitigation<br /><br />AWS: Bedrock guardrail prompt attack filter for AI security and prompt injection prevention<br /><br />Validation: Must be valid ContentFilterConfig if provided; controls prompt attack detection and blocking                       |
+| - [sexual](#guardrails_additionalProperties_contentFilters_sexual )             | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Q-ENHANCED-PROPERTY<br />Optional sexual content filter configuration controlling detection and blocking of sexual content in inputs and outputs. Provides content safety controls for sexual material with configurable strength levels for input and output filtering.<br /><br />Use cases: Sexual content filtering; Content safety; Appropriate content control; User protection<br /><br />AWS: Bedrock guardrail sexual content filter for content safety and appropriate material control<br /><br />Validation: Must be valid ContentFilterConfig if provided; controls sexual content detection and blocking              |
+| - [violence](#guardrails_additionalProperties_contentFilters_violence )         | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Q-ENHANCED-PROPERTY<br />Optional violence content filter configuration controlling detection and blocking of violent content in inputs and outputs. Provides content safety controls for violent material with configurable strength levels for violence filtering.<br /><br />Use cases: Violence filtering; Content safety; Appropriate content control; User protection from violent material<br /><br />AWS: Bedrock guardrail violence content filter for content safety and violence prevention<br /><br />Validation: Must be valid ContentFilterConfig if provided; controls violence content detection and blocking       |
+
+##### <a name="guardrails_additionalProperties_contentFilters_hate"></a>4.1.3.1. Property `root > guardrails > additionalProperties > contentFilters > hate`
+
+|                           |                                   |
+| ------------------------- | --------------------------------- |
+| **Type**                  | `object`                          |
+| **Required**              | No                                |
+| **Additional properties** | Not allowed                       |
+| **Defined in**            | #/definitions/ContentFilterConfig |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional hate speech filter configuration controlling detection and blocking of hate speech content in inputs and outputs. Provides content safety controls for hate speech with configurable strength levels for hate speech prevention.
+
+Use cases: Hate speech prevention; Content safety; Inclusive environment; User protection from harmful content
+
+AWS: Bedrock guardrail hate speech filter for content safety and hate speech prevention
+
+Validation: Must be valid ContentFilterConfig if provided; controls hate speech detection and blocking
+
+| Property                                                                                 | Pattern | Type             | Deprecated | Definition                                                                                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ---------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength )   | No      | enum (of string) | No         | In #/definitions/Strength                                                                    | Q-ENHANCED-PROPERTY<br />Required filter strength for user inputs controlling sensitivity of content detection in user-provided content. Defines how strictly the filter evaluates user inputs for content violations with LOW, MEDIUM, or HIGH sensitivity levels.<br /><br />Use cases: Input filtering; User content control; Detection sensitivity; Content safety for inputs<br /><br />AWS: Bedrock guardrail input filter strength for user content detection and safety control<br /><br />Validation: Must be LOW, MEDIUM, or HIGH; required for input content filtering configuration<br />  *        |
+| + [outputStrength](#guardrails_additionalProperties_contentFilters_hate_outputStrength ) | No      | enum (of string) | No         | Same as [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength ) | Q-ENHANCED-PROPERTY<br />Required filter strength for model outputs controlling sensitivity of content detection in AI-generated responses. Defines how strictly the filter evaluates model outputs for content violations with LOW, MEDIUM, or HIGH sensitivity levels.<br /><br />Use cases: Output filtering; AI response control; Detection sensitivity; Content safety for outputs<br /><br />AWS: Bedrock guardrail output filter strength for AI response detection and safety control<br /><br />Validation: Must be LOW, MEDIUM, or HIGH; required for output content filtering configuration<br />  * |
+
+###### <a name="guardrails_additionalProperties_contentFilters_hate_inputStrength"></a>4.1.3.1.1. Property `root > guardrails > additionalProperties > contentFilters > hate > inputStrength`
+
+|                |                        |
+| -------------- | ---------------------- |
+| **Type**       | `enum (of string)`     |
+| **Required**   | Yes                    |
+| **Defined in** | #/definitions/Strength |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required filter strength for user inputs controlling sensitivity of content detection in user-provided content. Defines how strictly the filter evaluates user inputs for content violations with LOW, MEDIUM, or HIGH sensitivity levels.
+
+Use cases: Input filtering; User content control; Detection sensitivity; Content safety for inputs
+
+AWS: Bedrock guardrail input filter strength for user content detection and safety control
+
+Validation: Must be LOW, MEDIUM, or HIGH; required for input content filtering configuration
+  *
+
+Must be one of:
+* "HIGH"
+* "LOW"
+* "MEDIUM"
+
+###### <a name="guardrails_additionalProperties_contentFilters_hate_outputStrength"></a>4.1.3.1.2. Property `root > guardrails > additionalProperties > contentFilters > hate > outputStrength`
+
+|                        |                                                                                     |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| **Type**               | `enum (of string)`                                                                  |
+| **Required**           | Yes                                                                                 |
+| **Same definition as** | [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength) |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required filter strength for model outputs controlling sensitivity of content detection in AI-generated responses. Defines how strictly the filter evaluates model outputs for content violations with LOW, MEDIUM, or HIGH sensitivity levels.
+
+Use cases: Output filtering; AI response control; Detection sensitivity; Content safety for outputs
+
+AWS: Bedrock guardrail output filter strength for AI response detection and safety control
+
+Validation: Must be LOW, MEDIUM, or HIGH; required for output content filtering configuration
+  *
+
+##### <a name="guardrails_additionalProperties_contentFilters_insults"></a>4.1.3.2. Property `root > guardrails > additionalProperties > contentFilters > insults`
+
+|                           |                                                              |
+| ------------------------- | ------------------------------------------------------------ |
+| **Type**                  | `object`                                                     |
+| **Required**              | No                                                           |
+| **Additional properties** | Not allowed                                                  |
+| **Same definition as**    | [hate](#guardrails_additionalProperties_contentFilters_hate) |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional insults filter configuration controlling detection and blocking of insulting content in inputs and outputs. Provides content safety controls for insulting language with configurable strength levels for respectful communication enforcement.
+
+Use cases: Insult prevention; Respectful communication; Content safety; Professional interaction maintenance
+
+AWS: Bedrock guardrail insults filter for content safety and respectful communication enforcement
+
+Validation: Must be valid ContentFilterConfig if provided; controls insult detection and blocking
+
+##### <a name="guardrails_additionalProperties_contentFilters_misconduct"></a>4.1.3.3. Property `root > guardrails > additionalProperties > contentFilters > misconduct`
+
+|                           |                                                              |
+| ------------------------- | ------------------------------------------------------------ |
+| **Type**                  | `object`                                                     |
+| **Required**              | No                                                           |
+| **Additional properties** | Not allowed                                                  |
+| **Same definition as**    | [hate](#guardrails_additionalProperties_contentFilters_hate) |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional misconduct filter configuration controlling detection and blocking of misconduct-related content in inputs and outputs. Provides content safety controls for misconduct material with configurable strength levels for ethical behavior enforcement.
+
+Use cases: Misconduct prevention; Ethical behavior; Content safety; Professional standards maintenance
+
+AWS: Bedrock guardrail misconduct filter for content safety and ethical behavior enforcement
+
+Validation: Must be valid ContentFilterConfig if provided; controls misconduct detection and blocking
+
+##### <a name="guardrails_additionalProperties_contentFilters_promptAttack"></a>4.1.3.4. Property `root > guardrails > additionalProperties > contentFilters > promptAttack`
+
+|                           |                                                              |
+| ------------------------- | ------------------------------------------------------------ |
+| **Type**                  | `object`                                                     |
+| **Required**              | No                                                           |
+| **Additional properties** | Not allowed                                                  |
+| **Same definition as**    | [hate](#guardrails_additionalProperties_contentFilters_hate) |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional prompt attack filter configuration controlling detection and blocking of prompt injection attacks in inputs and outputs. Provides security controls against prompt manipulation with configurable strength levels for AI system protection.
+
+Use cases: Prompt injection prevention; AI security; System protection; Attack mitigation
+
+AWS: Bedrock guardrail prompt attack filter for AI security and prompt injection prevention
+
+Validation: Must be valid ContentFilterConfig if provided; controls prompt attack detection and blocking
+
+##### <a name="guardrails_additionalProperties_contentFilters_sexual"></a>4.1.3.5. Property `root > guardrails > additionalProperties > contentFilters > sexual`
+
+|                           |                                                              |
+| ------------------------- | ------------------------------------------------------------ |
+| **Type**                  | `object`                                                     |
+| **Required**              | No                                                           |
+| **Additional properties** | Not allowed                                                  |
+| **Same definition as**    | [hate](#guardrails_additionalProperties_contentFilters_hate) |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional sexual content filter configuration controlling detection and blocking of sexual content in inputs and outputs. Provides content safety controls for sexual material with configurable strength levels for input and output filtering.
+
+Use cases: Sexual content filtering; Content safety; Appropriate content control; User protection
+
+AWS: Bedrock guardrail sexual content filter for content safety and appropriate material control
+
+Validation: Must be valid ContentFilterConfig if provided; controls sexual content detection and blocking
+
+##### <a name="guardrails_additionalProperties_contentFilters_violence"></a>4.1.3.6. Property `root > guardrails > additionalProperties > contentFilters > violence`
+
+|                           |                                                              |
+| ------------------------- | ------------------------------------------------------------ |
+| **Type**                  | `object`                                                     |
+| **Required**              | No                                                           |
+| **Additional properties** | Not allowed                                                  |
+| **Same definition as**    | [hate](#guardrails_additionalProperties_contentFilters_hate) |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional violence content filter configuration controlling detection and blocking of violent content in inputs and outputs. Provides content safety controls for violent material with configurable strength levels for violence filtering.
+
+Use cases: Violence filtering; Content safety; Appropriate content control; User protection from violent material
+
+AWS: Bedrock guardrail violence content filter for content safety and violence prevention
+
+Validation: Must be valid ContentFilterConfig if provided; controls violence content detection and blocking
+
+#### <a name="guardrails_additionalProperties_contextualGroundingFilters"></a>4.1.4. Property `root > guardrails > additionalProperties > contextualGroundingFilters`
+
+|                           |                                |
+| ------------------------- | ------------------------------ |
+| **Type**                  | `object`                       |
+| **Required**              | No                             |
+| **Additional properties** | Not allowed                    |
+| **Defined in**            | #/definitions/GroundingFilters |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional contextual grounding filter configuration ensuring AI responses are grounded in source material and relevant to queries. Provides accuracy controls for response grounding and query relevance with configurable threshold-based filtering.
+
+Use cases: Response grounding; Source material adherence; Query relevance; Factual accuracy control
+
+AWS: Bedrock guardrail contextual grounding filters for response accuracy and relevance control
+
+Validation: Must be valid GroundingFilters if provided; enables response grounding and relevance control
+  *
+
+| Property                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [grounding](#guardrails_additionalProperties_contextualGroundingFilters_grounding ) | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />Optional grounding threshold controlling how strictly responses must be grounded in source material with values from 0.0 to 1.0. Higher values enforce stricter grounding requirements ensuring AI responses closely adhere to provided source material and factual accuracy.<br /><br />Use cases: Source material adherence; Factual accuracy; Grounding enforcement; Response reliability<br /><br />AWS: Bedrock guardrail grounding threshold for source material adherence and factual accuracy<br /><br />Validation: Must be between 0.0 and 1.0 if provided; higher values enforce stricter grounding requirements |
+| - [relevance](#guardrails_additionalProperties_contextualGroundingFilters_relevance ) | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />Optional relevance threshold controlling how strictly responses must be relevant to user queries with values from 0.0 to 1.0. Higher values enforce stricter relevance requirements ensuring AI responses directly address user queries and maintain topical focus.<br /><br />Use cases: Query relevance; Topical focus; Response appropriateness; User query alignment<br /><br />AWS: Bedrock guardrail relevance threshold for query relevance and response appropriateness<br /><br />Validation: Must be between 0.0 and 1.0 if provided; higher values enforce stricter relevance requirements                       |
+
+##### <a name="guardrails_additionalProperties_contextualGroundingFilters_grounding"></a>4.1.4.1. Property `root > guardrails > additionalProperties > contextualGroundingFilters > grounding`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional grounding threshold controlling how strictly responses must be grounded in source material with values from 0.0 to 1.0. Higher values enforce stricter grounding requirements ensuring AI responses closely adhere to provided source material and factual accuracy.
+
+Use cases: Source material adherence; Factual accuracy; Grounding enforcement; Response reliability
+
+AWS: Bedrock guardrail grounding threshold for source material adherence and factual accuracy
+
+Validation: Must be between 0.0 and 1.0 if provided; higher values enforce stricter grounding requirements
+
+##### <a name="guardrails_additionalProperties_contextualGroundingFilters_relevance"></a>4.1.4.2. Property `root > guardrails > additionalProperties > contextualGroundingFilters > relevance`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional relevance threshold controlling how strictly responses must be relevant to user queries with values from 0.0 to 1.0. Higher values enforce stricter relevance requirements ensuring AI responses directly address user queries and maintain topical focus.
+
+Use cases: Query relevance; Topical focus; Response appropriateness; User query alignment
+
+AWS: Bedrock guardrail relevance threshold for query relevance and response appropriateness
+
+Validation: Must be between 0.0 and 1.0 if provided; higher values enforce stricter relevance requirements
+
+#### <a name="guardrails_additionalProperties_description"></a>4.1.5. Property `root > guardrails > additionalProperties > description`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional guardrail description providing documentation and context for guardrail purpose and configuration. Enables clear documentation of guardrail functionality and safety controls for operational understanding and management clarity.
+
+Use cases: Guardrail documentation; Configuration context; Operational understanding; Management clarity
+
+AWS: Bedrock guardrail description for documentation and operational context management
+
+Validation: Must be descriptive string if provided; enhances guardrail documentation and understanding
+
+#### <a name="guardrails_additionalProperties_sensitiveInformationFilters"></a>4.1.6. Property `root > guardrails > additionalProperties > sensitiveInformationFilters`
+
+|                           |                                           |
+| ------------------------- | ----------------------------------------- |
+| **Type**                  | `object`                                  |
+| **Required**              | No                                        |
+| **Additional properties** | Not allowed                               |
+| **Defined in**            | #/definitions/SensitiveInformationFilters |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional sensitive information filter configuration for PII detection and custom pattern matching enabling data privacy protection. Provides PII detection, custom regex patterns, and sensitive information filtering for data privacy compliance.
+
+Use cases: PII protection; Data privacy compliance; Sensitive information filtering; Custom pattern detection
+
+AWS: Bedrock guardrail sensitive information filters for PII protection and data privacy compliance
+
+Validation: Must be valid SensitiveInformationFilters if provided; enables PII protection and data privacy
+  *
+
+| Property                                                                                   | Pattern | Type  | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------ | ------- | ----- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [piiEntities](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities ) | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of PII entity filter configurations for detecting and protecting personally identifiable information in inputs and outputs. Provides PII detection and protection with configurable entity types and actions for data privacy compliance.<br /><br />Use cases: PII detection; Data privacy compliance; Personal information protection; Privacy regulation adherence<br /><br />AWS: Bedrock guardrail PII entity filters for personal information detection and privacy protection<br /><br />Validation: Must be array of valid PiiEntityConfigProperty if provided; enables PII detection and protection<br />  *       |
+| - [regexes](#guardrails_additionalProperties_sensitiveInformationFilters_regexes )         | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of regex pattern filter configurations for detecting custom sensitive patterns in inputs and outputs. Provides flexible pattern-based filtering for organization-specific sensitive information and custom data protection requirements.<br /><br />Use cases: Custom pattern detection; Organization-specific filtering; Flexible data protection; Pattern-based security<br /><br />AWS: Bedrock guardrail regex filters for custom pattern detection and flexible data protection<br /><br />Validation: Must be array of valid RegexConfigProperty if provided; enables custom pattern detection and filtering<br />  * |
+
+##### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities"></a>4.1.6.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional array of PII entity filter configurations for detecting and protecting personally identifiable information in inputs and outputs. Provides PII detection and protection with configurable entity types and actions for data privacy compliance.
+
+Use cases: PII detection; Data privacy compliance; Personal information protection; Privacy regulation adherence
+
+AWS: Bedrock guardrail PII entity filters for personal information detection and privacy protection
+
+Validation: Must be array of valid PiiEntityConfigProperty if provided; enables PII detection and protection
+  *
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                        | Description                                    |
+| ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| [CfnGuardrail.PiiEntityConfigProperty](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items) | The PII entity to configure for the guardrail. |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items"></a>4.1.6.1.1. root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > CfnGuardrail.PiiEntityConfigProperty
+
+|                           |                                                    |
+| ------------------------- | -------------------------------------------------- |
+| **Type**                  | `object`                                           |
+| **Required**              | No                                                 |
+| **Additional properties** | Not allowed                                        |
+| **Defined in**            | #/definitions/CfnGuardrail.PiiEntityConfigProperty |
+
+**Description:** The PII entity to configure for the guardrail.
+
+| Property                                                                                                         | Pattern | Type        | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [action](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_action )               | No      | string      | No         | -          | Configure guardrail action when the PII entity is detected.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [inputAction](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputAction )     | No      | string      | No         | -          | Specifies the action to take when harmful content is detected in the input. Supported values include:.<br /><br />- \`BLOCK\` – Block the content and replace it with blocked messaging.<br />- \`ANONYMIZE\` – Mask the content and replace it with identifier tags.<br />- \`NONE\` – Take no action but return detection information in the trace response.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [inputEnabled](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled )   | No      | Combination | No         | -          | Specifies whether to enable guardrail evaluation on the input.<br /><br />When disabled, you aren't charged for the evaluation. The evaluation doesn't appear in the response.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [outputAction](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputAction )   | No      | string      | No         | -          | Specifies the action to take when harmful content is detected in the output. Supported values include:.<br /><br />- \`BLOCK\` – Block the content and replace it with blocked messaging.<br />- \`ANONYMIZE\` – Mask the content and replace it with identifier tags.<br />- \`NONE\` – Take no action but return detection information in the trace response.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| - [outputEnabled](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled ) | No      | Combination | No         | -          | Indicates whether guardrail evaluation is enabled on the output.<br /><br />When disabled, you aren't charged for the evaluation. The evaluation doesn't appear in the response.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| + [type](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_type )                   | No      | string      | No         | -          | Configure guardrail type when the PII entity is detected.<br /><br />The following PIIs are used to block or mask sensitive information:<br /><br />- *General*<br /><br />- *ADDRESS*<br /><br />A physical address, such as "100 Main Street, Anytown, USA" or "Suite #12, Building 123". An address can include information such as the street, building, location, city, state, country, county, zip code, precinct, and neighborhood.<br />- *AGE*<br /><br />An individual's age, including the quantity and unit of time. For example, in the phrase "I am 40 years old," Guardrails recognizes "40 years" as an age.<br />- *NAME*<br /><br />An individual's name. This entity type does not include titles, such as Dr., Mr., Mrs., or Miss. guardrails doesn't apply this entity type to names that are part of organizations or addresses. For example, guardrails recognizes the "John Doe Organization" as an organization, and it recognizes "Jane Doe Street" as an address.<br />- *EMAIL*<br /><br />An email address, such as *marymajor@email.com* .<br />- *PHONE*<br /><br />A phone number. This entity type also includes fax and pager numbers.<br />- *USERNAME*<br /><br />A user name that identifies an account, such as a login name, screen name, nick name, or handle.<br />- *PASSWORD*<br /><br />An alphanumeric string that is used as a password, such as "* *very20special#pass** ".<br />- *DRIVER_ID*<br /><br />The number assigned to a driver's license, which is an official document permitting an individual to operate one or more motorized vehicles on a public road. A driver's license number consists of alphanumeric characters.<br />- *LICENSE_PLATE*<br /><br />A license plate for a vehicle is issued by the state or country where the vehicle is registered. The format for passenger vehicles is typically five to eight digits, consisting of upper-case letters and numbers. The format varies depending on the location of the issuing state or country.<br />- *VEHICLE_IDENTIFICATION_NUMBER*<br /><br />A Vehicle Identification Number (VIN) uniquely identifies a vehicle. VIN content and format are defined in the *ISO 3779* specification. Each country has specific codes and formats for VINs.<br />- *Finance*<br /><br />- *CREDIT_DEBIT_CARD_CVV*<br /><br />A three-digit card verification code (CVV) that is present on VISA, MasterCard, and Discover credit and debit cards. For American Express credit or debit cards, the CVV is a four-digit numeric code.<br />- *CREDIT_DEBIT_CARD_EXPIRY*<br /><br />The expiration date for a credit or debit card. This number is usually four digits long and is often formatted as *month/year* or *MM/YY* . Guardrails recognizes expiration dates such as *01/21* , *01/2021* , and *Jan 2021* .<br />- *CREDIT_DEBIT_CARD_NUMBER*<br /><br />The number for a credit or debit card. These numbers can vary from 13 to 16 digits in length. However, Amazon Comprehend also recognizes credit or debit card numbers when only the last four digits are present.<br />- *PIN*<br /><br />A four-digit personal identification number (PIN) with which you can access your bank account.<br />- *INTERNATIONAL_BANK_ACCOUNT_NUMBER*<br /><br />An International Bank Account Number has specific formats in each country. For more information, see [www.iban.com/structure](https://docs.aws.amazon.com/https://www.iban.com/structure) .<br />- *SWIFT_CODE*<br /><br />A SWIFT code is a standard format of Bank Identifier Code (BIC) used to specify a particular bank or branch. Banks use these codes for money transfers such as international wire transfers.<br /><br />SWIFT codes consist of eight or 11 characters. The 11-digit codes refer to specific branches, while eight-digit codes (or 11-digit codes ending in 'XXX') refer to the head or primary office.<br />- *IT*<br /><br />- *IP_ADDRESS*<br /><br />An IPv4 address, such as *198.51.100.0* .<br />- *MAC_ADDRESS*<br /><br />A *media access control* (MAC) address is a unique identifier assigned to a network interface controller (NIC).<br />- *URL*<br /><br />A web address, such as *www.example.com* .<br />- *AWS_ACCESS_KEY*<br /><br />A unique identifier that's associated with a secret access key; you use the access key ID and secret access key to sign programmatic AWS requests cryptographically.<br />- *AWS_SECRET_KEY*<br /><br />A unique identifier that's associated with an access key. You use the access key ID and secret access key to sign programmatic AWS requests cryptographically.<br />- *USA specific*<br /><br />- *US_BANK_ACCOUNT_NUMBER*<br /><br />A US bank account number, which is typically 10 to 12 digits long.<br />- *US_BANK_ROUTING_NUMBER*<br /><br />A US bank account routing number. These are typically nine digits long,<br />- *US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER*<br /><br />A US Individual Taxpayer Identification Number (ITIN) is a nine-digit number that starts with a "9" and contain a "7" or "8" as the fourth digit. An ITIN can be formatted with a space or a dash after the third and forth digits.<br />- *US_PASSPORT_NUMBER*<br /><br />A US passport number. Passport numbers range from six to nine alphanumeric characters.<br />- *US_SOCIAL_SECURITY_NUMBER*<br /><br />A US Social Security Number (SSN) is a nine-digit number that is issued to US citizens, permanent residents, and temporary working residents.<br />- *Canada specific*<br /><br />- *CA_HEALTH_NUMBER*<br /><br />A Canadian Health Service Number is a 10-digit unique identifier, required for individuals to access healthcare benefits.<br />- *CA_SOCIAL_INSURANCE_NUMBER*<br /><br />A Canadian Social Insurance Number (SIN) is a nine-digit unique identifier, required for individuals to access government programs and benefits.<br /><br />The SIN is formatted as three groups of three digits, such as *123-456-789* . A SIN can be validated through a simple check-digit process called the [Luhn algorithm](https://docs.aws.amazon.com/https://www.wikipedia.org/wiki/Luhn_algorithm) .<br />- *UK Specific*<br /><br />- *UK_NATIONAL_HEALTH_SERVICE_NUMBER*<br /><br />A UK National Health Service Number is a 10-17 digit number, such as *485 777 3456* . The current system formats the 10-digit number with spaces after the third and sixth digits. The final digit is an error-detecting checksum.<br />- *UK_NATIONAL_INSURANCE_NUMBER*<br /><br />A UK National Insurance Number (NINO) provides individuals with access to National Insurance (social security) benefits. It is also used for some purposes in the UK tax system.<br /><br />The number is nine digits long and starts with two letters, followed by six numbers and one letter. A NINO can be formatted with a space or a dash after the two letters and after the second, forth, and sixth digits.<br />- *UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER*<br /><br />A UK Unique Taxpayer Reference (UTR) is a 10-digit number that identifies a taxpayer or a business.<br />- *Custom*<br /><br />- *Regex filter* - You can use a regular expressions to define patterns for a guardrail to recognize and act upon such as serial number, booking ID etc.. |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_action"></a>4.1.6.1.1.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > action`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Configure guardrail action when the PII entity is detected.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputAction"></a>4.1.6.1.1.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputAction`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Specifies the action to take when harmful content is detected in the input. Supported values include:.
+
+- `BLOCK` – Block the content and replace it with blocked messaging.
+- `ANONYMIZE` – Mask the content and replace it with identifier tags.
+- `NONE` – Take no action but return detection information in the trace response.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled"></a>4.1.6.1.1.3. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Specifies whether to enable guardrail evaluation on the input.
+
+When disabled, you aren't charged for the evaluation. The evaluation doesn't appear in the response.
+
+| Any of(Option)                                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------- |
+| [IResolvable](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0) |
+| [item 1](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i1)      |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0"></a>4.1.6.1.1.3.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > IResolvable`
+
+|                           |                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                      |
+| **Required**              | No                                                                                                                                            |
+| **Additional properties** | Not allowed                                                                                                                                   |
+| **Same definition as**    | [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0) |
+
+**Description:** Interface for values that can be resolvable later
+
+Tokens are special objects that participate in synthesis.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i1"></a>4.1.6.1.1.3.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > item 1`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputAction"></a>4.1.6.1.1.4. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputAction`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Specifies the action to take when harmful content is detected in the output. Supported values include:.
+
+- `BLOCK` – Block the content and replace it with blocked messaging.
+- `ANONYMIZE` – Mask the content and replace it with identifier tags.
+- `NONE` – Take no action but return detection information in the trace response.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled"></a>4.1.6.1.1.5. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputEnabled`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Indicates whether guardrail evaluation is enabled on the output.
+
+When disabled, you aren't charged for the evaluation. The evaluation doesn't appear in the response.
+
+| Any of(Option)                                                                                                       |
+| -------------------------------------------------------------------------------------------------------------------- |
+| [IResolvable](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled_anyOf_i0) |
+| [item 1](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled_anyOf_i1)      |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled_anyOf_i0"></a>4.1.6.1.1.5.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputEnabled > anyOf > IResolvable`
+
+|                           |                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                      |
+| **Required**              | No                                                                                                                                            |
+| **Additional properties** | Not allowed                                                                                                                                   |
+| **Same definition as**    | [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0) |
+
+**Description:** Interface for values that can be resolvable later
+
+Tokens are special objects that participate in synthesis.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled_anyOf_i1"></a>4.1.6.1.1.5.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputEnabled > anyOf > item 1`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_type"></a>4.1.6.1.1.6. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > type`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Configure guardrail type when the PII entity is detected.
+
+The following PIIs are used to block or mask sensitive information:
+
+- *General*
+
+- *ADDRESS*
+
+A physical address, such as "100 Main Street, Anytown, USA" or "Suite #12, Building 123". An address can include information such as the street, building, location, city, state, country, county, zip code, precinct, and neighborhood.
+- *AGE*
+
+An individual's age, including the quantity and unit of time. For example, in the phrase "I am 40 years old," Guardrails recognizes "40 years" as an age.
+- *NAME*
+
+An individual's name. This entity type does not include titles, such as Dr., Mr., Mrs., or Miss. guardrails doesn't apply this entity type to names that are part of organizations or addresses. For example, guardrails recognizes the "John Doe Organization" as an organization, and it recognizes "Jane Doe Street" as an address.
+- *EMAIL*
+
+An email address, such as *marymajor@email.com* .
+- *PHONE*
+
+A phone number. This entity type also includes fax and pager numbers.
+- *USERNAME*
+
+A user name that identifies an account, such as a login name, screen name, nick name, or handle.
+- *PASSWORD*
+
+An alphanumeric string that is used as a password, such as "* *very20special#pass** ".
+- *DRIVER_ID*
+
+The number assigned to a driver's license, which is an official document permitting an individual to operate one or more motorized vehicles on a public road. A driver's license number consists of alphanumeric characters.
+- *LICENSE_PLATE*
+
+A license plate for a vehicle is issued by the state or country where the vehicle is registered. The format for passenger vehicles is typically five to eight digits, consisting of upper-case letters and numbers. The format varies depending on the location of the issuing state or country.
+- *VEHICLE_IDENTIFICATION_NUMBER*
+
+A Vehicle Identification Number (VIN) uniquely identifies a vehicle. VIN content and format are defined in the *ISO 3779* specification. Each country has specific codes and formats for VINs.
+- *Finance*
+
+- *CREDIT_DEBIT_CARD_CVV*
+
+A three-digit card verification code (CVV) that is present on VISA, MasterCard, and Discover credit and debit cards. For American Express credit or debit cards, the CVV is a four-digit numeric code.
+- *CREDIT_DEBIT_CARD_EXPIRY*
+
+The expiration date for a credit or debit card. This number is usually four digits long and is often formatted as *month/year* or *MM/YY* . Guardrails recognizes expiration dates such as *01/21* , *01/2021* , and *Jan 2021* .
+- *CREDIT_DEBIT_CARD_NUMBER*
+
+The number for a credit or debit card. These numbers can vary from 13 to 16 digits in length. However, Amazon Comprehend also recognizes credit or debit card numbers when only the last four digits are present.
+- *PIN*
+
+A four-digit personal identification number (PIN) with which you can access your bank account.
+- *INTERNATIONAL_BANK_ACCOUNT_NUMBER*
+
+An International Bank Account Number has specific formats in each country. For more information, see [www.iban.com/structure](https://docs.aws.amazon.com/https://www.iban.com/structure) .
+- *SWIFT_CODE*
+
+A SWIFT code is a standard format of Bank Identifier Code (BIC) used to specify a particular bank or branch. Banks use these codes for money transfers such as international wire transfers.
+
+SWIFT codes consist of eight or 11 characters. The 11-digit codes refer to specific branches, while eight-digit codes (or 11-digit codes ending in 'XXX') refer to the head or primary office.
+- *IT*
+
+- *IP_ADDRESS*
+
+An IPv4 address, such as *198.51.100.0* .
+- *MAC_ADDRESS*
+
+A *media access control* (MAC) address is a unique identifier assigned to a network interface controller (NIC).
+- *URL*
+
+A web address, such as *www.example.com* .
+- *AWS_ACCESS_KEY*
+
+A unique identifier that's associated with a secret access key; you use the access key ID and secret access key to sign programmatic AWS requests cryptographically.
+- *AWS_SECRET_KEY*
+
+A unique identifier that's associated with an access key. You use the access key ID and secret access key to sign programmatic AWS requests cryptographically.
+- *USA specific*
+
+- *US_BANK_ACCOUNT_NUMBER*
+
+A US bank account number, which is typically 10 to 12 digits long.
+- *US_BANK_ROUTING_NUMBER*
+
+A US bank account routing number. These are typically nine digits long,
+- *US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER*
+
+A US Individual Taxpayer Identification Number (ITIN) is a nine-digit number that starts with a "9" and contain a "7" or "8" as the fourth digit. An ITIN can be formatted with a space or a dash after the third and forth digits.
+- *US_PASSPORT_NUMBER*
+
+A US passport number. Passport numbers range from six to nine alphanumeric characters.
+- *US_SOCIAL_SECURITY_NUMBER*
+
+A US Social Security Number (SSN) is a nine-digit number that is issued to US citizens, permanent residents, and temporary working residents.
+- *Canada specific*
+
+- *CA_HEALTH_NUMBER*
+
+A Canadian Health Service Number is a 10-digit unique identifier, required for individuals to access healthcare benefits.
+- *CA_SOCIAL_INSURANCE_NUMBER*
+
+A Canadian Social Insurance Number (SIN) is a nine-digit unique identifier, required for individuals to access government programs and benefits.
+
+The SIN is formatted as three groups of three digits, such as *123-456-789* . A SIN can be validated through a simple check-digit process called the [Luhn algorithm](https://docs.aws.amazon.com/https://www.wikipedia.org/wiki/Luhn_algorithm) .
+- *UK Specific*
+
+- *UK_NATIONAL_HEALTH_SERVICE_NUMBER*
+
+A UK National Health Service Number is a 10-17 digit number, such as *485 777 3456* . The current system formats the 10-digit number with spaces after the third and sixth digits. The final digit is an error-detecting checksum.
+- *UK_NATIONAL_INSURANCE_NUMBER*
+
+A UK National Insurance Number (NINO) provides individuals with access to National Insurance (social security) benefits. It is also used for some purposes in the UK tax system.
+
+The number is nine digits long and starts with two letters, followed by six numbers and one letter. A NINO can be formatted with a space or a dash after the two letters and after the second, forth, and sixth digits.
+- *UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER*
+
+A UK Unique Taxpayer Reference (UTR) is a 10-digit number that identifies a taxpayer or a business.
+- *Custom*
+
+- *Regex filter* - You can use a regular expressions to define patterns for a guardrail to recognize and act upon such as serial number, booking ID etc..
+
+##### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes"></a>4.1.6.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional array of regex pattern filter configurations for detecting custom sensitive patterns in inputs and outputs. Provides flexible pattern-based filtering for organization-specific sensitive information and custom data protection requirements.
+
+Use cases: Custom pattern detection; Organization-specific filtering; Flexible data protection; Pattern-based security
+
+AWS: Bedrock guardrail regex filters for custom pattern detection and flexible data protection
+
+Validation: Must be array of valid RegexConfigProperty if provided; enables custom pattern detection and filtering
+  *
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                | Description                                            |
+| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [CfnGuardrail.RegexConfigProperty](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items) | The regular expression to configure for the guardrail. |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items"></a>4.1.6.2.1. root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > CfnGuardrail.RegexConfigProperty
+
+|                           |                                                |
+| ------------------------- | ---------------------------------------------- |
+| **Type**                  | `object`                                       |
+| **Required**              | No                                             |
+| **Additional properties** | Not allowed                                    |
+| **Defined in**            | #/definitions/CfnGuardrail.RegexConfigProperty |
+
+**Description:** The regular expression to configure for the guardrail.
+
+| Property                                                                                                     | Pattern | Type        | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------ | ------- | ----------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [action](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_action )               | No      | string      | No         | -          | The guardrail action to configure when matching regular expression is detected.                                                                                                                                                                                                    |
+| - [description](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_description )     | No      | string      | No         | -          | The description of the regular expression to configure for the guardrail.                                                                                                                                                                                                          |
+| - [inputAction](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputAction )     | No      | string      | No         | -          | Specifies the action to take when harmful content is detected in the input. Supported values include:.<br /><br />- \`BLOCK\` – Block the content and replace it with blocked messaging.<br />- \`NONE\` – Take no action but return detection information in the trace response.  |
+| - [inputEnabled](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled )   | No      | Combination | No         | -          | Specifies whether to enable guardrail evaluation on the input.<br /><br />When disabled, you aren't charged for the evaluation. The evaluation doesn't appear in the response.                                                                                                     |
+| + [name](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_name )                   | No      | string      | No         | -          | The name of the regular expression to configure for the guardrail.                                                                                                                                                                                                                 |
+| - [outputAction](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputAction )   | No      | string      | No         | -          | Specifies the action to take when harmful content is detected in the output. Supported values include:.<br /><br />- \`BLOCK\` – Block the content and replace it with blocked messaging.<br />- \`NONE\` – Take no action but return detection information in the trace response. |
+| - [outputEnabled](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled ) | No      | Combination | No         | -          | Specifies whether to enable guardrail evaluation on the output.<br /><br />When disabled, you aren't charged for the evaluation. The evaluation doesn't appear in the response.                                                                                                    |
+| + [pattern](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_pattern )             | No      | string      | No         | -          | The regular expression pattern to configure for the guardrail.                                                                                                                                                                                                                     |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_action"></a>4.1.6.2.1.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > action`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** The guardrail action to configure when matching regular expression is detected.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_description"></a>4.1.6.2.1.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > description`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** The description of the regular expression to configure for the guardrail.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputAction"></a>4.1.6.2.1.3. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputAction`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Specifies the action to take when harmful content is detected in the input. Supported values include:.
+
+- `BLOCK` – Block the content and replace it with blocked messaging.
+- `NONE` – Take no action but return detection information in the trace response.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled"></a>4.1.6.2.1.4. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputEnabled`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Specifies whether to enable guardrail evaluation on the input.
+
+When disabled, you aren't charged for the evaluation. The evaluation doesn't appear in the response.
+
+| Any of(Option)                                                                                                  |
+| --------------------------------------------------------------------------------------------------------------- |
+| [IResolvable](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled_anyOf_i0) |
+| [item 1](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled_anyOf_i1)      |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled_anyOf_i0"></a>4.1.6.2.1.4.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputEnabled > anyOf > IResolvable`
+
+|                           |                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                      |
+| **Required**              | No                                                                                                                                            |
+| **Additional properties** | Not allowed                                                                                                                                   |
+| **Same definition as**    | [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0) |
+
+**Description:** Interface for values that can be resolvable later
+
+Tokens are special objects that participate in synthesis.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled_anyOf_i1"></a>4.1.6.2.1.4.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputEnabled > anyOf > item 1`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_name"></a>4.1.6.2.1.5. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** The name of the regular expression to configure for the guardrail.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputAction"></a>4.1.6.2.1.6. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputAction`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Specifies the action to take when harmful content is detected in the output. Supported values include:.
+
+- `BLOCK` – Block the content and replace it with blocked messaging.
+- `NONE` – Take no action but return detection information in the trace response.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled"></a>4.1.6.2.1.7. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputEnabled`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Specifies whether to enable guardrail evaluation on the output.
+
+When disabled, you aren't charged for the evaluation. The evaluation doesn't appear in the response.
+
+| Any of(Option)                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------- |
+| [IResolvable](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled_anyOf_i0) |
+| [item 1](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled_anyOf_i1)      |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled_anyOf_i0"></a>4.1.6.2.1.7.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputEnabled > anyOf > IResolvable`
+
+|                           |                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                      |
+| **Required**              | No                                                                                                                                            |
+| **Additional properties** | Not allowed                                                                                                                                   |
+| **Same definition as**    | [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0) |
+
+**Description:** Interface for values that can be resolvable later
+
+Tokens are special objects that participate in synthesis.
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled_anyOf_i1"></a>4.1.6.2.1.7.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputEnabled > anyOf > item 1`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_pattern"></a>4.1.6.2.1.8. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > pattern`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** The regular expression pattern to configure for the guardrail.
+
+## <a name="kmsKeyArn"></a>5. Property `root > kmsKeyArn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional KMS key ARN for Bedrock resource encryption enabling customer-controlled encryption and enhanced security compliance. When provided, uses existing KMS key for encrypting agent resources; otherwise creates customer-managed key for data protection and security compliance.
+
+Use cases: Resource encryption; Customer-controlled keys; Security compliance; Data protection
+
+AWS: KMS key ARN for Bedrock resource encryption and customer-controlled data protection
+
+Validation: Must be valid KMS key ARN if provided; enables customer-controlled encryption for Bedrock resources
+
+## <a name="knowledgeBases"></a>6. Property `root > knowledgeBases`
+
+|                           |                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                    |
+| **Required**              | No                                                                                          |
+| **Additional properties** | [Each additional property must conform to the schema](#knowledgeBases_additionalProperties) |
+| **Defined in**            | #/definitions/NamedKnowledgeBaseProps                                                       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional knowledge base configurations for document-based AI capabilities enabling intelligent document processing and question-answering systems. Provides knowledge base setup with document ingestion, embedding generation, and retrieval capabilities for AI-powered information systems.
+
+Use cases: Knowledge management; Document processing; Question-answering systems; Information retrieval
+
+AWS: Bedrock knowledge bases for document-based AI capabilities and intelligent information systems
+
+Validation: Must be valid NamedKnowledgeBaseProps if provided; enables knowledge base deployment and document AI
+  *
+
+| Property                                    | Pattern | Type   | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [](#knowledgeBases_additionalProperties ) | No      | object | No         | In #/definitions/BedrockKnowledgeBaseProps | Q-ENHANCED-INTERFACE<br />Comprehensive Bedrock knowledge base properties interface with complete RAG configuration including data sources, vector storage, and embedding management. Defines knowledge base configuration for document ingestion, vector processing, and intelligent retrieval with support for multiple data sources and advanced AI capabilities.<br /><br />Use cases: RAG implementation; Knowledge management; Document retrieval; AI-powered search; Enterprise knowledge bases<br /><br />AWS: Amazon Bedrock knowledge base configuration for RAG implementation and intelligent document retrieval<br /><br />Validation: vectorStore, embeddingModel, and role are required; data sources and advanced features are optional |
+
+### <a name="knowledgeBases_additionalProperties"></a>6.1. Property `root > knowledgeBases > BedrockKnowledgeBaseProps`
+
+|                           |                                         |
+| ------------------------- | --------------------------------------- |
+| **Type**                  | `object`                                |
+| **Required**              | No                                      |
+| **Additional properties** | Not allowed                             |
+| **Defined in**            | #/definitions/BedrockKnowledgeBaseProps |
+
+**Description:** Q-ENHANCED-INTERFACE
+Comprehensive Bedrock knowledge base properties interface with complete RAG configuration including data sources, vector storage, and embedding management. Defines knowledge base configuration for document ingestion, vector processing, and intelligent retrieval with support for multiple data sources and advanced AI capabilities.
+
+Use cases: RAG implementation; Knowledge management; Document retrieval; AI-powered search; Enterprise knowledge bases
+
+AWS: Amazon Bedrock knowledge base configuration for RAG implementation and intelligent document retrieval
+
+Validation: vectorStore, embeddingModel, and role are required; data sources and advanced features are optional
+
+| Property                                                                                 | Pattern | Type   | Deprecated | Definition                                         | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------------------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [embeddingModel](#knowledgeBases_additionalProperties_embeddingModel )                 | No      | string | No         | -                                                  | Q-ENHANCED-PROPERTY<br />Required embedding model specification for vector generation enabling semantic understanding and similarity matching. Defines the Bedrock embedding model used for generating document vectors with specific dimensionality and semantic capabilities for optimal knowledge retrieval performance.<br /><br />Use cases: Vector generation; Semantic understanding; Similarity matching; Embedding optimization<br /><br />AWS: Bedrock embedding model for knowledge base vector generation and semantic understanding<br /><br />Validation: Must be valid Bedrock embedding model ID; required for vector generation and semantic processing                                                                              |
+| + [role](#knowledgeBases_additionalProperties_role )                                     | No      | object | No         | Same as [role](#agents_additionalProperties_role ) | Q-ENHANCED-PROPERTY<br />Required IAM role reference for knowledge base execution enabling secure access to AWS services and data sources. Provides the execution role for knowledge base operations with required permissions for Bedrock services, S3 data access, and optional Lambda sync functionality for knowledge base management.<br /><br />Use cases: Execution permissions; Service access; Data source connectivity; Security management<br /><br />AWS: IAM role for Bedrock knowledge base execution and secure service access<br /><br />Validation: Must be valid MdaaRoleRef with Bedrock trust policy; required for knowledge base execution and service access                                                                    |
+| - [s3DataSources](#knowledgeBases_additionalProperties_s3DataSources )                   | No      | object | No         | In #/definitions/NamedS3DataSource                 | Q-ENHANCED-PROPERTY<br />Optional S3 data sources configuration for cloud document integration enabling scalable document ingestion and knowledge base population. Provides S3-specific data source configurations for cloud document repositories with bucket and prefix-based organization for flexible content management.<br /><br />Use cases: Cloud document integration; S3 connectivity; Scalable ingestion; Flexible content management<br /><br />AWS: Bedrock knowledge base S3 data sources for cloud document integration and scalable content ingestion<br /><br />Validation: Must be valid NamedS3DataSource if provided; enables S3 integration and cloud document access<br />  *                                                   |
+| - [sharepointDataSources](#knowledgeBases_additionalProperties_sharepointDataSources )   | No      | object | No         | In #/definitions/NamedSharepointDataSources        | Q-ENHANCED-PROPERTY<br />Optional SharePoint data sources configuration for enterprise document integration enabling SharePoint content ingestion and knowledge base population. Provides SharePoint-specific data source configurations for enterprise document repositories and corporate knowledge management.<br /><br />Use cases: Enterprise document integration; SharePoint connectivity; Corporate knowledge management; Enterprise content ingestion<br /><br />AWS: Bedrock knowledge base SharePoint data sources for enterprise document integration and corporate content ingestion<br /><br />Validation: Must be valid NamedSharepointDataSources if provided; enables SharePoint integration and enterprise document access<br />  * |
+| - [supplementalBucketName](#knowledgeBases_additionalProperties_supplementalBucketName ) | No      | string | No         | -                                                  | Q-ENHANCED-PROPERTY<br />Optional supplemental S3 bucket name for advanced parsing workflows enabling enhanced document processing and AI-powered content extraction. Required when using advanced parsing strategies like Bedrock Data Automation or foundation model parsing for sophisticated document analysis and content extraction.<br /><br />Use cases: Advanced parsing; Enhanced processing; AI-powered extraction; Sophisticated document analysis<br /><br />AWS: S3 bucket for Bedrock knowledge base advanced parsing workflows and enhanced document processing<br /><br />Validation: Must be valid S3 bucket name if provided; required when using BEDROCK_DATA_AUTOMATION or BEDROCK_FOUNDATION_MODEL parsing                      |
+| - [vectorFieldSize](#knowledgeBases_additionalProperties_vectorFieldSize )               | No      | number | No         | -                                                  | Q-ENHANCED-PROPERTY<br />Optional vector field size specification for embedding dimensionality enabling vector storage optimization and performance tuning. Defines the dimensionality of vector embeddings for storage optimization and retrieval performance with model-specific requirements and storage efficiency.<br /><br />Use cases: Vector optimization; Storage efficiency; Performance tuning; Dimensionality control<br /><br />AWS: Bedrock knowledge base vector field size for embedding dimensionality and storage optimization<br /><br />Validation: Must be positive integer matching embedding model dimensions if provided; enables vector storage optimization                                                                 |
+| + [vectorStore](#knowledgeBases_additionalProperties_vectorStore )                       | No      | string | No         | -                                                  | Q-ENHANCED-PROPERTY<br />Required vector store reference for knowledge base vector storage enabling semantic search and retrieval capabilities. Specifies the vector store configuration that will be used for storing and retrieving document embeddings for AI-powered semantic search and intelligent document retrieval.<br /><br />Use cases: Vector storage; Semantic search; Document retrieval; AI-powered search<br /><br />AWS: Bedrock knowledge base vector store reference for semantic search and intelligent document retrieval<br /><br />Validation: Must be valid vector store name; required for knowledge base vector storage and retrieval capabilities                                                                          |
+
+#### <a name="knowledgeBases_additionalProperties_embeddingModel"></a>6.1.1. Property `root > knowledgeBases > additionalProperties > embeddingModel`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required embedding model specification for vector generation enabling semantic understanding and similarity matching. Defines the Bedrock embedding model used for generating document vectors with specific dimensionality and semantic capabilities for optimal knowledge retrieval performance.
+
+Use cases: Vector generation; Semantic understanding; Similarity matching; Embedding optimization
+
+AWS: Bedrock embedding model for knowledge base vector generation and semantic understanding
+
+Validation: Must be valid Bedrock embedding model ID; required for vector generation and semantic processing
+
+#### <a name="knowledgeBases_additionalProperties_role"></a>6.1.2. Property `root > knowledgeBases > additionalProperties > role`
+
+|                           |                                           |
+| ------------------------- | ----------------------------------------- |
+| **Type**                  | `object`                                  |
+| **Required**              | Yes                                       |
+| **Additional properties** | Not allowed                               |
+| **Same definition as**    | [role](#agents_additionalProperties_role) |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required IAM role reference for knowledge base execution enabling secure access to AWS services and data sources. Provides the execution role for knowledge base operations with required permissions for Bedrock services, S3 data access, and optional Lambda sync functionality for knowledge base management.
+
+Use cases: Execution permissions; Service access; Data source connectivity; Security management
+
+AWS: IAM role for Bedrock knowledge base execution and secure service access
+
+Validation: Must be valid MdaaRoleRef with Bedrock trust policy; required for knowledge base execution and service access
+
+#### <a name="knowledgeBases_additionalProperties_s3DataSources"></a>6.1.3. Property `root > knowledgeBases > additionalProperties > s3DataSources`
+
+|                           |                                                                                                                                |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                                                       |
+| **Required**              | No                                                                                                                             |
+| **Additional properties** | [Each additional property must conform to the schema](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties) |
+| **Defined in**            | #/definitions/NamedS3DataSource                                                                                                |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional S3 data sources configuration for cloud document integration enabling scalable document ingestion and knowledge base population. Provides S3-specific data source configurations for cloud document repositories with bucket and prefix-based organization for flexible content management.
+
+Use cases: Cloud document integration; S3 connectivity; Scalable ingestion; Flexible content management
+
+AWS: Bedrock knowledge base S3 data sources for cloud document integration and scalable content ingestion
+
+Validation: Must be valid NamedS3DataSource if provided; enables S3 integration and cloud document access
+  *
+
+| Property                                                                       | Pattern | Type   | Deprecated | Definition                    | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------ | ------- | ------ | ---------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties ) | No      | object | No         | In #/definitions/S3DataSource | Q-ENHANCED-INTERFACE<br />S3 data source configuration interface for Bedrock knowledge bases providing S3 integration and data source management capabilities. Defines S3 data source properties for knowledge base data ingestion including S3 bucket configuration, data source management, and content ingestion for AI knowledge base population from S3 storage.<br /><br />Use cases: S3 data integration; Data source management; Content ingestion; Knowledge base population; S3 bucket configuration; AI data sources<br /><br />AWS: Amazon Bedrock S3 data source configuration with S3 integration and automated content ingestion for knowledge bases<br /><br />Validation: Configuration must be valid for Bedrock knowledge base deployment; properties must conform to AWS Bedrock and AI service requirements |
+
+##### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties"></a>6.1.3.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > S3DataSource`
+
+|                           |                            |
+| ------------------------- | -------------------------- |
+| **Type**                  | `object`                   |
+| **Required**              | No                         |
+| **Additional properties** | Not allowed                |
+| **Defined in**            | #/definitions/S3DataSource |
+
+**Description:** Q-ENHANCED-INTERFACE
+S3 data source configuration interface for Bedrock knowledge bases providing S3 integration and data source management capabilities. Defines S3 data source properties for knowledge base data ingestion including S3 bucket configuration, data source management, and content ingestion for AI knowledge base population from S3 storage.
+
+Use cases: S3 data integration; Data source management; Content ingestion; Knowledge base population; S3 bucket configuration; AI data sources
+
+AWS: Amazon Bedrock S3 data source configuration with S3 integration and automated content ingestion for knowledge bases
+
+Validation: Configuration must be valid for Bedrock knowledge base deployment; properties must conform to AWS Bedrock and AI service requirements
+
+| Property                                                                                                                                | Pattern | Type    | Deprecated | Definition                                    | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [bucketName](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_bucketName )                                     | No      | string  | No         | -                                             | Q-ENHANCED-PROPERTY<br />Required S3 bucket name containing source documents for knowledge base ingestion enabling centralized document storage and automated content processing. Provides the S3 bucket that contains documents to be processed and ingested into the knowledge base for AI-powered search and retrieval capabilities.<br /><br />Use cases: Document storage; Content ingestion; Centralized data source; Knowledge base population<br /><br />AWS: S3 bucket name for Bedrock knowledge base data source and automated document ingestion<br /><br />Validation: Must be valid S3 bucket name; required for S3 data source configuration and document ingestion                                                                                  |
+| - [enableMultiSync](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_enableMultiSync )                           | No      | boolean | No         | -                                             | Q-ENHANCED-PROPERTY<br />Optional comprehensive multi-event synchronization flag for batch document processing enabling simultaneous multiple object processing and parallel knowledge base updates. Enables automatic processing of multiple S3 objects simultaneously with comprehensive event handling (CREATE, PUT, POST, DELETE) for efficient batch synchronization.<br /><br />Use cases: Batch processing; Multiple object handling; Parallel updates; Comprehensive event processing<br /><br />AWS: Bedrock knowledge base multi-event sync for simultaneous multiple object processing and batch updates<br /><br />Validation: Boolean value; defaults to false; enables multiple object simultaneous processing and batch synchronization              |
+| - [enableSync](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_enableSync )                                     | No      | boolean | No         | -                                             | Q-ENHANCED-PROPERTY<br />Optional automatic synchronization flag for real-time document processing enabling single object processing and sequential knowledge base updates. Enables automatic processing of new or updated S3 objects one at a time for controlled knowledge base synchronization and sequential content ingestion.<br /><br />Use cases: Single object processing; Sequential updates; Controlled synchronization; One-at-a-time processing<br /><br />AWS: Bedrock knowledge base automatic sync for single object S3 document processing and sequential updates<br /><br />Validation: Boolean value; defaults to false; enables single object automatic synchronization and sequential processing                                               |
+| - [prefix](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_prefix )                                             | No      | string  | No         | -                                             | Q-ENHANCED-PROPERTY<br />Optional S3 object prefix for selective document ingestion enabling targeted content processing and organized data source management. Provides prefix-based filtering to limit which objects in the bucket are included in knowledge base processing for focused content ingestion and management.<br /><br />Use cases: Selective ingestion; Content filtering; Organized processing; Targeted data source management<br /><br />AWS: S3 object prefix for Bedrock knowledge base selective document ingestion and content filtering<br /><br />Validation: Must be valid S3 prefix if provided; enables selective document processing and content organization                                                                           |
+| - [syncLambdaRoleArn](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_syncLambdaRoleArn )                       | No      | string  | No         | -                                             | Q-ENHANCED-PROPERTY<br />Optional IAM role ARN for batch sync Lambda function execution enabling multi-object processing and comprehensive S3 event handling. Provides execution role for batch synchronization Lambda functions when enableMultiSync is enabled, requiring specific permissions for CloudWatch Logs, SQS, Bedrock ingestion jobs, and KMS operations.<br /><br />Use cases: Batch processing; Multi-object sync; Lambda execution; Comprehensive event handling<br /><br />AWS: IAM role ARN for Bedrock knowledge base batch sync Lambda function execution and multi-object processing<br /><br />Validation: Must be valid IAM role ARN when enableMultiSync is true; role must have lambda.amazonaws.com trust policy and required permissions |
+| - [vectorIngestionConfiguration](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration ) | No      | object  | No         | In #/definitions/VectorIngestionConfiguration | Q-ENHANCED-PROPERTY<br />Optional vector ingestion configuration for document processing and embedding generation enabling customized content processing and vector optimization. Provides vector ingestion settings for document parsing, chunking, and transformation to optimize knowledge base performance and retrieval accuracy.<br /><br />Use cases: Document processing; Embedding generation; Vector optimization; Content customization<br /><br />AWS: Bedrock knowledge base vector ingestion configuration for document processing and embedding optimization<br /><br />Validation: Must be valid VectorIngestionConfiguration if provided; enables customized document processing and vector generation                                             |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_bucketName"></a>6.1.3.1.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > bucketName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required S3 bucket name containing source documents for knowledge base ingestion enabling centralized document storage and automated content processing. Provides the S3 bucket that contains documents to be processed and ingested into the knowledge base for AI-powered search and retrieval capabilities.
+
+Use cases: Document storage; Content ingestion; Centralized data source; Knowledge base population
+
+AWS: S3 bucket name for Bedrock knowledge base data source and automated document ingestion
+
+Validation: Must be valid S3 bucket name; required for S3 data source configuration and document ingestion
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_enableMultiSync"></a>6.1.3.1.2. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > enableMultiSync`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional comprehensive multi-event synchronization flag for batch document processing enabling simultaneous multiple object processing and parallel knowledge base updates. Enables automatic processing of multiple S3 objects simultaneously with comprehensive event handling (CREATE, PUT, POST, DELETE) for efficient batch synchronization.
+
+Use cases: Batch processing; Multiple object handling; Parallel updates; Comprehensive event processing
+
+AWS: Bedrock knowledge base multi-event sync for simultaneous multiple object processing and batch updates
+
+Validation: Boolean value; defaults to false; enables multiple object simultaneous processing and batch synchronization
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_enableSync"></a>6.1.3.1.3. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > enableSync`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional automatic synchronization flag for real-time document processing enabling single object processing and sequential knowledge base updates. Enables automatic processing of new or updated S3 objects one at a time for controlled knowledge base synchronization and sequential content ingestion.
+
+Use cases: Single object processing; Sequential updates; Controlled synchronization; One-at-a-time processing
+
+AWS: Bedrock knowledge base automatic sync for single object S3 document processing and sequential updates
+
+Validation: Boolean value; defaults to false; enables single object automatic synchronization and sequential processing
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_prefix"></a>6.1.3.1.4. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > prefix`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional S3 object prefix for selective document ingestion enabling targeted content processing and organized data source management. Provides prefix-based filtering to limit which objects in the bucket are included in knowledge base processing for focused content ingestion and management.
+
+Use cases: Selective ingestion; Content filtering; Organized processing; Targeted data source management
+
+AWS: S3 object prefix for Bedrock knowledge base selective document ingestion and content filtering
+
+Validation: Must be valid S3 prefix if provided; enables selective document processing and content organization
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_syncLambdaRoleArn"></a>6.1.3.1.5. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > syncLambdaRoleArn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional IAM role ARN for batch sync Lambda function execution enabling multi-object processing and comprehensive S3 event handling. Provides execution role for batch synchronization Lambda functions when enableMultiSync is enabled, requiring specific permissions for CloudWatch Logs, SQS, Bedrock ingestion jobs, and KMS operations.
+
+Use cases: Batch processing; Multi-object sync; Lambda execution; Comprehensive event handling
+
+AWS: IAM role ARN for Bedrock knowledge base batch sync Lambda function execution and multi-object processing
+
+Validation: Must be valid IAM role ARN when enableMultiSync is true; role must have lambda.amazonaws.com trust policy and required permissions
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration"></a>6.1.3.1.6. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration`
+
+|                           |                                            |
+| ------------------------- | ------------------------------------------ |
+| **Type**                  | `object`                                   |
+| **Required**              | No                                         |
+| **Additional properties** | Not allowed                                |
+| **Defined in**            | #/definitions/VectorIngestionConfiguration |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional vector ingestion configuration for document processing and embedding generation enabling customized content processing and vector optimization. Provides vector ingestion settings for document parsing, chunking, and transformation to optimize knowledge base performance and retrieval accuracy.
+
+Use cases: Document processing; Embedding generation; Vector optimization; Content customization
+
+AWS: Bedrock knowledge base vector ingestion configuration for document processing and embedding optimization
+
+Validation: Must be valid VectorIngestionConfiguration if provided; enables customized document processing and vector generation
+
+| Property                                                                                                                                                                       | Pattern | Type   | Deprecated | Definition                                         | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [chunkingConfiguration](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration )                         | No      | object | No         | In #/definitions/ChunkingConfiguration             | Q-ENHANCED-PROPERTY<br />Optional document chunking configuration for content segmentation and organization enabling optimized vector processing and retrieval. Provides chunking configuration for document content segmentation including chunking strategies and processing methods for enhanced knowledge base performance.<br /><br />Use cases: Content segmentation; Document organization; Vector processing; Retrieval optimization<br /><br />AWS: Bedrock knowledge base chunking configuration for document segmentation and vector processing<br /><br />Validation: Must be valid ChunkingConfiguration if provided; enables document chunking and content segmentation capabilities                                                               |
+| - [customTransformationConfiguration](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_customTransformationConfiguration ) | No      | object | No         | In #/definitions/CustomTransformationConfiguration | Q-ENHANCED-PROPERTY<br />Optional custom transformation configuration for advanced document processing enabling Lambda-based content manipulation and custom processing workflows. Provides custom transformation configuration for advanced document processing including Lambda functions and custom processing pipelines for specialized content handling.<br /><br />Use cases: Custom processing; Advanced transformation; Lambda-based processing; Specialized content handling<br /><br />AWS: Bedrock knowledge base custom transformation configuration for advanced document processing and manipulation<br /><br />Validation: Must be valid CustomTransformationConfiguration if provided; enables custom processing and transformation capabilities |
+| - [parsingConfiguration](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration )                           | No      | object | No         | In #/definitions/ParsingConfiguration              | Q-ENHANCED-PROPERTY<br />Optional document parsing configuration for content extraction and processing enabling document analysis and content preparation. Provides parsing configuration for document content extraction including parsing strategies and processing methods for knowledge base ingestion and vector generation.<br /><br />Use cases: Document parsing; Content extraction; Processing configuration; Content preparation<br /><br />AWS: Bedrock knowledge base parsing configuration for document content extraction and processing<br /><br />Validation: Must be valid ParsingConfiguration if provided; enables document parsing and content extraction capabilities                                                                      |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration"></a>6.1.3.1.6.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration`
+
+|                           |                                     |
+| ------------------------- | ----------------------------------- |
+| **Type**                  | `object`                            |
+| **Required**              | No                                  |
+| **Additional properties** | Not allowed                         |
+| **Defined in**            | #/definitions/ChunkingConfiguration |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional document chunking configuration for content segmentation and organization enabling optimized vector processing and retrieval. Provides chunking configuration for document content segmentation including chunking strategies and processing methods for enhanced knowledge base performance.
+
+Use cases: Content segmentation; Document organization; Vector processing; Retrieval optimization
+
+AWS: Bedrock knowledge base chunking configuration for document segmentation and vector processing
+
+Validation: Must be valid ChunkingConfiguration if provided; enables document chunking and content segmentation capabilities
+
+| Property                                                                                                                                                                                             | Pattern | Type             | Deprecated | Definition                            | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [chunkingStrategy](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_chunkingStrategy )                                   | No      | enum (of string) | No         | In #/definitions/ChunkingStrategy     | Q-ENHANCED-PROPERTY<br />Required chunking strategy specification for document processing workflow enabling selection between different segmentation approaches. Defines the chunking method for document content segmentation including fixed-size, hierarchical, semantic, or no chunking strategies for optimized knowledge base processing and retrieval.<br /><br />Use cases: Chunking strategy selection; Document segmentation; Processing workflow; Content organization<br /><br />AWS: Bedrock knowledge base chunking strategy for document segmentation and content processing workflow<br /><br />Validation: Must be FIXED_SIZE, HIERARCHICAL, SEMANTIC, or NONE; required for chunking configuration and processing strategy<br />  * |
+| - [fixedSizeChunkingConfiguration](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_fixedSizeChunkingConfiguration )       | No      | object           | No         | In #/definitions/FixedSizeChunking    | Q-ENHANCED-PROPERTY<br />Optional fixed-size chunking configuration for consistent document segmentation enabling uniform chunk sizes and predictable processing. Provides configuration for fixed-size chunking strategy with token limits and overlap settings for consistent document processing and retrieval optimization.<br /><br />Use cases: Consistent segmentation; Uniform chunk sizes; Predictable processing; Fixed-size strategy<br /><br />AWS: Bedrock knowledge base fixed-size chunking configuration for consistent document segmentation<br /><br />Validation: Must be valid FixedSizeChunking if provided; required when using FIXED_SIZE chunking strategy<br />  *                                                           |
+| - [hierarchicalChunkingConfiguration](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_hierarchicalChunkingConfiguration ) | No      | object           | No         | In #/definitions/HierarchicalChunking | Q-ENHANCED-PROPERTY<br />Optional hierarchical chunking configuration for multi-level document segmentation enabling structured content organization with varying granularity. Provides configuration for hierarchical chunking strategy with level-based processing and structured content organization for advanced knowledge management.<br /><br />Use cases: Multi-level segmentation; Structured organization; Hierarchical processing; Advanced knowledge management<br /><br />AWS: Bedrock knowledge base hierarchical chunking configuration for multi-level document processing<br /><br />Validation: Must be valid HierarchicalChunking if provided; required when using HIERARCHICAL chunking strategy<br />  *                         |
+| - [semanticChunkingConfiguration](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_semanticChunkingConfiguration )         | No      | object           | No         | In #/definitions/SemanticChunking     | Q-ENHANCED-PROPERTY<br />Optional semantic chunking configuration for intelligent document segmentation enabling meaning-based content organization and context preservation. Provides configuration for semantic chunking strategy with AI-powered boundary detection and semantic coherence for enhanced knowledge understanding.<br /><br />Use cases: Intelligent segmentation; Meaning-based organization; Context preservation; Semantic coherence<br /><br />AWS: Bedrock knowledge base semantic chunking configuration for intelligent document segmentation<br /><br />Validation: Must be valid SemanticChunking if provided; required when using SEMANTIC chunking strategy<br />  *                                                      |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_chunkingStrategy"></a>6.1.3.1.6.1.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > chunkingStrategy`
+
+|                |                                |
+| -------------- | ------------------------------ |
+| **Type**       | `enum (of string)`             |
+| **Required**   | Yes                            |
+| **Defined in** | #/definitions/ChunkingStrategy |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required chunking strategy specification for document processing workflow enabling selection between different segmentation approaches. Defines the chunking method for document content segmentation including fixed-size, hierarchical, semantic, or no chunking strategies for optimized knowledge base processing and retrieval.
+
+Use cases: Chunking strategy selection; Document segmentation; Processing workflow; Content organization
+
+AWS: Bedrock knowledge base chunking strategy for document segmentation and content processing workflow
+
+Validation: Must be FIXED_SIZE, HIERARCHICAL, SEMANTIC, or NONE; required for chunking configuration and processing strategy
+  *
+
+Must be one of:
+* "FIXED_SIZE"
+* "HIERARCHICAL"
+* "NONE"
+* "SEMANTIC"
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_fixedSizeChunkingConfiguration"></a>6.1.3.1.6.1.2. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > fixedSizeChunkingConfiguration`
+
+|                           |                                 |
+| ------------------------- | ------------------------------- |
+| **Type**                  | `object`                        |
+| **Required**              | No                              |
+| **Additional properties** | Not allowed                     |
+| **Defined in**            | #/definitions/FixedSizeChunking |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional fixed-size chunking configuration for consistent document segmentation enabling uniform chunk sizes and predictable processing. Provides configuration for fixed-size chunking strategy with token limits and overlap settings for consistent document processing and retrieval optimization.
+
+Use cases: Consistent segmentation; Uniform chunk sizes; Predictable processing; Fixed-size strategy
+
+AWS: Bedrock knowledge base fixed-size chunking configuration for consistent document segmentation
+
+Validation: Must be valid FixedSizeChunking if provided; required when using FIXED_SIZE chunking strategy
+  *
+
+| Property                                                                                                                                                                                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [maxTokens](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_fixedSizeChunkingConfiguration_maxTokens )                 | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />Required maximum token count per document chunk for fixed-size chunking strategy enabling consistent chunk sizing and optimized knowledge retrieval. Defines the maximum number of tokens that each document chunk can contain for balanced processing and effective vector embedding generation.<br /><br />Use cases: Chunk size control; Token management; Processing optimization; Embedding generation<br /><br />AWS: Bedrock knowledge base fixed-size chunking maximum tokens for document segmentation and processing<br /><br />Validation: Must be positive integer; required for fixed-size chunking configuration and document processing                         |
+| + [overlapPercentage](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_fixedSizeChunkingConfiguration_overlapPercentage ) | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />Required overlap percentage between adjacent document chunks for fixed-size chunking strategy enabling context preservation and improved retrieval accuracy. Defines the percentage of content overlap between consecutive chunks to maintain context continuity and enhance information retrieval.<br /><br />Use cases: Context preservation; Retrieval accuracy; Content continuity; Information overlap<br /><br />AWS: Bedrock knowledge base fixed-size chunking overlap percentage for context preservation and retrieval optimization<br /><br />Validation: Must be percentage value between 0-100; required for chunk overlap configuration and context preservation |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_fixedSizeChunkingConfiguration_maxTokens"></a>6.1.3.1.6.1.2.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > fixedSizeChunkingConfiguration > maxTokens`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required maximum token count per document chunk for fixed-size chunking strategy enabling consistent chunk sizing and optimized knowledge retrieval. Defines the maximum number of tokens that each document chunk can contain for balanced processing and effective vector embedding generation.
+
+Use cases: Chunk size control; Token management; Processing optimization; Embedding generation
+
+AWS: Bedrock knowledge base fixed-size chunking maximum tokens for document segmentation and processing
+
+Validation: Must be positive integer; required for fixed-size chunking configuration and document processing
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_fixedSizeChunkingConfiguration_overlapPercentage"></a>6.1.3.1.6.1.2.2. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > fixedSizeChunkingConfiguration > overlapPercentage`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required overlap percentage between adjacent document chunks for fixed-size chunking strategy enabling context preservation and improved retrieval accuracy. Defines the percentage of content overlap between consecutive chunks to maintain context continuity and enhance information retrieval.
+
+Use cases: Context preservation; Retrieval accuracy; Content continuity; Information overlap
+
+AWS: Bedrock knowledge base fixed-size chunking overlap percentage for context preservation and retrieval optimization
+
+Validation: Must be percentage value between 0-100; required for chunk overlap configuration and context preservation
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_hierarchicalChunkingConfiguration"></a>6.1.3.1.6.1.3. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > hierarchicalChunkingConfiguration`
+
+|                           |                                    |
+| ------------------------- | ---------------------------------- |
+| **Type**                  | `object`                           |
+| **Required**              | No                                 |
+| **Additional properties** | Not allowed                        |
+| **Defined in**            | #/definitions/HierarchicalChunking |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional hierarchical chunking configuration for multi-level document segmentation enabling structured content organization with varying granularity. Provides configuration for hierarchical chunking strategy with level-based processing and structured content organization for advanced knowledge management.
+
+Use cases: Multi-level segmentation; Structured organization; Hierarchical processing; Advanced knowledge management
+
+AWS: Bedrock knowledge base hierarchical chunking configuration for multi-level document processing
+
+Validation: Must be valid HierarchicalChunking if provided; required when using HIERARCHICAL chunking strategy
+  *
+
+| Property                                                                                                                                                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [levelConfigurations](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_hierarchicalChunkingConfiguration_levelConfigurations ) | No      | array  | No         | -          | Q-ENHANCED-PROPERTY<br />Required array of hierarchical chunking level configurations enabling multi-level document segmentation with varying granularity. Provides level-specific configurations for hierarchical document processing with different token limits per level for structured content organization and optimized knowledge retrieval.<br /><br />Use cases: Multi-level segmentation; Hierarchical organization; Structured chunking; Granular content control<br /><br />AWS: Bedrock knowledge base hierarchical chunking level configurations for multi-level document processing<br /><br />Validation: Must be array of valid HierarchicalChunkingLevelConfig objects; required for hierarchical chunking strategy |
+| + [overlapTokens](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_hierarchicalChunkingConfiguration_overlapTokens )             | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />Required token overlap count between hierarchical chunks enabling context preservation across chunk boundaries and improved information continuity. Defines the number of tokens that overlap between adjacent chunks to maintain context flow and enhance retrieval accuracy in hierarchical processing.<br /><br />Use cases: Context preservation; Information continuity; Chunk boundary management; Retrieval accuracy<br /><br />AWS: Bedrock knowledge base hierarchical chunking token overlap for context preservation and continuity<br /><br />Validation: Must be non-negative integer; required for hierarchical chunk overlap configuration and context management                             |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_hierarchicalChunkingConfiguration_levelConfigurations"></a>6.1.3.1.6.1.3.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > hierarchicalChunkingConfiguration > levelConfigurations`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | Yes     |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required array of hierarchical chunking level configurations enabling multi-level document segmentation with varying granularity. Provides level-specific configurations for hierarchical document processing with different token limits per level for structured content organization and optimized knowledge retrieval.
+
+Use cases: Multi-level segmentation; Hierarchical organization; Structured chunking; Granular content control
+
+AWS: Bedrock knowledge base hierarchical chunking level configurations for multi-level document processing
+
+Validation: Must be array of valid HierarchicalChunkingLevelConfig objects; required for hierarchical chunking strategy
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                                                                                                                           | Description              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| [HierarchicalChunkingLevelConfig](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_hierarchicalChunkingConfiguration_levelConfigurations_items) | Q-ENHANCED-INTERFACE ... |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_hierarchicalChunkingConfiguration_levelConfigurations_items"></a>6.1.3.1.6.1.3.1.1. root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > hierarchicalChunkingConfiguration > levelConfigurations > HierarchicalChunkingLevelConfig
+
+|                           |                                               |
+| ------------------------- | --------------------------------------------- |
+| **Type**                  | `object`                                      |
+| **Required**              | No                                            |
+| **Additional properties** | Not allowed                                   |
+| **Defined in**            | #/definitions/HierarchicalChunkingLevelConfig |
+
+**Description:** Q-ENHANCED-INTERFACE
+Hierarchical chunking level configuration interface for Bedrock knowledge bases providing multi-level document processing and hierarchical segmentation capabilities. Defines hierarchical chunking level properties for knowledge base document processing including level configuration, hierarchical segmentation, and multi-level content organization for advanced AI knowledge management.
+
+Use cases: Multi-level document processing; Hierarchical segmentation; Level configuration; Advanced knowledge management; Content organization; Hierarchical chunking
+
+AWS: Amazon Bedrock hierarchical chunking level configuration with multi-level document processing and hierarchical segmentation
+
+Validation: Configuration must be valid for Bedrock knowledge base deployment; properties must conform to AWS Bedrock and AI service requirements
+
+| Property                                                                                                                                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [maxTokens](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_hierarchicalChunkingConfiguration_levelConfigurations_items_maxTokens ) | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />Required maximum token count for hierarchical chunking level enabling multi-level document segmentation and structured content organization. Defines the token limit for this specific hierarchical level to create structured document chunks with varying granularity for optimized knowledge retrieval and hierarchical information access.<br /><br />Use cases: Hierarchical segmentation; Multi-level chunking; Structured organization; Granular content control<br /><br />AWS: Bedrock knowledge base hierarchical chunking level token limit for structured document segmentation<br /><br />Validation: Must be positive integer; required for hierarchical chunking level configuration and multi-level processing |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_hierarchicalChunkingConfiguration_levelConfigurations_items_maxTokens"></a>6.1.3.1.6.1.3.1.1.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > hierarchicalChunkingConfiguration > levelConfigurations > levelConfigurations items > maxTokens`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required maximum token count for hierarchical chunking level enabling multi-level document segmentation and structured content organization. Defines the token limit for this specific hierarchical level to create structured document chunks with varying granularity for optimized knowledge retrieval and hierarchical information access.
+
+Use cases: Hierarchical segmentation; Multi-level chunking; Structured organization; Granular content control
+
+AWS: Bedrock knowledge base hierarchical chunking level token limit for structured document segmentation
+
+Validation: Must be positive integer; required for hierarchical chunking level configuration and multi-level processing
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_hierarchicalChunkingConfiguration_overlapTokens"></a>6.1.3.1.6.1.3.2. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > hierarchicalChunkingConfiguration > overlapTokens`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required token overlap count between hierarchical chunks enabling context preservation across chunk boundaries and improved information continuity. Defines the number of tokens that overlap between adjacent chunks to maintain context flow and enhance retrieval accuracy in hierarchical processing.
+
+Use cases: Context preservation; Information continuity; Chunk boundary management; Retrieval accuracy
+
+AWS: Bedrock knowledge base hierarchical chunking token overlap for context preservation and continuity
+
+Validation: Must be non-negative integer; required for hierarchical chunk overlap configuration and context management
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_semanticChunkingConfiguration"></a>6.1.3.1.6.1.4. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > semanticChunkingConfiguration`
+
+|                           |                                |
+| ------------------------- | ------------------------------ |
+| **Type**                  | `object`                       |
+| **Required**              | No                             |
+| **Additional properties** | Not allowed                    |
+| **Defined in**            | #/definitions/SemanticChunking |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional semantic chunking configuration for intelligent document segmentation enabling meaning-based content organization and context preservation. Provides configuration for semantic chunking strategy with AI-powered boundary detection and semantic coherence for enhanced knowledge understanding.
+
+Use cases: Intelligent segmentation; Meaning-based organization; Context preservation; Semantic coherence
+
+AWS: Bedrock knowledge base semantic chunking configuration for intelligent document segmentation
+
+Validation: Must be valid SemanticChunking if provided; required when using SEMANTIC chunking strategy
+  *
+
+| Property                                                                                                                                                                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [breakpointPercentileThreshold](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_semanticChunkingConfiguration_breakpointPercentileThreshold ) | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />Required breakpoint percentile threshold for semantic boundary detection enabling intelligent chunk separation based on semantic similarity analysis. Defines the percentile threshold for determining semantic breakpoints in document content for optimal chunk boundaries and meaning preservation.<br /><br />Use cases: Semantic boundary detection; Intelligent separation; Similarity analysis; Optimal chunking<br /><br />AWS: Bedrock knowledge base semantic chunking breakpoint threshold for intelligent boundary detection<br /><br />Validation: Must be valid percentile value (0-100); required for semantic breakpoint detection and boundary analysis |
+| + [bufferSize](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_semanticChunkingConfiguration_bufferSize )                                       | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />Required buffer size specification for semantic context preservation enabling enhanced semantic boundary detection and improved content coherence. Defines the number of surrounding sentences to consider for semantic analysis and boundary determination in intelligent document segmentation.<br /><br />Use cases: Context preservation; Semantic boundary detection; Content coherence; Intelligent analysis<br /><br />AWS: Bedrock knowledge base semantic chunking buffer size for context preservation and boundary detection<br /><br />Validation: Must be positive integer; required for semantic chunking buffer configuration and context analysis        |
+| + [maxTokens](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_semanticChunkingConfiguration_maxTokens )                                         | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />Required maximum token count per semantic chunk enabling intelligent document segmentation based on meaning and context. Defines the token limit for semantic chunks while preserving semantic coherence and meaning-based boundaries for optimized knowledge retrieval and contextual understanding.<br /><br />Use cases: Semantic segmentation; Meaning preservation; Intelligent chunking; Context-aware processing<br /><br />AWS: Bedrock knowledge base semantic chunking maximum tokens for intelligent document segmentation<br /><br />Validation: Must be positive integer; required for semantic chunking configuration and meaning-based processing         |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_semanticChunkingConfiguration_breakpointPercentileThreshold"></a>6.1.3.1.6.1.4.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > semanticChunkingConfiguration > breakpointPercentileThreshold`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required breakpoint percentile threshold for semantic boundary detection enabling intelligent chunk separation based on semantic similarity analysis. Defines the percentile threshold for determining semantic breakpoints in document content for optimal chunk boundaries and meaning preservation.
+
+Use cases: Semantic boundary detection; Intelligent separation; Similarity analysis; Optimal chunking
+
+AWS: Bedrock knowledge base semantic chunking breakpoint threshold for intelligent boundary detection
+
+Validation: Must be valid percentile value (0-100); required for semantic breakpoint detection and boundary analysis
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_semanticChunkingConfiguration_bufferSize"></a>6.1.3.1.6.1.4.2. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > semanticChunkingConfiguration > bufferSize`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required buffer size specification for semantic context preservation enabling enhanced semantic boundary detection and improved content coherence. Defines the number of surrounding sentences to consider for semantic analysis and boundary determination in intelligent document segmentation.
+
+Use cases: Context preservation; Semantic boundary detection; Content coherence; Intelligent analysis
+
+AWS: Bedrock knowledge base semantic chunking buffer size for context preservation and boundary detection
+
+Validation: Must be positive integer; required for semantic chunking buffer configuration and context analysis
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_chunkingConfiguration_semanticChunkingConfiguration_maxTokens"></a>6.1.3.1.6.1.4.3. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > chunkingConfiguration > semanticChunkingConfiguration > maxTokens`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required maximum token count per semantic chunk enabling intelligent document segmentation based on meaning and context. Defines the token limit for semantic chunks while preserving semantic coherence and meaning-based boundaries for optimized knowledge retrieval and contextual understanding.
+
+Use cases: Semantic segmentation; Meaning preservation; Intelligent chunking; Context-aware processing
+
+AWS: Bedrock knowledge base semantic chunking maximum tokens for intelligent document segmentation
+
+Validation: Must be positive integer; required for semantic chunking configuration and meaning-based processing
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_customTransformationConfiguration"></a>6.1.3.1.6.2. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > customTransformationConfiguration`
+
+|                           |                                                 |
+| ------------------------- | ----------------------------------------------- |
+| **Type**                  | `object`                                        |
+| **Required**              | No                                              |
+| **Additional properties** | Not allowed                                     |
+| **Defined in**            | #/definitions/CustomTransformationConfiguration |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional custom transformation configuration for advanced document processing enabling Lambda-based content manipulation and custom processing workflows. Provides custom transformation configuration for advanced document processing including Lambda functions and custom processing pipelines for specialized content handling.
+
+Use cases: Custom processing; Advanced transformation; Lambda-based processing; Specialized content handling
+
+AWS: Bedrock knowledge base custom transformation configuration for advanced document processing and manipulation
+
+Validation: Must be valid CustomTransformationConfiguration if provided; enables custom processing and transformation capabilities
+
+| Property                                                                                                                                                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [intermediateStorageBucket](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_customTransformationConfiguration_intermediateStorageBucket ) | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required intermediate S3 bucket name for custom transformation workflow enabling document processing and Lambda function integration. Provides temporary storage for input documents before Lambda processing and output documents after transformation for advanced document processing workflows.<br /><br />Use cases: Document transformation; Lambda processing; Intermediate storage; Custom processing workflows<br /><br />AWS: S3 bucket for Bedrock knowledge base custom transformation intermediate storage and processing<br /><br />Validation: Must be valid S3 bucket name; required for custom transformation workflow and Lambda processing |
+| + [intermediateStoragePrefix](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_customTransformationConfiguration_intermediateStoragePrefix ) | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required S3 prefix for intermediate storage organization enabling structured document processing and workflow management. Provides organized storage structure for input and output documents during custom transformation processing with clear separation and management.<br /><br />Use cases: Storage organization; Document workflow; Processing structure; File management<br /><br />AWS: S3 prefix for Bedrock knowledge base custom transformation storage organization and workflow management<br /><br />Validation: Must be valid S3 prefix string; required for organized intermediate storage and processing workflow                           |
+| + [transformLambdaArns](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_customTransformationConfiguration_transformLambdaArns )             | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Required array of Lambda function ARNs for custom document transformation enabling advanced processing and content manipulation. Provides Lambda functions for custom document processing, content transformation, and advanced manipulation before knowledge base ingestion.<br /><br />Use cases: Custom document processing; Content transformation; Advanced manipulation; Lambda-based processing<br /><br />AWS: Lambda function ARNs for Bedrock knowledge base custom transformation and document processing<br /><br />Validation: Must be array of valid Lambda function ARNs; required for custom transformation and processing capabilities       |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_customTransformationConfiguration_intermediateStorageBucket"></a>6.1.3.1.6.2.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > customTransformationConfiguration > intermediateStorageBucket`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required intermediate S3 bucket name for custom transformation workflow enabling document processing and Lambda function integration. Provides temporary storage for input documents before Lambda processing and output documents after transformation for advanced document processing workflows.
+
+Use cases: Document transformation; Lambda processing; Intermediate storage; Custom processing workflows
+
+AWS: S3 bucket for Bedrock knowledge base custom transformation intermediate storage and processing
+
+Validation: Must be valid S3 bucket name; required for custom transformation workflow and Lambda processing
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_customTransformationConfiguration_intermediateStoragePrefix"></a>6.1.3.1.6.2.2. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > customTransformationConfiguration > intermediateStoragePrefix`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required S3 prefix for intermediate storage organization enabling structured document processing and workflow management. Provides organized storage structure for input and output documents during custom transformation processing with clear separation and management.
+
+Use cases: Storage organization; Document workflow; Processing structure; File management
+
+AWS: S3 prefix for Bedrock knowledge base custom transformation storage organization and workflow management
+
+Validation: Must be valid S3 prefix string; required for organized intermediate storage and processing workflow
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_customTransformationConfiguration_transformLambdaArns"></a>6.1.3.1.6.2.3. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > customTransformationConfiguration > transformLambdaArns`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | Yes               |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required array of Lambda function ARNs for custom document transformation enabling advanced processing and content manipulation. Provides Lambda functions for custom document processing, content transformation, and advanced manipulation before knowledge base ingestion.
+
+Use cases: Custom document processing; Content transformation; Advanced manipulation; Lambda-based processing
+
+AWS: Lambda function ARNs for Bedrock knowledge base custom transformation and document processing
+
+Validation: Must be array of valid Lambda function ARNs; required for custom transformation and processing capabilities
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                                                                                               | Description |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [transformLambdaArns items](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_customTransformationConfiguration_transformLambdaArns_items) | -           |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_customTransformationConfiguration_transformLambdaArns_items"></a>6.1.3.1.6.2.3.1. root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > customTransformationConfiguration > transformLambdaArns > transformLambdaArns items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration"></a>6.1.3.1.6.3. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > parsingConfiguration`
+
+|                           |                                    |
+| ------------------------- | ---------------------------------- |
+| **Type**                  | `object`                           |
+| **Required**              | No                                 |
+| **Additional properties** | Not allowed                        |
+| **Defined in**            | #/definitions/ParsingConfiguration |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional document parsing configuration for content extraction and processing enabling document analysis and content preparation. Provides parsing configuration for document content extraction including parsing strategies and processing methods for knowledge base ingestion and vector generation.
+
+Use cases: Document parsing; Content extraction; Processing configuration; Content preparation
+
+AWS: Bedrock knowledge base parsing configuration for document content extraction and processing
+
+Validation: Must be valid ParsingConfiguration if provided; enables document parsing and content extraction capabilities
+
+| Property                                                                                                                                                                                                | Pattern | Type             | Deprecated | Definition                                    | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [bedrockDataAutomationConfiguration](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockDataAutomationConfiguration )   | No      | object           | No         | In #/definitions/BedrockDataAutomationConfig  | Q-ENHANCED-PROPERTY<br />Optional Bedrock Data Automation configuration for automated document parsing enabling streamlined content extraction and processing. Provides configuration for Bedrock Data Automation when using automated parsing strategy for document processing.<br /><br />Use cases: Automated parsing; Streamlined processing; Data automation; Content extraction automation<br /><br />AWS: Bedrock Data Automation configuration for automated document parsing and content extraction<br /><br />Validation: Must be valid BedrockDataAutomationConfig if provided; optional when using BEDROCK_DATA_AUTOMATION strategy                                                                                                                                       |
+| - [bedrockFoundationModelConfiguration](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockFoundationModelConfiguration ) | No      | object           | No         | In #/definitions/BedrockFoundationModelConfig | Q-ENHANCED-PROPERTY<br />Optional foundation model configuration for AI-powered document parsing enabling customized content extraction and processing. Provides foundation model configuration when using foundation model strategy for document parsing and content extraction.<br /><br />Use cases: AI-powered parsing; Custom extraction; Foundation model processing; Tailored content extraction<br /><br />AWS: Bedrock foundation model configuration for AI-powered document parsing and content extraction<br /><br />Validation: Must be valid BedrockFoundationModelConfig if provided; required when using BEDROCK_FOUNDATION_MODEL strategy                                                                                                                            |
+| + [parsingStrategy](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_parsingStrategy )                                         | No      | enum (of string) | No         | In #/definitions/ParsingStrategy              | Q-ENHANCED-PROPERTY<br />Required parsing strategy specification for document processing workflow enabling selection between automated and AI-powered parsing approaches. Defines the parsing method for document content extraction including Bedrock Data Automation for streamlined processing or foundation model-based parsing for advanced AI-powered content extraction.<br /><br />Use cases: Document processing strategy; Parsing method selection; Content extraction approach; AI-powered vs automated processing<br /><br />AWS: Bedrock parsing strategy for document processing and content extraction workflow configuration<br /><br />Validation: Must be BEDROCK_DATA_AUTOMATION or BEDROCK_FOUNDATION_MODEL; required for document parsing configuration<br />  * |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockDataAutomationConfiguration"></a>6.1.3.1.6.3.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > parsingConfiguration > bedrockDataAutomationConfiguration`
+
+|                           |                                           |
+| ------------------------- | ----------------------------------------- |
+| **Type**                  | `object`                                  |
+| **Required**              | No                                        |
+| **Additional properties** | Not allowed                               |
+| **Defined in**            | #/definitions/BedrockDataAutomationConfig |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional Bedrock Data Automation configuration for automated document parsing enabling streamlined content extraction and processing. Provides configuration for Bedrock Data Automation when using automated parsing strategy for document processing.
+
+Use cases: Automated parsing; Streamlined processing; Data automation; Content extraction automation
+
+AWS: Bedrock Data Automation configuration for automated document parsing and content extraction
+
+Validation: Must be valid BedrockDataAutomationConfig if provided; optional when using BEDROCK_DATA_AUTOMATION strategy
+
+| Property                                                                                                                                                                                           | Pattern | Type  | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ----- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [parsingModality](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockDataAutomationConfiguration_parsingModality ) | No      | const | No         | -          | Q-ENHANCED-PROPERTY<br />Optional parsing modality specification for multimodal data processing enabling content extraction from text and image sources. Enables parsing of both textual and visual content within documents for enhanced knowledge base capabilities and information extraction.<br /><br />Use cases: Multimodal document processing; Image content extraction; data parsing; Visual information retrieval<br /><br />AWS: Bedrock Data Automation parsing modality for multimodal content extraction and processing<br /><br />Validation: Must be MULTIMODAL if provided; enables text and image content extraction capabilities<br />  * |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockDataAutomationConfiguration_parsingModality"></a>6.1.3.1.6.3.1.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > parsingConfiguration > bedrockDataAutomationConfiguration > parsingModality`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional parsing modality specification for multimodal data processing enabling content extraction from text and image sources. Enables parsing of both textual and visual content within documents for enhanced knowledge base capabilities and information extraction.
+
+Use cases: Multimodal document processing; Image content extraction; data parsing; Visual information retrieval
+
+AWS: Bedrock Data Automation parsing modality for multimodal content extraction and processing
+
+Validation: Must be MULTIMODAL if provided; enables text and image content extraction capabilities
+  *
+
+Specific value: `"MULTIMODAL"`
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockFoundationModelConfiguration"></a>6.1.3.1.6.3.2. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > parsingConfiguration > bedrockFoundationModelConfiguration`
+
+|                           |                                            |
+| ------------------------- | ------------------------------------------ |
+| **Type**                  | `object`                                   |
+| **Required**              | No                                         |
+| **Additional properties** | Not allowed                                |
+| **Defined in**            | #/definitions/BedrockFoundationModelConfig |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional foundation model configuration for AI-powered document parsing enabling customized content extraction and processing. Provides foundation model configuration when using foundation model strategy for document parsing and content extraction.
+
+Use cases: AI-powered parsing; Custom extraction; Foundation model processing; Tailored content extraction
+
+AWS: Bedrock foundation model configuration for AI-powered document parsing and content extraction
+
+Validation: Must be valid BedrockFoundationModelConfig if provided; required when using BEDROCK_FOUNDATION_MODEL strategy
+
+| Property                                                                                                                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [modelArn](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockFoundationModelConfiguration_modelArn )                   | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required foundation model ARN for document parsing operations enabling AI-powered content extraction and processing. Specifies the Bedrock foundation model that will be used for parsing documents and extracting content for knowledge base ingestion.<br /><br />Use cases: Model specification; AI-powered parsing; Content extraction; Document processing<br /><br />AWS: Bedrock foundation model ARN for document parsing and AI-powered content extraction<br /><br />Validation: Must be valid foundation model ARN; required for document parsing and content extraction                                                                                                                                                    |
+| - [parsingModality](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockFoundationModelConfiguration_parsingModality )     | No      | const  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional parsing modality specification for multimodal foundation model processing enabling content extraction from text and image sources. Enables foundation model-based parsing of both textual and visual content within documents for enhanced knowledge base capabilities and AI-powered information extraction.<br /><br />Use cases: AI-powered multimodal processing; Foundation model content extraction; document parsing; Visual and textual information retrieval<br /><br />AWS: Bedrock foundation model parsing modality for AI-powered multimodal content extraction and processing<br /><br />Validation: Must be MULTIMODAL if provided; enables AI-powered text and image content extraction capabilities<br />  * |
+| - [parsingPromptText](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockFoundationModelConfiguration_parsingPromptText ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional parsing instructions for foundation model customization enabling tailored content extraction and processing behavior. Provides custom instructions to guide the foundation model's parsing behavior for specific document types and content extraction requirements.<br /><br />Use cases: Custom parsing instructions; Tailored extraction; Processing customization; Model guidance<br /><br />AWS: Bedrock foundation model parsing instructions for customized content extraction and processing<br /><br />Validation: Must be valid instruction text if provided; enables custom parsing behavior and content extraction                                                                                                |
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockFoundationModelConfiguration_modelArn"></a>6.1.3.1.6.3.2.1. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > parsingConfiguration > bedrockFoundationModelConfiguration > modelArn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required foundation model ARN for document parsing operations enabling AI-powered content extraction and processing. Specifies the Bedrock foundation model that will be used for parsing documents and extracting content for knowledge base ingestion.
+
+Use cases: Model specification; AI-powered parsing; Content extraction; Document processing
+
+AWS: Bedrock foundation model ARN for document parsing and AI-powered content extraction
+
+Validation: Must be valid foundation model ARN; required for document parsing and content extraction
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockFoundationModelConfiguration_parsingModality"></a>6.1.3.1.6.3.2.2. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > parsingConfiguration > bedrockFoundationModelConfiguration > parsingModality`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional parsing modality specification for multimodal foundation model processing enabling content extraction from text and image sources. Enables foundation model-based parsing of both textual and visual content within documents for enhanced knowledge base capabilities and AI-powered information extraction.
+
+Use cases: AI-powered multimodal processing; Foundation model content extraction; document parsing; Visual and textual information retrieval
+
+AWS: Bedrock foundation model parsing modality for AI-powered multimodal content extraction and processing
+
+Validation: Must be MULTIMODAL if provided; enables AI-powered text and image content extraction capabilities
+  *
+
+Specific value: `"MULTIMODAL"`
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_bedrockFoundationModelConfiguration_parsingPromptText"></a>6.1.3.1.6.3.2.3. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > parsingConfiguration > bedrockFoundationModelConfiguration > parsingPromptText`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional parsing instructions for foundation model customization enabling tailored content extraction and processing behavior. Provides custom instructions to guide the foundation model's parsing behavior for specific document types and content extraction requirements.
+
+Use cases: Custom parsing instructions; Tailored extraction; Processing customization; Model guidance
+
+AWS: Bedrock foundation model parsing instructions for customized content extraction and processing
+
+Validation: Must be valid instruction text if provided; enables custom parsing behavior and content extraction
+
+###### <a name="knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration_parsingConfiguration_parsingStrategy"></a>6.1.3.1.6.3.3. Property `root > knowledgeBases > additionalProperties > s3DataSources > additionalProperties > vectorIngestionConfiguration > parsingConfiguration > parsingStrategy`
+
+|                |                               |
+| -------------- | ----------------------------- |
+| **Type**       | `enum (of string)`            |
+| **Required**   | Yes                           |
+| **Defined in** | #/definitions/ParsingStrategy |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required parsing strategy specification for document processing workflow enabling selection between automated and AI-powered parsing approaches. Defines the parsing method for document content extraction including Bedrock Data Automation for streamlined processing or foundation model-based parsing for advanced AI-powered content extraction.
+
+Use cases: Document processing strategy; Parsing method selection; Content extraction approach; AI-powered vs automated processing
+
+AWS: Bedrock parsing strategy for document processing and content extraction workflow configuration
+
+Validation: Must be BEDROCK_DATA_AUTOMATION or BEDROCK_FOUNDATION_MODEL; required for document parsing configuration
+  *
+
+Must be one of:
+* "BEDROCK_DATA_AUTOMATION"
+* "BEDROCK_FOUNDATION_MODEL"
+
+#### <a name="knowledgeBases_additionalProperties_sharepointDataSources"></a>6.1.4. Property `root > knowledgeBases > additionalProperties > sharepointDataSources`
+
+|                           |                                                                                                                                        |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                               |
+| **Required**              | No                                                                                                                                     |
+| **Additional properties** | [Each additional property must conform to the schema](#knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties) |
+| **Defined in**            | #/definitions/NamedSharepointDataSources                                                                                               |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional SharePoint data sources configuration for enterprise document integration enabling SharePoint content ingestion and knowledge base population. Provides SharePoint-specific data source configurations for enterprise document repositories and corporate knowledge management.
+
+Use cases: Enterprise document integration; SharePoint connectivity; Corporate knowledge management; Enterprise content ingestion
+
+AWS: Bedrock knowledge base SharePoint data sources for enterprise document integration and corporate content ingestion
+
+Validation: Must be valid NamedSharepointDataSources if provided; enables SharePoint integration and enterprise document access
+  *
+
+| Property                                                                               | Pattern | Type   | Deprecated | Definition                            | Title/Description |
+| -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------- | ----------------- |
+| - [](#knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties ) | No      | object | No         | In #/definitions/SharepointDataSource | -                 |
+
+##### <a name="knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties"></a>6.1.4.1. Property `root > knowledgeBases > additionalProperties > sharepointDataSources > SharepointDataSource`
+
+|                           |                                    |
+| ------------------------- | ---------------------------------- |
+| **Type**                  | `object`                           |
+| **Required**              | No                                 |
+| **Additional properties** | Not allowed                        |
+| **Defined in**            | #/definitions/SharepointDataSource |
+
+| Property                                                                                                                                        | Pattern | Type   | Deprecated | Definition                                                                                                                                    | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [dataSource](#knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource )                                     | No      | object | No         | In #/definitions/SharepointDataSourceConfiguration                                                                                            | Q-ENHANCED-PROPERTY<br />Required SharePoint data source configuration for enterprise document integration enabling SharePoint connectivity and content ingestion. Provides SharePoint-specific configuration including authentication, site access, and document retrieval for enterprise knowledge base population from SharePoint repositories.<br /><br />Use cases: Enterprise document integration; SharePoint connectivity; Corporate content ingestion; Enterprise knowledge management<br /><br />AWS: Bedrock knowledge base SharePoint data source configuration for enterprise document integration and content ingestion<br /><br />Validation: Must be valid SharepointDataSourceConfiguration; required for SharePoint integration and document access |
+| - [vectorIngestionConfiguration](#knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_vectorIngestionConfiguration ) | No      | object | No         | Same as [vectorIngestionConfiguration](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration ) | Q-ENHANCED-PROPERTY<br />Optional vector ingestion configuration for SharePoint document processing enabling customized content extraction and embedding generation. Provides vector ingestion settings for SharePoint document parsing, chunking, and transformation to optimize knowledge base performance with enterprise content.<br /><br />Use cases: SharePoint document processing; Enterprise content optimization; Vector generation; Content customization<br /><br />AWS: Bedrock knowledge base vector ingestion configuration for SharePoint document processing and optimization<br /><br />Validation: Must be valid VectorIngestionConfiguration if provided; enables customized SharePoint document processing and vector generation                |
+
+###### <a name="knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource"></a>6.1.4.1.1. Property `root > knowledgeBases > additionalProperties > sharepointDataSources > additionalProperties > dataSource`
+
+|                           |                                                 |
+| ------------------------- | ----------------------------------------------- |
+| **Type**                  | `object`                                        |
+| **Required**              | Yes                                             |
+| **Additional properties** | Not allowed                                     |
+| **Defined in**            | #/definitions/SharepointDataSourceConfiguration |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required SharePoint data source configuration for enterprise document integration enabling SharePoint connectivity and content ingestion. Provides SharePoint-specific configuration including authentication, site access, and document retrieval for enterprise knowledge base population from SharePoint repositories.
+
+Use cases: Enterprise document integration; SharePoint connectivity; Corporate content ingestion; Enterprise knowledge management
+
+AWS: Bedrock knowledge base SharePoint data source configuration for enterprise document integration and content ingestion
+
+Validation: Must be valid SharepointDataSourceConfiguration; required for SharePoint integration and document access
+
+| Property                                                                                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [authType](#knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_authType )                         | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required authentication type for SharePoint connectivity enabling secure access to SharePoint sites and document repositories. Specifies the OAuth2 authentication method for connecting to SharePoint including client credentials or SharePoint app-only authentication for enterprise document access.<br /><br />Use cases: SharePoint authentication; Secure connectivity; Enterprise access; OAuth2 integration<br /><br />AWS: Bedrock knowledge base SharePoint authentication type for secure site connectivity and document access<br /><br />Validation: Must be OAUTH2_CLIENT_CREDENTIALS or OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS; required for SharePoint authentication |
+| + [credentialsSecretArn](#knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_credentialsSecretArn ) | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required AWS Secrets Manager secret ARN containing SharePoint authentication credentials enabling secure credential management and access control. Provides the secret that stores SharePoint authentication credentials for secure and managed access to SharePoint sites and documents.<br /><br />Use cases: Credential management; Secure authentication; Access control; Secret management<br /><br />AWS: AWS Secrets Manager secret ARN for Bedrock knowledge base SharePoint authentication credentials<br /><br />Validation: Must be valid Secrets Manager ARN; required for SharePoint authentication and credential management                                                     |
+| + [domain](#knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_domain )                             | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required SharePoint domain specification for site connectivity enabling targeted SharePoint instance access and domain-specific configuration. Provides the SharePoint domain or site URL for establishing connectivity to the specific SharePoint instance containing target documents.<br /><br />Use cases: Domain connectivity; Site targeting; Instance specification; SharePoint access<br /><br />AWS: Bedrock knowledge base SharePoint domain for site connectivity and instance targeting<br /><br />Validation: Must be valid SharePoint domain or URL; required for SharePoint site connectivity and access                                                                        |
+| - [hostType](#knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_hostType )                         | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional SharePoint host type specification for deployment environment targeting enabling cloud or on-premises SharePoint connectivity. Specifies whether the SharePoint instance is online/cloud-based or server/on-premises for appropriate connectivity configuration.<br /><br />Use cases: Deployment targeting; Environment specification; Connectivity configuration; SharePoint type<br /><br />AWS: Bedrock knowledge base SharePoint host type for deployment environment and connectivity configuration<br /><br />Validation: Must be ONLINE if provided; defaults to ONLINE for cloud-based SharePoint connectivity                                                               |
+| + [siteUrls](#knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_siteUrls )                         | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Required array of SharePoint site URLs for multi-site document access enabling SharePoint content ingestion. Provides the specific SharePoint site URLs that contain documents to be ingested into the knowledge base for enterprise content coverage.<br /><br />Use cases: Multi-site access; ingestion; Site targeting; Enterprise content coverage<br /><br />AWS: Bedrock knowledge base SharePoint site URLs for multi-site document access and content ingestion<br /><br />Validation: Must be array of valid SharePoint site URLs; required for SharePoint site access and document ingestion                                                                                         |
+| + [tenantId](#knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_tenantId )                         | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required Microsoft 365 tenant identifier for enterprise SharePoint access enabling tenant-specific authentication and authorization. Provides the unique tenant ID for Microsoft 365 SharePoint access ensuring proper tenant isolation and security for enterprise document access.<br /><br />Use cases: Tenant identification; Enterprise access; Security isolation; M365 integration<br /><br />AWS: Bedrock knowledge base Microsoft 365 tenant ID for SharePoint enterprise access and tenant isolation<br /><br />Validation: Must be valid UUID format; required for Microsoft 365 tenant identification and SharePoint access                                                        |
+
+###### <a name="knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_authType"></a>6.1.4.1.1.1. Property `root > knowledgeBases > additionalProperties > sharepointDataSources > additionalProperties > dataSource > authType`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required authentication type for SharePoint connectivity enabling secure access to SharePoint sites and document repositories. Specifies the OAuth2 authentication method for connecting to SharePoint including client credentials or SharePoint app-only authentication for enterprise document access.
+
+Use cases: SharePoint authentication; Secure connectivity; Enterprise access; OAuth2 integration
+
+AWS: Bedrock knowledge base SharePoint authentication type for secure site connectivity and document access
+
+Validation: Must be OAUTH2_CLIENT_CREDENTIALS or OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS; required for SharePoint authentication
+
+###### <a name="knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_credentialsSecretArn"></a>6.1.4.1.1.2. Property `root > knowledgeBases > additionalProperties > sharepointDataSources > additionalProperties > dataSource > credentialsSecretArn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required AWS Secrets Manager secret ARN containing SharePoint authentication credentials enabling secure credential management and access control. Provides the secret that stores SharePoint authentication credentials for secure and managed access to SharePoint sites and documents.
+
+Use cases: Credential management; Secure authentication; Access control; Secret management
+
+AWS: AWS Secrets Manager secret ARN for Bedrock knowledge base SharePoint authentication credentials
+
+Validation: Must be valid Secrets Manager ARN; required for SharePoint authentication and credential management
+
+###### <a name="knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_domain"></a>6.1.4.1.1.3. Property `root > knowledgeBases > additionalProperties > sharepointDataSources > additionalProperties > dataSource > domain`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required SharePoint domain specification for site connectivity enabling targeted SharePoint instance access and domain-specific configuration. Provides the SharePoint domain or site URL for establishing connectivity to the specific SharePoint instance containing target documents.
+
+Use cases: Domain connectivity; Site targeting; Instance specification; SharePoint access
+
+AWS: Bedrock knowledge base SharePoint domain for site connectivity and instance targeting
+
+Validation: Must be valid SharePoint domain or URL; required for SharePoint site connectivity and access
+
+###### <a name="knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_hostType"></a>6.1.4.1.1.4. Property `root > knowledgeBases > additionalProperties > sharepointDataSources > additionalProperties > dataSource > hostType`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional SharePoint host type specification for deployment environment targeting enabling cloud or on-premises SharePoint connectivity. Specifies whether the SharePoint instance is online/cloud-based or server/on-premises for appropriate connectivity configuration.
+
+Use cases: Deployment targeting; Environment specification; Connectivity configuration; SharePoint type
+
+AWS: Bedrock knowledge base SharePoint host type for deployment environment and connectivity configuration
+
+Validation: Must be ONLINE if provided; defaults to ONLINE for cloud-based SharePoint connectivity
+
+###### <a name="knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_siteUrls"></a>6.1.4.1.1.5. Property `root > knowledgeBases > additionalProperties > sharepointDataSources > additionalProperties > dataSource > siteUrls`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | Yes               |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required array of SharePoint site URLs for multi-site document access enabling SharePoint content ingestion. Provides the specific SharePoint site URLs that contain documents to be ingested into the knowledge base for enterprise content coverage.
+
+Use cases: Multi-site access; ingestion; Site targeting; Enterprise content coverage
+
+AWS: Bedrock knowledge base SharePoint site URLs for multi-site document access and content ingestion
+
+Validation: Must be array of valid SharePoint site URLs; required for SharePoint site access and document ingestion
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                             | Description |
+| --------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [siteUrls items](#knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_siteUrls_items) | -           |
+
+###### <a name="knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_siteUrls_items"></a>6.1.4.1.1.5.1. root > knowledgeBases > additionalProperties > sharepointDataSources > additionalProperties > dataSource > siteUrls > siteUrls items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_dataSource_tenantId"></a>6.1.4.1.1.6. Property `root > knowledgeBases > additionalProperties > sharepointDataSources > additionalProperties > dataSource > tenantId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required Microsoft 365 tenant identifier for enterprise SharePoint access enabling tenant-specific authentication and authorization. Provides the unique tenant ID for Microsoft 365 SharePoint access ensuring proper tenant isolation and security for enterprise document access.
+
+Use cases: Tenant identification; Enterprise access; Security isolation; M365 integration
+
+AWS: Bedrock knowledge base Microsoft 365 tenant ID for SharePoint enterprise access and tenant isolation
+
+Validation: Must be valid UUID format; required for Microsoft 365 tenant identification and SharePoint access
+
+###### <a name="knowledgeBases_additionalProperties_sharepointDataSources_additionalProperties_vectorIngestionConfiguration"></a>6.1.4.1.2. Property `root > knowledgeBases > additionalProperties > sharepointDataSources > additionalProperties > vectorIngestionConfiguration`
+
+|                           |                                                                                                                                      |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                                                             |
+| **Required**              | No                                                                                                                                   |
+| **Additional properties** | Not allowed                                                                                                                          |
+| **Same definition as**    | [vectorIngestionConfiguration](#knowledgeBases_additionalProperties_s3DataSources_additionalProperties_vectorIngestionConfiguration) |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional vector ingestion configuration for SharePoint document processing enabling customized content extraction and embedding generation. Provides vector ingestion settings for SharePoint document parsing, chunking, and transformation to optimize knowledge base performance with enterprise content.
+
+Use cases: SharePoint document processing; Enterprise content optimization; Vector generation; Content customization
+
+AWS: Bedrock knowledge base vector ingestion configuration for SharePoint document processing and optimization
+
+Validation: Must be valid VectorIngestionConfiguration if provided; enables customized SharePoint document processing and vector generation
+
+#### <a name="knowledgeBases_additionalProperties_supplementalBucketName"></a>6.1.5. Property `root > knowledgeBases > additionalProperties > supplementalBucketName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional supplemental S3 bucket name for advanced parsing workflows enabling enhanced document processing and AI-powered content extraction. Required when using advanced parsing strategies like Bedrock Data Automation or foundation model parsing for sophisticated document analysis and content extraction.
+
+Use cases: Advanced parsing; Enhanced processing; AI-powered extraction; Sophisticated document analysis
+
+AWS: S3 bucket for Bedrock knowledge base advanced parsing workflows and enhanced document processing
+
+Validation: Must be valid S3 bucket name if provided; required when using BEDROCK_DATA_AUTOMATION or BEDROCK_FOUNDATION_MODEL parsing
+
+#### <a name="knowledgeBases_additionalProperties_vectorFieldSize"></a>6.1.6. Property `root > knowledgeBases > additionalProperties > vectorFieldSize`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional vector field size specification for embedding dimensionality enabling vector storage optimization and performance tuning. Defines the dimensionality of vector embeddings for storage optimization and retrieval performance with model-specific requirements and storage efficiency.
+
+Use cases: Vector optimization; Storage efficiency; Performance tuning; Dimensionality control
+
+AWS: Bedrock knowledge base vector field size for embedding dimensionality and storage optimization
+
+Validation: Must be positive integer matching embedding model dimensions if provided; enables vector storage optimization
+
+#### <a name="knowledgeBases_additionalProperties_vectorStore"></a>6.1.7. Property `root > knowledgeBases > additionalProperties > vectorStore`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required vector store reference for knowledge base vector storage enabling semantic search and retrieval capabilities. Specifies the vector store configuration that will be used for storing and retrieving document embeddings for AI-powered semantic search and intelligent document retrieval.
+
+Use cases: Vector storage; Semantic search; Document retrieval; AI-powered search
+
+AWS: Bedrock knowledge base vector store reference for semantic search and intelligent document retrieval
+
+Validation: Must be valid vector store name; required for knowledge base vector storage and retrieval capabilities
+
+## <a name="lambdaFunctions"></a>7. Property `root > lambdaFunctions`
+
+|                           |                                   |
+| ------------------------- | --------------------------------- |
+| **Type**                  | `object`                          |
+| **Required**              | No                                |
+| **Additional properties** | Not allowed                       |
+| **Defined in**            | #/definitions/LambdaFunctionProps |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional Lambda function configurations for Bedrock agent action groups enabling custom business logic and external system integration. Provides Lambda functions and layers for agent action groups enabling custom functionality, API integrations, and business process automation within AI agents.
+
+Use cases: Custom business logic; API integrations; Action group implementation; External system connectivity
+
+AWS: Lambda functions for Bedrock agent action groups and custom business logic implementation
+
+Validation: Must be valid LambdaFunctionProps if provided; enables custom action group functionality and integrations
+
+| Property                                   | Pattern | Type  | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------ | ------- | ----- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [functions](#lambdaFunctions_functions ) | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of Lambda function definitions for Bedrock agent action groups enabling custom business logic and external system integration. Provides function configurations for implementing agent action groups with custom functionality, API integrations, and business process automation within AI agents.<br /><br />Use cases: Custom business logic; External API integration; Action group implementation; Business process automation<br /><br />AWS: Lambda functions for Bedrock agent action groups with custom business logic and external integrations<br /><br />Validation: Must be array of valid FunctionProps if provided; enables custom action group functionality and integrations<br />  * |
+| - [layers](#lambdaFunctions_layers )       | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of Lambda layer definitions for shared code and dependencies enabling reusable components and optimized function deployment. Provides layer configurations for Lambda functions used in Bedrock agent action groups with shared libraries, runtime dependencies, and common utilities for efficient function execution.<br /><br />Use cases: Shared code libraries; Runtime dependencies; Common utilities; Function optimization<br /><br />AWS: Lambda layers for Bedrock agent action group functions with shared dependencies and code reuse<br /><br />Validation: Must be array of valid LayerProps if provided; enables shared code and dependency management<br />  *                         |
+
+### <a name="lambdaFunctions_functions"></a>7.1. Property `root > lambdaFunctions > functions`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional array of Lambda function definitions for Bedrock agent action groups enabling custom business logic and external system integration. Provides function configurations for implementing agent action groups with custom functionality, API integrations, and business process automation within AI agents.
+
+Use cases: Custom business logic; External API integration; Action group implementation; Business process automation
+
+AWS: Lambda functions for Bedrock agent action groups with custom business logic and external integrations
+
+Validation: Must be array of valid FunctionProps if provided; enables custom action group functionality and integrations
+  *
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                   | Description              |
+| ------------------------------------------------- | ------------------------ |
+| [FunctionProps](#lambdaFunctions_functions_items) | Q-ENHANCED-INTERFACE ... |
+
+#### <a name="lambdaFunctions_functions_items"></a>7.1.1. root > lambdaFunctions > functions > FunctionProps
 
 |                           |                             |
 | ------------------------- | --------------------------- |
@@ -99,39 +3282,39 @@ AWS: AWS Lambda function configuration for data processing with S3 EventBridge n
 
 Validation: srcDir must exist and contain deployable code; runtime must be valid Lambda runtime; handler must match code structure
 
-| Property                                                                           | Pattern | Type            | Deprecated | Definition                        | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| ---------------------------------------------------------------------------------- | ------- | --------------- | ---------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [additionalResourcePermissions](#functions_items_additionalResourcePermissions ) | No      | object          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional additional resource permissions for Lambda function access control in data processing workflows. Provides fine-grained permissions beyond basic invoke for complex S3 data operations and cross-service integration scenarios.<br /><br />Use cases: S3 bucket access for data processing; Glue catalog permissions; DynamoDB table access; SNS notification permissions<br /><br />AWS: Lambda resource policy permissions for data processing access control and service integration<br /><br />Validation: Must be valid SID to AdditionalResourcePermission mapping; enables complex data processing permission scenarios<br />  *                                                                                                                           |
-| - [alarms](#functions_items_alarms )                                               | No      | array           | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional array of CloudWatch alarms for Lambda function monitoring and alerting enabling automated incident response. Defines alarm conditions, thresholds, and SNS notifications for both custom metrics (from metricFilters) and AWS Lambda metrics with automatic metric validation and placeholder replacement.<br /><br />Use cases: Error rate alerting; Performance monitoring; Threshold breaches; Automated notifications; Incident management; Multi-metric conditions<br /><br />AWS: CloudWatch alarms for Lambda function monitoring and automated alerting with SNS integration<br /><br />Validation: Optional array of AlarmProps; custom metrics validated against metricFilters; AWS/* metrics bypass validation; supports {{functionName}} placeholder |
-| - [description](#functions_items_description )                                     | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional description of the Lambda function explaining its purpose and data processing operations for documentation and management clarity. Provides human-readable description of the function's purpose and the data operations it performs.<br /><br />Use cases: Function documentation; Operational clarity; Data processing explanation; Management understanding<br /><br />AWS: AWS Lambda function description for documentation and operational clarity<br /><br />Validation: Must be descriptive text if provided; recommended for function documentation and operational understanding                                                                                                                                                                       |
-| - [dockerBuild](#functions_items_dockerBuild )                                     | No      | boolean         | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional Docker container build flag for custom data processing environments. When enabled, expects srcDir to contain Dockerfile for custom runtime environments with specialized data processing libraries and dependencies.<br /><br />Use cases: Custom Python environments with ML libraries; Specialized data processing containers; Complex dependency management; Custom data science stacks<br /><br />AWS: Lambda container image deployment for custom data processing runtime environments and specialized libraries<br /><br />Validation: When true, srcDir must contain valid Dockerfile; container must be compatible with Lambda execution environment                                                                                                    |
-| - [environment](#functions_items_environment )                                     | No      | object          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional environment variables for function configuration enabling runtime configuration and parameter passing. Defines key-value pairs that Lambda caches and makes available for function execution enabling configuration changes without code modifications.<br /><br />Use cases: Runtime configuration; Parameter passing; Environment-specific settings; Configuration management<br /><br />AWS: AWS Lambda environment variables for function configuration and runtime parameters<br /><br />Validation: Must be valid key-value string pairs if provided; enables runtime configuration when specified<br />  *                                                                                                                                                |
-| - [ephemeralStorageSizeMB](#functions_items_ephemeralStorageSizeMB )               | No      | number          | No         | -                                 | The size of the function’s /tmp directory in MB.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [eventBridge](#functions_items_eventBridge )                                     | No      | object          | No         | In #/definitions/EventBridgeProps | Q-ENHANCED-PROPERTY<br />Optional EventBridge configuration for event-driven function execution enabling automated data processing workflows. Defines EventBridge integration for triggering Lambda functions based on events for automated data processing and workflow orchestration.<br /><br />Use cases: Event-driven processing; Workflow automation; Data pipeline triggers; Event orchestration<br /><br />AWS: Amazon EventBridge integration for Lambda function event-driven execution<br /><br />Validation: Must be valid EventBridgeProps object if provided; enables event-driven function execution when configured                                                                                                                                                                |
-| + [functionName](#functions_items_functionName )                                   | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Required basic function name for Lambda function identification and management. Provides the function identifier for Lambda operations and serves as the primary reference for function management and invocation.<br /><br />Use cases: Function identification; Lambda management; Function invocation; Resource tracking<br /><br />AWS: AWS Lambda function name for identification and management operations<br /><br />Validation: Must be unique function name string; required for function creation and identification                                                                                                                                                                                                                                           |
-| - [generatedLayerNames](#functions_items_generatedLayerNames )                     | No      | array of string | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional array of generated layer names to be added to the function enabling code reuse and dependency management. Specifies layers generated by the configuration that will be attached to the function for shared code and dependencies.<br /><br />Use cases: Code reuse; Dependency management; Shared libraries; Layer management<br /><br />AWS: AWS Lambda layers for code reuse and dependency management<br /><br />Validation: Must be array of valid layer names if provided; enables layer attachment when specified                                                                                                                                                                                                                                          |
-| - [grantInvoke](#functions_items_grantInvoke )                                     | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional principal ARN for Lambda invoke permissions enabling controlled access to data processing functions. Specifies AWS principals that can invoke the Lambda function for S3 event processing and data transformation operations.<br /><br />Use cases: S3 service principal for event triggers; EventBridge service access; Cross-account data processing; Step Functions integration<br /><br />AWS: Lambda function invoke permission for S3 EventBridge notifications and data processing service integration<br /><br />Validation: Must be valid AWS principal ARN; principal must exist and have appropriate permissions for data operations                                                                                                                  |
-| - [handler](#functions_items_handler )                                             | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional Lambda function handler specification for data processing entry point. Defines the specific function handler within the source code that Lambda will invoke for S3 events and EventBridge triggers in data operations.<br /><br />Use cases: Python data processing handlers; Node.js transformation functions; Custom event processing entry points; Data pipeline orchestration<br /><br />AWS: Lambda function handler for S3 event processing and data transformation execution<br /><br />Validation: Must match handler format for specified runtime (e.g., 'index.handler' for Node.js, 'main.lambda_handler' for Python)                                                                                                                                 |
-| - [layerArns](#functions_items_layerArns )                                         | No      | object          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional map of existing layer version ARNs to be directly added to the function enabling external dependency integration. Provides direct layer ARN references for attaching existing layers to the function for external dependencies and shared code.<br /><br />Use cases: External dependencies; Existing layer integration; Shared code; Layer reuse<br /><br />AWS: AWS Lambda layer ARNs for external layer integration and dependency management<br /><br />Validation: Must be valid layer name to ARN mapping if provided; enables external layer integration when specified<br />  *                                                                                                                                                                          |
-| - [logInsightsQueries](#functions_items_logInsightsQueries )                       | No      | array           | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional array of CloudWatch Logs Insights saved queries for Lambda function log analysis enabling pre-built troubleshooting queries. Defines saved query definitions that can be executed against function logs for rapid error analysis, performance investigation, and operational insights with automatic log group derivation.<br /><br />Use cases: Error log analysis; Performance troubleshooting; Request tracing; Operational monitoring; Cross-function queries<br /><br />AWS: CloudWatch Logs Insights query definitions for Lambda function log analysis and troubleshooting<br /><br />Validation: Optional array of LogInsightsQueryProps; queries auto-derive log groups if not specified; exported to SSM for discoverability                           |
-| - [maxEventAgeSeconds](#functions_items_maxEventAgeSeconds )                       | No      | number          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional maximum event age in seconds controlling event processing time limits for data processing workflows. Defines the maximum age of events that Lambda will process before discarding them for event freshness and processing relevance.<br /><br />Use cases: Event freshness; Processing time limits; Data relevance; Event lifecycle management<br /><br />AWS: AWS Lambda maximum event age for event processing time control<br /><br />Validation: Must be between 60 and 21600 seconds if provided; defaults to 21600 seconds (6 hours)                                                                                                                                                                                                                       |
-| - [memorySizeMB](#functions_items_memorySizeMB )                                   | No      | number          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional memory allocation in MB for function execution enabling performance optimization and resource management. Defines the amount of memory allocated to the function affecting CPU power allocation and execution performance for data processing operations.<br /><br />Use cases: Performance optimization; Memory allocation; CPU power; Resource management<br /><br />AWS: AWS Lambda memory size for function performance and resource allocation<br /><br />Validation: Must be between 128 and 10240 MB if provided; defaults to 128 MB; affects performance and cost                                                                                                                                                                                        |
-| - [metricFilters](#functions_items_metricFilters )                                 | No      | array           | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional array of CloudWatch metric filters for Lambda function custom metric extraction enabling log-to-metric transformation. Defines filter patterns and transformations for extracting custom metrics from function logs with automatic SSM export for cross-module discoverability and dashboard integration.<br /><br />Use cases: Error rate metrics; Performance tracking; Business metrics; Custom monitoring; Operational dashboards; Alerting<br /><br />AWS: CloudWatch Logs metric filters for Lambda function custom metric extraction and monitoring<br /><br />Validation: Optional array of MetricFilterProps; metrics exported to SSM; enables custom metric monitoring and alerting                                                                    |
-| - [reservedConcurrentExecutions](#functions_items_reservedConcurrentExecutions )   | No      | number          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional reserved concurrent executions for function capacity management enabling performance control and cost optimization. Defines the maximum number of concurrent executions reserved for the function affecting performance isolation and resource allocation.<br /><br />Use cases: Performance control; Capacity management; Cost optimization; Resource isolation<br /><br />AWS: AWS Lambda reserved concurrent executions for function capacity and performance management<br /><br />Validation: Must be positive integer if provided; affects function concurrency and account limits                                                                                                                                                                         |
-| - [retryAttempts](#functions_items_retryAttempts )                                 | No      | number          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional maximum retry attempts for failed function executions enabling fault tolerance and reliability. Defines the maximum number of times Lambda will retry function execution after errors for improved reliability and fault tolerance in data processing workflows.<br /><br />Use cases: Fault tolerance; Function reliability; Error recovery; Retry logic<br /><br />AWS: AWS Lambda retry attempts for failed function execution recovery and fault tolerance<br /><br />Validation: Must be between 0 and 2 if provided; defaults to 2; enables automatic retry for failed executions                                                                                                                                                                          |
-| + [roleArn](#functions_items_roleArn )                                             | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Required IAM role ARN for Lambda function execution permissions enabling secure access to AWS services and resources. Provides the execution role that Lambda assumes to execute the function and access data sources, outputs, and other AWS services.<br /><br />Use cases: Function permissions; Service access; Security roles; Resource authorization<br /><br />AWS: AWS IAM role ARN for Lambda function execution permissions and service access<br /><br />Validation: Must be valid IAM role ARN string; required for function execution permissions and resource access                                                                                                                                                                                        |
-| - [runtime](#functions_items_runtime )                                             | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional Lambda runtime specification for data processing execution environment. Defines the runtime environment for executing data transformation and S3 event processing functions with support for Python and Node.js data operations.<br /><br />Use cases: Python 3.9 for pandas data processing; Node.js 18.x for JSON transformations; Custom runtime environments; Data science libraries<br /><br />AWS: Lambda runtime environment for data processing function execution and library support<br /><br />Validation: Must be valid Lambda runtime (python3.9, nodejs18.x, etc.); must be compatible with source code and data processing libraries                                                                                                              |
-| + [srcDir](#functions_items_srcDir )                                               | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Required source code directory path containing Lambda function code for data processing operations. Specifies the local directory with function source code that will be packaged and deployed for S3 event processing and data transformation workflows.<br /><br />Use cases: CSV to Parquet transformation code; Data validation scripts; S3 event processing logic; Custom data pipeline functions<br /><br />AWS: Lambda function source code location for deployment packaging and data processing function creation<br /><br />Validation: Must be valid directory path containing deployable Lambda code; directory must exist and be readable                                                                                                                    |
-| - [timeoutSeconds](#functions_items_timeoutSeconds )                               | No      | number          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional function execution timeout in seconds controlling maximum execution time for data processing operations. Defines the maximum time the function can run before Lambda terminates it, critical for processing workflows and cost management.<br /><br />Use cases: Execution timeout; Cost control; Processing time limits; Resource management<br /><br />AWS: AWS Lambda function timeout for execution time control and resource management<br /><br />Validation: Must be positive integer in seconds if provided; defaults to 3 seconds; affects function execution and cost                                                                                                                                                                                  |
-| - [vpcConfig](#functions_items_vpcConfig )                                         | No      | object          | No         | In #/definitions/VpcConfigProps   | Q-ENHANCED-PROPERTY<br />Optional VPC configuration for function network deployment enabling secure networking and resource access within VPC environments. Defines VPC networking configuration for Lambda functions including subnet placement and security groups.<br /><br />Use cases: VPC deployment; Secure networking; Private resource access; Network isolation<br /><br />AWS: AWS VPC configuration for Lambda function networking and security<br /><br />Validation: Must be valid VpcConfigProps object if provided; enables VPC deployment when configured                                                                                                                                                                                                                         |
+| Property                                                                                           | Pattern | Type            | Deprecated | Definition                        | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [additionalResourcePermissions](#lambdaFunctions_functions_items_additionalResourcePermissions ) | No      | object          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional additional resource permissions for Lambda function access control in data processing workflows. Provides fine-grained permissions beyond basic invoke for complex S3 data operations and cross-service integration scenarios.<br /><br />Use cases: S3 bucket access for data processing; Glue catalog permissions; DynamoDB table access; SNS notification permissions<br /><br />AWS: Lambda resource policy permissions for data processing access control and service integration<br /><br />Validation: Must be valid SID to AdditionalResourcePermission mapping; enables complex data processing permission scenarios<br />  *                                                                                                                           |
+| - [alarms](#lambdaFunctions_functions_items_alarms )                                               | No      | array           | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional array of CloudWatch alarms for Lambda function monitoring and alerting enabling automated incident response. Defines alarm conditions, thresholds, and SNS notifications for both custom metrics (from metricFilters) and AWS Lambda metrics with automatic metric validation and placeholder replacement.<br /><br />Use cases: Error rate alerting; Performance monitoring; Threshold breaches; Automated notifications; Incident management; Multi-metric conditions<br /><br />AWS: CloudWatch alarms for Lambda function monitoring and automated alerting with SNS integration<br /><br />Validation: Optional array of AlarmProps; custom metrics validated against metricFilters; AWS/* metrics bypass validation; supports {{functionName}} placeholder |
+| - [description](#lambdaFunctions_functions_items_description )                                     | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional description of the Lambda function explaining its purpose and data processing operations for documentation and management clarity. Provides human-readable description of the function's purpose and the data operations it performs.<br /><br />Use cases: Function documentation; Operational clarity; Data processing explanation; Management understanding<br /><br />AWS: AWS Lambda function description for documentation and operational clarity<br /><br />Validation: Must be descriptive text if provided; recommended for function documentation and operational understanding                                                                                                                                                                       |
+| - [dockerBuild](#lambdaFunctions_functions_items_dockerBuild )                                     | No      | boolean         | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional Docker container build flag for custom data processing environments. When enabled, expects srcDir to contain Dockerfile for custom runtime environments with specialized data processing libraries and dependencies.<br /><br />Use cases: Custom Python environments with ML libraries; Specialized data processing containers; Complex dependency management; Custom data science stacks<br /><br />AWS: Lambda container image deployment for custom data processing runtime environments and specialized libraries<br /><br />Validation: When true, srcDir must contain valid Dockerfile; container must be compatible with Lambda execution environment                                                                                                    |
+| - [environment](#lambdaFunctions_functions_items_environment )                                     | No      | object          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional environment variables for function configuration enabling runtime configuration and parameter passing. Defines key-value pairs that Lambda caches and makes available for function execution enabling configuration changes without code modifications.<br /><br />Use cases: Runtime configuration; Parameter passing; Environment-specific settings; Configuration management<br /><br />AWS: AWS Lambda environment variables for function configuration and runtime parameters<br /><br />Validation: Must be valid key-value string pairs if provided; enables runtime configuration when specified<br />  *                                                                                                                                                |
+| - [ephemeralStorageSizeMB](#lambdaFunctions_functions_items_ephemeralStorageSizeMB )               | No      | number          | No         | -                                 | The size of the function’s /tmp directory in MB.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [eventBridge](#lambdaFunctions_functions_items_eventBridge )                                     | No      | object          | No         | In #/definitions/EventBridgeProps | Q-ENHANCED-PROPERTY<br />Optional EventBridge configuration for event-driven function execution enabling automated data processing workflows. Defines EventBridge integration for triggering Lambda functions based on events for automated data processing and workflow orchestration.<br /><br />Use cases: Event-driven processing; Workflow automation; Data pipeline triggers; Event orchestration<br /><br />AWS: Amazon EventBridge integration for Lambda function event-driven execution<br /><br />Validation: Must be valid EventBridgeProps object if provided; enables event-driven function execution when configured                                                                                                                                                                |
+| + [functionName](#lambdaFunctions_functions_items_functionName )                                   | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Required basic function name for Lambda function identification and management. Provides the function identifier for Lambda operations and serves as the primary reference for function management and invocation.<br /><br />Use cases: Function identification; Lambda management; Function invocation; Resource tracking<br /><br />AWS: AWS Lambda function name for identification and management operations<br /><br />Validation: Must be unique function name string; required for function creation and identification                                                                                                                                                                                                                                           |
+| - [generatedLayerNames](#lambdaFunctions_functions_items_generatedLayerNames )                     | No      | array of string | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional array of generated layer names to be added to the function enabling code reuse and dependency management. Specifies layers generated by the configuration that will be attached to the function for shared code and dependencies.<br /><br />Use cases: Code reuse; Dependency management; Shared libraries; Layer management<br /><br />AWS: AWS Lambda layers for code reuse and dependency management<br /><br />Validation: Must be array of valid layer names if provided; enables layer attachment when specified                                                                                                                                                                                                                                          |
+| - [grantInvoke](#lambdaFunctions_functions_items_grantInvoke )                                     | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional principal ARN for Lambda invoke permissions enabling controlled access to data processing functions. Specifies AWS principals that can invoke the Lambda function for S3 event processing and data transformation operations.<br /><br />Use cases: S3 service principal for event triggers; EventBridge service access; Cross-account data processing; Step Functions integration<br /><br />AWS: Lambda function invoke permission for S3 EventBridge notifications and data processing service integration<br /><br />Validation: Must be valid AWS principal ARN; principal must exist and have appropriate permissions for data operations                                                                                                                  |
+| - [handler](#lambdaFunctions_functions_items_handler )                                             | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional Lambda function handler specification for data processing entry point. Defines the specific function handler within the source code that Lambda will invoke for S3 events and EventBridge triggers in data operations.<br /><br />Use cases: Python data processing handlers; Node.js transformation functions; Custom event processing entry points; Data pipeline orchestration<br /><br />AWS: Lambda function handler for S3 event processing and data transformation execution<br /><br />Validation: Must match handler format for specified runtime (e.g., 'index.handler' for Node.js, 'main.lambda_handler' for Python)                                                                                                                                 |
+| - [layerArns](#lambdaFunctions_functions_items_layerArns )                                         | No      | object          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional map of existing layer version ARNs to be directly added to the function enabling external dependency integration. Provides direct layer ARN references for attaching existing layers to the function for external dependencies and shared code.<br /><br />Use cases: External dependencies; Existing layer integration; Shared code; Layer reuse<br /><br />AWS: AWS Lambda layer ARNs for external layer integration and dependency management<br /><br />Validation: Must be valid layer name to ARN mapping if provided; enables external layer integration when specified<br />  *                                                                                                                                                                          |
+| - [logInsightsQueries](#lambdaFunctions_functions_items_logInsightsQueries )                       | No      | array           | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional array of CloudWatch Logs Insights saved queries for Lambda function log analysis enabling pre-built troubleshooting queries. Defines saved query definitions that can be executed against function logs for rapid error analysis, performance investigation, and operational insights with automatic log group derivation.<br /><br />Use cases: Error log analysis; Performance troubleshooting; Request tracing; Operational monitoring; Cross-function queries<br /><br />AWS: CloudWatch Logs Insights query definitions for Lambda function log analysis and troubleshooting<br /><br />Validation: Optional array of LogInsightsQueryProps; queries auto-derive log groups if not specified; exported to SSM for discoverability                           |
+| - [maxEventAgeSeconds](#lambdaFunctions_functions_items_maxEventAgeSeconds )                       | No      | number          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional maximum event age in seconds controlling event processing time limits for data processing workflows. Defines the maximum age of events that Lambda will process before discarding them for event freshness and processing relevance.<br /><br />Use cases: Event freshness; Processing time limits; Data relevance; Event lifecycle management<br /><br />AWS: AWS Lambda maximum event age for event processing time control<br /><br />Validation: Must be between 60 and 21600 seconds if provided; defaults to 21600 seconds (6 hours)                                                                                                                                                                                                                       |
+| - [memorySizeMB](#lambdaFunctions_functions_items_memorySizeMB )                                   | No      | number          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional memory allocation in MB for function execution enabling performance optimization and resource management. Defines the amount of memory allocated to the function affecting CPU power allocation and execution performance for data processing operations.<br /><br />Use cases: Performance optimization; Memory allocation; CPU power; Resource management<br /><br />AWS: AWS Lambda memory size for function performance and resource allocation<br /><br />Validation: Must be between 128 and 10240 MB if provided; defaults to 128 MB; affects performance and cost                                                                                                                                                                                        |
+| - [metricFilters](#lambdaFunctions_functions_items_metricFilters )                                 | No      | array           | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional array of CloudWatch metric filters for Lambda function custom metric extraction enabling log-to-metric transformation. Defines filter patterns and transformations for extracting custom metrics from function logs with automatic SSM export for cross-module discoverability and dashboard integration.<br /><br />Use cases: Error rate metrics; Performance tracking; Business metrics; Custom monitoring; Operational dashboards; Alerting<br /><br />AWS: CloudWatch Logs metric filters for Lambda function custom metric extraction and monitoring<br /><br />Validation: Optional array of MetricFilterProps; metrics exported to SSM; enables custom metric monitoring and alerting                                                                    |
+| - [reservedConcurrentExecutions](#lambdaFunctions_functions_items_reservedConcurrentExecutions )   | No      | number          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional reserved concurrent executions for function capacity management enabling performance control and cost optimization. Defines the maximum number of concurrent executions reserved for the function affecting performance isolation and resource allocation.<br /><br />Use cases: Performance control; Capacity management; Cost optimization; Resource isolation<br /><br />AWS: AWS Lambda reserved concurrent executions for function capacity and performance management<br /><br />Validation: Must be positive integer if provided; affects function concurrency and account limits                                                                                                                                                                         |
+| - [retryAttempts](#lambdaFunctions_functions_items_retryAttempts )                                 | No      | number          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional maximum retry attempts for failed function executions enabling fault tolerance and reliability. Defines the maximum number of times Lambda will retry function execution after errors for improved reliability and fault tolerance in data processing workflows.<br /><br />Use cases: Fault tolerance; Function reliability; Error recovery; Retry logic<br /><br />AWS: AWS Lambda retry attempts for failed function execution recovery and fault tolerance<br /><br />Validation: Must be between 0 and 2 if provided; defaults to 2; enables automatic retry for failed executions                                                                                                                                                                          |
+| + [roleArn](#lambdaFunctions_functions_items_roleArn )                                             | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Required IAM role ARN for Lambda function execution permissions enabling secure access to AWS services and resources. Provides the execution role that Lambda assumes to execute the function and access data sources, outputs, and other AWS services.<br /><br />Use cases: Function permissions; Service access; Security roles; Resource authorization<br /><br />AWS: AWS IAM role ARN for Lambda function execution permissions and service access<br /><br />Validation: Must be valid IAM role ARN string; required for function execution permissions and resource access                                                                                                                                                                                        |
+| - [runtime](#lambdaFunctions_functions_items_runtime )                                             | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional Lambda runtime specification for data processing execution environment. Defines the runtime environment for executing data transformation and S3 event processing functions with support for Python and Node.js data operations.<br /><br />Use cases: Python 3.9 for pandas data processing; Node.js 18.x for JSON transformations; Custom runtime environments; Data science libraries<br /><br />AWS: Lambda runtime environment for data processing function execution and library support<br /><br />Validation: Must be valid Lambda runtime (python3.9, nodejs18.x, etc.); must be compatible with source code and data processing libraries                                                                                                              |
+| + [srcDir](#lambdaFunctions_functions_items_srcDir )                                               | No      | string          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Required source code directory path containing Lambda function code for data processing operations. Specifies the local directory with function source code that will be packaged and deployed for S3 event processing and data transformation workflows.<br /><br />Use cases: CSV to Parquet transformation code; Data validation scripts; S3 event processing logic; Custom data pipeline functions<br /><br />AWS: Lambda function source code location for deployment packaging and data processing function creation<br /><br />Validation: Must be valid directory path containing deployable Lambda code; directory must exist and be readable                                                                                                                    |
+| - [timeoutSeconds](#lambdaFunctions_functions_items_timeoutSeconds )                               | No      | number          | No         | -                                 | Q-ENHANCED-PROPERTY<br />Optional function execution timeout in seconds controlling maximum execution time for data processing operations. Defines the maximum time the function can run before Lambda terminates it, critical for processing workflows and cost management.<br /><br />Use cases: Execution timeout; Cost control; Processing time limits; Resource management<br /><br />AWS: AWS Lambda function timeout for execution time control and resource management<br /><br />Validation: Must be positive integer in seconds if provided; defaults to 3 seconds; affects function execution and cost                                                                                                                                                                                  |
+| - [vpcConfig](#lambdaFunctions_functions_items_vpcConfig )                                         | No      | object          | No         | In #/definitions/VpcConfigProps   | Q-ENHANCED-PROPERTY<br />Optional VPC configuration for function network deployment enabling secure networking and resource access within VPC environments. Defines VPC networking configuration for Lambda functions including subnet placement and security groups.<br /><br />Use cases: VPC deployment; Secure networking; Private resource access; Network isolation<br /><br />AWS: AWS VPC configuration for Lambda function networking and security<br /><br />Validation: Must be valid VpcConfigProps object if provided; enables VPC deployment when configured                                                                                                                                                                                                                         |
 
-#### <a name="functions_items_additionalResourcePermissions"></a>3.1.1. Property `root > functions > functions items > additionalResourcePermissions`
+##### <a name="lambdaFunctions_functions_items_additionalResourcePermissions"></a>7.1.1.1. Property `root > lambdaFunctions > functions > functions items > additionalResourcePermissions`
 
-|                           |                                                                                                                            |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                   |
-| **Required**              | No                                                                                                                         |
-| **Additional properties** | [Each additional property must conform to the schema](#functions_items_additionalResourcePermissions_additionalProperties) |
+|                           |                                                                                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                                                                   |
+| **Required**              | No                                                                                                                                         |
+| **Additional properties** | [Each additional property must conform to the schema](#lambdaFunctions_functions_items_additionalResourcePermissions_additionalProperties) |
 
 **Description:** Q-ENHANCED-PROPERTY
 Optional additional resource permissions for Lambda function access control in data processing workflows. Provides fine-grained permissions beyond basic invoke for complex S3 data operations and cross-service integration scenarios.
@@ -143,11 +3326,11 @@ AWS: Lambda resource policy permissions for data processing access control and s
 Validation: Must be valid SID to AdditionalResourcePermission mapping; enables complex data processing permission scenarios
   *
 
-| Property                                                                   | Pattern | Type   | Deprecated | Definition                                    | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| -------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [](#functions_items_additionalResourcePermissions_additionalProperties ) | No      | object | No         | In #/definitions/AdditionalResourcePermission | Q-ENHANCED-INTERFACE<br />Configuration interface for Lambda resource permission management enabling fine-grained access control for data processing operations. Defines specific permissions for AWS principals to access Lambda functions with optional source restrictions for enhanced security in data workflows.<br /><br />Use cases: S3 service permissions for event processing; EventBridge rule access; Cross-account data processing; Service-to-service integration<br /><br />AWS: Lambda resource policy permissions for controlled data processing function access and service integration<br /><br />Validation: principal and action are required; sourceAccount and sourceArn provide additional security for service principals |
+| Property                                                                                   | Pattern | Type   | Deprecated | Definition                                    | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [](#lambdaFunctions_functions_items_additionalResourcePermissions_additionalProperties ) | No      | object | No         | In #/definitions/AdditionalResourcePermission | Q-ENHANCED-INTERFACE<br />Configuration interface for Lambda resource permission management enabling fine-grained access control for data processing operations. Defines specific permissions for AWS principals to access Lambda functions with optional source restrictions for enhanced security in data workflows.<br /><br />Use cases: S3 service permissions for event processing; EventBridge rule access; Cross-account data processing; Service-to-service integration<br /><br />AWS: Lambda resource policy permissions for controlled data processing function access and service integration<br /><br />Validation: principal and action are required; sourceAccount and sourceArn provide additional security for service principals |
 
-##### <a name="functions_items_additionalResourcePermissions_additionalProperties"></a>3.1.1.1. Property `root > functions > functions items > additionalResourcePermissions > AdditionalResourcePermission`
+###### <a name="lambdaFunctions_functions_items_additionalResourcePermissions_additionalProperties"></a>7.1.1.1.1. Property `root > lambdaFunctions > functions > functions items > additionalResourcePermissions > AdditionalResourcePermission`
 
 |                           |                                            |
 | ------------------------- | ------------------------------------------ |
@@ -165,14 +3348,14 @@ AWS: Lambda resource policy permissions for controlled data processing function 
 
 Validation: principal and action are required; sourceAccount and sourceArn provide additional security for service principals
 
-| Property                                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| ----------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [action](#functions_items_additionalResourcePermissions_additionalProperties_action )               | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required Lambda action specification for data processing function permissions. Defines the specific Lambda action that will be granted to the principal for controlled access to data processing functions and workflow orchestration.<br /><br />Use cases: lambda:InvokeFunction for S3 event processing; lambda:InvokeAsync for asynchronous data operations; Custom actions for specific data workflows<br /><br />AWS: Lambda action permission for data processing function access and operation authorization<br /><br />Validation: Must be valid Lambda action (lambda:InvokeFunction, lambda:InvokeAsync, etc.); action must be appropriate for data processing use case                                 |
-| + [principal](#functions_items_additionalResourcePermissions_additionalProperties_principal )         | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required AWS principal ARN for Lambda function access in data processing workflows. Specifies the AWS principal (IAM role, user, service, or account) that will be granted permission to access the Lambda function for S3 event processing and data operations.<br /><br />Use cases: S3 service principal for event notifications; EventBridge service for rule triggers; Cross-account data processing roles; Step Functions execution roles<br /><br />AWS: Lambda resource policy principal for data processing function access and service integration<br /><br />Validation: Must be valid AWS principal ARN format; principal must exist and be accessible for data operations                             |
-| - [sourceAccount](#functions_items_additionalResourcePermissions_additionalProperties_sourceAccount ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional source AWS account restriction for enhanced security in cross-account data processing scenarios. When specified with service principals, restricts Lambda function access to originate from the specified account for additional security in data operations.<br /><br />Use cases: Cross-account S3 event processing; Multi-account data lake architectures; Secure service-to-service data operations; Account-based access control<br /><br />AWS: Lambda resource policy source account condition for enhanced cross-account data processing security<br /><br />Validation: Must be valid 12-digit AWS account ID if specified; used with service principals for additional data processing security |
-| - [sourceArn](#functions_items_additionalResourcePermissions_additionalProperties_sourceArn )         | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional source resource ARN restriction for fine-grained access control in data processing workflows. When specified with service principals, restricts Lambda function access to originate from specific AWS resources for enhanced security in data operations.<br /><br />Use cases: Specific S3 bucket event processing; EventBridge rule source restrictions; Resource-specific data processing access; Fine-grained security controls<br /><br />AWS: Lambda resource policy source ARN condition for resource-specific data processing access control<br /><br />Validation: Must be valid AWS resource ARN if specified; used with service principals for resource-specific data processing access        |
+| Property                                                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [action](#lambdaFunctions_functions_items_additionalResourcePermissions_additionalProperties_action )               | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required Lambda action specification for data processing function permissions. Defines the specific Lambda action that will be granted to the principal for controlled access to data processing functions and workflow orchestration.<br /><br />Use cases: lambda:InvokeFunction for S3 event processing; lambda:InvokeAsync for asynchronous data operations; Custom actions for specific data workflows<br /><br />AWS: Lambda action permission for data processing function access and operation authorization<br /><br />Validation: Must be valid Lambda action (lambda:InvokeFunction, lambda:InvokeAsync, etc.); action must be appropriate for data processing use case                                 |
+| + [principal](#lambdaFunctions_functions_items_additionalResourcePermissions_additionalProperties_principal )         | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required AWS principal ARN for Lambda function access in data processing workflows. Specifies the AWS principal (IAM role, user, service, or account) that will be granted permission to access the Lambda function for S3 event processing and data operations.<br /><br />Use cases: S3 service principal for event notifications; EventBridge service for rule triggers; Cross-account data processing roles; Step Functions execution roles<br /><br />AWS: Lambda resource policy principal for data processing function access and service integration<br /><br />Validation: Must be valid AWS principal ARN format; principal must exist and be accessible for data operations                             |
+| - [sourceAccount](#lambdaFunctions_functions_items_additionalResourcePermissions_additionalProperties_sourceAccount ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional source AWS account restriction for enhanced security in cross-account data processing scenarios. When specified with service principals, restricts Lambda function access to originate from the specified account for additional security in data operations.<br /><br />Use cases: Cross-account S3 event processing; Multi-account data lake architectures; Secure service-to-service data operations; Account-based access control<br /><br />AWS: Lambda resource policy source account condition for enhanced cross-account data processing security<br /><br />Validation: Must be valid 12-digit AWS account ID if specified; used with service principals for additional data processing security |
+| - [sourceArn](#lambdaFunctions_functions_items_additionalResourcePermissions_additionalProperties_sourceArn )         | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional source resource ARN restriction for fine-grained access control in data processing workflows. When specified with service principals, restricts Lambda function access to originate from specific AWS resources for enhanced security in data operations.<br /><br />Use cases: Specific S3 bucket event processing; EventBridge rule source restrictions; Resource-specific data processing access; Fine-grained security controls<br /><br />AWS: Lambda resource policy source ARN condition for resource-specific data processing access control<br /><br />Validation: Must be valid AWS resource ARN if specified; used with service principals for resource-specific data processing access        |
 
-###### <a name="functions_items_additionalResourcePermissions_additionalProperties_action"></a>3.1.1.1.1. Property `root > functions > functions items > additionalResourcePermissions > additionalProperties > action`
+###### <a name="lambdaFunctions_functions_items_additionalResourcePermissions_additionalProperties_action"></a>7.1.1.1.1.1. Property `root > lambdaFunctions > functions > functions items > additionalResourcePermissions > additionalProperties > action`
 
 |              |          |
 | ------------ | -------- |
@@ -188,7 +3371,7 @@ AWS: Lambda action permission for data processing function access and operation 
 
 Validation: Must be valid Lambda action (lambda:InvokeFunction, lambda:InvokeAsync, etc.); action must be appropriate for data processing use case
 
-###### <a name="functions_items_additionalResourcePermissions_additionalProperties_principal"></a>3.1.1.1.2. Property `root > functions > functions items > additionalResourcePermissions > additionalProperties > principal`
+###### <a name="lambdaFunctions_functions_items_additionalResourcePermissions_additionalProperties_principal"></a>7.1.1.1.1.2. Property `root > lambdaFunctions > functions > functions items > additionalResourcePermissions > additionalProperties > principal`
 
 |              |          |
 | ------------ | -------- |
@@ -204,7 +3387,7 @@ AWS: Lambda resource policy principal for data processing function access and se
 
 Validation: Must be valid AWS principal ARN format; principal must exist and be accessible for data operations
 
-###### <a name="functions_items_additionalResourcePermissions_additionalProperties_sourceAccount"></a>3.1.1.1.3. Property `root > functions > functions items > additionalResourcePermissions > additionalProperties > sourceAccount`
+###### <a name="lambdaFunctions_functions_items_additionalResourcePermissions_additionalProperties_sourceAccount"></a>7.1.1.1.1.3. Property `root > lambdaFunctions > functions > functions items > additionalResourcePermissions > additionalProperties > sourceAccount`
 
 |              |          |
 | ------------ | -------- |
@@ -220,7 +3403,7 @@ AWS: Lambda resource policy source account condition for enhanced cross-account 
 
 Validation: Must be valid 12-digit AWS account ID if specified; used with service principals for additional data processing security
 
-###### <a name="functions_items_additionalResourcePermissions_additionalProperties_sourceArn"></a>3.1.1.1.4. Property `root > functions > functions items > additionalResourcePermissions > additionalProperties > sourceArn`
+###### <a name="lambdaFunctions_functions_items_additionalResourcePermissions_additionalProperties_sourceArn"></a>7.1.1.1.1.4. Property `root > lambdaFunctions > functions > functions items > additionalResourcePermissions > additionalProperties > sourceArn`
 
 |              |          |
 | ------------ | -------- |
@@ -236,7 +3419,7 @@ AWS: Lambda resource policy source ARN condition for resource-specific data proc
 
 Validation: Must be valid AWS resource ARN if specified; used with service principals for resource-specific data processing access
 
-#### <a name="functions_items_alarms"></a>3.1.2. Property `root > functions > functions items > alarms`
+##### <a name="lambdaFunctions_functions_items_alarms"></a>7.1.1.2. Property `root > lambdaFunctions > functions > functions items > alarms`
 
 |              |         |
 | ------------ | ------- |
@@ -260,11 +3443,11 @@ Validation: Optional array of AlarmProps; custom metrics validated against metri
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be             | Description              |
-| ------------------------------------------- | ------------------------ |
-| [AlarmProps](#functions_items_alarms_items) | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be                             | Description              |
+| ----------------------------------------------------------- | ------------------------ |
+| [AlarmProps](#lambdaFunctions_functions_items_alarms_items) | Q-ENHANCED-INTERFACE ... |
 
-##### <a name="functions_items_alarms_items"></a>3.1.2.1. root > functions > functions items > alarms > AlarmProps
+###### <a name="lambdaFunctions_functions_items_alarms_items"></a>7.1.1.2.1. root > lambdaFunctions > functions > functions items > alarms > AlarmProps
 
 |                           |                          |
 | ------------------------- | ------------------------ |
@@ -282,28 +3465,28 @@ AWS: CloudWatch alarm for Lambda function monitoring and automated alerting with
 
 Validation: alarmName required; either metricName/namespace or metrics array required; threshold and evaluationPeriods required
 
-| Property                                                                            | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ----------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [actionsEnabled](#functions_items_alarms_items_actionsEnabled )                   | No      | boolean         | No         | -          | Q-ENHANCED-PROPERTY<br />Optional flag enabling or disabling alarm actions during state changes. Controls whether SNS notifications and other actions are executed when the alarm changes state for testing and maintenance scenarios.<br /><br />Use cases: Action control; Testing mode; Maintenance windows; Notification management<br /><br />AWS: CloudWatch alarm actions enabled flag for notification and action control<br /><br />Validation: Boolean flag; defaults to true; controls execution of alarm, OK, and insufficient data actions                                                                                                             |
-| - [alarmActions](#functions_items_alarms_items_alarmActions )                       | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of SNS topic ARNs for ALARM state notifications enabling automated alerting. Specifies SNS topics that receive notifications when the alarm transitions to ALARM state for operational response and incident management.<br /><br />Use cases: Error notifications; Performance alerts; Operational incidents; Automated response; PagerDuty integration<br /><br />AWS: SNS topic ARNs for CloudWatch alarm ALARM state notifications and automated alerting<br /><br />Validation: Must be valid SNS topic ARNs if provided; topics must exist; enables automated alarm notifications                                     |
-| - [alarmDescription](#functions_items_alarms_items_alarmDescription )               | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional human-readable description for the alarm enabling clear alarm purpose documentation. Provides detailed explanation of the alarm condition, threshold rationale, and expected actions for operational clarity.<br /><br />Use cases: Alarm documentation; Operational guidance; Threshold rationale; Action instructions<br /><br />AWS: CloudWatch alarm description for alarm documentation and operational guidance<br /><br />Validation: Optional descriptive string; appears in CloudWatch console and notifications; improves alarm understanding                                                                           |
-| + [alarmName](#functions_items_alarms_items_alarmName )                             | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required unique name for the CloudWatch alarm enabling alarm identification and management. Provides a descriptive name for the alarm that appears in the CloudWatch console and is used for SSM parameter export.<br /><br />Use cases: Alarm identification; Console display; SSM parameter naming; Notification messages<br /><br />AWS: CloudWatch alarm name for alarm identification and management<br /><br />Validation: Must be unique within the function; should be descriptive of alarm condition; used for SSM parameter naming                                                                                               |
-| + [comparisonOperator](#functions_items_alarms_items_comparisonOperator )           | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required comparison operator for alarm threshold evaluation enabling flexible breach conditions. Specifies how to compare the metric value to the threshold (e.g., GreaterThanOrEqualToThreshold, LessThanThreshold) for alarm state determination.<br /><br />Use cases: Greater than for error counts; Less than for availability; Equal to for exact matches; Threshold comparison<br /><br />AWS: CloudWatch alarm comparison operator for threshold evaluation and alarm state determination<br /><br />Validation: Must be valid comparison operator string; converted to CDK enum; determines alarm triggering logic                |
-| - [datapointsToAlarm](#functions_items_alarms_items_datapointsToAlarm )             | No      | number          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional number of datapoints that must breach threshold within evaluation periods enabling flexible alarm sensitivity. Specifies how many of the evaluation periods must breach the threshold (M out of N) for more nuanced alarm triggering.<br /><br />Use cases: Flexible sensitivity; Intermittent breach detection; M-out-of-N evaluation; False positive reduction<br /><br />AWS: CloudWatch alarm datapoints to alarm for M-out-of-N evaluation and flexible sensitivity<br /><br />Validation: Must be positive integer if provided; must be <= evaluationPeriods; defaults to evaluationPeriods                                 |
-| - [dimensions](#functions_items_alarms_items_dimensions )                           | No      | object          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric dimensions for single metric alarms enabling specific metric instance selection. Provides key-value pairs for filtering metrics to specific instances with support for {{functionName}} placeholder for dynamic function name substitution.<br /><br />Use cases: Function-specific alarms; Environment filtering; Dynamic function names; Instance selection<br /><br />AWS: CloudWatch metric dimensions for single metric alarm filtering and instance selection<br /><br />Validation: Must be valid dimension key-value pairs if provided; supports {{functionName}} placeholder; enables metric filtering |
-| + [evaluationPeriods](#functions_items_alarms_items_evaluationPeriods )             | No      | number          | No         | -          | Q-ENHANCED-PROPERTY<br />Required number of evaluation periods for alarm threshold comparison enabling sustained breach detection. Specifies how many consecutive periods the metric must breach the threshold before triggering the alarm for reducing false positives.<br /><br />Use cases: Sustained breach detection; False positive reduction; Alarm sensitivity; Threshold persistence<br /><br />AWS: CloudWatch alarm evaluation periods for sustained breach detection and alarm triggering<br /><br />Validation: Must be positive integer; determines alarm sensitivity; higher values reduce false positives                                           |
-| - [insufficientDataActions](#functions_items_alarms_items_insufficientDataActions ) | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of SNS topic ARNs for INSUFFICIENT_DATA state notifications enabling data availability monitoring. Specifies SNS topics that receive notifications when the alarm has insufficient data for evaluation.<br /><br />Use cases: Data availability monitoring; Metric collection issues; Pipeline health; Data gap detection<br /><br />AWS: SNS topic ARNs for CloudWatch alarm INSUFFICIENT_DATA state notifications and data monitoring<br /><br />Validation: Must be valid SNS topic ARNs if provided; topics must exist; enables data availability notifications                                                         |
-| - [metricName](#functions_items_alarms_items_metricName )                           | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric name for single metric alarms enabling direct metric monitoring. Specifies the metric to monitor for alarm evaluation, validated against defined metric filters for custom metrics or used directly for AWS metrics.<br /><br />Use cases: Error count monitoring; Duration tracking; AWS Lambda metrics; Custom metric alarms<br /><br />AWS: CloudWatch metric name for single metric alarm evaluation and monitoring<br /><br />Validation: Must be valid metric name if provided; validated against metric filters for custom metrics; mutually exclusive with metrics array                                |
-| - [metrics](#functions_items_alarms_items_metrics )                                 | No      | array           | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of metric data queries for metric math alarms enabling complex multi-metric conditions. Defines multiple metrics and expressions for calculated alarm conditions combining metrics with mathematical operations.<br /><br />Use cases: Multi-metric alarms; Calculated thresholds; Aggregated monitoring; Complex alerting logic; Derived metrics<br /><br />AWS: CloudWatch metric data queries for metric math alarms and complex alarm conditions<br /><br />Validation: Must be array of MetricDataQueryProps if provided; mutually exclusive with metricName; enables metric math alarms                               |
-| - [namespace](#functions_items_alarms_items_namespace )                             | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric namespace for single metric alarms enabling metric source identification. Specifies the namespace containing the metric, with automatic validation bypass for AWS/* namespaces and validation for custom namespaces.<br /><br />Use cases: Custom metric namespaces; AWS service metrics; Namespace identification; Metric validation<br /><br />AWS: CloudWatch metric namespace for single metric alarm source identification<br /><br />Validation: Must be valid namespace if provided; AWS/* namespaces bypass validation; custom namespaces validated against metric filters                              |
-| - [okActions](#functions_items_alarms_items_okActions )                             | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of SNS topic ARNs for OK state notifications enabling recovery confirmation. Specifies SNS topics that receive notifications when the alarm transitions to OK state for confirming issue resolution.<br /><br />Use cases: Recovery notifications; Issue resolution; Status updates; Incident closure<br /><br />AWS: SNS topic ARNs for CloudWatch alarm OK state notifications and recovery confirmation<br /><br />Validation: Must be valid SNS topic ARNs if provided; topics must exist; enables recovery notifications                                                                                               |
-| - [period](#functions_items_alarms_items_period )                                   | No      | number          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional metric evaluation period in seconds for single metric alarms defining aggregation time window. Specifies how long to aggregate metric data points before comparing to threshold for alarm evaluation.<br /><br />Use cases: Short-term monitoring; Long-term trends; Aggregation windows; Alarm sensitivity tuning<br /><br />AWS: CloudWatch metric period for single metric alarm aggregation and evaluation windows<br /><br />Validation: Must be valid period in seconds if provided; typically 60, 300, or 3600; affects alarm sensitivity                                                                                  |
-| - [statistic](#functions_items_alarms_items_statistic )                             | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric statistic for single metric alarms enabling metric aggregation. Specifies how to aggregate metric data points (e.g., Sum, Average, Maximum) for alarm threshold comparison.<br /><br />Use cases: Sum for error counts; Average for durations; Maximum for peaks; Statistical analysis<br /><br />AWS: CloudWatch metric statistic for single metric alarm aggregation and evaluation<br /><br />Validation: Must be valid statistic if provided (Sum, Average, Maximum, Minimum, SampleCount); used with metricName                                                                                            |
-| + [threshold](#functions_items_alarms_items_threshold )                             | No      | number          | No         | -          | Q-ENHANCED-PROPERTY<br />Required threshold value for alarm comparison enabling breach detection. Specifies the numeric value that the metric is compared against using the comparison operator to determine alarm state.<br /><br />Use cases: Error count thresholds; Duration limits; Rate limits; Performance boundaries<br /><br />AWS: CloudWatch alarm threshold for metric comparison and breach detection<br /><br />Validation: Must be numeric value; compared against metric using comparisonOperator; determines alarm triggering                                                                                                                      |
-| - [treatMissingData](#functions_items_alarms_items_treatMissingData )               | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional missing data treatment strategy for alarm evaluation enabling robust alarm behavior. Specifies how the alarm should behave when metric data is missing (e.g., notBreaching, breaching, ignore, missing) for handling data gaps.<br /><br />Use cases: Data gap handling; Alarm robustness; Missing data strategy; Evaluation continuity<br /><br />AWS: CloudWatch alarm missing data treatment for handling data gaps and evaluation continuity<br /><br />Validation: Must be valid treatment string if provided (notBreaching, breaching, ignore, missing); defaults to notBreaching                                           |
-| - [unit](#functions_items_alarms_items_unit )                                       | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric unit for single metric alarms enabling proper metric interpretation. Specifies the unit of measurement for the metric (e.g., Count, Milliseconds, Megabytes) for correct threshold comparison.<br /><br />Use cases: Unit specification; Metric interpretation; Threshold comparison; Alarm configuration<br /><br />AWS: CloudWatch metric unit for single metric alarm interpretation and evaluation<br /><br />Validation: Must be valid CloudWatch metric unit if provided; used for metric interpretation and threshold comparison                                                                         |
+| Property                                                                                            | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [actionsEnabled](#lambdaFunctions_functions_items_alarms_items_actionsEnabled )                   | No      | boolean         | No         | -          | Q-ENHANCED-PROPERTY<br />Optional flag enabling or disabling alarm actions during state changes. Controls whether SNS notifications and other actions are executed when the alarm changes state for testing and maintenance scenarios.<br /><br />Use cases: Action control; Testing mode; Maintenance windows; Notification management<br /><br />AWS: CloudWatch alarm actions enabled flag for notification and action control<br /><br />Validation: Boolean flag; defaults to true; controls execution of alarm, OK, and insufficient data actions                                                                                                             |
+| - [alarmActions](#lambdaFunctions_functions_items_alarms_items_alarmActions )                       | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of SNS topic ARNs for ALARM state notifications enabling automated alerting. Specifies SNS topics that receive notifications when the alarm transitions to ALARM state for operational response and incident management.<br /><br />Use cases: Error notifications; Performance alerts; Operational incidents; Automated response; PagerDuty integration<br /><br />AWS: SNS topic ARNs for CloudWatch alarm ALARM state notifications and automated alerting<br /><br />Validation: Must be valid SNS topic ARNs if provided; topics must exist; enables automated alarm notifications                                     |
+| - [alarmDescription](#lambdaFunctions_functions_items_alarms_items_alarmDescription )               | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional human-readable description for the alarm enabling clear alarm purpose documentation. Provides detailed explanation of the alarm condition, threshold rationale, and expected actions for operational clarity.<br /><br />Use cases: Alarm documentation; Operational guidance; Threshold rationale; Action instructions<br /><br />AWS: CloudWatch alarm description for alarm documentation and operational guidance<br /><br />Validation: Optional descriptive string; appears in CloudWatch console and notifications; improves alarm understanding                                                                           |
+| + [alarmName](#lambdaFunctions_functions_items_alarms_items_alarmName )                             | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required unique name for the CloudWatch alarm enabling alarm identification and management. Provides a descriptive name for the alarm that appears in the CloudWatch console and is used for SSM parameter export.<br /><br />Use cases: Alarm identification; Console display; SSM parameter naming; Notification messages<br /><br />AWS: CloudWatch alarm name for alarm identification and management<br /><br />Validation: Must be unique within the function; should be descriptive of alarm condition; used for SSM parameter naming                                                                                               |
+| + [comparisonOperator](#lambdaFunctions_functions_items_alarms_items_comparisonOperator )           | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required comparison operator for alarm threshold evaluation enabling flexible breach conditions. Specifies how to compare the metric value to the threshold (e.g., GreaterThanOrEqualToThreshold, LessThanThreshold) for alarm state determination.<br /><br />Use cases: Greater than for error counts; Less than for availability; Equal to for exact matches; Threshold comparison<br /><br />AWS: CloudWatch alarm comparison operator for threshold evaluation and alarm state determination<br /><br />Validation: Must be valid comparison operator string; converted to CDK enum; determines alarm triggering logic                |
+| - [datapointsToAlarm](#lambdaFunctions_functions_items_alarms_items_datapointsToAlarm )             | No      | number          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional number of datapoints that must breach threshold within evaluation periods enabling flexible alarm sensitivity. Specifies how many of the evaluation periods must breach the threshold (M out of N) for more nuanced alarm triggering.<br /><br />Use cases: Flexible sensitivity; Intermittent breach detection; M-out-of-N evaluation; False positive reduction<br /><br />AWS: CloudWatch alarm datapoints to alarm for M-out-of-N evaluation and flexible sensitivity<br /><br />Validation: Must be positive integer if provided; must be <= evaluationPeriods; defaults to evaluationPeriods                                 |
+| - [dimensions](#lambdaFunctions_functions_items_alarms_items_dimensions )                           | No      | object          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric dimensions for single metric alarms enabling specific metric instance selection. Provides key-value pairs for filtering metrics to specific instances with support for {{functionName}} placeholder for dynamic function name substitution.<br /><br />Use cases: Function-specific alarms; Environment filtering; Dynamic function names; Instance selection<br /><br />AWS: CloudWatch metric dimensions for single metric alarm filtering and instance selection<br /><br />Validation: Must be valid dimension key-value pairs if provided; supports {{functionName}} placeholder; enables metric filtering |
+| + [evaluationPeriods](#lambdaFunctions_functions_items_alarms_items_evaluationPeriods )             | No      | number          | No         | -          | Q-ENHANCED-PROPERTY<br />Required number of evaluation periods for alarm threshold comparison enabling sustained breach detection. Specifies how many consecutive periods the metric must breach the threshold before triggering the alarm for reducing false positives.<br /><br />Use cases: Sustained breach detection; False positive reduction; Alarm sensitivity; Threshold persistence<br /><br />AWS: CloudWatch alarm evaluation periods for sustained breach detection and alarm triggering<br /><br />Validation: Must be positive integer; determines alarm sensitivity; higher values reduce false positives                                           |
+| - [insufficientDataActions](#lambdaFunctions_functions_items_alarms_items_insufficientDataActions ) | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of SNS topic ARNs for INSUFFICIENT_DATA state notifications enabling data availability monitoring. Specifies SNS topics that receive notifications when the alarm has insufficient data for evaluation.<br /><br />Use cases: Data availability monitoring; Metric collection issues; Pipeline health; Data gap detection<br /><br />AWS: SNS topic ARNs for CloudWatch alarm INSUFFICIENT_DATA state notifications and data monitoring<br /><br />Validation: Must be valid SNS topic ARNs if provided; topics must exist; enables data availability notifications                                                         |
+| - [metricName](#lambdaFunctions_functions_items_alarms_items_metricName )                           | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric name for single metric alarms enabling direct metric monitoring. Specifies the metric to monitor for alarm evaluation, validated against defined metric filters for custom metrics or used directly for AWS metrics.<br /><br />Use cases: Error count monitoring; Duration tracking; AWS Lambda metrics; Custom metric alarms<br /><br />AWS: CloudWatch metric name for single metric alarm evaluation and monitoring<br /><br />Validation: Must be valid metric name if provided; validated against metric filters for custom metrics; mutually exclusive with metrics array                                |
+| - [metrics](#lambdaFunctions_functions_items_alarms_items_metrics )                                 | No      | array           | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of metric data queries for metric math alarms enabling complex multi-metric conditions. Defines multiple metrics and expressions for calculated alarm conditions combining metrics with mathematical operations.<br /><br />Use cases: Multi-metric alarms; Calculated thresholds; Aggregated monitoring; Complex alerting logic; Derived metrics<br /><br />AWS: CloudWatch metric data queries for metric math alarms and complex alarm conditions<br /><br />Validation: Must be array of MetricDataQueryProps if provided; mutually exclusive with metricName; enables metric math alarms                               |
+| - [namespace](#lambdaFunctions_functions_items_alarms_items_namespace )                             | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric namespace for single metric alarms enabling metric source identification. Specifies the namespace containing the metric, with automatic validation bypass for AWS/* namespaces and validation for custom namespaces.<br /><br />Use cases: Custom metric namespaces; AWS service metrics; Namespace identification; Metric validation<br /><br />AWS: CloudWatch metric namespace for single metric alarm source identification<br /><br />Validation: Must be valid namespace if provided; AWS/* namespaces bypass validation; custom namespaces validated against metric filters                              |
+| - [okActions](#lambdaFunctions_functions_items_alarms_items_okActions )                             | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of SNS topic ARNs for OK state notifications enabling recovery confirmation. Specifies SNS topics that receive notifications when the alarm transitions to OK state for confirming issue resolution.<br /><br />Use cases: Recovery notifications; Issue resolution; Status updates; Incident closure<br /><br />AWS: SNS topic ARNs for CloudWatch alarm OK state notifications and recovery confirmation<br /><br />Validation: Must be valid SNS topic ARNs if provided; topics must exist; enables recovery notifications                                                                                               |
+| - [period](#lambdaFunctions_functions_items_alarms_items_period )                                   | No      | number          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional metric evaluation period in seconds for single metric alarms defining aggregation time window. Specifies how long to aggregate metric data points before comparing to threshold for alarm evaluation.<br /><br />Use cases: Short-term monitoring; Long-term trends; Aggregation windows; Alarm sensitivity tuning<br /><br />AWS: CloudWatch metric period for single metric alarm aggregation and evaluation windows<br /><br />Validation: Must be valid period in seconds if provided; typically 60, 300, or 3600; affects alarm sensitivity                                                                                  |
+| - [statistic](#lambdaFunctions_functions_items_alarms_items_statistic )                             | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric statistic for single metric alarms enabling metric aggregation. Specifies how to aggregate metric data points (e.g., Sum, Average, Maximum) for alarm threshold comparison.<br /><br />Use cases: Sum for error counts; Average for durations; Maximum for peaks; Statistical analysis<br /><br />AWS: CloudWatch metric statistic for single metric alarm aggregation and evaluation<br /><br />Validation: Must be valid statistic if provided (Sum, Average, Maximum, Minimum, SampleCount); used with metricName                                                                                            |
+| + [threshold](#lambdaFunctions_functions_items_alarms_items_threshold )                             | No      | number          | No         | -          | Q-ENHANCED-PROPERTY<br />Required threshold value for alarm comparison enabling breach detection. Specifies the numeric value that the metric is compared against using the comparison operator to determine alarm state.<br /><br />Use cases: Error count thresholds; Duration limits; Rate limits; Performance boundaries<br /><br />AWS: CloudWatch alarm threshold for metric comparison and breach detection<br /><br />Validation: Must be numeric value; compared against metric using comparisonOperator; determines alarm triggering                                                                                                                      |
+| - [treatMissingData](#lambdaFunctions_functions_items_alarms_items_treatMissingData )               | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional missing data treatment strategy for alarm evaluation enabling robust alarm behavior. Specifies how the alarm should behave when metric data is missing (e.g., notBreaching, breaching, ignore, missing) for handling data gaps.<br /><br />Use cases: Data gap handling; Alarm robustness; Missing data strategy; Evaluation continuity<br /><br />AWS: CloudWatch alarm missing data treatment for handling data gaps and evaluation continuity<br /><br />Validation: Must be valid treatment string if provided (notBreaching, breaching, ignore, missing); defaults to notBreaching                                           |
+| - [unit](#lambdaFunctions_functions_items_alarms_items_unit )                                       | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric unit for single metric alarms enabling proper metric interpretation. Specifies the unit of measurement for the metric (e.g., Count, Milliseconds, Megabytes) for correct threshold comparison.<br /><br />Use cases: Unit specification; Metric interpretation; Threshold comparison; Alarm configuration<br /><br />AWS: CloudWatch metric unit for single metric alarm interpretation and evaluation<br /><br />Validation: Must be valid CloudWatch metric unit if provided; used for metric interpretation and threshold comparison                                                                         |
 
-###### <a name="functions_items_alarms_items_actionsEnabled"></a>3.1.2.1.1. Property `root > functions > functions items > alarms > alarms items > actionsEnabled`
+###### <a name="lambdaFunctions_functions_items_alarms_items_actionsEnabled"></a>7.1.1.2.1.1. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > actionsEnabled`
 
 |              |           |
 | ------------ | --------- |
@@ -319,7 +3502,7 @@ AWS: CloudWatch alarm actions enabled flag for notification and action control
 
 Validation: Boolean flag; defaults to true; controls execution of alarm, OK, and insufficient data actions
 
-###### <a name="functions_items_alarms_items_alarmActions"></a>3.1.2.1.2. Property `root > functions > functions items > alarms > alarms items > alarmActions`
+###### <a name="lambdaFunctions_functions_items_alarms_items_alarmActions"></a>7.1.1.2.1.2. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > alarmActions`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -343,18 +3526,18 @@ Validation: Must be valid SNS topic ARNs if provided; topics must exist; enables
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                        | Description |
-| ---------------------------------------------------------------------- | ----------- |
-| [alarmActions items](#functions_items_alarms_items_alarmActions_items) | -           |
+| Each item of this array must be                                                        | Description |
+| -------------------------------------------------------------------------------------- | ----------- |
+| [alarmActions items](#lambdaFunctions_functions_items_alarms_items_alarmActions_items) | -           |
 
-###### <a name="functions_items_alarms_items_alarmActions_items"></a>3.1.2.1.2.1. root > functions > functions items > alarms > alarms items > alarmActions > alarmActions items
+###### <a name="lambdaFunctions_functions_items_alarms_items_alarmActions_items"></a>7.1.1.2.1.2.1. root > lambdaFunctions > functions > functions items > alarms > alarms items > alarmActions > alarmActions items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_alarms_items_alarmDescription"></a>3.1.2.1.3. Property `root > functions > functions items > alarms > alarms items > alarmDescription`
+###### <a name="lambdaFunctions_functions_items_alarms_items_alarmDescription"></a>7.1.1.2.1.3. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > alarmDescription`
 
 |              |          |
 | ------------ | -------- |
@@ -370,7 +3553,7 @@ AWS: CloudWatch alarm description for alarm documentation and operational guidan
 
 Validation: Optional descriptive string; appears in CloudWatch console and notifications; improves alarm understanding
 
-###### <a name="functions_items_alarms_items_alarmName"></a>3.1.2.1.4. Property `root > functions > functions items > alarms > alarms items > alarmName`
+###### <a name="lambdaFunctions_functions_items_alarms_items_alarmName"></a>7.1.1.2.1.4. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > alarmName`
 
 |              |          |
 | ------------ | -------- |
@@ -386,7 +3569,7 @@ AWS: CloudWatch alarm name for alarm identification and management
 
 Validation: Must be unique within the function; should be descriptive of alarm condition; used for SSM parameter naming
 
-###### <a name="functions_items_alarms_items_comparisonOperator"></a>3.1.2.1.5. Property `root > functions > functions items > alarms > alarms items > comparisonOperator`
+###### <a name="lambdaFunctions_functions_items_alarms_items_comparisonOperator"></a>7.1.1.2.1.5. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > comparisonOperator`
 
 |              |          |
 | ------------ | -------- |
@@ -402,7 +3585,7 @@ AWS: CloudWatch alarm comparison operator for threshold evaluation and alarm sta
 
 Validation: Must be valid comparison operator string; converted to CDK enum; determines alarm triggering logic
 
-###### <a name="functions_items_alarms_items_datapointsToAlarm"></a>3.1.2.1.6. Property `root > functions > functions items > alarms > alarms items > datapointsToAlarm`
+###### <a name="lambdaFunctions_functions_items_alarms_items_datapointsToAlarm"></a>7.1.1.2.1.6. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > datapointsToAlarm`
 
 |              |          |
 | ------------ | -------- |
@@ -418,13 +3601,13 @@ AWS: CloudWatch alarm datapoints to alarm for M-out-of-N evaluation and flexible
 
 Validation: Must be positive integer if provided; must be <= evaluationPeriods; defaults to evaluationPeriods
 
-###### <a name="functions_items_alarms_items_dimensions"></a>3.1.2.1.7. Property `root > functions > functions items > alarms > alarms items > dimensions`
+###### <a name="lambdaFunctions_functions_items_alarms_items_dimensions"></a>7.1.1.2.1.7. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > dimensions`
 
-|                           |                                                                                                                      |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                             |
-| **Required**              | No                                                                                                                   |
-| **Additional properties** | [Each additional property must conform to the schema](#functions_items_alarms_items_dimensions_additionalProperties) |
+|                           |                                                                                                                                      |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                                                             |
+| **Required**              | No                                                                                                                                   |
+| **Additional properties** | [Each additional property must conform to the schema](#lambdaFunctions_functions_items_alarms_items_dimensions_additionalProperties) |
 
 **Description:** Q-ENHANCED-PROPERTY
 Optional CloudWatch metric dimensions for single metric alarms enabling specific metric instance selection. Provides key-value pairs for filtering metrics to specific instances with support for {{functionName}} placeholder for dynamic function name substitution.
@@ -435,18 +3618,18 @@ AWS: CloudWatch metric dimensions for single metric alarm filtering and instance
 
 Validation: Must be valid dimension key-value pairs if provided; supports {{functionName}} placeholder; enables metric filtering
 
-| Property                                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#functions_items_alarms_items_dimensions_additionalProperties ) | No      | string | No         | -          | -                 |
+| Property                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#lambdaFunctions_functions_items_alarms_items_dimensions_additionalProperties ) | No      | string | No         | -          | -                 |
 
-###### <a name="functions_items_alarms_items_dimensions_additionalProperties"></a>3.1.2.1.7.1. Property `root > functions > functions items > alarms > alarms items > dimensions > additionalProperties`
+###### <a name="lambdaFunctions_functions_items_alarms_items_dimensions_additionalProperties"></a>7.1.1.2.1.7.1. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > dimensions > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_alarms_items_evaluationPeriods"></a>3.1.2.1.8. Property `root > functions > functions items > alarms > alarms items > evaluationPeriods`
+###### <a name="lambdaFunctions_functions_items_alarms_items_evaluationPeriods"></a>7.1.1.2.1.8. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > evaluationPeriods`
 
 |              |          |
 | ------------ | -------- |
@@ -462,7 +3645,7 @@ AWS: CloudWatch alarm evaluation periods for sustained breach detection and alar
 
 Validation: Must be positive integer; determines alarm sensitivity; higher values reduce false positives
 
-###### <a name="functions_items_alarms_items_insufficientDataActions"></a>3.1.2.1.9. Property `root > functions > functions items > alarms > alarms items > insufficientDataActions`
+###### <a name="lambdaFunctions_functions_items_alarms_items_insufficientDataActions"></a>7.1.1.2.1.9. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > insufficientDataActions`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -486,18 +3669,18 @@ Validation: Must be valid SNS topic ARNs if provided; topics must exist; enables
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                              | Description |
-| -------------------------------------------------------------------------------------------- | ----------- |
-| [insufficientDataActions items](#functions_items_alarms_items_insufficientDataActions_items) | -           |
+| Each item of this array must be                                                                              | Description |
+| ------------------------------------------------------------------------------------------------------------ | ----------- |
+| [insufficientDataActions items](#lambdaFunctions_functions_items_alarms_items_insufficientDataActions_items) | -           |
 
-###### <a name="functions_items_alarms_items_insufficientDataActions_items"></a>3.1.2.1.9.1. root > functions > functions items > alarms > alarms items > insufficientDataActions > insufficientDataActions items
+###### <a name="lambdaFunctions_functions_items_alarms_items_insufficientDataActions_items"></a>7.1.1.2.1.9.1. root > lambdaFunctions > functions > functions items > alarms > alarms items > insufficientDataActions > insufficientDataActions items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_alarms_items_metricName"></a>3.1.2.1.10. Property `root > functions > functions items > alarms > alarms items > metricName`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metricName"></a>7.1.1.2.1.10. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metricName`
 
 |              |          |
 | ------------ | -------- |
@@ -513,7 +3696,7 @@ AWS: CloudWatch metric name for single metric alarm evaluation and monitoring
 
 Validation: Must be valid metric name if provided; validated against metric filters for custom metrics; mutually exclusive with metrics array
 
-###### <a name="functions_items_alarms_items_metrics"></a>3.1.2.1.11. Property `root > functions > functions items > alarms > alarms items > metrics`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics"></a>7.1.1.2.1.11. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics`
 
 |              |         |
 | ------------ | ------- |
@@ -537,11 +3720,11 @@ Validation: Must be array of MetricDataQueryProps if provided; mutually exclusiv
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                     | Description              |
-| ------------------------------------------------------------------- | ------------------------ |
-| [MetricDataQueryProps](#functions_items_alarms_items_metrics_items) | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be                                                     | Description              |
+| ----------------------------------------------------------------------------------- | ------------------------ |
+| [MetricDataQueryProps](#lambdaFunctions_functions_items_alarms_items_metrics_items) | Q-ENHANCED-INTERFACE ... |
 
-###### <a name="functions_items_alarms_items_metrics_items"></a>3.1.2.1.11.1. root > functions > functions items > alarms > alarms items > metrics > MetricDataQueryProps
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items"></a>7.1.1.2.1.11.1. root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > MetricDataQueryProps
 
 |                           |                                    |
 | ------------------------- | ---------------------------------- |
@@ -559,26 +3742,26 @@ AWS: CloudWatch metric data query for metric math alarms and complex metric expr
 
 Validation: id required; either expression or metricName/namespace required; supports both metric math and metric stats
 
-| Property                                                                | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| ----------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [dimensions](#functions_items_alarms_items_metrics_items_dimensions ) | No      | object  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric dimensions for metric filtering enabling specific metric instance selection. Provides key-value pairs for filtering metrics to specific instances (e.g., FunctionName for Lambda metrics).<br /><br />Use cases: Function-specific metrics; Environment filtering; Service segmentation; Instance selection<br /><br />AWS: CloudWatch metric dimensions for metric filtering and instance selection<br /><br />Validation: Must be valid dimension key-value pairs if provided; enables metric filtering; supports placeholders                                                                 |
-| - [expression](#functions_items_alarms_items_metrics_items_expression ) | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional metric math expression for calculated metrics enabling complex alerting logic combining multiple metrics. Defines mathematical operations on metrics (e.g., "m1+m2", "m1/m2*100") for derived metrics and complex alarm conditions.<br /><br />Use cases: Error rate calculations; Percentage metrics; Aggregated metrics; Derived values; Complex alerting<br /><br />AWS: CloudWatch metric math expression for calculated metrics and complex alarm conditions<br /><br />Validation: Must be valid metric math syntax if provided; references other metric IDs; mutually exclusive with metricName             |
-| + [id](#functions_items_alarms_items_metrics_items_id )                 | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Required unique identifier for the metric data query used in metric math expressions enabling metric referencing. Provides a short identifier (e.g., "m1", "m2", "total") that can be referenced in metric math expressions for combining and calculating metrics.<br /><br />Use cases: Expression references; Metric identification; Math operations; Query organization<br /><br />AWS: CloudWatch metric data query ID for metric math expression references and metric identification<br /><br />Validation: Must be unique within the alarm; used in metric math expressions; typically short alphanumeric identifier |
-| - [label](#functions_items_alarms_items_metrics_items_label )           | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional human-readable label for the metric data query enabling clear metric identification in dashboards and alarms. Provides a descriptive label that appears in CloudWatch console and alarm descriptions for better metric understanding.<br /><br />Use cases: Dashboard labels; Alarm descriptions; Metric identification; User-friendly naming<br /><br />AWS: CloudWatch metric data query label for metric identification and display<br /><br />Validation: Optional descriptive string; used for display purposes; improves metric readability                                                                  |
-| - [metricName](#functions_items_alarms_items_metrics_items_metricName ) | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric name for metric stats queries enabling direct metric referencing in alarms. Specifies the metric to query from CloudWatch Metrics for alarm evaluation, mutually exclusive with expression.<br /><br />Use cases: Direct metric queries; Standard metric alarms; AWS service metrics; Custom metric alarms<br /><br />AWS: CloudWatch metric name for metric stats queries and direct metric referencing<br /><br />Validation: Must be valid metric name if provided; mutually exclusive with expression; requires namespace                                                                    |
-| - [namespace](#functions_items_alarms_items_metrics_items_namespace )   | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric namespace for metric stats queries enabling metric source identification. Specifies the namespace containing the metric for alarm evaluation, required when using metricName.<br /><br />Use cases: Namespace identification; Metric source specification; AWS service metrics; Custom metric namespaces<br /><br />AWS: CloudWatch metric namespace for metric stats queries and metric source identification<br /><br />Validation: Must be valid namespace if provided; required with metricName; identifies metric source                                                                    |
-| - [period](#functions_items_alarms_items_metrics_items_period )         | No      | number  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional metric evaluation period in seconds defining the time window for metric aggregation. Specifies how long to aggregate metric data points before applying the statistic for alarm evaluation.<br /><br />Use cases: Short-term monitoring; Long-term trends; Aggregation windows; Alarm sensitivity<br /><br />AWS: CloudWatch metric period for metric data aggregation and evaluation windows<br /><br />Validation: Must be valid period in seconds if provided; typically 60, 300, or 3600; affects alarm sensitivity                                                                                            |
-| - [returnData](#functions_items_alarms_items_metrics_items_returnData ) | No      | boolean | No         | -          | Q-ENHANCED-PROPERTY<br />Optional flag indicating whether this metric data should be returned in query results enabling selective metric output. Controls whether the metric appears in alarm evaluation results, typically true for expressions and false for intermediate metrics.<br /><br />Use cases: Expression output control; Intermediate metric hiding; Result filtering; Alarm evaluation<br /><br />AWS: CloudWatch metric data query return data flag for selective metric output and alarm evaluation<br /><br />Validation: Defaults to true for expressions, false for metrics; controls metric visibility in results                |
-| - [statistic](#functions_items_alarms_items_metrics_items_statistic )   | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric statistic for metric aggregation enabling statistical analysis of metric data. Specifies how to aggregate metric data points (e.g., Sum, Average, Maximum) for alarm evaluation.<br /><br />Use cases: Sum for counts; Average for durations; Maximum for peaks; Minimum for lows; Statistical analysis<br /><br />AWS: CloudWatch metric statistic for metric data aggregation and statistical analysis<br /><br />Validation: Must be valid statistic if provided (Sum, Average, Maximum, Minimum, SampleCount); used with metricName                                                          |
-| - [unit](#functions_items_alarms_items_metrics_items_unit )             | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric unit for metric value interpretation enabling proper metric analysis. Specifies the unit of measurement for the metric (e.g., Count, Milliseconds, Megabytes) for correct interpretation.<br /><br />Use cases: Unit specification; Metric interpretation; Dashboard display; Alarm configuration<br /><br />AWS: CloudWatch metric unit for metric value interpretation and analysis<br /><br />Validation: Must be valid CloudWatch metric unit if provided; used for metric interpretation                                                                                                    |
+| Property                                                                                | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| --------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [dimensions](#lambdaFunctions_functions_items_alarms_items_metrics_items_dimensions ) | No      | object  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric dimensions for metric filtering enabling specific metric instance selection. Provides key-value pairs for filtering metrics to specific instances (e.g., FunctionName for Lambda metrics).<br /><br />Use cases: Function-specific metrics; Environment filtering; Service segmentation; Instance selection<br /><br />AWS: CloudWatch metric dimensions for metric filtering and instance selection<br /><br />Validation: Must be valid dimension key-value pairs if provided; enables metric filtering; supports placeholders                                                                 |
+| - [expression](#lambdaFunctions_functions_items_alarms_items_metrics_items_expression ) | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional metric math expression for calculated metrics enabling complex alerting logic combining multiple metrics. Defines mathematical operations on metrics (e.g., "m1+m2", "m1/m2*100") for derived metrics and complex alarm conditions.<br /><br />Use cases: Error rate calculations; Percentage metrics; Aggregated metrics; Derived values; Complex alerting<br /><br />AWS: CloudWatch metric math expression for calculated metrics and complex alarm conditions<br /><br />Validation: Must be valid metric math syntax if provided; references other metric IDs; mutually exclusive with metricName             |
+| + [id](#lambdaFunctions_functions_items_alarms_items_metrics_items_id )                 | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Required unique identifier for the metric data query used in metric math expressions enabling metric referencing. Provides a short identifier (e.g., "m1", "m2", "total") that can be referenced in metric math expressions for combining and calculating metrics.<br /><br />Use cases: Expression references; Metric identification; Math operations; Query organization<br /><br />AWS: CloudWatch metric data query ID for metric math expression references and metric identification<br /><br />Validation: Must be unique within the alarm; used in metric math expressions; typically short alphanumeric identifier |
+| - [label](#lambdaFunctions_functions_items_alarms_items_metrics_items_label )           | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional human-readable label for the metric data query enabling clear metric identification in dashboards and alarms. Provides a descriptive label that appears in CloudWatch console and alarm descriptions for better metric understanding.<br /><br />Use cases: Dashboard labels; Alarm descriptions; Metric identification; User-friendly naming<br /><br />AWS: CloudWatch metric data query label for metric identification and display<br /><br />Validation: Optional descriptive string; used for display purposes; improves metric readability                                                                  |
+| - [metricName](#lambdaFunctions_functions_items_alarms_items_metrics_items_metricName ) | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric name for metric stats queries enabling direct metric referencing in alarms. Specifies the metric to query from CloudWatch Metrics for alarm evaluation, mutually exclusive with expression.<br /><br />Use cases: Direct metric queries; Standard metric alarms; AWS service metrics; Custom metric alarms<br /><br />AWS: CloudWatch metric name for metric stats queries and direct metric referencing<br /><br />Validation: Must be valid metric name if provided; mutually exclusive with expression; requires namespace                                                                    |
+| - [namespace](#lambdaFunctions_functions_items_alarms_items_metrics_items_namespace )   | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric namespace for metric stats queries enabling metric source identification. Specifies the namespace containing the metric for alarm evaluation, required when using metricName.<br /><br />Use cases: Namespace identification; Metric source specification; AWS service metrics; Custom metric namespaces<br /><br />AWS: CloudWatch metric namespace for metric stats queries and metric source identification<br /><br />Validation: Must be valid namespace if provided; required with metricName; identifies metric source                                                                    |
+| - [period](#lambdaFunctions_functions_items_alarms_items_metrics_items_period )         | No      | number  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional metric evaluation period in seconds defining the time window for metric aggregation. Specifies how long to aggregate metric data points before applying the statistic for alarm evaluation.<br /><br />Use cases: Short-term monitoring; Long-term trends; Aggregation windows; Alarm sensitivity<br /><br />AWS: CloudWatch metric period for metric data aggregation and evaluation windows<br /><br />Validation: Must be valid period in seconds if provided; typically 60, 300, or 3600; affects alarm sensitivity                                                                                            |
+| - [returnData](#lambdaFunctions_functions_items_alarms_items_metrics_items_returnData ) | No      | boolean | No         | -          | Q-ENHANCED-PROPERTY<br />Optional flag indicating whether this metric data should be returned in query results enabling selective metric output. Controls whether the metric appears in alarm evaluation results, typically true for expressions and false for intermediate metrics.<br /><br />Use cases: Expression output control; Intermediate metric hiding; Result filtering; Alarm evaluation<br /><br />AWS: CloudWatch metric data query return data flag for selective metric output and alarm evaluation<br /><br />Validation: Defaults to true for expressions, false for metrics; controls metric visibility in results                |
+| - [statistic](#lambdaFunctions_functions_items_alarms_items_metrics_items_statistic )   | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric statistic for metric aggregation enabling statistical analysis of metric data. Specifies how to aggregate metric data points (e.g., Sum, Average, Maximum) for alarm evaluation.<br /><br />Use cases: Sum for counts; Average for durations; Maximum for peaks; Minimum for lows; Statistical analysis<br /><br />AWS: CloudWatch metric statistic for metric data aggregation and statistical analysis<br /><br />Validation: Must be valid statistic if provided (Sum, Average, Maximum, Minimum, SampleCount); used with metricName                                                          |
+| - [unit](#lambdaFunctions_functions_items_alarms_items_metrics_items_unit )             | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric unit for metric value interpretation enabling proper metric analysis. Specifies the unit of measurement for the metric (e.g., Count, Milliseconds, Megabytes) for correct interpretation.<br /><br />Use cases: Unit specification; Metric interpretation; Dashboard display; Alarm configuration<br /><br />AWS: CloudWatch metric unit for metric value interpretation and analysis<br /><br />Validation: Must be valid CloudWatch metric unit if provided; used for metric interpretation                                                                                                    |
 
-###### <a name="functions_items_alarms_items_metrics_items_dimensions"></a>3.1.2.1.11.1.1. Property `root > functions > functions items > alarms > alarms items > metrics > metrics items > dimensions`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items_dimensions"></a>7.1.1.2.1.11.1.1. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > metrics items > dimensions`
 
-|                           |                                                                                                                                    |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                           |
-| **Required**              | No                                                                                                                                 |
-| **Additional properties** | [Each additional property must conform to the schema](#functions_items_alarms_items_metrics_items_dimensions_additionalProperties) |
+|                           |                                                                                                                                                    |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                           |
+| **Required**              | No                                                                                                                                                 |
+| **Additional properties** | [Each additional property must conform to the schema](#lambdaFunctions_functions_items_alarms_items_metrics_items_dimensions_additionalProperties) |
 
 **Description:** Q-ENHANCED-PROPERTY
 Optional CloudWatch metric dimensions for metric filtering enabling specific metric instance selection. Provides key-value pairs for filtering metrics to specific instances (e.g., FunctionName for Lambda metrics).
@@ -589,18 +3772,18 @@ AWS: CloudWatch metric dimensions for metric filtering and instance selection
 
 Validation: Must be valid dimension key-value pairs if provided; enables metric filtering; supports placeholders
 
-| Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#functions_items_alarms_items_metrics_items_dimensions_additionalProperties ) | No      | string | No         | -          | -                 |
+| Property                                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#lambdaFunctions_functions_items_alarms_items_metrics_items_dimensions_additionalProperties ) | No      | string | No         | -          | -                 |
 
-###### <a name="functions_items_alarms_items_metrics_items_dimensions_additionalProperties"></a>3.1.2.1.11.1.1.1. Property `root > functions > functions items > alarms > alarms items > metrics > metrics items > dimensions > additionalProperties`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items_dimensions_additionalProperties"></a>7.1.1.2.1.11.1.1.1. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > metrics items > dimensions > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_alarms_items_metrics_items_expression"></a>3.1.2.1.11.1.2. Property `root > functions > functions items > alarms > alarms items > metrics > metrics items > expression`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items_expression"></a>7.1.1.2.1.11.1.2. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > metrics items > expression`
 
 |              |          |
 | ------------ | -------- |
@@ -616,7 +3799,7 @@ AWS: CloudWatch metric math expression for calculated metrics and complex alarm 
 
 Validation: Must be valid metric math syntax if provided; references other metric IDs; mutually exclusive with metricName
 
-###### <a name="functions_items_alarms_items_metrics_items_id"></a>3.1.2.1.11.1.3. Property `root > functions > functions items > alarms > alarms items > metrics > metrics items > id`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items_id"></a>7.1.1.2.1.11.1.3. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > metrics items > id`
 
 |              |          |
 | ------------ | -------- |
@@ -632,7 +3815,7 @@ AWS: CloudWatch metric data query ID for metric math expression references and m
 
 Validation: Must be unique within the alarm; used in metric math expressions; typically short alphanumeric identifier
 
-###### <a name="functions_items_alarms_items_metrics_items_label"></a>3.1.2.1.11.1.4. Property `root > functions > functions items > alarms > alarms items > metrics > metrics items > label`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items_label"></a>7.1.1.2.1.11.1.4. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > metrics items > label`
 
 |              |          |
 | ------------ | -------- |
@@ -648,7 +3831,7 @@ AWS: CloudWatch metric data query label for metric identification and display
 
 Validation: Optional descriptive string; used for display purposes; improves metric readability
 
-###### <a name="functions_items_alarms_items_metrics_items_metricName"></a>3.1.2.1.11.1.5. Property `root > functions > functions items > alarms > alarms items > metrics > metrics items > metricName`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items_metricName"></a>7.1.1.2.1.11.1.5. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > metrics items > metricName`
 
 |              |          |
 | ------------ | -------- |
@@ -664,7 +3847,7 @@ AWS: CloudWatch metric name for metric stats queries and direct metric referenci
 
 Validation: Must be valid metric name if provided; mutually exclusive with expression; requires namespace
 
-###### <a name="functions_items_alarms_items_metrics_items_namespace"></a>3.1.2.1.11.1.6. Property `root > functions > functions items > alarms > alarms items > metrics > metrics items > namespace`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items_namespace"></a>7.1.1.2.1.11.1.6. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > metrics items > namespace`
 
 |              |          |
 | ------------ | -------- |
@@ -680,7 +3863,7 @@ AWS: CloudWatch metric namespace for metric stats queries and metric source iden
 
 Validation: Must be valid namespace if provided; required with metricName; identifies metric source
 
-###### <a name="functions_items_alarms_items_metrics_items_period"></a>3.1.2.1.11.1.7. Property `root > functions > functions items > alarms > alarms items > metrics > metrics items > period`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items_period"></a>7.1.1.2.1.11.1.7. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > metrics items > period`
 
 |              |          |
 | ------------ | -------- |
@@ -696,7 +3879,7 @@ AWS: CloudWatch metric period for metric data aggregation and evaluation windows
 
 Validation: Must be valid period in seconds if provided; typically 60, 300, or 3600; affects alarm sensitivity
 
-###### <a name="functions_items_alarms_items_metrics_items_returnData"></a>3.1.2.1.11.1.8. Property `root > functions > functions items > alarms > alarms items > metrics > metrics items > returnData`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items_returnData"></a>7.1.1.2.1.11.1.8. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > metrics items > returnData`
 
 |              |           |
 | ------------ | --------- |
@@ -712,7 +3895,7 @@ AWS: CloudWatch metric data query return data flag for selective metric output a
 
 Validation: Defaults to true for expressions, false for metrics; controls metric visibility in results
 
-###### <a name="functions_items_alarms_items_metrics_items_statistic"></a>3.1.2.1.11.1.9. Property `root > functions > functions items > alarms > alarms items > metrics > metrics items > statistic`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items_statistic"></a>7.1.1.2.1.11.1.9. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > metrics items > statistic`
 
 |              |          |
 | ------------ | -------- |
@@ -728,7 +3911,7 @@ AWS: CloudWatch metric statistic for metric data aggregation and statistical ana
 
 Validation: Must be valid statistic if provided (Sum, Average, Maximum, Minimum, SampleCount); used with metricName
 
-###### <a name="functions_items_alarms_items_metrics_items_unit"></a>3.1.2.1.11.1.10. Property `root > functions > functions items > alarms > alarms items > metrics > metrics items > unit`
+###### <a name="lambdaFunctions_functions_items_alarms_items_metrics_items_unit"></a>7.1.1.2.1.11.1.10. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > metrics > metrics items > unit`
 
 |              |          |
 | ------------ | -------- |
@@ -744,7 +3927,7 @@ AWS: CloudWatch metric unit for metric value interpretation and analysis
 
 Validation: Must be valid CloudWatch metric unit if provided; used for metric interpretation
 
-###### <a name="functions_items_alarms_items_namespace"></a>3.1.2.1.12. Property `root > functions > functions items > alarms > alarms items > namespace`
+###### <a name="lambdaFunctions_functions_items_alarms_items_namespace"></a>7.1.1.2.1.12. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > namespace`
 
 |              |          |
 | ------------ | -------- |
@@ -760,7 +3943,7 @@ AWS: CloudWatch metric namespace for single metric alarm source identification
 
 Validation: Must be valid namespace if provided; AWS/* namespaces bypass validation; custom namespaces validated against metric filters
 
-###### <a name="functions_items_alarms_items_okActions"></a>3.1.2.1.13. Property `root > functions > functions items > alarms > alarms items > okActions`
+###### <a name="lambdaFunctions_functions_items_alarms_items_okActions"></a>7.1.1.2.1.13. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > okActions`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -784,18 +3967,18 @@ Validation: Must be valid SNS topic ARNs if provided; topics must exist; enables
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                  | Description |
-| ---------------------------------------------------------------- | ----------- |
-| [okActions items](#functions_items_alarms_items_okActions_items) | -           |
+| Each item of this array must be                                                  | Description |
+| -------------------------------------------------------------------------------- | ----------- |
+| [okActions items](#lambdaFunctions_functions_items_alarms_items_okActions_items) | -           |
 
-###### <a name="functions_items_alarms_items_okActions_items"></a>3.1.2.1.13.1. root > functions > functions items > alarms > alarms items > okActions > okActions items
+###### <a name="lambdaFunctions_functions_items_alarms_items_okActions_items"></a>7.1.1.2.1.13.1. root > lambdaFunctions > functions > functions items > alarms > alarms items > okActions > okActions items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_alarms_items_period"></a>3.1.2.1.14. Property `root > functions > functions items > alarms > alarms items > period`
+###### <a name="lambdaFunctions_functions_items_alarms_items_period"></a>7.1.1.2.1.14. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > period`
 
 |              |          |
 | ------------ | -------- |
@@ -811,7 +3994,7 @@ AWS: CloudWatch metric period for single metric alarm aggregation and evaluation
 
 Validation: Must be valid period in seconds if provided; typically 60, 300, or 3600; affects alarm sensitivity
 
-###### <a name="functions_items_alarms_items_statistic"></a>3.1.2.1.15. Property `root > functions > functions items > alarms > alarms items > statistic`
+###### <a name="lambdaFunctions_functions_items_alarms_items_statistic"></a>7.1.1.2.1.15. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > statistic`
 
 |              |          |
 | ------------ | -------- |
@@ -827,7 +4010,7 @@ AWS: CloudWatch metric statistic for single metric alarm aggregation and evaluat
 
 Validation: Must be valid statistic if provided (Sum, Average, Maximum, Minimum, SampleCount); used with metricName
 
-###### <a name="functions_items_alarms_items_threshold"></a>3.1.2.1.16. Property `root > functions > functions items > alarms > alarms items > threshold`
+###### <a name="lambdaFunctions_functions_items_alarms_items_threshold"></a>7.1.1.2.1.16. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > threshold`
 
 |              |          |
 | ------------ | -------- |
@@ -843,7 +4026,7 @@ AWS: CloudWatch alarm threshold for metric comparison and breach detection
 
 Validation: Must be numeric value; compared against metric using comparisonOperator; determines alarm triggering
 
-###### <a name="functions_items_alarms_items_treatMissingData"></a>3.1.2.1.17. Property `root > functions > functions items > alarms > alarms items > treatMissingData`
+###### <a name="lambdaFunctions_functions_items_alarms_items_treatMissingData"></a>7.1.1.2.1.17. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > treatMissingData`
 
 |              |          |
 | ------------ | -------- |
@@ -859,7 +4042,7 @@ AWS: CloudWatch alarm missing data treatment for handling data gaps and evaluati
 
 Validation: Must be valid treatment string if provided (notBreaching, breaching, ignore, missing); defaults to notBreaching
 
-###### <a name="functions_items_alarms_items_unit"></a>3.1.2.1.18. Property `root > functions > functions items > alarms > alarms items > unit`
+###### <a name="lambdaFunctions_functions_items_alarms_items_unit"></a>7.1.1.2.1.18. Property `root > lambdaFunctions > functions > functions items > alarms > alarms items > unit`
 
 |              |          |
 | ------------ | -------- |
@@ -875,7 +4058,7 @@ AWS: CloudWatch metric unit for single metric alarm interpretation and evaluatio
 
 Validation: Must be valid CloudWatch metric unit if provided; used for metric interpretation and threshold comparison
 
-#### <a name="functions_items_description"></a>3.1.3. Property `root > functions > functions items > description`
+##### <a name="lambdaFunctions_functions_items_description"></a>7.1.1.3. Property `root > lambdaFunctions > functions > functions items > description`
 
 |              |          |
 | ------------ | -------- |
@@ -891,7 +4074,7 @@ AWS: AWS Lambda function description for documentation and operational clarity
 
 Validation: Must be descriptive text if provided; recommended for function documentation and operational understanding
 
-#### <a name="functions_items_dockerBuild"></a>3.1.4. Property `root > functions > functions items > dockerBuild`
+##### <a name="lambdaFunctions_functions_items_dockerBuild"></a>7.1.1.4. Property `root > lambdaFunctions > functions > functions items > dockerBuild`
 
 |              |           |
 | ------------ | --------- |
@@ -907,13 +4090,13 @@ AWS: Lambda container image deployment for custom data processing runtime enviro
 
 Validation: When true, srcDir must contain valid Dockerfile; container must be compatible with Lambda execution environment
 
-#### <a name="functions_items_environment"></a>3.1.5. Property `root > functions > functions items > environment`
+##### <a name="lambdaFunctions_functions_items_environment"></a>7.1.1.5. Property `root > lambdaFunctions > functions > functions items > environment`
 
-|                           |                                                                                                          |
-| ------------------------- | -------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                 |
-| **Required**              | No                                                                                                       |
-| **Additional properties** | [Each additional property must conform to the schema](#functions_items_environment_additionalProperties) |
+|                           |                                                                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                                                 |
+| **Required**              | No                                                                                                                       |
+| **Additional properties** | [Each additional property must conform to the schema](#lambdaFunctions_functions_items_environment_additionalProperties) |
 
 **Description:** Q-ENHANCED-PROPERTY
 Optional environment variables for function configuration enabling runtime configuration and parameter passing. Defines key-value pairs that Lambda caches and makes available for function execution enabling configuration changes without code modifications.
@@ -925,18 +4108,18 @@ AWS: AWS Lambda environment variables for function configuration and runtime par
 Validation: Must be valid key-value string pairs if provided; enables runtime configuration when specified
   *
 
-| Property                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#functions_items_environment_additionalProperties ) | No      | string | No         | -          | -                 |
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#lambdaFunctions_functions_items_environment_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="functions_items_environment_additionalProperties"></a>3.1.5.1. Property `root > functions > functions items > environment > additionalProperties`
+###### <a name="lambdaFunctions_functions_items_environment_additionalProperties"></a>7.1.1.5.1. Property `root > lambdaFunctions > functions > functions items > environment > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="functions_items_ephemeralStorageSizeMB"></a>3.1.6. Property `root > functions > functions items > ephemeralStorageSizeMB`
+##### <a name="lambdaFunctions_functions_items_ephemeralStorageSizeMB"></a>7.1.1.6. Property `root > lambdaFunctions > functions > functions items > ephemeralStorageSizeMB`
 
 |              |             |
 | ------------ | ----------- |
@@ -946,7 +4129,7 @@ Validation: Must be valid key-value string pairs if provided; enables runtime co
 
 **Description:** The size of the function’s /tmp directory in MB.
 
-#### <a name="functions_items_eventBridge"></a>3.1.7. Property `root > functions > functions items > eventBridge`
+##### <a name="lambdaFunctions_functions_items_eventBridge"></a>7.1.1.7. Property `root > lambdaFunctions > functions > functions items > eventBridge`
 
 |                           |                                |
 | ------------------------- | ------------------------------ |
@@ -964,21 +4147,21 @@ AWS: Amazon EventBridge integration for Lambda function event-driven execution
 
 Validation: Must be valid EventBridgeProps object if provided; enables event-driven function execution when configured
 
-| Property                                                                 | Pattern | Type   | Deprecated | Definition                                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------------------------------------------------------ | ------- | ------ | ---------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [eventBridgeRules](#functions_items_eventBridge_eventBridgeRules )     | No      | object | No         | In #/definitions/NamedEventBridgeRuleProps   | Q-ENHANCED-PROPERTY<br />Optional collection of named general EventBridge rules that trigger processing workflows based on various AWS service events and custom events. Enables event-driven architectures beyond S3 events with flexible event pattern matching.<br /><br />Use cases: Multi-service event processing; Custom event handling; Scheduled workflow triggers<br /><br />AWS: Amazon EventBridge rules for general AWS service events and custom event processing<br /><br />Validation: Must be valid NamedEventBridgeRuleProps object if provided with valid rule names and configurations<br />  *                                 |
-| - [maxEventAgeSeconds](#functions_items_eventBridge_maxEventAgeSeconds ) | No      | number | No         | -                                            | Q-ENHANCED-PROPERTY<br />Maximum age in seconds that EventBridge will attempt to deliver an event to the target before discarding it. Controls event freshness and prevents processing of stale events in time-sensitive data processing workflows.<br /><br />Use cases: Event freshness control; Time-sensitive processing; Stale event prevention<br /><br />AWS: Amazon EventBridge maximum event age configuration for event delivery time limits<br /><br />Validation: Must be between 60 and 86400 seconds (1 minute to 24 hours); defaults to 86400 if not specified                                                                       |
-| - [retryAttempts](#functions_items_eventBridge_retryAttempts )           | No      | number | No         | -                                            | Q-ENHANCED-PROPERTY<br />Maximum number of retry attempts EventBridge will make when the target returns an error. Controls event delivery resilience and helps ensure reliable processing of critical data events with configurable retry behavior.<br /><br />Use cases: Event delivery resilience; Error recovery; Reliable event processing<br /><br />AWS: Amazon EventBridge retry attempt configuration for event delivery reliability<br /><br />Validation: Must be between 0 and 185 attempts; defaults to 185 if not specified                                                                                                            |
-| - [s3EventBridgeRules](#functions_items_eventBridge_s3EventBridgeRules ) | No      | object | No         | In #/definitions/NamedS3EventBridgeRuleProps | Q-ENHANCED-PROPERTY<br />Optional collection of named S3 EventBridge rules that trigger processing workflows based on S3 object events. Enables event-driven data processing pipelines that respond to S3 object creation, deletion, and modification events with bucket and prefix filtering.<br /><br />Use cases: S3 object processing workflows; Event-driven ETL pipelines; Multi-bucket event handling<br /><br />AWS: Amazon EventBridge rules for S3 event notifications and data processing triggers<br /><br />Validation: Must be valid NamedS3EventBridgeRuleProps object if provided with valid rule names and configurations<br />  * |
+| Property                                                                                 | Pattern | Type   | Deprecated | Definition                                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [eventBridgeRules](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules )     | No      | object | No         | In #/definitions/NamedEventBridgeRuleProps   | Q-ENHANCED-PROPERTY<br />Optional collection of named general EventBridge rules that trigger processing workflows based on various AWS service events and custom events. Enables event-driven architectures beyond S3 events with flexible event pattern matching.<br /><br />Use cases: Multi-service event processing; Custom event handling; Scheduled workflow triggers<br /><br />AWS: Amazon EventBridge rules for general AWS service events and custom event processing<br /><br />Validation: Must be valid NamedEventBridgeRuleProps object if provided with valid rule names and configurations<br />  *                                 |
+| - [maxEventAgeSeconds](#lambdaFunctions_functions_items_eventBridge_maxEventAgeSeconds ) | No      | number | No         | -                                            | Q-ENHANCED-PROPERTY<br />Maximum age in seconds that EventBridge will attempt to deliver an event to the target before discarding it. Controls event freshness and prevents processing of stale events in time-sensitive data processing workflows.<br /><br />Use cases: Event freshness control; Time-sensitive processing; Stale event prevention<br /><br />AWS: Amazon EventBridge maximum event age configuration for event delivery time limits<br /><br />Validation: Must be between 60 and 86400 seconds (1 minute to 24 hours); defaults to 86400 if not specified                                                                       |
+| - [retryAttempts](#lambdaFunctions_functions_items_eventBridge_retryAttempts )           | No      | number | No         | -                                            | Q-ENHANCED-PROPERTY<br />Maximum number of retry attempts EventBridge will make when the target returns an error. Controls event delivery resilience and helps ensure reliable processing of critical data events with configurable retry behavior.<br /><br />Use cases: Event delivery resilience; Error recovery; Reliable event processing<br /><br />AWS: Amazon EventBridge retry attempt configuration for event delivery reliability<br /><br />Validation: Must be between 0 and 185 attempts; defaults to 185 if not specified                                                                                                            |
+| - [s3EventBridgeRules](#lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules ) | No      | object | No         | In #/definitions/NamedS3EventBridgeRuleProps | Q-ENHANCED-PROPERTY<br />Optional collection of named S3 EventBridge rules that trigger processing workflows based on S3 object events. Enables event-driven data processing pipelines that respond to S3 object creation, deletion, and modification events with bucket and prefix filtering.<br /><br />Use cases: S3 object processing workflows; Event-driven ETL pipelines; Multi-bucket event handling<br /><br />AWS: Amazon EventBridge rules for S3 event notifications and data processing triggers<br /><br />Validation: Must be valid NamedS3EventBridgeRuleProps object if provided with valid rule names and configurations<br />  * |
 
-##### <a name="functions_items_eventBridge_eventBridgeRules"></a>3.1.7.1. Property `root > functions > functions items > eventBridge > eventBridgeRules`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules"></a>7.1.1.7.1. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules`
 
-|                           |                                                                                                                           |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                  |
-| **Required**              | No                                                                                                                        |
-| **Additional properties** | [Each additional property must conform to the schema](#functions_items_eventBridge_eventBridgeRules_additionalProperties) |
-| **Defined in**            | #/definitions/NamedEventBridgeRuleProps                                                                                   |
+|                           |                                                                                                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                  |
+| **Required**              | No                                                                                                                                        |
+| **Additional properties** | [Each additional property must conform to the schema](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties) |
+| **Defined in**            | #/definitions/NamedEventBridgeRuleProps                                                                                                   |
 
 **Description:** Q-ENHANCED-PROPERTY
 Optional collection of named general EventBridge rules that trigger processing workflows based on various AWS service events and custom events. Enables event-driven architectures beyond S3 events with flexible event pattern matching.
@@ -990,11 +4173,11 @@ AWS: Amazon EventBridge rules for general AWS service events and custom event pr
 Validation: Must be valid NamedEventBridgeRuleProps object if provided with valid rule names and configurations
   *
 
-| Property                                                                  | Pattern | Type   | Deprecated | Definition                            | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [](#functions_items_eventBridge_eventBridgeRules_additionalProperties ) | No      | object | No         | In #/definitions/EventBridgeRuleProps | Q-ENHANCED-INTERFACE<br />Configuration interface for EventBridge rules that define event patterns, schedules, and input transformations for triggering data processing workflows. Supports both event-driven and schedule-driven processing with flexible event pattern matching and custom input handling.<br /><br />Use cases: Event-driven data processing; Scheduled workflow triggers; Custom event pattern matching with input transformation<br /><br />AWS: Configures Amazon EventBridge rules with event patterns, schedules, and input transformations for workflow automation<br /><br />Validation: Either eventPattern or scheduleExpression must be provided; eventBusArn must be valid ARN if specified |
+| Property                                                                                  | Pattern | Type   | Deprecated | Definition                            | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties ) | No      | object | No         | In #/definitions/EventBridgeRuleProps | Q-ENHANCED-INTERFACE<br />Configuration interface for EventBridge rules that define event patterns, schedules, and input transformations for triggering data processing workflows. Supports both event-driven and schedule-driven processing with flexible event pattern matching and custom input handling.<br /><br />Use cases: Event-driven data processing; Scheduled workflow triggers; Custom event pattern matching with input transformation<br /><br />AWS: Configures Amazon EventBridge rules with event patterns, schedules, and input transformations for workflow automation<br /><br />Validation: Either eventPattern or scheduleExpression must be provided; eventBusArn must be valid ARN if specified |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties"></a>3.1.7.1.1. Property `root > functions > functions items > eventBridge > eventBridgeRules > EventBridgeRuleProps`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties"></a>7.1.1.7.1.1. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > EventBridgeRuleProps`
 
 |                           |                                    |
 | ------------------------- | ---------------------------------- |
@@ -1012,15 +4195,15 @@ AWS: Configures Amazon EventBridge rules with event patterns, schedules, and inp
 
 Validation: Either eventPattern or scheduleExpression must be provided; eventBusArn must be valid ARN if specified
 
-| Property                                                                                                       | Pattern | Type   | Deprecated | Definition                    | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| -------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [description](#functions_items_eventBridge_eventBridgeRules_additionalProperties_description )               | No      | string | No         | -                             | Q-ENHANCED-PROPERTY<br />Optional human-readable description of the EventBridge rule explaining its purpose and trigger conditions. Provides documentation for rule management and helps identify rule functionality in the AWS console.<br /><br />Use cases: Rule documentation; Management clarity; AWS console identification<br /><br />AWS: Amazon EventBridge rule description for management and identification<br /><br />Validation: Must be descriptive text if provided; recommended for rule documentation                                                                                                                                                                       |
-| - [eventBusArn](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventBusArn )               | No      | string | No         | -                             | Q-ENHANCED-PROPERTY<br />Optional ARN of the custom EventBridge event bus where the rule should be created. If not specified, the default event bus will be used. Enables cross-account event routing and custom event bus architectures for organized event processing.<br /><br />Use cases: Custom event bus routing; Cross-account event processing; Event bus isolation and organization<br /><br />AWS: Amazon EventBridge custom event bus ARN for rule creation and event routing<br /><br />Validation: Must be valid EventBridge event bus ARN format if provided (arn:aws:events:region:account:event-bus/bus-name)                                                                |
-| - [eventPattern](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern )             | No      | object | No         | In #/definitions/EventPattern | Q-ENHANCED-PROPERTY<br />Optional EventBridge event pattern that defines which events should trigger the rule. Specifies event source, detail type, and detail content matching criteria for precise event filtering and routing to appropriate processing workflows.<br /><br />Use cases: Event source filtering; Detail-based event routing; Multi-service event processing<br /><br />AWS: Amazon EventBridge event pattern for event matching and filtering<br /><br />Validation: Must be valid EventBridge event pattern format if provided; cannot be used with scheduleExpression<br />  * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_events.EventPattern.html |
-| - [input](#functions_items_eventBridge_eventBridgeRules_additionalProperties_input )                           | No      | object | No         | -                             | Q-ENHANCED-PROPERTY<br />Optional custom input payload that will be provided to the rule target instead of the original event content. Enables event transformation and custom payload injection for specialized processing requirements.<br /><br />Use cases: Event payload transformation; Custom processing parameters; Static configuration injection<br /><br />AWS: Amazon EventBridge rule target input transformation for custom payload delivery<br /><br />Validation: Must be valid JSON-serializable object if provided; replaces original event content<br />  *                                                                                                                |
-| - [scheduleExpression](#functions_items_eventBridge_eventBridgeRules_additionalProperties_scheduleExpression ) | No      | string | No         | -                             | Q-ENHANCED-PROPERTY<br />Optional schedule expression for time-based rule triggering using EventBridge cron or rate expressions. Enables scheduled data processing workflows and periodic batch operations with flexible timing configurations.<br /><br />Use cases: Scheduled ETL jobs; Periodic data processing; Time-based workflow automation<br /><br />AWS: Amazon EventBridge schedule expression for time-based rule triggering<br /><br />Validation: Must be valid EventBridge cron or rate expression if provided; cannot be used with eventPattern                                                                                                                               |
+| Property                                                                                                                       | Pattern | Type   | Deprecated | Definition                    | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [description](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_description )               | No      | string | No         | -                             | Q-ENHANCED-PROPERTY<br />Optional human-readable description of the EventBridge rule explaining its purpose and trigger conditions. Provides documentation for rule management and helps identify rule functionality in the AWS console.<br /><br />Use cases: Rule documentation; Management clarity; AWS console identification<br /><br />AWS: Amazon EventBridge rule description for management and identification<br /><br />Validation: Must be descriptive text if provided; recommended for rule documentation                                                                                                                                                                       |
+| - [eventBusArn](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventBusArn )               | No      | string | No         | -                             | Q-ENHANCED-PROPERTY<br />Optional ARN of the custom EventBridge event bus where the rule should be created. If not specified, the default event bus will be used. Enables cross-account event routing and custom event bus architectures for organized event processing.<br /><br />Use cases: Custom event bus routing; Cross-account event processing; Event bus isolation and organization<br /><br />AWS: Amazon EventBridge custom event bus ARN for rule creation and event routing<br /><br />Validation: Must be valid EventBridge event bus ARN format if provided (arn:aws:events:region:account:event-bus/bus-name)                                                                |
+| - [eventPattern](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern )             | No      | object | No         | In #/definitions/EventPattern | Q-ENHANCED-PROPERTY<br />Optional EventBridge event pattern that defines which events should trigger the rule. Specifies event source, detail type, and detail content matching criteria for precise event filtering and routing to appropriate processing workflows.<br /><br />Use cases: Event source filtering; Detail-based event routing; Multi-service event processing<br /><br />AWS: Amazon EventBridge event pattern for event matching and filtering<br /><br />Validation: Must be valid EventBridge event pattern format if provided; cannot be used with scheduleExpression<br />  * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_events.EventPattern.html |
+| - [input](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_input )                           | No      | object | No         | -                             | Q-ENHANCED-PROPERTY<br />Optional custom input payload that will be provided to the rule target instead of the original event content. Enables event transformation and custom payload injection for specialized processing requirements.<br /><br />Use cases: Event payload transformation; Custom processing parameters; Static configuration injection<br /><br />AWS: Amazon EventBridge rule target input transformation for custom payload delivery<br /><br />Validation: Must be valid JSON-serializable object if provided; replaces original event content<br />  *                                                                                                                |
+| - [scheduleExpression](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_scheduleExpression ) | No      | string | No         | -                             | Q-ENHANCED-PROPERTY<br />Optional schedule expression for time-based rule triggering using EventBridge cron or rate expressions. Enables scheduled data processing workflows and periodic batch operations with flexible timing configurations.<br /><br />Use cases: Scheduled ETL jobs; Periodic data processing; Time-based workflow automation<br /><br />AWS: Amazon EventBridge schedule expression for time-based rule triggering<br /><br />Validation: Must be valid EventBridge cron or rate expression if provided; cannot be used with eventPattern                                                                                                                               |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_description"></a>3.1.7.1.1.1. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > description`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_description"></a>7.1.1.7.1.1.1. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > description`
 
 |              |          |
 | ------------ | -------- |
@@ -1036,7 +4219,7 @@ AWS: Amazon EventBridge rule description for management and identification
 
 Validation: Must be descriptive text if provided; recommended for rule documentation
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventBusArn"></a>3.1.7.1.1.2. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventBusArn`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventBusArn"></a>7.1.1.7.1.1.2. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventBusArn`
 
 |              |          |
 | ------------ | -------- |
@@ -1052,7 +4235,7 @@ AWS: Amazon EventBridge custom event bus ARN for rule creation and event routing
 
 Validation: Must be valid EventBridge event bus ARN format if provided (arn:aws:events:region:account:event-bus/bus-name)
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern"></a>3.1.7.1.1.3. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern"></a>7.1.1.7.1.1.3. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern`
 
 |                           |                            |
 | ------------------------- | -------------------------- |
@@ -1071,19 +4254,19 @@ AWS: Amazon EventBridge event pattern for event matching and filtering
 Validation: Must be valid EventBridge event pattern format if provided; cannot be used with scheduleExpression
   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_events.EventPattern.html
 
-| Property                                                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ----------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [account](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_account )       | No      | array of string | No         | -          | The 12-digit number identifying an AWS account.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| - [detail](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detail )         | No      | object          | No         | -          | A JSON object, whose content is at the discretion of the service<br />originating the event.                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [detailType](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detailType ) | No      | array of string | No         | -          | Identifies, in combination with the source field, the fields and values<br />that appear in the detail field.<br /><br />Represents the "detail-type" event field.                                                                                                                                                                                                                                                                                                                       |
-| - [id](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_id )                 | No      | array of string | No         | -          | A unique value is generated for every event. This can be helpful in<br />tracing events as they move through rules to targets, and are processed.                                                                                                                                                                                                                                                                                                                                        |
-| - [region](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_region )         | No      | array of string | No         | -          | Identifies the AWS region where the event originated.                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [resources](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_resources )   | No      | array of string | No         | -          | This JSON array contains ARNs that identify resources that are involved<br />in the event. Inclusion of these ARNs is at the discretion of the<br />service.<br /><br />For example, Amazon EC2 instance state-changes include Amazon EC2<br />instance ARNs, Auto Scaling events include ARNs for both instances and<br />Auto Scaling groups, but API calls with AWS CloudTrail do not include<br />resource ARNs.                                                                     |
-| - [source](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_source )         | No      | array of string | No         | -          | Identifies the service that sourced the event. All events sourced from<br />within AWS begin with "aws." Customer-generated events can have any value<br />here, as long as it doesn't begin with "aws." We recommend the use of<br />Java package-name style reverse domain-name strings.<br /><br />To find the correct value for source for an AWS service, see the table in<br />AWS Service Namespaces. For example, the source value for Amazon<br />CloudFront is aws.cloudfront. |
-| - [time](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_time )             | No      | array of string | No         | -          | The event timestamp, which can be specified by the service originating<br />the event. If the event spans a time interval, the service might choose<br />to report the start time, so this value can be noticeably before the time<br />the event is actually received.                                                                                                                                                                                                                  |
-| - [version](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_version )       | No      | array of string | No         | -          | By default, this is set to 0 (zero) in all events.                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| Property                                                                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [account](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_account )       | No      | array of string | No         | -          | The 12-digit number identifying an AWS account.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [detail](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detail )         | No      | object          | No         | -          | A JSON object, whose content is at the discretion of the service<br />originating the event.                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [detailType](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detailType ) | No      | array of string | No         | -          | Identifies, in combination with the source field, the fields and values<br />that appear in the detail field.<br /><br />Represents the "detail-type" event field.                                                                                                                                                                                                                                                                                                                       |
+| - [id](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_id )                 | No      | array of string | No         | -          | A unique value is generated for every event. This can be helpful in<br />tracing events as they move through rules to targets, and are processed.                                                                                                                                                                                                                                                                                                                                        |
+| - [region](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_region )         | No      | array of string | No         | -          | Identifies the AWS region where the event originated.                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [resources](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_resources )   | No      | array of string | No         | -          | This JSON array contains ARNs that identify resources that are involved<br />in the event. Inclusion of these ARNs is at the discretion of the<br />service.<br /><br />For example, Amazon EC2 instance state-changes include Amazon EC2<br />instance ARNs, Auto Scaling events include ARNs for both instances and<br />Auto Scaling groups, but API calls with AWS CloudTrail do not include<br />resource ARNs.                                                                     |
+| - [source](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_source )         | No      | array of string | No         | -          | Identifies the service that sourced the event. All events sourced from<br />within AWS begin with "aws." Customer-generated events can have any value<br />here, as long as it doesn't begin with "aws." We recommend the use of<br />Java package-name style reverse domain-name strings.<br /><br />To find the correct value for source for an AWS service, see the table in<br />AWS Service Namespaces. For example, the source value for Amazon<br />CloudFront is aws.cloudfront. |
+| - [time](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_time )             | No      | array of string | No         | -          | The event timestamp, which can be specified by the service originating<br />the event. If the event spans a time interval, the service might choose<br />to report the start time, so this value can be noticeably before the time<br />the event is actually received.                                                                                                                                                                                                                  |
+| - [version](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_version )       | No      | array of string | No         | -          | By default, this is set to 0 (zero) in all events.                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_account"></a>3.1.7.1.1.3.1. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > account`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_account"></a>7.1.1.7.1.1.3.1. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > account`
 
 |              |                               |
 | ------------ | ----------------------------- |
@@ -1101,34 +4284,34 @@ Validation: Must be valid EventBridge event pattern format if provided; cannot b
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                                | Description |
-| -------------------------------------------------------------------------------------------------------------- | ----------- |
-| [account items](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_account_items) | -           |
+| Each item of this array must be                                                                                                | Description |
+| ------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| [account items](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_account_items) | -           |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_account_items"></a>3.1.7.1.1.3.1.1. root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > account > account items
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_account_items"></a>7.1.1.7.1.1.3.1.1. root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > account > account items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detail"></a>3.1.7.1.1.3.2. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > detail`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detail"></a>7.1.1.7.1.1.3.2. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > detail`
 
-|                           |                                                                                                                                                                    |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Type**                  | `object`                                                                                                                                                           |
-| **Required**              | No                                                                                                                                                                 |
-| **Additional properties** | [Each additional property must conform to the schema](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detail_additionalProperties) |
-| **Default**               | `"- No filtering on detail"`                                                                                                                                       |
+|                           |                                                                                                                                                                                    |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                           |
+| **Required**              | No                                                                                                                                                                                 |
+| **Additional properties** | [Each additional property must conform to the schema](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detail_additionalProperties) |
+| **Default**               | `"- No filtering on detail"`                                                                                                                                                       |
 
 **Description:** A JSON object, whose content is at the discretion of the service
 originating the event.
 
-| Property                                                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detail_additionalProperties ) | No      | object | No         | -          | -                 |
+| Property                                                                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detail_additionalProperties ) | No      | object | No         | -          | -                 |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detail_additionalProperties"></a>3.1.7.1.1.3.2.1. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > detail > additionalProperties`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detail_additionalProperties"></a>7.1.1.7.1.1.3.2.1. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > detail > additionalProperties`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1136,7 +4319,7 @@ originating the event.
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detailType"></a>3.1.7.1.1.3.3. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > detailType`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detailType"></a>7.1.1.7.1.1.3.3. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > detailType`
 
 |              |                                   |
 | ------------ | --------------------------------- |
@@ -1157,18 +4340,18 @@ Represents the "detail-type" event field.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                                      | Description |
-| -------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [detailType items](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detailType_items) | -           |
+| Each item of this array must be                                                                                                      | Description |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| [detailType items](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detailType_items) | -           |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detailType_items"></a>3.1.7.1.1.3.3.1. root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > detailType > detailType items
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_detailType_items"></a>7.1.1.7.1.1.3.3.1. root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > detailType > detailType items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_id"></a>3.1.7.1.1.3.4. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > id`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_id"></a>7.1.1.7.1.1.3.4. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > id`
 
 |              |                          |
 | ------------ | ------------------------ |
@@ -1187,18 +4370,18 @@ tracing events as they move through rules to targets, and are processed.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                      | Description |
-| ---------------------------------------------------------------------------------------------------- | ----------- |
-| [id items](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_id_items) | -           |
+| Each item of this array must be                                                                                      | Description |
+| -------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [id items](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_id_items) | -           |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_id_items"></a>3.1.7.1.1.3.4.1. root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > id > id items
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_id_items"></a>7.1.1.7.1.1.3.4.1. root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > id > id items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_region"></a>3.1.7.1.1.3.5. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > region`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_region"></a>7.1.1.7.1.1.3.5. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > region`
 
 |              |                              |
 | ------------ | ---------------------------- |
@@ -1216,18 +4399,18 @@ tracing events as they move through rules to targets, and are processed.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                              | Description |
-| ------------------------------------------------------------------------------------------------------------ | ----------- |
-| [region items](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_region_items) | -           |
+| Each item of this array must be                                                                                              | Description |
+| ---------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [region items](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_region_items) | -           |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_region_items"></a>3.1.7.1.1.3.5.1. root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > region > region items
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_region_items"></a>7.1.1.7.1.1.3.5.1. root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > region > region items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_resources"></a>3.1.7.1.1.3.6. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > resources`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_resources"></a>7.1.1.7.1.1.3.6. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > resources`
 
 |              |                                |
 | ------------ | ------------------------------ |
@@ -1252,18 +4435,18 @@ resource ARNs.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                                    | Description |
-| ------------------------------------------------------------------------------------------------------------------ | ----------- |
-| [resources items](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_resources_items) | -           |
+| Each item of this array must be                                                                                                    | Description |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [resources items](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_resources_items) | -           |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_resources_items"></a>3.1.7.1.1.3.6.1. root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > resources > resources items
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_resources_items"></a>7.1.1.7.1.1.3.6.1. root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > resources > resources items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_source"></a>3.1.7.1.1.3.7. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > source`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_source"></a>7.1.1.7.1.1.3.7. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > source`
 
 |              |                              |
 | ------------ | ---------------------------- |
@@ -1288,18 +4471,18 @@ CloudFront is aws.cloudfront.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                              | Description |
-| ------------------------------------------------------------------------------------------------------------ | ----------- |
-| [source items](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_source_items) | -           |
+| Each item of this array must be                                                                                              | Description |
+| ---------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [source items](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_source_items) | -           |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_source_items"></a>3.1.7.1.1.3.7.1. root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > source > source items
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_source_items"></a>7.1.1.7.1.1.3.7.1. root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > source > source items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_time"></a>3.1.7.1.1.3.8. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > time`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_time"></a>7.1.1.7.1.1.3.8. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > time`
 
 |              |                            |
 | ------------ | -------------------------- |
@@ -1320,18 +4503,18 @@ the event is actually received.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                          | Description |
-| -------------------------------------------------------------------------------------------------------- | ----------- |
-| [time items](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_time_items) | -           |
+| Each item of this array must be                                                                                          | Description |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| [time items](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_time_items) | -           |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_time_items"></a>3.1.7.1.1.3.8.1. root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > time > time items
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_time_items"></a>7.1.1.7.1.1.3.8.1. root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > time > time items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_version"></a>3.1.7.1.1.3.9. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > version`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_version"></a>7.1.1.7.1.1.3.9. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > version`
 
 |              |                               |
 | ------------ | ----------------------------- |
@@ -1349,18 +4532,18 @@ the event is actually received.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                                | Description |
-| -------------------------------------------------------------------------------------------------------------- | ----------- |
-| [version items](#functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_version_items) | -           |
+| Each item of this array must be                                                                                                | Description |
+| ------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| [version items](#lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_version_items) | -           |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_version_items"></a>3.1.7.1.1.3.9.1. root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > version > version items
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_eventPattern_version_items"></a>7.1.1.7.1.1.3.9.1. root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > eventPattern > version > version items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_input"></a>3.1.7.1.1.4. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > input`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_input"></a>7.1.1.7.1.1.4. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > input`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1378,7 +4561,7 @@ AWS: Amazon EventBridge rule target input transformation for custom payload deli
 Validation: Must be valid JSON-serializable object if provided; replaces original event content
   *
 
-###### <a name="functions_items_eventBridge_eventBridgeRules_additionalProperties_scheduleExpression"></a>3.1.7.1.1.5. Property `root > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > scheduleExpression`
+###### <a name="lambdaFunctions_functions_items_eventBridge_eventBridgeRules_additionalProperties_scheduleExpression"></a>7.1.1.7.1.1.5. Property `root > lambdaFunctions > functions > functions items > eventBridge > eventBridgeRules > additionalProperties > scheduleExpression`
 
 |              |          |
 | ------------ | -------- |
@@ -1394,7 +4577,7 @@ AWS: Amazon EventBridge schedule expression for time-based rule triggering
 
 Validation: Must be valid EventBridge cron or rate expression if provided; cannot be used with eventPattern
 
-##### <a name="functions_items_eventBridge_maxEventAgeSeconds"></a>3.1.7.2. Property `root > functions > functions items > eventBridge > maxEventAgeSeconds`
+###### <a name="lambdaFunctions_functions_items_eventBridge_maxEventAgeSeconds"></a>7.1.1.7.2. Property `root > lambdaFunctions > functions > functions items > eventBridge > maxEventAgeSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -1410,7 +4593,7 @@ AWS: Amazon EventBridge maximum event age configuration for event delivery time 
 
 Validation: Must be between 60 and 86400 seconds (1 minute to 24 hours); defaults to 86400 if not specified
 
-##### <a name="functions_items_eventBridge_retryAttempts"></a>3.1.7.3. Property `root > functions > functions items > eventBridge > retryAttempts`
+###### <a name="lambdaFunctions_functions_items_eventBridge_retryAttempts"></a>7.1.1.7.3. Property `root > lambdaFunctions > functions > functions items > eventBridge > retryAttempts`
 
 |              |          |
 | ------------ | -------- |
@@ -1426,14 +4609,14 @@ AWS: Amazon EventBridge retry attempt configuration for event delivery reliabili
 
 Validation: Must be between 0 and 185 attempts; defaults to 185 if not specified
 
-##### <a name="functions_items_eventBridge_s3EventBridgeRules"></a>3.1.7.4. Property `root > functions > functions items > eventBridge > s3EventBridgeRules`
+###### <a name="lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules"></a>7.1.1.7.4. Property `root > lambdaFunctions > functions > functions items > eventBridge > s3EventBridgeRules`
 
-|                           |                                                                                                                             |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                    |
-| **Required**              | No                                                                                                                          |
-| **Additional properties** | [Each additional property must conform to the schema](#functions_items_eventBridge_s3EventBridgeRules_additionalProperties) |
-| **Defined in**            | #/definitions/NamedS3EventBridgeRuleProps                                                                                   |
+|                           |                                                                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                    |
+| **Required**              | No                                                                                                                                          |
+| **Additional properties** | [Each additional property must conform to the schema](#lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties) |
+| **Defined in**            | #/definitions/NamedS3EventBridgeRuleProps                                                                                                   |
 
 **Description:** Q-ENHANCED-PROPERTY
 Optional collection of named S3 EventBridge rules that trigger processing workflows based on S3 object events. Enables event-driven data processing pipelines that respond to S3 object creation, deletion, and modification events with bucket and prefix filtering.
@@ -1445,11 +4628,11 @@ AWS: Amazon EventBridge rules for S3 event notifications and data processing tri
 Validation: Must be valid NamedS3EventBridgeRuleProps object if provided with valid rule names and configurations
   *
 
-| Property                                                                    | Pattern | Type   | Deprecated | Definition                              | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| --------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [](#functions_items_eventBridge_s3EventBridgeRules_additionalProperties ) | No      | object | No         | In #/definitions/S3EventBridgeRuleProps | Q-ENHANCED-INTERFACE<br />Configuration interface for S3 EventBridge rules that define event patterns for S3 object notifications. Enables event-driven data processing by specifying which S3 buckets and object prefixes should trigger EventBridge rules for downstream processing.<br /><br />Use cases: S3 object creation event processing; Prefix-based event filtering; Cross-account S3 event handling<br /><br />AWS: Configures Amazon EventBridge rules for S3 event notifications with bucket and prefix filtering<br /><br />Validation: buckets array must contain valid S3 bucket names; prefixes must be valid S3 object key prefixes; eventBusArn must be valid EventBridge bus ARN |
+| Property                                                                                    | Pattern | Type   | Deprecated | Definition                              | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [](#lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties ) | No      | object | No         | In #/definitions/S3EventBridgeRuleProps | Q-ENHANCED-INTERFACE<br />Configuration interface for S3 EventBridge rules that define event patterns for S3 object notifications. Enables event-driven data processing by specifying which S3 buckets and object prefixes should trigger EventBridge rules for downstream processing.<br /><br />Use cases: S3 object creation event processing; Prefix-based event filtering; Cross-account S3 event handling<br /><br />AWS: Configures Amazon EventBridge rules for S3 event notifications with bucket and prefix filtering<br /><br />Validation: buckets array must contain valid S3 bucket names; prefixes must be valid S3 object key prefixes; eventBusArn must be valid EventBridge bus ARN |
 
-###### <a name="functions_items_eventBridge_s3EventBridgeRules_additionalProperties"></a>3.1.7.4.1. Property `root > functions > functions items > eventBridge > s3EventBridgeRules > S3EventBridgeRuleProps`
+###### <a name="lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties"></a>7.1.1.7.4.1. Property `root > lambdaFunctions > functions > functions items > eventBridge > s3EventBridgeRules > S3EventBridgeRuleProps`
 
 |                           |                                      |
 | ------------------------- | ------------------------------------ |
@@ -1467,13 +4650,13 @@ AWS: Configures Amazon EventBridge rules for S3 event notifications with bucket 
 
 Validation: buckets array must contain valid S3 bucket names; prefixes must be valid S3 object key prefixes; eventBusArn must be valid EventBridge bus ARN
 
-| Property                                                                                           | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| -------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [buckets](#functions_items_eventBridge_s3EventBridgeRules_additionalProperties_buckets )         | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Array of S3 bucket names that should trigger the EventBridge rule when object events occur. Enables multi-bucket event processing and centralized event handling for distributed data lake architectures.<br /><br />Use cases: Multi-bucket event processing; Data lake event consolidation; Cross-bucket event handling<br /><br />AWS: Amazon S3 bucket names for EventBridge event pattern matching<br /><br />Validation: Must be array of valid S3 bucket names (3-63 characters, lowercase, no underscores)                                                                             |
-| - [eventBusArn](#functions_items_eventBridge_s3EventBridgeRules_additionalProperties_eventBusArn ) | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional ARN of the custom EventBridge event bus where the rule should be created. If not specified, the default event bus will be used. Enables cross-account event routing and custom event bus architectures.<br /><br />Use cases: Custom event bus routing; Cross-account event processing; Event bus isolation and organization<br /><br />AWS: Amazon EventBridge custom event bus ARN for rule creation and event routing<br /><br />Validation: Must be valid EventBridge event bus ARN format if provided (arn:aws:events:region:account:event-bus/bus-name)                         |
-| - [prefixes](#functions_items_eventBridge_s3EventBridgeRules_additionalProperties_prefixes )       | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of S3 object key prefixes that filter which objects trigger the EventBridge rule. Enables fine-grained event filtering based on object location and naming patterns for targeted data processing workflows.<br /><br />Use cases: Folder-based event filtering; File type-specific processing; Hierarchical data organization event handling<br /><br />AWS: Amazon S3 object key prefixes for EventBridge event pattern filtering<br /><br />Validation: Must be array of valid S3 object key prefixes if provided; prefixes should not start with '/' (automatically handled) |
+| Property                                                                                                           | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [buckets](#lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties_buckets )         | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Array of S3 bucket names that should trigger the EventBridge rule when object events occur. Enables multi-bucket event processing and centralized event handling for distributed data lake architectures.<br /><br />Use cases: Multi-bucket event processing; Data lake event consolidation; Cross-bucket event handling<br /><br />AWS: Amazon S3 bucket names for EventBridge event pattern matching<br /><br />Validation: Must be array of valid S3 bucket names (3-63 characters, lowercase, no underscores)                                                                             |
+| - [eventBusArn](#lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties_eventBusArn ) | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Optional ARN of the custom EventBridge event bus where the rule should be created. If not specified, the default event bus will be used. Enables cross-account event routing and custom event bus architectures.<br /><br />Use cases: Custom event bus routing; Cross-account event processing; Event bus isolation and organization<br /><br />AWS: Amazon EventBridge custom event bus ARN for rule creation and event routing<br /><br />Validation: Must be valid EventBridge event bus ARN format if provided (arn:aws:events:region:account:event-bus/bus-name)                         |
+| - [prefixes](#lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties_prefixes )       | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of S3 object key prefixes that filter which objects trigger the EventBridge rule. Enables fine-grained event filtering based on object location and naming patterns for targeted data processing workflows.<br /><br />Use cases: Folder-based event filtering; File type-specific processing; Hierarchical data organization event handling<br /><br />AWS: Amazon S3 object key prefixes for EventBridge event pattern filtering<br /><br />Validation: Must be array of valid S3 object key prefixes if provided; prefixes should not start with '/' (automatically handled) |
 
-###### <a name="functions_items_eventBridge_s3EventBridgeRules_additionalProperties_buckets"></a>3.1.7.4.1.1. Property `root > functions > functions items > eventBridge > s3EventBridgeRules > additionalProperties > buckets`
+###### <a name="lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties_buckets"></a>7.1.1.7.4.1.1. Property `root > lambdaFunctions > functions > functions items > eventBridge > s3EventBridgeRules > additionalProperties > buckets`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1497,18 +4680,18 @@ Validation: Must be array of valid S3 bucket names (3-63 characters, lowercase, 
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                     | Description |
-| --------------------------------------------------------------------------------------------------- | ----------- |
-| [buckets items](#functions_items_eventBridge_s3EventBridgeRules_additionalProperties_buckets_items) | -           |
+| Each item of this array must be                                                                                     | Description |
+| ------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [buckets items](#lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties_buckets_items) | -           |
 
-###### <a name="functions_items_eventBridge_s3EventBridgeRules_additionalProperties_buckets_items"></a>3.1.7.4.1.1.1. root > functions > functions items > eventBridge > s3EventBridgeRules > additionalProperties > buckets > buckets items
+###### <a name="lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties_buckets_items"></a>7.1.1.7.4.1.1.1. root > lambdaFunctions > functions > functions items > eventBridge > s3EventBridgeRules > additionalProperties > buckets > buckets items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_eventBridge_s3EventBridgeRules_additionalProperties_eventBusArn"></a>3.1.7.4.1.2. Property `root > functions > functions items > eventBridge > s3EventBridgeRules > additionalProperties > eventBusArn`
+###### <a name="lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties_eventBusArn"></a>7.1.1.7.4.1.2. Property `root > lambdaFunctions > functions > functions items > eventBridge > s3EventBridgeRules > additionalProperties > eventBusArn`
 
 |              |          |
 | ------------ | -------- |
@@ -1524,7 +4707,7 @@ AWS: Amazon EventBridge custom event bus ARN for rule creation and event routing
 
 Validation: Must be valid EventBridge event bus ARN format if provided (arn:aws:events:region:account:event-bus/bus-name)
 
-###### <a name="functions_items_eventBridge_s3EventBridgeRules_additionalProperties_prefixes"></a>3.1.7.4.1.3. Property `root > functions > functions items > eventBridge > s3EventBridgeRules > additionalProperties > prefixes`
+###### <a name="lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties_prefixes"></a>7.1.1.7.4.1.3. Property `root > lambdaFunctions > functions > functions items > eventBridge > s3EventBridgeRules > additionalProperties > prefixes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1548,18 +4731,18 @@ Validation: Must be array of valid S3 object key prefixes if provided; prefixes 
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                       | Description |
-| ----------------------------------------------------------------------------------------------------- | ----------- |
-| [prefixes items](#functions_items_eventBridge_s3EventBridgeRules_additionalProperties_prefixes_items) | -           |
+| Each item of this array must be                                                                                       | Description |
+| --------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [prefixes items](#lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties_prefixes_items) | -           |
 
-###### <a name="functions_items_eventBridge_s3EventBridgeRules_additionalProperties_prefixes_items"></a>3.1.7.4.1.3.1. root > functions > functions items > eventBridge > s3EventBridgeRules > additionalProperties > prefixes > prefixes items
+###### <a name="lambdaFunctions_functions_items_eventBridge_s3EventBridgeRules_additionalProperties_prefixes_items"></a>7.1.1.7.4.1.3.1. root > lambdaFunctions > functions > functions items > eventBridge > s3EventBridgeRules > additionalProperties > prefixes > prefixes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="functions_items_functionName"></a>3.1.8. Property `root > functions > functions items > functionName`
+##### <a name="lambdaFunctions_functions_items_functionName"></a>7.1.1.8. Property `root > lambdaFunctions > functions > functions items > functionName`
 
 |              |          |
 | ------------ | -------- |
@@ -1575,7 +4758,7 @@ AWS: AWS Lambda function name for identification and management operations
 
 Validation: Must be unique function name string; required for function creation and identification
 
-#### <a name="functions_items_generatedLayerNames"></a>3.1.9. Property `root > functions > functions items > generatedLayerNames`
+##### <a name="lambdaFunctions_functions_items_generatedLayerNames"></a>7.1.1.9. Property `root > lambdaFunctions > functions > functions items > generatedLayerNames`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1599,18 +4782,18 @@ Validation: Must be array of valid layer names if provided; enables layer attach
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                         | Description |
-| ----------------------------------------------------------------------- | ----------- |
-| [generatedLayerNames items](#functions_items_generatedLayerNames_items) | -           |
+| Each item of this array must be                                                         | Description |
+| --------------------------------------------------------------------------------------- | ----------- |
+| [generatedLayerNames items](#lambdaFunctions_functions_items_generatedLayerNames_items) | -           |
 
-##### <a name="functions_items_generatedLayerNames_items"></a>3.1.9.1. root > functions > functions items > generatedLayerNames > generatedLayerNames items
+###### <a name="lambdaFunctions_functions_items_generatedLayerNames_items"></a>7.1.1.9.1. root > lambdaFunctions > functions > functions items > generatedLayerNames > generatedLayerNames items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="functions_items_grantInvoke"></a>3.1.10. Property `root > functions > functions items > grantInvoke`
+##### <a name="lambdaFunctions_functions_items_grantInvoke"></a>7.1.1.10. Property `root > lambdaFunctions > functions > functions items > grantInvoke`
 
 |              |          |
 | ------------ | -------- |
@@ -1626,7 +4809,7 @@ AWS: Lambda function invoke permission for S3 EventBridge notifications and data
 
 Validation: Must be valid AWS principal ARN; principal must exist and have appropriate permissions for data operations
 
-#### <a name="functions_items_handler"></a>3.1.11. Property `root > functions > functions items > handler`
+##### <a name="lambdaFunctions_functions_items_handler"></a>7.1.1.11. Property `root > lambdaFunctions > functions > functions items > handler`
 
 |              |          |
 | ------------ | -------- |
@@ -1642,13 +4825,13 @@ AWS: Lambda function handler for S3 event processing and data transformation exe
 
 Validation: Must match handler format for specified runtime (e.g., 'index.handler' for Node.js, 'main.lambda_handler' for Python)
 
-#### <a name="functions_items_layerArns"></a>3.1.12. Property `root > functions > functions items > layerArns`
+##### <a name="lambdaFunctions_functions_items_layerArns"></a>7.1.1.12. Property `root > lambdaFunctions > functions > functions items > layerArns`
 
-|                           |                                                                                                        |
-| ------------------------- | ------------------------------------------------------------------------------------------------------ |
-| **Type**                  | `object`                                                                                               |
-| **Required**              | No                                                                                                     |
-| **Additional properties** | [Each additional property must conform to the schema](#functions_items_layerArns_additionalProperties) |
+|                           |                                                                                                                        |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                               |
+| **Required**              | No                                                                                                                     |
+| **Additional properties** | [Each additional property must conform to the schema](#lambdaFunctions_functions_items_layerArns_additionalProperties) |
 
 **Description:** Q-ENHANCED-PROPERTY
 Optional map of existing layer version ARNs to be directly added to the function enabling external dependency integration. Provides direct layer ARN references for attaching existing layers to the function for external dependencies and shared code.
@@ -1660,18 +4843,18 @@ AWS: AWS Lambda layer ARNs for external layer integration and dependency managem
 Validation: Must be valid layer name to ARN mapping if provided; enables external layer integration when specified
   *
 
-| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#functions_items_layerArns_additionalProperties ) | No      | string | No         | -          | -                 |
+| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#lambdaFunctions_functions_items_layerArns_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="functions_items_layerArns_additionalProperties"></a>3.1.12.1. Property `root > functions > functions items > layerArns > additionalProperties`
+###### <a name="lambdaFunctions_functions_items_layerArns_additionalProperties"></a>7.1.1.12.1. Property `root > lambdaFunctions > functions > functions items > layerArns > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="functions_items_logInsightsQueries"></a>3.1.13. Property `root > functions > functions items > logInsightsQueries`
+##### <a name="lambdaFunctions_functions_items_logInsightsQueries"></a>7.1.1.13. Property `root > lambdaFunctions > functions > functions items > logInsightsQueries`
 
 |              |         |
 | ------------ | ------- |
@@ -1695,11 +4878,11 @@ Validation: Optional array of LogInsightsQueryProps; queries auto-derive log gro
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                    | Description              |
-| ------------------------------------------------------------------ | ------------------------ |
-| [LogInsightsQueryProps](#functions_items_logInsightsQueries_items) | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be                                                    | Description              |
+| ---------------------------------------------------------------------------------- | ------------------------ |
+| [LogInsightsQueryProps](#lambdaFunctions_functions_items_logInsightsQueries_items) | Q-ENHANCED-INTERFACE ... |
 
-##### <a name="functions_items_logInsightsQueries_items"></a>3.1.13.1. root > functions > functions items > logInsightsQueries > LogInsightsQueryProps
+###### <a name="lambdaFunctions_functions_items_logInsightsQueries_items"></a>7.1.1.13.1. root > lambdaFunctions > functions > functions items > logInsightsQueries > LogInsightsQueryProps
 
 |                           |                                     |
 | ------------------------- | ----------------------------------- |
@@ -1717,13 +4900,13 @@ AWS: CloudWatch Logs Insights query definitions for Lambda function log analysis
 
 Validation: queryName must be unique; queryString must be valid Logs Insights syntax; logGroupNames optional (defaults to function log group)
 
-| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [logGroupNames](#functions_items_logInsightsQueries_items_logGroupNames ) | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of CloudWatch log group names for cross-function query analysis enabling multi-function log correlation. When specified, query executes across multiple log groups for comprehensive analysis; when omitted, automatically uses the Lambda function's log group.<br /><br />Use cases: Cross-function analysis; Multi-service correlation; Distributed tracing; Pipeline-wide monitoring<br /><br />AWS: CloudWatch log group names for Logs Insights query scope and cross-function analysis<br /><br />Validation: Must be valid log group names if provided; defaults to function log group when omitted; enables cross-function queries |
-| + [queryName](#functions_items_logInsightsQueries_items_queryName )         | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required unique name for the CloudWatch Logs Insights query enabling query identification and organization. Provides a descriptive name for the saved query that appears in the CloudWatch console and can be referenced programmatically for log analysis workflows.<br /><br />Use cases: Query identification; Console display; Programmatic reference; Query organization<br /><br />AWS: CloudWatch Logs Insights query name for saved query identification and management<br /><br />Validation: Must be unique within the function; should be descriptive of query purpose; used for SSM parameter naming                                           |
-| + [queryString](#functions_items_logInsightsQueries_items_queryString )     | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required CloudWatch Logs Insights query string defining log analysis logic for Lambda function troubleshooting. Specifies the query syntax for filtering, parsing, and analyzing Lambda function logs with automatic whitespace cleaning and limit clause addition.<br /><br />Use cases: Error filtering; Performance analysis; Request tracing; Log pattern matching; Statistical aggregation<br /><br />AWS: CloudWatch Logs Insights query syntax for Lambda function log analysis and pattern extraction<br /><br />Validation: Must be valid Logs Insights query syntax; leading whitespace automatically stripped; limit clause added if missing    |
+| Property                                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [logGroupNames](#lambdaFunctions_functions_items_logInsightsQueries_items_logGroupNames ) | No      | array of string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional array of CloudWatch log group names for cross-function query analysis enabling multi-function log correlation. When specified, query executes across multiple log groups for comprehensive analysis; when omitted, automatically uses the Lambda function's log group.<br /><br />Use cases: Cross-function analysis; Multi-service correlation; Distributed tracing; Pipeline-wide monitoring<br /><br />AWS: CloudWatch log group names for Logs Insights query scope and cross-function analysis<br /><br />Validation: Must be valid log group names if provided; defaults to function log group when omitted; enables cross-function queries |
+| + [queryName](#lambdaFunctions_functions_items_logInsightsQueries_items_queryName )         | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required unique name for the CloudWatch Logs Insights query enabling query identification and organization. Provides a descriptive name for the saved query that appears in the CloudWatch console and can be referenced programmatically for log analysis workflows.<br /><br />Use cases: Query identification; Console display; Programmatic reference; Query organization<br /><br />AWS: CloudWatch Logs Insights query name for saved query identification and management<br /><br />Validation: Must be unique within the function; should be descriptive of query purpose; used for SSM parameter naming                                           |
+| + [queryString](#lambdaFunctions_functions_items_logInsightsQueries_items_queryString )     | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />Required CloudWatch Logs Insights query string defining log analysis logic for Lambda function troubleshooting. Specifies the query syntax for filtering, parsing, and analyzing Lambda function logs with automatic whitespace cleaning and limit clause addition.<br /><br />Use cases: Error filtering; Performance analysis; Request tracing; Log pattern matching; Statistical aggregation<br /><br />AWS: CloudWatch Logs Insights query syntax for Lambda function log analysis and pattern extraction<br /><br />Validation: Must be valid Logs Insights query syntax; leading whitespace automatically stripped; limit clause added if missing    |
 
-###### <a name="functions_items_logInsightsQueries_items_logGroupNames"></a>3.1.13.1.1. Property `root > functions > functions items > logInsightsQueries > logInsightsQueries items > logGroupNames`
+###### <a name="lambdaFunctions_functions_items_logInsightsQueries_items_logGroupNames"></a>7.1.1.13.1.1. Property `root > lambdaFunctions > functions > functions items > logInsightsQueries > logInsightsQueries items > logGroupNames`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1747,18 +4930,18 @@ Validation: Must be valid log group names if provided; defaults to function log 
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                      | Description |
-| ------------------------------------------------------------------------------------ | ----------- |
-| [logGroupNames items](#functions_items_logInsightsQueries_items_logGroupNames_items) | -           |
+| Each item of this array must be                                                                      | Description |
+| ---------------------------------------------------------------------------------------------------- | ----------- |
+| [logGroupNames items](#lambdaFunctions_functions_items_logInsightsQueries_items_logGroupNames_items) | -           |
 
-###### <a name="functions_items_logInsightsQueries_items_logGroupNames_items"></a>3.1.13.1.1.1. root > functions > functions items > logInsightsQueries > logInsightsQueries items > logGroupNames > logGroupNames items
+###### <a name="lambdaFunctions_functions_items_logInsightsQueries_items_logGroupNames_items"></a>7.1.1.13.1.1.1. root > lambdaFunctions > functions > functions items > logInsightsQueries > logInsightsQueries items > logGroupNames > logGroupNames items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_logInsightsQueries_items_queryName"></a>3.1.13.1.2. Property `root > functions > functions items > logInsightsQueries > logInsightsQueries items > queryName`
+###### <a name="lambdaFunctions_functions_items_logInsightsQueries_items_queryName"></a>7.1.1.13.1.2. Property `root > lambdaFunctions > functions > functions items > logInsightsQueries > logInsightsQueries items > queryName`
 
 |              |          |
 | ------------ | -------- |
@@ -1774,7 +4957,7 @@ AWS: CloudWatch Logs Insights query name for saved query identification and mana
 
 Validation: Must be unique within the function; should be descriptive of query purpose; used for SSM parameter naming
 
-###### <a name="functions_items_logInsightsQueries_items_queryString"></a>3.1.13.1.3. Property `root > functions > functions items > logInsightsQueries > logInsightsQueries items > queryString`
+###### <a name="lambdaFunctions_functions_items_logInsightsQueries_items_queryString"></a>7.1.1.13.1.3. Property `root > lambdaFunctions > functions > functions items > logInsightsQueries > logInsightsQueries items > queryString`
 
 |              |          |
 | ------------ | -------- |
@@ -1790,7 +4973,7 @@ AWS: CloudWatch Logs Insights query syntax for Lambda function log analysis and 
 
 Validation: Must be valid Logs Insights query syntax; leading whitespace automatically stripped; limit clause added if missing
 
-#### <a name="functions_items_maxEventAgeSeconds"></a>3.1.14. Property `root > functions > functions items > maxEventAgeSeconds`
+##### <a name="lambdaFunctions_functions_items_maxEventAgeSeconds"></a>7.1.1.14. Property `root > lambdaFunctions > functions > functions items > maxEventAgeSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -1806,7 +4989,7 @@ AWS: AWS Lambda maximum event age for event processing time control
 
 Validation: Must be between 60 and 21600 seconds if provided; defaults to 21600 seconds (6 hours)
 
-#### <a name="functions_items_memorySizeMB"></a>3.1.15. Property `root > functions > functions items > memorySizeMB`
+##### <a name="lambdaFunctions_functions_items_memorySizeMB"></a>7.1.1.15. Property `root > lambdaFunctions > functions > functions items > memorySizeMB`
 
 |              |          |
 | ------------ | -------- |
@@ -1822,7 +5005,7 @@ AWS: AWS Lambda memory size for function performance and resource allocation
 
 Validation: Must be between 128 and 10240 MB if provided; defaults to 128 MB; affects performance and cost
 
-#### <a name="functions_items_metricFilters"></a>3.1.16. Property `root > functions > functions items > metricFilters`
+##### <a name="lambdaFunctions_functions_items_metricFilters"></a>7.1.1.16. Property `root > lambdaFunctions > functions > functions items > metricFilters`
 
 |              |         |
 | ------------ | ------- |
@@ -1846,11 +5029,11 @@ Validation: Optional array of MetricFilterProps; metrics exported to SSM; enable
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                           | Description              |
-| --------------------------------------------------------- | ------------------------ |
-| [MetricFilterProps](#functions_items_metricFilters_items) | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be                                           | Description              |
+| ------------------------------------------------------------------------- | ------------------------ |
+| [MetricFilterProps](#lambdaFunctions_functions_items_metricFilters_items) | Q-ENHANCED-INTERFACE ... |
 
-##### <a name="functions_items_metricFilters_items"></a>3.1.16.1. root > functions > functions items > metricFilters > MetricFilterProps
+###### <a name="lambdaFunctions_functions_items_metricFilters_items"></a>7.1.1.16.1. root > lambdaFunctions > functions > functions items > metricFilters > MetricFilterProps
 
 |                           |                                 |
 | ------------------------- | ------------------------------- |
@@ -1868,13 +5051,13 @@ AWS: CloudWatch Logs metric filter for log-to-metric transformation and custom m
 
 Validation: filterName must be unique; filterPattern must be valid syntax; metricTransformations array required
 
-| Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| + [filterName](#functions_items_metricFilters_items_filterName )                       | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required unique name for the CloudWatch metric filter enabling filter identification and management. Provides a descriptive name for the metric filter that appears in the CloudWatch console and is used for SSM parameter export.<br /><br />Use cases: Filter identification; Console display; SSM parameter naming; Filter management<br /><br />AWS: CloudWatch Logs metric filter name for filter identification and management<br /><br />Validation: Must be unique within the function; should be descriptive of filter purpose; used for SSM parameter naming                                                                                                                         |
-| + [filterPattern](#functions_items_metricFilters_items_filterPattern )                 | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required CloudWatch Logs filter pattern for matching and extracting data from log events enabling flexible log parsing. Supports JSON pattern syntax for structured logs, space-delimited patterns for formatted logs, and simple text patterns for basic matching.<br /><br />Use cases: JSON log parsing; Space-delimited field extraction; Text pattern matching; Error detection; Performance data extraction<br /><br />AWS: CloudWatch Logs filter pattern for log event matching and data extraction<br /><br />Validation: Must be valid filter pattern syntax; supports JSON, space-delimited, and text patterns; enables flexible log parsing                                         |
-| + [metricTransformations](#functions_items_metricFilters_items_metricTransformations ) | No      | array  | No         | -          | Q-ENHANCED-PROPERTY<br />Required array of metric transformations defining how matched log data is converted to CloudWatch Metrics enabling multiple metrics per filter. Specifies one or more metric transformations that extract different values from the same log events for comprehensive monitoring.<br /><br />Use cases: Multiple metrics per filter; Error and duration tracking; Multi-dimensional monitoring; Comprehensive observability<br /><br />AWS: CloudWatch metric transformations for log-to-metric conversion and multi-metric publishing<br /><br />Validation: Must be non-empty array of MetricTransformationProps; each transformation creates a separate metric; enables multi-metric filters |
+| Property                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| + [filterName](#lambdaFunctions_functions_items_metricFilters_items_filterName )                       | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required unique name for the CloudWatch metric filter enabling filter identification and management. Provides a descriptive name for the metric filter that appears in the CloudWatch console and is used for SSM parameter export.<br /><br />Use cases: Filter identification; Console display; SSM parameter naming; Filter management<br /><br />AWS: CloudWatch Logs metric filter name for filter identification and management<br /><br />Validation: Must be unique within the function; should be descriptive of filter purpose; used for SSM parameter naming                                                                                                                         |
+| + [filterPattern](#lambdaFunctions_functions_items_metricFilters_items_filterPattern )                 | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required CloudWatch Logs filter pattern for matching and extracting data from log events enabling flexible log parsing. Supports JSON pattern syntax for structured logs, space-delimited patterns for formatted logs, and simple text patterns for basic matching.<br /><br />Use cases: JSON log parsing; Space-delimited field extraction; Text pattern matching; Error detection; Performance data extraction<br /><br />AWS: CloudWatch Logs filter pattern for log event matching and data extraction<br /><br />Validation: Must be valid filter pattern syntax; supports JSON, space-delimited, and text patterns; enables flexible log parsing                                         |
+| + [metricTransformations](#lambdaFunctions_functions_items_metricFilters_items_metricTransformations ) | No      | array  | No         | -          | Q-ENHANCED-PROPERTY<br />Required array of metric transformations defining how matched log data is converted to CloudWatch Metrics enabling multiple metrics per filter. Specifies one or more metric transformations that extract different values from the same log events for comprehensive monitoring.<br /><br />Use cases: Multiple metrics per filter; Error and duration tracking; Multi-dimensional monitoring; Comprehensive observability<br /><br />AWS: CloudWatch metric transformations for log-to-metric conversion and multi-metric publishing<br /><br />Validation: Must be non-empty array of MetricTransformationProps; each transformation creates a separate metric; enables multi-metric filters |
 
-###### <a name="functions_items_metricFilters_items_filterName"></a>3.1.16.1.1. Property `root > functions > functions items > metricFilters > metricFilters items > filterName`
+###### <a name="lambdaFunctions_functions_items_metricFilters_items_filterName"></a>7.1.1.16.1.1. Property `root > lambdaFunctions > functions > functions items > metricFilters > metricFilters items > filterName`
 
 |              |          |
 | ------------ | -------- |
@@ -1890,7 +5073,7 @@ AWS: CloudWatch Logs metric filter name for filter identification and management
 
 Validation: Must be unique within the function; should be descriptive of filter purpose; used for SSM parameter naming
 
-###### <a name="functions_items_metricFilters_items_filterPattern"></a>3.1.16.1.2. Property `root > functions > functions items > metricFilters > metricFilters items > filterPattern`
+###### <a name="lambdaFunctions_functions_items_metricFilters_items_filterPattern"></a>7.1.1.16.1.2. Property `root > lambdaFunctions > functions > functions items > metricFilters > metricFilters items > filterPattern`
 
 |              |          |
 | ------------ | -------- |
@@ -1906,7 +5089,7 @@ AWS: CloudWatch Logs filter pattern for log event matching and data extraction
 
 Validation: Must be valid filter pattern syntax; supports JSON, space-delimited, and text patterns; enables flexible log parsing
 
-###### <a name="functions_items_metricFilters_items_metricTransformations"></a>3.1.16.1.3. Property `root > functions > functions items > metricFilters > metricFilters items > metricTransformations`
+###### <a name="lambdaFunctions_functions_items_metricFilters_items_metricTransformations"></a>7.1.1.16.1.3. Property `root > lambdaFunctions > functions > functions items > metricFilters > metricFilters items > metricTransformations`
 
 |              |         |
 | ------------ | ------- |
@@ -1930,11 +5113,11 @@ Validation: Must be non-empty array of MetricTransformationProps; each transform
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                               | Description              |
-| --------------------------------------------------------------------------------------------- | ------------------------ |
-| [MetricTransformationProps](#functions_items_metricFilters_items_metricTransformations_items) | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be                                                                               | Description              |
+| ------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| [MetricTransformationProps](#lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items) | Q-ENHANCED-INTERFACE ... |
 
-###### <a name="functions_items_metricFilters_items_metricTransformations_items"></a>3.1.16.1.3.1. root > functions > functions items > metricFilters > metricFilters items > metricTransformations > MetricTransformationProps
+###### <a name="lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items"></a>7.1.1.16.1.3.1. root > lambdaFunctions > functions > functions items > metricFilters > metricFilters items > metricTransformations > MetricTransformationProps
 
 |                           |                                         |
 | ------------------------- | --------------------------------------- |
@@ -1952,16 +5135,16 @@ AWS: CloudWatch metric transformation for log-to-metric conversion and custom me
 
 Validation: metricName and metricNamespace required; metricValue must be valid extraction pattern; unit and dimensions optional
 
-| Property                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| ------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [defaultValue](#functions_items_metricFilters_items_metricTransformations_items_defaultValue )       | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />Optional default metric value when filter pattern does not match log events enabling consistent metric publishing. Provides a fallback value for the metric when the filter pattern doesn't match any log events, ensuring continuous metric data.<br /><br />Use cases: Zero-value defaults; Missing data handling; Continuous metric streams; Gap filling<br /><br />AWS: CloudWatch metric default value for non-matching log events and continuous metric publishing<br /><br />Validation: Must be numeric if provided; used when filter pattern doesn't match; enables gap-free metrics                                                 |
-| - [dimensions](#functions_items_metricFilters_items_metricTransformations_items_dimensions )           | No      | object | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric dimensions for metric segmentation and filtering enabling multi-dimensional metric analysis. Provides key-value pairs for segmenting metrics by attributes like environment, service, or function name for detailed analysis and filtering.<br /><br />Use cases: Environment segmentation; Service filtering; Function-level metrics; Multi-dimensional analysis<br /><br />AWS: CloudWatch metric dimensions for metric segmentation and multi-dimensional analysis<br /><br />Validation: Must be valid dimension key-value pairs if provided; enables metric filtering and segmentation                        |
-| + [metricName](#functions_items_metricFilters_items_metricTransformations_items_metricName )           | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required CloudWatch metric name for the transformed metric enabling metric identification and monitoring. Defines the specific metric name that will be published to CloudWatch Metrics for tracking Lambda function behavior and performance.<br /><br />Use cases: Error count tracking; Duration monitoring; Custom business metrics; Performance indicators<br /><br />AWS: CloudWatch metric name for custom metric publishing and monitoring dashboards<br /><br />Validation: Must be valid metric name; used for SSM parameter export; appears in CloudWatch console                                                                  |
-| + [metricNamespace](#functions_items_metricFilters_items_metricTransformations_items_metricNamespace ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required CloudWatch metric namespace for metric organization and grouping enabling logical metric categorization. Defines the namespace under which the metric will be published for organizing related metrics and enabling namespace-level queries.<br /><br />Use cases: Metric organization; Namespace-level queries; Dashboard grouping; Cost allocation<br /><br />AWS: CloudWatch metric namespace for custom metric organization and categorization<br /><br />Validation: Must be valid namespace; used for SSM parameter export; enables metric grouping                                                                            |
-| + [metricValue](#functions_items_metricFilters_items_metricTransformations_items_metricValue )         | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required metric value extraction pattern defining how to extract numeric values from log events for metric publishing. Specifies the value to publish to CloudWatch Metrics, either as a constant (e.g., "1" for counts) or as a log field reference (e.g., "$duration" for extracted values).<br /><br />Use cases: Error counting; Duration extraction; Memory usage tracking; Custom value extraction<br /><br />AWS: CloudWatch metric value for log-to-metric transformation and numeric data extraction<br /><br />Validation: Must be valid value pattern; supports constants and field references; enables flexible metric extraction |
-| - [unit](#functions_items_metricFilters_items_metricTransformations_items_unit )                       | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric unit for metric value interpretation enabling proper metric visualization and analysis. Specifies the unit of measurement for the metric value (e.g., Count, Milliseconds, Megabytes) for correct display in dashboards and alarms.<br /><br />Use cases: Duration metrics; Memory metrics; Count metrics; Rate metrics; Size metrics<br /><br />AWS: CloudWatch metric unit for metric value interpretation and dashboard visualization<br /><br />Validation: Must be valid CloudWatch metric unit if provided; used for SSM parameter export; enables proper metric display                                     |
+| Property                                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ---------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [defaultValue](#lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_defaultValue )       | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />Optional default metric value when filter pattern does not match log events enabling consistent metric publishing. Provides a fallback value for the metric when the filter pattern doesn't match any log events, ensuring continuous metric data.<br /><br />Use cases: Zero-value defaults; Missing data handling; Continuous metric streams; Gap filling<br /><br />AWS: CloudWatch metric default value for non-matching log events and continuous metric publishing<br /><br />Validation: Must be numeric if provided; used when filter pattern doesn't match; enables gap-free metrics                                                 |
+| - [dimensions](#lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_dimensions )           | No      | object | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric dimensions for metric segmentation and filtering enabling multi-dimensional metric analysis. Provides key-value pairs for segmenting metrics by attributes like environment, service, or function name for detailed analysis and filtering.<br /><br />Use cases: Environment segmentation; Service filtering; Function-level metrics; Multi-dimensional analysis<br /><br />AWS: CloudWatch metric dimensions for metric segmentation and multi-dimensional analysis<br /><br />Validation: Must be valid dimension key-value pairs if provided; enables metric filtering and segmentation                        |
+| + [metricName](#lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_metricName )           | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required CloudWatch metric name for the transformed metric enabling metric identification and monitoring. Defines the specific metric name that will be published to CloudWatch Metrics for tracking Lambda function behavior and performance.<br /><br />Use cases: Error count tracking; Duration monitoring; Custom business metrics; Performance indicators<br /><br />AWS: CloudWatch metric name for custom metric publishing and monitoring dashboards<br /><br />Validation: Must be valid metric name; used for SSM parameter export; appears in CloudWatch console                                                                  |
+| + [metricNamespace](#lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_metricNamespace ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required CloudWatch metric namespace for metric organization and grouping enabling logical metric categorization. Defines the namespace under which the metric will be published for organizing related metrics and enabling namespace-level queries.<br /><br />Use cases: Metric organization; Namespace-level queries; Dashboard grouping; Cost allocation<br /><br />AWS: CloudWatch metric namespace for custom metric organization and categorization<br /><br />Validation: Must be valid namespace; used for SSM parameter export; enables metric grouping                                                                            |
+| + [metricValue](#lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_metricValue )         | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required metric value extraction pattern defining how to extract numeric values from log events for metric publishing. Specifies the value to publish to CloudWatch Metrics, either as a constant (e.g., "1" for counts) or as a log field reference (e.g., "$duration" for extracted values).<br /><br />Use cases: Error counting; Duration extraction; Memory usage tracking; Custom value extraction<br /><br />AWS: CloudWatch metric value for log-to-metric transformation and numeric data extraction<br /><br />Validation: Must be valid value pattern; supports constants and field references; enables flexible metric extraction |
+| - [unit](#lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_unit )                       | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional CloudWatch metric unit for metric value interpretation enabling proper metric visualization and analysis. Specifies the unit of measurement for the metric value (e.g., Count, Milliseconds, Megabytes) for correct display in dashboards and alarms.<br /><br />Use cases: Duration metrics; Memory metrics; Count metrics; Rate metrics; Size metrics<br /><br />AWS: CloudWatch metric unit for metric value interpretation and dashboard visualization<br /><br />Validation: Must be valid CloudWatch metric unit if provided; used for SSM parameter export; enables proper metric display                                     |
 
-###### <a name="functions_items_metricFilters_items_metricTransformations_items_defaultValue"></a>3.1.16.1.3.1.1. Property `root > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > defaultValue`
+###### <a name="lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_defaultValue"></a>7.1.1.16.1.3.1.1. Property `root > lambdaFunctions > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > defaultValue`
 
 |              |          |
 | ------------ | -------- |
@@ -1977,13 +5160,13 @@ AWS: CloudWatch metric default value for non-matching log events and continuous 
 
 Validation: Must be numeric if provided; used when filter pattern doesn't match; enables gap-free metrics
 
-###### <a name="functions_items_metricFilters_items_metricTransformations_items_dimensions"></a>3.1.16.1.3.1.2. Property `root > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > dimensions`
+###### <a name="lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_dimensions"></a>7.1.1.16.1.3.1.2. Property `root > lambdaFunctions > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > dimensions`
 
-|                           |                                                                                                                                                         |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                |
-| **Required**              | No                                                                                                                                                      |
-| **Additional properties** | [Each additional property must conform to the schema](#functions_items_metricFilters_items_metricTransformations_items_dimensions_additionalProperties) |
+|                           |                                                                                                                                                                         |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                |
+| **Required**              | No                                                                                                                                                                      |
+| **Additional properties** | [Each additional property must conform to the schema](#lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_dimensions_additionalProperties) |
 
 **Description:** Q-ENHANCED-PROPERTY
 Optional CloudWatch metric dimensions for metric segmentation and filtering enabling multi-dimensional metric analysis. Provides key-value pairs for segmenting metrics by attributes like environment, service, or function name for detailed analysis and filtering.
@@ -1994,18 +5177,18 @@ AWS: CloudWatch metric dimensions for metric segmentation and multi-dimensional 
 
 Validation: Must be valid dimension key-value pairs if provided; enables metric filtering and segmentation
 
-| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#functions_items_metricFilters_items_metricTransformations_items_dimensions_additionalProperties ) | No      | string | No         | -          | -                 |
+| Property                                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_dimensions_additionalProperties ) | No      | string | No         | -          | -                 |
 
-###### <a name="functions_items_metricFilters_items_metricTransformations_items_dimensions_additionalProperties"></a>3.1.16.1.3.1.2.1. Property `root > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > dimensions > additionalProperties`
+###### <a name="lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_dimensions_additionalProperties"></a>7.1.1.16.1.3.1.2.1. Property `root > lambdaFunctions > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > dimensions > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_metricFilters_items_metricTransformations_items_metricName"></a>3.1.16.1.3.1.3. Property `root > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > metricName`
+###### <a name="lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_metricName"></a>7.1.1.16.1.3.1.3. Property `root > lambdaFunctions > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > metricName`
 
 |              |          |
 | ------------ | -------- |
@@ -2021,7 +5204,7 @@ AWS: CloudWatch metric name for custom metric publishing and monitoring dashboar
 
 Validation: Must be valid metric name; used for SSM parameter export; appears in CloudWatch console
 
-###### <a name="functions_items_metricFilters_items_metricTransformations_items_metricNamespace"></a>3.1.16.1.3.1.4. Property `root > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > metricNamespace`
+###### <a name="lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_metricNamespace"></a>7.1.1.16.1.3.1.4. Property `root > lambdaFunctions > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > metricNamespace`
 
 |              |          |
 | ------------ | -------- |
@@ -2037,7 +5220,7 @@ AWS: CloudWatch metric namespace for custom metric organization and categorizati
 
 Validation: Must be valid namespace; used for SSM parameter export; enables metric grouping
 
-###### <a name="functions_items_metricFilters_items_metricTransformations_items_metricValue"></a>3.1.16.1.3.1.5. Property `root > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > metricValue`
+###### <a name="lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_metricValue"></a>7.1.1.16.1.3.1.5. Property `root > lambdaFunctions > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > metricValue`
 
 |              |          |
 | ------------ | -------- |
@@ -2053,7 +5236,7 @@ AWS: CloudWatch metric value for log-to-metric transformation and numeric data e
 
 Validation: Must be valid value pattern; supports constants and field references; enables flexible metric extraction
 
-###### <a name="functions_items_metricFilters_items_metricTransformations_items_unit"></a>3.1.16.1.3.1.6. Property `root > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > unit`
+###### <a name="lambdaFunctions_functions_items_metricFilters_items_metricTransformations_items_unit"></a>7.1.1.16.1.3.1.6. Property `root > lambdaFunctions > functions > functions items > metricFilters > metricFilters items > metricTransformations > metricTransformations items > unit`
 
 |              |          |
 | ------------ | -------- |
@@ -2069,7 +5252,7 @@ AWS: CloudWatch metric unit for metric value interpretation and dashboard visual
 
 Validation: Must be valid CloudWatch metric unit if provided; used for SSM parameter export; enables proper metric display
 
-#### <a name="functions_items_reservedConcurrentExecutions"></a>3.1.17. Property `root > functions > functions items > reservedConcurrentExecutions`
+##### <a name="lambdaFunctions_functions_items_reservedConcurrentExecutions"></a>7.1.1.17. Property `root > lambdaFunctions > functions > functions items > reservedConcurrentExecutions`
 
 |              |          |
 | ------------ | -------- |
@@ -2085,7 +5268,7 @@ AWS: AWS Lambda reserved concurrent executions for function capacity and perform
 
 Validation: Must be positive integer if provided; affects function concurrency and account limits
 
-#### <a name="functions_items_retryAttempts"></a>3.1.18. Property `root > functions > functions items > retryAttempts`
+##### <a name="lambdaFunctions_functions_items_retryAttempts"></a>7.1.1.18. Property `root > lambdaFunctions > functions > functions items > retryAttempts`
 
 |              |          |
 | ------------ | -------- |
@@ -2101,7 +5284,7 @@ AWS: AWS Lambda retry attempts for failed function execution recovery and fault 
 
 Validation: Must be between 0 and 2 if provided; defaults to 2; enables automatic retry for failed executions
 
-#### <a name="functions_items_roleArn"></a>3.1.19. Property `root > functions > functions items > roleArn`
+##### <a name="lambdaFunctions_functions_items_roleArn"></a>7.1.1.19. Property `root > lambdaFunctions > functions > functions items > roleArn`
 
 |              |          |
 | ------------ | -------- |
@@ -2117,7 +5300,7 @@ AWS: AWS IAM role ARN for Lambda function execution permissions and service acce
 
 Validation: Must be valid IAM role ARN string; required for function execution permissions and resource access
 
-#### <a name="functions_items_runtime"></a>3.1.20. Property `root > functions > functions items > runtime`
+##### <a name="lambdaFunctions_functions_items_runtime"></a>7.1.1.20. Property `root > lambdaFunctions > functions > functions items > runtime`
 
 |              |          |
 | ------------ | -------- |
@@ -2133,7 +5316,7 @@ AWS: Lambda runtime environment for data processing function execution and libra
 
 Validation: Must be valid Lambda runtime (python3.9, nodejs18.x, etc.); must be compatible with source code and data processing libraries
 
-#### <a name="functions_items_srcDir"></a>3.1.21. Property `root > functions > functions items > srcDir`
+##### <a name="lambdaFunctions_functions_items_srcDir"></a>7.1.1.21. Property `root > lambdaFunctions > functions > functions items > srcDir`
 
 |              |          |
 | ------------ | -------- |
@@ -2149,7 +5332,7 @@ AWS: Lambda function source code location for deployment packaging and data proc
 
 Validation: Must be valid directory path containing deployable Lambda code; directory must exist and be readable
 
-#### <a name="functions_items_timeoutSeconds"></a>3.1.22. Property `root > functions > functions items > timeoutSeconds`
+##### <a name="lambdaFunctions_functions_items_timeoutSeconds"></a>7.1.1.22. Property `root > lambdaFunctions > functions > functions items > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -2165,7 +5348,7 @@ AWS: AWS Lambda function timeout for execution time control and resource managem
 
 Validation: Must be positive integer in seconds if provided; defaults to 3 seconds; affects function execution and cost
 
-#### <a name="functions_items_vpcConfig"></a>3.1.23. Property `root > functions > functions items > vpcConfig`
+##### <a name="lambdaFunctions_functions_items_vpcConfig"></a>7.1.1.23. Property `root > lambdaFunctions > functions > functions items > vpcConfig`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -2183,14 +5366,14 @@ AWS: AWS VPC configuration for Lambda function networking and security
 
 Validation: Must be valid VpcConfigProps object if provided; enables VPC deployment when configured
 
-| Property                                                                           | Pattern | Type            | Deprecated | Definition                                  | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| ---------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [securityGroupEgressRules](#functions_items_vpcConfig_securityGroupEgressRules ) | No      | object          | No         | In #/definitions/MdaaSecurityGroupRuleProps | Q-ENHANCED-PROPERTY<br />Optional security group egress rules for Lambda function outbound traffic control enabling fine-grained network access management and security controls. Provides custom egress rules for Lambda function security group controlling outbound network access.<br /><br />Use cases: Egress control; Outbound traffic filtering; Network security; Access management<br /><br />AWS: Security group egress rules for Lambda function outbound traffic control and network security<br /><br />Validation: Must be valid MdaaSecurityGroupRuleProps if provided; enables custom egress rule configuration<br />  * |
-| - [securityGroupId](#functions_items_vpcConfig_securityGroupId )                   | No      | string          | No         | -                                           | Q-ENHANCED-PROPERTY<br />Optional security group ID for Lambda function network access control enabling custom security group configuration and traffic filtering. When specified, uses existing security group for Lambda function network access control; otherwise creates new security group.<br /><br />Use cases: Custom security group; Network access control; Traffic filtering; Security configuration<br /><br />AWS: Security group ID for Lambda function network access control and traffic filtering<br /><br />Validation: Must be valid security group ID if provided; enables custom security group configuration       |
-| + [subnetIds](#functions_items_vpcConfig_subnetIds )                               | No      | array of string | No         | -                                           | Q-ENHANCED-PROPERTY<br />Required array of subnet IDs for Lambda function placement controlling availability zone distribution and network segmentation. Defines the specific subnets within the VPC where Lambda function ENIs will be created for network connectivity and availability.<br /><br />Use cases: Subnet placement; Availability zone distribution; Network segmentation; ENI placement<br /><br />AWS: Subnet IDs for Lambda function ENI placement and network connectivity<br /><br />Validation: Must be array of valid subnet ID strings; required for Lambda subnet placement and connectivity                       |
-| + [vpcId](#functions_items_vpcConfig_vpcId )                                       | No      | string          | No         | -                                           | Q-ENHANCED-PROPERTY<br />Required VPC ID for Lambda function deployment enabling network isolation and VPC connectivity for secure function execution. Defines the specific VPC where the Lambda function will be deployed for network isolation and secure connectivity to VPC resources.<br /><br />Use cases: VPC deployment; Network isolation; Secure connectivity; VPC resource access<br /><br />AWS: AWS VPC ID for Lambda function VPC deployment and network isolation<br /><br />Validation: Must be valid VPC ID; required for VPC Lambda deployment; enables secure network connectivity                                     |
+| Property                                                                                           | Pattern | Type            | Deprecated | Definition                                  | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [securityGroupEgressRules](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules ) | No      | object          | No         | In #/definitions/MdaaSecurityGroupRuleProps | Q-ENHANCED-PROPERTY<br />Optional security group egress rules for Lambda function outbound traffic control enabling fine-grained network access management and security controls. Provides custom egress rules for Lambda function security group controlling outbound network access.<br /><br />Use cases: Egress control; Outbound traffic filtering; Network security; Access management<br /><br />AWS: Security group egress rules for Lambda function outbound traffic control and network security<br /><br />Validation: Must be valid MdaaSecurityGroupRuleProps if provided; enables custom egress rule configuration<br />  * |
+| - [securityGroupId](#lambdaFunctions_functions_items_vpcConfig_securityGroupId )                   | No      | string          | No         | -                                           | Q-ENHANCED-PROPERTY<br />Optional security group ID for Lambda function network access control enabling custom security group configuration and traffic filtering. When specified, uses existing security group for Lambda function network access control; otherwise creates new security group.<br /><br />Use cases: Custom security group; Network access control; Traffic filtering; Security configuration<br /><br />AWS: Security group ID for Lambda function network access control and traffic filtering<br /><br />Validation: Must be valid security group ID if provided; enables custom security group configuration       |
+| + [subnetIds](#lambdaFunctions_functions_items_vpcConfig_subnetIds )                               | No      | array of string | No         | -                                           | Q-ENHANCED-PROPERTY<br />Required array of subnet IDs for Lambda function placement controlling availability zone distribution and network segmentation. Defines the specific subnets within the VPC where Lambda function ENIs will be created for network connectivity and availability.<br /><br />Use cases: Subnet placement; Availability zone distribution; Network segmentation; ENI placement<br /><br />AWS: Subnet IDs for Lambda function ENI placement and network connectivity<br /><br />Validation: Must be array of valid subnet ID strings; required for Lambda subnet placement and connectivity                       |
+| + [vpcId](#lambdaFunctions_functions_items_vpcConfig_vpcId )                                       | No      | string          | No         | -                                           | Q-ENHANCED-PROPERTY<br />Required VPC ID for Lambda function deployment enabling network isolation and VPC connectivity for secure function execution. Defines the specific VPC where the Lambda function will be deployed for network isolation and secure connectivity to VPC resources.<br /><br />Use cases: VPC deployment; Network isolation; Secure connectivity; VPC resource access<br /><br />AWS: AWS VPC ID for Lambda function VPC deployment and network isolation<br /><br />Validation: Must be valid VPC ID; required for VPC Lambda deployment; enables secure network connectivity                                     |
 
-##### <a name="functions_items_vpcConfig_securityGroupEgressRules"></a>3.1.23.1. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules"></a>7.1.1.23.1. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules`
 
 |                           |                                          |
 | ------------------------- | ---------------------------------------- |
@@ -2209,13 +5392,13 @@ AWS: Security group egress rules for Lambda function outbound traffic control an
 Validation: Must be valid MdaaSecurityGroupRuleProps if provided; enables custom egress rule configuration
   *
 
-| Property                                                                        | Pattern | Type  | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| ------------------------------------------------------------------------------- | ------- | ----- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| - [ipv4](#functions_items_vpcConfig_securityGroupEgressRules_ipv4 )             | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />IPv4 CIDR block rules for security group traffic control defining IP address-based access restrictions. Specifies IPv4 CIDR blocks that are allowed or denied access through the security group for network-level access control and IP-based security policies.<br /><br />Use cases: IP-based access control; Network segmentation; CIDR-based restrictions; Geographic access control; Network security policies<br /><br />AWS: AWS EC2 SecurityGroup rules with IPv4 CIDR block sources/destinations<br /><br />Validation: Must be valid MdaaCidrPeer array with valid CIDR notation; optional array for IP-based rules<br />  *                            |
-| - [prefixList](#functions_items_vpcConfig_securityGroupEgressRules_prefixList ) | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />Prefix list rules for security group traffic control defining managed prefix list-based access restrictions. Specifies AWS-managed or customer-managed prefix lists for scalable IP address range management and centralized network access control.<br /><br />Use cases: Managed IP ranges; Scalable access control; Centralized IP management; AWS service access; Regional IP restrictions<br /><br />AWS: AWS EC2 SecurityGroup rules with prefix list sources/destinations<br /><br />Validation: Must be valid MdaaPrefixListPeer array with valid prefix list IDs; optional array for prefix list-based rules<br />  *                                    |
-| - [sg](#functions_items_vpcConfig_securityGroupEgressRules_sg )                 | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />Security group rules for cross-security group traffic control defining security group-based access restrictions. Specifies other security groups that are allowed access through this security group for resource-level access control and security group chaining.<br /><br />Use cases: Cross-security group access; Resource-based access control; Security group chaining; Service-to-service communication; Layered security<br /><br />AWS: AWS EC2 SecurityGroup rules with security group sources/destinations<br /><br />Validation: Must be valid MdaaSecurityGroupPeer array with valid security group IDs; optional array for SG-based rules<br />  * |
+| Property                                                                                        | Pattern | Type  | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------- | ------- | ----- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [ipv4](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4 )             | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />IPv4 CIDR block rules for security group traffic control defining IP address-based access restrictions. Specifies IPv4 CIDR blocks that are allowed or denied access through the security group for network-level access control and IP-based security policies.<br /><br />Use cases: IP-based access control; Network segmentation; CIDR-based restrictions; Geographic access control; Network security policies<br /><br />AWS: AWS EC2 SecurityGroup rules with IPv4 CIDR block sources/destinations<br /><br />Validation: Must be valid MdaaCidrPeer array with valid CIDR notation; optional array for IP-based rules<br />  *                            |
+| - [prefixList](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList ) | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />Prefix list rules for security group traffic control defining managed prefix list-based access restrictions. Specifies AWS-managed or customer-managed prefix lists for scalable IP address range management and centralized network access control.<br /><br />Use cases: Managed IP ranges; Scalable access control; Centralized IP management; AWS service access; Regional IP restrictions<br /><br />AWS: AWS EC2 SecurityGroup rules with prefix list sources/destinations<br /><br />Validation: Must be valid MdaaPrefixListPeer array with valid prefix list IDs; optional array for prefix list-based rules<br />  *                                    |
+| - [sg](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg )                 | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />Security group rules for cross-security group traffic control defining security group-based access restrictions. Specifies other security groups that are allowed access through this security group for resource-level access control and security group chaining.<br /><br />Use cases: Cross-security group access; Resource-based access control; Security group chaining; Service-to-service communication; Layered security<br /><br />AWS: AWS EC2 SecurityGroup rules with security group sources/destinations<br /><br />Validation: Must be valid MdaaSecurityGroupPeer array with valid security group IDs; optional array for SG-based rules<br />  * |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4"></a>3.1.23.1.1. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4"></a>7.1.1.23.1.1. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4`
 
 |              |         |
 | ------------ | ------- |
@@ -2240,11 +5423,11 @@ Validation: Must be valid MdaaCidrPeer array with valid CIDR notation; optional 
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                | Description              |
-| ------------------------------------------------------------------------------ | ------------------------ |
-| [MdaaCidrPeer](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items) | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be                                                                | Description              |
+| ---------------------------------------------------------------------------------------------- | ------------------------ |
+| [MdaaCidrPeer](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items) | Q-ENHANCED-INTERFACE ... |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items"></a>3.1.23.1.1.1. root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > MdaaCidrPeer
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items"></a>7.1.1.23.1.1.1. root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > MdaaCidrPeer
 
 |                           |                            |
 | ------------------------- | -------------------------- |
@@ -2262,16 +5445,16 @@ AWS: Amazon EC2 configuration for compute infrastructure and instance management
 
 Validation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements
 
-| Property                                                                                       | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ---------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [cidr](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_cidr )                 | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required CIDR block specification for network access control in security group rules enabling IP range-based access control. Defines the IP address range that will be allowed or denied access through security group rules for network-level access control and security boundaries.<br /><br />Use cases: IP range access control; Network security boundaries; CIDR-based filtering; Network access management<br /><br />AWS: Amazon EC2 security group CIDR block for IP range-based network access control<br /><br />Validation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-based security group rules |
-| - [description](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_description )   | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [port](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_port )                 | No      | number | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| + [protocol](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_protocol )         | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [suppressions](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions ) | No      | array  | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [toPort](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_toPort )             | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />The ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.<br /><br />Use cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions<br /><br />AWS: AWS EC2 SecurityGroup rule ToPort property for port range specification<br /><br />Validation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules            |
+| Property                                                                                                       | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| -------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [cidr](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_cidr )                 | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required CIDR block specification for network access control in security group rules enabling IP range-based access control. Defines the IP address range that will be allowed or denied access through security group rules for network-level access control and security boundaries.<br /><br />Use cases: IP range access control; Network security boundaries; CIDR-based filtering; Network access management<br /><br />AWS: Amazon EC2 security group CIDR block for IP range-based network access control<br /><br />Validation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-based security group rules |
+| - [description](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_description )   | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [port](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_port )                 | No      | number | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| + [protocol](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_protocol )         | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [suppressions](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions ) | No      | array  | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [toPort](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_toPort )             | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />The ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.<br /><br />Use cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions<br /><br />AWS: AWS EC2 SecurityGroup rule ToPort property for port range specification<br /><br />Validation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules            |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_cidr"></a>3.1.23.1.1.1.1. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > cidr`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_cidr"></a>7.1.1.23.1.1.1.1. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > cidr`
 
 |              |          |
 | ------------ | -------- |
@@ -2287,28 +5470,28 @@ AWS: Amazon EC2 security group CIDR block for IP range-based network access cont
 
 Validation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-based security group rules
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_description"></a>3.1.23.1.1.1.2. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > description`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_description"></a>7.1.1.23.1.1.1.2. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_port"></a>3.1.23.1.1.1.3. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > port`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_port"></a>7.1.1.23.1.1.1.3. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > port`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_protocol"></a>3.1.23.1.1.1.4. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > protocol`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_protocol"></a>7.1.1.23.1.1.1.4. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > protocol`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions"></a>3.1.23.1.1.1.5. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions"></a>7.1.1.23.1.1.1.5. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions`
 
 |              |         |
 | ------------ | ------- |
@@ -2323,11 +5506,11 @@ Validation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-b
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                         | Description                               |
-| ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| [NagPackSuppression](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items) | Interface for creating a rule suppression |
+| Each item of this array must be                                                                                         | Description                               |
+| ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| [NagPackSuppression](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items) | Interface for creating a rule suppression |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items"></a>3.1.23.1.1.1.5.1. root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > NagPackSuppression
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items"></a>7.1.1.23.1.1.1.5.1. root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > NagPackSuppression
 
 |                           |                                  |
 | ------------------------- | -------------------------------- |
@@ -2338,13 +5521,13 @@ Validation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-b
 
 **Description:** Interface for creating a rule suppression
 
-| Property                                                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description                                     |
-| ----------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------- |
-| - [appliesTo](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo ) | No      | array  | No         | -          | Rule specific granular suppressions                   |
-| + [id](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_id )               | No      | string | No         | -          | The id of the rule to ignore                          |
-| + [reason](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_reason )       | No      | string | No         | -          | The reason to ignore the rule (minimum 10 characters) |
+| Property                                                                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description                                     |
+| --------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------- |
+| - [appliesTo](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo ) | No      | array  | No         | -          | Rule specific granular suppressions                   |
+| + [id](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_id )               | No      | string | No         | -          | The id of the rule to ignore                          |
+| + [reason](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_reason )       | No      | string | No         | -          | The reason to ignore the rule (minimum 10 characters) |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo"></a>3.1.23.1.1.1.5.1.1. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo"></a>7.1.1.23.1.1.1.5.1.1. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo`
 
 |              |         |
 | ------------ | ------- |
@@ -2361,11 +5544,11 @@ Validation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-b
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                                                  | Description            |
-| -------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| [NagPackSuppressionAppliesTo](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items) | A granular suppression |
+| Each item of this array must be                                                                                                                  | Description            |
+| ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- |
+| [NagPackSuppressionAppliesTo](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items) | A granular suppression |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items"></a>3.1.23.1.1.1.5.1.1.1. root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > NagPackSuppressionAppliesTo
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items"></a>7.1.1.23.1.1.1.5.1.1.1. root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > NagPackSuppressionAppliesTo
 
 |                           |                                           |
 | ------------------------- | ----------------------------------------- |
@@ -2376,12 +5559,12 @@ Validation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-b
 
 **Description:** A granular suppression
 
-| Any of(Option)                                                                                                               |
-| ---------------------------------------------------------------------------------------------------------------------------- |
-| [RegexAppliesTo](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0) |
-| [item 1](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i1)         |
+| Any of(Option)                                                                                                                               |
+| -------------------------------------------------------------------------------------------------------------------------------------------- |
+| [RegexAppliesTo](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0) |
+| [item 1](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i1)         |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0"></a>3.1.23.1.1.1.5.1.1.1.1. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > RegexAppliesTo`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0"></a>7.1.1.23.1.1.1.5.1.1.1.1. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > RegexAppliesTo`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -2392,11 +5575,11 @@ Validation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-b
 
 **Description:** A regular expression to apply to matching findings
 
-| Property                                                                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description        |
-| ---------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
-| + [regex](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0_regex ) | No      | string | No         | -          | An ECMA-262 regex string |
+| Property                                                                                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description        |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
+| + [regex](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0_regex ) | No      | string | No         | -          | An ECMA-262 regex string |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0_regex"></a>3.1.23.1.1.1.5.1.1.1.1.1. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 0 > regex`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0_regex"></a>7.1.1.23.1.1.1.5.1.1.1.1.1. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 0 > regex`
 
 |              |          |
 | ------------ | -------- |
@@ -2405,14 +5588,14 @@ Validation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-b
 
 **Description:** An ECMA-262 regex string
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i1"></a>3.1.23.1.1.1.5.1.1.1.2. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 1`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i1"></a>7.1.1.23.1.1.1.5.1.1.1.2. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_id"></a>3.1.23.1.1.1.5.1.2. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > id`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_id"></a>7.1.1.23.1.1.1.5.1.2. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > id`
 
 |              |          |
 | ------------ | -------- |
@@ -2421,7 +5604,7 @@ Validation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-b
 
 **Description:** The id of the rule to ignore
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_reason"></a>3.1.23.1.1.1.5.1.3. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > reason`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_reason"></a>7.1.1.23.1.1.1.5.1.3. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > reason`
 
 |              |          |
 | ------------ | -------- |
@@ -2430,7 +5613,7 @@ Validation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-b
 
 **Description:** The reason to ignore the rule (minimum 10 characters)
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_toPort"></a>3.1.23.1.1.1.6. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > toPort`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_toPort"></a>7.1.1.23.1.1.1.6. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > toPort`
 
 |              |          |
 | ------------ | -------- |
@@ -2446,7 +5629,7 @@ AWS: AWS EC2 SecurityGroup rule ToPort property for port range specification
 
 Validation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_prefixList"></a>3.1.23.1.2. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList"></a>7.1.1.23.1.2. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList`
 
 |              |         |
 | ------------ | ------- |
@@ -2471,11 +5654,11 @@ Validation: Must be valid MdaaPrefixListPeer array with valid prefix list IDs; o
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                            | Description              |
-| ------------------------------------------------------------------------------------------ | ------------------------ |
-| [MdaaPrefixListPeer](#functions_items_vpcConfig_securityGroupEgressRules_prefixList_items) | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be                                                                            | Description              |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------ |
+| [MdaaPrefixListPeer](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items) | Q-ENHANCED-INTERFACE ... |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_prefixList_items"></a>3.1.23.1.2.1. root > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > MdaaPrefixListPeer
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items"></a>7.1.1.23.1.2.1. root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > MdaaPrefixListPeer
 
 |                           |                                  |
 | ------------------------- | -------------------------------- |
@@ -2493,30 +5676,30 @@ AWS: Amazon EC2 configuration for compute infrastructure and instance management
 
 Validation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements
 
-| Property                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| ---------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [description](#functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_description )   | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [port](#functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_port )                 | No      | number | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| + [prefixList](#functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_prefixList )     | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required prefix list identifier for managed IP range access control in security group rules enabling AWS service and managed IP range-based access control. Defines the prefix list ID that contains managed IP ranges for AWS services or custom IP ranges for streamlined security group rule management.<br /><br />Use cases: AWS service access; Managed IP ranges; Prefix list-based filtering; Streamlined rule management<br /><br />AWS: Amazon EC2 prefix list identifier for managed IP range-based network access control<br /><br />Validation: Must be valid prefix list ID format (pl-xxxxxxxxx); required for prefix list-based security group rules |
-| + [protocol](#functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_protocol )         | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [suppressions](#functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions ) | No      | array  | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [toPort](#functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_toPort )             | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />The ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.<br /><br />Use cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions<br /><br />AWS: AWS EC2 SecurityGroup rule ToPort property for port range specification<br /><br />Validation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules                                          |
+| Property                                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| -------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [description](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_description )   | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [port](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_port )                 | No      | number | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| + [prefixList](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_prefixList )     | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required prefix list identifier for managed IP range access control in security group rules enabling AWS service and managed IP range-based access control. Defines the prefix list ID that contains managed IP ranges for AWS services or custom IP ranges for streamlined security group rule management.<br /><br />Use cases: AWS service access; Managed IP ranges; Prefix list-based filtering; Streamlined rule management<br /><br />AWS: Amazon EC2 prefix list identifier for managed IP range-based network access control<br /><br />Validation: Must be valid prefix list ID format (pl-xxxxxxxxx); required for prefix list-based security group rules |
+| + [protocol](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_protocol )         | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [suppressions](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions ) | No      | array  | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [toPort](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_toPort )             | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />The ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.<br /><br />Use cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions<br /><br />AWS: AWS EC2 SecurityGroup rule ToPort property for port range specification<br /><br />Validation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules                                          |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_description"></a>3.1.23.1.2.1.1. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > description`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_description"></a>7.1.1.23.1.2.1.1. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_port"></a>3.1.23.1.2.1.2. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > port`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_port"></a>7.1.1.23.1.2.1.2. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > port`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_prefixList"></a>3.1.23.1.2.1.3. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > prefixList`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_prefixList"></a>7.1.1.23.1.2.1.3. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > prefixList`
 
 |              |          |
 | ------------ | -------- |
@@ -2532,14 +5715,14 @@ AWS: Amazon EC2 prefix list identifier for managed IP range-based network access
 
 Validation: Must be valid prefix list ID format (pl-xxxxxxxxx); required for prefix list-based security group rules
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_protocol"></a>3.1.23.1.2.1.4. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > protocol`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_protocol"></a>7.1.1.23.1.2.1.4. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > protocol`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions"></a>3.1.23.1.2.1.5. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > suppressions`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions"></a>7.1.1.23.1.2.1.5. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > suppressions`
 
 |              |         |
 | ------------ | ------- |
@@ -2554,22 +5737,22 @@ Validation: Must be valid prefix list ID format (pl-xxxxxxxxx); required for pre
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                               | Description                               |
-| ------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| [NagPackSuppression](#functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions_items) | Interface for creating a rule suppression |
+| Each item of this array must be                                                                                               | Description                               |
+| ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| [NagPackSuppression](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions_items) | Interface for creating a rule suppression |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions_items"></a>3.1.23.1.2.1.5.1. root > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > suppressions > NagPackSuppression
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions_items"></a>7.1.1.23.1.2.1.5.1. root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > suppressions > NagPackSuppression
 
-|                           |                                                                                                                                                                       |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                              |
-| **Required**              | No                                                                                                                                                                    |
-| **Additional properties** | Not allowed                                                                                                                                                           |
-| **Same definition as**    | [functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items) |
+|                           |                                                                                                                                                                                                       |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                                              |
+| **Required**              | No                                                                                                                                                                                                    |
+| **Additional properties** | Not allowed                                                                                                                                                                                           |
+| **Same definition as**    | [lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items) |
 
 **Description:** Interface for creating a rule suppression
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_toPort"></a>3.1.23.1.2.1.6. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > toPort`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_prefixList_items_toPort"></a>7.1.1.23.1.2.1.6. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > toPort`
 
 |              |          |
 | ------------ | -------- |
@@ -2585,7 +5768,7 @@ AWS: AWS EC2 SecurityGroup rule ToPort property for port range specification
 
 Validation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_sg"></a>3.1.23.1.3. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > sg`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg"></a>7.1.1.23.1.3. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > sg`
 
 |              |         |
 | ------------ | ------- |
@@ -2610,11 +5793,11 @@ Validation: Must be valid MdaaSecurityGroupPeer array with valid security group 
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                       | Description              |
-| ------------------------------------------------------------------------------------- | ------------------------ |
-| [MdaaSecurityGroupPeer](#functions_items_vpcConfig_securityGroupEgressRules_sg_items) | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be                                                                       | Description              |
+| ----------------------------------------------------------------------------------------------------- | ------------------------ |
+| [MdaaSecurityGroupPeer](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items) | Q-ENHANCED-INTERFACE ... |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_sg_items"></a>3.1.23.1.3.1. root > functions > functions items > vpcConfig > securityGroupEgressRules > sg > MdaaSecurityGroupPeer
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items"></a>7.1.1.23.1.3.1. root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > sg > MdaaSecurityGroupPeer
 
 |                           |                                     |
 | ------------------------- | ----------------------------------- |
@@ -2632,37 +5815,37 @@ AWS: Amazon EC2 configuration for compute infrastructure and instance management
 
 Validation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements
 
-| Property                                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| -------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| - [description](#functions_items_vpcConfig_securityGroupEgressRules_sg_items_description )   | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [port](#functions_items_vpcConfig_securityGroupEgressRules_sg_items_port )                 | No      | number | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| + [protocol](#functions_items_vpcConfig_securityGroupEgressRules_sg_items_protocol )         | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| + [sgId](#functions_items_vpcConfig_securityGroupEgressRules_sg_items_sgId )                 | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required security group identifier for security group-based access control in network rules enabling security group reference-based access control. Defines the security group ID that will be referenced in security group rules for allowing access between security groups and resources.<br /><br />Use cases: Security group reference; Cross-security group access; Resource-based access control; Security group chaining<br /><br />AWS: Amazon EC2 security group identifier for security group-based network access control<br /><br />Validation: Must be valid security group ID format (sg-xxxxxxxxx); required for security group-based rules |
-| - [suppressions](#functions_items_vpcConfig_securityGroupEgressRules_sg_items_suppressions ) | No      | array  | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [toPort](#functions_items_vpcConfig_securityGroupEgressRules_sg_items_toPort )             | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />The ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.<br /><br />Use cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions<br /><br />AWS: AWS EC2 SecurityGroup rule ToPort property for port range specification<br /><br />Validation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules                                 |
+| Property                                                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [description](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_description )   | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [port](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_port )                 | No      | number | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| + [protocol](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_protocol )         | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| + [sgId](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_sgId )                 | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required security group identifier for security group-based access control in network rules enabling security group reference-based access control. Defines the security group ID that will be referenced in security group rules for allowing access between security groups and resources.<br /><br />Use cases: Security group reference; Cross-security group access; Resource-based access control; Security group chaining<br /><br />AWS: Amazon EC2 security group identifier for security group-based network access control<br /><br />Validation: Must be valid security group ID format (sg-xxxxxxxxx); required for security group-based rules |
+| - [suppressions](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_suppressions ) | No      | array  | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [toPort](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_toPort )             | No      | number | No         | -          | Q-ENHANCED-PROPERTY<br />The ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.<br /><br />Use cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions<br /><br />AWS: AWS EC2 SecurityGroup rule ToPort property for port range specification<br /><br />Validation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules                                 |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_sg_items_description"></a>3.1.23.1.3.1.1. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > description`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_description"></a>7.1.1.23.1.3.1.1. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_sg_items_port"></a>3.1.23.1.3.1.2. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > port`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_port"></a>7.1.1.23.1.3.1.2. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > port`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_sg_items_protocol"></a>3.1.23.1.3.1.3. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > protocol`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_protocol"></a>7.1.1.23.1.3.1.3. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > protocol`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_sg_items_sgId"></a>3.1.23.1.3.1.4. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > sgId`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_sgId"></a>7.1.1.23.1.3.1.4. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > sgId`
 
 |              |          |
 | ------------ | -------- |
@@ -2678,7 +5861,7 @@ AWS: Amazon EC2 security group identifier for security group-based network acces
 
 Validation: Must be valid security group ID format (sg-xxxxxxxxx); required for security group-based rules
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_sg_items_suppressions"></a>3.1.23.1.3.1.5. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > suppressions`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_suppressions"></a>7.1.1.23.1.3.1.5. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > suppressions`
 
 |              |         |
 | ------------ | ------- |
@@ -2693,22 +5876,22 @@ Validation: Must be valid security group ID format (sg-xxxxxxxxx); required for 
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                       | Description                               |
-| ----------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| [NagPackSuppression](#functions_items_vpcConfig_securityGroupEgressRules_sg_items_suppressions_items) | Interface for creating a rule suppression |
+| Each item of this array must be                                                                                       | Description                               |
+| --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| [NagPackSuppression](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_suppressions_items) | Interface for creating a rule suppression |
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_sg_items_suppressions_items"></a>3.1.23.1.3.1.5.1. root > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > suppressions > NagPackSuppression
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_suppressions_items"></a>7.1.1.23.1.3.1.5.1. root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > suppressions > NagPackSuppression
 
-|                           |                                                                                                                                                                       |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                              |
-| **Required**              | No                                                                                                                                                                    |
-| **Additional properties** | Not allowed                                                                                                                                                           |
-| **Same definition as**    | [functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items](#functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items) |
+|                           |                                                                                                                                                                                                       |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                                              |
+| **Required**              | No                                                                                                                                                                                                    |
+| **Additional properties** | Not allowed                                                                                                                                                                                           |
+| **Same definition as**    | [lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items](#lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items) |
 
 **Description:** Interface for creating a rule suppression
 
-###### <a name="functions_items_vpcConfig_securityGroupEgressRules_sg_items_toPort"></a>3.1.23.1.3.1.6. Property `root > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > toPort`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupEgressRules_sg_items_toPort"></a>7.1.1.23.1.3.1.6. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupEgressRules > sg > sg items > toPort`
 
 |              |          |
 | ------------ | -------- |
@@ -2724,7 +5907,7 @@ AWS: AWS EC2 SecurityGroup rule ToPort property for port range specification
 
 Validation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules
 
-##### <a name="functions_items_vpcConfig_securityGroupId"></a>3.1.23.2. Property `root > functions > functions items > vpcConfig > securityGroupId`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_securityGroupId"></a>7.1.1.23.2. Property `root > lambdaFunctions > functions > functions items > vpcConfig > securityGroupId`
 
 |              |          |
 | ------------ | -------- |
@@ -2740,7 +5923,7 @@ AWS: Security group ID for Lambda function network access control and traffic fi
 
 Validation: Must be valid security group ID if provided; enables custom security group configuration
 
-##### <a name="functions_items_vpcConfig_subnetIds"></a>3.1.23.3. Property `root > functions > functions items > vpcConfig > subnetIds`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_subnetIds"></a>7.1.1.23.3. Property `root > lambdaFunctions > functions > functions items > vpcConfig > subnetIds`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -2764,18 +5947,18 @@ Validation: Must be array of valid subnet ID strings; required for Lambda subnet
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                               | Description |
-| ------------------------------------------------------------- | ----------- |
-| [subnetIds items](#functions_items_vpcConfig_subnetIds_items) | -           |
+| Each item of this array must be                                               | Description |
+| ----------------------------------------------------------------------------- | ----------- |
+| [subnetIds items](#lambdaFunctions_functions_items_vpcConfig_subnetIds_items) | -           |
 
-###### <a name="functions_items_vpcConfig_subnetIds_items"></a>3.1.23.3.1. root > functions > functions items > vpcConfig > subnetIds > subnetIds items
+###### <a name="lambdaFunctions_functions_items_vpcConfig_subnetIds_items"></a>7.1.1.23.3.1. root > lambdaFunctions > functions > functions items > vpcConfig > subnetIds > subnetIds items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="functions_items_vpcConfig_vpcId"></a>3.1.23.4. Property `root > functions > functions items > vpcConfig > vpcId`
+###### <a name="lambdaFunctions_functions_items_vpcConfig_vpcId"></a>7.1.1.23.4. Property `root > lambdaFunctions > functions > functions items > vpcConfig > vpcId`
 
 |              |          |
 | ------------ | -------- |
@@ -2791,23 +5974,7 @@ AWS: AWS VPC ID for Lambda function VPC deployment and network isolation
 
 Validation: Must be valid VPC ID; required for VPC Lambda deployment; enables secure network connectivity
 
-## <a name="kmsArn"></a>4. Property `root > kmsArn`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Q-ENHANCED-PROPERTY
-Required KMS key ARN for DataOps encryption enabling data protection and security compliance. Provides the customer-managed KMS key for encrypting DataOps resources, data, and operational artifacts ensuring data protection and compliance.
-
-Use cases: Data encryption; Security compliance; Key management; Data protection
-
-AWS: KMS key ARN for DataOps encryption and data protection compliance
-
-Validation: Must be valid KMS key ARN; required for encryption and data protection compliance
-
-## <a name="layers"></a>5. Property `root > layers`
+### <a name="lambdaFunctions_layers"></a>7.2. Property `root > lambdaFunctions > layers`
 
 |              |         |
 | ------------ | ------- |
@@ -2815,13 +5982,13 @@ Validation: Must be valid KMS key ARN; required for encryption and data protecti
 | **Required** | No      |
 
 **Description:** Q-ENHANCED-PROPERTY
-Optional array of Lambda layer definitions for shared code, libraries, and dependencies across multiple functions. Enables code reuse, dependency management, and consistent runtime environments for efficient serverless data processing operations.
+Optional array of Lambda layer definitions for shared code and dependencies enabling reusable components and optimized function deployment. Provides layer configurations for Lambda functions used in Bedrock agent action groups with shared libraries, runtime dependencies, and common utilities for efficient function execution.
 
-Use cases: Shared code libraries; Dependency management; Runtime environment consistency across functions
+Use cases: Shared code libraries; Runtime dependencies; Common utilities; Function optimization
 
-AWS: AWS Lambda layers for shared code and dependency management across multiple functions
+AWS: Lambda layers for Bedrock agent action group functions with shared dependencies and code reuse
 
-Validation: Must be array of valid LayerProps objects if provided; layers can be referenced by functions
+Validation: Must be array of valid LayerProps if provided; enables shared code and dependency management
   *
 
 |                      | Array restrictions |
@@ -2832,11 +5999,11 @@ Validation: Must be array of valid LayerProps objects if provided; layers can be
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be | Description              |
-| ------------------------------- | ------------------------ |
-| [LayerProps](#layers_items)     | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be             | Description              |
+| ------------------------------------------- | ------------------------ |
+| [LayerProps](#lambdaFunctions_layers_items) | Q-ENHANCED-INTERFACE ... |
 
-### <a name="layers_items"></a>5.1. root > layers > LayerProps
+#### <a name="lambdaFunctions_layers_items"></a>7.2.1. root > lambdaFunctions > layers > LayerProps
 
 |                           |                          |
 | ------------------------- | ------------------------ |
@@ -2854,14 +6021,14 @@ AWS: AWS Lambda configuration for serverless data processing and event-driven wo
 
 Validation: Configuration must be valid for deployment; properties must conform to AWS Lambda and MDAA requirements
 
-| Property                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| ------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [description](#layers_items_description ) | No      | string  | No         | -          | Description of the layer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| - [dockerBuild](#layers_items_dockerBuild ) | No      | boolean | No         | -          | If true, src is expected to contain a Dockerfile for building the layer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| + [layerName](#layers_items_layerName )     | No      | string  | No         | -          | Layer name                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| + [src](#layers_items_src )                 | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Required source directory or ZIP file path for Lambda layer code deployment enabling shared library and dependency management. Defines the location of the layer code that will be packaged and deployed as a Lambda layer for reuse across multiple Lambda functions.<br /><br />Use cases: Shared library deployment; Dependency management; Code reuse; Lambda layer creation; Common utilities<br /><br />AWS: AWS Lambda layer source code path for shared library deployment and dependency management<br /><br />Validation: Must be valid directory path or ZIP file path; required for layer code deployment |
+| Property                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ----------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [description](#lambdaFunctions_layers_items_description ) | No      | string  | No         | -          | Description of the layer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [dockerBuild](#lambdaFunctions_layers_items_dockerBuild ) | No      | boolean | No         | -          | If true, src is expected to contain a Dockerfile for building the layer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| + [layerName](#lambdaFunctions_layers_items_layerName )     | No      | string  | No         | -          | Layer name                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| + [src](#lambdaFunctions_layers_items_src )                 | No      | string  | No         | -          | Q-ENHANCED-PROPERTY<br />Required source directory or ZIP file path for Lambda layer code deployment enabling shared library and dependency management. Defines the location of the layer code that will be packaged and deployed as a Lambda layer for reuse across multiple Lambda functions.<br /><br />Use cases: Shared library deployment; Dependency management; Code reuse; Lambda layer creation; Common utilities<br /><br />AWS: AWS Lambda layer source code path for shared library deployment and dependency management<br /><br />Validation: Must be valid directory path or ZIP file path; required for layer code deployment |
 
-#### <a name="layers_items_description"></a>5.1.1. Property `root > layers > layers items > description`
+##### <a name="lambdaFunctions_layers_items_description"></a>7.2.1.1. Property `root > lambdaFunctions > layers > layers items > description`
 
 |              |          |
 | ------------ | -------- |
@@ -2870,7 +6037,7 @@ Validation: Configuration must be valid for deployment; properties must conform 
 
 **Description:** Description of the layer
 
-#### <a name="layers_items_dockerBuild"></a>5.1.2. Property `root > layers > layers items > dockerBuild`
+##### <a name="lambdaFunctions_layers_items_dockerBuild"></a>7.2.1.2. Property `root > lambdaFunctions > layers > layers items > dockerBuild`
 
 |              |           |
 | ------------ | --------- |
@@ -2879,7 +6046,7 @@ Validation: Configuration must be valid for deployment; properties must conform 
 
 **Description:** If true, src is expected to contain a Dockerfile for building the layer
 
-#### <a name="layers_items_layerName"></a>5.1.3. Property `root > layers > layers items > layerName`
+##### <a name="lambdaFunctions_layers_items_layerName"></a>7.2.1.3. Property `root > lambdaFunctions > layers > layers items > layerName`
 
 |              |          |
 | ------------ | -------- |
@@ -2888,7 +6055,7 @@ Validation: Configuration must be valid for deployment; properties must conform 
 
 **Description:** Layer name
 
-#### <a name="layers_items_src"></a>5.1.4. Property `root > layers > layers items > src`
+##### <a name="lambdaFunctions_layers_items_src"></a>7.2.1.4. Property `root > lambdaFunctions > layers > layers items > src`
 
 |              |          |
 | ------------ | -------- |
@@ -2904,7 +6071,7 @@ AWS: AWS Lambda layer source code path for shared library deployment and depende
 
 Validation: Must be valid directory path or ZIP file path; required for layer code deployment
 
-## <a name="nag_suppressions"></a>6. Property `root > nag_suppressions`
+## <a name="nag_suppressions"></a>8. Property `root > nag_suppressions`
 
 |                           |                                         |
 | ------------------------- | --------------------------------------- |
@@ -2926,7 +6093,7 @@ Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structu
 | --------------------------------------- | ------- | ----- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | + [by_path](#nag_suppressions_by_path ) | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.<br /><br />Use cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations<br /><br />AWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation<br /><br />Validation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details<br />  * |
 
-### <a name="nag_suppressions_by_path"></a>6.1. Property `root > nag_suppressions > by_path`
+### <a name="nag_suppressions_by_path"></a>8.1. Property `root > nag_suppressions > by_path`
 
 |              |         |
 | ------------ | ------- |
@@ -2955,7 +6122,7 @@ Validation: Must be array of valid MdaaNagSuppressionByPath objects with valid r
 | ----------------------------------------------------------- | ------------------------ |
 | [MdaaNagSuppressionByPath](#nag_suppressions_by_path_items) | Q-ENHANCED-INTERFACE ... |
 
-#### <a name="nag_suppressions_by_path_items"></a>6.1.1. root > nag_suppressions > by_path > MdaaNagSuppressionByPath
+#### <a name="nag_suppressions_by_path_items"></a>8.1.1. root > nag_suppressions > by_path > MdaaNagSuppressionByPath
 
 |                           |                                        |
 | ------------------------- | -------------------------------------- |
@@ -2978,7 +6145,7 @@ Validation: path must be valid CloudFormation resource path; suppressions array 
 | + [path](#nag_suppressions_by_path_items_path )                 | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.<br /><br />Use cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control<br /><br />AWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation<br /><br />Validation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName) |
 | + [suppressions](#nag_suppressions_by_path_items_suppressions ) | No      | array of object | No         | -          | Q-ENHANCED-PROPERTY<br />Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.<br /><br />Use cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance<br /><br />AWS: CDK Nag rule ID suppression with justification tracking for compliance auditing<br /><br />Validation: Each suppression must have valid CDK Nag rule ID and non-empty reason string<br />  *          |
 
-##### <a name="nag_suppressions_by_path_items_path"></a>6.1.1.1. Property `root > nag_suppressions > by_path > by_path items > path`
+##### <a name="nag_suppressions_by_path_items_path"></a>8.1.1.1. Property `root > nag_suppressions > by_path > by_path items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -2994,7 +6161,7 @@ AWS: CloudFormation resource path for targeted CDK Nag rule suppression during v
 
 Validation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)
 
-##### <a name="nag_suppressions_by_path_items_suppressions"></a>6.1.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions`
+##### <a name="nag_suppressions_by_path_items_suppressions"></a>8.1.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -3023,7 +6190,7 @@ Validation: Each suppression must have valid CDK Nag rule ID and non-empty reaso
 | ------------------------------------------------------------------------ | ----------- |
 | [suppressions items](#nag_suppressions_by_path_items_suppressions_items) | -           |
 
-###### <a name="nag_suppressions_by_path_items_suppressions_items"></a>6.1.1.2.1. root > nag_suppressions > by_path > by_path items > suppressions > suppressions items
+###### <a name="nag_suppressions_by_path_items_suppressions_items"></a>8.1.1.2.1. root > nag_suppressions > by_path > by_path items > suppressions > suppressions items
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -3036,51 +6203,19 @@ Validation: Each suppression must have valid CDK Nag rule ID and non-empty reaso
 | + [id](#nag_suppressions_by_path_items_suppressions_items_id )         | No      | string | No         | -          | -                 |
 | + [reason](#nag_suppressions_by_path_items_suppressions_items_reason ) | No      | string | No         | -          | -                 |
 
-###### <a name="nag_suppressions_by_path_items_suppressions_items_id"></a>6.1.1.2.1.1. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > id`
+###### <a name="nag_suppressions_by_path_items_suppressions_items_id"></a>8.1.1.2.1.1. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > id`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="nag_suppressions_by_path_items_suppressions_items_reason"></a>6.1.1.2.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > reason`
+###### <a name="nag_suppressions_by_path_items_suppressions_items_reason"></a>8.1.1.2.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > reason`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
-
-## <a name="notificationTopicArn"></a>7. Property `root > notificationTopicArn`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Q-ENHANCED-PROPERTY
-Required SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.
-
-Use cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication
-
-AWS: SNS topic ARN for DataOps notifications and workflow coordination
-
-Validation: Must be valid SNS topic ARN; required for notifications and workflow coordination
-
-## <a name="projectName"></a>8. Property `root > projectName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Q-ENHANCED-PROPERTY
-Required name of the DataOps project that will contain and manage the Lambda functions. Provides organizational context and enables resource sharing, permissions management, and operational coordination within the DataOps framework.
-
-Use cases: DataOps project organization; Resource sharing and permissions; Operational coordination and monitoring
-
-AWS: DataOps project reference for Lambda function organization and resource management
-
-Validation: Must be valid DataOps project name; required; project must exist or be created in the same deployment
 
 ## <a name="sagemakerBlueprint"></a>9. Property `root > sagemakerBlueprint`
 
@@ -5586,20 +8721,20 @@ you can use `Aws.STACK_NAME` directly.
 
 **Description:** Tags to be applied to the stack.
 
-| Property                                                                                                                                                   | Pattern | Type   | Deprecated | Definition                   | Title/Description                                                                                                                                                                                                              |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| + [_setTag](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags__setTag )                         | No      | object | No         | -                            | -                                                                                                                                                                                                                              |
-| + [didHaveInitialTags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_didHaveInitialTags )   | No      | object | No         | -                            | -                                                                                                                                                                                                                              |
-| - [dynamicTags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_dynamicTags )                 | No      | object | No         | -                            | -                                                                                                                                                                                                                              |
-| + [externalTagPriority](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_externalTagPriority ) | No      | object | No         | -                            | -                                                                                                                                                                                                                              |
-| + [parseExternalTags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_parseExternalTags )     | No      | object | No         | -                            | Parse external tags.<br /><br />Set the parseable ones into this tag manager. Save the rest (tokens, lazies) in \`this.dynamicTags\`.                                                                                          |
-| + [priorities](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_priorities )                   | No      | object | No         | -                            | -                                                                                                                                                                                                                              |
-| + [renderedTags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags )               | No      | object | No         | In #/definitions/IResolvable | A lazy value that represents the rendered tags at synthesis time<br /><br />If you need to make a custom construct taggable, use the value of this<br />property to pass to the \`tags\` property of the underlying construct. |
-| + [resourceTypeName](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_resourceTypeName )       | No      | object | No         | -                            | -                                                                                                                                                                                                                              |
-| + [sortedTags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_sortedTags )                   | No      | object | No         | -                            | -                                                                                                                                                                                                                              |
-| + [tagFormatter](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_tagFormatter )               | No      | object | No         | -                            | -                                                                                                                                                                                                                              |
-| + [tagPropertyName](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_tagPropertyName )         | No      | string | No         | -                            | The property name for tag values<br /><br />Normally this is \`tags\` but some resources choose a different name. Cognito<br />UserPool uses UserPoolTags                                                                      |
-| + [tags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_tags )                               | No      | object | No         | -                            | -                                                                                                                                                                                                                              |
+| Property                                                                                                                                                   | Pattern | Type   | Deprecated | Definition                                                                                                                                             | Title/Description                                                                                                                                                                                                              |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| + [_setTag](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags__setTag )                         | No      | object | No         | -                                                                                                                                                      | -                                                                                                                                                                                                                              |
+| + [didHaveInitialTags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_didHaveInitialTags )   | No      | object | No         | -                                                                                                                                                      | -                                                                                                                                                                                                                              |
+| - [dynamicTags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_dynamicTags )                 | No      | object | No         | -                                                                                                                                                      | -                                                                                                                                                                                                                              |
+| + [externalTagPriority](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_externalTagPriority ) | No      | object | No         | -                                                                                                                                                      | -                                                                                                                                                                                                                              |
+| + [parseExternalTags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_parseExternalTags )     | No      | object | No         | -                                                                                                                                                      | Parse external tags.<br /><br />Set the parseable ones into this tag manager. Save the rest (tokens, lazies) in \`this.dynamicTags\`.                                                                                          |
+| + [priorities](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_priorities )                   | No      | object | No         | -                                                                                                                                                      | -                                                                                                                                                                                                                              |
+| + [renderedTags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags )               | No      | object | No         | Same as [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0 ) | A lazy value that represents the rendered tags at synthesis time<br /><br />If you need to make a custom construct taggable, use the value of this<br />property to pass to the \`tags\` property of the underlying construct. |
+| + [resourceTypeName](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_resourceTypeName )       | No      | object | No         | -                                                                                                                                                      | -                                                                                                                                                                                                                              |
+| + [sortedTags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_sortedTags )                   | No      | object | No         | -                                                                                                                                                      | -                                                                                                                                                                                                                              |
+| + [tagFormatter](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_tagFormatter )               | No      | object | No         | -                                                                                                                                                      | -                                                                                                                                                                                                                              |
+| + [tagPropertyName](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_tagPropertyName )         | No      | string | No         | -                                                                                                                                                      | The property name for tag values<br /><br />Normally this is \`tags\` but some resources choose a different name. Cognito<br />UserPool uses UserPoolTags                                                                      |
+| + [tags](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_tags )                               | No      | object | No         | -                                                                                                                                                      | -                                                                                                                                                                                                                              |
 
 ###### <a name="sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags__setTag"></a>9.5.7.4.3.6.1.8.35.1. Property `root > sagemakerBlueprint > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > tags > _setTag`
 
@@ -5655,68 +8790,17 @@ Set the parseable ones into this tag manager. Save the rest (tokens, lazies) in 
 
 ###### <a name="sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags"></a>9.5.7.4.3.6.1.8.35.7. Property `root > sagemakerBlueprint > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > tags > renderedTags`
 
-|                           |                           |
-| ------------------------- | ------------------------- |
-| **Type**                  | `object`                  |
-| **Required**              | Yes                       |
-| **Additional properties** | Not allowed               |
-| **Defined in**            | #/definitions/IResolvable |
+|                           |                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                      |
+| **Required**              | Yes                                                                                                                                           |
+| **Additional properties** | Not allowed                                                                                                                                   |
+| **Same definition as**    | [agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0](#agents_additionalProperties_actionGroups_items_apiSchema_s3_anyOf_i0) |
 
 **Description:** A lazy value that represents the rendered tags at synthesis time
 
 If you need to make a custom construct taggable, use the value of this
 property to pass to the `tags` property of the underlying construct.
-
-| Property                                                                                                                                                    | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                            |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [creationStack](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags_creationStack ) | No      | array of string  | No         | -          | The creation stack of this resolvable which will be appended to errors<br />thrown during resolution.<br /><br />This may return an array with a single informational element indicating how<br />to get this property populated, if it was skipped for performance reasons. |
-| - [typeHint](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags_typeHint )           | No      | enum (of string) | No         | -          | The type that this token will likely resolve to.                                                                                                                                                                                                                             |
-
-###### <a name="sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags_creationStack"></a>9.5.7.4.3.6.1.8.35.7.1. Property `root > sagemakerBlueprint > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > tags > renderedTags > creationStack`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | Yes               |
-
-**Description:** The creation stack of this resolvable which will be appended to errors
-thrown during resolution.
-
-This may return an array with a single informational element indicating how
-to get this property populated, if it was skipped for performance reasons.
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                                                                                      | Description |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [creationStack items](#sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags_creationStack_items) | -           |
-
-###### <a name="sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags_creationStack_items"></a>9.5.7.4.3.6.1.8.35.7.1.1. root > sagemakerBlueprint > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > tags > renderedTags > creationStack > creationStack items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags_typeHint"></a>9.5.7.4.3.6.1.8.35.7.2. Property `root > sagemakerBlueprint > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > tags > renderedTags > typeHint`
-
-|              |                    |
-| ------------ | ------------------ |
-| **Type**     | `enum (of string)` |
-| **Required** | No                 |
-
-**Description:** The type that this token will likely resolve to.
-
-Must be one of:
-* "number"
-* "string"
-* "string-list"
 
 ###### <a name="sagemakerBlueprint_domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_resourceTypeName"></a>9.5.7.4.3.6.1.8.35.8. Property `root > sagemakerBlueprint > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > tags > resourceTypeName`
 
@@ -9574,23 +12658,7 @@ If you set the value to ``true``, the parameter value is masked with asterisks (
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-## <a name="securityConfigurationName"></a>10. Property `root > securityConfigurationName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Q-ENHANCED-PROPERTY
-Required Glue security configuration name for DataOps job security enabling encryption and access control for data processing operations. Provides the security configuration that will be used by Glue jobs for encryption at rest, in transit, and CloudWatch logs encryption.
-
-Use cases: Glue job security; Encryption configuration; Security compliance; Data protection
-
-AWS: Glue security configuration for DataOps job encryption and security compliance
-
-Validation: Must be valid security configuration name; required for Glue job security and encryption
-
-## <a name="service_catalog_product_config"></a>11. Property `root > service_catalog_product_config`
+## <a name="service_catalog_product_config"></a>10. Property `root > service_catalog_product_config`
 
 |                           |                                               |
 | ------------------------- | --------------------------------------------- |
@@ -9617,7 +12685,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | + [portfolio_arn](#service_catalog_product_config_portfolio_arn )                 | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />ARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.<br /><br />Use cases: Portfolio organization; Access control; Product categorization<br /><br />AWS: AWS Service Catalog portfolio ARN for product association and access management<br /><br />Validation: Must be valid AWS Service Catalog portfolio ARN format                                                                 |
 | + [portfolio_bucket_name](#service_catalog_product_config_portfolio_bucket_name ) | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
-### <a name="service_catalog_product_config_launch_role_name"></a>11.1. Property `root > service_catalog_product_config > launch_role_name`
+### <a name="service_catalog_product_config_launch_role_name"></a>10.1. Property `root > service_catalog_product_config > launch_role_name`
 
 |              |          |
 | ------------ | -------- |
@@ -9633,7 +12701,7 @@ AWS: AWS Service Catalog launch role for controlled product provisioning permiss
 
 Validation: Must be valid IAM role name if provided
 
-### <a name="service_catalog_product_config_name"></a>11.2. Property `root > service_catalog_product_config > name`
+### <a name="service_catalog_product_config_name"></a>10.2. Property `root > service_catalog_product_config > name`
 
 |              |          |
 | ------------ | -------- |
@@ -9649,7 +12717,7 @@ AWS: AWS Service Catalog product name for user interface display
 
 Validation: Must be non-empty string suitable for Service Catalog product naming
 
-### <a name="service_catalog_product_config_owner"></a>11.3. Property `root > service_catalog_product_config > owner`
+### <a name="service_catalog_product_config_owner"></a>10.3. Property `root > service_catalog_product_config > owner`
 
 |              |          |
 | ------------ | -------- |
@@ -9665,7 +12733,7 @@ AWS: AWS Service Catalog product owner for accountability and management
 
 Validation: Must be non-empty string identifying the product owner
 
-### <a name="service_catalog_product_config_parameters"></a>11.4. Property `root > service_catalog_product_config > parameters`
+### <a name="service_catalog_product_config_parameters"></a>10.4. Property `root > service_catalog_product_config > parameters`
 
 |                           |                                                                                                                        |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -9687,7 +12755,7 @@ Validation: Must be object with string keys and valid MdaaServiceCatalogParamete
 | ---------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [](#service_catalog_product_config_parameters_additionalProperties ) | No      | object | No         | In #/definitions/MdaaServiceCatalogParameterConfig | Q-ENHANCED-INTERFACE<br />Configuration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.<br /><br />Use cases: Service Catalog product parameterization; Parameter validation; User input constraints<br /><br />AWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints<br /><br />Validation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided |
 
-#### <a name="service_catalog_product_config_parameters_additionalProperties"></a>11.4.1. Property `root > service_catalog_product_config > parameters > MdaaServiceCatalogParameterConfig`
+#### <a name="service_catalog_product_config_parameters_additionalProperties"></a>10.4.1. Property `root > service_catalog_product_config > parameters > MdaaServiceCatalogParameterConfig`
 
 |                           |                                                 |
 | ------------------------- | ----------------------------------------------- |
@@ -9710,7 +12778,7 @@ Validation: props must be valid CfnParameterProps; constraints must be valid con
 | - [constraints](#service_catalog_product_config_parameters_additionalProperties_constraints ) | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintConfig                                         | Q-ENHANCED-PROPERTY<br />Optional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.<br /><br />Use cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation<br /><br />AWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogConstraintConfig object if provided |
 | + [props](#service_catalog_product_config_parameters_additionalProperties_props )             | No      | object | No         | Same as [cfnParamProps](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps ) | Q-ENHANCED-PROPERTY<br />CloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.<br /><br />Use cases: Parameter type definition; Default value specification; Allowed value constraints<br /><br />AWS: AWS CloudFormation parameter properties for Service Catalog product parameters<br /><br />Validation: Must be valid CfnParameterProps object with required CloudFormation parameter properties          |
 
-##### <a name="service_catalog_product_config_parameters_additionalProperties_constraints"></a>11.4.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints`
+##### <a name="service_catalog_product_config_parameters_additionalProperties_constraints"></a>10.4.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints`
 
 |                           |                                                  |
 | ------------------------- | ------------------------------------------------ |
@@ -9733,7 +12801,7 @@ Validation: Must be valid MdaaServiceCatalogConstraintConfig object if provided
 | + [description](#service_catalog_product_config_parameters_additionalProperties_constraints_description ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Human-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.<br /><br />Use cases: Constraint documentation; User guidance; Business rule explanation<br /><br />AWS: AWS Service Catalog constraint description for user understanding<br /><br />Validation: Must be non-empty descriptive text explaining the constraint purpose and scope                        |
 | + [rules](#service_catalog_product_config_parameters_additionalProperties_constraints_rules )             | No      | object | No         | -          | Q-ENHANCED-PROPERTY<br />Object containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.<br /><br />Use cases: Named validation rules; Organized constraint logic; Multiple validation scenarios<br /><br />AWS: AWS Service Catalog constraint rules for structured parameter validation<br /><br />Validation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values<br />  * |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_description"></a>11.4.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > description`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_description"></a>10.4.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > description`
 
 |              |          |
 | ------------ | -------- |
@@ -9749,7 +12817,7 @@ AWS: AWS Service Catalog constraint description for user understanding
 
 Validation: Must be non-empty descriptive text explaining the constraint purpose and scope
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules"></a>11.4.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules"></a>10.4.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules`
 
 |                           |                                                                                                                                                               |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -9771,7 +12839,7 @@ Validation: Must be object with string keys and valid MdaaServiceCatalogConstrai
 | ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties ) | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintRuleConfig | Q-ENHANCED-INTERFACE<br />Configuration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.<br /><br />Use cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic<br /><br />AWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation<br /><br />Validation: condition must be valid condition config; assertions must be array of valid assertion configs |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties"></a>11.4.1.1.2.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > MdaaServiceCatalogConstraintRuleConfig`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties"></a>10.4.1.1.2.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > MdaaServiceCatalogConstraintRuleConfig`
 
 |                           |                                                      |
 | ------------------------- | ---------------------------------------------------- |
@@ -9794,7 +12862,7 @@ Validation: condition must be valid condition config; assertions must be array o
 | + [assertions](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions ) | No      | array  | No         | -                                                                  | Q-ENHANCED-PROPERTY<br />Array of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.<br /><br />Use cases: Multiple validation checks; parameter validation; Business rule enforcement<br /><br />AWS: AWS Service Catalog constraint rule assertions for parameter validation<br /><br />Validation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects |
 | + [condition](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition )   | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig | Q-ENHANCED-PROPERTY<br />Condition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.<br /><br />Use cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints<br /><br />AWS: AWS Service Catalog constraint rule condition for conditional validation<br /><br />Validation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object   |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions"></a>11.4.1.1.2.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions"></a>10.4.1.1.2.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions`
 
 |              |         |
 | ------------ | ------- |
@@ -9822,7 +12890,7 @@ Validation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConf
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
 | [MdaaServiceCatalogConstraintRuleAssertionConfig](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items) | Q-ENHANCED-INTERFACE ... |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items"></a>11.4.1.1.2.1.1.1. root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > MdaaServiceCatalogConstraintRuleAssertionConfig
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items"></a>10.4.1.1.2.1.1.1. root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > MdaaServiceCatalogConstraintRuleAssertionConfig
 
 |                           |                                                               |
 | ------------------------- | ------------------------------------------------------------- |
@@ -9845,7 +12913,7 @@ Validation: assert must be valid constraint assertion expression; description mu
 | + [assert](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert )           | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Constraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.<br /><br />Use cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement<br /><br />AWS: AWS Service Catalog constraint rule assertion for parameter validation<br /><br />Validation: Must be valid CloudFormation condition expression using intrinsic functions |
 | + [description](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Human-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.<br /><br />Use cases: User guidance for parameter validation; Error message context; Business rule documentation<br /><br />AWS: AWS Service Catalog constraint rule description for user guidance<br /><br />Validation: Must be non-empty descriptive text explaining the constraint purpose                                         |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert"></a>11.4.1.1.2.1.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > assert`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert"></a>10.4.1.1.2.1.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > assert`
 
 |              |          |
 | ------------ | -------- |
@@ -9861,7 +12929,7 @@ AWS: AWS Service Catalog constraint rule assertion for parameter validation
 
 Validation: Must be valid CloudFormation condition expression using intrinsic functions
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description"></a>11.4.1.1.2.1.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > description`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description"></a>10.4.1.1.2.1.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > description`
 
 |              |          |
 | ------------ | -------- |
@@ -9877,7 +12945,7 @@ AWS: AWS Service Catalog constraint rule description for user guidance
 
 Validation: Must be non-empty descriptive text explaining the constraint purpose
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition"></a>11.4.1.1.2.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > condition`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition"></a>10.4.1.1.2.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > condition`
 
 |                           |                                                                 |
 | ------------------------- | --------------------------------------------------------------- |
@@ -9895,7 +12963,7 @@ AWS: AWS Service Catalog constraint rule condition for conditional validation
 
 Validation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object
 
-##### <a name="service_catalog_product_config_parameters_additionalProperties_props"></a>11.4.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > props`
+##### <a name="service_catalog_product_config_parameters_additionalProperties_props"></a>10.4.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > props`
 
 |                           |                                                                                    |
 | ------------------------- | ---------------------------------------------------------------------------------- |
@@ -9913,7 +12981,7 @@ AWS: AWS CloudFormation parameter properties for Service Catalog product paramet
 
 Validation: Must be valid CfnParameterProps object with required CloudFormation parameter properties
 
-### <a name="service_catalog_product_config_portfolio_arn"></a>11.5. Property `root > service_catalog_product_config > portfolio_arn`
+### <a name="service_catalog_product_config_portfolio_arn"></a>10.5. Property `root > service_catalog_product_config > portfolio_arn`
 
 |              |          |
 | ------------ | -------- |
@@ -9929,12 +12997,401 @@ AWS: AWS Service Catalog portfolio ARN for product association and access manage
 
 Validation: Must be valid AWS Service Catalog portfolio ARN format
 
-### <a name="service_catalog_product_config_portfolio_bucket_name"></a>11.6. Property `root > service_catalog_product_config > portfolio_bucket_name`
+### <a name="service_catalog_product_config_portfolio_bucket_name"></a>10.6. Property `root > service_catalog_product_config > portfolio_bucket_name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
+## <a name="vectorStores"></a>11. Property `root > vectorStores`
+
+|                           |                                                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                  |
+| **Required**              | No                                                                                        |
+| **Additional properties** | [Each additional property must conform to the schema](#vectorStores_additionalProperties) |
+| **Defined in**            | #/definitions/NamedVectorStoreProps                                                       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional vector store configurations for knowledge base deployment enabling semantic search and retrieval-augmented generation capabilities. Provides vector database configuration for knowledge bases supporting similarity search, document retrieval, and RAG-based AI applications.
+
+Use cases: Vector storage; Semantic search; Knowledge retrieval; RAG applications
+
+AWS: Vector stores for Bedrock knowledge bases and semantic search capabilities
+
+Validation: Must be valid NamedVectorStoreProps if provided; enables vector storage and semantic search functionality
+  *
+
+| Property                                  | Pattern | Type        | Deprecated | Definition | Title/Description |
+| ----------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
+| - [](#vectorStores_additionalProperties ) | No      | Combination | No         | -          | -                 |
+
+### <a name="vectorStores_additionalProperties"></a>11.1. Property `root > vectorStores > additionalProperties`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Any of(Option)                                                               |
+| ---------------------------------------------------------------------------- |
+| [AuroraServerlessPgVectorProps](#vectorStores_additionalProperties_anyOf_i0) |
+| [OpensearchServerlessProps](#vectorStores_additionalProperties_anyOf_i1)     |
+
+#### <a name="vectorStores_additionalProperties_anyOf_i0"></a>11.1.1. Property `root > vectorStores > additionalProperties > anyOf > AuroraServerlessPgVectorProps`
+
+|                           |                                             |
+| ------------------------- | ------------------------------------------- |
+| **Type**                  | `object`                                    |
+| **Required**              | No                                          |
+| **Additional properties** | Not allowed                                 |
+| **Defined in**            | #/definitions/AuroraServerlessPgVectorProps |
+
+**Description:** Q-ENHANCED-INTERFACE
+Aurora Serverless PostgreSQL vector store properties interface for Bedrock knowledge bases providing database configuration and vector storage capabilities. Extends base vector store properties with Aurora-specific configuration including database connectivity, engine settings, and capacity management for scalable vector storage.
+
+Use cases: Aurora vector storage; PostgreSQL configuration; Serverless database; Vector database management
+
+AWS: Aurora Serverless PostgreSQL configuration for Bedrock knowledge base vector storage and database management
+
+Validation: Extends BaseVectorStoreProps validation; Aurora-specific properties are optional with sensible defaults
+
+| Property                                                                          | Pattern | Type              | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| --------------------------------------------------------------------------------- | ------- | ----------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [engineVersion](#vectorStores_additionalProperties_anyOf_i0_engineVersion )     | No      | string            | No         | -          | Q-ENHANCED-PROPERTY<br />Optional PostgreSQL engine version specification for Aurora database configuration enabling version control and feature compatibility. Defines the PostgreSQL engine version for Aurora Serverless with specific feature sets and compatibility requirements for vector operations.<br /><br />Use cases: Version control; Feature compatibility; Engine configuration; Database capabilities<br /><br />AWS: Aurora PostgreSQL engine version for Bedrock knowledge base database configuration and feature compatibility<br /><br />Validation: Must be valid PostgreSQL version if provided; enables version-specific features and compatibility         |
+| - [maxCapacity](#vectorStores_additionalProperties_anyOf_i0_maxCapacity )         | No      | enum (of integer) | No         | -          | Q-ENHANCED-PROPERTY<br />Optional maximum capacity specification for Aurora Serverless scaling enabling performance limits and cost control. Defines the maximum Aurora Capacity Units (ACUs) for serverless scaling to ensure performance limits and prevent unexpected costs during high-usage periods.<br /><br />Use cases: Performance limits; Cost control; Scaling boundaries; Resource management<br /><br />AWS: Aurora Serverless maximum capacity for Bedrock knowledge base performance limits and cost control<br /><br />Validation: Must be valid AuroraCapacityUnit if provided; enables maximum capacity configuration and cost management<br />  *                 |
+| - [minCapacity](#vectorStores_additionalProperties_anyOf_i0_minCapacity )         | No      | enum (of integer) | No         | -          | Q-ENHANCED-PROPERTY<br />Optional minimum capacity specification for Aurora Serverless scaling enabling cost optimization and performance baseline. Defines the minimum Aurora Capacity Units (ACUs) for serverless scaling to ensure baseline performance while optimizing costs during low-usage periods.<br /><br />Use cases: Cost optimization; Performance baseline; Scaling configuration; Resource management<br /><br />AWS: Aurora Serverless minimum capacity for Bedrock knowledge base cost optimization and performance baseline<br /><br />Validation: Must be valid AuroraCapacityUnit if provided; enables minimum capacity configuration and cost control<br />  * |
+| - [port](#vectorStores_additionalProperties_anyOf_i0_port )                       | No      | number            | No         | -          | Q-ENHANCED-PROPERTY<br />Optional database port specification for Aurora PostgreSQL connectivity enabling custom port configuration and network access control. Defines the port number for Aurora PostgreSQL database connections with default PostgreSQL port if not specified.<br /><br />Use cases: Port configuration; Network access; Database connectivity; Custom networking<br /><br />AWS: Aurora PostgreSQL port for Bedrock knowledge base database connectivity and network configuration<br /><br />Validation: Must be valid port number if provided; defaults to standard PostgreSQL port for database connectivity                                                  |
+| + [subnetIds](#vectorStores_additionalProperties_anyOf_i0_subnetIds )             | No      | array of string   | No         | -          | Q-ENHANCED-PROPERTY<br />Required array of subnet identifiers for vector store deployment enabling multi-AZ deployment and network distribution. Provides the subnets where vector store components will be deployed for high availability, fault tolerance, and distributed network access.<br /><br />Use cases: Multi-AZ deployment; High availability; Network distribution; Fault tolerance<br /><br />AWS: Subnet IDs for Bedrock knowledge base vector store multi-AZ deployment and network distribution<br /><br />Validation: Must be array of valid subnet IDs; required for vector store deployment and high availability                                                |
+| - [vectorStoreType](#vectorStores_additionalProperties_anyOf_i0_vectorStoreType ) | No      | enum (of string)  | No         | -          | Q-ENHANCED-PROPERTY<br />Optional vector store type specification for storage backend selection enabling choice between Aurora Serverless and OpenSearch Serverless. Defines the vector storage backend type for knowledge base vector storage with different performance and cost characteristics.<br /><br />Use cases: Storage backend selection; Performance optimization; Cost management; Technology choice<br /><br />AWS: Bedrock knowledge base vector store type for storage backend and technology selection<br /><br />Validation: Must be AURORA_SERVERLESS or OPENSEARCH_SERVERLESS if provided; enables storage backend selection<br />  *                            |
+| + [vpcId](#vectorStores_additionalProperties_anyOf_i0_vpcId )                     | No      | string            | No         | -          | Q-ENHANCED-PROPERTY<br />Required VPC identifier for vector store network isolation enabling secure deployment and network control. Provides the VPC where the vector store will be deployed for network isolation, security controls, and private connectivity within the specified network environment.<br /><br />Use cases: Network isolation; Security deployment; VPC connectivity; Private networking<br /><br />AWS: VPC ID for Bedrock knowledge base vector store network deployment and isolation<br /><br />Validation: Must be valid VPC ID; required for vector store network deployment and security isolation                                                        |
+
+##### <a name="vectorStores_additionalProperties_anyOf_i0_engineVersion"></a>11.1.1.1. Property `root > vectorStores > additionalProperties > anyOf > item 0 > engineVersion`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional PostgreSQL engine version specification for Aurora database configuration enabling version control and feature compatibility. Defines the PostgreSQL engine version for Aurora Serverless with specific feature sets and compatibility requirements for vector operations.
+
+Use cases: Version control; Feature compatibility; Engine configuration; Database capabilities
+
+AWS: Aurora PostgreSQL engine version for Bedrock knowledge base database configuration and feature compatibility
+
+Validation: Must be valid PostgreSQL version if provided; enables version-specific features and compatibility
+
+##### <a name="vectorStores_additionalProperties_anyOf_i0_maxCapacity"></a>11.1.1.2. Property `root > vectorStores > additionalProperties > anyOf > item 0 > maxCapacity`
+
+|              |                     |
+| ------------ | ------------------- |
+| **Type**     | `enum (of integer)` |
+| **Required** | No                  |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional maximum capacity specification for Aurora Serverless scaling enabling performance limits and cost control. Defines the maximum Aurora Capacity Units (ACUs) for serverless scaling to ensure performance limits and prevent unexpected costs during high-usage periods.
+
+Use cases: Performance limits; Cost control; Scaling boundaries; Resource management
+
+AWS: Aurora Serverless maximum capacity for Bedrock knowledge base performance limits and cost control
+
+Validation: Must be valid AuroraCapacityUnit if provided; enables maximum capacity configuration and cost management
+  *
+
+Must be one of:
+* 1
+* 128
+* 16
+* 192
+* 2
+* 256
+* 32
+* 384
+* 4
+* 64
+* 8
+
+##### <a name="vectorStores_additionalProperties_anyOf_i0_minCapacity"></a>11.1.1.3. Property `root > vectorStores > additionalProperties > anyOf > item 0 > minCapacity`
+
+|              |                     |
+| ------------ | ------------------- |
+| **Type**     | `enum (of integer)` |
+| **Required** | No                  |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional minimum capacity specification for Aurora Serverless scaling enabling cost optimization and performance baseline. Defines the minimum Aurora Capacity Units (ACUs) for serverless scaling to ensure baseline performance while optimizing costs during low-usage periods.
+
+Use cases: Cost optimization; Performance baseline; Scaling configuration; Resource management
+
+AWS: Aurora Serverless minimum capacity for Bedrock knowledge base cost optimization and performance baseline
+
+Validation: Must be valid AuroraCapacityUnit if provided; enables minimum capacity configuration and cost control
+  *
+
+Must be one of:
+* 1
+* 128
+* 16
+* 192
+* 2
+* 256
+* 32
+* 384
+* 4
+* 64
+* 8
+
+##### <a name="vectorStores_additionalProperties_anyOf_i0_port"></a>11.1.1.4. Property `root > vectorStores > additionalProperties > anyOf > item 0 > port`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional database port specification for Aurora PostgreSQL connectivity enabling custom port configuration and network access control. Defines the port number for Aurora PostgreSQL database connections with default PostgreSQL port if not specified.
+
+Use cases: Port configuration; Network access; Database connectivity; Custom networking
+
+AWS: Aurora PostgreSQL port for Bedrock knowledge base database connectivity and network configuration
+
+Validation: Must be valid port number if provided; defaults to standard PostgreSQL port for database connectivity
+
+##### <a name="vectorStores_additionalProperties_anyOf_i0_subnetIds"></a>11.1.1.5. Property `root > vectorStores > additionalProperties > anyOf > item 0 > subnetIds`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | Yes               |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required array of subnet identifiers for vector store deployment enabling multi-AZ deployment and network distribution. Provides the subnets where vector store components will be deployed for high availability, fault tolerance, and distributed network access.
+
+Use cases: Multi-AZ deployment; High availability; Network distribution; Fault tolerance
+
+AWS: Subnet IDs for Bedrock knowledge base vector store multi-AZ deployment and network distribution
+
+Validation: Must be array of valid subnet IDs; required for vector store deployment and high availability
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                | Description |
+| ------------------------------------------------------------------------------ | ----------- |
+| [subnetIds items](#vectorStores_additionalProperties_anyOf_i0_subnetIds_items) | -           |
+
+###### <a name="vectorStores_additionalProperties_anyOf_i0_subnetIds_items"></a>11.1.1.5.1. root > vectorStores > additionalProperties > anyOf > item 0 > subnetIds > subnetIds items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="vectorStores_additionalProperties_anyOf_i0_vectorStoreType"></a>11.1.1.6. Property `root > vectorStores > additionalProperties > anyOf > item 0 > vectorStoreType`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional vector store type specification for storage backend selection enabling choice between Aurora Serverless and OpenSearch Serverless. Defines the vector storage backend type for knowledge base vector storage with different performance and cost characteristics.
+
+Use cases: Storage backend selection; Performance optimization; Cost management; Technology choice
+
+AWS: Bedrock knowledge base vector store type for storage backend and technology selection
+
+Validation: Must be AURORA_SERVERLESS or OPENSEARCH_SERVERLESS if provided; enables storage backend selection
+  *
+
+Must be one of:
+* "AURORA_SERVERLESS"
+* "OPENSEARCH_SERVERLESS"
+
+##### <a name="vectorStores_additionalProperties_anyOf_i0_vpcId"></a>11.1.1.7. Property `root > vectorStores > additionalProperties > anyOf > item 0 > vpcId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required VPC identifier for vector store network isolation enabling secure deployment and network control. Provides the VPC where the vector store will be deployed for network isolation, security controls, and private connectivity within the specified network environment.
+
+Use cases: Network isolation; Security deployment; VPC connectivity; Private networking
+
+AWS: VPC ID for Bedrock knowledge base vector store network deployment and isolation
+
+Validation: Must be valid VPC ID; required for vector store network deployment and security isolation
+
+#### <a name="vectorStores_additionalProperties_anyOf_i1"></a>11.1.2. Property `root > vectorStores > additionalProperties > anyOf > OpensearchServerlessProps`
+
+|                           |                                         |
+| ------------------------- | --------------------------------------- |
+| **Type**                  | `object`                                |
+| **Required**              | No                                      |
+| **Additional properties** | Not allowed                             |
+| **Defined in**            | #/definitions/OpensearchServerlessProps |
+
+**Description:** Q-ENHANCED-INTERFACE
+OpenSearch Serverless vector store properties interface for Bedrock knowledge bases providing search configuration and vector storage capabilities. Extends base vector store properties with OpenSearch-specific configuration including replica management and serverless search capabilities for scalable vector operations.
+
+Use cases: OpenSearch vector storage; Serverless search; Vector operations; Search configuration
+
+AWS: OpenSearch Serverless configuration for Bedrock knowledge base vector storage and search capabilities
+
+Validation: Extends BaseVectorStoreProps validation; standbyReplicas is required for replica configuration
+
+| Property                                                                          | Pattern | Type             | Deprecated | Definition                       | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [ossVpce](#vectorStores_additionalProperties_anyOf_i1_ossVpce )                 | No      | object           | No         | In #/definitions/OssVpceConfig   | Q-ENHANCED-PROPERTY<br />Optional existing OpenSearch Serverless VPC endpoint configuration for reusing pre-existing VPC endpoints enabling deployment flexibility and avoiding duplicate endpoint creation. When provided, the construct will use the existing VPC endpoint instead of creating a new one, preventing deployment failures when a VPC endpoint already exists for the specified VPC.<br /><br />Use cases: Reuse existing endpoints; Avoid duplicate creation; Deployment flexibility; Cost optimization<br /><br />AWS: Existing OpenSearch Serverless VPC endpoint configuration for Bedrock knowledge base network connectivity<br /><br />Validation: If provided, both vpceId and securityGroupId must be specified |
+| + [standbyReplicas](#vectorStores_additionalProperties_anyOf_i1_standbyReplicas ) | No      | enum (of string) | No         | In #/definitions/StandbyReplicas | Q-ENHANCED-PROPERTY<br />Required standby replica configuration for OpenSearch Serverless high availability enabling fault tolerance and performance optimization. Defines whether to enable or disable standby replicas for the OpenSearch Serverless collection with permanent configuration that cannot be changed after creation.<br /><br />Use cases: High availability; Fault tolerance; Performance optimization; Replica management<br /><br />AWS: OpenSearch Serverless standby replicas for Bedrock knowledge base high availability and fault tolerance<br /><br />Validation: Must be ENABLE or DISABLE; required for replica configuration and cannot be changed after collection creation<br />  *                       |
+| + [subnetIds](#vectorStores_additionalProperties_anyOf_i1_subnetIds )             | No      | array of string  | No         | -                                | Q-ENHANCED-PROPERTY<br />Required array of subnet identifiers for vector store deployment enabling multi-AZ deployment and network distribution. Provides the subnets where vector store components will be deployed for high availability, fault tolerance, and distributed network access.<br /><br />Use cases: Multi-AZ deployment; High availability; Network distribution; Fault tolerance<br /><br />AWS: Subnet IDs for Bedrock knowledge base vector store multi-AZ deployment and network distribution<br /><br />Validation: Must be array of valid subnet IDs; required for vector store deployment and high availability                                                                                                    |
+| - [vectorStoreType](#vectorStores_additionalProperties_anyOf_i1_vectorStoreType ) | No      | enum (of string) | No         | -                                | Q-ENHANCED-PROPERTY<br />Optional vector store type specification for storage backend selection enabling choice between Aurora Serverless and OpenSearch Serverless. Defines the vector storage backend type for knowledge base vector storage with different performance and cost characteristics.<br /><br />Use cases: Storage backend selection; Performance optimization; Cost management; Technology choice<br /><br />AWS: Bedrock knowledge base vector store type for storage backend and technology selection<br /><br />Validation: Must be AURORA_SERVERLESS or OPENSEARCH_SERVERLESS if provided; enables storage backend selection<br />  *                                                                                |
+| + [vpcId](#vectorStores_additionalProperties_anyOf_i1_vpcId )                     | No      | string           | No         | -                                | Q-ENHANCED-PROPERTY<br />Required VPC identifier for vector store network isolation enabling secure deployment and network control. Provides the VPC where the vector store will be deployed for network isolation, security controls, and private connectivity within the specified network environment.<br /><br />Use cases: Network isolation; Security deployment; VPC connectivity; Private networking<br /><br />AWS: VPC ID for Bedrock knowledge base vector store network deployment and isolation<br /><br />Validation: Must be valid VPC ID; required for vector store network deployment and security isolation                                                                                                            |
+
+##### <a name="vectorStores_additionalProperties_anyOf_i1_ossVpce"></a>11.1.2.1. Property `root > vectorStores > additionalProperties > anyOf > item 1 > ossVpce`
+
+|                           |                             |
+| ------------------------- | --------------------------- |
+| **Type**                  | `object`                    |
+| **Required**              | No                          |
+| **Additional properties** | Not allowed                 |
+| **Defined in**            | #/definitions/OssVpceConfig |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional existing OpenSearch Serverless VPC endpoint configuration for reusing pre-existing VPC endpoints enabling deployment flexibility and avoiding duplicate endpoint creation. When provided, the construct will use the existing VPC endpoint instead of creating a new one, preventing deployment failures when a VPC endpoint already exists for the specified VPC.
+
+Use cases: Reuse existing endpoints; Avoid duplicate creation; Deployment flexibility; Cost optimization
+
+AWS: Existing OpenSearch Serverless VPC endpoint configuration for Bedrock knowledge base network connectivity
+
+Validation: If provided, both vpceId and securityGroupId must be specified
+
+| Property                                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description                                      |
+| ----------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------ |
+| + [securityGroupId](#vectorStores_additionalProperties_anyOf_i1_ossVpce_securityGroupId ) | No      | string | No         | -          | The security group ID associated with the VPC endpoint |
+| + [vpceId](#vectorStores_additionalProperties_anyOf_i1_ossVpce_vpceId )                   | No      | string | No         | -          | The existing VPC endpoint ID                           |
+
+###### <a name="vectorStores_additionalProperties_anyOf_i1_ossVpce_securityGroupId"></a>11.1.2.1.1. Property `root > vectorStores > additionalProperties > anyOf > item 1 > ossVpce > securityGroupId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** The security group ID associated with the VPC endpoint
+
+###### <a name="vectorStores_additionalProperties_anyOf_i1_ossVpce_vpceId"></a>11.1.2.1.2. Property `root > vectorStores > additionalProperties > anyOf > item 1 > ossVpce > vpceId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** The existing VPC endpoint ID
+
+##### <a name="vectorStores_additionalProperties_anyOf_i1_standbyReplicas"></a>11.1.2.2. Property `root > vectorStores > additionalProperties > anyOf > item 1 > standbyReplicas`
+
+|                |                               |
+| -------------- | ----------------------------- |
+| **Type**       | `enum (of string)`            |
+| **Required**   | Yes                           |
+| **Defined in** | #/definitions/StandbyReplicas |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required standby replica configuration for OpenSearch Serverless high availability enabling fault tolerance and performance optimization. Defines whether to enable or disable standby replicas for the OpenSearch Serverless collection with permanent configuration that cannot be changed after creation.
+
+Use cases: High availability; Fault tolerance; Performance optimization; Replica management
+
+AWS: OpenSearch Serverless standby replicas for Bedrock knowledge base high availability and fault tolerance
+
+Validation: Must be ENABLE or DISABLE; required for replica configuration and cannot be changed after collection creation
+  *
+
+Must be one of:
+* "DISABLE"
+* "ENABLE"
+
+##### <a name="vectorStores_additionalProperties_anyOf_i1_subnetIds"></a>11.1.2.3. Property `root > vectorStores > additionalProperties > anyOf > item 1 > subnetIds`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | Yes               |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required array of subnet identifiers for vector store deployment enabling multi-AZ deployment and network distribution. Provides the subnets where vector store components will be deployed for high availability, fault tolerance, and distributed network access.
+
+Use cases: Multi-AZ deployment; High availability; Network distribution; Fault tolerance
+
+AWS: Subnet IDs for Bedrock knowledge base vector store multi-AZ deployment and network distribution
+
+Validation: Must be array of valid subnet IDs; required for vector store deployment and high availability
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                | Description |
+| ------------------------------------------------------------------------------ | ----------- |
+| [subnetIds items](#vectorStores_additionalProperties_anyOf_i1_subnetIds_items) | -           |
+
+###### <a name="vectorStores_additionalProperties_anyOf_i1_subnetIds_items"></a>11.1.2.3.1. root > vectorStores > additionalProperties > anyOf > item 1 > subnetIds > subnetIds items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="vectorStores_additionalProperties_anyOf_i1_vectorStoreType"></a>11.1.2.4. Property `root > vectorStores > additionalProperties > anyOf > item 1 > vectorStoreType`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional vector store type specification for storage backend selection enabling choice between Aurora Serverless and OpenSearch Serverless. Defines the vector storage backend type for knowledge base vector storage with different performance and cost characteristics.
+
+Use cases: Storage backend selection; Performance optimization; Cost management; Technology choice
+
+AWS: Bedrock knowledge base vector store type for storage backend and technology selection
+
+Validation: Must be AURORA_SERVERLESS or OPENSEARCH_SERVERLESS if provided; enables storage backend selection
+  *
+
+Must be one of:
+* "AURORA_SERVERLESS"
+* "OPENSEARCH_SERVERLESS"
+
+##### <a name="vectorStores_additionalProperties_anyOf_i1_vpcId"></a>11.1.2.5. Property `root > vectorStores > additionalProperties > anyOf > item 1 > vpcId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Q-ENHANCED-PROPERTY
+Required VPC identifier for vector store network isolation enabling secure deployment and network control. Provides the VPC where the vector store will be deployed for network isolation, security controls, and private connectivity within the specified network environment.
+
+Use cases: Network isolation; Security deployment; VPC connectivity; Private networking
+
+AWS: VPC ID for Bedrock knowledge base vector store network deployment and isolation
+
+Validation: Must be valid VPC ID; required for vector store network deployment and security isolation
+
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-03 at 12:24:12 +0100
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-03 at 12:24:23 +0100
