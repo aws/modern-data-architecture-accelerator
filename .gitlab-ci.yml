@@ -259,6 +259,60 @@ feature_merge_smoke_test:
   variables:
     CAEF_TESTING_BRANCH: main
 
+.integ_test_template: &integ_test_template
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    - merge_requests
+  stage: test
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+  cache:
+    key: feature-merge-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  allow_failure: true
+
+# --- Integration test jobs (bootstrap + test + teardown) ---
+
+feature_merge_integ_split_0:
+  <<: *integ_test_template
+  script:
+    - ./scripts/bootstrap-integ.sh
+    - python3 ./scripts/run-integ-tests.py split_0
+    # - ./scripts/bootstrap-integ.sh --teardown
+  resource_group: integ-us-east-2
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${TESTING_ROLE_ARN}"
+    AWS_REGION: us-east-2
+
+feature_merge_integ_split_1:
+  <<: *integ_test_template
+  script:
+    - ./scripts/bootstrap-integ.sh
+    - python3 ./scripts/run-integ-tests.py split_1
+    # - ./scripts/bootstrap-integ.sh --teardown
+  resource_group: integ-us-west-1
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${TESTING_ROLE_ARN}"
+    AWS_REGION: us-west-1
+
+feature_merge_integ_split_2:
+  <<: *integ_test_template
+  script:
+    - ./scripts/bootstrap-integ.sh
+    - python3 ./scripts/run-integ-tests.py split_2
+    # - ./scripts/bootstrap-integ.sh --teardown
+  resource_group: integ-us-west-2
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${TESTING_ROLE_ARN}"
+    AWS_REGION: us-west-2
+
 feature_version:
   tags:
     - arch:amd64

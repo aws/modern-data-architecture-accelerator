@@ -26,6 +26,7 @@ jsii-dist
 .jsii
 tsconfig.tsbuildinfo
 npm
+.npmrc
 .scannerwork
 coverage
 .mdaa_working
@@ -43,6 +44,9 @@ deployment/cdk-solution-helper/package-lock.json
 deployment/global-s3-assets*
 deployment/regional-s3-assets*
 !jest.config.snapshot.js
+# Integration test build artifacts
+integ/constructs/node_modules
+integ/constructs/dist
 
 # Python build artifacts and virtual environments
 .venv

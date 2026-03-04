@@ -15,12 +15,11 @@ echo "Updating version from $CURRENT_VERSION -> $NEW_VERSION"
 # Update version in lerna.json
 sed -i "s/\"version\": \"${CURRENT_VERSION}\"/\"version\": \"${NEW_VERSION}\"/" lerna.json
 
-# Update version in package.json files (in each package)
+# Update version in package.json files
 find ./ -type f -name "package.json" | grep -v node_modules | xargs -n1 -I{} sed -i "s/\"version\": \"${CURRENT_VERSION}\"/\"version\": \"${NEW_VERSION}\"/" {}
 
 # Update peerDependency and devDependency versions in package.json files
-find ./packages -type f -name "package.json" | grep -v node_modules | xargs -n1 -I{} sed -i  "s/@aws-mdaa\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-mdaa\1\"\2$NEW_VERSION\"/" {}
-sed -i  "s/@aws-mdaa\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-mdaa\1\"\2$NEW_VERSION\"/" ./schemas/package.json
+find ./ -type f -name "package.json" | grep -v node_modules | xargs -n1 -I{} sed -i "s/@aws-mdaa\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-mdaa\1\"\2$NEW_VERSION\"/" {}
 
 # Update version in .jsii files (in each package)
 find ./ -type f -name ".jsii" | grep -v node_modules | xargs -n1 -I{} sed -i "s/\"version\": \"${CURRENT_VERSION}\"/\"version\": \"${NEW_VERSION}\"/" {}

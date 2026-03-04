@@ -64,7 +64,8 @@
     "packages/constructs/L3/*/*",
     "packages/utilities/*",
     "packages/apps/*/*",
-    "schemas"
+    "schemas",
+    "integ/constructs"
   ],
   "repository": {
     "type": "git",

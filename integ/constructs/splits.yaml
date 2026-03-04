@@ -1,0 +1,33 @@
+# Split configuration for L2 construct integration tests
+# Each split runs in a separate CI job
+# Region is passed via AWS_REGION env var to the runner script
+
+splits:
+  - name: split_0
+    tests:
+      - packages/constructs/L2/sagemaker-constructs/test/integ/lifecycle-config.integ.ts
+      - packages/constructs/L2/dms-constructs/test/integ/endpoint.integ.ts
+      - packages/constructs/L2/ecs-constructs/test/integ/ecs.integ.ts
+
+  - name: split_1
+    tests:
+      # It also checks a star pattern of tests runner
+      - packages/constructs/L2/cloudwatch-constructs/test/integ/*
+      - packages/constructs/L2/custom-constructs/test/integ/custom-resource.integ.ts
+      - packages/constructs/L2/glue-constructs/test/integ/dataops.integ.ts
+      - packages/constructs/L2/redshift-constructs/test/integ/param-group.integ.ts
+      - packages/constructs/L2/transfer-family-constructs/test/integ/sftp-server.integ.ts
+      - packages/constructs/L2/sns-constructs/test/integ/topic.integ.ts
+      - packages/constructs/L2/sqs-constructs/test/integ/queue.integ.ts
+
+  - name: split_2
+    tests:
+      - packages/constructs/L2/athena-constructs/test/integ/workgroup.integ.ts
+      - packages/constructs/L2/s3-constructs/test/integ/bucket.integ.ts
+      - packages/constructs/L2/ddb-constructs/test/integ/table.integ.ts
+      - packages/constructs/L2/ec2-constructs/test/integ/extras.integ.ts
+      - packages/constructs/L2/eventbridge-constructs/test/integ/eventbus.integ.ts
+      - packages/constructs/L2/glue-constructs/test/integ/security.integ.ts
+      - packages/constructs/L2/iam-constructs/test/integ/iam.integ.ts
+      - packages/constructs/L2/lambda-constructs/test/integ/function.integ.ts
+      - packages/constructs/L2/construct/test/integ/param-output.integ.ts

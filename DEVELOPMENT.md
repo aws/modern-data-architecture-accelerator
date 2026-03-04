@@ -105,6 +105,31 @@ describe( 'MDAA Construct Compliance Tests', () => {
 } )
 ```
 
+### Integration Testing (L2 Constructs)
+
+Some lightweight MDAA L2 constructs have integration tests that deploy real AWS resources, validate behavior, and tear down. Tests are co-located with their packages in `test/integ/` directories. For full documentation on writing and running integration tests, see [integ/constructs/README.md](integ/constructs/README.md).
+
+#### Prerequisites
+
+- AWS credentials configured
+- `AWS_REGION` or `AWS_DEFAULT_REGION` set
+
+#### Quick Start
+
+```bash
+# Bootstrap shared resources
+./scripts/bootstrap-integ.sh
+
+# Run all tests in a package directory
+python3 ./scripts/run-integ-tests.py packages/constructs/L2/s3-constructs
+
+# Or run all integration tests (might be slow, use directory mode)
+python3 ./scripts/run-integ-tests.py
+
+# Teardown when you're finished
+./scripts/bootstrap-integ.sh --teardown
+```
+
 ### Testing Python Code
 
 MDAA includes comprehensive Python testing for Lambda functions, Glue jobs, and other Python components using modern tooling.

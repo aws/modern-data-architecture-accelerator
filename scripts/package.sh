@@ -10,8 +10,8 @@ mkdir -p $CI_PROJECT_DIR/target/package-build
 # will link them so they are included in the packages.
 npx lerna exec "$CI_PROJECT_DIR/scripts/link_bundled_deps.sh $CI_PROJECT_DIR/node_modules" --stream
 
-# Build npm packages
-npx lerna exec "npm pack --pack-destination $CI_PROJECT_DIR/target/package-build" --stream
+# Build npm packages (skip private packages)
+npx lerna exec "if [ \"\$(jq -r '.private // false' package.json)\" != 'true' ]; then npm pack --pack-destination $CI_PROJECT_DIR/target/package-build; else echo 'Skipping private package'; fi" --stream
 
 # Use jsii to build JSII Packages
 npx lerna run package --stream
