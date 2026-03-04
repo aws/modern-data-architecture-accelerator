@@ -7794,4 +7794,3 @@ Validation: Must be valid PropsNode workflow definition; required for workflow c
 | **Additional properties** | Any type allowed |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-03 at 12:24:13 +0100

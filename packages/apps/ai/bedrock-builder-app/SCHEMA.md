@@ -13394,4 +13394,3 @@ AWS: VPC ID for Bedrock knowledge base vector store network deployment and isola
 Validation: Must be valid VPC ID; required for vector store network deployment and security isolation
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-03 at 12:24:23 +0100

@@ -7252,4 +7252,3 @@ AWS: Amazon Athena workgroup bytes scanned cutoff for query cost control and res
 Validation: Must be positive integer in bytes if provided; enforces per-query scanning limits
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-03 at 12:24:20 +0100

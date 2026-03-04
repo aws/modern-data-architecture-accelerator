@@ -7233,4 +7233,3 @@ Validation: Must be valid AWS Service Catalog portfolio ARN format
 | **Required** | Yes      |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-03 at 12:24:25 +0100

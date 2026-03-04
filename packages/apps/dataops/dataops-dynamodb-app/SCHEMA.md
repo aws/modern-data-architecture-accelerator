@@ -7282,4 +7282,3 @@ AWS: DynamoDB write capacity units for provisioned throughput and write performa
 Validation: Must be positive integer if provided; represents writes per second for 1KB items
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-03 at 12:24:15 +0100

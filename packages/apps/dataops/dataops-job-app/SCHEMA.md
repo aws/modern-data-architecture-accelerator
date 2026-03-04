@@ -7727,4 +7727,3 @@ AWS: Glue job configuration for ETL processing and data transformation workflows
 Validation: executionRoleArn, command, and description are required; other properties are optional with specific constraints
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-03 at 12:24:18 +0100

@@ -7284,4 +7284,3 @@ Validation: Must be array of valid public key names from publicKeys configuratio
 | **Required** | No       |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-03 at 12:24:33 +0100
