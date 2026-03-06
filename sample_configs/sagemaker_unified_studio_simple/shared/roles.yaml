@@ -56,32 +56,50 @@ generatePolicies:
             - datazone:ListDomains
           Resource: "*"
 
-        # Project and environment cleanup permissions
+        # Project and environment read permissions
+        - Sid: SMUSProjectRead
+          Effect: Allow
+          Action:
+            - datazone:ListProjects
+            - datazone:GetProject
+            - datazone:ListEnvironments
+            - datazone:GetEnvironment
+            - lakeformation:ListPermissions
+          Resource: "*"
+
+        # Destructive project/environment actions — consider requiring additional approval or MFA
         - Sid: SMUSProjectCleanup
           Effect: Allow
           Action:
             - datazone:DeleteProject
-            - datazone:ListProjects
-            - datazone:GetProject
             - datazone:DeleteEnvironment
-            - datazone:ListEnvironments
-            - datazone:GetEnvironment
             - lakeformation:RevokePermissions
-            - lakeformation:ListPermissions
           Resource: "*"
 
-        # Required permissions for domain operations
-        - Sid: SMUSDomainSupport
+        # KMS read permissions for domain operations
+        - Sid: SMUSKmsRead
           Effect: Allow
           Action:
-            - iam:PassRole
             - kms:ListAliases
             - kms:DescribeKey
           Resource: "*"
 
+        # iam:PassRole scoped to SMUS domain roles only
+        - Sid: SMUSPassRole
+          Effect: Allow
+          Action:
+            - iam:PassRole
+          Resource:
+            - !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/*-execution-role"
+            - !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/*-provisioning-role"
+            - !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/service-*"
+          Condition:
+            StringEquals:
+              iam:PassedToService: datazone.amazonaws.com
+
     suppressions:
       - id: "AwsSolutions-IAM5"
-        reason: "Domain management requires wildcard permissions for resource creation and management."
+        reason: "DataZone/SageMaker domain management APIs do not support resource-level permissions. iam:PassRole is scoped to SMUS domain roles with iam:PassedToService condition."
 
 # The list of roles which will be generated
 generateRoles:

@@ -521,7 +521,7 @@ export class CommonDomainHelper {
               actions: USER_ACTIONS,
               resources: [domainKmsKeyArn],
             }),
-            // DataZone read permissions
+            // DataZone read permissions (these APIs do not support resource-level permissions)
             new PolicyStatement({
               resources: ['*'],
               actions: [
@@ -530,8 +530,12 @@ export class CommonDomainHelper {
                 'datazone:GetEnvironment',
                 'datazone:ListConnections',
                 'datazone:GetUserProfile',
-                'iam:GetRole',
               ],
+            }),
+            // iam:GetRole scoped to DataZone user roles only
+            new PolicyStatement({
+              resources: [`arn:${this.props.partition}:iam::${account}:role/datazone_usr_role_*`],
+              actions: ['iam:GetRole'],
             }),
             // IAM permissions for DataZone user roles
             new PolicyStatement({

@@ -3468,10 +3468,25 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
                       "datazone:GetEnvironment",
                       "datazone:ListConnections",
                       "datazone:GetUserProfile",
-                      "iam:GetRole",
                     ],
                     "Effect": "Allow",
                     "Resource": "*",
+                  },
+                  {
+                    "Action": "iam:GetRole",
+                    "Effect": "Allow",
+                    "Resource": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:test-partition:iam::",
+                          {
+                            "Ref": "AWS::AccountId",
+                          },
+                          ":role/datazone_usr_role_*",
+                        ],
+                      ],
+                    },
                   },
                   {
                     "Action": "iam:AttachRolePolicy",
@@ -10691,10 +10706,25 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
                     "datazone:GetEnvironment",
                     "datazone:ListConnections",
                     "datazone:GetUserProfile",
-                    "iam:GetRole",
                   ],
                   "Effect": "Allow",
                   "Resource": "*",
+                },
+                {
+                  "Action": "iam:GetRole",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:test-partition:iam::",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":role/datazone_usr_role_*",
+                      ],
+                    ],
+                  },
                 },
                 {
                   "Action": "iam:AttachRolePolicy",
