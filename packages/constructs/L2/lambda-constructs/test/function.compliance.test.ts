@@ -58,4 +58,8 @@ describe('MDAA Construct Compliance Tests', () => {
       Role: testLambdaRole.roleArn,
     });
   });
+
+  test('No LogRetention custom resource is created', () => {
+    template.resourceCountIs('Custom::LogRetention', 0);
+  });
 });

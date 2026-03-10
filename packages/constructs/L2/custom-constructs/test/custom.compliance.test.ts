@@ -36,11 +36,11 @@ describe('MDAA Construct Compliance Tests', () => {
 
   // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
   test('Validate function resource counts', () => {
-    template.resourceCountIs('AWS::Lambda::Function', 3);
+    template.resourceCountIs('AWS::Lambda::Function', 2);
   });
 
   test('Validate role resource counts', () => {
-    template.resourceCountIs('AWS::IAM::Role', 3);
+    template.resourceCountIs('AWS::IAM::Role', 2);
   });
 
   test('Handler Function', () => {

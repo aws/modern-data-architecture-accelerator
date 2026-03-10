@@ -4,6 +4,8 @@
 
 ### General Changes
 
+- Fixed deployment failures in accounts with SCPs that deny `logs:DeleteRetentionPolicy` by preventing CDK's `LogRetention` custom resource from being created in stacks that use `MdaaLambdaFunction`
+
 - SSM parameters can now be referenced using simplified scope prefixes:
   - `ssm-org:<path>` resolves to `ssm:/{{org}}/<path>`
   - `ssm-domain:<path>` resolves to `ssm:/{{org}}/{{domain}}/<path>`

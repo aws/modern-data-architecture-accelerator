@@ -303,21 +303,18 @@ export class MdaaLambdaFunction extends Function {
         resourceType: 'lambda',
         resourceId: props.functionName,
         name: 'log-group',
-        value: this.logGroup.logGroupName,
+        value: `/aws/lambda/${this.functionName}`,
         ...props,
       },
       scope,
     );
 
-    // Apply CDK-NAG suppressions for LogRetention custom resource
-    // The LogRetention construct is created by CDK when logGroup is accessed (above)
-    // It's created at the stack level with a dynamic ID
+    // Apply CDK-NAG suppressions for LogRetention custom resource if it gets
+    // created by external code accessing this.logGroup
     this.applyLogRetentionSuppressions();
   }
 
   private applyLogRetentionSuppressions(): void {
-    // Find all LogRetention constructs at the stack level
-    // The LogRetention construct is created by CDK with a dynamic ID when logGroup is accessed
     const stack = this.node.root;
     const allConstructs = stack.node.findAll();
     const logRetentionConstructs = allConstructs.filter(child => child.node.id.startsWith('LogRetention'));

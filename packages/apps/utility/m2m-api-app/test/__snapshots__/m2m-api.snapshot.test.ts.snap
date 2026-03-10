@@ -4,148 +4,6 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-m2m-main": {
     "Description": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.4.0",
-    "Mappings": {
-      "LatestNodeRuntimeMap": {
-        "af-south-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-east-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-east-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-northeast-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-northeast-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-northeast-3": {
-          "value": "nodejs22.x",
-        },
-        "ap-south-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-south-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-3": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-4": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-5": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-6": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-7": {
-          "value": "nodejs22.x",
-        },
-        "ca-central-1": {
-          "value": "nodejs22.x",
-        },
-        "ca-west-1": {
-          "value": "nodejs22.x",
-        },
-        "cn-north-1": {
-          "value": "nodejs22.x",
-        },
-        "cn-northwest-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-central-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-central-2": {
-          "value": "nodejs22.x",
-        },
-        "eu-isoe-west-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-north-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-south-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-south-2": {
-          "value": "nodejs22.x",
-        },
-        "eu-west-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-west-2": {
-          "value": "nodejs22.x",
-        },
-        "eu-west-3": {
-          "value": "nodejs22.x",
-        },
-        "eusc-de-east-1": {
-          "value": "nodejs22.x",
-        },
-        "il-central-1": {
-          "value": "nodejs22.x",
-        },
-        "me-central-1": {
-          "value": "nodejs22.x",
-        },
-        "me-south-1": {
-          "value": "nodejs22.x",
-        },
-        "mx-central-1": {
-          "value": "nodejs22.x",
-        },
-        "sa-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-east-2": {
-          "value": "nodejs22.x",
-        },
-        "us-gov-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-gov-west-1": {
-          "value": "nodejs22.x",
-        },
-        "us-iso-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-iso-west-1": {
-          "value": "nodejs22.x",
-        },
-        "us-isob-east-1": {
-          "value": "nodejs18.x",
-        },
-        "us-isob-west-1": {
-          "value": "nodejs18.x",
-        },
-        "us-isof-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-isof-south-1": {
-          "value": "nodejs22.x",
-        },
-        "us-west-1": {
-          "value": "nodejs22.x",
-        },
-        "us-west-2": {
-          "value": "nodejs22.x",
-        },
-      },
-    },
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -256,9 +114,14 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
           "Name": "test-org:test-domain:test-m2m-main:lambda:logauthevent:log-group",
         },
         "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
           ],
         },
       },
@@ -341,9 +204,14 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
           "Name": "test-org:test-domain:test-m2m-main:lambda:signeds3urlgen:log-group",
         },
         "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
           ],
         },
       },
@@ -368,233 +236,6 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
       },
     },
     "Resources": {
-      "REPLACED-CFN-LOGICAL-ID": {
-        "DependsOn": [
-          "REPLACED-CFN-LOGICAL-ID",
-          "REPLACED-CFN-LOGICAL-ID",
-        ],
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "applies_to": [
-                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-                ],
-                "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
-              },
-              {
-                "applies_to": [
-                  "Resource::*",
-                ],
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "Code": {
-            "S3Bucket": {
-              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-            },
-            "S3Key": "REPLACED-GENERATED-NAME.zip",
-          },
-          "Handler": "index.handler",
-          "Role": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
-            ],
-          },
-          "Runtime": {
-            "Fn::FindInMap": [
-              "LatestNodeRuntimeMap",
-              {
-                "Ref": "AWS::Region",
-              },
-              "value",
-            ],
-          },
-          "Tags": [
-            {
-              "Key": "mdaa_cdk_app",
-              "Value": "m2m-api",
-            },
-            {
-              "Key": "mdaa_domain",
-              "Value": "test-domain",
-            },
-            {
-              "Key": "mdaa_env",
-              "Value": "test-env",
-            },
-            {
-              "Key": "mdaa_module_name",
-              "Value": "test-m2m-main",
-            },
-            {
-              "Key": "mdaa_org",
-              "Value": "test-org",
-            },
-          ],
-          "Timeout": 900,
-        },
-        "Type": "AWS::Lambda::Function",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "applies_to": [
-                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-                ],
-                "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
-              },
-              {
-                "applies_to": [
-                  "Resource::*",
-                ],
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "AssumeRolePolicyDocument": {
-            "Statement": [
-              {
-                "Action": "sts:AssumeRole",
-                "Effect": "Allow",
-                "Principal": {
-                  "Service": "lambda.amazonaws.com",
-                },
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "ManagedPolicyArns": [
-            {
-              "Fn::Join": [
-                "",
-                [
-                  "arn:",
-                  {
-                    "Ref": "AWS::Partition",
-                  },
-                  ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-                ],
-              ],
-            },
-          ],
-          "Tags": [
-            {
-              "Key": "mdaa_cdk_app",
-              "Value": "m2m-api",
-            },
-            {
-              "Key": "mdaa_domain",
-              "Value": "test-domain",
-            },
-            {
-              "Key": "mdaa_env",
-              "Value": "test-env",
-            },
-            {
-              "Key": "mdaa_module_name",
-              "Value": "test-m2m-main",
-            },
-            {
-              "Key": "mdaa_org",
-              "Value": "test-org",
-            },
-          ],
-        },
-        "Type": "AWS::IAM::Role",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "applies_to": [
-                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-                ],
-                "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
-              },
-              {
-                "applies_to": [
-                  "Resource::*",
-                ],
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "PolicyDocument": {
-            "Statement": [
-              {
-                "Action": [
-                  "logs:PutRetentionPolicy",
-                  "logs:DeleteRetentionPolicy",
-                ],
-                "Effect": "Allow",
-                "Resource": "*",
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-          "Roles": [
-            {
-              "Ref": "REPLACED-CFN-LOGICAL-ID",
-            },
-          ],
-        },
-        "Type": "AWS::IAM::Policy",
-      },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "Description": "Stack description parameter to update on version changes",
@@ -1639,96 +1280,6 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
           "cdk_nag": {
             "rules_to_suppress": [
               {
-                "applies_to": [
-                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-                ],
-                "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
-              },
-              {
-                "applies_to": [
-                  "Resource::*",
-                ],
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function only logs to stdout. DLQ is not required.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging successful authentication requests. Concurrency is unbounded by design.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function only logs to stdout. DLQ is not required.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function only logs to stdout. DLQ is not required.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging successful authentication requests. Concurrency is unbounded by design.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging successful authentication requests. Concurrency is unbounded by design.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "LogGroupName": {
-            "Fn::Join": [
-              "",
-              [
-                "/aws/lambda/",
-                {
-                  "Ref": "REPLACED-CFN-LOGICAL-ID",
-                },
-              ],
-            ],
-          },
-          "ServiceToken": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
-            ],
-          },
-        },
-        "Type": "Custom::LogRetention",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
                 "id": "NIST.800.53.R5-LambdaDLQ",
                 "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function only logs to stdout. DLQ is not required.",
               },
@@ -1840,9 +1391,14 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
           },
           "Type": "String",
           "Value": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
             ],
           },
         },
@@ -2426,84 +1982,6 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
           "cdk_nag": {
             "rules_to_suppress": [
               {
-                "applies_to": [
-                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-                ],
-                "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
-              },
-              {
-                "applies_to": [
-                  "Resource::*",
-                ],
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation behind API gateway.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation behind API gateway.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation behind API gateway.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "LogGroupName": {
-            "Fn::Join": [
-              "",
-              [
-                "/aws/lambda/",
-                {
-                  "Ref": "REPLACED-CFN-LOGICAL-ID",
-                },
-              ],
-            ],
-          },
-          "ServiceToken": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
-            ],
-          },
-        },
-        "Type": "Custom::LogRetention",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
                 "id": "NIST.800.53.R5-LambdaDLQ",
                 "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
               },
@@ -2591,9 +2069,14 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
           },
           "Type": "String",
           "Value": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
             ],
           },
         },
@@ -2858,148 +2341,6 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
 exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
 {
   "Description": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.4.0",
-  "Mappings": {
-    "LatestNodeRuntimeMap": {
-      "af-south-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-east-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs22.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-4": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-5": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-6": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-7": {
-        "value": "nodejs22.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs22.x",
-      },
-      "ca-west-1": {
-        "value": "nodejs22.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs22.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs22.x",
-      },
-      "eu-isoe-west-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs22.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs22.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs22.x",
-      },
-      "eusc-de-east-1": {
-        "value": "nodejs22.x",
-      },
-      "il-central-1": {
-        "value": "nodejs22.x",
-      },
-      "me-central-1": {
-        "value": "nodejs22.x",
-      },
-      "me-south-1": {
-        "value": "nodejs22.x",
-      },
-      "mx-central-1": {
-        "value": "nodejs22.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-east-2": {
-        "value": "nodejs22.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs22.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs22.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isof-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-isof-south-1": {
-        "value": "nodejs22.x",
-      },
-      "us-west-1": {
-        "value": "nodejs22.x",
-      },
-      "us-west-2": {
-        "value": "nodejs22.x",
-      },
-    },
-  },
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -3110,9 +2451,14 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
         "Name": "test-org:test-domain:test-m2m-main:lambda:logauthevent:log-group",
       },
       "Value": {
-        "Fn::GetAtt": [
-          "REPLACED-CFN-LOGICAL-ID",
-          "LogGroupName",
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
         ],
       },
     },
@@ -3195,9 +2541,14 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
         "Name": "test-org:test-domain:test-m2m-main:lambda:signeds3urlgen:log-group",
       },
       "Value": {
-        "Fn::GetAtt": [
-          "REPLACED-CFN-LOGICAL-ID",
-          "LogGroupName",
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
         ],
       },
     },
@@ -3222,233 +2573,6 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
     },
   },
   "Resources": {
-    "REPLACED-CFN-LOGICAL-ID": {
-      "DependsOn": [
-        "REPLACED-CFN-LOGICAL-ID",
-        "REPLACED-CFN-LOGICAL-ID",
-      ],
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "applies_to": [
-                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-              "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
-            },
-            {
-              "applies_to": [
-                "Resource::*",
-              ],
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-          },
-          "S3Key": "REPLACED-GENERATED-NAME.zip",
-        },
-        "Handler": "index.handler",
-        "Role": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "m2m-api",
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain",
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env",
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-m2m-main",
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "applies_to": [
-                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-              "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
-            },
-            {
-              "applies_to": [
-                "Resource::*",
-              ],
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "m2m-api",
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain",
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env",
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-m2m-main",
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "applies_to": [
-                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-              "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
-            },
-            {
-              "applies_to": [
-                "Resource::*",
-              ],
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "logs:PutRetentionPolicy",
-                "logs:DeleteRetentionPolicy",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-        "Roles": [
-          {
-            "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "Description": "Stack description parameter to update on version changes",
@@ -4493,96 +3617,6 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "applies_to": [
-                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-              "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
-            },
-            {
-              "applies_to": [
-                "Resource::*",
-              ],
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function only logs to stdout. DLQ is not required.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging successful authentication requests. Concurrency is unbounded by design.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function only logs to stdout. DLQ is not required.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function only logs to stdout. DLQ is not required.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging successful authentication requests. Concurrency is unbounded by design.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is logging successful authentication requests. Concurrency is unbounded by design.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "REPLACED-CFN-LOGICAL-ID",
-              },
-            ],
-          ],
-        },
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
               "id": "NIST.800.53.R5-LambdaDLQ",
               "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function only logs to stdout. DLQ is not required.",
             },
@@ -4694,9 +3728,14 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
           ],
         },
       },
@@ -5280,84 +4319,6 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "applies_to": [
-                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-              "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
-            },
-            {
-              "applies_to": [
-                "Resource::*",
-              ],
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation behind API gateway.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation behind API gateway.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation behind API gateway.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "REPLACED-CFN-LOGICAL-ID",
-              },
-            ],
-          ],
-        },
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
               "id": "NIST.800.53.R5-LambdaDLQ",
               "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:LINE:COL] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
             },
@@ -5445,9 +4406,14 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
           ],
         },
       },
