@@ -29,7 +29,7 @@ function validateModelArn(arn: string): string {
 function isInferenceProfileId(modelIdentifier: string): boolean {
   // Known region prefixes for cross-region inference profiles (based on AWS documentation)
   // https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html
-  const knownRegionPrefixes = ['us', 'us-gov', 'eu', 'apac'];
+  const knownRegionPrefixes = ['us', 'us-gov', 'eu', 'apac', 'global'];
 
   // Pattern: {region}.{provider}.{model-identifier}
   const parts = modelIdentifier.split('.');

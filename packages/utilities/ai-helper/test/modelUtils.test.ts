@@ -155,6 +155,16 @@ describe('Utils - resolveModelArn', () => {
       expect(result).toBe(expectedArn);
     });
 
+    test('should convert global inference profile ID to inference profile ARN', () => {
+      const inferenceProfileId = 'global.anthropic.claude-haiku-4-5-20251001-v1:0';
+      const expectedArn =
+        'arn:aws:bedrock:eu-west-1:123456789012:inference-profile/global.anthropic.claude-haiku-4-5-20251001-v1:0';
+
+      const result = resolveModelArn(inferenceProfileId, mockPartition, 'eu-west-1', mockAccount);
+
+      expect(result).toBe(expectedArn);
+    });
+
     test('should handle Meta model in inference profile', () => {
       const inferenceProfileId = 'eu.meta.llama2-70b-chat-v1';
       const expectedArn = 'arn:aws:bedrock:eu-west-1:123456789012:inference-profile/eu.meta.llama2-70b-chat-v1';

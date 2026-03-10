@@ -749,6 +749,8 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
     const keyUsageStatement = new PolicyStatement({
       actions: [...ENCRYPT_ACTIONS, ...DECRYPT_ACTIONS],
       principals: [executionRole, deploymentRole],
+      // Use of * mirrors what is done in the CDK methods for adding policy helpers.
+      resources: ['*'],
       effect: Effect.ALLOW,
     });
     efsKmsKey.addToResourcePolicy(keyUsageStatement);

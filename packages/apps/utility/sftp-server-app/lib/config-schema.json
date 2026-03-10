@@ -2307,6 +2307,10 @@
                     "description": "Q-ENHANCED-PROPERTY\nOptional boolean flag to enable internet-facing SFTP server with public IP address allocation enabling external client access. Controls whether the SFTP server will be accessible from the internet with public IP addresses or remain internal to the VPC for private access only.\n\nUse cases: External client access; Internet connectivity; Public SFTP access; B2B file exchange; External partner integration\n\nAWS: AWS Transfer Family SFTP server internet-facing configuration for public IP allocation and external access\n\nValidation: Must be boolean value if provided; optional for internet accessibility control",
                     "type": "boolean"
                 },
+                "securityPolicyName": {
+                    "description": "Optional Transfer Family security policy name controlling cryptographic algorithms for SFTP connections.\nDefaults to 'TransferSecurityPolicy-FIPS-2020-06' for backwards compatibility.\nUse a non-FIPS policy (e.g. 'TransferSecurityPolicy-2024-01') in regions that do not support FIPS.",
+                    "type": "string"
+                },
                 "subnetIds": {
                     "description": "Q-ENHANCED-PROPERTY\nRequired array of subnet identifiers where the SFTP server will be hosted enabling multi-AZ deployment and network distribution. Defines the specific subnets within the VPC that will host the SFTP server endpoints providing availability and network segmentation for file transfer operations.\n\nUse cases: Multi-AZ deployment; Network segmentation; Availability distribution; Subnet-level isolation; Network architecture\n\nAWS: Amazon VPC subnet identifiers for AWS Transfer Family SFTP server deployment and network distribution\n\nValidation: Must be array of valid subnet identifiers; required for SFTP server deployment; subnets must be in specified VPC",
                     "items": {

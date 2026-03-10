@@ -63,6 +63,12 @@ export interface MdaaSFTPServerProps extends MdaaConstructProps {
   readonly preAuthenticationLoginBanner?: string;
   readonly tags?: CfnTag[];
   readonly workflowDetails?: CfnServer.WorkflowDetailsProperty | IResolvable;
+  /**
+   * Optional Transfer Family security policy name controlling cryptographic algorithms for SFTP connections.
+   * Defaults to 'TransferSecurityPolicy-FIPS-2020-06' for backwards compatibility.
+   * Use a non-FIPS policy (e.g. 'TransferSecurityPolicy-2024-01') in regions that do not support FIPS.
+   */
+  readonly securityPolicyName?: string;
 }
 
 /**
@@ -83,7 +89,7 @@ export class MdaaSFTPServer extends CfnServer {
         subnetIds: props.subnetIds,
       },
       protocols: ['SFTP'],
-      securityPolicyName: MdaaSFTPServer.SECURITY_POLICY_NAME,
+      securityPolicyName: props.securityPolicyName ?? MdaaSFTPServer.SECURITY_POLICY_NAME,
       loggingRole: props.loggingRole.roleArn,
     };
     const allProps = { ...props, ...overrideProps };

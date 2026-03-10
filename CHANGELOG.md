@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.5.0] - 2026-02-28
+## [1.5.0] - 2026-03-13
 
 ### General Changes
 
@@ -74,6 +74,12 @@
 - All DataOps Modules can now be deployed independently without a DataOps Project
   - `projectName` config parameter has been made optional
   - Where project resources were automatically used when deployed with a DataOps Project, these resources can now be directly specified in module configs
+
+### Utility Module Changes
+
+#### SFTP Server Module
+
+- Added optional `securityPolicyName` configuration for Transfer Family SFTP server, enabling deployment in regions that do not support FIPS security policies (e.g. eu-west-1). Defaults to `TransferSecurityPolicy-FIPS-2020-06` for backwards compatibility.
 
 ## [1.4.0] - 2026-01-30
 

@@ -68,6 +68,12 @@ export interface ServerProps {
    * Validation: Must be array of valid CIDR blocks; required for security group ingress rules and access control
    **/
   readonly ingressCidrs: string[];
+  /**
+   * Optional Transfer Family security policy name controlling cryptographic algorithms for SFTP connections.
+   * Defaults to 'TransferSecurityPolicy-FIPS-2020-06' for backwards compatibility.
+   * Use a non-FIPS policy (e.g. 'TransferSecurityPolicy-2024-01') in regions that do not support FIPS.
+   */
+  readonly securityPolicyName?: string;
 }
 export interface SftpServerL3ConstructProps extends MdaaL3ConstructProps {
   /**
@@ -131,6 +137,7 @@ export class SftpServerL3Construct extends MdaaL3Construct {
       securityGroupId: securityGroup.attrGroupId,
       subnetIds: this.props.server.subnetIds,
       loggingRole: loggingRole,
+      securityPolicyName: this.props.server.securityPolicyName,
     };
 
     // Build our SFTP server!

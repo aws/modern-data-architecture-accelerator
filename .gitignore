@@ -65,4 +65,9 @@ dist/
 e2e
 
 tmp
+.kiro/
+.apex/
+.workflow-state
+generated/design/
+project-doc/
 .cache
