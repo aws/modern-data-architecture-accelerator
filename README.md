@@ -138,6 +138,7 @@ Starter kits provide secure, prepackaged foundations for common use cases:
 | [GenAI Accelerator](starter_kits/genai_accelerator/README.md) | Enterprise-ready generative AI platform with Amazon Bedrock | ~10–15 min |
 | [Governed Lakehouse](starter_kits/governed_lakehouse/README.md) | DataZone-governed lakehouse with fine-grained access control | ~20–25 min |
 | [Health Data Accelerator](starter_kits/health_data_accelerator/README.md) | Healthcare data lake with DMS (Database Migration Service) integration | ~30–45 min |
+| [SMUS Research Environment](starter_kits/smus_research_environment/README.md) | A SageMaker Unified Studio-enabled architecture suitable for facilitating team-based research activities | ~20–25 min | 
 
 ## Sample Configurations
 

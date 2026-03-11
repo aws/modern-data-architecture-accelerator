@@ -1,8 +1,8 @@
-# SageMaker Unified Studio with DataZone
+# SageMaker Unified Studio Research Environment
 
-This is a sample MDAA configuration for deploying a SageMaker Unified Studio domain and basic project profiles. This sample is appropriate for very small organizations with only a few teams, operating within a single AWS account, and where data assets will be created and consumed entirely within SageMaker Unified Studio.
+This is a starter MDAA configuration for deploying a SageMaker Unified Studio-based Research Environment. This architectyre is appropriate for organizations with multiple teams operating within a single AWS account, and where data assets will be created and consumed entirely within SageMaker Unified Studio. For more complex organizations with teams operating across multiple account, and/or with custom research compute needs (via SMUS custom blueprints), see the SMUS Data Mesh sample configs.
 
-![Simple SageMaker Unified Studio](docs/smus_simple.png)
+![SageMaker Unified Studio Research Environment](docs/smus_research_environment.png)
 
 ---
 
