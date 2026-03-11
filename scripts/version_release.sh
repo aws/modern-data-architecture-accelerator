@@ -41,5 +41,11 @@ if [ -f "solution-manifest.yaml" ]; then
   sed -i "s/version: v${CURRENT_VERSION}/version: v${NEW_VERSION}/" solution-manifest.yaml
 fi
 
+# Update version badge in README.md
+if [ -f "README.md" ]; then
+  echo "Updating README.md version badge from $CURRENT_VERSION to $NEW_VERSION"
+  sed -i "s/version-${CURRENT_VERSION}-green/version-${NEW_VERSION}-green/" README.md
+fi
+
 npm install
 
