@@ -2741,12 +2741,10 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         .filter(name => name?.includes('kb-'));
 
       // Should have 3 consolidated policies (vectorstore, foundation-models, datasync) for the KB role
-      // Plus 3 additional vector store policies for Aurora handler roles (one per KB)
-      // Total = 6 policies matching kb-vectorsto, kb-foundatio, or kb-datasync
       const consolidatedPolicies = policyNames.filter(
         name => name?.includes('kb-vectorsto') || name?.includes('kb-foundatio') || name?.includes('kb-datasync'),
       );
-      expect(consolidatedPolicies.length).toBe(6);
+      expect(consolidatedPolicies.length).toBe(3);
     });
 
     test('Consolidated Vector Store Policy Has Correct Permissions', () => {
@@ -2925,13 +2923,13 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const kbPolicyNames = allPolicyNames.filter(name => name?.includes('kb-'));
 
       // Should have 6 consolidated policies (3 per role: vectorstore, foundation-model, datasync)
-      // Plus 2 additional vector store policies for Aurora handler roles (one per KB)
-      // Total = 8 policies
+      // Note: MdaaRdsDataResource now handles its own permissions internally via inline policies,
+      // so no additional managed policies are created for Aurora handler roles
       const consolidatedPolicies = kbPolicyNames.filter(
         name => name?.includes('kb-vectorsto') || name?.includes('kb-foundatio') || name?.includes('kb-datasync'),
       );
 
-      expect(consolidatedPolicies.length).toBe(8);
+      expect(consolidatedPolicies.length).toBe(6);
     });
   });
 

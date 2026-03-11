@@ -17,6 +17,7 @@
 - CLI now supports !include tag to reference external files in YAML configurations
 - Simplified installer stack: removed user requirements for CodePipeline/S3 source and CodeStar ARN, and replaced `npm install` with running `mdaa` from npmjs.org.
 - Added baseline diff support: new `--cdk-out`, `--baseline`, and `--diff-out` CLI flags enable comparing CloudFormation templates against stored baselines without requiring AWS deployment
+- BedrockKnowledgeBaseL3Construct creates fewer policies for corresponding MdaaRdsDataResources; it used to attach overly permissive policy with 11 statements to them, but now MdaaRdsDataResource manages its own policy statements internally -- only 3 required, as a result it also becomes self-sufficent and can be deployed independently;
 
 ### Governance Module Changes
 

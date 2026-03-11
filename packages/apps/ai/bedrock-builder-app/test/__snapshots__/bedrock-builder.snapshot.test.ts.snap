@@ -706,42 +706,6 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-bedrock-builder-app:managed-policy:kbvectorstoretestknowledgebasehandler:arn",
-        },
-        "Value": {
-          "Ref": "REPLACED-CFN-LOGICAL-ID",
-        },
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Export": {
-          "Name": "test-org:test-domain:test-bedrock-builder-app:managed-policy:kbvectorstoretestknowledgebasehandler:name",
-        },
-        "Value": {
-          "Fn::Select": [
-            1,
-            {
-              "Fn::Split": [
-                "/",
-                {
-                  "Fn::Select": [
-                    5,
-                    {
-                      "Fn::Split": [
-                        ":",
-                        {
-                          "Ref": "REPLACED-CFN-LOGICAL-ID",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Export": {
           "Name": "test-org:test-domain:test-bedrock-builder-app:datasource:testdsbdaparsing:id",
         },
         "Value": {
@@ -5311,136 +5275,6 @@ Provide responses in markdown format with source citations
         "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Properties": {
-          "Description": "",
-          "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-app-k-854c42e",
-          "Path": "/",
-          "PolicyDocument": {
-            "Statement": [
-              {
-                "Action": [
-                  "secretsmanager:GetSecretValue",
-                  "secretsmanager:DescribeSecret",
-                ],
-                "Effect": "Allow",
-                "Resource": {
-                  "Ref": "REPLACED-CFN-LOGICAL-ID",
-                },
-                "Sid": "DBSecretAccess",
-              },
-              {
-                "Action": [
-                  "rds-data:ExecuteStatement",
-                  "rds-data:BatchExecuteStatement",
-                  "rds:DescribeDBClusters",
-                ],
-                "Effect": "Allow",
-                "Resource": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":rds:",
-                      {
-                        "Ref": "AWS::Region",
-                      },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId",
-                      },
-                      ":cluster:",
-                      {
-                        "Ref": "REPLACED-CFN-LOGICAL-ID",
-                      },
-                    ],
-                  ],
-                },
-                "Sid": "DBQuery",
-              },
-              {
-                "Action": [
-                  "kms:Decrypt",
-                  "kms:Encrypt",
-                  "kms:ReEncryptFrom",
-                  "kms:ReEncryptTo",
-                  "kms:GenerateDataKey",
-                  "kms:GenerateDataKeyWithoutPlaintext",
-                  "kms:GenerateDataKeyPair",
-                  "kms:GenerateDataKeyPairWithoutPlaintext",
-                ],
-                "Effect": "Allow",
-                "Resource": {
-                  "Fn::GetAtt": [
-                    "REPLACED-CFN-LOGICAL-ID",
-                    "Arn",
-                  ],
-                },
-                "Sid": "KMSUsage",
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-        },
-        "Type": "AWS::IAM::ManagedPolicy",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Properties": {
-          "Name": "/test-org/test-domain/test-bedrock-builder-app/managed-policy/kb-vectorstore-test-knowledge-base-handler/arn",
-          "Tags": {
-            "mdaa_cdk_app": "bedrock-builder",
-            "mdaa_domain": "test-domain",
-            "mdaa_env": "test-env",
-            "mdaa_module_name": "test-bedrock-builder-app",
-            "mdaa_org": "test-org",
-          },
-          "Type": "String",
-          "Value": {
-            "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-        },
-        "Type": "AWS::SSM::Parameter",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Properties": {
-          "Name": "/test-org/test-domain/test-bedrock-builder-app/managed-policy/kb-vectorstore-test-knowledge-base-handler/name",
-          "Tags": {
-            "mdaa_cdk_app": "bedrock-builder",
-            "mdaa_domain": "test-domain",
-            "mdaa_env": "test-env",
-            "mdaa_module_name": "test-bedrock-builder-app",
-            "mdaa_org": "test-org",
-          },
-          "Type": "String",
-          "Value": {
-            "Fn::Select": [
-              1,
-              {
-                "Fn::Split": [
-                  "/",
-                  {
-                    "Fn::Select": [
-                      5,
-                      {
-                        "Fn::Split": [
-                          ":",
-                          {
-                            "Ref": "REPLACED-CFN-LOGICAL-ID",
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        },
-        "Type": "AWS::SSM::Parameter",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
         "DeletionPolicy": "Delete",
         "Properties": {
           "ServiceToken": {
@@ -7275,7 +7109,6 @@ Provide responses in markdown format with source citations
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "DependsOn": [
-          "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
@@ -9303,6 +9136,23 @@ Provide responses in markdown format with source citations
                   ],
                 },
               },
+              {
+                "Action": "secretsmanager:GetSecretValue",
+                "Effect": "Allow",
+                "Resource": {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              },
+              {
+                "Action": "kms:Decrypt",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
             ],
             "Version": "2012-10-17",
           },
@@ -9351,11 +9201,6 @@ Provide responses in markdown format with source citations
             ],
             "Version": "2012-10-17",
           },
-          "ManagedPolicyArns": [
-            {
-              "Ref": "REPLACED-CFN-LOGICAL-ID",
-            },
-          ],
           "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-app---26c38b2",
           "Tags": [
             {
@@ -11363,42 +11208,6 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
       },
       "Value": {
         "Ref": "REPLACED-CFN-LOGICAL-ID",
-      },
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-main:managed-policy:kbvectorstoretestknowledgebasehandler:arn",
-      },
-      "Value": {
-        "Ref": "REPLACED-CFN-LOGICAL-ID",
-      },
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-main:managed-policy:kbvectorstoretestknowledgebasehandler:name",
-      },
-      "Value": {
-        "Fn::Select": [
-          1,
-          {
-            "Fn::Split": [
-              "/",
-              {
-                "Fn::Select": [
-                  5,
-                  {
-                    "Fn::Split": [
-                      ":",
-                      {
-                        "Ref": "REPLACED-CFN-LOGICAL-ID",
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
       },
     },
     "REPLACED-CFN-LOGICAL-ID": {
@@ -15972,136 +15781,6 @@ Provide responses in markdown format with source citations
       "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "Description": "",
-        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-main--dad4d68",
-        "Path": "/",
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "secretsmanager:GetSecretValue",
-                "secretsmanager:DescribeSecret",
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Ref": "REPLACED-CFN-LOGICAL-ID",
-              },
-              "Sid": "DBSecretAccess",
-            },
-            {
-              "Action": [
-                "rds-data:ExecuteStatement",
-                "rds-data:BatchExecuteStatement",
-                "rds:DescribeDBClusters",
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition",
-                    },
-                    ":rds:",
-                    {
-                      "Ref": "AWS::Region",
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId",
-                    },
-                    ":cluster:",
-                    {
-                      "Ref": "REPLACED-CFN-LOGICAL-ID",
-                    },
-                  ],
-                ],
-              },
-              "Sid": "DBQuery",
-            },
-            {
-              "Action": [
-                "kms:Decrypt",
-                "kms:Encrypt",
-                "kms:ReEncryptFrom",
-                "kms:ReEncryptTo",
-                "kms:GenerateDataKey",
-                "kms:GenerateDataKeyWithoutPlaintext",
-                "kms:GenerateDataKeyPair",
-                "kms:GenerateDataKeyPairWithoutPlaintext",
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "REPLACED-CFN-LOGICAL-ID",
-                  "Arn",
-                ],
-              },
-              "Sid": "KMSUsage",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-      },
-      "Type": "AWS::IAM::ManagedPolicy",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-main/managed-policy/kb-vectorstore-test-knowledge-base-handler/arn",
-        "Tags": {
-          "mdaa_cdk_app": "bedrock-builder",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-bedrock-builder-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": {
-          "Ref": "REPLACED-CFN-LOGICAL-ID",
-        },
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-main/managed-policy/kb-vectorstore-test-knowledge-base-handler/name",
-        "Tags": {
-          "mdaa_cdk_app": "bedrock-builder",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-bedrock-builder-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::Select": [
-            1,
-            {
-              "Fn::Split": [
-                "/",
-                {
-                  "Fn::Select": [
-                    5,
-                    {
-                      "Fn::Split": [
-                        ":",
-                        {
-                          "Ref": "REPLACED-CFN-LOGICAL-ID",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
       "DeletionPolicy": "Delete",
       "Properties": {
         "ServiceToken": {
@@ -17936,7 +17615,6 @@ Provide responses in markdown format with source citations
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "DependsOn": [
-        "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
@@ -19964,6 +19642,23 @@ Provide responses in markdown format with source citations
                 ],
               },
             },
+            {
+              "Action": "secretsmanager:GetSecretValue",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            },
+            {
+              "Action": "kms:Decrypt",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -20012,11 +19707,6 @@ Provide responses in markdown format with source citations
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": [
-          {
-            "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-        ],
         "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-mai--6efe19c8",
         "Tags": [
           {

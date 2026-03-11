@@ -43,6 +43,36 @@ export interface MdaaRdsDataResourceProps extends MdaaConstructProps {
 
 export class MdaaRdsDataResource extends MdaaCustomResource {
   private static setRdsDataProps(props: MdaaRdsDataResourceProps): MdaaCustomResourceProps {
+    const policyStatements: PolicyStatement[] = [
+      new PolicyStatement({
+        actions: ['rds-data:ExecuteStatement'],
+        resources: [props.rdsCluster.clusterArn],
+      }),
+    ];
+
+    // Add permissions to read the encrypted secret if it exists
+    // These are the minimal permissions needed for the custom resource handler
+    // to execute SQL statements during deployment
+    if (props.rdsCluster.secret) {
+      policyStatements.push(
+        new PolicyStatement({
+          actions: ['secretsmanager:GetSecretValue'],
+          resources: [props.rdsCluster.secret.secretArn],
+        }),
+      );
+
+      // The secret is encrypted with the cluster's encryption key
+      // We need to access it through the cluster's secret which has the key reference
+      if (props.rdsCluster.secret.encryptionKey) {
+        policyStatements.push(
+          new PolicyStatement({
+            actions: ['kms:Decrypt'],
+            resources: [props.rdsCluster.secret.encryptionKey.keyArn],
+          }),
+        );
+      }
+    }
+
     return {
       resourceType: 'RDS-Data',
       naming: props.naming,
@@ -50,12 +80,7 @@ export class MdaaRdsDataResource extends MdaaCustomResource {
       handler: 'index.lambda_handler',
       handlerTimeout: props.timeout ? props.timeout : Duration.minutes(11),
       code: Code.fromAsset(`${__dirname}/functions/rds-data/`),
-      handlerRolePolicyStatements: [
-        new PolicyStatement({
-          actions: ['rds-data:ExecuteStatement'],
-          resources: [props.rdsCluster.clusterArn],
-        }),
-      ],
+      handlerRolePolicyStatements: policyStatements,
       handlerProps: {
         cluster_arn: props.rdsCluster.clusterArn,
         secret_arn: props.rdsCluster.secret?.secretArn,

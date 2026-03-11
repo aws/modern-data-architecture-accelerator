@@ -1173,14 +1173,6 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     const dbConfig = this.prepareAuroraDbConfiguration(kbName);
     const { createDb, createTable } = this.setupAuroraDatabase(kbName, store, dbConfig);
 
-    // Always create policy for handler's role if it exists, because all handlers are independent
-    const handlerRole = createTable.handlerFunction.role;
-    let storeAccessPolicy: ManagedPolicy | undefined;
-    if (handlerRole) {
-      storeAccessPolicy = this.createVectorStorePolicyForKB(`${kbName}-handler`, store, kmsKey);
-      handlerRole.addManagedPolicy(storeAccessPolicy);
-    }
-
     const knowledgeBase = this.createAuroraKnowledgeBaseResource(kbName, kbConfig, embeddingModelArn, store, dbConfig);
 
     // Finalize kb creation
@@ -1188,9 +1180,6 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       createDb,
       createTable,
     ];
-    if (storeAccessPolicy) {
-      dependencies.push(storeAccessPolicy);
-    }
     this.setupKnowledgeBaseDependencies(knowledgeBase, dependencies);
     this.createKnowledgeBaseLogging(kbName, knowledgeBase, kmsKey);
     this.createDataSources(kbConfig, knowledgeBase, kbName, kmsKey);

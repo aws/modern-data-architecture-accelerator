@@ -1176,7 +1176,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
       });
     });
 
-    test('deferPolicyCreation=true skips KB role policy creation but creates handler policy', () => {
+    test('deferPolicyCreation=true skips KB role policy creation', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -1214,14 +1214,13 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
       });
       expect(dataSyncPolicies.length).toBe(0);
 
-      // Count vector store policies - should only have 1 (for handler), not 2 (handler + KB role)
+      // Verify NO vector store policy is created for KB role
       const vectorStorePolicies = policyNames.filter(name => {
         const policy = policies[name];
         const policyName = policy.Properties?.ManagedPolicyName || '';
         return policyName.includes('kb-vectorstor');
       });
-      // Only handler policy should exist, not KB role policy
-      expect(vectorStorePolicies.length).toBe(1);
+      expect(vectorStorePolicies.length).toBe(0);
 
       // Verify Knowledge Base resource is still created
       template.hasResourceProperties('AWS::Bedrock::KnowledgeBase', {
