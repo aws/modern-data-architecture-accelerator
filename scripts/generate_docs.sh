@@ -14,8 +14,11 @@ export PUBLISHED_VERSION="${CURRENT_MAJOR}.${CURRENT_MINOR}"
 rm -rf target/docs*;mkdir -p target/docs/
 
 # Generate Config Schema Docs
-# Use the update_schemas.sh script to generate all SCHEMA.md files
-./scripts/update_schemas.sh ./packages/
+# Generate CLI Schema Doc
+generate-schema-doc --config-file ./scripts/jsfh-conf.yaml ./packages/cli/lib/config-schema.json ./packages/cli/SCHEMA.md
+
+# Generate Module Schema Docs
+find ./packages/apps/ -name config-schema.json -execdir generate-schema-doc --config-file ../../../../../scripts/jsfh-conf.yaml {} ../SCHEMA.md ';'
 
 # Generate TypeDocs
 npx typedoc --out target/docs/typedocs/
