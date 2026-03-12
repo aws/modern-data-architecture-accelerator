@@ -4,7 +4,7 @@
  */
 
 import { MdaaConstructProps } from '@aws-mdaa/construct';
-import { CfnGroupProfile, CfnGroupProfileProps, CfnUserProfile, CfnUserProfileProps } from 'aws-cdk-lib/aws-datazone';
+import { CfnUserProfile, CfnUserProfileProps, CfnGroupProfile, CfnGroupProfileProps } from 'aws-cdk-lib/aws-datazone';
 import { Construct } from 'constructs';
 import { LEGACY_DATAZONE_SCOPE_CONTEXT_KEY } from '.';
 
@@ -36,7 +36,7 @@ export class ProfileManagementConstruct extends Construct {
 
     // Create user profiles
     if (props.users) {
-      for (const [userName, userConfig] of Object.entries(props.users)) {
+      Object.entries(props.users).forEach(([userName, userConfig]) => {
         const userProfileProps: CfnUserProfileProps = {
           domainIdentifier: props.domainId,
           userIdentifier: userConfig.identifier,
@@ -48,12 +48,12 @@ export class ProfileManagementConstruct extends Construct {
           `${idPrefix}user-${userName}`,
           userProfileProps,
         );
-      }
+      });
     }
 
     // Create group profiles
     if (props.groups) {
-      for (const [groupName, groupConfig] of Object.entries(props.groups)) {
+      Object.entries(props.groups).forEach(([groupName, groupConfig]) => {
         const groupProfileProps: CfnGroupProfileProps = {
           domainIdentifier: props.domainId,
           groupIdentifier: groupConfig.identifier,
@@ -64,7 +64,7 @@ export class ProfileManagementConstruct extends Construct {
           `${idPrefix}group-${groupName}`,
           groupProfileProps,
         );
-      }
+      });
     }
   }
 }

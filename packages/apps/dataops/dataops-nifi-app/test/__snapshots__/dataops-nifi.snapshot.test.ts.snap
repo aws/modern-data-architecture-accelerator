@@ -859,7 +859,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                 {
                   "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                 },
-                "/746ffcd9b7f5c9b7ceab7f1a0198fe14b6ab78f55f892eafa5fa619ffa9f5016.json",
+                "/012bf2455435852e4a5630fb49d738dbdd17805457317c1c5277f5314544eff5.json",
               ],
             ],
           },
@@ -14653,7 +14653,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
               {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
               },
-              "/746ffcd9b7f5c9b7ceab7f1a0198fe14b6ab78f55f892eafa5fa619ffa9f5016.json",
+              "/012bf2455435852e4a5630fb49d738dbdd17805457317c1c5277f5314544eff5.json",
             ],
           ],
         },

@@ -17,29 +17,64 @@ import {
 
 export interface SagemakerProjectConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.
+   * SSM parameter base name containing SageMaker domain configuration. Allows
+   * all required domain config (domain ID, blueprint IDs, domain unit IDs) to be
+   * pulled from SSM and APIs. If omitted, the full domainConfig object must be
+   * provided instead.
    *
-   * Use cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup
+   * Use cases: Dynamic domain config resolution; Decoupled domain/project deployments
    *
-   * AWS: AWS Systems Manager parameter for DataZone domain configuration reference
+   * AWS: SSM Parameter Store for SageMaker domain configuration
    *
-   * Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration
-   **/
+   * Validation: Optional; valid SSM parameter name; mutually exclusive with domainConfig
+   */
   readonly domainConfigSSMParam?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional direct domain configuration for DataZone project setup enabling inline domain configuration management. Provides direct domain configuration object for DataZone project setup and governance configuration without external parameter references.
+   * Direct domain configuration object for SageMaker project setup. Use this
+   * when SSM-based config resolution is not desired. Mutually exclusive with
+   * domainConfigSSMParam.
    *
-   * Use cases: Direct configuration; Inline setup; Domain configuration; Governance setup
+   * Use cases: Inline domain config; Testing; Single-stack deployments
    *
-   * AWS: DataZone domain configuration for project setup and governance management
+   * AWS: SageMaker (DataZone V2) domain configuration
    *
-   * Validation: Must be valid DomainConfig object if provided; enables direct domain configuration when specified
-   *   **/
+   * Validation: Optional; valid DomainConfig; mutually exclusive with domainConfigSSMParam
+   */
   readonly domainConfig?: DomainConfig;
+  /**
+   * SageMaker projects to create in the domain. Each project references a
+   * project profile and can include data sources and membership assignments.
+   *
+   * Use cases: Project deployment; Data source registration; Team membership
+   *
+   * AWS: DataZone projects with profile-based environment provisioning
+   *
+   * Validation: Optional; valid NamedSageMakerProjects
+   */
   readonly projects?: NamedSageMakerProjects;
+  /**
+   * Project profiles defining environment blueprints and deployment configurations.
+   * Profiles are reusable templates that determine which environments are provisioned
+   * when a project is created.
+   *
+   * Use cases: Standardized project templates; Blueprint environment bundling
+   *
+   * AWS: DataZone project profiles with environment configurations
+   *
+   * Validation: Optional; valid NamedProjectProfiles
+   */
   readonly projectProfiles?: NamedProjectProfiles;
+  /**
+   * Reusable environment templates that can be referenced by project profiles
+   * via the environmentsTemplate property. Template environments are merged
+   * with profile-specific environments.
+   *
+   * Use cases: Shared environment definitions; DRY profile configuration
+   *
+   * AWS: DataZone project profile environment templates
+   *
+   * Validation: Optional; map of template name to NamedProfileEnvironmentConfigs
+   */
   readonly projectProfileEnvironmentsTemplates?: { [name: string]: NamedProfileEnvironmentConfigs };
 }
 

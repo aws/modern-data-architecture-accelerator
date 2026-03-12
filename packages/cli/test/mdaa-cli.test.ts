@@ -1290,3 +1290,80 @@ test('should use execCmdWithDiffCapture when action is diff with diff-out', () =
 
   consoleSpy.mockRestore();
 });
+
+describe('useStaging', () => {
+  const baseOptions = {
+    testing: 'true',
+    action: 'synth',
+    working_dir: 'test/test_working',
+    tag: 'testtag',
+  };
+
+  const createConfigWithUseStaging = (useStaging?: boolean) => {
+    const config: Record<string, unknown> = {
+      organization: 'sample-org',
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              modules: {
+                'module-a': { module_path: '@aws-mdaa/test' },
+                'module-b': { module_path: '@aws-mdaa/test' },
+              },
+            },
+          },
+        },
+      },
+    };
+    if (useStaging !== undefined) {
+      config.useStaging = useStaging;
+    }
+    return config;
+  };
+
+  test('should compute deploy stages when useStaging is undefined (default behavior)', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+    const configContents = createConfigWithUseStaging(undefined);
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+
+    const stageLogCalls = consoleSpy.mock.calls
+      .flat()
+      .filter((msg: string) => typeof msg === 'string' && msg.includes('Set deploy stage to'));
+    expect(stageLogCalls.length).toBeGreaterThan(0);
+
+    consoleSpy.mockRestore();
+  });
+
+  test('should compute deploy stages when useStaging is true', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+    const configContents = createConfigWithUseStaging(true);
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+
+    const stageLogCalls = consoleSpy.mock.calls
+      .flat()
+      .filter((msg: string) => typeof msg === 'string' && msg.includes('Set deploy stage to'));
+    expect(stageLogCalls.length).toBeGreaterThan(0);
+
+    consoleSpy.mockRestore();
+  });
+
+  test('should assign all modules to default stage when useStaging is false', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+    const configContents = createConfigWithUseStaging(false);
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+
+    // computeModuleDeployStage is bypassed, so no "Set deploy stage to" logs
+    const stageLogCalls = consoleSpy.mock.calls
+      .flat()
+      .filter((msg: string) => typeof msg === 'string' && msg.includes('Set deploy stage to'));
+    expect(stageLogCalls).toHaveLength(0);
+
+    consoleSpy.mockRestore();
+  });
+});

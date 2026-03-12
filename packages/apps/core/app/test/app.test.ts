@@ -5,7 +5,7 @@
 
 import { MdaaAppProps, MdaaCdkApp } from '../lib/app';
 import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
-import { MdaaAppConfigParserProps, MdaaSageMakerBluePrintConfig } from '../lib/app_config';
+import { MdaaAppConfigParserProps, MdaaSageMakerCustomBluePrintConfig } from '../lib/app_config';
 import { Stack } from 'aws-cdk-lib';
 
 class TestApp extends MdaaCdkApp {
@@ -146,12 +146,12 @@ describe('MdaaCdkApp', () => {
 
   describe('SageMaker Blueprint', () => {
     test('generateStack with sagemakerBlueprint using SSM param creates blueprint stack', () => {
-      const sagemakerConfig: MdaaSageMakerBluePrintConfig = {
+      const sagemakerConfig: MdaaSageMakerCustomBluePrintConfig = {
         domainBucketName: 'test-domain-bucket',
         domainConfigSSMParam: '/test/domain/config',
         description: 'Test Blueprint',
         blueprintName: 'test-blueprint',
-        provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+        provisioningRole: { arn: 'arn:aws:iam::123456789012:role/test-provisioning-role' },
       };
 
       const app = new TestApp({
@@ -167,11 +167,11 @@ describe('MdaaCdkApp', () => {
     });
 
     test('generateStack with domainConfigSSMParam instead of domainConfig', () => {
-      const sagemakerConfig: MdaaSageMakerBluePrintConfig = {
+      const sagemakerConfig: MdaaSageMakerCustomBluePrintConfig = {
         domainBucketName: 'test-domain-bucket',
         domainConfigSSMParam: '/test/domain/config',
         description: 'Test Blueprint with SSM',
-        provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+        provisioningRole: { arn: 'arn:aws:iam::123456789012:role/test-provisioning-role' },
       };
 
       const app = new TestApp({
@@ -186,10 +186,10 @@ describe('MdaaCdkApp', () => {
     });
 
     test('throws error when neither domainConfig nor domainConfigSSMParam provided', () => {
-      const sagemakerConfig: MdaaSageMakerBluePrintConfig = {
+      const sagemakerConfig: MdaaSageMakerCustomBluePrintConfig = {
         domainBucketName: 'test-domain-bucket',
         description: 'Test Blueprint',
-        provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+        provisioningRole: { arn: 'arn:aws:iam::123456789012:role/test-provisioning-role' },
       };
 
       const app = new TestApp({
@@ -203,10 +203,10 @@ describe('MdaaCdkApp', () => {
     });
 
     test('handles blueprint with provisioningRoleArn', () => {
-      const sagemakerConfig: MdaaSageMakerBluePrintConfig = {
+      const sagemakerConfig: MdaaSageMakerCustomBluePrintConfig = {
         domainBucketName: 'test-domain-bucket',
         domainConfigSSMParam: '/test/domain/config',
-        provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+        provisioningRole: { arn: 'arn:aws:iam::123456789012:role/test-provisioning-role' },
         description: 'Test Blueprint with Role',
       };
 
@@ -222,9 +222,9 @@ describe('MdaaCdkApp', () => {
     });
 
     test('handles blueprint with parameters', () => {
-      const sagemakerConfig: MdaaSageMakerBluePrintConfig = {
+      const sagemakerConfig: MdaaSageMakerCustomBluePrintConfig = {
         domainBucketName: 'test-domain-bucket',
-        provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+        provisioningRole: { arn: 'arn:aws:iam::123456789012:role/test-provisioning-role' },
         domainConfigSSMParam: '/test/domain/config',
         description: 'Test Blueprint with Parameters',
         parameters: {
@@ -257,11 +257,11 @@ describe('MdaaCdkApp', () => {
 
     describe('resolveDomainBucketName', () => {
       test('returns bucket name as-is', () => {
-        const sagemakerConfig: MdaaSageMakerBluePrintConfig = {
+        const sagemakerConfig: MdaaSageMakerCustomBluePrintConfig = {
           domainBucketName: 'my-regular-bucket-name',
           domainConfigSSMParam: '/test/domain/config',
           description: 'Test Blueprint',
-          provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+          provisioningRole: { arn: 'arn:aws:iam::123456789012:role/test-provisioning-role' },
         };
 
         const app = new TestApp({
@@ -277,11 +277,11 @@ describe('MdaaCdkApp', () => {
     });
 
     test('blueprint uses custom blueprintName when provided', () => {
-      const sagemakerConfig: MdaaSageMakerBluePrintConfig = {
+      const sagemakerConfig: MdaaSageMakerCustomBluePrintConfig = {
         domainBucketName: 'test-domain-bucket',
         domainConfigSSMParam: '/test/domain/config',
         blueprintName: 'custom-blueprint-name',
-        provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+        provisioningRole: { arn: 'arn:aws:iam::123456789012:role/test-provisioning-role' },
         description: 'Test Blueprint',
       };
 
@@ -297,11 +297,11 @@ describe('MdaaCdkApp', () => {
     });
 
     test('blueprint generates default name when blueprintName not provided', () => {
-      const sagemakerConfig: MdaaSageMakerBluePrintConfig = {
+      const sagemakerConfig: MdaaSageMakerCustomBluePrintConfig = {
         domainBucketName: 'test-domain-bucket',
         domainConfigSSMParam: '/test/domain/config',
         description: 'Test Blueprint',
-        provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+        provisioningRole: { arn: 'arn:aws:iam::123456789012:role/test-provisioning-role' },
       };
 
       const app = new TestApp({

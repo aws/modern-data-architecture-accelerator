@@ -1,0 +1,102 @@
+# Common IAM Roles Configuration
+#
+# Creates a standard set of IAM roles and policies deployed to each AWS account.
+# Provides consistent permissions, separation of duties, and service-specific access
+# for Glue ETL, DataZone provisioning, and Lake Formation integration.
+
+# Disable automatic creation of persona-based managed policies
+# We define custom policies below for more granular control
+createPersonaManagedPolicies: false
+
+# Custom IAM policies that will be generated and can be attached to roles
+generatePolicies:
+  # Basic S3 read-only policy for data discovery and bucket exploration
+  BasicDataPolicy:
+    policyDocument:
+      Statement:
+        # Allows listing and viewing S3 bucket configurations without modifying data
+        - Sid: BasicS3Access
+          Effect: Allow
+          Action:
+            - s3:ListAllMyBuckets # List all S3 buckets in the account
+            - s3:GetAccountPublicAccessBlock # View account-level public access settings
+            - s3:GetBucketPublicAccessBlock # View bucket-level public access settings
+            - s3:GetBucketPolicyStatus # Check if bucket policy is public
+            - s3:GetBucketAcl # View bucket access control lists
+            - s3:ListAccessPoints # List S3 access points
+            - s3:GetBucketLocation # Get the region where bucket is located
+          Resource: "*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+  # Policy for managing DynamoDB tables in DataZone blueprint provisioning
+  ddb-bp-provisioning:
+    policyDocument:
+      Statement:
+        # Allows full lifecycle management of DynamoDB tables
+        - Sid: DynamoDBTableOperations
+          Effect: Allow
+          Action:
+            - dynamodb:CreateTable # Create new DynamoDB tables
+            - dynamodb:UpdateTable # Modify existing table settings (capacity, indexes, etc.)
+            - dynamodb:DeleteTable # Remove DynamoDB tables
+            - dynamodb:DescribeTable # Get table metadata and status
+            - dynamodb:ListTables # List all tables in the account
+            - dynamodb:TagResource # Add tags to tables for organization
+            - dynamodb:UntagResource # Remove tags from tables
+            - dynamodb:ListTagsOfResource # List tags on tables
+            - dynamodb:UpdateContinuousBackups # Configure backups on table
+            - dynamodb:DescribeContinuousBackups # View backup configuration
+            - dynamodb:DescribeTimeToLive # View TTL configuration
+            - dynamodb:UpdateTimeToLive # Configure TTL on table
+          Resource: "*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "DynamoDB table operations, KMS keys, and SSM parameters require wildcard resource as names are not known at deployment time."
+
+
+
+# IAM roles that will be created for various data platform personas and services
+generateRoles:
+  # Role for AWS Glue ETL jobs to process and transform data
+  glue-etl:
+    trustedPrincipal: service:glue.amazonaws.com # Only Glue service can assume this role
+    awsManagedPolicies:
+      - service-role/AWSGlueServiceRole # Provides Glue with access to S3, CloudWatch, and other required services
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueServiceRole approved for usage"
+
+  # Administrative role for managing the entire data platform
+  data-admin:
+    trustedPrincipal: this_account # Can be assumed by users/roles in this AWS account
+    awsManagedPolicies:
+      - AmazonDataZoneFullAccess # Full control over DataZone domains, projects, and assets
+      - AWSGlueConsoleFullAccess # Full access to Glue console and resources
+      - AWSLakeFormationDataAdmin # Administrative access to Lake Formation permissions
+      - AWSLakeFormationCrossAccountManager # Manage cross-account data sharing in Lake Formation
+    generatedPolicies:
+      - BasicDataPolicy # Add S3 discovery capabilities
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueConsoleFullAccess, AmazonDataZoneFullAccess, AWSLakeFormationDataAdmin, AWSLakeFormationCrossAccountManager approved for usage"
+
+  # Role for data engineers to build and manage data pipelines
+  data-engineer:
+    trustedPrincipal: this_account # Can be assumed by users/roles in this AWS account
+    awsManagedPolicies:
+      - AWSGlueConsoleFullAccess # Full access to create and manage Glue jobs, crawlers, and catalogs
+    generatedPolicies:
+      - BasicDataPolicy # Add S3 discovery capabilities
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueConsoleFullAccess, AmazonDataZoneFullUserAccessapproved for usage"
+
+  # Role for DataZone blueprint provisioning to create DynamoDB resources
+  # This role is assumed by DataZone when provisioning the custom DDB blueprint
+  # as part of SMUS project creation
+  ddb-bp-prov:
+    trustedPrincipal: service:datazone.amazonaws.com # DataZone service can assume this role
+    generatedPolicies:
+      - ddb-bp-provisioning # Grant DDB provisioning permissions

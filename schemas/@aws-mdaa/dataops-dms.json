@@ -2,6 +2,40 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
+        "AdditionalBlueprintAccount": {
+            "additionalProperties": false,
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "authorizedDomainUnits": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "enabledRegions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
+                    },
+                    "type": "object"
+                },
+                "provisioningRole": {
+                    "$ref": "#/definitions/MdaaRoleRef"
+                }
+            },
+            "required": [
+                "account",
+                "provisioningRole"
+            ],
+            "type": "object"
+        },
         "Architecture": {
             "additionalProperties": false,
             "description": "Architectures supported by AWS Lambda",
@@ -2167,53 +2201,34 @@
             ],
             "type": "object"
         },
-        "MdaaSageMakerBluePrintConfig": {
+        "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS SageMaker blueprint deployment that specifies domain association, and parameterization. Enables MDAA modules to be deployed as self-service SageMaker blueprints with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized blueprint offerings\n\nAWS: Configures AWS SageMaker blueprints for self-service deployment of MDAA modules with domain management\n\nValidation: domain_arn must be valid SageMaker domain ARN;",
             "properties": {
-                "authorizedDomainUnits": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "blueprintName": {
+                "arn": {
+                    "description": "Full IAM role ARN for cross-account role references and explicit role identification.\n\nUse cases: Cross-account role references; Explicit role binding; Multi-account deployments\n\nAWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)\n\nValidation: Optional; must be a valid IAM role ARN if provided",
                     "type": "string"
                 },
-                "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nDescription for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.\n\nUse cases: Product identification; User-friendly naming; SageMaker console display\n\nAWS: AWS SageMaker blueprint name for user interface display\n\nValidation: Must be non-empty string suitable for SageMaker blueprint naming",
+                "id": {
+                    "description": "IAM role unique identifier for role resolution using the role's AWS-generated ID.\n\nUse cases: Stable role references; Role resolution by unique ID; Immutable role binding\n\nAWS: IAM role unique ID (e.g., AROA...)\n\nValidation: Optional; must be a valid IAM role unique ID if provided",
                     "type": "string"
                 },
-                "domainBucketName": {
+                "immutable": {
+                    "description": "Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.\n\nUse cases: Pre-existing role protection; Externally managed roles; Read-only role references\n\nAWS: Controls whether MDAA attaches policies or modifies the referenced IAM role\n\nValidation: Optional boolean; defaults to false",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "IAM role name for role resolution within the same AWS account.\n\nUse cases: Same-account role references; Role name-based resolution; Local IAM role binding\n\nAWS: IAM role name resolved via GetRole within the deployment account\n\nValidation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution",
                     "type": "string"
                 },
-                "domainConfig": {
-                    "$ref": "#/definitions/DomainConfig"
-                },
-                "domainConfigSSMParam": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
+                "refId": {
+                    "description": "Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.\n\nUse cases: Role reference identification; Configuration deduplication; Role lookup key\n\nAWS: Logical identifier for IAM role references within MDAA configuration\n\nValidation: Optional; must be unique within the configuration scope if provided",
                     "type": "string"
                 },
-                "enabledRegions": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "parameters": {
-                    "additionalProperties": {
-                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
-                    },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS SageMaker blueprint parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
-                    "type": "object"
-                },
-                "provisioningRoleArn": {
-                    "type": "string"
+                "sso": {
+                    "description": "Flag indicating the role should be resolved as an AWS SSO auto-generated role.\n\nUse cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access\n\nAWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention\n\nValidation: Optional boolean; defaults to false",
+                    "type": "boolean"
                 }
             },
-            "required": [
-                "provisioningRoleArn"
-            ],
             "type": "object"
         },
         "MdaaSageMakerBluePrintParameterConfig": {
@@ -2255,6 +2270,62 @@
             },
             "required": [
                 "fieldType"
+            ],
+            "type": "object"
+        },
+        "MdaaSageMakerCustomBluePrintConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS SageMaker blueprint deployment that specifies domain association, and parameterization. Enables MDAA modules to be deployed as self-service SageMaker blueprints with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized blueprint offerings\n\nAWS: Configures AWS SageMaker blueprints for self-service deployment of MDAA modules with domain management\n\nValidation: domain_arn must be valid SageMaker domain ARN;",
+            "properties": {
+                "additionalAccounts": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/AdditionalBlueprintAccount"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional map of additional AWS accounts where the SageMaker blueprint should be enabled. Each entry maps a friendly account name to account-specific configuration including provisioning role ARN and optional parameters and authorized domain units.\n\nUse cases: Multi-account deployment; Cross-account provisioning; Account-specific configuration\n\nAWS: AWS SageMaker blueprint multi-account provisioning configuration\n\nValidation: Must be object with string keys and valid account configuration values if provided",
+                    "type": "object"
+                },
+                "authorizedDomainUnits": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "blueprintName": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nDescription for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.\n\nUse cases: Product identification; User-friendly naming; SageMaker console display\n\nAWS: AWS SageMaker blueprint name for user interface display\n\nValidation: Must be non-empty string suitable for SageMaker blueprint naming",
+                    "type": "string"
+                },
+                "domainBucketName": {
+                    "type": "string"
+                },
+                "domainConfig": {
+                    "$ref": "#/definitions/DomainConfig"
+                },
+                "domainConfigSSMParam": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
+                    "type": "string"
+                },
+                "enabledRegions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS SageMaker blueprint parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "type": "object"
+                },
+                "provisioningRole": {
+                    "$ref": "#/definitions/MdaaRoleRef"
+                }
+            },
+            "required": [
+                "provisioningRole"
             ],
             "type": "object"
         },
@@ -4050,7 +4121,7 @@
             "type": "string"
         },
         "sagemakerBlueprint": {
-            "$ref": "#/definitions/MdaaSageMakerBluePrintConfig",
+            "$ref": "#/definitions/MdaaSageMakerCustomBluePrintConfig",
             "description": "Q-ENHANCED-PROPERTY\nOptional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access\n\nAWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode"
         },
         "securityConfigurationName": {

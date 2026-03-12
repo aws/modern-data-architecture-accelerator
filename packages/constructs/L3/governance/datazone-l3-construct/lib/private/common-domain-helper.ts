@@ -8,8 +8,8 @@ import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-co
 import {
   AuthorizationPolicy,
   DataZoneAuthorizationConstruct,
-  DataZoneBlueprintConfigConstruct,
   DataZoneDomainUnitConstruct,
+  DataZoneManagedBlueprintConfigConstruct,
   DomainConfig,
   DomainConfigProps,
   EntityType,
@@ -21,7 +21,7 @@ import {
 import { GlueCatalogL3Construct } from '@aws-mdaa/glue-catalog-l3-construct';
 import { MdaaManagedPolicy, MdaaManagedPolicyProps, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
-import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, MdaaKmsKey, USER_ACTIONS } from '@aws-mdaa/kms-constructs';
+import { MdaaKmsKey, USER_ACTIONS } from '@aws-mdaa/kms-constructs';
 import { LakeFormationSettingsL3Construct } from '@aws-mdaa/lakeformation-settings-l3-construct';
 import { Duration } from 'aws-cdk-lib';
 
@@ -34,11 +34,13 @@ import {
   CfnOwner,
   CfnOwnerProps,
   CfnUserProfile,
+  CfnUserProfileProps,
 } from 'aws-cdk-lib/aws-datazone';
 import {
   Conditions,
   Effect,
   IRole,
+  ManagedPolicy,
   PolicyDocument,
   PolicyStatement,
   Role,
@@ -53,19 +55,16 @@ import {
   AssociatedAccountProps,
   BaseDomainProps,
   DataZoneDomainProps,
-  DomainUnit,
   NamedDomainUnits,
   SageMakerDomainProps,
 } from '../datazone-l3-construct';
 import { flattenDomainUnitPaths } from '../utils';
 
 type DomainPropsWithAssociatedAccounts = DataZoneDomainProps | SageMakerDomainProps;
-
 export interface CreatedDomainUnit {
   readonly construct: DataZoneDomainUnitConstruct;
   readonly domainUnits?: { [name: string]: CreatedDomainUnit };
 }
-
 export interface CommonDomainHelperProps {
   readonly naming: IMdaaResourceNaming;
   readonly roleHelper: MdaaRoleHelper;
@@ -80,20 +79,6 @@ export class CommonDomainHelper {
 
   constructor(props: CommonDomainHelperProps) {
     this.props = props;
-  }
-
-  private resolveGlueCatalogKmsKey(
-    scope: Construct,
-    accountName: string,
-    accountProps: AssociatedAccountProps,
-  ): string {
-    return accountProps.glueCatalogKmsKeyArn
-      ? accountProps.glueCatalogKmsKeyArn
-      : MdaaStringParameter.fromStringParameterArn(
-          scope,
-          `${accountName}-glue-catalog-key-ssm`,
-          `arn:${this.props.partition}:ssm:${this.props.region}:${accountProps.account}:parameter${GlueCatalogL3Construct.ACCOUNT_KEY_SSM_PATH}`,
-        ).stringValue;
   }
 
   // Creates KMS key with cross-account access policies for DataZone
@@ -116,18 +101,31 @@ export class CommonDomainHelper {
       ),
       this.props.account,
     ];
+
     for (const account of keyAccessAccounts) {
-      const accountKeyUsagePolicyStatement = new PolicyStatement({
+      const datazoneKeyUsagePolicyStatement = new PolicyStatement({
         effect: Effect.ALLOW,
         resources: ['*'],
-        actions: [...DECRYPT_ACTIONS, ...ENCRYPT_ACTIONS, 'kms:DescribeKey', 'kms:CreateGrant'],
+        actions: [...USER_ACTIONS, 'kms:DescribeKey', 'kms:CreateGrant'],
       });
-      accountKeyUsagePolicyStatement.addAnyPrincipal();
-      accountKeyUsagePolicyStatement.addCondition('StringEquals', {
+      datazoneKeyUsagePolicyStatement.addAnyPrincipal();
+      datazoneKeyUsagePolicyStatement.addCondition('StringEquals', {
         'kms:CallerAccount': account,
         'kms:ViaService': `datazone.${this.props.region}.amazonaws.com`,
       });
-      kmsKey.addToResourcePolicy(accountKeyUsagePolicyStatement);
+      kmsKey.addToResourcePolicy(datazoneKeyUsagePolicyStatement);
+
+      const s3KeyUsagePolicyStatement = new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: ['*'],
+        actions: [...USER_ACTIONS, 'kms:DescribeKey', 'kms:CreateGrant'],
+      });
+      s3KeyUsagePolicyStatement.addAnyPrincipal();
+      s3KeyUsagePolicyStatement.addCondition('StringEquals', {
+        'kms:CallerAccount': account,
+        'kms:ViaService': `s3.${this.props.region}.amazonaws.com`,
+      });
+      kmsKey.addToResourcePolicy(s3KeyUsagePolicyStatement);
     }
 
     return kmsKey;
@@ -289,6 +287,19 @@ export class CommonDomainHelper {
         },
       };
       new CfnOwner(domain, `owner-user-${ownerName}`, cfnOwnerProps);
+      const authorizonPolicy: AuthorizationPolicy = {
+        policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
+        principals: [{ userIdentifier: { name: ownerName, identifier: ownerUser.attrId } }],
+        includeChildDomainUnits: true,
+      };
+      this.createAuthorizationPolicies(
+        `owner-auths-${ownerName}`,
+        domain,
+        domain.attrId,
+        domain.attrRootDomainUnitId,
+        { 'project-membership': authorizonPolicy },
+        domainProps,
+      );
     });
 
     // Assign group owners to root domain unit
@@ -308,6 +319,19 @@ export class CommonDomainHelper {
         },
       };
       new CfnOwner(domain, `owner-group-${ownerName}`, cfnOwnerProps);
+      const authorizonPolicy: AuthorizationPolicy = {
+        policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
+        principals: [{ groupIdentifier: { name: ownerName, identifier: ownerGroup.attrId } }],
+        includeChildDomainUnits: true,
+      };
+      this.createAuthorizationPolicies(
+        `owner-auths-${ownerName}`,
+        domain,
+        domain.attrId,
+        domain.attrRootDomainUnitId,
+        { 'project-membership': authorizonPolicy },
+        domainProps,
+      );
     });
     return profileManagement;
   }
@@ -324,27 +348,33 @@ export class CommonDomainHelper {
       associatedAccountCdkUserProfiles: { [name: string]: CfnUserProfile };
     },
     domainUnits?: NamedDomainUnits,
+    ownersCollector?: CfnOwner[],
   ): { [name: string]: CreatedDomainUnit } {
     return Object.fromEntries(
       Object.entries(domainUnits ?? {}).map(([domainUnitName, domainUnitProps]) => {
         // Create domain unit with ownership configuration
         const idPrefix = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? `parent-` : '';
-        const domainUnitConstruct = new DataZoneDomainUnitConstruct(scope, `${idPrefix}domain-unit-${domainUnitName}`, {
-          naming: this.props.naming,
-          domainId: domainId,
-          parentDomainUnitId: parentDomainId,
-          name: domainUnitName,
-          description: domainUnitProps.description,
-          ownership: {
-            ownerAccounts: domainUnitProps.ownerAccounts,
-            ownerUsers: domainUnitProps.ownerUsers,
-            ownerGroups: domainUnitProps.ownerGroups,
+        const domainUnitConstruct = new DataZoneDomainUnitConstruct(
+          scope,
+          `${idPrefix}domain-unit-${domainUnitName}`,
+          {
+            naming: this.props.naming,
+            domainId: domainId,
+            parentDomainUnitId: parentDomainId,
+            name: domainUnitName,
+            description: domainUnitProps.description,
+            ownership: {
+              ownerAccounts: domainUnitProps.ownerAccounts,
+              ownerUsers: domainUnitProps.ownerUsers,
+              ownerGroups: domainUnitProps.ownerGroups,
+            },
+            dataAdminUserProfile: userProfiles.dataAdminUserProfile,
+            userProfiles: userProfiles.domainUsers,
+            groupProfiles: userProfiles.domainGroups,
+            associatedAccountUserProfiles: userProfiles.associatedAccountCdkUserProfiles,
           },
-          dataAdminUserProfile: userProfiles.dataAdminUserProfile,
-          userProfiles: userProfiles.domainUsers,
-          groupProfiles: userProfiles.domainGroups,
-          associatedAccountUserProfiles: userProfiles.associatedAccountCdkUserProfiles,
-        });
+          ownersCollector || [],
+        );
 
         // Recursively create child domain units
         const childDomainUnits = this.createDomainUnits(
@@ -358,6 +388,7 @@ export class CommonDomainHelper {
             associatedAccountCdkUserProfiles: userProfiles.associatedAccountCdkUserProfiles,
           },
           domainUnitProps.domainUnits,
+          ownersCollector,
         );
         return [domainUnitName, { construct: domainUnitConstruct, domainUnits: childDomainUnits }];
       }),
@@ -370,60 +401,82 @@ export class CommonDomainHelper {
     domainName: string,
     policyName: string,
     kmsConfig: {
-      account: string;
-      region: string;
       keyAccessAccounts: string[];
       domainKmsKeyArn: string;
       glueCatalogKmsKeyArns: string[];
     },
   ) {
-    const domainKmsUsagePolicy = new MdaaManagedPolicy(scope, `domain-kms-managed-policy-${domainName}`, {
+    const kmsUsagePolicyProps: MdaaManagedPolicyProps = {
       naming: this.props.naming,
       managedPolicyName: policyName,
       verbatimPolicyName: true,
-    });
-
-    domainKmsUsagePolicy.addStatements(
-      this.createDomainKeyDecryptStatement(kmsConfig.domainKmsKeyArn),
-      this.createDomainKeyGenDataKeyStatement(kmsConfig.domainKmsKeyArn),
-      this.createDomainKeyGrantStatement(kmsConfig),
-      this.createGlueCatalogDescribeStatement(kmsConfig.glueCatalogKmsKeyArns),
-      this.createGlueCatalogDecryptStatement(kmsConfig.glueCatalogKmsKeyArns, kmsConfig.keyAccessAccounts),
+    };
+    const domainKmsUsagePolicy = new MdaaManagedPolicy(
+      scope,
+      `domain-kms-managed-policy-${domainName}`,
+      kmsUsagePolicyProps,
     );
+
+    // Allow decrypt and generate data key for domain KMS key with DataZone context
+    const domainKeyDecryptStatement = new PolicyStatement({
+      sid: 'DomainKmsUsage',
+      effect: Effect.ALLOW,
+      resources: [kmsConfig.domainKmsKeyArn],
+      actions: [...USER_ACTIONS, 'kms:DescribeKey'],
+    });
+    domainKmsUsagePolicy.addStatements(domainKeyDecryptStatement);
+
+    // Allow describing Glue catalog KMS keys
+    const glueCatalogDescribeStatement = new PolicyStatement({
+      sid: 'GlueKmsDescribe',
+      effect: Effect.ALLOW,
+      resources: kmsConfig.glueCatalogKmsKeyArns,
+      actions: ['kms:DescribeKey'],
+    });
+    domainKmsUsagePolicy.addStatements(glueCatalogDescribeStatement);
+
+    // Allow decrypting Glue catalog data with catalog ID context
+    const glueCatalogDecryptStatement = new PolicyStatement({
+      sid: 'GlueKmsDecrypt',
+      effect: Effect.ALLOW,
+      resources: kmsConfig.glueCatalogKmsKeyArns,
+      actions: ['kms:Decrypt'],
+      conditions: {
+        StringEquals: {
+          'kms:EncryptionContext:glue_catalog_id': kmsConfig.keyAccessAccounts,
+        },
+      },
+    });
+    domainKmsUsagePolicy.addStatements(glueCatalogDecryptStatement);
 
     return domainKmsUsagePolicy;
   }
 
-  private createDomainKeyDecryptStatement(domainKmsKeyArn: string): PolicyStatement {
-    return new PolicyStatement({
-      sid: 'DomainKmsDecrypt',
-      effect: Effect.ALLOW,
-      resources: [domainKmsKeyArn],
-      actions: ['kms:Decrypt', 'kms:GenerateDataKey'],
-      conditions: {
-        'ForAnyValue:StringEquals': {
-          'kms:EncryptionContextKeys': 'aws:datazone:domainId',
-        },
-      },
-    });
-  }
+  // Creates managed policy for KMS key admin operations (CreateGrant)
+  public createDomainKmsAdminPolicy(
+    scope: Construct,
+    domainName: string,
+    policyName: string,
+    kmsConfig: {
+      account: string;
+      region: string;
+      domainKmsKeyArn: string;
+    },
+  ) {
+    const kmsAdminPolicyProps: MdaaManagedPolicyProps = {
+      naming: this.props.naming,
+      managedPolicyName: policyName,
+      verbatimPolicyName: true,
+    };
+    const domainKmsAdminPolicy = new MdaaManagedPolicy(
+      scope,
+      `domain-kms-admin-policy-${domainName}`,
+      kmsAdminPolicyProps,
+    );
 
-  private createDomainKeyGenDataKeyStatement(domainKmsKeyArn: string): PolicyStatement {
-    return new PolicyStatement({
-      sid: 'DomainKmsGenDataKey',
-      effect: Effect.ALLOW,
-      resources: [domainKmsKeyArn],
-      actions: ['kms:GenerateDataKey'],
-    });
-  }
-
-  private createDomainKeyGrantStatement(kmsConfig: {
-    account: string;
-    region: string;
-    domainKmsKeyArn: string;
-  }): PolicyStatement {
-    return new PolicyStatement({
-      sid: 'DomainKmsGrant',
+    // Allow creating grants for DataZone service
+    const domainKeyGrantStatement = new PolicyStatement({
+      sid: 'DomainKmsCreateGrant',
       effect: Effect.ALLOW,
       resources: [kmsConfig.domainKmsKeyArn],
       actions: ['kms:CreateGrant'],
@@ -440,32 +493,9 @@ export class CommonDomainHelper {
         },
       },
     });
-  }
+    domainKmsAdminPolicy.addStatements(domainKeyGrantStatement);
 
-  private createGlueCatalogDescribeStatement(glueCatalogKmsKeyArns: string[]): PolicyStatement {
-    return new PolicyStatement({
-      sid: 'GlueKmsDescribe',
-      effect: Effect.ALLOW,
-      resources: glueCatalogKmsKeyArns,
-      actions: ['kms:DescribeKey'],
-    });
-  }
-
-  private createGlueCatalogDecryptStatement(
-    glueCatalogKmsKeyArns: string[],
-    keyAccessAccounts: string[],
-  ): PolicyStatement {
-    return new PolicyStatement({
-      sid: 'GlueKmsDecrypt',
-      effect: Effect.ALLOW,
-      resources: glueCatalogKmsKeyArns,
-      actions: ['kms:Decrypt'],
-      conditions: {
-        StringEquals: {
-          'kms:EncryptionContext:glue_catalog_id': keyAccessAccounts,
-        },
-      },
-    });
+    return domainKmsAdminPolicy;
   }
 
   // Creates managed policy for S3 bucket read/write access
@@ -506,7 +536,7 @@ export class CommonDomainHelper {
   }
 
   // Creates Lambda execution role for custom resources with DataZone and KMS permissions
-  public createCustomResourceRole(scope: Construct, roleName: string, domainKmsKeyArn: string, account: string) {
+  public createCustomResourceRole(scope: Construct, roleName: string, account: string) {
     const customResourceRole = new MdaaRole(scope, 'custom-resource-role', {
       naming: this.props.naming,
       roleName: roleName,
@@ -515,13 +545,7 @@ export class CommonDomainHelper {
       inlinePolicies: {
         'custom-resource-policy': new PolicyDocument({
           statements: [
-            // KMS permissions for domain key
-            new PolicyStatement({
-              effect: Effect.ALLOW,
-              actions: USER_ACTIONS,
-              resources: [domainKmsKeyArn],
-            }),
-            // DataZone read permissions (these APIs do not support resource-level permissions)
+            // DataZone read permissions
             new PolicyStatement({
               resources: ['*'],
               actions: [
@@ -532,10 +556,16 @@ export class CommonDomainHelper {
                 'datazone:GetUserProfile',
               ],
             }),
-            // iam:GetRole scoped to DataZone user roles only
+            // iam:GetRole needed by DataZone API calls (aws:ViaAWSService used instead of
+            // aws:CalledVia as IAM global endpoint calls don't reliably propagate CalledVia)
             new PolicyStatement({
-              resources: [`arn:${this.props.partition}:iam::${account}:role/datazone_usr_role_*`],
+              resources: ['*'],
               actions: ['iam:GetRole'],
+              conditions: {
+                Bool: {
+                  'aws:ViaAWSService': 'true',
+                },
+              },
             }),
             // IAM permissions for DataZone user roles
             new PolicyStatement({
@@ -569,7 +599,7 @@ export class CommonDomainHelper {
   }
 
   // Enables and configures an environment blueprint for the domain
-  public createBlueprintConfiguration(
+  public createManagedBlueprintConfiguration(
     scope: Construct,
     blueprintConfig: {
       account: string;
@@ -584,7 +614,7 @@ export class CommonDomainHelper {
     },
   ) {
     const idPrefix = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? `parent-` : '';
-    return new DataZoneBlueprintConfigConstruct(
+    return new DataZoneManagedBlueprintConfigConstruct(
       scope,
       `${idPrefix}env-blueprint-config-${blueprintConfig.domainName}-${blueprintConfig.blueprintName}`,
       {
@@ -610,101 +640,76 @@ export class CommonDomainHelper {
     domain: CfnDomain,
     domainVersion: 'V1' | 'V2',
   ): { [name: string]: CfnUserProfile } {
-    if (!domainProps.associatedAccounts) {
-      return {};
-    }
+    if (domainProps.associatedAccounts) {
+      // Select RAM permission ARN based on domain version
+      const permissionArns =
+        domainVersion == 'V1'
+          ? ['arn:aws:ram::aws:permission/AWSRAMDefaultPermissionAmazonDataZoneDomain']
+          : ['arn:aws:ram::aws:permission/AWSRAMPermissionsAmazonDatazoneDomainExtendedServiceAccess'];
 
-    const domainRamShare = this.createDomainRamShare(scope, domainName, domainProps, domain, domainVersion);
-    const associatedAccountCdkUserProfiles = this.createAssociatedAccountCdkUserProfiles(
-      scope,
-      domainName,
-      domainProps,
-      domain,
-      domainRamShare,
-    );
-    this.assignOwnerAccountsToRootDomainUnit(domain, domainName, domainProps, associatedAccountCdkUserProfiles);
+      // Create RAM share for domain with associated accounts
+      const domainramShareProps: CfnResourceShareProps = {
+        name: `DataZone-${this.props.naming.resourceName()}-${domain.attrId}`,
+        resourceArns: [domain.attrArn],
+        principals: Array.from(new Set(Object.entries(domainProps.associatedAccounts).map(x => x[1].account))),
+        permissionArns: permissionArns,
+      };
+      const domainRamShare = new CfnResourceShare(scope, `domain-ram-share-${domainName}`, domainramShareProps);
 
-    return associatedAccountCdkUserProfiles;
-  }
+      // Create CDK user profiles for associated accounts that need them
+      const associatedAccountCdkUserProfiles = Object.fromEntries(
+        Object.entries(domainProps.associatedAccounts || {})
+          .filter(associatedAccountProps => {
+            return associatedAccountProps[1].createCdkUser;
+          })
+          .map(([associatedAccountName, associatedAccountProps]) => {
+            // Wait for RAM association to complete before creating user profile
+            const associatedAccountRamShareMonitor = this.getRamAssociationMonitor(
+              domain,
+              `domain-ram-association-monitor-${associatedAccountName}`,
+              domainRamShare,
+              associatedAccountProps.account,
+            );
 
-  private createDomainRamShare(
-    scope: Construct,
-    domainName: string,
-    domainProps: DataZoneDomainProps,
-    domain: CfnDomain,
-    domainVersion: 'V1' | 'V2',
-  ): CfnResourceShare {
-    const permissionArns =
-      domainVersion == 'V1'
-        ? ['arn:aws:ram::aws:permission/AWSRAMDefaultPermissionAmazonDataZoneDomain']
-        : ['arn:aws:ram::aws:permission/AWSRAMPermissionsAmazonDatazoneDomainExtendedServiceAccess'];
-
-    return new CfnResourceShare(scope, `domain-ram-share-${domainName}`, {
-      name: `DataZone-${this.props.naming.resourceName()}-${domain.attrId}`,
-      resourceArns: [domain.attrArn],
-      principals: Array.from(new Set(Object.entries(domainProps.associatedAccounts!).map(x => x[1].account))),
-      permissionArns: permissionArns,
-    });
-  }
-
-  private createAssociatedAccountCdkUserProfiles(
-    scope: Construct,
-    domainName: string,
-    domainProps: DataZoneDomainProps,
-    domain: CfnDomain,
-    domainRamShare: CfnResourceShare,
-  ): { [name: string]: CfnUserProfile } {
-    return Object.fromEntries(
-      Object.entries(domainProps.associatedAccounts || {})
-        .filter(([, associatedAccountProps]) => associatedAccountProps.createCdkUser)
-        .map(([associatedAccountName, associatedAccountProps]) => {
-          const associatedAccountRamShareMonitor = this.getRamAssociationMonitor(
-            domain,
-            `domain-ram-association-monitor-${associatedAccountName}`,
-            domainRamShare,
-            associatedAccountProps.account,
-          );
-
-          const associatedAccountCdkUserProfile = new CfnUserProfile(
-            scope,
-            `${domainName}-${associatedAccountName}-cdk-user-profile`,
-            {
+            const accountCdkUserProfileProps: CfnUserProfileProps = {
               domainIdentifier: domain.attrId,
               userIdentifier:
                 associatedAccountProps.cdkRoleArn ??
                 `arn:${this.props.partition}:iam::${associatedAccountProps.account}:role/cdk-hnb659fds-cfn-exec-role-${associatedAccountProps.account}-${this.props.region}`,
               userType: 'IAM_ROLE',
               status: 'ACTIVATED',
-            },
-          );
-          associatedAccountCdkUserProfile.node.addDependency(associatedAccountRamShareMonitor);
-          return [associatedAccountName, associatedAccountCdkUserProfile];
-        }),
-    );
-  }
+            };
+            const associatedAccountCdkUserProfile = new CfnUserProfile(
+              scope,
+              `${domainName}-${associatedAccountName}-cdk-user-profile`,
+              accountCdkUserProfileProps,
+            );
+            associatedAccountCdkUserProfile.node.addDependency(associatedAccountRamShareMonitor);
+            return [associatedAccountName, associatedAccountCdkUserProfile];
+          }),
+      );
 
-  private assignOwnerAccountsToRootDomainUnit(
-    domain: CfnDomain,
-    domainName: string,
-    domainProps: DataZoneDomainProps,
-    associatedAccountCdkUserProfiles: { [name: string]: CfnUserProfile },
-  ): void {
-    domainProps.ownerAccounts?.forEach(ownerName => {
-      const ownerUser = associatedAccountCdkUserProfiles[ownerName];
-      if (!ownerUser) {
-        throw new Error(`Unknown owner account cdk user ${ownerName} on domain ${domainName}`);
-      }
-      new CfnOwner(domain, `owner-cdk-user-${ownerName}`, {
-        domainIdentifier: domain.attrId,
-        entityIdentifier: domain.attrRootDomainUnitId,
-        entityType: EntityType.DOMAIN_UNIT,
-        owner: {
-          user: {
-            userIdentifier: ownerUser.attrId,
+      // Assign account CDK users as owners to root domain unit
+      domainProps.ownerAccounts?.forEach(ownerName => {
+        const ownerUser = associatedAccountCdkUserProfiles[ownerName];
+        if (!ownerUser) {
+          throw new Error(`Unknown owner account cdk user ${ownerName} on domain ${domainName}`);
+        }
+        const cfnOwnerProps: CfnOwnerProps = {
+          domainIdentifier: domain.attrId,
+          entityIdentifier: domain.attrRootDomainUnitId,
+          entityType: EntityType.DOMAIN_UNIT,
+          owner: {
+            user: {
+              userIdentifier: ownerUser.attrId,
+            },
           },
-        },
+        };
+        new CfnOwner(domain, `owner-cdk-user-${ownerName}`, cfnOwnerProps);
       });
-    });
+      return associatedAccountCdkUserProfiles;
+    }
+    return {};
   }
 
   // Returns Glue catalog ARNs for a given account
@@ -779,8 +784,43 @@ export class CommonDomainHelper {
         throw new Error(`Domain unit '${domainUnitName}' not found in created domain units`);
       }
 
-      const authPolicies = this.buildAuthorizationPolicies(domainUnitProps);
+      const allowAllUsersPrincipal: PolicyPrincipal | undefined = domainUnitProps.allowAllUsers
+        ? {
+            allUsersGrantFilter: true,
+          }
+        : undefined;
 
+      const allowedUserPrincipals = domainUnitProps.allowedUsers?.map(username => {
+        return {
+          userName: username,
+        };
+      });
+
+      const allowedGroupsPrincipals = domainUnitProps.allowedGroups?.map(groupName => {
+        return {
+          groupName: groupName,
+        };
+      });
+
+      const allowedUserGroupsPolicy: NamedAuthorizationPolicies | undefined =
+        allowedUserPrincipals || allowedGroupsPrincipals || allowAllUsersPrincipal
+          ? {
+              'allowed-users-groups': {
+                policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
+                principals: [
+                  ...(allowedUserPrincipals || []),
+                  ...(allowedGroupsPrincipals || []),
+                  ...(allowAllUsersPrincipal ? [allowAllUsersPrincipal] : []),
+                ],
+                includeChildDomainUnits: true,
+              },
+            }
+          : undefined;
+      const authPolicies: NamedAuthorizationPolicies | undefined = {
+        ...allowedUserGroupsPolicy,
+        ...domainUnitProps.authorizationPolicies,
+      };
+      // Create authorization policies for this domain unit
       if (authPolicies && Object.keys(authPolicies).length > 0) {
         this.createAuthorizationPolicies(
           'authorization-policies',
@@ -806,35 +846,6 @@ export class CommonDomainHelper {
     });
   }
 
-  private buildAuthorizationPolicies(domainUnitProps: DomainUnit): NamedAuthorizationPolicies | undefined {
-    const allowAllUsersPrincipal: PolicyPrincipal | undefined = domainUnitProps.allowAllUsers
-      ? { allUsersGrantFilter: true }
-      : undefined;
-
-    const allowedUserPrincipals = domainUnitProps.allowedUsers?.map(username => ({ userName: username }));
-    const allowedGroupsPrincipals = domainUnitProps.allowedGroups?.map(groupName => ({ groupName: groupName }));
-
-    const allowedUserGroupsPolicy: NamedAuthorizationPolicies | undefined =
-      allowedUserPrincipals || allowedGroupsPrincipals || allowAllUsersPrincipal
-        ? {
-            'allowed-users-groups': {
-              policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
-              principals: [
-                ...(allowedUserPrincipals || []),
-                ...(allowedGroupsPrincipals || []),
-                ...(allowAllUsersPrincipal ? [allowAllUsersPrincipal] : []),
-              ],
-              includeChildDomainUnits: true,
-            },
-          }
-        : undefined;
-
-    return {
-      ...allowedUserGroupsPolicy,
-      ...domainUnitProps.authorizationPolicies,
-    };
-  }
-
   // Wraps authorization construct creation with error handling
   protected createAuthorizationPolicies(
     id: string,
@@ -845,7 +856,16 @@ export class CommonDomainHelper {
     domainProps?: DataZoneDomainProps,
   ): DataZoneAuthorizationConstruct {
     try {
-      return this.createDataZoneAuthorizationConstruct(id, scope, domainId, entityId, policies, domainProps);
+      const authorizationConstruct = this.createDataZoneAuthorizationConstruct(
+        id,
+        scope,
+        domainId,
+        entityId,
+        policies,
+        domainProps,
+      );
+
+      return authorizationConstruct;
     } catch (error) {
       throw new Error(
         `Authorization policies creation failed for domain unit '${entityId}': ${
@@ -927,7 +947,15 @@ export class CommonDomainHelper {
     kmsKey: IKey,
   ) {
     const associatedAccountGlueCatalogKmsKeyArns: string[] = Object.entries(domainProps.associatedAccounts || {}).map(
-      ([accountName, accountProps]) => this.resolveGlueCatalogKmsKey(scope, accountName, accountProps),
+      ([accountName, accountProps]) => {
+        return accountProps.glueCatalogKmsKeyArn
+          ? accountProps.glueCatalogKmsKeyArn
+          : MdaaStringParameter.fromStringParameterArn(
+              scope,
+              `${accountName}-glue-catalog-key-ssm`,
+              `arn:${this.props.partition}:ssm:${this.props.region}:${accountProps.account}:parameter${GlueCatalogL3Construct.ACCOUNT_KEY_SSM_PATH}`,
+            ).stringValue;
+      },
     );
     // Collects Glue catalog KMS keys from associated accounts and main account
     const glueCatalogKmsKeyArns = [
@@ -951,11 +979,16 @@ export class CommonDomainHelper {
     // Create KMS usage policy with domain and Glue catalog permissions
     const domainKmsUsagePolicyName = this.props.naming.resourceName(`domain-kms-use-${domainName}`);
     const domainKmsUsagePolicy = this.createDomainKmsUsagePolicy(scope, domainName, domainKmsUsagePolicyName, {
-      account: this.props.account,
-      region: this.props.region,
       keyAccessAccounts,
       domainKmsKeyArn: kmsKey.keyArn,
       glueCatalogKmsKeyArns: glueCatalogKmsKeyArns,
+    });
+
+    const domainKmsAdminPolicyName = this.props.naming.resourceName(`domain-kms-admin-${domainName}`);
+    const domainKmsAdminPolicy = this.createDomainKmsAdminPolicy(scope, domainName, domainKmsAdminPolicyName, {
+      account: this.props.account,
+      region: this.props.region,
+      domainKmsKeyArn: kmsKey.keyArn,
     });
 
     // Create S3 bucket usage policy
@@ -967,6 +1000,8 @@ export class CommonDomainHelper {
       domainKmsUsagePolicyName,
       domainKmsUsagePolicy,
       domainBucketUsagePolicyName,
+      domainKmsAdminPolicyName,
+      domainKmsAdminPolicy,
     };
   }
 
@@ -1046,7 +1081,8 @@ export class CommonDomainHelper {
       domain: CfnDomain;
       domainConfig: DomainConfig;
       policyNames: {
-        kms: string;
+        kmsUsagePolicyName: string;
+        kmsAdminPolicyName: string;
         bucket: string;
       };
       keyAccessAccounts: string[];
@@ -1057,7 +1093,8 @@ export class CommonDomainHelper {
         accountProps: AssociatedAccountProps,
         resourceConfig: {
           domainConfig: DomainConfig;
-          kmsPolicy: string;
+          kmsUsagePolicyName: string;
+          kmsAdminPolicyName: string;
           bucketPolicy: string;
           keyAccounts: string[];
         },
@@ -1088,7 +1125,8 @@ export class CommonDomainHelper {
       );
       crossAccountConfig.createAssociatedAccountResources(scope, domainName, accountName, accountProps, {
         domainConfig: crossAccountConfig.domainConfig,
-        kmsPolicy: crossAccountConfig.policyNames.kms,
+        kmsUsagePolicyName: crossAccountConfig.policyNames.kmsUsagePolicyName,
+        kmsAdminPolicyName: crossAccountConfig.policyNames.kmsAdminPolicyName,
         bucketPolicy: crossAccountConfig.policyNames.bucket,
         keyAccounts: crossAccountConfig.keyAccessAccounts,
       });
@@ -1115,7 +1153,7 @@ export class CommonDomainHelper {
     domainName: string,
     accountId: string,
     region: string,
-    policyNames: { kms: string; bucket: string },
+    policyNames: { kmsUsage: string; kmsAdmin: string; bucket: string },
     keyAccessAccounts: string[],
     crossAccountDomainConfig: DomainConfig,
   ) {
@@ -1129,14 +1167,18 @@ export class CommonDomainHelper {
         crossAccountDomainConfig.domainBucketArn,
       ),
     );
-    const domainKmsUsagePolicy = this.createDomainKmsUsagePolicy(crossAccountStack, domainName, policyNames.kms, {
-      account: accountId,
-      region,
+    const domainKmsUsagePolicy = this.createDomainKmsUsagePolicy(crossAccountStack, domainName, policyNames.kmsUsage, {
       keyAccessAccounts,
       domainKmsKeyArn: crossAccountDomainConfig.domainKmsKeyArn,
       glueCatalogKmsKeyArns: crossAccountDomainConfig.glueCatalogKmsKeyArns,
     });
-    return { domainBucketUsagePolicy, domainKmsUsagePolicy };
+    const domainKmsAdminPolicy = this.createDomainKmsAdminPolicy(crossAccountStack, domainName, policyNames.kmsAdmin, {
+      account: accountId,
+      region: region,
+      domainKmsKeyArn: crossAccountDomainConfig.domainKmsKeyArn,
+    });
+
+    return { domainBucketUsagePolicy, domainKmsUsagePolicy, domainKmsAdminPolicy };
   }
 
   // Resolves LakeFormation manage access role from ARN or SSM parameter
@@ -1165,6 +1207,7 @@ export class CommonDomainHelper {
     },
     domainData: {
       domainUnitIds: { [name: string]: string };
+      blueprintIds?: { [name: string]: string };
       glueCatalogKmsKeyArns: string[];
       glueCatalogArns: string[];
     },
@@ -1190,6 +1233,7 @@ export class CommonDomainHelper {
       ssmParamBase: this.props.naming.ssmPath(`domain/${domainName}/config`),
       customResourceRoleName,
       createConfigParams: true,
+      blueprintIds: domainData.blueprintIds,
     };
     return new DomainConfig(scope, `domain-config-${domainName}`, domainConfigProps);
   }
@@ -1199,21 +1243,34 @@ export class CommonDomainHelper {
     scope: Construct,
     domainName: string,
     domain: CfnDomain,
-    kmsKeyArn: string,
+    domainKmsUsagePolicy: ManagedPolicy,
+    domainProps: BaseDomainProps,
   ): { roleName: string; role: IRole } {
     const customResourceRoleName = this.props.naming.resourceName(`${domainName}-custom-resource`, 64);
-    const customResourceRole = this.createCustomResourceRole(
-      scope,
-      customResourceRoleName,
-      kmsKeyArn,
-      this.props.account,
-    );
-    new CfnUserProfile(scope, 'custom-resource-user-profile', {
+    const customResourceRole = this.createCustomResourceRole(scope, customResourceRoleName, this.props.account);
+
+    domainKmsUsagePolicy.attachToRole(customResourceRole);
+    const customResourceUserProfile = new CfnUserProfile(scope, 'custom-resource-user-profile', {
       domainIdentifier: domain.attrId,
       userIdentifier: customResourceRole.roleArn,
       userType: 'IAM_ROLE',
       status: 'ACTIVATED',
     });
+
+    const authorizonPolicy: AuthorizationPolicy = {
+      policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
+      principals: [{ userIdentifier: { name: 'custom-resource-user', identifier: customResourceUserProfile.attrId } }],
+      includeChildDomainUnits: true,
+    };
+    this.createAuthorizationPolicies(
+      `custom-resource-role-auth`,
+      domain,
+      domain.attrId,
+      domain.attrRootDomainUnitId,
+      { 'custom-resource-role-auth': authorizonPolicy },
+      domainProps,
+    );
+
     return { roleName: customResourceRoleName, role: customResourceRole };
   }
 }

@@ -1,0 +1,39 @@
+# Lake Formation Settings Configuration
+#
+# Configures Lake Formation for DataZone/SMUS integration with fine-grained access control,
+# automated permission management, and cross-account data sharing capabilities.
+
+# Lake Formation Admin Roles Configuration
+# These roles can manage Lake Formation permissions, grants, and data locations
+lakeFormationAdminRoles:
+  # Data governance administrators - can manage LF permissions and grants
+  - id: ssm-domain:/generated-role/data-admin/id
+
+# Disable IAM-based permissions in favor of Lake Formation permissions
+# When false, Lake Formation becomes the primary access control mechanism
+# This is required for:
+# - DataZone integration and automated permission management
+# - Fine-grained column and row-level security
+# - Cross-account data sharing with governance
+# When true (default AWS behavior), IAM policies control access, bypassing Lake Formation
+iamAllowedPrincipalsDefault: false
+
+# Create a role for DataZone to administer Lake Formation permissions
+# This role is used by DataZone to automatically:
+# - Grant permissions when users subscribe to data assets
+# - Revoke permissions when subscriptions are removed
+# - Manage cross-account grants for data sharing
+createDataZoneAdminRole: true
+
+# Allow DataZone admin role from the enterprise account to manage Lake Formation in this account
+# Required for cross-account data sharing scenarios where:
+# - The SMUS domain is in the enterprise account
+# - Data assets are in this account (team1 or team2)
+# - DataZone needs to manage permissions across account boundaries
+dataZoneAdminTrustAccounts:
+  - "{{context:enterprise_account}}"
+
+# Allow CDK deployment role to administer Lake Formation during stack deployment
+# This enables MDAA to configure Lake Formation settings, register S3 locations,
+# and create initial grants as part of the infrastructure deployment
+createCdkLFAdmin: true

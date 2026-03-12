@@ -179,7 +179,7 @@ describe('DomainConfig Tests', () => {
       const domainConfig = new DomainConfig(testStack, 'TestDomainConfig', props);
       const paramArns = domainConfig.configParamArns;
 
-      expect(paramArns).toHaveLength(8);
+      expect(paramArns).toHaveLength(9);
       expect(paramArns.every(arn => typeof arn === 'string')).toBe(true);
 
       const template = Template.fromStack(testStack);
@@ -221,7 +221,7 @@ describe('DomainConfig Tests', () => {
       const domainConfig = new DomainConfig(testStack, 'TestDomainConfigWithUnits', props);
       const paramArns = domainConfig.configParamArns;
 
-      expect(paramArns).toHaveLength(8);
+      expect(paramArns).toHaveLength(9);
     });
 
     test('should handle empty domainCustomEnvBlueprintId', () => {
@@ -244,7 +244,7 @@ describe('DomainConfig Tests', () => {
       const domainConfig = new DomainConfig(testStack, 'TestDomainConfigNoBlueprint', props);
       const paramArns = domainConfig.configParamArns;
 
-      expect(paramArns).toHaveLength(8);
+      expect(paramArns).toHaveLength(9);
       expect(paramArns.every(arn => typeof arn === 'string')).toBe(true);
     });
   });
@@ -287,7 +287,7 @@ describe('DomainConfig Tests', () => {
       expect(typeof engineeringUnitId).toBe('string');
 
       const paramArns = domainConfig.configParamArns;
-      expect(paramArns).toHaveLength(8);
+      expect(paramArns).toHaveLength(9);
 
       const template = Template.fromStack(testStack);
       // Verify multiple SSM parameters are created
@@ -316,7 +316,7 @@ describe('DomainConfig Tests', () => {
       const domainConfig = new DomainConfig(testStack, 'EdgeCaseDomainConfig', props);
       const paramArns = domainConfig.configParamArns;
 
-      expect(paramArns).toHaveLength(8);
+      expect(paramArns).toHaveLength(9);
       expect(paramArns.every(arn => typeof arn === 'string')).toBe(true);
     });
   });

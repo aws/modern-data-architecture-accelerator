@@ -10,13 +10,13 @@ export class MdaaOrgDomainEnvConfigValueTransformer implements IMdaaConfigValueT
 
   public transformValue(value: string): string {
     if (value.startsWith('ssm-org:')) {
-      return `ssm:${this.naming.ssmOrgPath(value.replace(/^ssm-org:\s*/, ''), false)}`;
+      return `{{resolve:ssm:${this.naming.ssmOrgPath(value.replace(/^ssm-org:\s*/, ''), false)}}}`;
     }
     if (value.startsWith('ssm-domain:')) {
-      return `ssm:${this.naming.ssmDomainPath(value.replace(/^ssm-domain:\s*/, ''), false)}`;
+      return `{{resolve:ssm:${this.naming.ssmDomainPath(value.replace(/^ssm-domain:\s*/, ''), false)}}}`;
     }
     if (value.startsWith('ssm-env:')) {
-      return `ssm:${this.naming.ssmEnvPath(value.replace(/^ssm-env:\s*/, ''), false)}`;
+      return `{{resolve:ssm:${this.naming.ssmEnvPath(value.replace(/^ssm-env:\s*/, ''), false)}}}`;
     }
     return value;
   }

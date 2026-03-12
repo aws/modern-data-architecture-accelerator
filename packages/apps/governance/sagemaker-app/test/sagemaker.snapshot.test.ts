@@ -11,6 +11,7 @@ import { TestRegionFact } from '@aws-mdaa/testing';
 import { Fact } from 'aws-cdk-lib/region-info';
 beforeEach(() => {
   process.env.CDK_DEFAULT_REGION = 'test-region';
+  process.env.CDK_DEFAULT_ACCOUNT = 'test-account';
   Fact.register(new TestRegionFact(), true);
 });
 describe('sagemaker Snapshot Tests', () => {
@@ -36,6 +37,10 @@ describe('sagemaker Snapshot Tests', () => {
           context: {
             ...context,
             module_configs: path.join(__dirname, 'test-config.yaml'),
+            additional_stacks: JSON.stringify([
+              { account: '1234567890', region: 'test-region' },
+              { account: '2234567890', region: 'test-region' },
+            ]),
           },
         });
         return moduleApp.generateStack();
@@ -57,6 +62,10 @@ describe('sagemaker Snapshot Tests', () => {
           context: {
             ...context,
             module_configs: path.join(__dirname, 'test-config.yaml'),
+            additional_stacks: JSON.stringify([
+              { account: '1234567890', region: 'test-region' },
+              { account: '2234567890', region: 'test-region' },
+            ]),
           },
         });
         moduleApp.generateStack();

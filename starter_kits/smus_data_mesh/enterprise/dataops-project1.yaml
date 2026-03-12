@@ -1,0 +1,104 @@
+# Enterprise DataOps Project Configuration
+#
+# Provides data engineering infrastructure with S3 storage, Glue cataloging, Lake Formation permissions,
+# and SMUS integration. Demonstrates using data lake KMS key and exposing databases as SMUS data sources.
+
+# IAM roles that will have access to the project's resources (S3 bucket, KMS key)
+dataAdminRoles:
+  # This role will be provided admin access to project resources
+  # Can manage all aspects of the project infrastructure
+  - id: ssm-org:/ent-com/generated-role/data-admin/id
+  
+  # This role will be used to deploy custom SMUS Blueprints which need access
+  # to project resources (such as the KMS key for encrypting DynamoDB tables)
+  - id: ssm-org:/ent-com/generated-role/ddb-bp-prov/id
+
+# IAM roles for data engineers who will build and manage data pipelines
+# These roles get read/write access to project S3 bucket and Glue resources
+dataEngineerRoles:
+  - id: ssm-org:/ent-com/generated-role/data-engineer/id
+
+# Roles used to execute data operations (Glue Jobs, Crawlers, etc)
+# These are service roles that Glue assumes when running jobs and crawlers
+projectExecutionRoles:
+  - id: ssm-org:/ent-com/generated-role/glue-etl/id
+
+# Override the default project KMS key for S3 output
+# We will use the data lake KMS key instead of the project-specific key
+# This allows writing data directly to the data lake with consistent encryption
+# The project will still have its own KMS key for other resources (like DynamoDB)
+s3OutputKmsKeyArn: ssm-domain:/lake/kms/arn
+
+# SageMaker Unified Studio integration
+# Creates a SMUS project linked to this DataOps project for unified data access
+sagemaker:
+  # Reference to the SMUS domain configuration in SSM Parameter Store
+  # This is a raw SSM parameter path (not an ssm: reference)
+  domainConfigSSMParam: /{{org}}/ent-data/smus-dom/domain/domain1/config
+  
+  # Configuration for the SageMaker project to be created
+  project:
+    # The name of the SageMaker project profile to use
+    # This profile was created in smus-project-profiles.yaml
+    profileName: enterprise-profile
+    
+    # Project owners have full control over the project
+    # Can manage members, subscribe to data, and configure settings
+    ownerUsers:
+      admin1: "{{context:admin1_user_sso_id}}"
+    
+    # Project owner groups
+    # All members of these groups have owner permissions
+    ownerGroups:
+      enterprise: "{{context:enterprise_group_sso_id}}"
+    
+    # Environment configurations specify blueprint parameter values
+    environmentConfigs:
+      # DynamoDB blueprint configuration (from smus-bp-ddb.yaml)
+      ddb-table:
+        parameters:
+          # The KMS key parameter references this DataOps project's KMS key
+          # {{ref:/ProjectKmsKey/Resource:Arn}} is a CloudFormation reference to the
+          # KMS key resource created by this DataOps project
+          # This ensures the DDB table uses the same encryption key as other project resources
+          kmsKey: "{{ref:/ProjectKmsKey/Resource:Arn}}"
+
+# Glue databases to create within the project
+# Each database represents a logical grouping of tables/data assets
+databases:
+  # A sample database pointing to data assets on the data lake
+  lake-db1:
+    description: Enterprise Data Lake Database 1
+    
+    # The data lake S3 bucket and prefix location where the database data is stored
+    # Project execution roles will be granted Lake Formation permissions
+    # to create Glue tables which point to this location
+    locationBucketName: ssm-domain:/lake/bucket/transformed/name
+    locationPrefix: data/db1
+    
+    # Automatically create a Glue Crawler for the database
+    # Crawlers scan S3 data and automatically create/update Glue table schemas
+    crawler:
+      # Role that the crawler will assume when running
+      # This should be one of the roles defined in projectExecutionRoles
+      role:
+        arn: ssm-org:/ent-com/generated-role/glue-etl/arn
+    
+    # Enable creation of a SageMaker datasource for this database
+    # This creates a data source in SMUS that points to the Glue database
+    # Users can then discover and query this data through the SMUS interface
+    # The data source will be created in the SageMaker project specified above
+    createSagemakerDatasource: true
+    
+    # Automatically create Lake Formation grants for the project roles
+    # This configures fine-grained permissions for the database
+    lakeFormation:
+      # Data admin roles get SUPER permissions (full control including ability to grant permissions)
+      createSuperGrantsForDataAdminRoles: true
+      
+      # Data engineer roles get read-only permissions (SELECT on tables)
+      createReadGrantsForDataEngineerRoles: true
+      
+      # Project execution roles (Glue jobs) get read/write permissions (SELECT, INSERT, DELETE, ALTER)
+      createReadWriteGrantsForProjectExecutionRoles: true
+

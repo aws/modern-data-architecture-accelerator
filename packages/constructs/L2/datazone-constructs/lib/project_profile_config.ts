@@ -24,7 +24,7 @@ export class ProjectProfilesConfig extends Construct {
   }
 
   public getProjectProfileId(projectProfileName: string): string {
-    if (projectProfileName in this.projectProfileIds) {
+    if (this.projectProfileIds[projectProfileName]) {
       return this.projectProfileIds[projectProfileName];
     }
     return this.ssmParamArnOrName(
@@ -59,7 +59,8 @@ export class ProjectProfilesConfig extends Construct {
   private ssmParamArnOrName(id: string, arnOrName: string): IStringParameter {
     const existing = this.node.tryFindChild(id);
     if (existing) {
-      return existing as IStringParameter;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return existing as any;
     }
     if (arnOrName.startsWith('arn:')) {
       return MdaaStringParameter.fromStringParameterArn(this, id, arnOrName);

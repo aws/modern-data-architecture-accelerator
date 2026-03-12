@@ -6,8 +6,7 @@
 import {
   ConfigurationElement,
   IMdaaConfigTransformer,
-  MdaaConfigBlueprintRefValueTransformer,
-  MdaaConfigBlueprintRefValueTransformerProps,
+  IMdaaConfigValueTransformer,
   MdaaConfigParamRefValueTransformer,
   MdaaConfigParamRefValueTransformerProps,
   MdaaConfigRefValueTransformer,
@@ -16,6 +15,8 @@ import {
   MdaaConfigTransformer,
   MdaaNagSuppressionConfigs,
   MdaaServiceCatalogProductConfig,
+  MdaaConfigBlueprintRefValueTransformer,
+  MdaaConfigBlueprintRefValueTransformerProps,
 } from '@aws-mdaa/config';
 import { DomainConfig, MdaaSageMakerBluePrintParameterConfig } from '@aws-mdaa/datazone-constructs';
 
@@ -26,7 +27,7 @@ import * as yaml from 'yaml';
 
 import { MdaaOrgDomainEnvConfigValueTransformer } from './org-domain-env-transformer';
 import { coerceConfigTypes } from './utils';
-import { MdaaGeneratedRoleConfigValueTransformer } from './generated-role-transformer';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 
 /**
  * Q-ENHANCED-INTERFACE
@@ -38,7 +39,7 @@ import { MdaaGeneratedRoleConfigValueTransformer } from './generated-role-transf
  *
  * Validation: domain_arn must be valid SageMaker domain ARN;
  */
-export interface MdaaSageMakerBluePrintConfig {
+export interface MdaaSageMakerCustomBluePrintConfig {
   readonly blueprintName?: string;
   /**
    * Q-ENHANCED-PROPERTY
@@ -55,7 +56,7 @@ export interface MdaaSageMakerBluePrintConfig {
   readonly domainConfig?: DomainConfig;
 
   readonly enabledRegions?: string[];
-  readonly provisioningRoleArn: string;
+  readonly provisioningRole: MdaaRoleRef;
 
   /**
    * Q-ENHANCED-PROPERTY
@@ -81,6 +82,28 @@ export interface MdaaSageMakerBluePrintConfig {
   readonly parameters?: { [key: string]: MdaaSageMakerBluePrintParameterConfig };
 
   readonly authorizedDomainUnits?: string[];
+
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional map of additional AWS accounts where the SageMaker blueprint should be enabled. Each entry maps a friendly account name to account-specific configuration including provisioning role ARN and optional parameters and authorized domain units.
+   *
+   * Use cases: Multi-account deployment; Cross-account provisioning; Account-specific configuration
+   *
+   * AWS: AWS SageMaker blueprint multi-account provisioning configuration
+   *
+   * Validation: Must be object with string keys and valid account configuration values if provided
+   **/
+  readonly additionalAccounts?: {
+    [accountName: string]: AdditionalBlueprintAccount;
+  };
+}
+
+export interface AdditionalBlueprintAccount {
+  readonly account: string;
+  readonly enabledRegions?: string[];
+  readonly provisioningRole: MdaaRoleRef;
+  readonly parameters?: { [key: string]: MdaaSageMakerBluePrintParameterConfig };
+  readonly authorizedDomainUnits?: string[];
 }
 
 export interface MdaaBaseConfigContents {
@@ -105,7 +128,7 @@ export interface MdaaBaseConfigContents {
    *
    * Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode
    **/
-  readonly sagemakerBlueprint?: MdaaSageMakerBluePrintConfig;
+  readonly sagemakerBlueprint?: MdaaSageMakerCustomBluePrintConfig;
   /**
    * Q-ENHANCED-PROPERTY
    * Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.
@@ -180,7 +203,7 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
   private readonly stack: Stack;
 
   public readonly serviceCatalogConfig?: MdaaServiceCatalogProductConfig;
-  public readonly sagemakerBlueprintConfig?: MdaaSageMakerBluePrintConfig;
+  public readonly sagemakerBlueprintConfig?: MdaaSageMakerCustomBluePrintConfig;
   public readonly nagSuppressions?: MdaaNagSuppressionConfigs;
 
   /**
@@ -219,6 +242,7 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
     ).transformConfig(orgDomainEnvResolvedConfig);
 
     // Add new transformer with support for SSM param shorthand for org, domain, env
+
     const configRefValueTransformerProps: MdaaConfigRefValueTransformerProps = {
       naming: this.props.naming,
       org: this.stack.node.tryGetContext('org'),
@@ -239,18 +263,18 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
     this.sagemakerBlueprintConfig = baseConfigContents.sagemakerBlueprint;
     this.nagSuppressions = baseConfigContents.nag_suppressions;
 
-    const extractParamProps = <T>(
-      params: { [key: string]: T } | undefined,
-      getPropsFn: (p: T) => CfnParameterProps | undefined,
-    ): { [name: string]: CfnParameterProps } => {
-      return Object.fromEntries(Object.entries(params || {}).map(([name, p]) => [name, getPropsFn(p) || {}]));
-    };
-
     const paramProps: { [name: string]: CfnParameterProps } = {
-      ...extractParamProps(this.sagemakerBlueprintConfig?.parameters, p => p.cfnParamProps),
-      ...extractParamProps(this.serviceCatalogConfig?.parameters, p => p.props),
+      ...Object.fromEntries(
+        Object.entries(this.sagemakerBlueprintConfig?.parameters || {}).map(([paramName, props]) => {
+          return [paramName, props.cfnParamProps || {}];
+        }),
+      ),
+      ...Object.fromEntries(
+        Object.entries(this.serviceCatalogConfig?.parameters || {}).map(([paramName, props]) => {
+          return [paramName, props.props || {}];
+        }),
+      ),
     };
-
     const paramTransformerProps: MdaaConfigParamRefValueTransformerProps = {
       ...configRefValueTransformerProps,
       paramProps: paramProps,
@@ -298,5 +322,29 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
 
     // TYPE_WARNING: not clear why this should work
     this.configContents = resolvedParamsConfigContents as unknown as T;
+  }
+}
+
+class MdaaGeneratedRoleConfigValueTransformer implements IMdaaConfigValueTransformer {
+  naming: IMdaaResourceNaming;
+
+  constructor(naming: IMdaaResourceNaming) {
+    this.naming = naming;
+  }
+
+  public transformValue(value: string): string {
+    if (value.startsWith('generated-role-id:')) {
+      return `ssm:${this.naming.ssmPath(
+        'generated-role/' + value.replace(/^generated-role-id:\s*/, '') + '/id',
+        false,
+      )}`;
+    } else if (value.startsWith('generated-role-arn:')) {
+      return `ssm:${this.naming.ssmPath(
+        'generated-role/' + value.replace(/^generated-role-arn:\s*/, '') + '/arn',
+        false,
+      )}`;
+    } else {
+      return value;
+    }
   }
 }

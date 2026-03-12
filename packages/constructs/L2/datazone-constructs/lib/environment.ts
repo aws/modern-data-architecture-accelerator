@@ -15,35 +15,23 @@ import { MdaaDatazoneProject } from './project';
 import { Stack } from 'aws-cdk-lib';
 
 export interface MdaaDatazoneEnvironmentProps extends MdaaConstructProps {
-  /** DataZone project reference for environment association enabling project-environment integration */
   readonly project: MdaaDatazoneProject;
-  /** IAM role for DataZone environment user access enabling user-based environment operations */
   readonly envUserRole: IRole;
-  /** Lake Formation manage access role for automated data governance enabling permission */
   readonly lakeformationManageAccessRole: IRole;
-  /** S3 bucket for DataZone environment data storage enabling environment data management */
   readonly envBucket: IBucket;
-  /** AWS account ID for environment deployment enabling account-specific resource creation */
   readonly account: string;
-  /** AWS region for environment deployment enabling region-specific resource creation */
   readonly region: string;
 }
 
 export class MdaaDatazoneEnvironment extends Construct {
-  /** Environment properties configuration for DataZone environment setup providing access to environment settings */
   readonly props: MdaaDatazoneEnvironmentProps;
-  /** CloudFormation DataZone environment resource for environment deployment and management */
   public readonly env: CfnEnvironment;
-  /** Glue database for DataZone subscription data storage enabling subscription data management */
   public readonly subDatabase: CfnDatabase;
-  /** Generated subscription database name after applying naming conventions for consistent resource identification */
   public readonly subDatabaseName: string;
-  /** DataZone subscription target for data subscription management enabling subscription workflows */
   public readonly subTarget: CfnSubscriptionTarget;
-  /** Lake Formation manage access role for automated data governance enabling permission management */
   public readonly lakeformationManageAccessRole: IRole;
 
-  private readonly constructScope: Construct;
+  private constructScope: Construct;
 
   public constructor(scope: Construct, id: string, props: MdaaDatazoneEnvironmentProps, useParentScope?: boolean) {
     super(scope, id);
@@ -86,7 +74,6 @@ export class MdaaDatazoneEnvironment extends Construct {
       domainIdentifier: props.project.domainConfig.domainId,
       environmentIdentifier: datazoneEnv.attrId,
       parameters: {
-        // uri: `https://${props.region}.console.aws.amazon.com/athena/home#/query-editor/domain/${datazoneEnv.attrDomainId}/domainRegion/${props.region}/environment/${datazoneEnv.attrId}`
         uri: `https://${props.region}.console.aws.amazon.com/athena/home?region=${props.region}#/query-editor`,
       },
     };

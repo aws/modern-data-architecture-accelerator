@@ -13,7 +13,7 @@ import { Construct } from 'constructs';
 import { DataZoneAuthorizationConstruct, EntityType, NamedAuthorizationPolicies } from './authorization';
 import { LEGACY_DATAZONE_SCOPE_CONTEXT_KEY } from '.';
 
-export interface DataZoneBlueprintConfigConstructProps extends MdaaConstructProps {
+export interface DataZoneManagedBlueprintConfigConstructProps extends MdaaConstructProps {
   readonly domainName: string;
   readonly blueprintName: string;
   readonly enabledRegions: string[];
@@ -25,11 +25,11 @@ export interface DataZoneBlueprintConfigConstructProps extends MdaaConstructProp
   readonly domainId: string;
 }
 
-export class DataZoneBlueprintConfigConstruct extends Construct {
+export class DataZoneManagedBlueprintConfigConstruct extends Construct {
   public readonly blueprintConfig: CfnEnvironmentBlueprintConfiguration;
   public readonly blueprintConfigId: string;
 
-  constructor(scope: Construct, id: string, props: DataZoneBlueprintConfigConstructProps) {
+  constructor(scope: Construct, id: string, props: DataZoneManagedBlueprintConfigConstructProps) {
     super(scope, id);
 
     //Maintains backwards compat for before domains were their own L2 construct
@@ -53,7 +53,7 @@ export class DataZoneBlueprintConfigConstruct extends Construct {
     this.createAuthorization(props);
   }
 
-  private createAuthorization(props: DataZoneBlueprintConfigConstructProps): void {
+  private createAuthorization(props: DataZoneManagedBlueprintConfigConstructProps): void {
     const authorizationPolicies: NamedAuthorizationPolicies = Object.fromEntries(
       Object.entries(props.authorizedDomainUnits || {}).map(([domainUnit, domainUnitId]) => {
         return [
@@ -65,17 +65,15 @@ export class DataZoneBlueprintConfigConstruct extends Construct {
             domainUnitId: domainUnitId,
           },
         ];
-      }),
+      }) || [],
     );
 
-    if (Object.keys(authorizationPolicies).length > 0) {
-      new DataZoneAuthorizationConstruct(this, 'authorization', {
-        naming: props.naming,
-        domainId: props.domainId,
-        entityId: `${props.account}:${this.blueprintConfigId}`,
-        entityType: EntityType.ENVIRONMENT_BLUEPRINT_CONFIGURATION,
-        policies: authorizationPolicies,
-      });
-    }
+    new DataZoneAuthorizationConstruct(this, 'authorization', {
+      naming: props.naming,
+      domainId: props.domainId,
+      entityId: `${props.account}:${this.blueprintConfigId}`,
+      entityType: EntityType.ENVIRONMENT_BLUEPRINT_CONFIGURATION,
+      policies: authorizationPolicies,
+    });
   }
 }

@@ -1,35 +1,36 @@
 import { CfnParameter, CfnParameterProps, Stack } from 'aws-cdk-lib';
-import { MdaaConfigRefValueTransformer, MdaaConfigRefValueTransformerProps } from './ref-value-transformer';
+import { MdaaConfigRefValueTransformerProps, MdaaConfigRefValueTransformer } from './ref-value-transformer';
 
 export interface MdaaConfigParamRefValueTransformerProps extends MdaaConfigRefValueTransformerProps {
   readonly paramProps: { [name: string]: CfnParameterProps };
 }
-
 export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransformer {
-  private readonly paramProps: { [name: string]: CfnParameterProps };
-
+  private paramProps: { [name: string]: CfnParameterProps };
   constructor(props: MdaaConfigParamRefValueTransformerProps) {
     super(props);
     this.paramProps = props.paramProps;
   }
-
   protected override parseRef(value: string, refMatch: string[]): string | number {
+    /**
+     * Handle base case where we resolve and return a single naked parameter value,
+     * Important as we need to avoid building a string if we have a standalone numerical value
+     */
     const standaloneParam = this.resolveStandaloneParam(value, refMatch);
     if (standaloneParam) {
       return standaloneParam;
     }
+    // In all other cases, return a recursively substituted string
     let toReturn: string = value;
-    for (const ref of refMatch) {
+    refMatch.forEach(ref => {
       let resolvedValue: string | undefined;
       const refInner = this.transformValue(ref).toString();
-      if (refInner.startsWith('param:')) {
+      if (refInner.startsWith('param:') && this.props.scope instanceof Stack) {
         resolvedValue = this.createParam(refInner).toString();
       }
       toReturn = resolvedValue ? toReturn.replace(`{{${ref}}}`, resolvedValue) : toReturn;
-    }
+    });
     return toReturn;
   }
-
   /**
    * Resolve standalone parameters with no other content in the value.
    * "Standalone" means it is not embedded in a string value.
@@ -52,7 +53,6 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
     }
     return undefined;
   }
-
   /**
    * Create new or resolve existing parameter for a given parameter reference
    * @param refInner
@@ -87,7 +87,6 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
     // If no paramProps type was found, create a new parameter based on type labels if present
     return this.createParamUsingTypeLabels(paramBase, paramName, paramProps);
   }
-
   private createParamUsingProps(paramName: string, paramType: string, paramProps: CfnParameterProps) {
     if (!this.props.scope) {
       throw new Error('Unable to create params outside of a Construct');
@@ -104,7 +103,6 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
       );
     }
   }
-
   protected createParamUsingTypeLabels(
     paramBase: string,
     paramName: string,
@@ -126,15 +124,13 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
     // If no type is specified in paramProps, then assume that the parameter is a string
     return new CfnParameter(this.props.scope, paramName, paramProps).valueAsString;
   }
-
   /**
    * Whether the given parameter type is a list type
    * Follows conventions of CfnParameter internal functions
    */
   private isListType(type: string) {
-    return type.includes('List<') || type.includes('CommaDelimitedList');
+    return type.indexOf('List<') >= 0 || type.indexOf('CommaDelimitedList') >= 0;
   }
-
   /**
    * Whether the given parameter type is a number type
    * Follows conventions of CfnParameter internal functions
@@ -142,7 +138,6 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
   private isNumberType(type: string) {
     return type === 'Number';
   }
-
   /**
    * Whether the given parameter type is a string type
    * Follows conventions of CfnParameter internal functions
@@ -150,7 +145,6 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
   private isStringType(type: string) {
     return !this.isListType(type) && !this.isNumberType(type);
   }
-
   private getParamProps(paramName: string): CfnParameterProps | undefined {
     if (this.paramProps[paramName]) {
       return this.paramProps[paramName];

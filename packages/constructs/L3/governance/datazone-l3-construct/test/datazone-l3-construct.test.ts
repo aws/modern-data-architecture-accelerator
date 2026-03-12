@@ -35,7 +35,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain',
@@ -57,7 +57,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain',
@@ -91,7 +91,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain',
@@ -119,7 +119,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain',
@@ -147,7 +147,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test V1 domain',
@@ -168,8 +168,8 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        glueCatalogKmsKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/test-key',
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test-key',
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain',
@@ -190,7 +190,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain with default SSO',
@@ -219,7 +219,7 @@ describe('DataZone L3 Construct Tests', () => {
           'test-domain': {
             description: 'Test',
 
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
 
             users: {
@@ -246,7 +246,7 @@ describe('DataZone L3 Construct Tests', () => {
           'test-domain': {
             description: 'Test',
 
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
 
             users: { user1: { ssoId: 'sso-123' } },
@@ -269,18 +269,18 @@ describe('DataZone L3 Construct Tests', () => {
       new DataZoneL3Construct(stack, 'test', {
         naming: testApp.naming,
         roleHelper,
-        crossAccountStacks: { '123456789012': { 'us-east-1': crossAccountStack } },
+        crossAccountStacks: { '123456789012': { 'test-region': crossAccountStack } },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test',
 
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
 
             associatedAccounts: {
               acc1: {
                 account: '123456789012',
-                glueCatalogKmsKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/test',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test',
               },
             },
           },
@@ -299,11 +299,11 @@ describe('DataZone L3 Construct Tests', () => {
           'test-domain': {
             description: 'Test',
             singleSignOnType: 'DISABLED',
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'MANUAL',
 
             users: {
-              user1: { iamRole: { arn: 'arn:aws:iam::123456789012:role/user1' } },
+              user1: { iamRole: { arn: 'arn:test-partition:iam::123456789012:role/user1' } },
             },
           },
         },
@@ -321,7 +321,7 @@ describe('DataZone L3 Construct Tests', () => {
           'test-domain': {
             description: 'Test',
 
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
 
             groups: { group1: { ssoId: 'group-123' } },
@@ -351,14 +351,14 @@ describe('DataZone L3 Construct Tests', () => {
           'test-domain': {
             description: 'Test',
 
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
 
             associatedAccounts: {
               acc1: {
                 account: '123456789012',
                 region: 'us-west-2',
-                glueCatalogKmsKeyArn: 'arn:aws:kms:us-west-2:123456789012:key/test',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:us-west-2:123456789012:key/test',
               },
             },
           },
@@ -376,12 +376,12 @@ describe('DataZone L3 Construct Tests', () => {
           'test-domain': {
             description: 'Test',
 
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
 
             users: {
               user1: { ssoId: 'sso-123' },
-              user2: { iamRole: { arn: 'arn:aws:iam::123456789012:role/user2' } },
+              user2: { iamRole: { arn: 'arn:test-partition:iam::123456789012:role/user2' } },
             },
           },
         },
@@ -395,19 +395,19 @@ describe('DataZone L3 Construct Tests', () => {
       new DataZoneL3Construct(stack, 'test', {
         naming: testApp.naming,
         roleHelper,
-        crossAccountStacks: { '123456789012': { 'us-east-1': crossAccountStack } },
+        crossAccountStacks: { '123456789012': { 'test-region': crossAccountStack } },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test',
 
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
 
             associatedAccounts: {
               acc1: {
                 account: '123456789012',
-                glueCatalogKmsKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/test',
-                cdkRoleArn: 'arn:aws:iam::123456789012:role/custom-cdk-role',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test',
+                cdkRoleArn: 'arn:test-partition:iam::123456789012:role/custom-cdk-role',
               },
             },
           },
@@ -425,7 +425,7 @@ describe('DataZone L3 Construct Tests', () => {
           'test-domain': {
             description: 'Test',
 
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
 
             users: {
@@ -462,7 +462,7 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
 
               ownerUsers: ['unknown-user'],
@@ -481,7 +481,7 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
 
               ownerGroups: ['unknown-group'],
@@ -500,7 +500,7 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
 
               users: {
@@ -522,7 +522,7 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
 
               domainUnits: {
@@ -546,7 +546,7 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
 
               domainUnits: {
@@ -570,7 +570,7 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
 
               domainUnits: {
@@ -594,7 +594,7 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
 
               domainUnits: {
@@ -613,7 +613,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain with authorization policies',
@@ -647,7 +647,7 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that authorization policies are created
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 1);
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 2);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_PROJECT',
       });
@@ -657,7 +657,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain with invalid owner account',
@@ -669,7 +669,7 @@ describe('DataZone L3 Construct Tests', () => {
               acc1: {
                 account: '123456789012',
                 createCdkUser: true,
-                glueCatalogKmsKeyArn: 'arn:aws:kms:test-region:123456789012:key/test-key',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test-key',
               },
             },
             ownerAccounts: ['unknown-account'],
@@ -686,7 +686,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain with domain unit owner error',
@@ -698,7 +698,7 @@ describe('DataZone L3 Construct Tests', () => {
               acc1: {
                 account: '123456789012',
                 createCdkUser: true,
-                glueCatalogKmsKeyArn: 'arn:aws:kms:test-region:123456789012:key/test-key',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test-key',
               },
             },
             domainUnits: {
@@ -720,7 +720,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain with nested authorization policies',
@@ -759,7 +759,7 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that nested authorization policies are created
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 1);
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 2);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_ASSET_TYPE',
       });
@@ -769,7 +769,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain with invalid authorization policy',
@@ -803,7 +803,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain with domain units',
@@ -832,7 +832,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain with groups',
@@ -867,7 +867,7 @@ describe('DataZone L3 Construct Tests', () => {
 
       // Verify group profile and policy are created
       template.resourceCountIs('AWS::DataZone::GroupProfile', 1);
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 1);
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 2);
     });
 
     test('should create associated account CDK users and owners', () => {
@@ -876,7 +876,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         crossAccountStacks: {
           '123456789012': { 'test-region': crossAccountStack1 },
           '123456789013': { 'test-region': crossAccountStack2 },
@@ -892,12 +892,12 @@ describe('DataZone L3 Construct Tests', () => {
               acc1: {
                 account: '123456789012',
                 createCdkUser: true,
-                glueCatalogKmsKeyArn: 'arn:aws:kms:test-region:123456789012:key/test-key',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test-key',
               },
               acc2: {
                 account: '123456789013',
                 createCdkUser: false,
-                glueCatalogKmsKeyArn: 'arn:aws:kms:test-region:123456789013:key/test-key',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789013:key/test-key',
               },
             },
             ownerAccounts: ['acc1'],
@@ -922,7 +922,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         crossAccountStacks: { '123456789012': { 'test-region': crossAccountStack } },
         dataZoneDomains: {
           'test-domain': {
@@ -935,7 +935,7 @@ describe('DataZone L3 Construct Tests', () => {
               acc1: {
                 account: '123456789012',
                 createCdkUser: true,
-                glueCatalogKmsKeyArn: 'arn:aws:kms:test-region:123456789012:key/test-key',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test-key',
               },
             },
             domainUnits: {
@@ -960,7 +960,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Domain with auth policies',
@@ -992,7 +992,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sagemakerDomainExecutionRole: { name: 'existing-execution-role' },
         dataZoneDomains: {
           'test-domain': {
@@ -1018,7 +1018,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test domain',
@@ -1043,7 +1043,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         dataZoneDomains: {
           'test-domain': {
             description: 'Test domain',
@@ -1077,7 +1077,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test domain',
@@ -1087,7 +1087,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             domainUnits: {
@@ -1111,7 +1111,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test domain',
@@ -1120,7 +1120,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
           },
         },
@@ -1143,7 +1143,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test V2 domain',
@@ -1169,8 +1169,8 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        glueCatalogKmsKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/test-key',
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test-key',
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test domain',
@@ -1180,7 +1180,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
           },
         },
@@ -1200,12 +1200,12 @@ describe('DataZone L3 Construct Tests', () => {
         sageMakerDomains: {
           'test-domain': {
             description: 'Test',
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             users: {
@@ -1230,12 +1230,12 @@ describe('DataZone L3 Construct Tests', () => {
         sageMakerDomains: {
           'test-domain': {
             description: 'Test',
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             users: { user1: { ssoId: 'sso-123' } },
@@ -1257,16 +1257,16 @@ describe('DataZone L3 Construct Tests', () => {
       new DataZoneL3Construct(stack, 'test', {
         naming: testApp.naming,
         roleHelper,
-        crossAccountStacks: { '123456789012': { 'us-east-1': crossAccountStack } },
+        crossAccountStacks: { '123456789012': { 'test-region': crossAccountStack } },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test',
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             associatedAccounts: {
@@ -1274,10 +1274,10 @@ describe('DataZone L3 Construct Tests', () => {
                 tooling: {
                   vpcId: 'test-vpc',
                   subnetIds: ['subnet-id-1', 'subnet-id2'],
-                  provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                  provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
                 },
                 account: '123456789012',
-                glueCatalogKmsKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/test',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test',
               },
             },
           },
@@ -1295,16 +1295,16 @@ describe('DataZone L3 Construct Tests', () => {
           'test-domain': {
             description: 'Test',
 
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'MANUAL',
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             users: {
-              user1: { iamRole: { arn: 'arn:aws:iam::123456789012:role/user1' } },
+              user1: { iamRole: { arn: 'arn:test-partition:iam::123456789012:role/user1' } },
             },
           },
         },
@@ -1320,12 +1320,12 @@ describe('DataZone L3 Construct Tests', () => {
         sageMakerDomains: {
           'test-domain': {
             description: 'Test',
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             groups: { group1: { ssoId: 'group-123' } },
@@ -1353,12 +1353,12 @@ describe('DataZone L3 Construct Tests', () => {
         sageMakerDomains: {
           'test-domain': {
             description: 'Test',
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             associatedAccounts: {
@@ -1367,10 +1367,10 @@ describe('DataZone L3 Construct Tests', () => {
                 tooling: {
                   vpcId: 'test-vpc',
                   subnetIds: ['subnet-id-1', 'subnet-id2'],
-                  provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                  provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
                 },
                 region: 'us-west-2',
-                glueCatalogKmsKeyArn: 'arn:aws:kms:us-west-2:123456789012:key/test',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:us-west-2:123456789012:key/test',
               },
             },
           },
@@ -1387,17 +1387,17 @@ describe('DataZone L3 Construct Tests', () => {
         sageMakerDomains: {
           'test-domain': {
             description: 'Test',
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             users: {
               user1: { ssoId: 'sso-123' },
-              user2: { iamRole: { arn: 'arn:aws:iam::123456789012:role/user2' } },
+              user2: { iamRole: { arn: 'arn:test-partition:iam::123456789012:role/user2' } },
             },
           },
         },
@@ -1411,17 +1411,17 @@ describe('DataZone L3 Construct Tests', () => {
       new DataZoneL3Construct(stack, 'test', {
         naming: testApp.naming,
         roleHelper,
-        crossAccountStacks: { '123456789012': { 'us-east-1': crossAccountStack } },
+        crossAccountStacks: { '123456789012': { 'test-region': crossAccountStack } },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test',
 
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             associatedAccounts: {
@@ -1430,10 +1430,10 @@ describe('DataZone L3 Construct Tests', () => {
                 tooling: {
                   vpcId: 'test-vpc',
                   subnetIds: ['subnet-id-1', 'subnet-id2'],
-                  provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                  provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
                 },
-                glueCatalogKmsKeyArn: 'arn:aws:kms:us-east-1:123456789012:key/test',
-                cdkRoleArn: 'arn:aws:iam::123456789012:role/custom-cdk-role',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test',
+                cdkRoleArn: 'arn:test-partition:iam::123456789012:role/custom-cdk-role',
               },
             },
           },
@@ -1451,12 +1451,12 @@ describe('DataZone L3 Construct Tests', () => {
           'test-domain': {
             description: 'Test',
 
-            dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
             userAssignment: 'AUTOMATIC',
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             users: {
@@ -1493,12 +1493,12 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
               tooling: {
                 vpcId: 'test-vpc',
                 subnetIds: ['subnet-id-1', 'subnet-id2'],
-                provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
               },
 
               ownerUsers: ['unknown-user'],
@@ -1517,12 +1517,12 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
               tooling: {
                 vpcId: 'test-vpc',
                 subnetIds: ['subnet-id-1', 'subnet-id2'],
-                provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
               },
 
               ownerGroups: ['unknown-group'],
@@ -1541,12 +1541,12 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
               tooling: {
                 vpcId: 'test-vpc',
                 subnetIds: ['subnet-id-1', 'subnet-id2'],
-                provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
               },
 
               users: {
@@ -1568,12 +1568,12 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
               tooling: {
                 vpcId: 'test-vpc',
                 subnetIds: ['subnet-id-1', 'subnet-id2'],
-                provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
               },
 
               domainUnits: {
@@ -1597,12 +1597,12 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
               tooling: {
                 vpcId: 'test-vpc',
                 subnetIds: ['subnet-id-1', 'subnet-id2'],
-                provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
               },
 
               domainUnits: {
@@ -1626,12 +1626,12 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
               tooling: {
                 vpcId: 'test-vpc',
                 subnetIds: ['subnet-id-1', 'subnet-id2'],
-                provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
               },
 
               domainUnits: {
@@ -1655,12 +1655,12 @@ describe('DataZone L3 Construct Tests', () => {
             'test-domain': {
               description: 'Test',
 
-              dataAdminRole: { arn: 'arn:aws:iam::123456789012:role/admin' },
+              dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
               userAssignment: 'AUTOMATIC',
               tooling: {
                 vpcId: 'test-vpc',
                 subnetIds: ['subnet-id-1', 'subnet-id2'],
-                provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
               },
 
               domainUnits: {
@@ -1679,7 +1679,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test domain with authorization policies',
@@ -1689,7 +1689,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             users: {
@@ -1718,7 +1718,7 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that authorization policies are created
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 3);
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 4);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_PROJECT',
       });
@@ -1728,7 +1728,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test domain with invalid owner account',
@@ -1738,7 +1738,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             associatedAccounts: {
@@ -1748,9 +1748,9 @@ describe('DataZone L3 Construct Tests', () => {
                 tooling: {
                   vpcId: 'test-vpc',
                   subnetIds: ['subnet-id-1', 'subnet-id2'],
-                  provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                  provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
                 },
-                glueCatalogKmsKeyArn: 'arn:aws:kms:test-region:123456789012:key/test-key',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test-key',
               },
             },
             ownerAccounts: ['unknown-account'],
@@ -1767,7 +1767,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test domain with domain unit owner error',
@@ -1777,7 +1777,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             associatedAccounts: {
@@ -1787,9 +1787,9 @@ describe('DataZone L3 Construct Tests', () => {
                 tooling: {
                   vpcId: 'test-vpc',
                   subnetIds: ['subnet-id-1', 'subnet-id2'],
-                  provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                  provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
                 },
-                glueCatalogKmsKeyArn: 'arn:aws:kms:test-region:123456789012:key/test-key',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test-key',
               },
             },
             domainUnits: {
@@ -1811,7 +1811,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test domain with nested authorization policies',
@@ -1821,7 +1821,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             users: {
@@ -1855,7 +1855,7 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that nested authorization policies are created
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 3);
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 4);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_ASSET_TYPE',
       });
@@ -1865,7 +1865,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test domain with invalid authorization policy',
@@ -1875,7 +1875,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             domainUnits: {
@@ -1904,7 +1904,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test domain with domain units',
@@ -1914,7 +1914,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             domainUnits: {
@@ -1938,7 +1938,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Test domain with groups',
@@ -1948,7 +1948,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             groups: {
@@ -1978,7 +1978,7 @@ describe('DataZone L3 Construct Tests', () => {
 
       // Verify group profile and policy are created
       template.resourceCountIs('AWS::DataZone::GroupProfile', 1);
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 3);
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 4);
     });
 
     test('should create associated account CDK users and owners', () => {
@@ -1987,7 +1987,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         crossAccountStacks: {
           '123456789012': { 'test-region': crossAccountStack1 },
           '123456789013': { 'test-region': crossAccountStack2 },
@@ -2001,7 +2001,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             associatedAccounts: {
@@ -2010,20 +2010,20 @@ describe('DataZone L3 Construct Tests', () => {
                 tooling: {
                   vpcId: 'test-vpc',
                   subnetIds: ['subnet-id-1', 'subnet-id2'],
-                  provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                  provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
                 },
                 createCdkUser: true,
-                glueCatalogKmsKeyArn: 'arn:aws:kms:test-region:123456789012:key/test-key',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test-key',
               },
               acc2: {
                 account: '123456789013',
                 tooling: {
                   vpcId: 'test-vpc',
                   subnetIds: ['subnet-id-1', 'subnet-id2'],
-                  provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                  provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
                 },
                 createCdkUser: false,
-                glueCatalogKmsKeyArn: 'arn:aws:kms:test-region:123456789013:key/test-key',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789013:key/test-key',
               },
             },
             ownerAccounts: ['acc1'],
@@ -2048,7 +2048,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         crossAccountStacks: { '123456789012': { 'test-region': crossAccountStack } },
         sageMakerDomains: {
           'test-domain': {
@@ -2059,7 +2059,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             associatedAccounts: {
@@ -2068,10 +2068,10 @@ describe('DataZone L3 Construct Tests', () => {
                 tooling: {
                   vpcId: 'test-vpc',
                   subnetIds: ['subnet-id-1', 'subnet-id2'],
-                  provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+                  provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
                 },
                 createCdkUser: true,
-                glueCatalogKmsKeyArn: 'arn:aws:kms:test-region:123456789012:key/test-key',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test-key',
               },
             },
             domainUnits: {
@@ -2096,7 +2096,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'V2 domain with tooling in wrong place',
@@ -2124,7 +2124,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'Domain with auth policies',
@@ -2134,7 +2134,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
 
             domainUnits: {
@@ -2161,7 +2161,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sagemakerDomainExecutionRole: { name: 'existing-execution-role' },
         sageMakerDomains: {
           'test-domain': {
@@ -2172,7 +2172,7 @@ describe('DataZone L3 Construct Tests', () => {
             tooling: {
               vpcId: 'test-vpc',
               subnetIds: ['subnet-id-1', 'subnet-id2'],
-              provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role',
+              provisioningRole: { arn: 'arn:test-partition:iam::123456789012:role/test-provisioning-role' },
             },
           },
         },
@@ -2190,7 +2190,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'V2 domain with custom blueprints',
@@ -2224,7 +2224,7 @@ describe('DataZone L3 Construct Tests', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
         naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
         sageMakerDomains: {
           'test-domain': {
             description: 'V2 domain with custom blueprints',
@@ -2247,88 +2247,6 @@ describe('DataZone L3 Construct Tests', () => {
       expect(() => {
         new DataZoneL3Construct(stack, 'test-v2-custom-blueprints', props);
       }).toThrow('DataLake blueprint is automatically enabled and should not be included in enabledManagedBlueprints');
-    });
-
-    test('should handle authorizedDomainUnits without leading slash', () => {
-      const props: DataZoneL3ConstructProps = {
-        roleHelper,
-        naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
-        sageMakerDomains: {
-          'test-domain': {
-            description: 'Domain with units without leading slash',
-            dataAdminRole: { name: 'admin' },
-            userAssignment: 'MANUAL',
-            tooling: {
-              vpcId: 'vpc-123',
-              subnetIds: ['subnet-123'],
-              authorizedDomainUnits: ['root', 'unit1'],
-            },
-            domainUnits: {
-              '/root/unit1': {
-                description: 'Test unit',
-              },
-            },
-          },
-        },
-      };
-
-      new DataZoneL3Construct(stack, 'test-normalized-units', props);
-      const template = Template.fromStack(stack);
-      expect(template).toBeDefined();
-    });
-
-    test('should filter undefined domain unit IDs', () => {
-      const props: DataZoneL3ConstructProps = {
-        roleHelper,
-        naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
-        sageMakerDomains: {
-          'test-domain': {
-            description: 'Domain with non-existent units',
-            dataAdminRole: { name: 'admin' },
-            userAssignment: 'MANUAL',
-            tooling: {
-              vpcId: 'vpc-123',
-              subnetIds: ['subnet-123'],
-              authorizedDomainUnits: ['/root', '/nonexistent'],
-            },
-          },
-        },
-      };
-
-      new DataZoneL3Construct(stack, 'test-filtered-units', props);
-      const template = Template.fromStack(stack);
-      expect(template).toBeDefined();
-    });
-
-    test('should throw error for invalid CloudFormation template path', () => {
-      const props: DataZoneL3ConstructProps = {
-        roleHelper,
-        naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:aws:iam::123456789012:role/test-role' },
-        sageMakerDomains: {
-          'test-domain': {
-            description: 'Domain with invalid custom blueprint',
-            dataAdminRole: { name: 'admin' },
-            userAssignment: 'MANUAL',
-            tooling: {
-              vpcId: 'vpc-123',
-              subnetIds: ['subnet-123'],
-            },
-            customBlueprints: {
-              InvalidBlueprint: {
-                path: '/nonexistent/path/template.yaml',
-                authorizedDomainUnits: ['/root'],
-              },
-            },
-          },
-        },
-      };
-
-      expect(() => {
-        new DataZoneL3Construct(stack, 'test-invalid-template', props);
-      }).toThrow('Cannot find asset');
     });
   });
 });

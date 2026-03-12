@@ -1,0 +1,217 @@
+# MDAA Root Configuration
+#
+# This file orchestrates the deployment of a multi-account SageMaker Unified Studio
+# environment with cross-account data sharing capabilities.
+#
+# Architecture Overview:
+# - Enterprise Account: SMUS domain, central data lake, enterprise data operations
+# - Team1 Account: Team1 team data pipelines and data products
+# - Team2 Account: Team2 team data consumption and analytics
+#
+# Deployment Flow:
+# 1. Common modules deploy to all accounts (roles, glue-catalog, lakeformation-settings)
+# 2. Enterprise account: SMUS domain → custom blueprints → project profiles → datalake → dataops project
+# 3. Team1 account: DataOps project with SMUS integration
+# 4. Team2 account: SMUS project for data consumption
+#
+# Key Concepts:
+# - Domains: Logical groupings of modules that deploy together
+# - Env Templates: Reusable module configurations applied across environments
+# - Context Variables: Values referenced throughout configs using {{context:variable_name}}
+# - SSM References: Cross-module references using ssm-org: and ssm-domain: prefixes
+#   - ssm-org:/domain/module/... references within same organization
+#   - ssm-domain:/module/... references within same domain
+#   - {{ref:/ConstructPath:Attribute}} references within same CloudFormation stack
+
+# All resources will be deployed to the default region specified in the environment or AWS configurations.
+# Can optional specify a specific AWS Region Name.
+region: default
+
+## Pre-Deployment Instructions
+# TODO: Set an appropriate, unique organization name
+# Failure to do so may result in global naming conflicts for S3 buckets and other global resources.
+organization: <UNIQUE_ORG_NAME>
+
+# Context values set here can be referenced throughout module configs using {{context:key}} syntax
+context:
+  # TODO: Configure account numbers for enterprise and team accounts
+  # Note that these accounts should be:
+  # - Members of an AWS Organization
+  # - Have AWS Organizations RAM sharing with automated associations enabled
+  #   (required for cross-account resource sharing)
+  enterprise_account: '<ENTERPRISE_ACCOUNT_ID>'
+  team1_account: '<TEAM1_ACCOUNT_ID>'
+  team2_account: '<TEAM2_ACCOUNT_ID>'
+
+  # TODO: Configure to match SSO group IDs for your teams
+  # Note that IAM Identity Center (IAM IDC) should be:
+  # - Enabled in the same region targeted for MDAA deployment
+  # - Have these groups created (or create them in IAM IDC)
+  # - Group IDs can be found in IAM Identity Center console
+  admin1_user_sso_id: '<ADMIN_USER_SSO_ID>'
+  enterprise_group_sso_id: '<ENTERPRISE_GROUP_SSO_ID>'
+  team1_group_sso_id: '<TEAM1_GROUP_SSO_ID>'
+  team2_group_sso_id: '<TEAM2_GROUP_SSO_ID>'
+
+  # TODO: Configure to match networking for your enterprise/main account
+  # where the SageMaker domain and enterprise projects will be deployed.
+  # Note that configured subnets should have access to AWS Service endpoints
+  # via public routing or via VPC Endpoints (recommended for production).
+  enterprise_vpc_id: '<ENTERPRISE_VPC_ID>'
+  enterprise_private_subnet_id1: '<ENTERPRISE_PRIVATE_SUBNET_ID_1>'
+  enterprise_private_subnet_id2: '<ENTERPRISE_PRIVATE_SUBNET_ID_2>'
+
+  # TODO: Configure to match networking for your team1 account
+  # where team1 projects will be deployed.
+  # Note that configured subnets should have access to AWS Service endpoints
+  # via public routing or via VPC Endpoints.
+  team1_vpc_id: '<TEAM1_VPC_ID>'
+  team1_private_subnet_id1: '<TEAM1_PRIVATE_SUBNET_ID_1>'
+  team1_private_subnet_id2: '<TEAM1_PRIVATE_SUBNET_ID_2>'
+
+  # TODO: Configure to match networking for your team2 account
+  # where team2 projects will be deployed.
+  # Note that configured subnets should have access to AWS Service endpoints
+  # via public routing or via VPC Endpoints.
+  team2_vpc_id: '<TEAM2_VPC_ID>'
+  team2_private_subnet_id1: '<TEAM2_PRIVATE_SUBNET_ID_1>'
+  team2_private_subnet_id2: '<TEAM2_PRIVATE_SUBNET_ID_2>'
+
+# Forces modules to deploy in the order they are listed in the config. This is important to ensure
+# MDAA modules being deployed as custom blueprints are deployed in proper order.
+useStaging: false
+
+# Environment templates define reusable sets of modules that can be applied across domains
+# Templates promote consistency and reduce duplication
+env_templates:
+  # A common set of modules deployed across all accounts
+  # These provide foundational capabilities needed by all teams
+  common:
+    modules:
+      # Configures the Glue Catalog encryption key for cross-account access
+      # Required for cross-account data sharing via Lake Formation and DataZone
+      glue-cat:
+        module_path: '@aws-mdaa/glue-catalog'
+        module_configs:
+          - ./common/glue-catalog.yaml
+
+      # Deploys a common set of IAM roles per account
+      # Roles: data-admin, data-engineer, glue-etl, ddb-bp-prov
+      roles:
+        module_path: '@aws-mdaa/roles'
+        module_configs:
+          - ./common/roles.yaml
+
+      # Configures Lake Formation settings for use with DataZone/SMUS
+      # Disables IAM-based permissions in favor of Lake Formation governance
+      lf-set:
+        module_path: '@aws-mdaa/lakeformation-settings'
+        module_configs:
+          - ./common/lakeformation-settings.yaml
+
+# Domains define logical groupings of modules that deploy together
+# Each domain can have multiple environments (dev, prod, etc.) targeting different accounts
+domains:
+  # Common modules for the enterprise account deployed using the common template
+  ent-com:
+    environments:
+      dev:
+        account: default # Uses the default account from AWS credentials
+        template: common # Applies the common env_template defined above
+
+  # Common modules for the team1 account deployed using the common template
+  team1-com:
+    environments:
+      dev:
+        account: '{{context:team1_account}}'
+        template: common
+
+  # Common modules for the team2 account deployed using the common template
+  team2-com:
+    environments:
+      dev:
+        account: '{{context:team2_account}}'
+        template: common
+
+  # Data resources for the enterprise account
+  # Includes SMUS domain, custom blueprints, project profiles, data lake, and data operations
+  ent-data:
+    environments:
+      dev:
+        account: default
+        modules:
+          # The SMUS domain module - creates the DataZone V2 domain
+          # This is the central governance layer for all data assets
+          smus-dom:
+            module_path: '@aws-mdaa/sagemaker'
+            module_configs:
+              - ./enterprise/smus-domains.yaml
+            # Each associated account in the `smus-domain.yaml` module config also requires
+            # to be listed here. This allows MDAA to deploy cross-account stacks
+            # to automate the domain association.
+            additional_accounts:
+              - '{{context:team1_account}}'
+              - '{{context:team2_account}}'
+
+          # Deploys MDAA DynamoDB Module as a custom SMUS blueprint
+          # This blueprint can be provisioned automatically when creating SMUS projects
+          smus-bp-ddb:
+            module_path: '@aws-mdaa/dataops-dynamodb'
+            module_configs:
+              - ./enterprise/smus-bp-ddb.yaml
+            # Each additional account in the `smus-bp-ddb.yaml` module config also requires
+            # to be listed here. This allows MDAA to deploy cross-account stacks
+            # to automate the blueprint deployment in associated accounts.
+            additional_accounts:
+              - '{{context:team1_account}}'
+              - '{{context:team2_account}}'
+
+          # Deploys SageMaker Unified Studio Project Profiles
+          # Profiles define standardized project templates with pre-configured blueprints
+          smus-prof:
+            module_path: '@aws-mdaa/sagemaker-project'
+            module_configs:
+              - ./enterprise/smus-project-profiles.yaml
+
+          # Deploys a basic three-zone data lake for the enterprise
+          # Zones: raw (landing), transformed (processed), curated (business-ready)
+          lake:
+            cdk_app: '@aws-caef/datalake'
+            app_configs:
+              - ./enterprise/datalake.yaml
+
+          # Deploys a data operations project for enterprise data pipelines
+          # Includes S3 bucket, KMS key, Glue database, crawler, and SMUS integration
+          # Used to publish enterprise data products from the lake into SMUS
+          proj1:
+            module_path: '@aws-mdaa/dataops-project'
+            module_configs:
+              - ./enterprise/dataops-project1.yaml
+
+  # Data related modules for the team1 account
+  team1-data:
+    environments:
+      dev:
+        account: '{{context:team1_account}}'
+        modules:
+          # Deploys a data operations project for team1 data pipelines
+          # Includes S3 bucket, KMS key, Glue database, crawler, and SMUS integration
+          # Used to publish team1 data products into SMUS for cross-account sharing
+          proj1:
+            module_path: '@aws-mdaa/dataops-project'
+            module_configs:
+              - ./team1/dataops-project1.yaml
+
+  # Data related modules for the team2 account
+  team2-data:
+    environments:
+      dev:
+        account: '{{context:team2_account}}'
+        modules:
+          # Deploys a SMUS project for the team2 team
+          # Consumption-focused project without DataOps components
+          # Used primarily to consume data assets published by other teams
+          proj1:
+            module_path: '@aws-mdaa/sagemaker-project'
+            module_configs:
+              - ./team2/smus-project.yaml

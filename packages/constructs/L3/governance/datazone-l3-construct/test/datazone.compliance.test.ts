@@ -96,6 +96,7 @@ describe('MDAA Compliance Stack Tests', () => {
       glueCatalogKmsKeyArn: 'test-key-arn',
       crossAccountStacks: {
         '12312421': { 'test-region': new Stack(testApp, 'testextrastack') },
+        '1231241224': { 'test-region': new Stack(testApp, 'testextrastack2') },
       },
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
       naming: testApp.naming,
@@ -277,7 +278,7 @@ describe('MDAA Compliance Stack Tests', () => {
       }).toThrow('Unknown owner account cdk user unknownAccount on domain test-domain');
     });
 
-    test('Should handle associated account without cross account stack', () => {
+    test('Should throw when associated account without cross account stack', () => {
       const testApp = new MdaaTestApp();
       const stack = testApp.testStack;
 
@@ -307,7 +308,7 @@ describe('MDAA Compliance Stack Tests', () => {
       // This should not throw but will log warnings
       expect(() => {
         new DataZoneL3Construct(stack, 'missing-stack-test', propsWithMissingStack);
-      }).not.toThrow();
+      }).toThrow();
     });
 
     test('Should handle domain units with authorization policies', () => {

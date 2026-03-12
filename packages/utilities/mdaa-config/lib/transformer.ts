@@ -60,7 +60,7 @@ export class MdaaConfigTransformer implements IMdaaConfigTransformer {
    */
   public transformConfigArray(contextPath: string, resolvedConfig: unknown[]): unknown[] {
     const transformedConfig: ConfigurationElement | unknown[] = [];
-    for (const value of resolvedConfig) {
+    resolvedConfig.forEach(value => {
       if (typeof value === 'string' || value instanceof String)
         transformedConfig.push(this.valueTransformer.transformValue(value.toString(), contextPath));
       else if (value instanceof Array)
@@ -68,7 +68,7 @@ export class MdaaConfigTransformer implements IMdaaConfigTransformer {
       else if (value instanceof Object)
         transformedConfig.push(this.transformConfigObject(contextPath, value as ConfigurationElement));
       else transformedConfig.push(value);
-    }
+    });
     return transformedConfig;
   }
 }

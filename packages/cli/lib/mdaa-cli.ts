@@ -324,13 +324,18 @@ export class MdaaDeploy {
         `Env ${envEffectiveConfig.domainName}/${envEffectiveConfig.envName}: Filtering for module ${this.moduleFilter}`,
       );
     }
-    if (envEffectiveConfig.useBootstrap) {
-      env.modules['caef-bootstrap'] = {
-        module_path: '@aws-mdaa/bootstrap',
-      };
-    }
 
-    const moduleEffectiveConfigs = Object.entries(env.modules).map(entry => {
+    const envModules = envEffectiveConfig.useBootstrap
+      ? {
+          //Ensure bootstrap is listed first
+          'caef-bootstrap': {
+            module_path: '@aws-mdaa/bootstrap',
+          },
+          ...env.modules,
+        }
+      : env.modules;
+
+    const moduleEffectiveConfigs = Object.entries(envModules).map(entry => {
       return this.computeModuleEffectiveConfig(entry[0], entry[1], envEffectiveConfig);
     });
 
@@ -444,7 +449,11 @@ export class MdaaDeploy {
           customNaming: installedCustomNamingModule,
         };
 
-        const deployStage = this.computeModuleDeployStage(installedModuleConfig);
+        const deployStage =
+          this.config.contents.useStaging === undefined || this.config.contents.useStaging
+            ? this.computeModuleDeployStage(installedModuleConfig)
+            : MdaaDeploy.DEFAULT_DEPLOY_STAGE;
+
         if (deployStages[deployStage]) {
           deployStages[deployStage].push(installedModuleConfig);
         } else {

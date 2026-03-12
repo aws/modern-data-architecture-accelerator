@@ -1,0 +1,92 @@
+# Custom SMUS Blueprint - DynamoDB Table
+#
+# Deploys the MDAA DynamoDB module as a reusable SMUS blueprint with configurable KMS encryption.
+# Blueprints are automatically provisioned when creating SMUS projects based on project profile configuration.
+
+# This config will result in this module being deployed as a SMUS custom blueprint
+# instead of direct deployment as a CDK/CloudFormation Stack
+sagemakerBlueprint:
+  # The SSM param path (not an ssm: reference) which points to the base
+  # SSM param containing the SMUS domain config, deployed via the MDAA SageMaker module
+  domainConfigSSMParam: /{{org}}/{{domain}}/smus-dom/domain/domain1/config
+
+  # The name of the published blueprint (must be unique within the domain)
+  # This name is referenced in project profile configurations
+  blueprintName: ddb-table
+
+  # ARN of the blueprint provisioning role
+  # This role is assumed by SMUS to deploy the blueprint as part of project creation
+  # The role requires permissions to:
+  # - Create/update/delete all resources in the blueprint template
+  # - Access domain resources (KMS keys, S3 buckets)
+  # - Tag resources for project association
+  provisioningRole:
+    arn: ssm-org:/ent-com/roles/role/ddb-bp-prov/arn
+
+  # Additional accounts where this blueprint can be deployed
+  # Account-specific blueprint configurations are deployed via separate CloudFormation stacks
+  # Each account listed here should also be in additional_accounts for the smus-bp-ddb module in mdaa.yaml
+  additionalAccounts:
+    team1:
+      account: "{{context:team1_account}}"
+      # Provisioning role in the team1 account
+      # Note: Must use name or arn (not SSM references) for associated accounts
+      provisioningRole:
+        name: "{{org}}-{{env}}-team1-com-roles-ddb-bp-prov"
+
+    team2:
+      account: "{{context:team2_account}}"
+      # Provisioning role in the team2 account
+      provisioningRole:
+        name: "{{org}}-{{env}}-team2-com-roles-ddb-bp-prov"
+
+  # Blueprint parameters expose CloudFormation parameters as SMUS configuration options
+  # Any {{param:name}} referenced in the module config below can be exposed here
+  parameters:
+    # The "{{param:kmsKey}}" is created in the DDB module config below as a CloudFormation parameter
+    kmsKey:
+      # SMUS blueprint parameter properties
+      # These control how the parameter appears and behaves in SMUS
+      blueprintParamProps:
+        fieldType: string # Data type for the parameter
+        description: "The KMS key arn to encrypt the table."
+
+        # isOptional: false means this parameter MUST be set
+        # Either in the project profile or in the individual project
+        isOptional: false
+
+        # isUpdateSupported: false means the value cannot be changed after project creation
+        # This is appropriate for KMS keys since changing encryption keys requires recreating the table
+        isUpdateSupported: false
+
+        # isEditable: true means the value can be set at the project level
+        # If false, the value would be fixed at the project profile level
+        # This allows different projects to use different KMS keys (project-specific vs domain-level)
+        isEditable: true
+
+      # CloudFormation parameter properties
+      # These appear on the CloudFormation parameter itself within the template
+      cfnParamProps:
+        description: "The KMS key arn to encrypt the table."
+
+# Below is the standard DynamoDB module configuration
+# This defines the actual DynamoDB table to be created
+
+# The KMS ARN will be configured via CloudFormation Parameter
+# The parameter value is populated by SMUS from Project Profile/Project values at deployment time
+# This param is decorated for use by SMUS in the sagemakerBlueprint.parameters section above
+kmsArn: "{{param:kmsKey}}"
+
+# List of DynamoDB table definitions
+# Multiple tables can be defined, but this blueprint creates a single table
+tableDefinitions:
+  t1:
+    # Partition key (required for all DynamoDB tables)
+    partitionKey:
+      name: pk1
+      type: S # String type (S = String, N = Number, B = Binary)
+
+    # Billing mode determines how you pay for read/write capacity
+    # PAY_PER_REQUEST: Pay per request (no capacity planning needed)
+    # PROVISIONED: Specify read/write capacity units (requires readCapacity/writeCapacity)
+    billingMode: PAY_PER_REQUEST

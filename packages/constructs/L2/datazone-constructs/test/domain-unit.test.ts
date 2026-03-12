@@ -6,7 +6,7 @@
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Template } from 'aws-cdk-lib/assertions';
 import { CfnGroupProfile, CfnUserProfile } from 'aws-cdk-lib/aws-datazone';
-import { DataZoneDomainUnitConstruct } from '../lib';
+import { DataZoneDomainUnitConstruct } from '../lib/domain-unit';
 
 describe('DataZoneDomainUnitConstruct', () => {
   let testApp: MdaaTestApp;
@@ -22,13 +22,18 @@ describe('DataZoneDomainUnitConstruct', () => {
   });
 
   it('should create domain unit with minimal config', () => {
-    new DataZoneDomainUnitConstruct(testApp.testStack, 'test-unit', {
-      naming: testApp.naming,
-      domainId: 'test-domain-id',
-      parentDomainUnitId: 'parent-unit-id',
-      name: 'test-unit',
-      dataAdminUserProfile,
-    });
+    new DataZoneDomainUnitConstruct(
+      testApp.testStack,
+      'test-unit',
+      {
+        naming: testApp.naming,
+        domainId: 'test-domain-id',
+        parentDomainUnitId: 'parent-unit-id',
+        name: 'test-unit',
+        dataAdminUserProfile,
+      },
+      [],
+    );
 
     const template = Template.fromStack(testApp.testStack);
     template.hasResourceProperties('AWS::DataZone::DomainUnit', {
@@ -39,14 +44,19 @@ describe('DataZoneDomainUnitConstruct', () => {
   });
 
   it('should create domain unit with description', () => {
-    new DataZoneDomainUnitConstruct(testApp.testStack, 'test-unit', {
-      naming: testApp.naming,
-      domainId: 'test-domain-id',
-      parentDomainUnitId: 'parent-unit-id',
-      name: 'test-unit',
-      description: 'Test unit description',
-      dataAdminUserProfile,
-    });
+    new DataZoneDomainUnitConstruct(
+      testApp.testStack,
+      'test-unit',
+      {
+        naming: testApp.naming,
+        domainId: 'test-domain-id',
+        parentDomainUnitId: 'parent-unit-id',
+        name: 'test-unit',
+        description: 'Test unit description',
+        dataAdminUserProfile,
+      },
+      [],
+    );
 
     const template = Template.fromStack(testApp.testStack);
     template.hasResourceProperties('AWS::DataZone::DomainUnit', {
@@ -55,13 +65,18 @@ describe('DataZoneDomainUnitConstruct', () => {
   });
 
   it('should create admin ownership', () => {
-    new DataZoneDomainUnitConstruct(testApp.testStack, 'test-unit', {
-      naming: testApp.naming,
-      domainId: 'test-domain-id',
-      parentDomainUnitId: 'parent-unit-id',
-      name: 'test-unit',
-      dataAdminUserProfile,
-    });
+    new DataZoneDomainUnitConstruct(
+      testApp.testStack,
+      'test-unit',
+      {
+        naming: testApp.naming,
+        domainId: 'test-domain-id',
+        parentDomainUnitId: 'parent-unit-id',
+        name: 'test-unit',
+        dataAdminUserProfile,
+      },
+      [],
+    );
 
     const template = Template.fromStack(testApp.testStack);
     template.hasResourceProperties('AWS::DataZone::Owner', {
@@ -76,19 +91,24 @@ describe('DataZoneDomainUnitConstruct', () => {
       userType: 'IAM_ROLE',
     });
 
-    new DataZoneDomainUnitConstruct(testApp.testStack, 'test-unit', {
-      naming: testApp.naming,
-      domainId: 'test-domain-id',
-      parentDomainUnitId: 'parent-unit-id',
-      name: 'test-unit',
-      dataAdminUserProfile,
-      ownership: {
-        ownerUsers: ['test-user'],
+    new DataZoneDomainUnitConstruct(
+      testApp.testStack,
+      'test-unit',
+      {
+        naming: testApp.naming,
+        domainId: 'test-domain-id',
+        parentDomainUnitId: 'parent-unit-id',
+        name: 'test-unit',
+        dataAdminUserProfile,
+        ownership: {
+          ownerUsers: ['test-user'],
+        },
+        userProfiles: {
+          'test-user': userProfile,
+        },
       },
-      userProfiles: {
-        'test-user': userProfile,
-      },
-    });
+      [],
+    );
 
     const template = Template.fromStack(testApp.testStack);
     template.resourceCountIs('AWS::DataZone::Owner', 2);
@@ -100,19 +120,24 @@ describe('DataZoneDomainUnitConstruct', () => {
       groupIdentifier: 'group-123',
     });
 
-    new DataZoneDomainUnitConstruct(testApp.testStack, 'test-unit', {
-      naming: testApp.naming,
-      domainId: 'test-domain-id',
-      parentDomainUnitId: 'parent-unit-id',
-      name: 'test-unit',
-      dataAdminUserProfile,
-      ownership: {
-        ownerGroups: ['test-group'],
+    new DataZoneDomainUnitConstruct(
+      testApp.testStack,
+      'test-unit',
+      {
+        naming: testApp.naming,
+        domainId: 'test-domain-id',
+        parentDomainUnitId: 'parent-unit-id',
+        name: 'test-unit',
+        dataAdminUserProfile,
+        ownership: {
+          ownerGroups: ['test-group'],
+        },
+        groupProfiles: {
+          'test-group': groupProfile,
+        },
       },
-      groupProfiles: {
-        'test-group': groupProfile,
-      },
-    });
+      [],
+    );
 
     const template = Template.fromStack(testApp.testStack);
     template.resourceCountIs('AWS::DataZone::Owner', 2);
@@ -125,19 +150,24 @@ describe('DataZoneDomainUnitConstruct', () => {
       userType: 'IAM_ROLE',
     });
 
-    new DataZoneDomainUnitConstruct(testApp.testStack, 'test-unit', {
-      naming: testApp.naming,
-      domainId: 'test-domain-id',
-      parentDomainUnitId: 'parent-unit-id',
-      name: 'test-unit',
-      dataAdminUserProfile,
-      ownership: {
-        ownerAccounts: ['test-account'],
+    new DataZoneDomainUnitConstruct(
+      testApp.testStack,
+      'test-unit',
+      {
+        naming: testApp.naming,
+        domainId: 'test-domain-id',
+        parentDomainUnitId: 'parent-unit-id',
+        name: 'test-unit',
+        dataAdminUserProfile,
+        ownership: {
+          ownerAccounts: ['test-account'],
+        },
+        associatedAccountUserProfiles: {
+          'test-account': accountProfile,
+        },
       },
-      associatedAccountUserProfiles: {
-        'test-account': accountProfile,
-      },
-    });
+      [],
+    );
 
     const template = Template.fromStack(testApp.testStack);
     template.resourceCountIs('AWS::DataZone::Owner', 2);
@@ -145,71 +175,78 @@ describe('DataZoneDomainUnitConstruct', () => {
 
   it('should throw for unknown user', () => {
     expect(() => {
-      new DataZoneDomainUnitConstruct(testApp.testStack, 'test-unit', {
-        naming: testApp.naming,
-        domainId: 'test-domain-id',
-        parentDomainUnitId: 'parent-unit-id',
-        name: 'test-unit',
-        dataAdminUserProfile,
-        ownership: {
-          ownerUsers: ['unknown-user'],
+      new DataZoneDomainUnitConstruct(
+        testApp.testStack,
+        'test-unit',
+        {
+          naming: testApp.naming,
+          domainId: 'test-domain-id',
+          parentDomainUnitId: 'parent-unit-id',
+          name: 'test-unit',
+          dataAdminUserProfile,
+          ownership: {
+            ownerUsers: ['unknown-user'],
+          },
         },
-      });
+        [],
+      );
     }).toThrow('Unknown owner user unknown-user');
   });
 
   it('should throw for unknown group', () => {
     expect(() => {
-      new DataZoneDomainUnitConstruct(testApp.testStack, 'test-unit', {
-        naming: testApp.naming,
-        domainId: 'test-domain-id',
-        parentDomainUnitId: 'parent-unit-id',
-        name: 'test-unit',
-        dataAdminUserProfile,
-        ownership: {
-          ownerGroups: ['unknown-group'],
+      new DataZoneDomainUnitConstruct(
+        testApp.testStack,
+        'test-unit',
+        {
+          naming: testApp.naming,
+          domainId: 'test-domain-id',
+          parentDomainUnitId: 'parent-unit-id',
+          name: 'test-unit',
+          dataAdminUserProfile,
+          ownership: {
+            ownerGroups: ['unknown-group'],
+          },
         },
-      });
+        [],
+      );
     }).toThrow('Unknown owner group unknown-group');
   });
 
   it('should throw for unknown account', () => {
     expect(() => {
-      new DataZoneDomainUnitConstruct(testApp.testStack, 'test-unit', {
+      new DataZoneDomainUnitConstruct(
+        testApp.testStack,
+        'test-unit',
+        {
+          naming: testApp.naming,
+          domainId: 'test-domain-id',
+          parentDomainUnitId: 'parent-unit-id',
+          name: 'test-unit',
+          dataAdminUserProfile,
+          ownership: {
+            ownerAccounts: ['unknown-account'],
+          },
+        },
+        [],
+      );
+    }).toThrow('Unknown owner account unknown-account');
+  });
+
+  it('should expose domainUnitId', () => {
+    const construct = new DataZoneDomainUnitConstruct(
+      testApp.testStack,
+      'test-unit',
+      {
         naming: testApp.naming,
         domainId: 'test-domain-id',
         parentDomainUnitId: 'parent-unit-id',
         name: 'test-unit',
         dataAdminUserProfile,
-        ownership: {
-          ownerAccounts: ['unknown-account'],
-        },
-      });
-    }).toThrow('Unknown owner account unknown-account');
-  });
-
-  it('should expose domainUnitId', () => {
-    const construct = new DataZoneDomainUnitConstruct(testApp.testStack, 'test-unit', {
-      naming: testApp.naming,
-      domainId: 'test-domain-id',
-      parentDomainUnitId: 'parent-unit-id',
-      name: 'test-unit',
-      dataAdminUserProfile,
-    });
+      },
+      [],
+    );
 
     expect(construct.domainUnitId).toBeDefined();
-  });
-
-  it('should expose owners array', () => {
-    const construct = new DataZoneDomainUnitConstruct(testApp.testStack, 'test-unit', {
-      naming: testApp.naming,
-      domainId: 'test-domain-id',
-      parentDomainUnitId: 'parent-unit-id',
-      name: 'test-unit',
-      dataAdminUserProfile,
-    });
-
-    expect(construct.owners).toBeDefined();
-    expect(construct.owners.length).toBe(1); // Just the data admin owner
   });
 });

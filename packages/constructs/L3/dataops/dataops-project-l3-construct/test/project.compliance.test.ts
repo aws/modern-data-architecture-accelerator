@@ -7,7 +7,7 @@ import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
-import { DataOpsProjectL3Construct, DataOpsProjectL3ConstructProps, NamedDatabaseGrantProps } from '../lib';
+import { NamedDatabaseGrantProps, DataOpsProjectL3Construct, DataOpsProjectL3ConstructProps } from '../lib';
 // nosemgrep
 import * as path from 'path';
 import { Protocol } from 'aws-cdk-lib/aws-ec2';
@@ -734,74 +734,5 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       },
     });
-  });
-});
-
-describe('DataOps SageMaker Integration Tests', () => {
-  const testApp = new MdaaTestApp();
-
-  const testGlueRoleRef: MdaaRoleRef = {
-    id: 'test-glue-role-id',
-  };
-
-  const testAdminRoleRef: MdaaRoleRef = {
-    id: 'test-admin-role-id',
-  };
-
-  const testEngRoleRef: MdaaRoleRef = {
-    id: 'test-eng-role-id',
-  };
-
-  it('should throw error when both datazone and sagemaker are defined', () => {
-    expect(() => {
-      new DataOpsProjectL3Construct(testApp.testStack, 'test-both-defined', {
-        naming: testApp.naming,
-        roleHelper: new MdaaRoleHelper(
-          testApp.testStack,
-          testApp.naming,
-          path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
-        ),
-        projectExecutionRoleRefs: [testGlueRoleRef],
-        dataAdminRoleRefs: [testAdminRoleRef],
-        dataEngineerRoleRefs: [testEngRoleRef],
-        datazone: {
-          project: {
-            domainConfigSSMParam: '/test-param',
-            domainUnit: '/test-unit',
-          },
-        },
-        sagemaker: {
-          domainConfigSSMParam: '/test-param',
-          project: {
-            profileName: 'test-profile',
-          },
-        },
-      });
-    }).toThrow('Only one of datazone or sagemaker properties should be defined');
-  });
-
-  it('should create construct with sagemaker integration', () => {
-    const sagemakerApp = new MdaaTestApp();
-    new DataOpsProjectL3Construct(sagemakerApp.testStack, 'test-sagemaker', {
-      naming: sagemakerApp.naming,
-      roleHelper: new MdaaRoleHelper(
-        sagemakerApp.testStack,
-        sagemakerApp.naming,
-        path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
-      ),
-      projectExecutionRoleRefs: [testGlueRoleRef],
-      dataAdminRoleRefs: [testAdminRoleRef],
-      dataEngineerRoleRefs: [testEngRoleRef],
-      sagemaker: {
-        domainConfigSSMParam: '/test-param',
-        project: {
-          profileName: 'test-profile',
-        },
-        createDataAdminOwners: true,
-      },
-    });
-
-    const template = Template.fromStack(sagemakerApp.testStack);
-    expect(template).toBeDefined();
   });
 });

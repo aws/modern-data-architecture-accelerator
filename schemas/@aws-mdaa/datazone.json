@@ -2,6 +2,40 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
+        "AdditionalBlueprintAccount": {
+            "additionalProperties": false,
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "authorizedDomainUnits": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "enabledRegions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
+                    },
+                    "type": "object"
+                },
+                "provisioningRole": {
+                    "$ref": "#/definitions/MdaaRoleRef"
+                }
+            },
+            "required": [
+                "account",
+                "provisioningRole"
+            ],
+            "type": "object"
+        },
         "Architecture": {
             "additionalProperties": false,
             "description": "Architectures supported by AWS Lambda",
@@ -23,30 +57,30 @@
         },
         "AssociatedAccountProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nAssociated account configuration interface for DataZone with cross-account data governance and multi-account integration capabilities. Defines associated account properties for DataZone including cross-account access, resource sharing, and multi-account data governance for enterprise data catalog management.\n\nUse cases: Cross-account data governance; Multi-account integration; Resource sharing; Enterprise data catalog; Cross-account access; Account association\n\nAWS: Amazon DataZone associated account configuration with cross-account governance and multi-account integration\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "properties": {
                 "account": {
-                    "description": "Q-ENHANCED-PROPERTY\nAWS account ID for DataZone cross-account association enabling multi-account data governance and resource sharing. Specifies the target account for DataZone association, supporting enterprise-wide data governance across multiple AWS accounts.\n\nUse cases: Cross-account data governance; Multi-account integration; Enterprise data catalog; Account association; Resource sharing\n\nAWS: Amazon DataZone cross-account association for multi-account data governance and resource sharing\n\nValidation: Must be valid AWS account ID; required; account must be accessible for DataZone association",
+                    "description": "AWS account ID of the associated account. Must also be configured as an\nadditional_account on the MDAA module in mdaa.yaml.\n\nUse cases: Cross-account domain association; Multi-account data governance\n\nAWS: DataZone cross-account association target\n\nValidation: Required; valid 12-digit AWS account ID",
                     "type": "string"
                 },
                 "cdkRoleArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nCDK deployment role ARN for cross-account infrastructure management enabling automated resource deployment. Specifies the IAM role used for CDK deployments in the associated account for infrastructure automation and resource management.\n\nUse cases: Cross-account CDK deployment; Infrastructure automation; Resource management; Deployment automation; Cross-account operations\n\nAWS: AWS CDK cross-account deployment role for infrastructure automation and resource management\n\nValidation: Must be valid IAM role ARN if specified; role must have appropriate CDK deployment permissions",
+                    "description": "CDK deployment role ARN for cross-account infrastructure provisioning in the\nassociated account.\n\nUse cases: Cross-account CDK deployments; Automated infrastructure provisioning\n\nAWS: IAM role for CDK cross-account deployment\n\nValidation: Optional; valid IAM role ARN with CDK deployment permissions",
                     "type": "string"
                 },
                 "createCdkUser": {
-                    "description": "Q-ENHANCED-PROPERTY\nCDK user creation flag for automated user provisioning enabling cross-account deployment user management. When enabled, automatically creates CDK deployment users in the associated account for infrastructure automation and deployment operations.\n\nUse cases: Automated user provisioning; Cross-account deployment; User management; Infrastructure automation; Deployment user creation\n\nAWS: AWS IAM user creation for CDK cross-account deployment and infrastructure automation\n\nValidation: Boolean value; when true, creates CDK deployment users in the associated account",
+                    "default": false,
+                    "description": "When true, creates a DataZone domain user for CDK-based deployments in the\nassociated account.\n\nUse cases: Automated CDK deployments within DataZone; Programmatic project management\n\nAWS: DataZone user profile for CDK automation\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "glueCatalogKmsKeyArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nGlue catalog KMS key ARN for cross-account encryption and data protection enabling secure data catalog access. Specifies the KMS key used for encrypting Glue catalog resources in the associated account for secure cross-account data governance.\n\nUse cases: Cross-account encryption; Data protection; Secure catalog access; KMS key management; Data security\n\nAWS: AWS Glue catalog KMS encryption for secure cross-account data catalog access and protection\n\nValidation: Must be valid KMS key ARN; required; key must be accessible from both accounts for encryption operations",
+                    "description": "KMS key ARN for Glue catalog encryption in the associated account. If omitted,\nlooked up from a standard SSM parameter created by the Glue Catalog Settings\nmodule and RAM-shared to associated accounts.\n\nUse cases: Cross-account catalog encryption; Customer-managed key for associated account Glue catalog\n\nAWS: KMS key for Glue Data Catalog encryption in the associated account\n\nValidation: Optional; valid KMS key ARN; key must be accessible from the associated account",
                     "type": "string"
                 },
                 "lakeformationManageAccessRoleArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nLake Formation management access role ARN for cross-account data governance enabling fine-grained access control. Specifies the IAM role used for Lake Formation access management in the associated account for cross-account data governance and permission management.\n\nUse cases: Cross-account Lake Formation access; Fine-grained permissions; Data governance management; Access control; Permission delegation\n\nAWS: AWS Lake Formation cross-account access role for data governance and permission management\n\nValidation: Must be valid IAM role ARN if specified; role must have appropriate Lake Formation permissions",
+                    "description": "IAM role ARN for Lake Formation access management in the associated account.\nShould be an LF Admin role, likely created by the LF Settings module. If omitted,\nlooked up from the standard LF Settings SSM parameter.\n\nUse cases: Cross-account Lake Formation governance; Fine-grained data permissions in associated accounts\n\nAWS: IAM role for Lake Formation permission management in the associated account\n\nValidation: Optional; valid IAM role ARN with Lake Formation admin permissions",
                     "type": "string"
                 },
                 "region": {
-                    "description": "Q-ENHANCED-PROPERTY\nTarget region for DataZone cross-account association enabling multi-region data governance and resource management. Specifies the AWS region for the associated account resources, supporting multi-region data governance architectures.\n\nUse cases: Multi-region governance; Regional resource management; Cross-region association; Regional data catalog; Geographic distribution\n\nAWS: Amazon DataZone regional association for multi-region data governance and resource management\n\nValidation: Must be valid AWS region name if specified; region must support DataZone services",
+                    "description": "AWS region for the associated account resources. Defaults to the deploying\nstack's region if omitted.\n\nUse cases: Multi-region domain association; Regional resource targeting\n\nAWS: Target region for cross-account DataZone resources\n\nValidation: Optional; valid AWS region identifier",
                     "type": "string"
                 }
             },
@@ -504,51 +538,51 @@
         },
         "DataZoneDomainProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nDomain configuration interface for DataZone providing data governance domain deployment and management capabilities. Defines domain properties for DataZone including domain versioning, SSO integration, and domain configuration for complete data governance domain establishment and management.\n\nUse cases: Data governance domains; Domain deployment; SSO integration; Domain versioning; Governance management; Data catalog domains\n\nAWS: Amazon DataZone domain configuration providing governance domain deployment and SSO integration\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "properties": {
                 "associatedAccounts": {
                     "$ref": "#/definitions/NamedDataZoneAssociatedAccounts",
-                    "description": "Q-ENHANCED-PROPERTY\nAssociated accounts for cross-account DataZone integration enabling multi-account data governance and resource sharing. Defines accounts that will be associated with the DataZone domain for cross-account data governance and collaborative data management.\n\nUse cases: Cross-account integration; Multi-account governance; Resource sharing; Enterprise data governance; Account association\n\nAWS: Amazon DataZone cross-account association for multi-account data governance and resource sharing\n\nValidation: Must be valid NamedAssociatedAccounts if specified; enables cross-account data governance and collaboration\n  *"
+                    "description": "Additional AWS accounts associated with this domain for cross-account\ndata governance and resource sharing. Each account can have its own\nGlue catalog encryption, LF roles, and CDK deployment configuration.\n\nUse cases: Multi-account data governance; Cross-account catalog sharing; Enterprise domain federation\n\nAWS: DataZone cross-account domain associations\n\nValidation: Optional; valid NamedDataZoneAssociatedAccounts"
                 },
                 "dataAdminRole": {
                     "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "Q-ENHANCED-PROPERTY\nData admin role reference for DataZone domain administration enabling domain management and administrative access. Specifies the IAM role that will have administrative privileges over the DataZone domain, including user management, resource configuration, and governance policy administration.\n\nUse cases: Domain administration; Administrative access; Domain management; Governance administration; Administrative privileges\n\nAWS: Amazon DataZone domain admin role for domain administration and management\n\nValidation: Must be valid MdaaRoleRef; required; role must have appropriate DataZone administrative permissions"
+                    "description": "IAM role with administrative privileges over the domain. Used for user\nmanagement, resource configuration, and governance policy administration.\nResolved via MDAA role helper.\n\nUse cases: Domain administration; Governance policy management; Resource configuration\n\nAWS: IAM role granted DataZone domain admin permissions\n\nValidation: Required; valid MdaaRoleRef"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nDomain description for documentation and identification enabling clear domain purpose and organizational context. Provides descriptive information about the DataZone domain's purpose, scope, and role within the data governance framework.\n\nUse cases: Domain documentation; Purpose identification; Organizational context; Governance documentation; Domain description\n\nAWS: Amazon DataZone domain description for documentation and identification\n\nValidation: Must be valid description string if specified; provides context for domain purpose and governance scope",
+                    "description": "Human-readable description of the domain's purpose and scope.\n\nUse cases: Domain documentation; Organizational context\n\nAWS: DataZone domain description\n\nValidation: Optional; string",
                     "type": "string"
                 },
                 "domainUnits": {
                     "$ref": "#/definitions/NamedDomainUnits",
-                    "description": "Q-ENHANCED-PROPERTY\nDomain units for hierarchical organization enabling structured data governance and organizational alignment. Defines the organizational structure within the DataZone domain, supporting hierarchical governance and systematic data organization.\n\nUse cases: Hierarchical organization; Structured governance; Organizational alignment; Domain structure; Governance hierarchy\n\nAWS: Amazon DataZone domain units for hierarchical governance and organizational structure\n\nValidation: Must be valid NamedDomainUnits if specified; enables hierarchical domain organization and governance\n  *"
+                    "description": "Hierarchical domain units for organizing projects and governance scopes\nwithin the domain.\n\nUse cases: Organizational hierarchy; Project grouping; Governance scope isolation\n\nAWS: DataZone domain units\n\nValidation: Optional; valid NamedDomainUnits"
                 },
                 "groups": {
                     "$ref": "#/definitions/NamedDataZoneGroups",
-                    "description": "Q-ENHANCED-PROPERTY\nDomain groups for group-based access management enabling collective user provisioning and group-based access control. Defines groups that will have access to the DataZone domain, supporting group-based data governance and collective access management.\n\nUse cases: Group-based access; Collective provisioning; Group access control; Team management; Group permissions\n\nAWS: Amazon DataZone domain group configuration for group-based access and management\n\nValidation: Must be valid NamedDataZoneGroups if specified; enables group-based access and management\n  *"
+                    "description": "Named groups to be added to the domain. Groups are SSO-only and identified\nby a friendly name mapped to an SSO group ID.\n\nUse cases: Team-based domain access; SSO group provisioning\n\nAWS: DataZone group profiles (SSO)\n\nValidation: Optional; valid NamedDataZoneGroups"
                 },
                 "ownerAccounts": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner account IDs for domain ownership enabling cross-account domain administration and account-based ownership control. Specifies AWS accounts that have ownership privileges over the entire DataZone domain, supporting cross-account domain administration and governance.\n\nUse cases: Cross-account ownership; Account-based administration; Multi-account governance; Administrative accounts; Domain ownership\n\nAWS: Amazon DataZone domain account ownership for cross-account domain administration and control\n\nValidation: Must be array of valid AWS account IDs if specified; accounts must be accessible for ownership assignment",
+                    "description": "Associated account names granted ownership of the root domain unit,\nallowing project creation at the domain root. Names must match entries\nin the domain's associatedAccounts config.\n\nUse cases: Cross-account root ownership; Delegated domain administration\n\nAWS: DataZone root domain unit owner (account)\n\nValidation: Optional; string array; names must match associatedAccounts keys",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "ownerGroups": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner group names for domain ownership enabling group-based domain administration and collective ownership control. Specifies groups that have ownership privileges over the entire DataZone domain, supporting group-based domain administration and governance.\n\nUse cases: Group-based ownership; Collective administration; Group ownership control; Administrative groups; Domain governance\n\nAWS: Amazon DataZone domain group ownership for group-based domain administration and control\n\nValidation: Must be array of valid group names if specified; groups must exist in the DataZone domain for ownership assignment",
+                    "description": "Group names granted ownership of the root domain unit. Names must match\nentries in the domain's groups config.\n\nUse cases: Root-level domain administration; Team-based ownership\n\nAWS: DataZone root domain unit owner (group)\n\nValidation: Optional; string array; names must match domain groups keys",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "ownerUsers": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner user names for domain ownership enabling user-based domain administration and ownership control. Specifies users that have ownership privileges over the entire DataZone domain, supporting user-based domain administration and governance.\n\nUse cases: User-based ownership; Domain administration; User ownership control; Administrative users; Domain governance\n\nAWS: Amazon DataZone domain user ownership for user-based domain administration and control\n\nValidation: Must be array of valid user names if specified; users must exist in the DataZone domain for ownership assignment",
+                    "description": "User names granted ownership of the root domain unit. Names must match\nentries in the domain's users config.\n\nUse cases: Root-level domain administration; User-based ownership\n\nAWS: DataZone root domain unit owner (user)\n\nValidation: Optional; string array; names must match domain users keys",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "singleSignOnType": {
-                    "description": "Q-ENHANCED-PROPERTY\nSingle sign-on integration type for DataZone domain authentication enabling centralized identity management and federated access. Controls the SSO integration method, supporting either disabled SSO or IAM Identity Center integration for centralized authentication.\n\nUse cases: SSO integration; Centralized authentication; Identity management; Federated access; Authentication control\n\nAWS: Amazon DataZone SSO integration configuration for centralized authentication and identity management\n\nValidation: Must be 'DISABLED' or 'IAM_IDC'; optional; defaults to 'DISABLED'; determines authentication method and identity integration\n  *",
+                    "default": "'DISABLED'",
+                    "description": "SSO integration type for domain authentication. DISABLED uses IAM-only\nauthentication; IAM_IDC enables IAM Identity Center federation.\n\nUse cases: Federated authentication; IAM Identity Center integration; IAM-only domains\n\nAWS: DataZone domain SSO configuration\n\nValidation: Optional; 'DISABLED' | 'IAM_IDC'",
                     "enum": [
                         "DISABLED",
                         "IAM_IDC"
@@ -556,7 +590,8 @@
                     "type": "string"
                 },
                 "userAssignment": {
-                    "description": "Q-ENHANCED-PROPERTY\nUser assignment mode for DataZone domain access control enabling manual or automatic user provisioning. Controls how users are assigned to the domain, supporting either manual administrative control or automatic assignment based on organizational policies.\n\nUse cases: User provisioning control; Access management; Assignment automation; User lifecycle management; Access control\n\nAWS: Amazon DataZone domain user assignment configuration for user provisioning and access control\n\nValidation: Must be 'MANUAL' or 'AUTOMATIC'; optional; defaults to 'MANUAL'; determines user assignment and provisioning behavior\n  *",
+                    "default": "'MANUAL'",
+                    "description": "Controls how users are assigned to the domain. MANUAL requires explicit\nassignment; AUTOMATIC assigns users based on organizational policies.\n\nUse cases: User provisioning control; Automated vs. manual user onboarding\n\nAWS: DataZone domain user assignment mode\n\nValidation: Optional; 'MANUAL' | 'AUTOMATIC'",
                     "enum": [
                         "AUTOMATIC",
                         "MANUAL"
@@ -565,7 +600,7 @@
                 },
                 "users": {
                     "$ref": "#/definitions/NamedDataZoneUsers",
-                    "description": "Q-ENHANCED-PROPERTY\nDomain users for user access management enabling individual user provisioning and access control. Defines users that will have access to the DataZone domain, supporting individual user management and personalized data governance access.\n\nUse cases: Individual user access; User provisioning; Personal access control; User management; Individual permissions\n\nAWS: Amazon DataZone domain user configuration for individual user access and management\n\nValidation: Must be valid NamedDataZoneUsers if specified; enables individual user access and management\n  *"
+                    "description": "Named users to be added to the domain. Each user is identified by a\nfriendly name and can be IAM-based or SSO-based.\n\nUse cases: Individual domain access; IAM and SSO user provisioning\n\nAWS: DataZone user profiles (IAM or SSO)\n\nValidation: Optional; valid NamedDataZoneUsers"
                 }
             },
             "required": [
@@ -575,10 +610,9 @@
         },
         "DataZoneGroup": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nDataZone group configuration interface for data governance providing group management and permission orchestration capabilities. Defines DataZone group properties for data governance including group identity, member management, and collective permissions for systematic data governance group administration.\n\nUse cases: Data governance group management; Group permissions; Member administration; Collective access control; Data catalog groups; Governance organization\n\nAWS: Amazon DataZone group configuration with group management and permission orchestration for data governance\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "properties": {
                 "ssoId": {
-                    "description": "Q-ENHANCED-PROPERTY\nSSO group identifier for DataZone group identity and federated group management enabling centralized group-based access control. Specifies the SSO group ID for federated group management and collective permissions within the DataZone data governance environment.\n\nUse cases: SSO group integration; Federated group management; Centralized group access; Collective permissions; Group-based governance\n\nAWS: Amazon DataZone SSO group integration for federated group management and collective access control\n\nValidation: Must be valid SSO group ID; required; group must exist in SSO directory for proper integration",
+                    "description": "IAM Identity Center (SSO) group ID for group-based domain access.\nGroups are SSO-only; IAM role groups are not supported.\n\nUse cases: Team-based domain access; SSO group permissions; Collective governance\n\nAWS: DataZone SSO group profile linked to IAM Identity Center\n\nValidation: Required; valid SSO group ID; group must exist in SSO directory",
                     "type": "string"
                 }
             },
@@ -589,14 +623,13 @@
         },
         "DataZoneUser": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nDataZone user configuration interface for data governance providing user management and access control capabilities. Defines DataZone user properties for data governance including user identity, role assignments, and access permissions for systematic data catalog and governance user management.\n\nUse cases: Data governance user management; User access control; Identity management; Role assignments; Data catalog access; Governance permissions\n\nAWS: Amazon DataZone user configuration with identity management and access control for data governance\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "properties": {
                 "iamRole": {
                     "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role reference for DataZone user identity and access control enabling role-based data governance permissions. Specifies the IAM role that will be associated with the DataZone user for access control and permission management within the data governance framework.\n\nUse cases: Role-based access control; IAM integration; Permission management; Data governance access; Identity management\n\nAWS: Amazon DataZone user IAM role association for access control and permission management\n\nValidation: Must be valid MdaaRoleRef if specified; role must exist and be accessible; mutually exclusive with ssoId"
+                    "description": "IAM role reference for this user's domain access. The role is resolved via\nMDAA role helper (by ARN, name, or SSM ref). Use this for IAM-based users;\nmutually exclusive with ssoId.\n\nUse cases: IAM-based domain access; Role-based user identity; Non-SSO environments\n\nAWS: IAM role associated as a DataZone user profile\n\nValidation: Optional; valid MdaaRoleRef; mutually exclusive with ssoId"
                 },
                 "ssoId": {
-                    "description": "Q-ENHANCED-PROPERTY\nSSO user identifier for DataZone user identity and federated access enabling single sign-on integration. Specifies the SSO user ID for federated identity management and centralized authentication within the DataZone data governance environment.\n\nUse cases: SSO integration; Federated identity; Centralized authentication; Single sign-on access; Identity federation\n\nAWS: Amazon DataZone SSO user integration for federated identity and centralized authentication\n\nValidation: Must be valid SSO user ID if specified; user must exist in SSO directory; mutually exclusive with iamRole",
+                    "description": "IAM Identity Center (SSO) user ID for federated domain access. Use this for\nSSO-based users; mutually exclusive with iamRole.\n\nUse cases: SSO-based domain access; Federated identity; IAM Identity Center integration\n\nAWS: DataZone SSO user profile linked to IAM Identity Center\n\nValidation: Optional; valid SSO user ID; mutually exclusive with iamRole",
                     "type": "string"
                 }
             },
@@ -821,18 +854,20 @@
         },
         "DomainUnit": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for DataZone domain unit hierarchy enabling organizational data governance structure. Defines domain unit ownership, permissions, and nested hierarchical organization for systematic data catalog governance and access control within DataZone domains.\n\nUse cases: Hierarchical data governance; Domain unit organization; Nested organizational structure for data catalog management\n\nAWS: Configures AWS DataZone domain units with ownership and hierarchical organization for data governance\n\nValidation: All owner arrays are optional; domainUnits enables recursive nesting for hierarchical organization",
             "properties": {
                 "allowAllUsers": {
+                    "description": "When true, all domain users are allowed access to this domain unit.\n\nUse cases: Open-access domain units; Unrestricted project creation\n\nAWS: DataZone domain unit access control\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "allowedGroups": {
+                    "description": "Specific group names allowed access to this domain unit. Names must match\nentries in the domain's groups config.\n\nUse cases: Group-scoped domain unit access; Team-restricted project creation\n\nAWS: DataZone domain unit group access list\n\nValidation: Optional; string array; names must match domain groups keys",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "allowedUsers": {
+                    "description": "Specific user names allowed access to this domain unit. Names must match\nentries in the domain's users config.\n\nUse cases: User-scoped domain unit access; Restricted project creation\n\nAWS: DataZone domain unit user access list\n\nValidation: Optional; string array; names must match domain users keys",
                     "items": {
                         "type": "string"
                     },
@@ -840,32 +875,32 @@
                 },
                 "authorizationPolicies": {
                     "$ref": "#/definitions/NamedAuthorizationPolicies",
-                    "description": "Q-ENHANCED-PROPERTY\nAuthorization policies for domain unit access control enabling fine-grained permission management and governance. Defines authorization policies that grant specific permissions to principals (users, groups, accounts) within the domain unit, supporting comprehensive access control and data governance.\n\nUse cases: Fine-grained access control; Permission management; Data governance; Principal-based authorization; Policy-driven security\n\nAWS: Amazon DataZone authorization policies for domain unit access control and governance\n\nValidation: Must be Record of valid AuthorizationPolicy objects if specified; enables comprehensive domain unit authorization"
+                    "description": "Fine-grained authorization policies for this domain unit. Supports policy types\nlike CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, and CREATE_PROJECT with user/group\nprincipals.\n\nUse cases: Permission scoping per domain unit; Policy-driven project creation control\n\nAWS: DataZone authorization policies (CREATE_DOMAIN_UNIT, CREATE_PROJECT, etc.)\n\nValidation: Optional; Record of AuthorizationPolicy objects"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nDomain unit description for documentation and identification enabling clear unit purpose and organizational context. Provides descriptive information about the domain unit's purpose and scope within the data governance hierarchy.\n\nUse cases: Unit documentation; Purpose identification; Organizational context; Governance documentation; Unit description\n\nAWS: Amazon DataZone domain unit description for documentation and identification\n\nValidation: Must be valid description string if specified; provides context for domain unit purpose and scope",
+                    "description": "Human-readable description of this domain unit's purpose and scope.\n\nUse cases: Organizational documentation; Domain unit identification\n\nAWS: DataZone domain unit description\n\nValidation: Optional; string",
                     "type": "string"
                 },
                 "domainUnits": {
                     "$ref": "#/definitions/NamedDomainUnits",
-                    "description": "Q-ENHANCED-PROPERTY\nNested domain units for hierarchical organization enabling recursive domain unit structure and multi-level governance. Defines child domain units within the current unit, supporting complex organizational hierarchies and nested governance structures.\n\nUse cases: Hierarchical organization; Nested governance; Multi-level structure; Complex organization; Recursive units\n\nAWS: Amazon DataZone nested domain units for hierarchical governance and organizational structure\n\nValidation: Must be valid NamedDomainUnits if specified; enables recursive nesting for complex organizational hierarchies\n  *"
+                    "description": "Child domain units nested under this unit, enabling recursive hierarchical\norganization. Each child inherits the parent's domain context.\n\nUse cases: Multi-level organizational hierarchy; Nested governance scopes\n\nAWS: DataZone nested domain units\n\nValidation: Optional; valid NamedDomainUnits; supports arbitrary nesting depth"
                 },
                 "ownerAccounts": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner account IDs for domain unit access control enabling cross-account ownership and administrative permissions. Specifies AWS accounts that have ownership and administrative access to the domain unit, supporting multi-account data governance and cross-account administration.\n\nUse cases: Cross-account ownership; Multi-account governance; Administrative access; Account-based permissions; Enterprise governance\n\nAWS: Amazon DataZone domain unit account ownership for cross-account governance and administrative access\n\nValidation: Must be array of valid AWS account IDs if specified; accounts must be accessible for ownership assignment",
+                    "description": "Associated account names that receive ownership of this domain unit,\nallowing project creation within it. Names must match entries in the\ndomain's associatedAccounts config.\n\nUse cases: Cross-account project creation; Delegated domain unit ownership\n\nAWS: DataZone domain unit owner (account-based)\n\nValidation: Optional; string array; names must match associatedAccounts keys",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "ownerGroups": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner group names for domain unit access control enabling group-based ownership and collective administrative permissions. Specifies groups that have ownership and administrative access to the domain unit, supporting group-based data governance and collective administration.\n\nUse cases: Group-based ownership; Collective administration; Group permissions; Team governance; Group access control\n\nAWS: Amazon DataZone domain unit group ownership for group-based governance and administrative access\n\nValidation: Must be array of valid group names if specified; groups must exist in the DataZone domain for ownership assignment",
+                    "description": "Group names that receive ownership of this domain unit. Names must match\nentries in the domain's groups config.\n\nUse cases: Team-based domain unit administration; Group ownership delegation\n\nAWS: DataZone domain unit owner (group-based)\n\nValidation: Optional; string array; names must match domain groups keys",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "ownerUsers": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner user names for domain unit access control enabling user-based ownership and administrative permissions. Specifies users that have ownership and administrative access to the domain unit, supporting user-based data governance and individual administration.\n\nUse cases: User-based ownership; Individual administration; User permissions; Personal governance; User access control\n\nAWS: Amazon DataZone domain unit user ownership for user-based governance and administrative access\n\nValidation: Must be array of valid user names if specified; users must exist in the DataZone domain for ownership assignment",
+                    "description": "User names that receive ownership of this domain unit. Names must match\nentries in the domain's users config.\n\nUse cases: User-based domain unit administration; Individual ownership delegation\n\nAWS: DataZone domain unit owner (user-based)\n\nValidation: Optional; string array; names must match domain users keys",
                     "items": {
                         "type": "string"
                     },
@@ -2069,55 +2104,6 @@
             },
             "type": "object"
         },
-        "MdaaSageMakerBluePrintConfig": {
-            "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS SageMaker blueprint deployment that specifies domain association, and parameterization. Enables MDAA modules to be deployed as self-service SageMaker blueprints with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized blueprint offerings\n\nAWS: Configures AWS SageMaker blueprints for self-service deployment of MDAA modules with domain management\n\nValidation: domain_arn must be valid SageMaker domain ARN;",
-            "properties": {
-                "authorizedDomainUnits": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "blueprintName": {
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nDescription for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.\n\nUse cases: Product identification; User-friendly naming; SageMaker console display\n\nAWS: AWS SageMaker blueprint name for user interface display\n\nValidation: Must be non-empty string suitable for SageMaker blueprint naming",
-                    "type": "string"
-                },
-                "domainBucketName": {
-                    "type": "string"
-                },
-                "domainConfig": {
-                    "$ref": "#/definitions/DomainConfig"
-                },
-                "domainConfigSSMParam": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
-                    "type": "string"
-                },
-                "enabledRegions": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "parameters": {
-                    "additionalProperties": {
-                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
-                    },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS SageMaker blueprint parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
-                    "type": "object"
-                },
-                "provisioningRoleArn": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "provisioningRoleArn"
-            ],
-            "type": "object"
-        },
         "MdaaSageMakerBluePrintParameterConfig": {
             "additionalProperties": false,
             "properties": {
@@ -2157,6 +2143,62 @@
             },
             "required": [
                 "fieldType"
+            ],
+            "type": "object"
+        },
+        "MdaaSageMakerCustomBluePrintConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS SageMaker blueprint deployment that specifies domain association, and parameterization. Enables MDAA modules to be deployed as self-service SageMaker blueprints with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized blueprint offerings\n\nAWS: Configures AWS SageMaker blueprints for self-service deployment of MDAA modules with domain management\n\nValidation: domain_arn must be valid SageMaker domain ARN;",
+            "properties": {
+                "additionalAccounts": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/AdditionalBlueprintAccount"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional map of additional AWS accounts where the SageMaker blueprint should be enabled. Each entry maps a friendly account name to account-specific configuration including provisioning role ARN and optional parameters and authorized domain units.\n\nUse cases: Multi-account deployment; Cross-account provisioning; Account-specific configuration\n\nAWS: AWS SageMaker blueprint multi-account provisioning configuration\n\nValidation: Must be object with string keys and valid account configuration values if provided",
+                    "type": "object"
+                },
+                "authorizedDomainUnits": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "blueprintName": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nDescription for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.\n\nUse cases: Product identification; User-friendly naming; SageMaker console display\n\nAWS: AWS SageMaker blueprint name for user interface display\n\nValidation: Must be non-empty string suitable for SageMaker blueprint naming",
+                    "type": "string"
+                },
+                "domainBucketName": {
+                    "type": "string"
+                },
+                "domainConfig": {
+                    "$ref": "#/definitions/DomainConfig"
+                },
+                "domainConfigSSMParam": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
+                    "type": "string"
+                },
+                "enabledRegions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS SageMaker blueprint parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "type": "object"
+                },
+                "provisioningRole": {
+                    "$ref": "#/definitions/MdaaRoleRef"
+                }
+            },
+            "required": [
+                "provisioningRole"
             ],
             "type": "object"
         },
@@ -2315,35 +2357,30 @@
             "additionalProperties": {
                 "$ref": "#/definitions/AssociatedAccountProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed associated account configuration interface for DataZone with systematic cross-account organization and management capabilities. Defines named associated account mappings for organized multi-account data governance including account sets and systematic cross-account administration for enterprise data catalog governance.\n\nUse cases: Named account sets; Cross-account organization; Multi-account management; Systematic account administration; Enterprise governance organization; Account mapping\n\nAWS: Amazon DataZone named associated account configuration with systematic cross-account organization and management\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "type": "object"
         },
         "NamedDataZoneDomainProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/DataZoneDomainProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamedDataZoneDomainProps configuration interface for data governance and catalog management.\n\nUse cases: Data governance; Data catalog management; Data discovery; Governance workflows\n\nAWS: Amazon DataZone configuration for data governance and catalog management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon DataZone and MDAA requirements",
             "type": "object"
         },
         "NamedDataZoneGroups": {
             "additionalProperties": {
                 "$ref": "#/definitions/DataZoneGroup"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed DataZone group configuration interface for data governance with systematic group organization and management capabilities. Defines named DataZone group mappings for organized data governance including group sets, permission management, and systematic group administration for data catalog governance.\n\nUse cases: Named group sets; Group organization; Permission management; Systematic group administration; Data governance organization; Group mapping\n\nAWS: Amazon DataZone named group configuration with systematic group organization and management for data governance\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "type": "object"
         },
         "NamedDataZoneUsers": {
             "additionalProperties": {
                 "$ref": "#/definitions/DataZoneUser"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed DataZone user configuration interface for data governance with systematic user organization and management capabilities. Defines named DataZone user mappings for organized data governance including user sets, access management, and systematic user administration for data catalog governance.\n\nUse cases: Named user sets; User organization; Access management; Systematic user administration; Data governance organization; User mapping\n\nAWS: Amazon DataZone named user configuration with systematic user organization and management for data governance\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "type": "object"
         },
         "NamedDomainUnits": {
             "additionalProperties": {
                 "$ref": "#/definitions/DomainUnit"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed domain unit configuration interface for DataZone with systematic domain unit organization and management capabilities. Defines named domain unit mappings for organized hierarchical data governance including unit sets and systematic domain unit administration for data catalog governance.\n\nUse cases: Named domain unit sets; Domain unit organization; Hierarchical governance management; Systematic unit administration; Governance organization; Unit mapping\n\nAWS: Amazon DataZone named domain unit configuration with systematic domain unit organization and hierarchical management\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "type": "object"
         },
         "NamedPrincipalIdentifier": {
@@ -3076,22 +3113,22 @@
     "properties": {
         "domains": {
             "$ref": "#/definitions/NamedDataZoneDomainProps",
-            "description": "Q-ENHANCED-PROPERTY\nRequired map of domain names to DataZone domain configurations enabling data catalog and governance management. Provides complete domain setup with data discovery, catalog integration, and governance capabilities for enterprise data management.\n\nUse cases: Data catalog management; Domain-driven governance; Enterprise data discovery and organization\n\nAWS: Amazon DataZone domains for data catalog and governance management\n\nValidation: Must be valid NamedDomainsProps; required; defines all DataZone domain configurations and capabilities\n  *"
+            "description": "Map of domain names to DataZone domain configurations. The DataZone module\ndeploys domains with KMS encryption, execution roles, domain buckets,\nuser/group profiles, domain units, and optional cross-account associations.\n\nUse cases: Multi-domain deployment; Data catalog governance; Enterprise data discovery\n\nAWS: DataZone domains, KMS CMKs, IAM execution roles, S3 domain buckets\n\nValidation: Required; valid NamedDataZoneDomainProps"
         },
         "glueCatalogKmsKeyArn": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional KMS key ARN for Glue catalog encryption enabling secure data catalog operations with customer-controlled encryption. Provides encryption at rest for Glue catalog metadata and data governance information within DataZone integration.\n\nUse cases: Data catalog encryption; Secure metadata management; Customer-controlled key management for governance\n\nAWS: AWS KMS key for Glue catalog encryption in DataZone integration and secure metadata management\n\nValidation: Must be valid KMS key ARN if provided; enables secure Glue catalog integration with DataZone",
+            "description": "KMS key ARN for Glue catalog encryption in this account. If omitted,\nlooked up from the standard LF Settings SSM parameter.\n\nUse cases: Customer-managed Glue catalog encryption; Compliance-driven key management\n\nAWS: KMS key for Glue Data Catalog encryption\n\nValidation: Optional; valid KMS key ARN",
             "type": "string"
         },
         "lakeformationManageAccessRole": {
             "$ref": "#/definitions/MdaaRoleRef",
-            "description": "Q-ENHANCED-PROPERTY\nOptional Lake Formation management access role reference enabling DataZone integration with Lake Formation access control. Provides role-based integration between DataZone and Lake Formation for data governance and access management.\n\nUse cases: Lake Formation integration; data governance; Integrated access control across data services\n\nAWS: AWS IAM role for DataZone and Lake Formation integration and governance\n\nValidation: Must be valid MdaaRoleRef if provided; enables integrated governance between DataZone and Lake Formation"
+            "description": "IAM role for Lake Formation permission management across all domains.\nShould be an LF Admin role, typically created by the LF Settings module.\nIf omitted, looked up from the standard LF Settings SSM parameter.\n\nUse cases: DataZone-LakeFormation integration; Automated LF permission grants\n\nAWS: IAM role for Lake Formation access management\n\nValidation: Optional; valid MdaaRoleRef"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "sagemakerBlueprint": {
-            "$ref": "#/definitions/MdaaSageMakerBluePrintConfig",
+            "$ref": "#/definitions/MdaaSageMakerCustomBluePrintConfig",
             "description": "Q-ENHANCED-PROPERTY\nOptional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access\n\nAWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode"
         },
         "service_catalog_product_config": {

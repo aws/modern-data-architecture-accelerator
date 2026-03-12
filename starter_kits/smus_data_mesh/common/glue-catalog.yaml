@@ -1,0 +1,9 @@
+# Glue Catalog Cross-Account Access Configuration
+#
+# Configures Glue Catalog KMS encryption keys for cross-account access,
+# enabling data sharing via Lake Formation and DataZone across all participating accounts.
+
+consumerAccounts:
+  enterprise: "{{context:enterprise_account}}" # Domain account with central data lake
+  team2: "{{context:team2_account}}" # Consumer account
+  team1: "{{context:team1_account}}" # Producer/consumer account

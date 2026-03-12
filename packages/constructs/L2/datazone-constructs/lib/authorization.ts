@@ -45,7 +45,6 @@ export interface NamedPrincipalIdentifier {
   readonly name: string;
   readonly identifier: string;
 }
-
 export interface PolicyPrincipal {
   readonly userName?: string;
   readonly userIdentifier?: NamedPrincipalIdentifier;
@@ -194,9 +193,7 @@ export class PrincipalResolver {
     if (principal.accountName) return this.resolveAccountPrincipal(principal.accountName);
     if (principal.allUsersGrantFilter) return { user: { allUsersGrantFilter: {} } };
 
-    throw new Error(
-      'Validation logic error, should not be possible to reach this line since validation ensures one of the six properties are present',
-    );
+    throw new Error('Invalid principal configuration');
   }
 
   private resolveUserPrincipal(userName: string, allUsersGrantFilter?: boolean): ResolvedPrincipalIdentifier {
@@ -257,7 +254,7 @@ export class DataZoneAuthorizationConstruct extends Construct {
   private createPolicyGrants(props: DataZoneAuthorizationConstructProps): CfnPolicyGrant[] {
     const grants: CfnPolicyGrant[] = [];
 
-    for (const [policyName, policy] of Object.entries(props.policies)) {
+    Object.entries(props.policies).forEach(([policyName, policy]) => {
       // For blueprint policies, create a single grant (principals array is ignored)
       if (this.isBlueprintPolicy(props.entityType, policy.policyType)) {
         const detail = this.createPolicyGrantDetail(props, policy);
@@ -276,7 +273,7 @@ export class DataZoneAuthorizationConstruct extends Construct {
         grants.push(grant);
       } else {
         // For non-blueprint policies, iterate over principals
-        for (const principal of policy.principals) {
+        policy.principals.forEach(principal => {
           const resolvedPrincipalName = this.resolvePrincipalName(policyName, principal);
           const principalIdentifier = this.principalResolver.resolvePrincipalIdentifier(principal);
           const detail = this.createPolicyGrantDetail(props, policy);
@@ -290,9 +287,10 @@ export class DataZoneAuthorizationConstruct extends Construct {
           });
           this.configureGrant(grant, policy, policyName, resolvedPrincipalName);
           grants.push(grant);
-        }
+        });
       }
-    }
+    });
+
     return grants;
   }
 

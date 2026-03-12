@@ -62,14 +62,23 @@ domains:
     # Required - Description to give to the domain
     description: DataZone Domain Description
 
-    # Provisioning role ARN for DataZone environment provisioning
-    provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role'
-
     # Optional - How Users are assigned to domain (default: MANUAL): MANUAL | AUTOMATIC
     userAssignment: MANUAL
 
+    # Optional - These are externally-defined roles which will be used to provision blueprints.
+    # We list them there in order to provide them access to domain resources.
+    # Also, a base blueprint provisioning policy will be attached.
+    # Any blueprint specific provisinong permissions will need to be attached
+    # directly to the role.
+    blueprintProvisioningRoles:
+      - arn: 'arn:aws:iam::test-account:role/test-provisioning-role'
+      - name: test-provisioning-role2
+
     # Required - configuration details for the managed tooling blueprint
     tooling:
+      # Provisioning role ARN for DataZone environment provisioning
+      provisioningRole:
+        arn: 'arn:aws:iam::123456789012:role/test-provisioning-role'
       vpcId: test-vpc-id
       subnetIds:
         - test-subnet-id
@@ -77,12 +86,12 @@ domains:
     # Optional - Additional managed blueprints with parameters
     enabledManagedBlueprints:
       LakehouseCatalog:
-        parameters:
+        parameterValues:
           stringParam: testValue
         authorizedDomainUnits:
           - /root
       CustomAwsService:
-        parameters:
+        parameterValues:
           simpleString: test
         authorizedDomainUnits:
           - /root
@@ -174,19 +183,48 @@ domains:
         # (Optional) The role which will be used within the associated account to administer LF permissions.
         # This should be an LF Admin role within the account, likely created by the LF Settings module in the associated account.
         # If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
-        lakeformationManageAccessRoleArn:
-          'arn:test-partition:iam::test-account:role/test-role'
-          # Required - configuration details for the managed tooling blueprint
+        lakeformationManageAccessRoleArn: 'arn:test-partition:iam::test-account:role/test-role'
+        # (Optional) These are externally-defined roles which will be used to provision blueprints in the associated account.
+        # We list them there in order to provide them access to domain resources.
+        # Also, a base blueprint provisioning policy will be attached.
+        # Any blueprint specific provisinong permissions will need to be attached
+        # directly to the role.
+        # Note that these associated account roles must be referred directly by name or arn
+        # and cannot reference SSM params.
+        blueprintProvisioningRoles:
+          - arn: 'arn:aws:iam::1234567890:role/test-provisioning-role'
+          - name: test-provisioning-role2
+        # Required - configuration details for the managed tooling blueprint
         tooling:
           vpcId: test-vpc-id
           subnetIds:
             - test-subnet-id
+
+        # Optional - Additional managed blueprints with parameters
+        enabledManagedBlueprints:
+          LakehouseCatalog:
+            parameterValues:
+              stringParam: testValue
+            authorizedDomainUnits:
+              - /root
+          CustomAwsService:
+            parameterValues:
+              simpleString: test
+            authorizedDomainUnits:
+              - /root
+          NoParams:
+            authorizedDomainUnits:
+              - /root
+
       # A friendly name for the associated account
       associated-account-name2:
         # The AWS account number fo the associated account.
         # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
         account: '2234567890'
-        # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
+        # Optional - The arn of the KMS key used to encrypt the glue catalog in this associated account
+        # If not specified, the KMS key arn will be looked up from a standard SSM param created by the
+        # Glue Catalog Settings module and RAM shared to associated accounts.
+        glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
         createCdkUser: true
         # (Optional) The role which will be used within the associated account to administer LF permissions.
         # This should be an LF Admin role within the account, likely created by the LF Settings module in the associated account.

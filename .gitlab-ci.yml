@@ -111,7 +111,7 @@ feature_merge_lint:
   stage: prebuild
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - echo "Running npm_install.sh script"
     - ./scripts/npm_install.sh
@@ -257,7 +257,7 @@ feature_merge_smoke_test:
     - feature_merge_build_test
   ## optionally state which mdaa-testing branch
   variables:
-    CAEF_TESTING_BRANCH: main
+    CAEF_TESTING_BRANCH: 889-create-comprehensive-smus-configs
 
 .integ_test_template: &integ_test_template
   tags:

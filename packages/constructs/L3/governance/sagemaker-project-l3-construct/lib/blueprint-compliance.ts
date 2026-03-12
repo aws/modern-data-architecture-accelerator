@@ -11,7 +11,7 @@ export interface ParamOverride {
 
 const PARAM_OVERRIDES: Record<string, ParamOverride[]> = {
   Tooling: [
-    { name: 'logGroupRetention', value: '' }, //Indefinite
+    { name: 'logGroupRetention', value: '' },
     { name: 'sagemakerDomainNetworkType', value: 'VpcOnly' },
     { name: 'enableNetworkIsolation', value: 'true' },
   ],

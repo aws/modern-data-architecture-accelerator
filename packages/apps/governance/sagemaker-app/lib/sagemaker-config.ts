@@ -21,48 +21,51 @@ export interface SageMakerBlueprintProps {
 
 export interface SagemakerConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of domain names to SageMaker domain configurations enabling ML platform management and governance. Provides complete domain setup with user management, security controls, and ML development capabilities for enterprise machine learning operations.
+   * Map of domain names to SageMaker Unified Studio (DataZone V2) domain
+   * configurations. Each domain deploys a SageMaker domain with KMS encryption,
+   * service role, domain bucket, tooling blueprint, user/group profiles, and
+   * optional cross-account associations.
    *
-   * Use cases: ML platform management; SageMaker domain governance; Enterprise ML development environment setup
+   * Use cases: SageMaker Unified Studio domain deployment; ML governance; Blueprint management
    *
-   * AWS: Amazon SageMaker domains for ML platform management and governance
+   * AWS: SageMaker (DataZone V2) domains, KMS CMKs, IAM service roles, S3 domain buckets
    *
-   * Validation: Must be valid NamedBaseDomainsProps; required; defines all SageMaker domain configurations and capabilities
-   *   **/
+   * Validation: Required; valid NamedSageMakerDomainProps
+   */
   readonly domains: NamedSageMakerDomainProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional KMS key ARN for Glue catalog encryption enabling secure data catalog operations with customer-controlled encryption. Provides encryption at rest for Glue catalog metadata used in ML workflows and data governance within SageMaker integration.
+   * KMS key ARN for Glue catalog encryption in this account. If omitted,
+   * looked up from the standard LF Settings SSM parameter.
    *
-   * Use cases: Data catalog encryption; Secure ML metadata management; Customer-controlled key management for ML governance
+   * Use cases: Customer-managed Glue catalog encryption for ML workflows
    *
-   * AWS: AWS KMS key for Glue catalog encryption in SageMaker integration and secure ML metadata management
+   * AWS: KMS key for Glue Data Catalog encryption
    *
-   * Validation: Must be valid KMS key ARN if provided; enables secure Glue catalog integration with SageMaker
-   **/
+   * Validation: Optional; valid KMS key ARN
+   */
   readonly glueCatalogKmsKeyArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional Lake Formation management access role reference enabling SageMaker integration with Lake Formation access control. Provides role-based integration between SageMaker and Lake Formation for ML data governance and access management.
+   * IAM role for Lake Formation permission management across all domains.
+   * Should be an LF Admin role, typically created by the LF Settings module.
+   * If omitted, looked up from the standard LF Settings SSM parameter.
    *
-   * Use cases: Lake Formation integration; ML data governance; Integrated access control for ML workflows
+   * Use cases: SageMaker-LakeFormation integration; Automated LF permission grants for ML data
    *
-   * AWS: AWS IAM role for SageMaker and Lake Formation integration and ML governance
+   * AWS: IAM role for Lake Formation access management
    *
-   * Validation: Must be valid MdaaRoleRef if provided; enables integrated governance between SageMaker and Lake Formation
-   **/
+   * Validation: Optional; valid MdaaRoleRef
+   */
   readonly lakeformationManageAccessRole?: MdaaRoleRef;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional SageMaker domain execution role reference enabling custom execution role configuration for enhanced security compliance. When provided, uses existing role instead of creating default execution role with AWS managed policies for least privilege access.
+   * Custom execution role for SageMaker domains. When provided, uses this role
+   * instead of creating a default execution role with AWS managed policies.
    *
-   * Use cases: Custom execution roles; Security compliance; Least privilege access; Role reuse
+   * Use cases: Least-privilege execution roles; Custom permission boundaries; Role reuse
    *
-   * AWS: AWS IAM role for SageMaker domain execution with custom permissions
+   * AWS: IAM role for SageMaker domain execution
    *
-   * Validation: Must be valid MdaaRoleRef if provided; enables custom execution role configuration
-   **/
+   * Validation: Optional; valid MdaaRoleRef
+   */
   readonly sagemakerDomainExecutionRole?: MdaaRoleRef;
 }
 

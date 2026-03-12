@@ -13,6 +13,7 @@ import { AppProps, Stack } from 'aws-cdk-lib';
 import { SagemakerProjectConfigParser } from './sagemaker-project-config';
 
 export class SagemakerProjectCDKApp extends MdaaCdkApp {
+  /* istanbul ignore next */
   constructor(props: AppProps = {}) {
     super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
   }

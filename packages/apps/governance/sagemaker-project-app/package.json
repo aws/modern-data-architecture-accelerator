@@ -33,6 +33,10 @@
     "typescript": "5.9.3",
     "typescript-json-schema": "0.63.0"
   },
+  "overrides": {
+    "aws-cdk-lib": "2.220.0",
+    "@types/babel__traverse": "7.18.2"
+  },
   "dependencies": {
     "@aws-mdaa/app": "1.4.0",
     "@aws-mdaa/sagemaker-project-l3-construct": "1.4.0",

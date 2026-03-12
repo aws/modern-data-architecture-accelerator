@@ -17,8 +17,7 @@ import { Construct } from 'constructs';
 import { getParamComplianceOverrides } from './blueprint-compliance';
 import { ProjectProfilesConfig } from '@aws-mdaa/datazone-constructs/lib/project_profile_config';
 import { CfnResourceShare, CfnResourceShareProps } from 'aws-cdk-lib/aws-ram';
-import { NamedAuthorizationPolicies } from '@aws-mdaa/datazone-constructs/lib/authorization';
-import * as cdk from 'aws-cdk-lib/core';
+
 import {
   GrantProps,
   LakeFormationAccessControlL3Construct,
@@ -31,110 +30,234 @@ export interface NamedSageMakerProjects {
 }
 
 export interface SageMakerProjectProps {
+  /**
+   * Name of the project profile to use for this project. The profile must
+   * target the same account as the project.
+   *
+   * Use cases: Profile-based project creation; Environment template selection
+   *
+   * AWS: DataZone project profile reference
+   *
+   * Validation: Required; string; must match a key in projectProfiles config
+   */
   readonly profileName: string;
 
-  readonly authorizations?: NamedAuthorizationPolicies;
-
+  /**
+   * Per-environment configuration overrides for this project's environments.
+   *
+   * Use cases: Project-specific environment customization
+   *
+   * AWS: DataZone project environment configurations
+   *
+   * Validation: Optional; map of environment name to ProjectEnvironmentConfiguration
+   */
   readonly environmentConfigs?: { [name: string]: ProjectEnvironmentConfiguration };
+  /**
+   * Domain unit path where the project will be created (e.g., /some/domain/unit).
+   *
+   * Use cases: Project organizational placement; Governance scope targeting
+   *
+   * AWS: DataZone domain unit for project placement
+   *
+   * Validation: Optional; slash-delimited domain unit path
+   */
   readonly domainUnit?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Owner user references for project ownership enabling user-based project administration and full administrative permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting user-based project governance and individual administration.
+   * MDAA user configuration names (from the SageMaker module users section) that
+   * receive PROJECT_OWNER designation with full administrative access to the project.
+   * These are not DataZone usernames or Identity Center identifiers.
    *
-   * Use cases: User-based project ownership; Project administration; Full administrative access; Owner permissions; Project governance
+   * Use cases: User-based project ownership; Full project admin access
    *
-   * AWS: Amazon DataZone project owner users with PROJECT_OWNER designation for full administrative access
+   * AWS: DataZone project membership with PROJECT_OWNER role
    *
-   * Validation: Must be array of valid MDAA user configuration names as defined in the SageMaker module users section; references must exist in module configuration
-   **/
+   * Validation: Optional; map of ID to user config name; names must exist in module users config
+   */
   readonly ownerUsers?: { [id: string]: string };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Owner group references for project ownership enabling group-based project administration and collective administrative permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting group-based project governance and collective administration.
+   * MDAA group configuration names (from the SageMaker module groups section) that
+   * receive PROJECT_OWNER designation with full administrative access to the project.
+   * These are not DataZone group names or Identity Center group identifiers.
    *
-   * Use cases: Group-based project ownership; Collective administration; Full administrative access; Owner permissions; Team governance
+   * Use cases: Team-based project ownership; Group admin access
    *
-   * AWS: Amazon DataZone project owner groups with PROJECT_OWNER designation for full administrative access
+   * AWS: DataZone project membership with PROJECT_OWNER role
    *
-   * Validation: Must be array of valid MDAA group configuration names as defined in the SageMaker module groups section; references must exist in module configuration
-   **/
+   * Validation: Optional; map of ID to group config name; names must exist in module groups config
+   */
   readonly ownerGroups?: { [id: string]: string };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Contributor user references for project access enabling user-based project contribution and standard permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting user-based project collaboration and individual contribution.
+   * MDAA user configuration names that receive PROJECT_CONTRIBUTOR designation
+   * with contributor-level access to the project.
    *
-   * Use cases: User-based project access; Project contribution; Contributor permissions; Collaboration; Standard access
+   * Use cases: User-based project contribution; Standard project access
    *
-   * AWS: Amazon DataZone project contributor users with PROJECT_CONTRIBUTOR designation for contributor-level access
+   * AWS: DataZone project membership with PROJECT_CONTRIBUTOR role
    *
-   * Validation: Must be array of valid MDAA user configuration names as defined in the SageMaker module users section; references must exist in module configuration
-   **/
+   * Validation: Optional; map of ID to user config name; names must exist in module users config
+   */
   readonly users?: { [id: string]: string };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Contributor group references for project access enabling group-based project contribution and collective standard permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting group-based project collaboration and collective contribution.
+   * MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation
+   * with contributor-level access to the project.
    *
-   * Use cases: Group-based project access; Collective contribution; Contributor permissions; Team collaboration; Standard access
+   * Use cases: Team-based project contribution; Group standard access
    *
-   * AWS: Amazon DataZone project contributor groups with PROJECT_CONTRIBUTOR designation for contributor-level access
+   * AWS: DataZone project membership with PROJECT_CONTRIBUTOR role
    *
-   * Validation: Must be array of valid MDAA group configuration names as defined in the SageMaker module groups section; references must exist in module configuration
-   **/
+   * Validation: Optional; map of ID to group config name; names must exist in module groups config
+   */
   readonly groups?: { [id: string]: string };
 
-  readonly account?: string;
-
+  /**
+   * Glue data sources to import into the project. Each data source references
+   * a Glue database and creates Lake Formation read permissions for the project's
+   * environment user.
+   *
+   * Use cases: Importing existing Glue databases into SageMaker projects; Data asset discovery
+   *
+   * AWS: DataZone data sources with Glue run configuration
+   *
+   * Validation: Optional; map of data source name to DataSourceProps
+   */
   readonly dataSources?: { [name: string]: DataSourceProps };
 }
 
 export interface DataSourceProps {
+  /**
+   * Glue database name to use as the data source. The project's environment user
+   * will be granted Lake Formation read permissions on this database and its tables.
+   *
+   * Use cases: Glue database import; Data asset registration
+   *
+   * AWS: Glue database referenced as a DataZone data source
+   *
+   * Validation: Required; valid Glue database name
+   */
   readonly databaseName: string;
 }
 
 export interface SagemakerProjectL3ConstructProps extends MdaaL3ConstructProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.
+   * SSM parameter base name containing SageMaker domain configuration. Allows
+   * all required domain config (domain ID, blueprint IDs, domain unit IDs) to be
+   * pulled from SSM and APIs. If omitted, the full domainConfig object must be
+   * provided instead.
    *
-   * Use cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup
+   * Use cases: Dynamic domain config resolution; Decoupled domain/project deployments
    *
-   * AWS: AWS Systems Manager parameter for DataZone domain configuration reference
+   * AWS: SSM Parameter Store for SageMaker domain configuration
    *
-   * Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration
-   **/
+   * Validation: Optional; valid SSM parameter name; mutually exclusive with domainConfig
+   */
   readonly domainConfigSSMParam?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional direct domain configuration for DataZone project setup enabling inline domain configuration management. Provides direct domain configuration object for DataZone project setup and governance configuration without external parameter references.
+   * Direct domain configuration object for SageMaker project setup. Use this
+   * when SSM-based config resolution is not desired. Mutually exclusive with
+   * domainConfigSSMParam.
    *
-   * Use cases: Direct configuration; Inline setup; Domain configuration; Governance setup
+   * Use cases: Inline domain config; Testing; Single-stack deployments
    *
-   * AWS: DataZone domain configuration for project setup and governance management
+   * AWS: SageMaker (DataZone V2) domain configuration
    *
-   * Validation: Must be valid DomainConfig object if provided; enables direct domain configuration when specified
-   *   **/
+   * Validation: Optional; valid DomainConfig; mutually exclusive with domainConfigSSMParam
+   */
   readonly domainConfig?: DomainConfig;
 
+  /**
+   * SageMaker projects to create in the domain. Each project references a
+   * project profile and can include data sources and membership assignments.
+   *
+   * Use cases: Project deployment; Data source registration; Team membership
+   *
+   * AWS: DataZone projects with profile-based environment provisioning
+   *
+   * Validation: Optional; valid NamedSageMakerProjects
+   */
   readonly projects?: NamedSageMakerProjects;
+  /**
+   * Project profiles defining environment blueprints and deployment configurations.
+   * Profiles are reusable templates that determine which environments are provisioned
+   * when a project is created.
+   *
+   * Use cases: Standardized project templates; Blueprint environment bundling
+   *
+   * AWS: DataZone project profiles with environment configurations
+   *
+   * Validation: Optional; valid NamedProjectProfiles
+   */
   readonly projectProfiles?: NamedProjectProfiles;
+  /**
+   * Reusable environment templates that can be referenced by project profiles
+   * via the environmentsTemplate property. Template environments are merged
+   * with profile-specific environments.
+   *
+   * Use cases: Shared environment definitions; DRY profile configuration
+   *
+   * AWS: DataZone project profile environment templates
+   *
+   * Validation: Optional; map of template name to NamedProfileEnvironmentConfigs
+   */
   readonly projectProfileEnvironmentsTemplates?: { [name: string]: NamedProfileEnvironmentConfigs };
 }
 
 export interface ProjectProfileProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional domain unit specification for DataZone project organization enabling hierarchical domain management and project categorization. Defines the domain unit within the DataZone domain for project organization and governance scope management.
+   * Domain unit path within the DataZone domain where this project profile
+   * is scoped. Uses slash-delimited paths (e.g., /root/team-a).
    *
-   * Use cases: Domain organization; Project categorization; Hierarchical management; Governance scope
+   * Use cases: Profile scoping to organizational units; Governance boundary control
    *
-   * AWS: DataZone domain unit for project organization and governance management
+   * AWS: DataZone domain unit for project profile scoping
    *
-   * Validation: Must be valid domain unit string if provided; affects project organization and governance scope
-   **/
+   * Validation: Optional; valid domain unit path string
+   */
   readonly domainUnit?: string;
+  /**
+   * Named environment configurations for this profile. Each key is a blueprint
+   * name that must exist in the domain's enabled blueprints. Merged with
+   * environments from the referenced environmentsTemplate.
+   *
+   * Use cases: Profile-specific environment definitions; Blueprint parameter overrides
+   *
+   * AWS: DataZone project profile environment configurations
+   *
+   * Validation: Optional; valid NamedProfileEnvironmentConfigs
+   */
   readonly environments?: NamedProfileEnvironmentConfigs;
+  /**
+   * Target AWS account ID for the profile's environments. Defaults to the
+   * deploying stack's account if omitted.
+   *
+   * Use cases: Cross-account project profiles; Account-specific environment targeting
+   *
+   * AWS: Target account for DataZone environment provisioning
+   *
+   * Validation: Optional; valid 12-digit AWS account ID
+   */
   readonly account?: string;
+  /**
+   * Target AWS region for the profile's environments. Defaults to the
+   * deploying stack's region if omitted.
+   *
+   * Use cases: Cross-region project profiles; Region-specific environment targeting
+   *
+   * AWS: Target region for DataZone environment provisioning
+   *
+   * Validation: Optional; valid AWS region identifier
+   */
   readonly region?: string;
+  /**
+   * Name of an environment template from projectProfileEnvironmentsTemplates.
+   * Template environments are merged with this profile's environments, with
+   * profile-level values taking precedence.
+   *
+   * Use cases: Reusable environment definitions; Template-based profile configuration
+   *
+   * AWS: DataZone project profile environment template reference
+   *
+   * Validation: Optional; must match a key in projectProfileEnvironmentsTemplates
+   */
   readonly environmentsTemplate?: string;
 }
 
@@ -143,14 +266,66 @@ export interface NamedProfileEnvironmentConfigs {
   readonly [name: string]: ProfileEnvironmentConfig;
 }
 
-type ConfigurationParameter = CfnProjectProfile.EnvironmentConfigurationParametersDetailsProperty | cdk.IResolvable;
+export interface ParameterOverrideProps {
+  /**
+   * Whether this parameter can be edited by project creators. When false,
+   * the value is locked to the profile-defined value.
+   *
+   * Use cases: Compliance-enforced parameters; Locked vs. flexible overrides
+   *
+   * AWS: DataZone project profile parameter editability
+   *
+   * Validation: Optional; boolean
+   */
+  readonly isEditable?: boolean;
+  /**
+   * Override value for this blueprint parameter.
+   *
+   * Use cases: Default parameter values; Compliance-enforced settings
+   *
+   * AWS: DataZone project profile parameter value
+   *
+   * Validation: Optional; string
+   */
+  readonly value?: string;
+}
 
 export interface ProfileEnvironmentConfig {
+  /**
+   * When the environment is deployed relative to project creation.
+   * ON_CREATE deploys immediately; ON_DEMAND requires manual trigger.
+   *
+   * Use cases: Automatic vs. manual environment provisioning
+   *
+   * AWS: DataZone environment deployment mode
+   *
+   * Validation: Optional; 'ON_CREATE' | 'ON_DEMAND'
+   */
   readonly deploymentMode?: 'ON_CREATE' | 'ON_DEMAND';
+  /**
+   * Numeric order for environment deployment. Lower numbers deploy first.
+   * Tooling is always order 1, DataLake is always order 2.
+   *
+   * Use cases: Ordered environment provisioning; Dependency sequencing
+   *
+   * AWS: DataZone environment deployment order
+   *
+   * Validation: Optional; positive integer
+   */
   readonly deploymentOrder?: number;
-  readonly configurationParameters?: {
-    [key: string]: ConfigurationParameter;
-  };
+  /**
+   * Blueprint parameter overrides for this environment configuration.
+   * Supports per-parameter value and editability settings.
+   *
+   * Use cases: Blueprint-specific parameter customization; Compliance overrides
+   *
+   * AWS: DataZone project profile environment parameters
+   *
+   * Validation: Optional; object with overrides map of parameter name to ParameterOverrideProps
+   *
+   * @jsii ignore
+   */
+  readonly parameters?: { overrides: { [name: string]: ParameterOverrideProps } };
 }
 
 export interface NamedProjectProfiles {
@@ -171,7 +346,7 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
       ? new DomainConfig(this, 'domain-config-parser', {
           ssmParamBase: props.domainConfigSSMParam,
           naming: props.naming,
-          refresh: true,
+          refresh: true, //Ensures that newly added blueprints can be referenced
         })
       : props.domainConfig;
 
@@ -339,28 +514,36 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
     const envConfigs: CfnProjectProfile.EnvironmentConfigurationProperty[] = Object.entries({
       ...templateEnvs,
       ...profileProps.environments,
-    }).map(([envName, envPropsRaw]) => {
+    }).map(([envName, envProps]) => {
       const blueprintName = envName;
       const blueprintId = domainConfig.getBlueprintId(blueprintName);
       if (!blueprintId) {
         throw new Error(`Environment blueprint ${blueprintName} not found in enabledManagedBlueprints`);
       }
 
-      return {
+      const overrides = Object.entries(envProps.parameters?.overrides || {}).map(([paramName, paramProps]) => {
+        return {
+          ...paramProps,
+          name: paramName,
+        };
+      });
+
+      const configParameters: CfnProjectProfile.EnvironmentConfigurationParametersDetailsProperty = {
+        ...envProps.parameters,
+        parameterOverrides: [...overrides, ...getParamComplianceOverrides(blueprintName)],
+      };
+      const envConfig: CfnProjectProfile.EnvironmentConfigurationProperty = {
         awsRegion: { regionName: profileProps.region ?? this.region },
         awsAccount: {
           awsAccountId: profileProps.account ?? this.account,
         },
-        environmentBlueprintName: blueprintName,
-        configurationParameters: {
-          ...envPropsRaw.configurationParameters,
-          parameterOverrides: getParamComplianceOverrides(blueprintName),
-        },
+        configurationParameters: configParameters,
         name: envName,
         environmentBlueprintId: blueprintId,
-        deploymentMode: envPropsRaw.deploymentMode,
-        deploymentOrder: envPropsRaw.deploymentOrder,
+        deploymentMode: envProps.deploymentMode,
+        deploymentOrder: envProps.deploymentOrder,
       };
+      return envConfig;
     });
 
     // Create required Tooling environment configuration

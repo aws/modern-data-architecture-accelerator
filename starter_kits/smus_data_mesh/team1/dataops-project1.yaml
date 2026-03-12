@@ -1,0 +1,92 @@
+# Team1 DataOps Project Configuration (Cross-Account)
+#
+# DataOps project in team1 account integrated with enterprise SMUS domain.
+# Enables team-managed pipelines with centralized governance and cross-account data sharing.
+
+# IAM roles that will have access to the project's resources (S3 bucket, KMS key)
+dataAdminRoles:
+  # This role will be provided admin access to project resources
+  # References the data-admin role created in the team1 account
+  - id: ssm-org:/team1-com/generated-role/data-admin/id
+
+  # This role will be used to deploy custom SMUS Blueprints which need access
+  # to project resources (such as the KMS key for encrypting DynamoDB tables)
+  - id: ssm-org:/team1-com/generated-role/ddb-bp-prov/id
+
+# IAM roles for data engineers who will build and manage data pipelines
+# These roles get read/write access to project S3 bucket and Glue resources
+dataEngineerRoles:
+  - id: ssm-org:/team1-com/generated-role/data-engineer/id
+
+# Roles used to execute data operations (Glue Jobs, Crawlers, etc)
+# These are service roles that Glue assumes when running jobs
+projectExecutionRoles:
+  - id: ssm-org:/team1-com/generated-role/glue-etl/id
+
+# SageMaker Unified Studio integration
+# Creates a SMUS project linked to this DataOps project for unified data access
+sagemaker:
+  # Reference to SMUS domain configuration in enterprise account (cross-account)
+  # Uses full ARN format because this config deploys to team1 account
+  domainConfigSSMParam: arn:aws:ssm:{{region}}:{{context:enterprise_account}}:parameter/{{org}}/ent-data/smus-dom/domain/domain1/config
+
+  # Configuration for the SageMaker project to be created
+  project:
+    # The name of the SageMaker project profile to use
+    # This profile was created in smus-project-profiles.yaml and targets team1 account
+    profileName: team1-profile
+
+    # Domain unit provides organizational hierarchy and access control
+    # This places the project under /business-teams/team1 in the domain structure
+    domainUnit: /business-teams/team1
+
+    # Project owners have full control over the project
+    ownerUsers:
+      admin1: "{{context:admin1_user_sso_id}}"
+
+    # Environment configurations specify blueprint parameter values
+    environmentConfigs:
+      # DynamoDB blueprint configuration (from smus-bp-ddb.yaml)
+      ddb-table:
+        parameters:
+          # The KMS key parameter references this DataOps project's KMS key
+          # {{ref:/ProjectKmsKey/Resource:Arn}} is a CloudFormation reference to the
+          # KMS key resource created by this DataOps project
+          # This ensures the DDB table uses the same encryption key as other project resources
+          kmsKey: "{{ref:/ProjectKmsKey/Resource:Arn}}"
+
+# Glue databases to create within the project
+# Each database represents a logical grouping of tables/data assets
+databases:
+  db1:
+    description: Sample Team1 Datasource
+
+    # S3 location where database data is stored
+    # locationPrefix is relative to the project's S3 bucket
+    # Full path will be: s3://<project-bucket>/data/db1/
+    locationPrefix: data/db1
+
+    # Automatically create a Glue Crawler for the database
+    # Crawlers scan S3 data and automatically create/update Glue table schemas
+    crawler:
+      # Role that the crawler will assume when running
+      # This should be one of the roles defined in projectExecutionRoles
+      role:
+        arn: ssm-org:/team1-com/generated-role/glue-etl/arn
+
+    # Enable creation of a SageMaker datasource for this database
+    # This creates a data source in SMUS that points to the Glue database
+    # Users can then discover and query this data through the SMUS interface
+    createSagemakerDatasource: true
+
+    # Automatically create Lake Formation grants for the project roles
+    # This configures fine-grained permissions for the database
+    lakeFormation:
+      # Data admin roles get SUPER permissions (full control including grants)
+      createSuperGrantsForDataAdminRoles: true
+
+      # Data engineer roles get read-only permissions
+      createReadGrantsForDataEngineerRoles: true
+
+      # Project execution roles (Glue jobs) get read/write permissions
+      createReadWriteGrantsForProjectExecutionRoles: true

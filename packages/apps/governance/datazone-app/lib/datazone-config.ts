@@ -14,37 +14,39 @@ import { NamedDataZoneDomainProps } from '@aws-mdaa/datazone-l3-construct';
 
 export interface DataZoneConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of domain names to DataZone domain configurations enabling data catalog and governance management. Provides complete domain setup with data discovery, catalog integration, and governance capabilities for enterprise data management.
+   * Map of domain names to DataZone domain configurations. The DataZone module
+   * deploys domains with KMS encryption, execution roles, domain buckets,
+   * user/group profiles, domain units, and optional cross-account associations.
    *
-   * Use cases: Data catalog management; Domain-driven governance; Enterprise data discovery and organization
+   * Use cases: Multi-domain deployment; Data catalog governance; Enterprise data discovery
    *
-   * AWS: Amazon DataZone domains for data catalog and governance management
+   * AWS: DataZone domains, KMS CMKs, IAM execution roles, S3 domain buckets
    *
-   * Validation: Must be valid NamedDomainsProps; required; defines all DataZone domain configurations and capabilities
-   *   **/
+   * Validation: Required; valid NamedDataZoneDomainProps
+   */
   readonly domains: NamedDataZoneDomainProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional KMS key ARN for Glue catalog encryption enabling secure data catalog operations with customer-controlled encryption. Provides encryption at rest for Glue catalog metadata and data governance information within DataZone integration.
+   * KMS key ARN for Glue catalog encryption in this account. If omitted,
+   * looked up from the standard LF Settings SSM parameter.
    *
-   * Use cases: Data catalog encryption; Secure metadata management; Customer-controlled key management for governance
+   * Use cases: Customer-managed Glue catalog encryption; Compliance-driven key management
    *
-   * AWS: AWS KMS key for Glue catalog encryption in DataZone integration and secure metadata management
+   * AWS: KMS key for Glue Data Catalog encryption
    *
-   * Validation: Must be valid KMS key ARN if provided; enables secure Glue catalog integration with DataZone
-   **/
+   * Validation: Optional; valid KMS key ARN
+   */
   readonly glueCatalogKmsKeyArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional Lake Formation management access role reference enabling DataZone integration with Lake Formation access control. Provides role-based integration between DataZone and Lake Formation for data governance and access management.
+   * IAM role for Lake Formation permission management across all domains.
+   * Should be an LF Admin role, typically created by the LF Settings module.
+   * If omitted, looked up from the standard LF Settings SSM parameter.
    *
-   * Use cases: Lake Formation integration; data governance; Integrated access control across data services
+   * Use cases: DataZone-LakeFormation integration; Automated LF permission grants
    *
-   * AWS: AWS IAM role for DataZone and Lake Formation integration and governance
+   * AWS: IAM role for Lake Formation access management
    *
-   * Validation: Must be valid MdaaRoleRef if provided; enables integrated governance between DataZone and Lake Formation
-   **/
+   * Validation: Optional; valid MdaaRoleRef
+   */
   readonly lakeformationManageAccessRole?: MdaaRoleRef;
 }
 

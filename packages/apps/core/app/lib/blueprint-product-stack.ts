@@ -2,42 +2,67 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-import { MdaaStringParameter } from '@aws-mdaa/construct';
+
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { CfnParameter } from 'aws-cdk-lib';
 import { ProductStack, ProductStackProps } from 'aws-cdk-lib/aws-servicecatalog';
 import { Construct, Node } from 'constructs';
 import { MdaaStackProps } from './stack';
-import { IMdaaResourceNaming, MdaaDefaultResourceNaming, MdaaResourceNamingConfig } from '@aws-mdaa/naming';
+import { MdaaDefaultResourceNaming, MdaaResourceNamingConfig, IMdaaResourceNaming } from '@aws-mdaa/naming';
 
 interface MdaaBaseProductStackProps extends ProductStackProps {
   readonly naming: IMdaaResourceNaming;
-  readonly useBootstrap: boolean;
+}
+
+class BlueprintRoleHelper extends MdaaRoleHelper {
+  constructor() {
+    // Pass dummy values to parent constructor since they won't be used
+    super({} as Construct, {} as IMdaaResourceNaming);
+  }
+
+  public override resolveRoleRefsWithOrdinals(): never {
+    throw new Error(
+      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
+    );
+  }
+
+  public override resolveRoleRefs(): never {
+    throw new Error(
+      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
+    );
+  }
+
+  public override resolveRoleRefWithRefId(): never {
+    throw new Error(
+      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
+    );
+  }
+
+  public override resolveRoleRef(): never {
+    throw new Error(
+      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
+    );
+  }
+
+  public override createProviderServiceToken(): never {
+    throw new Error(
+      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
+    );
+  }
 }
 
 abstract class MdaaBaseProductBlueprintStack extends ProductStack {
-  public readonly roleHelper: MdaaRoleHelper;
+  public readonly roleHelper: MdaaRoleHelper = new BlueprintRoleHelper();
 
   protected constructor(scope: Construct, id: string, props: MdaaBaseProductStackProps) {
     super(scope, id, props);
-
-    const iamHelperProviderServiceToken = props.useBootstrap
-      ? MdaaStringParameter.valueForStringParameter(
-          this,
-          props.naming.ssmPath(`caef-bootstrap/role-helper-service-token`, false, false),
-        )
-      : undefined;
-    this.roleHelper = new MdaaRoleHelper(this, props.naming, iamHelperProviderServiceToken);
   }
 }
 
 export interface MdaaProductStackProps extends MdaaStackProps {
   readonly assetBucket: IBucket;
 }
-
-const PROVISIONED_NAME_PARAM_LENGTH = 16;
-const MODULE_NAME_CONNECTOR = '-';
 
 export class MdaaProductStack extends MdaaBaseProductBlueprintStack {
   public props: MdaaProductStackProps;
@@ -47,7 +72,7 @@ export class MdaaProductStack extends MdaaBaseProductBlueprintStack {
     super(scope, id, props);
     const provisionedNameParam = new CfnParameter(this, 'provisionedName', {
       description: 'A unique name for the provisioned product.',
-      maxLength: PROVISIONED_NAME_PARAM_LENGTH,
+      maxLength: 16,
     });
 
     const productNaming = new ExpectedLengthNaming({
@@ -55,9 +80,8 @@ export class MdaaProductStack extends MdaaBaseProductBlueprintStack {
       org: props.naming.props.org,
       domain: props.naming.props.domain,
       env: props.naming.props.env,
-      moduleName: props.naming.props.moduleName + MODULE_NAME_CONNECTOR + provisionedNameParam.valueAsString,
-      expectedEnvLength:
-        props.naming.props.moduleName.length + MODULE_NAME_CONNECTOR.length + PROVISIONED_NAME_PARAM_LENGTH,
+      moduleName: props.naming.props.moduleName + '-' + provisionedNameParam.valueAsString,
+      expectedEnvLength: props.naming.props.moduleName.length + 17,
     });
 
     this.props = { ...props, naming: productNaming };

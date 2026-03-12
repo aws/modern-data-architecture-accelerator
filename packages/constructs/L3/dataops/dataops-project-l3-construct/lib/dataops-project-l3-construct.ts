@@ -16,7 +16,8 @@ import {
 } from '@aws-mdaa/datazone-constructs';
 import { MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
 import { Ec2L3Construct, Ec2L3ConstructProps } from '@aws-mdaa/ec2-l3-construct';
-import { MdaaSecurityConfig } from '@aws-mdaa/glue-constructs';
+import { GlueCatalogL3Construct } from '@aws-mdaa/glue-catalog-l3-construct';
+import { MdaaCfnCrawler, MdaaCfnCrawlerProps, MdaaSecurityConfig } from '@aws-mdaa/glue-constructs';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
@@ -32,8 +33,8 @@ import {
   PrincipalProps,
   ResourceLinkProps,
 } from '@aws-mdaa/lakeformation-access-control-l3-construct';
-import { LakeFormationTagsL3Construct, LFTagConfig } from '@aws-mdaa/lakeformation-tags-l3-construct';
 import { LakeFormationSettingsL3Construct } from '@aws-mdaa/lakeformation-settings-l3-construct';
+import { LakeFormationTagsL3Construct, LFTagConfig } from '@aws-mdaa/lakeformation-tags-l3-construct';
 import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import {
@@ -45,7 +46,7 @@ import { MdaaSnsTopic, MdaaSnsTopicProps } from '@aws-mdaa/sns-constructs';
 import { Arn, ArnComponents, ArnFormat, Tags } from 'aws-cdk-lib';
 import { CfnDataSource, CfnDataSourceProps, CfnEnvironment } from 'aws-cdk-lib/aws-datazone';
 import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
-import { CfnClassifier, CfnConnection, CfnDatabase } from 'aws-cdk-lib/aws-glue';
+import { CfnClassifier, CfnConnection, CfnCrawler, CfnDatabase } from 'aws-cdk-lib/aws-glue';
 import {
   AccountPrincipal,
   Effect,
@@ -60,9 +61,8 @@ import { CfnPrincipalPermissions, CfnResource } from 'aws-cdk-lib/aws-lakeformat
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Construct } from 'constructs';
+import { LakeFormationConfig, NamedTagBasedGrants } from './lake-formation-props';
 import { createLakeFormationTags, processLakeFormationTagsPermissions } from './lake-formation-tags-manager';
-import { NamedTagBasedGrants, LakeFormationConfig } from './lake-formation-props';
-import { GlueCatalogL3Construct } from '@aws-mdaa/glue-catalog-l3-construct';
 
 /**
  * Named map of database grant names to grant configurations.
@@ -195,8 +195,57 @@ export interface DatabaseProps {
 
   /** Auto-create SageMaker data sources for this database. */
   readonly createSagemakerDatasource?: boolean;
-}
 
+  /** Auto-create Glue Crawler for this database. */
+  readonly crawler?: DatabaseCrawlerProps;
+}
+export interface DatabaseCrawlerProps {
+  readonly role: MdaaRoleRef;
+  /**
+   * Crawler configuration as a string.  See:  https://docs.aws.amazon.com/glue/latest/dg/crawler-configuration.html
+   */
+  readonly extraConfiguration?: ConfigurationElement;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional crawler execution schedule configuration enabling automated periodic data discovery and catalog updates. Defines when and how frequently the crawler will run to discover new data and update the Glue catalog with schema changes and new partitions.
+   *
+   * Use cases: Automated data discovery; Scheduled catalog updates; Periodic schema detection; Regular metadata refresh
+   *
+   * AWS: AWS Glue crawler schedule configuration for automated execution timing and frequency
+   *
+   * Validation: Must be valid CfnCrawler.ScheduleProperty if provided; optional for on-demand crawler execution
+   **/
+  readonly schedule?: CfnCrawler.ScheduleProperty;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional schema change policy configuration controlling how the crawler handles detected schema modifications and table structure changes. Defines behavior for schema evolution including update actions, deletion policies, and change detection sensitivity.
+   *
+   * Use cases: Schema evolution management; Table structure change handling; Metadata consistency; Schema change detection
+   *
+   * AWS: AWS Glue crawler schema change policy for handling table structure modifications and schema evolution
+   *
+   * Validation: Must be valid CfnCrawler.SchemaChangePolicyProperty if provided; optional for default schema change handling
+   **/
+  readonly schemaChangePolicy?: CfnCrawler.SchemaChangePolicyProperty;
+  /**
+   * Optional string prefix to prepend to all table names created by the crawler enabling organized table naming and namespace management. Provides consistent table naming convention and helps avoid naming conflicts in shared Glue catalogs.
+   *
+   * Use cases: Table naming organization; Namespace management; Naming conflict avoidance; Consistent table naming
+   *
+   * AWS: AWS Glue crawler table prefix for systematic table naming and catalog organization
+   *
+   * Validation: Must be valid string if provided; optional for default table naming without prefix
+   **/
+  readonly tablePrefix?: string;
+  /**
+   * Name of the custom classifier to use from the crawler.yaml configuration
+   */
+  readonly classifiers?: string[];
+  /**
+   * Recrawl behaviour: CRAWL_NEW_FOLDERS_ONLY or CRAWL_EVERYTHING or CRAWL_EVENT_MODE
+   */
+  readonly recrawlBehavior?: string;
+}
 export type ClassifierType = 'csv' | 'grok' | 'json' | 'xml';
 
 // Cannot useCfnClassifier.GrokClassifierProperty as some values allow IResolvable
@@ -531,8 +580,9 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     // This ensures tags exist at account level before any database associations
     this.projectLevelLFTagsConstruct = createLakeFormationTags(this, this.props);
 
-    this.createProjectDatabases(this.props.databases || {}, projectBucket, datazoneResources);
-    this.createProjectSecurityConfig(kmsKey, s3OutputKmsKey);
+    const securityConfiguration = this.createProjectSecurityConfig(kmsKey, s3OutputKmsKey);
+
+    this.createProjectDatabases(this.props.databases || {}, projectBucket, securityConfiguration, datazoneResources);
 
     // create project SNS topic
     const topic = this.createSNSTopic(kmsKey);
@@ -894,6 +944,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
   private createProjectDatabases(
     databases: NamedDatabaseProps,
     projectBucket: IBucket,
+    securityConfiguration: SecurityConfiguration,
     datazoneResources?: DatazoneResources,
   ) {
     // Build our databases
@@ -938,9 +989,36 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
         );
       }
 
+      this.createProjectCrawler(databaseName, dbName, databaseProps, database, databaseBucket, securityConfiguration);
+
       // Required so we can auto-wire other stacks/resources to this project resource via SSM
       this.createProjectSSMParam(`ssm-database-name-${databaseName}`, `databaseName/${databaseName}`, dbResourceName);
     });
+  }
+  private createProjectCrawler(
+    databaseConfigName: string,
+    dbConstructName: string,
+    databaseProps: DatabaseProps,
+    database: CfnDatabase,
+    databaseBucket: IBucket,
+    securityConfiguration: SecurityConfiguration,
+  ) {
+    if (!databaseProps.crawler) return;
+    const role = this.props.roleHelper.resolveRoleRefWithRefId(
+      databaseProps.crawler.role,
+      `${databaseConfigName}-crawler-role`,
+    );
+
+    const crawlerProps: MdaaCfnCrawlerProps = {
+      name: databaseConfigName,
+      role: role.arn(),
+      databaseName: dbConstructName,
+      targets: { s3Targets: [{ path: databaseBucket.s3UrlForObject(databaseProps.locationPrefix || '') }] },
+      crawlerSecurityConfiguration: securityConfiguration.securityConfigurationName,
+      naming: this.props.naming,
+    };
+
+    new MdaaCfnCrawler(database, 'crawler', crawlerProps);
   }
 
   private createDataZoneDatasource(

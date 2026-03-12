@@ -13,8 +13,6 @@ import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment } from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct } from 'constructs';
-import { DataZoneAuthorizationConstruct, EntityType, NamedAuthorizationPolicies } from './authorization';
-import { DomainConfig } from './domain_config';
 
 export interface MdaaSageMakerBluePrintParameterProps {
   readonly fieldType: string;
@@ -24,34 +22,36 @@ export interface MdaaSageMakerBluePrintParameterProps {
   readonly isOptional?: boolean;
   readonly isUpdateSupported?: boolean;
 }
+
 export interface MdaaSageMakerBluePrintParameterConfig {
   readonly blueprintParamProps: MdaaSageMakerBluePrintParameterProps;
   readonly cfnParamProps?: CfnParameterProps;
 }
+
 export interface MdaaSageMakerCustomBlueprintConstructProps extends MdaaConstructProps {
-  readonly domainConfig: DomainConfig;
+  readonly domainId: string;
+  readonly domainKmsKeyArn: string;
+  readonly domainKmsUsagePolicyName: string;
+  readonly domainBucketUsagePolicyName: string;
   readonly description?: string;
-  readonly provisioningRoleArn: string;
   readonly blueprintName: string;
   readonly templateUrl: string;
   readonly domainBucket: IBucket;
-  readonly enabledRegions?: string[];
   readonly parameters?: { [key: string]: MdaaSageMakerBluePrintParameterConfig };
-  readonly authorizedDomainUnits?: { [name: string]: string };
   readonly region: string;
   readonly account: string;
 }
 
 export class MdaaSageMakerCustomBlueprintConstruct extends Construct {
+  public readonly blueprintId: string;
+
   constructor(scope: Construct, id: string, props: MdaaSageMakerCustomBlueprintConstructProps) {
     super(scope, id);
 
-    //Create SageMaker Blueprint using custom resource
     const createBpStatement = new PolicyStatement({
       effect: Effect.ALLOW,
       actions: [
         'datazone:CreateEnvironmentBlueprint',
-        'datazone:PutEnvironmentBlueprintConfiguration',
         'datazone:ListEnvironmentBlueprints',
         'datazone:UpdateEnvironmentBlueprint',
         'datazone:DeleteEnvironmentBlueprint',
@@ -61,51 +61,47 @@ export class MdaaSageMakerCustomBlueprintConstruct extends Construct {
 
     const policyStatements = [createBpStatement];
 
-    policyStatements.push(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['iam:PassRole'],
-        resources: [props.provisioningRoleArn],
-      }),
-    );
-
     const templateKey = `blueprints/${props.blueprintName}.json`;
 
-    // Automatically include the standard MDAA parameters that MdaaBlueprintProductStack creates.
-    // These parameters (org, domain, env, module) are automatically created by MdaaBlueprintProductStack
-    // and must be registered as blueprint parameters.
-    const userParameters = Object.entries(props.parameters || {}).map(([paramName, paramProps]) => {
-      if (!/^\w+$/.test(paramName)) {
-        throw new Error('Param names used in blueprints must match ^[a-zA-Z0-9_]+$');
-      }
-      return {
-        ...paramProps.blueprintParamProps,
-        keyName: paramName,
-      };
-    });
+    const userParameters = [
+      ...Object.entries(props.parameters || {}).map(([paramName, paramProps]) => {
+        if (!/^\w+$/.test(paramName)) {
+          throw new Error('Param names used in blueprints must match ^[a-zA-Z0-9_]+$');
+        }
+        return {
+          ...paramProps.blueprintParamProps,
+          keyName: paramName,
+        };
+      }),
+    ];
 
     const domainKmsUsagePolicy = ManagedPolicy.fromManagedPolicyName(
       this,
       'domain-kms-managed-policy',
-      props.domainConfig.domainKmsUsagePolicyName,
+      props.domainKmsUsagePolicyName,
     );
 
     const domainBucketUsagePolicy = ManagedPolicy.fromManagedPolicyName(
       this,
       'domain-bucket-managed-policy',
-      props.domainConfig.domainBucketUsagePolicyName,
+      props.domainBucketUsagePolicyName,
     );
-    const domainKey = Key.fromKeyArn(this, 'domain-key-import', props.domainConfig.domainKmsKeyArn);
+    const domainKey = Key.fromKeyArn(this, 'domain-key-import', props.domainKmsKeyArn);
 
-    // We need to use a custom resource here because CfnEnvironmentBlueprintConfiguration supports only managed blueprints
     const bpProps: MdaaCustomResourceProps = {
-      resourceType: 'SageMakerEnvironmentBluePrint',
+      resourceType: 'EnvironmentBluePrint',
       code: Code.fromAsset(`${__dirname}/../src/lambda/environment_blueprint`),
       runtime: Runtime.PYTHON_3_13,
       handler: 'lambda.lambda_handler',
       handlerRoleManagedPolicies: [domainBucketUsagePolicy, domainKmsUsagePolicy],
       handlerRolePolicyStatements: policyStatements,
-      handlerLayers: [new MdaaBoto3LayerVersion(this, 'boto3-layer', { naming: props.naming })],
+      handlerLayers: [
+        new MdaaBoto3LayerVersion(this, 'boto3-layer', {
+          naming: props.naming,
+          createParams: false,
+          createOutputs: false,
+        }),
+      ],
       handlerPolicySuppressions: [
         {
           id: 'AwsSolutions-IAM5',
@@ -113,8 +109,7 @@ export class MdaaSageMakerCustomBlueprintConstruct extends Construct {
         },
       ],
       handlerProps: {
-        provisioning_role_arn: props.provisioningRoleArn,
-        domain_id: props.domainConfig.domainId,
+        domain_id: props.domainId,
         blueprint_name: props.blueprintName,
         blueprint_description: props.description,
         template_source_url: props.templateUrl,
@@ -122,7 +117,6 @@ export class MdaaSageMakerCustomBlueprintConstruct extends Construct {
         template_key: templateKey,
         template_bucket_region_domain_name: props.domainBucket.bucketRegionalDomainName,
         user_parameters: userParameters,
-        enabled_regions: [props.region, ...(props.enabledRegions || [])],
       },
       naming: props.naming,
       handlerTimeout: Duration.seconds(120),
@@ -132,29 +126,8 @@ export class MdaaSageMakerCustomBlueprintConstruct extends Construct {
     };
 
     const bp = new MdaaCustomResource(this, 'env-blueprint', bpProps);
-    const blueprintId = bp.getAttString('BlueprintId');
-    const authorizationPolicies: NamedAuthorizationPolicies = Object.fromEntries(
-      Object.entries(props.authorizedDomainUnits || {}).map(([domainUnit, domainUnitId]) => {
-        return [
-          `blueprint-${domainUnit}`,
-          {
-            policyType: 'CREATE_ENVIRONMENT_FROM_BLUEPRINT',
-            principals: [{ allUsersGrantFilter: true }],
-            includeChildDomainUnits: true,
-            domainUnitId: domainUnitId,
-          },
-        ];
-      }),
-    );
+    this.blueprintId = bp.getAttString('BlueprintId');
 
-    const authConstruct = new DataZoneAuthorizationConstruct(this, 'blueprint-authorization', {
-      naming: props.naming,
-      domainId: props.domainConfig.domainId,
-      entityId: `${props.account}:${blueprintId}`,
-      entityType: EntityType.ENVIRONMENT_BLUEPRINT_CONFIGURATION,
-      policies: authorizationPolicies,
-    });
-    authConstruct.node.addDependency(bp);
     if (bp.handlerFunction.role) {
       const qualifier =
         this.node.tryGetContext(BOOTSTRAP_QUALIFIER_CONTEXT) ?? DefaultStackSynthesizer.DEFAULT_QUALIFIER;

@@ -5,7 +5,7 @@
 ### General Changes
 
 - Fixed deployment failures in accounts with SCPs that deny `logs:DeleteRetentionPolicy` by preventing CDK's `LogRetention` custom resource from being created in stacks that use `MdaaLambdaFunction`
-
+- Added 'useStaging' parameter to MDAA CLI which if set will force modules to be deployed precisely in the order they appear in the MDAA config, instead of using staging values from module packages
 - SSM parameters can now be referenced using simplified scope prefixes:
   - `ssm-org:<path>` resolves to `ssm:/{{org}}/<path>`
   - `ssm-domain:<path>` resolves to `ssm:/{{org}}/{{domain}}/<path>`

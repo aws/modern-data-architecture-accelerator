@@ -274,6 +274,10 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject App App Snapshot Test
         "Type": "AWS::SSM::Parameter::Value<String>",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/arn",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/bucket_arn",
         "Type": "AWS::SSM::Parameter::Value<String>",
       },
@@ -634,7 +638,7 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject App App Snapshot Test
               },
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] DataZone operations do not accept a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/reference.html",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] DataZone List operations (ListDomainUnitsForParent, ListProjectProfiles, ListProjects, ListEnvironmentBlueprints) do not support resource-level permissions.",
               },
             ],
           },
@@ -643,8 +647,14 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject App App Snapshot Test
           "PolicyDocument": {
             "Statement": [
               {
+                "Action": "datazone:GetDomain",
+                "Effect": "Allow",
+                "Resource": {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              },
+              {
                 "Action": [
-                  "datazone:GetDomain",
                   "datazone:ListDomainUnitsForParent",
                   "datazone:ListProjectProfiles",
                   "datazone:ListProjects",
@@ -2977,6 +2987,10 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject Stack Snapshot Test 1
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
     "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/arn",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
       "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/bucket_arn",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
@@ -3337,7 +3351,7 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject Stack Snapshot Test 1
             },
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] DataZone operations do not accept a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/reference.html",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] DataZone List operations (ListDomainUnitsForParent, ListProjectProfiles, ListProjects, ListEnvironmentBlueprints) do not support resource-level permissions.",
             },
           ],
         },
@@ -3346,8 +3360,14 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject Stack Snapshot Test 1
         "PolicyDocument": {
           "Statement": [
             {
+              "Action": "datazone:GetDomain",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            },
+            {
               "Action": [
-                "datazone:GetDomain",
                 "datazone:ListDomainUnitsForParent",
                 "datazone:ListProjectProfiles",
                 "datazone:ListProjects",

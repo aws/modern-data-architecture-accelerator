@@ -64,6 +64,7 @@ export class DomainConfig extends Construct {
   readonly customResourceRoleName: string;
 
   public static readonly SSM_DOMAIN_ID = 'id';
+  public static readonly SSM_DOMAIN_ARN = 'arn';
   public static readonly SSM_PARAM_DOMAIN_KMS_POLICY = 'kms_usage_policy_name';
   public static readonly SSM_PARAM_DOMAIN_KMS_ARN = 'kms_arn';
   public static readonly SSM_PARAM_DOMAIN_BUCKET_POLICY = 'bucket_usage_policy_name';
@@ -87,6 +88,10 @@ export class DomainConfig extends Construct {
     this.domainId =
       props.domainId ??
       this.ssmParamArnOrName(id + '-ssm-domain-id', `${this.ssmParamBase}/${DomainConfig.SSM_DOMAIN_ID}`).stringValue;
+
+    this.domainArn =
+      props.domainArn ??
+      this.ssmParamArnOrName(id + '-ssm-domain-arn', `${this.ssmParamBase}/${DomainConfig.SSM_DOMAIN_ARN}`).stringValue;
 
     this.customResourceRoleName =
       props.customResourceRoleName ??
@@ -137,15 +142,14 @@ export class DomainConfig extends Construct {
         `${this.ssmParamBase}/${DomainConfig.SSM_PARAM_DOMAIN_BUCKET_ARN}`,
       ).stringValue;
 
-    this.domainConfigCr = this.createDomainConfigCr(this.domainId, props.refresh);
+    this.domainConfigCr = this.createDomainConfigCr(this.domainId, this.domainArn, props.refresh);
 
     this.domainName = props.domainName ?? this.domainConfigCr.getAttString('name');
     this.domainVersion = props.domainVersion ?? this.domainConfigCr.getAttString('domainVersion');
-    this.domainArn = props.domainArn ?? this.domainConfigCr.getAttString('arn');
 
-    this.domainUnitIds = props.domainUnitIds ?? {};
-    this.blueprintIds = props.blueprintIds ?? {};
-    this.projectIds = props.projectIds ?? {};
+    this.domainUnitIds = props.domainUnitIds || {};
+    this.blueprintIds = props.blueprintIds || {};
+    this.projectIds = props.projectIds || {};
 
     if (props.createConfigParams) {
       this.configParamArns = this.createDomainConfigParams();
@@ -154,18 +158,25 @@ export class DomainConfig extends Construct {
 
   public getDomainUnitId(searchPath: string): string {
     const path = searchPath.startsWith('/root') ? searchPath : `/root/${searchPath.replace(/^\//, '')}`;
-    if (this.domainUnitIds[path]) return this.domainUnitIds[path];
-    return this.domainConfigCr.getAttString(`domain_unit_id${path}`);
+    if (this.domainUnitIds?.[path]) {
+      return this.domainUnitIds[path];
+    } else {
+      return this.domainConfigCr.getAttString(`domain_unit_id${path}`);
+    }
   }
 
   public getBlueprintId(blueprintName: string): string {
-    if (this.blueprintIds[blueprintName]) return this.blueprintIds[blueprintName];
-    return this.domainConfigCr.getAttString(`blueprint_id/${blueprintName}`);
+    if (this.blueprintIds[blueprintName]) {
+      return this.blueprintIds[blueprintName];
+    } else {
+      return this.domainConfigCr.getAttString(`blueprint_id/${blueprintName}`);
+    }
   }
 
   private createDomainConfigParams(): string[] {
     return [
       this.createDomainConfigParam(DomainConfig.SSM_DOMAIN_ID, this.domainId).parameterArn,
+      this.createDomainConfigParam(DomainConfig.SSM_DOMAIN_ARN, this.domainArn).parameterArn,
       this.createDomainConfigParam(DomainConfig.SSM_PARAM_DOMAIN_KMS_ARN, this.domainKmsKeyArn).parameterArn,
       this.createDomainConfigParam(DomainConfig.SSM_PARAM_DOMAIN_BUCKET_ARN, this.domainBucketArn).parameterArn,
       this.createDomainConfigParam(DomainConfig.SSM_PARAM_DOMAIN_KMS_POLICY, this.domainKmsUsagePolicyName)
@@ -218,12 +229,15 @@ export class DomainConfig extends Construct {
    * @param refresh
    * @returns Custom resource for domain config
    */
-  private createDomainConfigCr(domainId: string, refresh?: boolean) {
+  private createDomainConfigCr(domainId: string, domainArn: string, refresh?: boolean) {
     const statements = [
+      new PolicyStatement({
+        resources: [domainArn],
+        actions: ['datazone:GetDomain'],
+      }),
       new PolicyStatement({
         resources: ['*'],
         actions: [
-          'datazone:GetDomain',
           'datazone:ListDomainUnitsForParent',
           'datazone:ListProjectProfiles',
           'datazone:ListProjects',
@@ -246,7 +260,7 @@ export class DomainConfig extends Construct {
         {
           id: 'AwsSolutions-IAM5',
           reason:
-            'DataZone operations do not accept a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/reference.html',
+            'DataZone List operations (ListDomainUnitsForParent, ListProjectProfiles, ListProjects, ListEnvironmentBlueprints) do not support resource-level permissions.',
         },
       ],
       handlerProps: {

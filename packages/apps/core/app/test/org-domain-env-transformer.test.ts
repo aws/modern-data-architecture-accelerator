@@ -6,7 +6,6 @@
 import { MdaaOrgDomainEnvConfigValueTransformer } from '../lib/org-domain-env-transformer';
 import { MdaaDefaultResourceNaming } from '@aws-mdaa/naming';
 import { Stack } from 'aws-cdk-lib';
-
 describe('MdaaOrgDomainEnvConfigValueTransformer', () => {
   let transformer: MdaaOrgDomainEnvConfigValueTransformer;
 
@@ -22,26 +21,18 @@ describe('MdaaOrgDomainEnvConfigValueTransformer', () => {
     transformer = new MdaaOrgDomainEnvConfigValueTransformer(naming);
   });
 
-  test('transforms ssm-org: prefix', () => {
+  test('wraps ssm-org: prefix with {{resolve:ssm:/test-org/<param>}}', () => {
     const result = transformer.transformValue('ssm-org:my-param');
-    expect(result).toContain('ssm:');
-    expect(result).toContain('test-org');
+    expect(result).toBe('{{resolve:ssm:/test-org/my-param}}');
   });
 
-  test('transforms ssm-domain: prefix', () => {
+  test('wraps ssm-domain: prefix with {{resolve:ssm:/test-org/test-domain/<param>}}', () => {
     const result = transformer.transformValue('ssm-domain:my-param');
-    expect(result).toContain('ssm:');
-    expect(result).toContain('test-domain');
+    expect(result).toBe('{{resolve:ssm:/test-org/test-domain/my-param}}');
   });
 
-  test('transforms ssm-env: prefix', () => {
+  test('wraps ssm-env: prefix with {{resolve:ssm:/test-org/test-domain/<param>}}', () => {
     const result = transformer.transformValue('ssm-env:my-param');
-    expect(result).toContain('ssm:');
-    expect(result).toContain('dev');
-  });
-
-  test('returns unchanged value for non-matching prefix', () => {
-    const result = transformer.transformValue('regular-value');
-    expect(result).toBe('regular-value');
+    expect(result).toBe('{{resolve:ssm:/test-org/test-domain/dev/my-param}}');
   });
 });

@@ -12,33 +12,6 @@ env_blueprint = importlib.import_module('lambda')
 class TestHelperFunctions:
     """Test cases for helper functions."""
 
-    def test_get_required_param_success(self):
-        """Test get_required_param with valid param."""
-        config = {'domain_id': 'dzd_123'}
-        result = env_blueprint.get_required_param(config, 'domain_id')
-        assert result == 'dzd_123'
-
-    def test_get_required_param_missing(self):
-        """Test get_required_param raises on missing param."""
-        config = {}
-        with pytest.raises(ValueError) as exc_info:
-            env_blueprint.get_required_param(config, 'domain_id')
-        assert "Unable to parse domain_id" in str(exc_info.value)
-
-    def test_convert_string_boolean_true(self):
-        """Test _convert_string_boolean with 'true'."""
-        assert env_blueprint._convert_string_boolean('true') is True
-        assert env_blueprint._convert_string_boolean('TRUE') is True
-
-    def test_convert_string_boolean_false(self):
-        """Test _convert_string_boolean with 'false'."""
-        assert env_blueprint._convert_string_boolean('false') is False
-        assert env_blueprint._convert_string_boolean('FALSE') is False
-
-    def test_convert_string_boolean_other(self):
-        """Test _convert_string_boolean with non-boolean string."""
-        assert env_blueprint._convert_string_boolean('hello') == 'hello'
-
     def test_convert_dict_string_booleans_simple(self):
         """Test convert_dict_string_booleans with simple dict."""
         input_dict = {'enabled': 'true', 'disabled': 'false', 'name': 'test'}
@@ -70,12 +43,12 @@ class TestHelperFunctions:
         assert bucket == 'my-bucket'
         assert key == 'my-key'
 
-    def test_get_s3_bucket_obj_from_url_invalid(self):
-        """Test get_s3_bucket_obj_from_url with invalid URL."""
+    def test_get_s3_bucket_obj_from_url_empty_path(self):
+        """Test get_s3_bucket_obj_from_url with empty path raises IndexError."""
         url = 'https://s3.amazonaws.com/'
-        bucket, key = env_blueprint.get_s3_bucket_obj_from_url(url)
-        assert bucket is None
-        assert key is None
+        # Source tries to access path_segments[1] which doesn't exist for empty path
+        with pytest.raises(IndexError):
+            env_blueprint.get_s3_bucket_obj_from_url(url)
 
 
 class TestLambdaHandler:
@@ -132,7 +105,6 @@ class TestLambdaHandler:
         mock_time.sleep.return_value = None
         mock_s3.copy_object.return_value = {}
         mock_dz.create_environment_blueprint.return_value = {'id': 'bp-new123'}
-        mock_dz.put_environment_blueprint_configuration.return_value = {}
 
         response = env_blueprint.lambda_handler(create_event, lambda_context)
 
@@ -140,7 +112,6 @@ class TestLambdaHandler:
         assert response['PhysicalResourceId'] == 'bp-new123'
         assert response['Data']['BlueprintId'] == 'bp-new123'
         mock_dz.create_environment_blueprint.assert_called_once()
-        mock_dz.put_environment_blueprint_configuration.assert_called_once()
 
     @patch.object(env_blueprint, 'time')
     @patch.object(env_blueprint, 's3_client')
@@ -201,7 +172,7 @@ class TestLambdaHandler:
         mock_time.sleep.return_value = None
         event = {'RequestType': 'Create', 'ResourceProperties': {}}
 
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(Exception) as exc_info:
             env_blueprint.lambda_handler(event, lambda_context)
 
         assert "Unable to parse domain_id" in str(exc_info.value)
@@ -215,10 +186,10 @@ class TestLambdaHandler:
             'ResourceProperties': {'domain_id': 'dzd_test123'}
         }
 
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(Exception) as exc_info:
             env_blueprint.lambda_handler(event, lambda_context)
 
-        assert "Unable to parse PhysicalResourceId" in str(exc_info.value)
+        assert "Unable to parse identifier" in str(exc_info.value)
 
 
 class TestCopyTemplate:

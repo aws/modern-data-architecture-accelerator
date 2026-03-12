@@ -6,8 +6,7 @@
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Template } from 'aws-cdk-lib/assertions';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { DataZoneBlueprintConfigConstruct } from '../lib';
-import { LEGACY_DATAZONE_SCOPE_CONTEXT_KEY } from '../lib/index';
+import { DataZoneManagedBlueprintConfigConstruct } from '../lib/managed-blueprint-config';
 
 describe('DataZoneBlueprintConfigConstruct', () => {
   let testApp: MdaaTestApp;
@@ -26,7 +25,7 @@ describe('DataZoneBlueprintConfigConstruct', () => {
   });
 
   it('should create blueprint configuration', () => {
-    new DataZoneBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
+    new DataZoneManagedBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
@@ -45,7 +44,7 @@ describe('DataZoneBlueprintConfigConstruct', () => {
   });
 
   it('should create blueprint with provisioning role', () => {
-    new DataZoneBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
+    new DataZoneManagedBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
@@ -64,7 +63,7 @@ describe('DataZoneBlueprintConfigConstruct', () => {
   });
 
   it('should create blueprint with regional parameters', () => {
-    new DataZoneBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
+    new DataZoneManagedBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
@@ -86,7 +85,7 @@ describe('DataZoneBlueprintConfigConstruct', () => {
   });
 
   it('should create authorization when provided', () => {
-    new DataZoneBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
+    new DataZoneManagedBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
@@ -102,7 +101,7 @@ describe('DataZoneBlueprintConfigConstruct', () => {
   });
 
   it('should expose blueprintId', () => {
-    const construct = new DataZoneBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
+    const construct = new DataZoneManagedBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
@@ -116,15 +115,31 @@ describe('DataZoneBlueprintConfigConstruct', () => {
     expect(construct.blueprintConfigId).toBeDefined();
   });
 
-  it('should handle empty authorizedDomainUnits', () => {
-    new DataZoneBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
+  it('should not create authorization when authorizedDomainUnits is undefined', () => {
+    new DataZoneManagedBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
       blueprintName: 'DefaultDataLake',
       enabledRegions: ['us-east-1'],
+      manageAccessRole,
       account: '123456789012',
-      // No authorizedDomainUnits
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.resourceCountIs('AWS::DataZone::PolicyGrant', 0);
+  });
+
+  it('should not create authorization when authorizedDomainUnits is empty', () => {
+    new DataZoneManagedBlueprintConfigConstruct(testApp.testStack, 'test-blueprint', {
+      naming: testApp.naming,
+      domainId: 'test-domain-id',
+      domainName: 'test-domain',
+      blueprintName: 'DefaultDataLake',
+      enabledRegions: ['us-east-1'],
+      manageAccessRole,
+      authorizedDomainUnits: {},
+      account: '123456789012',
     });
 
     const template = Template.fromStack(testApp.testStack);
@@ -132,14 +147,14 @@ describe('DataZoneBlueprintConfigConstruct', () => {
   });
 
   it('should use legacy scope when context key is set', () => {
-    // Create a fresh app with the legacy context key set at construction time
-    const legacyTestApp = new MdaaTestApp({ [LEGACY_DATAZONE_SCOPE_CONTEXT_KEY]: 'true' });
+    const legacyTestApp = new MdaaTestApp();
+    legacyTestApp.testStack.node.setContext('LEGACY_DATAZONE_SCOPE', true);
 
     const legacyManageRole = new Role(legacyTestApp.testStack, 'ManageRole', {
       assumedBy: new ServicePrincipal('datazone.amazonaws.com'),
     });
 
-    new DataZoneBlueprintConfigConstruct(legacyTestApp.testStack, 'test-blueprint', {
+    new DataZoneManagedBlueprintConfigConstruct(legacyTestApp.testStack, 'test-blueprint', {
       naming: legacyTestApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
@@ -150,9 +165,6 @@ describe('DataZoneBlueprintConfigConstruct', () => {
     });
 
     const template = Template.fromStack(legacyTestApp.testStack);
-    // Verify resource is created with legacy naming pattern
-    template.hasResourceProperties('AWS::DataZone::EnvironmentBlueprintConfiguration', {
-      EnvironmentBlueprintIdentifier: 'DefaultDataLake',
-    });
+    template.resourceCountIs('AWS::DataZone::EnvironmentBlueprintConfiguration', 1);
   });
 });

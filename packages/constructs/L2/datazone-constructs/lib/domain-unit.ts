@@ -37,15 +37,12 @@ export class DataZoneDomainUnitConstruct extends Construct {
   public readonly props: DataZoneDomainUnitConstructProps;
   public readonly domainUnit: CfnDomainUnit;
   public readonly domainUnitId: string;
-  /** All CfnOwner resources created for this domain unit */
-  public readonly owners: CfnOwner[];
 
-  constructor(scope: Construct, id: string, props: DataZoneDomainUnitConstructProps) {
+  constructor(scope: Construct, id: string, props: DataZoneDomainUnitConstructProps, ownersCollector: CfnOwner[]) {
     super(scope, id);
     //Maintains backwards compat for before domains were their own L2 construct
-    const useLegacyScope = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY);
-    const resolvedScope = useLegacyScope ? scope : this;
-    const idSuffix = useLegacyScope ? `-${props.name}` : '';
+    const resolvedScope = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? scope : this;
+    const idSuffix = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? `-${props.name}` : '';
     this.props = props;
     const cfnDomainUnitProps: CfnDomainUnitProps = {
       domainIdentifier: props.domainId,
@@ -57,15 +54,21 @@ export class DataZoneDomainUnitConstruct extends Construct {
     this.domainUnit = new CfnDomainUnit(resolvedScope, 'domain-unit' + idSuffix, cfnDomainUnitProps);
     this.domainUnitId = this.domainUnit.attrId;
 
-    // Create all owners for this domain unit
-    this.owners = [
+    // Always create data admin ownership
+    ownersCollector.push(
       this.createOwnership('user-data-admin', {
         user: { userIdentifier: props.dataAdminUserProfile.attrId },
       }),
-      ...this.createAccountOwnership(props.ownership?.ownerAccounts, props.associatedAccountUserProfiles),
-      ...this.createUserOwnership(props.ownership?.ownerUsers, props.userProfiles),
-      ...this.createGroupOwnership(props.ownership?.ownerGroups, props.groupProfiles),
-    ];
+    );
+
+    // Create ownership for specified accounts, users, and groups
+    if (props.ownership) {
+      ownersCollector.push(
+        ...this.createAccountOwnership(props.ownership.ownerAccounts, props.associatedAccountUserProfiles),
+        ...this.createUserOwnership(props.ownership.ownerUsers, props.userProfiles),
+        ...this.createGroupOwnership(props.ownership.ownerGroups, props.groupProfiles),
+      );
+    }
   }
 
   private createOwnership(

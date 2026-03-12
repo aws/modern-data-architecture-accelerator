@@ -1,0 +1,153 @@
+# SageMaker Unified Studio Domain Configuration
+#
+# Creates a DataZone V2 domain spanning multiple AWS accounts with centralized governance,
+# domain units for organizational hierarchy, SSO integration, and cross-account blueprint provisioning.
+
+# List of SMUS domains to create (typically one per organization)
+domains:
+  # Domain name (must be unique within the account)
+  domain1:
+    # Required - Description to give to the domain
+    description: "Basic SageMaker Unified Studio domain"
+
+    # Optional - How users are assigned to domain (default: MANUAL)
+    # MANUAL: Users must be explicitly added to the domain
+    # AUTOMATIC: All SSO users automatically get access (not recommended for production)
+    userAssignment: MANUAL
+
+    # Data admin role for the domain
+    # This IAM role will:
+    # - Have access to domain resources (S3 buckets, KMS keys, etc.)
+    # - Be able to interact with the domain via API/CLI
+    # - NOT be able to log into the domain UI (use SSO admin1 user instead)
+    # Note: A domain user profile is automatically created for the data admin
+    # and does not need to be added to the users: section below
+    dataAdminRole:
+      id: ssm-org:/ent-com/generated-role/data-admin/id
+
+    # Externally-defined roles used to provision blueprints
+    # These roles are granted:
+    # - Access to domain resources (KMS keys, S3 buckets)
+    # - Base blueprint provisioning policy (CloudFormation, tagging, etc.)
+    # - Blueprint-specific permissions (attached directly to the role)
+    # When a project is created, SMUS assumes these roles to deploy infrastructure
+    blueprintProvisioningRoles:
+      # This role is provisioned in the roles module and has permissions
+      # to create DynamoDB tables for the DDB custom blueprint
+      - arn: ssm-org:/ent-com/roles/role/ddb-bp-prov/arn
+
+    # Tooling blueprint configuration for SageMaker Unified Studio
+    # Tooling includes compute resources like SageMaker notebooks, EMR clusters, etc.
+    # These resources are deployed in the specified VPC for network isolation
+    tooling:
+      vpcId: "{{context:enterprise_vpc_id}}"
+      subnetIds:
+        - "{{context:enterprise_private_subnet_id1}}"
+        - "{{context:enterprise_private_subnet_id2}}"
+
+    # Individual SSO users to add to the domain
+    users:
+      # A single admin user should exist in IAM Identity Center
+      # This user can log into the SMUS UI and has administrative privileges
+      admin1:
+        ssoId: "{{context:admin1_user_sso_id}}"
+
+    # Admin will be added as domain root owner
+    # Root owners have full control over the domain and all projects
+    ownerUsers:
+      - admin1
+
+    # SSO Groups to be added to the domain
+    # Groups can be assigned to projects and domain units for access control
+    groups:
+      # An enterprise group which will have access to projects
+      # in the enterprise account
+      enterprise:
+        ssoId: "{{context:enterprise_group_sso_id}}"
+
+      # A group for the team1 team which will have access to team1 projects
+      team1:
+        ssoId: "{{context:team1_group_sso_id}}"
+
+      # A group for the team2 team which will have access to team2 projects
+      team2:
+        ssoId: "{{context:team2_group_sso_id}}"
+
+    # Additional accounts to associate with the domain
+    # Each team gets its own AWS account for:
+    # - Security isolation (separate IAM boundaries)
+    # - Cost allocation (track spending per team)
+    # - Resource quotas (independent service limits)
+    associatedAccounts:
+      team1:
+        account: "{{context:team1_account}}"
+
+        # Create a domain user for the associated account
+        # This CDK user allows deployment of SMUS resources (like Projects)
+        # directly into the associated account via CloudFormation
+        createCdkUser: true
+
+        # Externally-defined roles used to provision blueprints in the team1 account
+        # These roles are granted access to domain resources and base provisioning policies
+        blueprintProvisioningRoles:
+          # This role is provisioned in the roles module in the team1 account
+          # Note: Associated account roles must be referred by name or ARN
+          # (cannot use SSM param references like ssm-org:)
+          - name: "{{org}}-{{env}}-team1-com-roles-ddb-bp-prov"
+
+        # Each associated account has its own VPC and subnets for tooling
+        # This provides network isolation between teams
+        tooling:
+          vpcId: "{{context:team1_vpc_id}}"
+          subnetIds:
+            - "{{context:team1_private_subnet_id1}}"
+            - "{{context:team1_private_subnet_id2}}"
+
+      team2:
+        account: "{{context:team2_account}}"
+        createCdkUser: true
+
+        # Blueprint provisioning roles for the team2 account
+        blueprintProvisioningRoles:
+          - name: "{{org}}-{{env}}-team2-com-roles-ddb-bp-prov"
+
+        tooling:
+          vpcId: "{{context:team2_vpc_id}}"
+          subnetIds:
+            - "{{context:team2_private_subnet_id1}}"
+            - "{{context:team2_private_subnet_id2}}"
+
+    # Domain units create organizational hierarchy within the domain
+    # They provide:
+    # - Logical grouping of projects (e.g., all team1 projects)
+    # - Access control boundaries (who can create/view projects)
+    # - Delegation of administration (domain unit owners)
+    domainUnits:
+      # Top-level domain unit for all business teams
+      business-teams:
+        domainUnits:
+          # Team1 domain unit
+          team1:
+            description: Team1
+
+            # Team1 account CDK role will be permitted to administer
+            # this domain unit (create projects, manage members, etc.)
+            ownerAccounts:
+              - team1
+
+            # All users and groups are allowed to be added as members to projects
+            # within this domain unit. If false, only specific users/groups can be added.
+            allowAllUsers: true
+
+          # Team2 domain unit
+          team2:
+            description: Team2
+
+            # Team2 account CDK role will be permitted to administer
+            # this domain unit
+            ownerAccounts:
+              - team2
+
+            # All users and groups are allowed to be added as members to projects
+            # within this domain unit
+            allowAllUsers: true

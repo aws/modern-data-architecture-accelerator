@@ -41,6 +41,9 @@
       "path": "../../../L2/custom-constructs"
     },
     {
+      "path": "../../../L2/s3-constructs"
+    },
+    {
       "path": "../../../L2/datazone-constructs"
     },
     {

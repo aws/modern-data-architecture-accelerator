@@ -460,6 +460,10 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
         "Type": "AWS::SSM::Parameter::Value<String>",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/sample-org/shared/sagemaker/domain/test-domain/config/arn",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "Default": "/sample-org/shared/sagemaker/domain/test-domain/config/bucket_arn",
         "Type": "AWS::SSM::Parameter::Value<String>",
       },
@@ -5340,7 +5344,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               },
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] DataZone operations do not accept a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/reference.html",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] DataZone List operations (ListDomainUnitsForParent, ListProjectProfiles, ListProjects, ListEnvironmentBlueprints) do not support resource-level permissions.",
               },
             ],
           },
@@ -5349,8 +5353,14 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           "PolicyDocument": {
             "Statement": [
               {
+                "Action": "datazone:GetDomain",
+                "Effect": "Allow",
+                "Resource": {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              },
+              {
                 "Action": [
-                  "datazone:GetDomain",
                   "datazone:ListDomainUnitsForParent",
                   "datazone:ListProjectProfiles",
                   "datazone:ListProjects",
@@ -8498,6 +8508,10 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Default": "/sample-org/shared/sagemaker/domain/test-domain/config/custom_resource_role",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/sample-org/shared/sagemaker/domain/test-domain/config/arn",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
     "REPLACED-CFN-LOGICAL-ID": {
@@ -13381,7 +13395,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             },
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] DataZone operations do not accept a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/reference.html",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] DataZone List operations (ListDomainUnitsForParent, ListProjectProfiles, ListProjects, ListEnvironmentBlueprints) do not support resource-level permissions.",
             },
           ],
         },
@@ -13390,8 +13404,14 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         "PolicyDocument": {
           "Statement": [
             {
+              "Action": "datazone:GetDomain",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            },
+            {
               "Action": [
-                "datazone:GetDomain",
                 "datazone:ListDomainUnitsForParent",
                 "datazone:ListProjectProfiles",
                 "datazone:ListProjects",

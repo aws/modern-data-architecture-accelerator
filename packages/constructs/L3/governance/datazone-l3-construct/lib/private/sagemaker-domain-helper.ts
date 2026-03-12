@@ -9,6 +9,8 @@ import {
   DataZoneDomainConstruct,
   DomainConfig,
   LEGACY_DATAZONE_SCOPE_CONTEXT_KEY,
+  MdaaSageMakerCustomBlueprintConfigConstruct,
+  MdaaSageMakerCustomBlueprintConfigConstructProps,
   MdaaSageMakerCustomBlueprintConstruct,
   MdaaSageMakerCustomBlueprintConstructProps,
 } from '@aws-mdaa/datazone-constructs';
@@ -19,41 +21,36 @@ import { Stack } from 'aws-cdk-lib';
 
 import { MdaaL3Construct } from '@aws-mdaa/l3-construct/lib/l3construct';
 import { CfnDomain, CfnEnvironmentBlueprintConfiguration, CfnUserProfile } from 'aws-cdk-lib/aws-datazone';
-import { Conditions, Effect, IRole, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import {
+  ArnPrincipal,
+  Conditions,
+  Effect,
+  IPrincipal,
+  IRole,
+  ManagedPolicy,
+  PolicyStatement,
+  Role,
+  ServicePrincipal,
+} from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { CloudFormationTemplate } from 'aws-cdk-lib/aws-servicecatalog';
 import { Construct } from 'constructs';
 import {
-  CustomEnabledBlueprintProps,
+  CustomBlueprintProps,
   EnabledBlueprintProps,
   SageMakerAssociatedAccountProps,
   SageMakerDomainProps,
   ToolingBlueprintProps,
 } from '../datazone-l3-construct';
 import { CommonDomainHelper, CommonDomainHelperProps } from './common-domain-helper';
+import { resolveCrossAccountProvisioningRole } from '@aws-mdaa/datazone-constructs/lib/utils';
 
 export class SageMakerDomainHelper extends CommonDomainHelper {
   private secondStageStack?: Stack;
 
   constructor(props: CommonDomainHelperProps) {
     super(props);
-  }
-
-  private mapAuthorizedDomainUnits(
-    authorizedUnits: string[] | undefined,
-    domainUnitIds: { [key: string]: string } | DomainConfig,
-  ): { [key: string]: string } {
-    const getUnitId = (unit: string): string | undefined => {
-      return domainUnitIds instanceof DomainConfig ? domainUnitIds.getDomainUnitId(unit) : domainUnitIds[unit];
-    };
-
-    return Object.fromEntries(
-      (authorizedUnits ?? ['/root'])
-        .map(unit => (unit.startsWith('/') ? unit : `/${unit}`))
-        .map(unit => [unit, getUnitId(unit)])
-        .filter(([_unit, id]) => id !== undefined),
-    );
   }
 
   public createSageMakerDomains(
@@ -102,6 +99,28 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       bucketName: domainName,
     });
 
+    //Provide access to domain bucket for associated account blueprint provisioning roles
+    const associatedAccountProvisioningRoles: IPrincipal[] = Object.values(
+      domainProps.associatedAccounts || {},
+    ).flatMap(accountProps => {
+      return (accountProps.blueprintProvisioningRoles || []).map(roleRef => {
+        const roleArn = resolveCrossAccountProvisioningRole(roleRef, accountProps.account, this.props.partition);
+        return new ArnPrincipal(roleArn);
+      });
+    });
+    if (associatedAccountProvisioningRoles.length > 0) {
+      //This statement will allow blueprint provisioning roles in associated accounts to
+      // read blueprint templates from the domain bucket
+      const associatedAccountBucketPolicyStatement = new PolicyStatement({
+        sid: 'AssociatedAccountDomainBucketRead',
+        effect: Effect.ALLOW,
+        resources: [domainBucket.arnForObjects('blueprints/') + '*'],
+        actions: ['s3:GetObject', 's3:GetObjectVersion'],
+        principals: associatedAccountProvisioningRoles,
+      });
+      domainBucket.addToResourcePolicy(associatedAccountBucketPolicyStatement);
+    }
+
     // Create KMS policies and bucket policy
     const policies = this.setupDomainAccessPolicies(scope, domainName, domainProps, kmsKey);
     const domainBucketUsagePolicy = this.createDomainBucketUsagePolicy(
@@ -111,9 +130,27 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       domainBucket,
     );
     policies.domainKmsUsagePolicy.attachToRole(serviceRole);
-    executionRole.addManagedPolicy(domainBucketUsagePolicy);
-    lakeformationManageAccessRole.addManagedPolicy(policies.domainKmsUsagePolicy);
-    executionRole.addManagedPolicy(policies.domainKmsUsagePolicy);
+    policies.domainKmsAdminPolicy.attachToRole(serviceRole);
+    policies.domainKmsUsagePolicy.attachToRole(executionRole);
+    policies.domainKmsAdminPolicy.attachToRole(executionRole);
+    policies.domainKmsUsagePolicy.attachToRole(lakeformationManageAccessRole);
+    domainBucketUsagePolicy.attachToRole(executionRole);
+
+    if (domainProps.blueprintProvisioningRoles) {
+      const resolvedBpRoles = this.props.roleHelper
+        .resolveRoleRefsWithOrdinals(domainProps.blueprintProvisioningRoles, 'bp-provisioning')
+        .map(resolveRef => {
+          return resolveRef.role(resolveRef.refId());
+        });
+
+      resolvedBpRoles.forEach(role => {
+        policies.domainKmsUsagePolicy.attachToRole(role);
+        policies.domainKmsAdminPolicy.attachToRole(role);
+        domainBucketUsagePolicy.attachToRole(role);
+      });
+
+      this.createBaseBlueprintProvisioningPolicy(domain, 'bp-provisioning', resolvedBpRoles, this.props.account);
+    }
 
     // Create user/group profiles, domain units, and authorization policies
     const associatedAccountCdkUserProfiles = this.createAccountAssociations(
@@ -134,6 +171,17 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
 
     // Prepare domain config data and create SageMaker-specific resources
     const { domainUnitIds, glueCatalogArns } = this.prepareDomainConfigData(domain, createdDomainUnits, domainProps);
+    // Create custom blueprints before domain config
+    const blueprintIds = this.createCustomBlueprints(
+      domainProps,
+      domain,
+      domainBucket,
+      domain.attrId,
+      policies.domainKmsUsagePolicy.managedPolicyName,
+      domainBucketUsagePolicy.managedPolicyName,
+      kmsKey.keyArn,
+    );
+
     const domainConfig = this.createSageMakerResources(
       scope,
       domainName,
@@ -146,11 +194,13 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       },
       {
         domainUnitIds,
+        blueprintIds,
         glueCatalogKmsKeyArns: policies.glueCatalogKmsKeyArns,
         glueCatalogArns,
       },
       {
         domainKmsUsagePolicy: policies.domainKmsUsagePolicy,
+        domainKmsAdminPolicy: policies.domainKmsAdminPolicy,
         domainBucketUsagePolicy,
       },
     );
@@ -167,7 +217,8 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
         domain,
         domainConfig,
         policyNames: {
-          kms: policies.domainKmsUsagePolicyName,
+          kmsUsagePolicyName: policies.domainKmsUsagePolicyName,
+          kmsAdminPolicyName: policies.domainKmsAdminPolicyName,
           bucket: policies.domainBucketUsagePolicyName,
         },
         keyAccessAccounts: policies.keyAccessAccounts,
@@ -187,6 +238,99 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
         },
       });
     }
+  }
+
+  private createBaseBlueprintProvisioningPolicy(scope: Construct, id: string, bpRoles: IRole[], account: string) {
+    const policy = new MdaaManagedPolicy(scope, id, {
+      managedPolicyName: 'bp-provisioning',
+      naming: this.props.naming,
+      roles: bpRoles,
+    });
+
+    // CloudFormation template validation
+    policy.addStatements(
+      new PolicyStatement({
+        sid: 'CfnValidate',
+        effect: Effect.ALLOW,
+        actions: ['cloudformation:ValidateTemplate'],
+        resources: ['*'],
+      }),
+    );
+
+    // CloudFormation stack creation for DataZone projects
+    policy.addStatements(
+      new PolicyStatement({
+        sid: 'CfnCreate',
+        effect: Effect.ALLOW,
+        actions: ['cloudformation:CreateStack', 'cloudformation:TagResource'],
+        resources: [`arn:${this.props.partition}:cloudformation:${this.props.region}:${account}:stack/DataZone*`],
+        conditions: {
+          StringEquals: {
+            'aws:ResourceAccount': '${aws:PrincipalAccount}',
+          },
+          Null: {
+            'aws:ResourceTag/AmazonDataZoneProject': 'false',
+            'aws:TagKeys': 'false',
+          },
+          'ForAllValues:StringLike': {
+            'aws:TagKeys': ['AmazonDataZone*'],
+          },
+        },
+      }),
+    );
+
+    // CloudFormation stack management
+    policy.addStatements(
+      new PolicyStatement({
+        sid: 'CfnMng',
+        effect: Effect.ALLOW,
+        actions: [
+          'cloudformation:DescribeStacks',
+          'cloudformation:DescribeStackEvents',
+          'cloudformation:UpdateStack',
+          'cloudformation:GetTemplate',
+        ],
+        resources: [`arn:${this.props.partition}:cloudformation:${this.props.region}:${account}:stack/DataZone*`],
+        conditions: {
+          StringEquals: {
+            'aws:ResourceAccount': '${aws:PrincipalAccount}',
+          },
+          Null: {
+            'aws:ResourceTag/AmazonDataZoneProject': 'false',
+          },
+        },
+      }),
+    );
+
+    // CloudFormation stack deletion
+    policy.addStatements(
+      new PolicyStatement({
+        sid: 'CfnDelete',
+        effect: Effect.ALLOW,
+        actions: ['cloudformation:DeleteStack', 'cloudformation:DescribeStacks'],
+        resources: [`arn:${this.props.partition}:cloudformation:${this.props.region}:${account}:stack/DataZone*`],
+        conditions: {
+          StringEquals: {
+            'aws:ResourceAccount': '${aws:PrincipalAccount}',
+          },
+        },
+      }),
+    );
+
+    // Add CDK-NAG suppressions
+    MdaaNagSuppressions.addCodeResourceSuppressions(
+      policy,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'ValidateTemplate action does not support resource-level permissions. Stack name wildcards required for DataZone project provisioning.',
+        },
+      ],
+      true,
+    );
+
+    return policy;
   }
 
   public createSageMakerServiceRole(scope: Construct, roleName: string): IRole {
@@ -217,55 +361,63 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     },
     domainData: {
       domainUnitIds: { [name: string]: string };
+      blueprintIds: { [name: string]: string };
       glueCatalogKmsKeyArns: string[];
       glueCatalogArns: string[];
     },
     policies: {
       domainKmsUsagePolicy: MdaaManagedPolicy;
+      domainKmsAdminPolicy: MdaaManagedPolicy;
       domainBucketUsagePolicy: MdaaManagedPolicy;
     },
   ): DomainConfig {
-    // Create provisioning role and tooling resources (KMS, bucket)
-    const domainBlueprintProvisioningRole = this.createProvisioningRole(
+    // Create a default provisioning role
+    const domainDefaultBlueprintProvisioningRole = this.createProvisioningRole(
       domainResources.domain,
       this.props.account,
       domainName,
-      domainResources.kmsKey.keyArn,
     );
-    domainBlueprintProvisioningRole.addManagedPolicy(policies.domainKmsUsagePolicy);
-    domainBlueprintProvisioningRole.addManagedPolicy(policies.domainBucketUsagePolicy);
-    const toolingProvisioningRole = domainProps.tooling.provisioningRoleArn
-      ? Role.fromRoleArn(domainResources.domain, 'tooling-provisioning-role', domainProps.tooling.provisioningRoleArn)
-      : domainBlueprintProvisioningRole;
+    domainDefaultBlueprintProvisioningRole.addManagedPolicy(policies.domainKmsUsagePolicy);
+    domainDefaultBlueprintProvisioningRole.addManagedPolicy(policies.domainBucketUsagePolicy);
+
+    const toolingProvisioningRole = domainProps.tooling.provisioningRole
+      ? this.props.roleHelper
+          .resolveRoleRefWithRefId(domainProps.tooling.provisioningRole, 'tooling-provisioning-role')
+          .role('tooling-provisioning-role')
+      : domainDefaultBlueprintProvisioningRole;
+
     const toolingResourceParams = this.createToolingResources(
       domainResources.domain,
       domainName,
       this.props.account,
       this.props.region,
       domainProps.tooling,
+      policies.domainKmsUsagePolicy,
+      policies.domainKmsAdminPolicy,
     );
-    const toolingParams = { ...domainProps.tooling?.parameters, ...toolingResourceParams };
+    const toolingParams = { ...domainProps.tooling?.parameterValues, ...toolingResourceParams };
 
     // Map authorized domain units for tooling blueprint
-    const toolingAuthorizedDomainUnitIds = this.mapAuthorizedDomainUnits(
-      domainProps.tooling?.authorizedDomainUnits,
-      domainData.domainUnitIds,
+    const toolingAuthorizedDomainUnitIds = Object.fromEntries(
+      (domainProps.tooling?.authorizedDomainUnits ?? ['/root'])
+        .map(unit => (unit.startsWith('/') ? unit : `/${unit}`))
+        .map(unit => [unit, domainData.domainUnitIds[unit]]),
     );
 
     // Enable Tooling and DataLake blueprints (required for SageMaker)
-    this.createBlueprintConfiguration(domainResources.domain, {
+    this.createManagedBlueprintConfiguration(domainResources.domain, {
       account: this.props.account,
       region: this.props.region,
       domainName,
       domainId: domainResources.domain.attrId,
       blueprintName: 'Tooling',
       lakeformationManageAccessRole: domainResources.lakeformationManageAccessRole,
-      regionalParameters: this.createBlueprintRegionalParams({ parameters: toolingParams }, this.props.region),
+      regionalParameters: this.createBlueprintRegionalParams({ parameterValues: toolingParams }, this.props.region),
       authorizedDomainUnits: toolingAuthorizedDomainUnitIds,
       provisioningRole: toolingProvisioningRole,
     });
 
-    this.createBlueprintConfiguration(domainResources.domain, {
+    this.createManagedBlueprintConfiguration(domainResources.domain, {
       account: this.props.account,
       region: this.props.region,
       domainName,
@@ -276,21 +428,13 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       provisioningRole: toolingProvisioningRole,
     });
 
-    this.createManagedBlueprintConfigs(
-      domainName,
-      domainProps,
-      domainResources.domain,
-      domainData.domainUnitIds,
-      domainBlueprintProvisioningRole,
-      domainResources.lakeformationManageAccessRole,
-    );
-
     // Create custom resource role and user profile
     const { roleName } = this.createCustomResourceRoleAndProfile(
       domainResources.domain,
       domainName,
       domainResources.domain,
-      domainResources.kmsKey.keyArn,
+      policies.domainKmsUsagePolicy,
+      domainProps,
     );
 
     // Create and return domain configuration
@@ -307,143 +451,135 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       policies,
       roleName,
     );
-    this.createCustomBlueprints(
-      domainProps,
-      domainResources.domain,
-      domainData.domainUnitIds,
-      domainBlueprintProvisioningRole,
-      domainResources.domainBucket,
-      domainConfig,
-    );
+
+    if (domainProps.enabledManagedBlueprints) {
+      // Enable managed blueprints using the helper method
+      this.enableManagedBlueprints(
+        domainProps.enabledManagedBlueprints,
+        domainResources.domain,
+        this.props.account,
+        domainName,
+        domainConfig,
+        domainResources.lakeformationManageAccessRole,
+        domainDefaultBlueprintProvisioningRole,
+        this.props.region,
+      );
+    }
+
+    if (domainProps.customBlueprints) {
+      this.enableCustomBlueprints(
+        domainResources.domain,
+        domainProps.customBlueprints,
+        domainDefaultBlueprintProvisioningRole,
+        domainConfig,
+      );
+    }
+
     return domainConfig;
   }
 
   private createCustomBlueprints(
     domainProps: SageMakerDomainProps,
     domain: CfnDomain,
-    domainUnitIds: { [key: string]: string },
-    domainBlueprintProvisioningRole: IRole,
     domainBucket: IBucket,
-    domainConfig: DomainConfig,
-  ) {
-    // Enable additional managed blueprints
+    domainId: string,
+    domainKmsUsagePolicyName: string,
+    domainBucketUsagePolicyName: string,
+    domainKmsKeyArn: string,
+  ): { [key: string]: string } {
     return Object.fromEntries(
       Object.entries(domainProps.customBlueprints ?? {}).map(([blueprintName, customBlueprintProps]) => {
         if (blueprintName.toLowerCase() === 'tooling') {
           throw new Error("Tooling blueprint must be configured under 'tooling'");
-        } else {
-          // Create provisioning role
-          const provisioningRole = customBlueprintProps.provisioningRoleArn
-            ? Role.fromRoleArn(domain, `${blueprintName}-provisioning-role`, customBlueprintProps.provisioningRoleArn)
-            : domainBlueprintProvisioningRole;
-
-          const templateUrl = this.resolveTemplateUrl(domain, customBlueprintProps);
-          const authorizedDomainUnits = Object.fromEntries(
-            (customBlueprintProps.authorizedDomainUnits ?? ['/root'])
-              .map(unit => (unit.startsWith('/') ? unit : `/${unit}`))
-              .map(unit => [unit, domainUnitIds[unit]]),
-          );
-          const blueprintProps: MdaaSageMakerCustomBlueprintConstructProps = {
-            domainConfig: domainConfig,
-            provisioningRoleArn: provisioningRole.roleArn,
-            blueprintName: blueprintName,
-            templateUrl: templateUrl,
-            domainBucket: domainBucket,
-            enabledRegions: [this.props.region],
-            region: this.props.region,
-            account: this.props.account,
-            naming: this.props.naming,
-            authorizedDomainUnits: authorizedDomainUnits,
-          };
-          const blueprint = new MdaaSageMakerCustomBlueprintConstruct(
-            domain,
-            `${blueprintName}-custom-blueprint`,
-            blueprintProps,
-          );
-
-          return [blueprintName, blueprint];
         }
-      }),
-    );
-  }
-  private resolveTemplateUrl(scope: Construct, customBlueprintProps: CustomEnabledBlueprintProps): string {
-    if (!customBlueprintProps.path && !customBlueprintProps.url) {
-      throw new Error('Exactly one of path or url must be specified');
-    }
 
-    try {
-      if (customBlueprintProps.path) {
-        const template = CloudFormationTemplate.fromAsset(customBlueprintProps.path);
-        return template.bind(Stack.of(scope)).httpUrl;
-      } else {
-        const template = CloudFormationTemplate.fromUrl(customBlueprintProps.url!);
-        return template.bind(Stack.of(scope)).httpUrl;
-      }
-    } catch (error) {
-      throw new Error(
-        `Failed to resolve CloudFormation template: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
+        const templateUrl = this.resolveTemplateUrl(domain, customBlueprintProps);
 
-  private createManagedBlueprintConfigs(
-    domainName: string,
-    domainProps: SageMakerDomainProps,
-    domain: CfnDomain,
-    domainUnitIds: { [key: string]: string },
-    domainBlueprintProvisioningRole: IRole,
-    lakeformationManageAccessRole: IRole,
-  ) {
-    // Validate that Tooling and DataLake are not in enabledManagedBlueprints
-    if (domainProps.enabledManagedBlueprints && 'Tooling' in domainProps.enabledManagedBlueprints) {
-      throw new Error(
-        'Tooling blueprint is automatically enabled and should not be included in enabledManagedBlueprints',
-      );
-    }
-    if (domainProps.enabledManagedBlueprints && 'DataLake' in domainProps.enabledManagedBlueprints) {
-      throw new Error(
-        'DataLake blueprint is automatically enabled and should not be included in enabledManagedBlueprints',
-      );
-    }
+        // Create the blueprint
+        const blueprintProps: MdaaSageMakerCustomBlueprintConstructProps = {
+          domainId: domainId,
+          domainKmsUsagePolicyName: domainKmsUsagePolicyName,
+          domainBucketUsagePolicyName: domainBucketUsagePolicyName,
+          blueprintName: blueprintName,
+          templateUrl: templateUrl,
+          domainBucket: domainBucket,
+          naming: this.props.naming,
+          parameters: customBlueprintProps.parameters,
+          region: this.props.region,
+          account: this.props.account,
+          domainKmsKeyArn: domainKmsKeyArn,
+        };
+        const blueprint = new MdaaSageMakerCustomBlueprintConstruct(
+          domain,
+          `${blueprintName}-custom-blueprint`,
+          blueprintProps,
+        );
 
-    // Enable additional managed blueprints
-    return Object.fromEntries(
-      Object.entries(domainProps.enabledManagedBlueprints ?? {}).map(([blueprintName, blueprintProps]) => {
-        if (blueprintName.toLowerCase() === 'tooling') {
-          throw new Error("Tooling blueprint must be configured under 'tooling'");
-        } else {
-          const authorizedDomainUnits = this.mapAuthorizedDomainUnits(
-            blueprintProps.authorizedDomainUnits,
-            domainUnitIds,
-          );
-          // Create provisioning role
-          const provisioningRole = blueprintProps.provisioningRoleArn
-            ? Role.fromRoleArn(domain, `${blueprintName}-provisioning-role`, blueprintProps.provisioningRoleArn)
-            : domainBlueprintProvisioningRole;
-
-          const blueprintId = this.createBlueprintConfiguration(domain, {
-            account: this.props.account,
-            region: this.props.region,
-            domainName,
-            domainId: domain.attrId,
-            blueprintName,
-            lakeformationManageAccessRole,
-            regionalParameters: this.createBlueprintRegionalParams(blueprintProps, this.props.region),
-            authorizedDomainUnits,
-            provisioningRole,
-          }).blueprintConfigId;
-          return [blueprintName, blueprintId];
-        }
+        return [blueprintName, blueprint.blueprintId];
       }),
     );
   }
 
-  private createProvisioningRole(
+  private enableCustomBlueprints(
     scope: Construct,
-    account: string,
-    domainName: string,
-    domainKmsKeyArn: string,
-  ): IRole {
+    enabledCustomBlueprints: { [name: string]: CustomBlueprintProps },
+    domainDefaultBlueprintProvisioningRole: IRole,
+    domainConfig: DomainConfig,
+  ) {
+    Object.entries(enabledCustomBlueprints ?? {}).forEach(([enabledBlueprintName, enabledBlueprintProps]) => {
+      const blueprintId = domainConfig.getBlueprintId(enabledBlueprintName);
+      if (!blueprintId) {
+        return;
+      }
+
+      // Create provisioning role
+      const provisioningRole = enabledBlueprintProps.provisioningRole
+        ? this.props.roleHelper
+            .resolveRoleRefWithRefId(
+              enabledBlueprintProps.provisioningRole,
+              `${enabledBlueprintName}-provisioning-role`,
+            )
+            .role(`${enabledBlueprintName}-provisioning-role`)
+        : domainDefaultBlueprintProvisioningRole;
+
+      const authorizedDomainUnits = Object.fromEntries(
+        (enabledBlueprintProps.authorizedDomainUnits ?? ['/root'])
+          .map(unit => (unit.startsWith('/') ? unit : `/${unit}`))
+          .map(unit => [unit, domainConfig.getDomainUnitId(unit)]),
+      );
+
+      // Create the blueprint configuration
+      const blueprintConfigProps: MdaaSageMakerCustomBlueprintConfigConstructProps = {
+        domainConfig: domainConfig,
+        blueprintIdentifier: blueprintId,
+        provisioningRoleArn: provisioningRole.roleArn,
+        enabledRegions: [this.props.region],
+        region: this.props.region,
+        naming: this.props.naming,
+        authorizedDomainUnits,
+        account: this.props.account,
+      };
+
+      new MdaaSageMakerCustomBlueprintConfigConstruct(
+        scope,
+        `${enabledBlueprintName}-custom-blueprint-config`,
+        blueprintConfigProps,
+      );
+    });
+  }
+
+  private resolveTemplateUrl(scope: Construct, customBlueprintProps: CustomBlueprintProps): string {
+    if (customBlueprintProps.path) {
+      const template = CloudFormationTemplate.fromAsset(customBlueprintProps.path);
+      return template.bind(Stack.of(scope)).httpUrl;
+    } else if (customBlueprintProps.url) {
+      const template = CloudFormationTemplate.fromUrl(customBlueprintProps.url);
+      return template.bind(Stack.of(scope)).httpUrl;
+    }
+    throw new Error('Exactly one of path or url must be specified');
+  }
+
+  private createProvisioningRole(scope: Construct, account: string, domainName: string): IRole {
     const provisioningRoleCondition: Conditions = {
       StringEquals: {
         'aws:SourceAccount': account,
@@ -466,14 +602,6 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       new PolicyStatement({
         actions: ['sts:TagSession'],
         principals: [new ServicePrincipal('datazone.amazonaws.com').withConditions(provisioningRoleCondition)],
-      }),
-    );
-
-    provisioningRole.addToPolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: USER_ACTIONS,
-        resources: [domainKmsKeyArn],
       }),
     );
 
@@ -522,7 +650,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     return [
       {
         region: regionName,
-        parameters: { ...blueprintProps.parameters, ...forcedParams },
+        parameters: { ...blueprintProps.parameterValues, ...forcedParams },
       },
     ];
   }
@@ -533,12 +661,36 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     account: string,
     region: string,
     toolingProps: ToolingBlueprintProps,
+    domainKmsUsagePolicy: ManagedPolicy,
+    domainKmsAdminPolicy: ManagedPolicy,
   ): { [paramName: string]: string } {
     const kmsKey = new MdaaKmsKey(scope, `${domainName}-tooling-kms`, {
       naming: this.props.naming,
       alias: `${domainName}-tooling`,
       description: `DataZone Tooling KMS Key for ${domainName} on ${region}`,
     });
+
+    domainKmsUsagePolicy.addStatements(
+      new PolicyStatement({
+        actions: [...USER_ACTIONS, 'kms:DescribeKey'],
+        resources: [kmsKey.keyArn],
+      }),
+    );
+
+    domainKmsAdminPolicy.addStatements(
+      new PolicyStatement({
+        sid: 'ToolingKmsCreateGrant',
+        effect: Effect.ALLOW,
+        resources: [kmsKey.keyArn],
+        actions: ['kms:CreateGrant'],
+        conditions: {
+          StringLike: {
+            'kms:CallerAccount': account,
+          },
+        },
+      }),
+    );
+
     const cloudwatchStatement = new PolicyStatement({
       sid: 'CloudWatchLogsEncryption',
       effect: Effect.ALLOW,
@@ -556,7 +708,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     });
     kmsKey.addToResourcePolicy(cloudwatchStatement);
 
-    const bucket = new MdaaBucket(scope, `${domainName}-tooling-bucket`, {
+    const toolingBucket = new MdaaBucket(scope, `${domainName}-tooling-bucket`, {
       naming: this.props.naming,
       bucketName: `${domainName}-${region}-${account}-tooling`,
       encryptionKey: kmsKey,
@@ -566,7 +718,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
 
     const forcedParams = {
       KmsKeyArn: kmsKey.keyArn,
-      S3Location: bucket.s3UrlForObject(),
+      S3Location: toolingBucket.s3UrlForObject(),
       Subnets: toolingProps.subnetIds.join(','),
       VpcId: toolingProps.vpcId,
     };
@@ -585,7 +737,8 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     },
     resourceConfig: {
       domainConfig: DomainConfig;
-      kmsPolicy: string;
+      kmsUsagePolicyName: string;
+      kmsAdminPolicyName: string;
       bucketPolicy: string;
       keyAccounts: string[];
     },
@@ -596,10 +749,9 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     const region = accountProps.region || this.props.region;
     const crossAccountStack = (scope as MdaaL3Construct).getCrossAccountStack(accountProps.account, region);
     if (!crossAccountStack) {
-      console.warn(
+      throw new Error(
         `Cross account stack not defined for associated account ${accountName}/${accountProps.account} on domain ${domainName}. Cross account association will not work.`,
       );
-      return;
     }
     secondStageStack.addDependency(crossAccountStack);
 
@@ -612,12 +764,16 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     );
 
     // Create bucket and KMS usage policies in cross-account
-    const { domainBucketUsagePolicy, domainKmsUsagePolicy } = this.createCrossAccountPolicies(
+    const { domainBucketUsagePolicy, domainKmsUsagePolicy, domainKmsAdminPolicy } = this.createCrossAccountPolicies(
       crossAccountStack,
       domainName,
       accountProps.account,
       region,
-      { kms: resourceConfig.kmsPolicy, bucket: resourceConfig.bucketPolicy },
+      {
+        kmsUsage: resourceConfig.kmsUsagePolicyName,
+        kmsAdmin: resourceConfig.kmsAdminPolicyName,
+        bucket: resourceConfig.bucketPolicy,
+      },
       resourceConfig.keyAccounts,
       crossAccountDomainConfig,
     );
@@ -630,32 +786,56 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     );
     lakeformationManageAccessRole.addManagedPolicy(domainKmsUsagePolicy);
 
-    // Resolve or create provisioning role
-    const accountBlueprintProvisioningRole = this.createProvisioningRole(
+    // Created default provisioning role for this account
+    const accountDefaultBlueprintProvisioningRole = this.createProvisioningRole(
       crossAccountStack,
       this.props.account,
       domainName,
-      crossAccountDomainConfig.domainKmsKeyArn,
     );
 
-    accountBlueprintProvisioningRole.addManagedPolicy(domainKmsUsagePolicy);
-    accountBlueprintProvisioningRole.addManagedPolicy(domainBucketUsagePolicy);
+    domainKmsUsagePolicy.attachToRole(accountDefaultBlueprintProvisioningRole);
+    domainKmsAdminPolicy.attachToRole(accountDefaultBlueprintProvisioningRole);
+    domainBucketUsagePolicy.attachToRole(accountDefaultBlueprintProvisioningRole);
 
-    const toolingProvisioningRole = accountProps.tooling.provisioningRoleArn
+    const bpRoles = accountProps.blueprintProvisioningRoles?.map(roleRef => {
+      const roleArn = resolveCrossAccountProvisioningRole(roleRef, accountProps.account, this.props.partition);
+      return Role.fromRoleArn(crossAccountStack, `${domainName}-${roleRef.name || roleRef.arn}`, roleArn);
+    });
+
+    bpRoles?.forEach(role => {
+      domainKmsUsagePolicy.attachToRole(role);
+      domainKmsAdminPolicy.attachToRole(role);
+      domainBucketUsagePolicy.attachToRole(role);
+    });
+    if (bpRoles) {
+      this.createBaseBlueprintProvisioningPolicy(
+        crossAccountStack,
+        `bp-provisioning-${domainName}`,
+        bpRoles,
+        accountProps.account,
+      );
+    }
+
+    const toolingProvisioningRole = accountProps.tooling.provisioningRole
       ? Role.fromRoleArn(
           crossAccountStack,
           `${domainName}-tooling-provisioning-role`,
-          accountProps.tooling.provisioningRoleArn,
+          resolveCrossAccountProvisioningRole(
+            accountProps.tooling.provisioningRole,
+            accountProps.account,
+            this.props.partition,
+          ),
         )
-      : accountBlueprintProvisioningRole;
+      : accountDefaultBlueprintProvisioningRole;
 
     // Create custom resource role and user profile in cross-account
-    this.createCustomResourceRole(
+    const customResourceRole = this.createCustomResourceRole(
       crossAccountStack,
       resourceConfig.domainConfig.customResourceRoleName,
-      crossAccountDomainConfig.domainKmsKeyArn,
       accountProps.account,
     );
+
+    domainKmsUsagePolicy.attachToRole(customResourceRole);
 
     const customResourceUserProfile = new CfnUserProfile(
       associatedAccountConfig.secondStageStack,
@@ -684,13 +864,14 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     );
 
     // Map authorized domain units for tooling
-    const toolingAuthorizedDomainUnitIds = this.mapAuthorizedDomainUnits(
-      domainProps.tooling?.authorizedDomainUnits,
-      crossAccountDomainConfig,
+    const toolingAuthorizedDomainUnitIds = Object.fromEntries(
+      (domainProps.tooling?.authorizedDomainUnits ?? ['/root'])
+        .map(unit => (unit.startsWith('/') ? unit : `/${unit}`))
+        .map(unit => [unit, crossAccountDomainConfig.getDomainUnitId(unit)]),
     );
 
     // Enable Tooling blueprint in cross-account
-    this.createBlueprintConfiguration(crossAccountStack, {
+    this.createManagedBlueprintConfiguration(crossAccountStack, {
       account: accountProps.account,
       region: accountProps.region ?? this.props.region,
       domainName,
@@ -706,6 +887,8 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
           accountProps.account,
           accountProps.region ?? this.props.region,
           accountProps.tooling,
+          domainKmsUsagePolicy,
+          domainKmsAdminPolicy,
         ),
       ),
       authorizedDomainUnits: toolingAuthorizedDomainUnitIds,
@@ -713,7 +896,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     });
 
     // Enable DataLake blueprint in cross-account
-    this.createBlueprintConfiguration(crossAccountStack, {
+    this.createManagedBlueprintConfiguration(crossAccountStack, {
       account: accountProps.account,
       region: accountProps.region ?? this.props.region,
       domainName,
@@ -724,50 +907,75 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       provisioningRole: toolingProvisioningRole,
     });
 
-    // Enable additional managed blueprints in cross-account
-    this.createCrossAccountManagedBlueprints(
-      crossAccountStack,
-      domainName,
-      domainProps,
-      accountProps,
-      crossAccountDomainConfig,
-      lakeformationManageAccessRole,
-      accountBlueprintProvisioningRole,
-    );
-  }
+    if (accountProps.enabledManagedBlueprints) {
+      // Enable additional managed blueprints in cross-account
+      this.enableManagedBlueprints(
+        accountProps.enabledManagedBlueprints,
+        crossAccountStack,
+        accountProps.account,
+        domainName,
+        crossAccountDomainConfig,
+        lakeformationManageAccessRole,
+        accountDefaultBlueprintProvisioningRole,
+        accountProps.region,
+      );
+    }
 
-  private createCrossAccountManagedBlueprints(
-    crossAccountStack: Construct,
-    domainName: string,
-    domainProps: SageMakerDomainProps,
-    accountProps: SageMakerAssociatedAccountProps,
-    crossAccountDomainConfig: DomainConfig,
-    lakeformationManageAccessRole: IRole,
-    accountBlueprintProvisioningRole: IRole,
-  ) {
-    Object.entries(domainProps.enabledManagedBlueprints ?? {}).forEach(([blueprintName, blueprintProps]) => {
-      const authorizedDomainUnits = this.mapAuthorizedDomainUnits(
-        blueprintProps.authorizedDomainUnits,
+    if (accountProps.enabledCustomBlueprints) {
+      this.enableCustomBlueprints(
+        crossAccountStack,
+        accountProps.enabledCustomBlueprints,
+        accountDefaultBlueprintProvisioningRole,
         crossAccountDomainConfig,
       );
-      const provisioningRole = blueprintProps.provisioningRoleArn
+    }
+  }
+
+  private enableManagedBlueprints(
+    enabledManagedBlueprints: { [name: string]: EnabledBlueprintProps },
+    scope: Construct,
+    enabledAccount: string,
+    domainName: string,
+    domainConfig: DomainConfig,
+    lakeformationManageAccessRole: IRole,
+    blueprintProvisioningRole: IRole,
+    enabledRegion?: string,
+  ) {
+    // Validate that Tooling and DataLake are not in enabledManagedBlueprints
+    if ('Tooling' in enabledManagedBlueprints) {
+      throw new Error(
+        'Tooling blueprint is automatically enabled and should not be included in enabledManagedBlueprints',
+      );
+    }
+    if ('DataLake' in enabledManagedBlueprints) {
+      throw new Error(
+        'DataLake blueprint is automatically enabled and should not be included in enabledManagedBlueprints',
+      );
+    }
+
+    Object.entries(enabledManagedBlueprints).forEach(([blueprintName, blueprintProps]) => {
+      const authorizedDomainUnits = Object.fromEntries(
+        (blueprintProps.authorizedDomainUnits ?? ['/root'])
+          .map(unit => (unit.startsWith('/') ? unit : `/${unit}`))
+          .map(unit => [unit, domainConfig.getDomainUnitId(unit)]),
+      );
+
+      const provisioningRole = blueprintProps.provisioningRole
         ? Role.fromRoleArn(
-            crossAccountStack,
+            scope,
             `${domainName}-${blueprintName}-provisioning-role`,
-            blueprintProps.provisioningRoleArn,
+            resolveCrossAccountProvisioningRole(blueprintProps.provisioningRole, enabledAccount, this.props.partition),
           )
-        : accountBlueprintProvisioningRole;
-      this.createBlueprintConfiguration(crossAccountStack, {
-        account: accountProps.account,
-        region: accountProps.region ?? this.props.region,
+        : blueprintProvisioningRole;
+
+      this.createManagedBlueprintConfiguration(scope, {
+        account: enabledAccount,
+        region: enabledRegion ?? this.props.region,
         domainName,
-        domainId: crossAccountDomainConfig.domainId,
+        domainId: domainConfig.domainId,
         blueprintName,
         lakeformationManageAccessRole,
-        regionalParameters: this.createBlueprintRegionalParams(
-          blueprintProps,
-          accountProps.region ?? this.props.region,
-        ),
+        regionalParameters: this.createBlueprintRegionalParams(blueprintProps, enabledRegion ?? this.props.region),
         authorizedDomainUnits,
         provisioningRole,
       });

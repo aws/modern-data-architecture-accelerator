@@ -1,0 +1,96 @@
+# Enterprise Data Lake Configuration
+#
+# Three-zone data lake architecture (raw/transformed/curated) with S3 bucket policies
+# for raw zone and Lake Formation governance for transformed/curated zones.
+
+# A list of Logical Config Roles which can be referenced in Access Policies
+# Each Logical Config Role can have one or more IAM role ARNs bound to it
+roles:
+  DataAdminRole:
+    - id: ssm-org:/ent-com/generated-role/data-admin/id
+  DataEngineerRole:
+    - id: ssm-org:/ent-com/generated-role/data-engineer/id
+  GlueETLRole:
+    - id: ssm-org:/ent-com/generated-role/glue-etl/id
+
+# Definitions of access policies which grant access to S3 paths for specified Logical Config Roles
+# These Access Policies are then applied to Data Lake buckets (injected into bucket policies)
+accessPolicies:
+  # Root policy grants admin access to the entire bucket
+  RootPolicy: # A friendly name for the access policy
+    rule:
+      # The S3 prefix path to which policy will be applied in the bucket policies
+      prefix: /
+      
+      # A list of Logical Config Roles which will be provided ReadWriteSuper access
+      # ReadWriteSuper access allows:
+      # - Reading objects (s3:GetObject, s3:ListBucket)
+      # - Writing objects (s3:PutObject)
+      # - Permanent data deletion (s3:DeleteObject)
+      # - Managing object versions and lifecycle
+      ReadWriteSuperRoles:
+        - DataAdminRole
+
+  # This policy grants read access to the data/ prefix for discovery and processing
+  DataReadPolicy:
+    rule:
+      # Applies to the data/ prefix where actual datasets are stored
+      prefix: data/
+      
+      # ReadRoles get read-only access:
+      # - s3:GetObject (download objects)
+      # - s3:ListBucket (list objects in prefix)
+      # - No write or delete permissions
+      ReadRoles:
+        - GlueETLRole
+        - DataEngineerRole
+
+  # This policy grants read/write access to the data/ prefix for ETL jobs
+  DataReadWritePolicy:
+    rule:
+      prefix: data/
+      
+      # ReadRoles in this context means read-only access
+      # Glue ETL jobs need to read data for processing
+      ReadRoles:
+        - GlueETLRole
+
+
+# The set of S3 buckets which will be created, and the access policies which will be applied
+buckets:
+  # A 'raw' bucket/zone for landing ingested data
+  # This is the entry point for data into the lake
+  raw:
+    # The list of access policies which will be applied to the bucket
+    # These policies are injected into the S3 bucket policy
+    accessPolicies:
+      - RootPolicy      # Admins have full access
+      - DataReadPolicy  # Engineers and ETL jobs can read
+
+  # A 'transformed' bucket/zone for processed/cleaned data
+  # Data here has been validated, cleaned, and structured
+  transformed:
+    # Register the data/ prefix with Lake Formation for governance
+    # This enables fine-grained access control at the table/column level
+    lakeFormationLocations:
+      all-data:
+        prefix: data
+    
+    accessPolicies:
+      - RootPolicy           # Admins have full access
+      - DataReadPolicy       # Engineers and ETL jobs can read
+      - DataReadWritePolicy  # ETL jobs can write processed data
+
+  # A 'curated' bucket/zone for business-ready data products
+  # Data here is optimized for analytics and ready for consumption
+  curated:
+    # Register the data/ prefix with Lake Formation for governance
+    # This enables cross-account sharing and fine-grained access control
+    lakeFormationLocations:
+      all-data:
+        prefix: data
+    
+    accessPolicies:
+      - RootPolicy           # Admins have full access
+      - DataReadPolicy       # Engineers and ETL jobs can read
+      - DataReadWritePolicy  # ETL jobs can write curated data products

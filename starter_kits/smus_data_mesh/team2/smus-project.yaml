@@ -1,0 +1,32 @@
+# Team2 SMUS Project Configuration (Consumption-Focused)
+#
+# Pure SMUS project for data consumption without DataOps components.
+# Uses domain KMS key and consumes data published by other teams via DataZone catalog.
+
+# Reference to SMUS domain configuration in enterprise account (cross-account)
+# Uses full ARN format because this config deploys to a different account than the domain
+domainConfigSSMParam: arn:aws:ssm:{{region}}:{{context:enterprise_account}}:parameter/{{org}}/ent-data/smus-dom/domain/domain1/config
+
+projects:
+  team2:
+    # Project profile determines which account and blueprints are used
+    profileName: team2-profile # Targets team2 account, includes ddb-table blueprint
+
+    # Domain unit provides organizational hierarchy and access control
+    # Projects in this unit inherit permissions and are grouped logically
+    domainUnit: /business-teams/team2
+
+    # Project owners have full control over the project
+    ownerUsers:
+      admin1: "{{context:admin1_user_sso_id}}"
+
+    # Environment configurations specify blueprint parameter values
+    environmentConfigs:
+      # DynamoDB blueprint configuration (from smus-bp-ddb.yaml)
+      ddb-table:
+        parameters:
+          # Uses domain KMS key (shared resource) instead of project-specific key
+          # This is appropriate for consumption-focused projects that don't need
+          # isolated encryption keys. The domain key is managed centrally.
+          # Format: ssm: prefix indicates SSM parameter reference with full ARN
+          kmsKey: ssm-org:/ent-data/smus-dom/kms/domain1-tooling/arn

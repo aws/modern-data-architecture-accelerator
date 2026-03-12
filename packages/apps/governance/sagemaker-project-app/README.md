@@ -24,7 +24,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
 sagemaker: # Module Name can be customized
-  module_path: '@aws-caef/sagemake-project' # Must match module NPM package name
+  module_path: '@aws-mdaa/sagemake-project' # Must match module NPM package name
   module_configs:
     - ./sagemaker-project.yaml # Filename/path can be customized
 ```

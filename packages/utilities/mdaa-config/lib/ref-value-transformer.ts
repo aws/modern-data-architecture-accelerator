@@ -1,11 +1,12 @@
 import { MdaaStringParameter } from '@aws-mdaa/construct';
-import { Stack } from 'aws-cdk-lib';
+import { Fn, Names, Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 // nosemgrep
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
 import * as XRegExp from 'xregexp';
 import { ConfigurationElement } from './config';
 import { IMdaaConfigValueTransformer, TransformResult } from './transformer';
+import { IStringParameter } from 'aws-cdk-lib/aws-ssm';
 
 export interface AwsEnvironment {
   readonly partition?: string;
@@ -115,22 +116,55 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
     }
 
     if (refInner.startsWith('ssm-org:')) {
-      return this.resolveSsmReference('ssm-org', refInner);
+      return this.resolveSsmPartialPathReference(refInner);
     }
 
     if (refInner.startsWith('ssm-domain:')) {
-      return this.resolveSsmReference('ssm-domain', refInner);
+      return this.resolveSsmPartialPathReference(refInner);
     }
 
     if (refInner.startsWith('ssm-env:')) {
-      return this.resolveSsmReference('ssm-env', refInner);
+      return this.resolveSsmPartialPathReference(refInner);
     }
 
     if (refInner.startsWith('resolve:ssm:')) {
       return this.resolveDirectSsm(refInner);
     }
 
+    if (refInner.startsWith('ref:')) {
+      return this.resolveRef(refInner);
+    }
+
     return undefined;
+  }
+
+  private resolveRef(refInner: string): string {
+    const dummyStack = new Stack(undefined);
+    const withoutPrefix = refInner.replace(/^ref:/, '');
+    const parts = withoutPrefix.split(':');
+
+    // Remove leading slash if present from the path
+    const pathWithSlash = parts[0];
+    const path = pathWithSlash.startsWith('/') ? pathWithSlash.slice(1) : pathWithSlash;
+    const attr = parts[1]; // Will be undefined if no attribute specified
+
+    const logicalId = this.generateLogicalId(dummyStack, path);
+
+    if (attr) {
+      return Fn.getAtt(logicalId, attr).toString();
+    } else {
+      return Fn.ref(logicalId).toString();
+    }
+  }
+
+  private generateLogicalId(parentScope: Construct, path: string): string {
+    const pathComponents = path.split('/');
+    const construct = new Construct(parentScope, pathComponents[0]);
+    if (pathComponents.length == 1) {
+      return Names.nodeUniqueId(construct.node);
+    } else {
+      return this.generateLogicalId(construct, pathComponents.slice(1).join('/'));
+    }
   }
 
   private getSimpleRefMap(): { [key: string]: string | undefined } {
@@ -162,34 +196,41 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
     return process.env[envVar];
   }
 
-  private resolveSsmReference(type: 'ssm-org' | 'ssm-domain' | 'ssm-env', refInner: string): string {
+  private extractSsmValue(refInner: string, prefix: string): string {
+    const extracted = refInner.replace(new RegExp(`^${prefix}:\\s*`), '');
+    // Remove leading slash to prevent double slashes in the path
+    return extracted.startsWith('/') ? extracted.slice(1) : extracted;
+  }
+
+  private resolveSsmPartialPathReference(refInner: string): string {
     if (!this.props.naming) {
-      throw new Error(`Unable to resolve ${type} ssm param outside of a naming context`);
+      throw new Error(`Unable to resolve ${refInner} ssm param outside of a naming context`);
     }
 
-    if (!this.props.scope) {
-      throw new Error(`Unable to resolve ${type} ssm param outside of a Construct`);
+    if (refInner.startsWith('ssm-org:')) {
+      const ssmPath = this.props.naming.ssmOrgPath(this.extractSsmValue(refInner, 'ssm-org'));
+      return `{{resolve:ssm:${ssmPath}}}`;
     }
 
-    const pathMethodMap = {
-      'ssm-org': 'ssmOrgPath',
-      'ssm-domain': 'ssmDomainPath',
-      'ssm-env': 'ssmEnvPath',
-    } as const;
+    if (refInner.startsWith('ssm-domain:')) {
+      const ssmPath = this.props.naming.ssmDomainPath(this.extractSsmValue(refInner, 'ssm-domain'));
+      return `{{resolve:ssm:${ssmPath}}}`;
+    }
 
-    const pathMethod = pathMethodMap[type];
-    const ssmPath = this.props.naming[pathMethod](refInner.replace(new RegExp(`^${type}:\\s*`), ''), false);
+    if (refInner.startsWith('ssm-env:')) {
+      const ssmPath = this.props.naming.ssmEnvPath(this.extractSsmValue(refInner, 'ssm-env'));
+      return `{{resolve:ssm:${ssmPath}}}`;
+    }
 
-    return this.getSsmValue(ssmPath);
+    return refInner;
   }
 
   private resolveDirectSsm(refInner: string): string {
-    const ssmPath = refInner.replace(/^resolve:ssm:/, '');
-
     if (!this.props.scope) {
       throw new Error('Unable to resolve ssm param outside of a Construct');
     }
 
+    const ssmPath = refInner.replace(/^resolve:ssm:/, '');
     console.log(`Resolving SSM: ${ssmPath}`);
     return this.getSsmValue(ssmPath);
   }
@@ -198,7 +239,15 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
     if (!this.props.scope) {
       throw new Error('Unable to resolve ssm param outside of a Construct');
     }
-
+    //Handle full arn-based SSM paths (for referencing RAM shared SSM params from other accounts)
+    if (ssmPath.startsWith('arn:')) {
+      const stack = Stack.of(this.props.scope);
+      const exists = stack.node.tryFindChild(ssmPath) as IStringParameter;
+      if (exists) {
+        return exists.stringValue;
+      }
+      return MdaaStringParameter.fromStringParameterArn(Stack.of(this.props.scope), ssmPath, ssmPath).stringValue;
+    }
     return this.props.scope.node.tryGetContext('@mdaaLookupSSMValues')
       ? MdaaStringParameter.valueFromLookup(Stack.of(this.props.scope), ssmPath)
       : MdaaStringParameter.valueForStringParameter(Stack.of(this.props.scope), ssmPath);

@@ -59,16 +59,18 @@ export class MdaaCustomResource extends CustomResource {
     }
 
     const handlerRoleResourceId = `custom-${props.resourceType}-handler-role`;
-    const existingHandlerRole = props.handlerRole ?? (stack.node.tryFindChild(handlerRoleResourceId) as IRole);
-    const handlerRole =
-      existingHandlerRole ||
-      new MdaaLambdaRole(stack, handlerRoleResourceId, {
-        roleName: `${props.resourceType}-handler`,
-        naming: props.naming,
-        logGroupNames: [handlerFunctionName],
-        createParams: false,
-        createOutputs: false,
-      });
+    const existingHandlerRole = props.handlerRole
+      ? props.handlerRole
+      : (stack.node.tryFindChild(handlerRoleResourceId) as IRole);
+    const handlerRole = existingHandlerRole
+      ? existingHandlerRole
+      : new MdaaLambdaRole(stack, handlerRoleResourceId, {
+          roleName: `${props.resourceType}-handler`,
+          naming: props.naming,
+          logGroupNames: [handlerFunctionName],
+          createParams: false,
+          createOutputs: false,
+        });
 
     const handlerPolicy = this.resolveHandlerPolicy(stack, props);
 
@@ -99,22 +101,22 @@ export class MdaaCustomResource extends CustomResource {
     });
     const handlerFunctionResourceId = `custom-${props.resourceType}-handler-function`;
     const existingHandlerFunction = stack.node.tryFindChild(handlerFunctionResourceId) as MdaaLambdaFunction;
-    this.handlerFunctionPlaceHolder =
-      existingHandlerFunction ||
-      new MdaaLambdaFunction(stack, handlerFunctionResourceId, {
-        naming: props.naming,
-        runtime: props.runtime,
-        code: props.code,
-        handler: props.handler,
-        role: handlerRole,
-        functionName: `${props.resourceType}-handler`,
-        layers: props.handlerLayers,
-        timeout: props.handlerTimeout ?? Duration.seconds(60),
-        vpc: props.vpc,
-        vpcSubnets: props.subnet,
-        securityGroups: props.securityGroup ? [props.securityGroup] : undefined,
-        environment: props.environment,
-      });
+    this.handlerFunctionPlaceHolder = existingHandlerFunction
+      ? existingHandlerFunction
+      : new MdaaLambdaFunction(stack, handlerFunctionResourceId, {
+          naming: props.naming,
+          runtime: props.runtime,
+          code: props.code,
+          handler: props.handler,
+          role: handlerRole,
+          functionName: `${props.resourceType}-handler`,
+          layers: props.handlerLayers,
+          timeout: props.handlerTimeout ? props.handlerTimeout : Duration.seconds(60),
+          vpc: props.vpc,
+          vpcSubnets: props.subnet,
+          securityGroups: props.securityGroup ? [props.securityGroup] : undefined,
+          environment: props.environment,
+        });
 
     if (handlerPolicy) this.handlerFunctionPlaceHolder.node.addDependency(handlerPolicy);
 
@@ -159,16 +161,16 @@ export class MdaaCustomResource extends CustomResource {
     const providerFunctionName = props.naming.resourceName(`${props.resourceType}-provider`, 64);
     const providerRoleResourceId = `custom-${props.resourceType}-provider-role`;
     const existingProviderRole = stack.node.tryFindChild(providerRoleResourceId) as Role;
-    const providerRole =
-      existingProviderRole ||
-      new MdaaLambdaRole(stack, providerRoleResourceId, {
-        description: 'CR Role',
-        roleName: `${props.resourceType}-provider`,
-        naming: props.naming,
-        logGroupNames: [providerFunctionName],
-        createParams: false,
-        createOutputs: false,
-      });
+    const providerRole = existingProviderRole
+      ? existingProviderRole
+      : new MdaaLambdaRole(stack, providerRoleResourceId, {
+          description: 'CR Role',
+          roleName: `${props.resourceType}-provider`,
+          naming: props.naming,
+          logGroupNames: [providerFunctionName],
+          createParams: false,
+          createOutputs: false,
+        });
 
     MdaaNagSuppressions.addCodeResourceSuppressions(
       providerRole,
@@ -190,13 +192,13 @@ export class MdaaCustomResource extends CustomResource {
     );
     const providerResourceId = `custom-${props.resourceType}-provider`;
     const existingProvider = stack.node.tryFindChild(providerResourceId) as Provider;
-    const provider =
-      existingProvider ||
-      new Provider(stack, providerResourceId, {
-        onEventHandler: this.handlerFunctionPlaceHolder,
-        frameworkOnEventRole: providerRole,
-        providerFunctionName: providerFunctionName,
-      });
+    const provider = existingProvider
+      ? existingProvider
+      : new Provider(stack, providerResourceId, {
+          onEventHandler: this.handlerFunctionPlaceHolder,
+          frameworkOnEventRole: providerRole,
+          providerFunctionName: providerFunctionName,
+        });
 
     MdaaNagSuppressions.addCodeResourceSuppressions(
       provider,
@@ -257,21 +259,20 @@ export class MdaaCustomResource extends CustomResource {
     };
     return crProps;
   }
-
   private static resolveHandlerPolicy(stack: Stack, props: MdaaCustomResourceProps): Policy | undefined {
     const handlerPolicyResourceId = `custom-${props.resourceType}-handler-policy`;
     const existingPolicy = stack.node.tryFindChild(handlerPolicyResourceId) as Policy;
     if (existingPolicy && props.handlerRolePolicyStatements) {
       existingPolicy.addStatements(...props.handlerRolePolicyStatements);
       return existingPolicy;
-    }
-    if (props.handlerRolePolicyStatements) {
+    } else if (props.handlerRolePolicyStatements) {
       return new Policy(stack, handlerPolicyResourceId, {
         policyName: `${props.resourceType}-handler`,
         document: new PolicyDocument({ statements: props.handlerRolePolicyStatements }),
       });
+    } else {
+      return undefined;
     }
-    return undefined;
   }
 
   constructor(scope: Construct, id: string, props: MdaaCustomResourceProps) {

@@ -145,4 +145,115 @@ describe('MdaaConfigBlueprintRefValueTransformer', () => {
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Resolving blueprint path:'));
     consoleSpy.mockRestore();
   });
+
+  test('handles blueprint ref with special characters in path', () => {
+    const transformer = new MdaaConfigBlueprintRefValueTransformer({
+      naming: mockNaming,
+      scope: stack,
+    });
+    const result = transformer.transformValue('{{blueprint:/path/with-dashes_and_underscores/123}}');
+    expect(result).toContain('{{resolve:ssm:');
+    expect(result).toContain('/path/with-dashes_and_underscores/123}}');
+  });
+
+  test('handles blueprint ref at start of string', () => {
+    const transformer = new MdaaConfigBlueprintRefValueTransformer({
+      naming: mockNaming,
+      scope: stack,
+    });
+    const result = transformer.transformValue('{{blueprint:/path}}-suffix');
+    expect(result).toMatch(/^\{\{resolve:ssm:/);
+    expect(result).toContain('-suffix');
+  });
+
+  test('handles blueprint ref at end of string', () => {
+    const transformer = new MdaaConfigBlueprintRefValueTransformer({
+      naming: mockNaming,
+      scope: stack,
+    });
+    const result = transformer.transformValue('prefix-{{blueprint:/path}}');
+    expect(result).toContain('prefix-');
+    expect(result).toMatch(/\}\}$/);
+  });
+
+  test('handles multiple different ref types mixed', () => {
+    const transformer = new MdaaConfigBlueprintRefValueTransformer({
+      naming: mockNaming,
+      scope: stack,
+    });
+    const result = transformer.transformValue('{{blueprint:/path1}}-{{other:ref}}-{{blueprint:/path2}}');
+    expect(result).toContain('/path1}}');
+    expect(result).toContain('{{other:ref}}');
+    expect(result).toContain('/path2}}');
+  });
+
+  test('handles empty blueprint path', () => {
+    const transformer = new MdaaConfigBlueprintRefValueTransformer({
+      naming: mockNaming,
+      scope: stack,
+    });
+    const result = transformer.transformValue('{{blueprint:}}');
+    expect(result).toContain('{{resolve:ssm:');
+  });
+
+  test('handles blueprint ref with only slashes', () => {
+    const transformer = new MdaaConfigBlueprintRefValueTransformer({
+      naming: mockNaming,
+      scope: stack,
+    });
+    const result = transformer.transformValue('{{blueprint:/}}');
+    expect(result).toContain('{{resolve:ssm:');
+    expect(result).toContain('/}}');
+  });
+
+  test('creates parameter on first blueprint ref', () => {
+    const transformer = new MdaaConfigBlueprintRefValueTransformer({
+      naming: mockNaming,
+      scope: stack,
+    });
+
+    const childrenBefore = stack.node.children.length;
+    transformer.transformValue('{{blueprint:/first}}');
+    const childrenAfter = stack.node.children.length;
+
+    expect(childrenAfter).toBeGreaterThan(childrenBefore);
+  });
+
+  test('does not create duplicate parameters', () => {
+    const transformer = new MdaaConfigBlueprintRefValueTransformer({
+      naming: mockNaming,
+      scope: stack,
+    });
+
+    transformer.transformValue('{{blueprint:/first}}');
+    const childrenAfterFirst = stack.node.children.length;
+
+    transformer.transformValue('{{blueprint:/second}}');
+    const childrenAfterSecond = stack.node.children.length;
+
+    // Should not create additional parameters
+    expect(childrenAfterSecond).toBe(childrenAfterFirst);
+  });
+
+  test('throws when blueprint ref without scope', () => {
+    const transformer = new MdaaConfigBlueprintRefValueTransformer({
+      naming: mockNaming,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      scope: undefined as any,
+    });
+    expect(() => transformer.transformValue('{{blueprint:/path}}')).toThrow(
+      'Unable to resolve blueprint params outside of a Construct',
+    );
+  });
+
+  test('throws when blueprint ref without naming', () => {
+    const transformer = new MdaaConfigBlueprintRefValueTransformer({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      naming: undefined as any,
+      scope: stack,
+    });
+    expect(() => transformer.transformValue('{{blueprint:/path}}')).toThrow(
+      'Unable to resolve blueprint params without a naming implementation',
+    );
+  });
 });

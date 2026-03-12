@@ -28,7 +28,7 @@ export class MdaaConfigBlueprintRefValueTransformer implements IMdaaConfigValueT
     }
   }
 
-  protected parseBlueprintRef(value: string, refMatch: string[]): string {
+  protected parseBlueprintRef(value: string, refMatch: string[]): string | number | object {
     // Substitute all references in the string
     return this.substituteBlueprintReferences(value, refMatch);
   }
@@ -60,11 +60,20 @@ export class MdaaConfigBlueprintRefValueTransformer implements IMdaaConfigValueT
 
   private resolveBlueprintReference(refInner: string) {
     if (refInner.startsWith('blueprint:')) {
+      if (!this.props.scope) {
+        throw new Error('Unable to resolve blueprint params outside of a Construct');
+      }
+      if (!this.props.naming) {
+        throw new Error('Unable to resolve blueprint params without a naming implementation');
+      }
       const blueprintPath = refInner.replace(/^blueprint:/, '');
-      const ssmOrgPath = this.props.naming.ssmOrgPath('', false);
-      const existingDzProjectParam = this.props.scope.node.tryFindChild('datazoneEnvironmentProjectId') as CfnParameter;
-      const dzProjectParam =
-        existingDzProjectParam || new CfnParameter(this.props.scope, 'datazoneEnvironmentProjectId');
+      const ssmOrgPath = this.props.naming?.ssmOrgPath('', false);
+      const existingDzProjectParam = this.props.scope?.node.tryFindChild(
+        'datazoneEnvironmentProjectId',
+      ) as CfnParameter;
+      const dzProjectParam = existingDzProjectParam
+        ? existingDzProjectParam
+        : new CfnParameter(this.props.scope, 'datazoneEnvironmentProjectId');
       const ssmPath = `{{resolve:ssm:${ssmOrgPath}${dzProjectParam.valueAsString}${blueprintPath}}}`;
       console.log(`Resolving blueprint path: ${ssmPath}`);
       return ssmPath;

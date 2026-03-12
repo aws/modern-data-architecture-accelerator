@@ -205,6 +205,8 @@ export interface MdaaConfigContents {
    * Config properties for TF modules
    */
   readonly terraform?: TerraformConfig;
+
+  readonly useStaging?: boolean;
 }
 
 export interface MdaaParserConfig {

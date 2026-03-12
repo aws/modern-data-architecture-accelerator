@@ -199,16 +199,6 @@ describe('MdaaConfigParamRefValueTransformer', () => {
     });
   });
 
-  describe('scope validation', () => {
-    test('does not resolve param ref without scope', () => {
-      const transformer = new MdaaConfigParamRefValueTransformer({ ...baseProps });
-      // Without scope, param refs should not be resolved
-      expect(() => {
-        transformer.transformValue('{{param:noScopeParam}}');
-      }).toThrow('Unable to create parameters outside of a Construct');
-    });
-  });
-
   describe('mixed refs', () => {
     test('handles mix of param and non-param refs (non-param refs unchanged)', () => {
       const stack = new Stack();

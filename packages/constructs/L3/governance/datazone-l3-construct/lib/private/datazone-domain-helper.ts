@@ -93,6 +93,7 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
     const domainConfig = this.createDataZoneResources(
       scope,
       domainName,
+      domainProps,
       {
         domain,
         kmsKey,
@@ -115,7 +116,8 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
       domain,
       domainConfig,
       policyNames: {
-        kms: policies.domainKmsUsagePolicyName,
+        kmsUsagePolicyName: policies.domainKmsUsagePolicyName,
+        kmsAdminPolicyName: policies.domainKmsAdminPolicyName,
         bucket: policies.domainBucketUsagePolicyName,
       },
       keyAccessAccounts: policies.keyAccessAccounts,
@@ -126,6 +128,7 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
   private createDataZoneResources(
     scope: Construct,
     domainName: string,
+    domainProps: DataZoneDomainProps,
     domainResources: {
       domain: CfnDomain;
       kmsKey: IKey;
@@ -143,7 +146,7 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
     },
   ) {
     // Enable CustomAwsService blueprint for DataZone V1
-    this.createBlueprintConfiguration(domainResources.domain, {
+    this.createManagedBlueprintConfiguration(domainResources.domain, {
       account: this.props.account,
       region: this.props.region,
       domainName,
@@ -157,7 +160,8 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
       domainResources.domain,
       domainName,
       domainResources.domain,
-      domainResources.kmsKey.keyArn,
+      policies.domainKmsUsagePolicy,
+      domainProps,
     );
 
     // Create and return domain configuration
@@ -183,7 +187,8 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
     associatedAccountProps: AssociatedAccountProps,
     resourceConfig: {
       domainConfig: DomainConfig;
-      kmsPolicy: string;
+      kmsUsagePolicyName: string;
+      kmsAdminPolicyName: string;
       bucketPolicy: string;
       keyAccounts: string[];
     },
@@ -191,10 +196,9 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
     const region = associatedAccountProps.region || this.props.region;
     const crossAccountStack = (scope as MdaaL3Construct).getCrossAccountStack(associatedAccountProps.account, region);
     if (!crossAccountStack) {
-      console.warn(
+      throw new Error(
         `Cross account stack not defined for associated account ${associatedAccountName}/${associatedAccountProps.account} on domain ${domainName}. Cross account association will not work.`,
       );
-      return;
     }
 
     // Parse domain config from SSM parameters in cross-account
@@ -211,7 +215,11 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
       domainName,
       associatedAccountProps.account,
       region,
-      { kms: resourceConfig.kmsPolicy, bucket: resourceConfig.bucketPolicy },
+      {
+        kmsUsage: resourceConfig.kmsUsagePolicyName,
+        kmsAdmin: resourceConfig.kmsAdminPolicyName,
+        bucket: resourceConfig.bucketPolicy,
+      },
       resourceConfig.keyAccounts,
       crossAccountDomainConfig,
     );
@@ -225,7 +233,7 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
     lakeformationManageAccessRole.addManagedPolicy(domainKmsUsagePolicy);
 
     // Enable CustomAwsService blueprint in cross-account
-    this.createBlueprintConfiguration(crossAccountStack, {
+    this.createManagedBlueprintConfiguration(crossAccountStack, {
       account: associatedAccountProps.account,
       region: associatedAccountProps.region ?? this.props.region,
       domainName,

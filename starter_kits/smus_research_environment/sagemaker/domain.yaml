@@ -14,7 +14,7 @@ domains:
     # Data admin role for the domain - reference role from roles module
     # This role will be provided access to
     dataAdminRole:
-      id: ssm:/{{org}}/shared/generated-role/data-admin/id
+      id: org-ssm:/shared/generated-role/data-admin/id
 
     # Tooling blueprint configuration for SageMaker Unified Studio
     tooling:

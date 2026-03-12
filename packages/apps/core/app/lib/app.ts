@@ -30,21 +30,18 @@ import {
   MdaaAppConfigParser,
   MdaaAppConfigParserProps,
   MdaaBaseConfigContents,
-  MdaaSageMakerBluePrintConfig,
+  MdaaSageMakerCustomBluePrintConfig,
 } from './app_config';
 import { MdaaBlueprintStack, MdaaProductStack } from './blueprint-product-stack';
 import * as configSchema from './config-schema.json';
 import { MdaaStack } from './stack';
 import { cleanContextStringValue, filterConfigurationElement, getNodeValue, readYamlFile } from './utils';
 // nosemgrep
-import {
-  DomainConfig,
-  MdaaSageMakerCustomBlueprintConstruct,
-  MdaaSageMakerCustomBlueprintConstructProps,
-} from '@aws-mdaa/datazone-constructs';
+import { DomainConfig } from '@aws-mdaa/datazone-constructs';
 import * as assert from 'assert';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import * as pjson from '../package.json';
+import { CustomBlueprintL3Construct } from './custom-blueprint-l3-construct';
 
 export interface MdaaAppProps extends AppProps {
   readonly appConfigRaw?: ConfigurationElement;
@@ -365,7 +362,7 @@ export abstract class MdaaCdkApp extends App {
     return parentStack;
   }
 
-  private generateSageMakerBlueprintStack(sagemakerBlueprintConfig: MdaaSageMakerBluePrintConfig) {
+  private generateSageMakerBlueprintStack(sagemakerBlueprintConfig: MdaaSageMakerCustomBluePrintConfig) {
     const domainConfig = sagemakerBlueprintConfig.domainConfigSSMParam
       ? new DomainConfig(this.stack, 'domain-config-parser', {
           ssmParamBase: sagemakerBlueprintConfig.domainConfigSSMParam,
@@ -393,94 +390,70 @@ export abstract class MdaaCdkApp extends App {
 
     const blueprintStack = new MdaaBlueprintStack(this.stack, `${this.stack.stackName}-blueprint`, {
       naming: this.naming,
-      useBootstrap: this.useBootstrap,
+      useBootstrap: false,
       assetBucket: domainBucket,
       blueprintName: blueprintName,
     });
-
+    // Need to remove the blueprint props from the config we pass to the underlying module.
+    // This ensures SSM references from the blueprint config don't polute the blueprint stack,
+    // which might be deployed into different accounts.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { sagemakerBlueprint, ...appConfigWithoutSagemakerBlueprint } = this.appConfigRaw;
     this.subGenerateResources(
       blueprintStack,
       this.createL3ConstructProps(blueprintStack),
-      this.getConfigParserProps(this.appConfigRaw),
+      this.getConfigParserProps(appConfigWithoutSagemakerBlueprint),
     );
+
     const tags = {
       mdaa_dz_domain_id: blueprintStack.dzDomainIdParam.valueAsString,
       mdaa_dz_project_name: blueprintStack.dzProjectNameParam.valueAsString,
       mdaa_dz_project_id: blueprintStack.dzProjectIdParam.valueAsString,
       mdaa_dz_environment_id: blueprintStack.dzEnvIdParam.valueAsString,
     };
-    for (const [tag, value] of Object.entries(tags)) {
-      Tags.of(blueprintStack).add(tag, value);
-    }
+    Object.entries(tags).forEach(([tag, value]) => Tags.of(blueprintStack).add(tag, value));
     const template = CloudFormationTemplate.fromProductStack(blueprintStack);
-
-    const authorizedDomainUnits = Object.fromEntries(
-      (sagemakerBlueprintConfig.authorizedDomainUnits ?? ['/root'])
-        .map(unit => (unit.startsWith('/') ? unit : `/${unit}`))
-        .map(unit => [unit, domainConfig.getDomainUnitId(unit)]),
-    );
-    const blueprintProps: MdaaSageMakerCustomBlueprintConstructProps = {
-      domainConfig: domainConfig,
-      provisioningRoleArn: sagemakerBlueprintConfig.provisioningRoleArn,
-      blueprintName: blueprintName,
+    new CustomBlueprintL3Construct(this.stack, 'custom-blueprint-l3', {
+      ...this.createL3ConstructProps(this.stack),
       templateUrl: template.bind(this.stack).httpUrl,
-      domainBucket: domainBucket,
-      enabledRegions: sagemakerBlueprintConfig.enabledRegions,
-      region: this.stack.region,
-      account: this.stack.account,
-      naming: this.naming,
-      authorizedDomainUnits: authorizedDomainUnits,
-    };
-    new MdaaSageMakerCustomBlueprintConstruct(this.stack, `${blueprintName}-custom-blueprint`, blueprintProps);
+      domainConfig: domainConfig,
+      domainBucket,
+      blueprintName,
+      sagemakerBlueprintConfig,
+    });
   }
 
   public generateStack(): Stack {
     if (this.baseConfigParser.serviceCatalogConfig) {
-      return this.generateServiceCatalogStack();
+      const portfolioBucketArn = `arn:${this.stack.partition}:s3:::${this.baseConfigParser.serviceCatalogConfig.portfolio_bucket_name}`;
+      const portfolioBucket = Bucket.fromBucketArn(this.stack, 'sm-domain-bucket-import', portfolioBucketArn);
+
+      const productStack = new MdaaProductStack(this.stack, `${this.stack.stackName}-product`, {
+        naming: this.naming,
+        useBootstrap: this.useBootstrap,
+        assetBucket: portfolioBucket,
+      });
+
+      this.subGenerateResources(
+        productStack,
+        this.createL3ConstructProps(productStack),
+        this.getConfigParserProps(this.appConfigRaw),
+      );
+
+      return this.generateServiceCatalogProductParentStackResources(
+        this.baseConfigParser.serviceCatalogConfig,
+        this.stack,
+        productStack,
+      );
+    } else if (this.baseConfigParser.sagemakerBlueprintConfig) {
+      this.generateSageMakerBlueprintStack(this.baseConfigParser.sagemakerBlueprintConfig);
+    } else {
+      this.subGenerateResources(
+        this.stack,
+        this.createL3ConstructProps(this.stack),
+        this.getConfigParserProps(this.appConfigRaw),
+      );
     }
-
-    if (this.baseConfigParser.sagemakerBlueprintConfig) {
-      return this.generateSageMakerStack();
-    }
-
-    return this.generateStandardStack();
-  }
-
-  private generateServiceCatalogStack(): Stack {
-    const portfolioBucketArn = `arn:${this.stack.partition}:s3:::${this.baseConfigParser.serviceCatalogConfig!.portfolio_bucket_name}`;
-    const portfolioBucket = Bucket.fromBucketArn(this.stack, 'sm-domain-bucket-import', portfolioBucketArn);
-
-    const productStack = new MdaaProductStack(this.stack, `${this.stack.stackName}-product`, {
-      naming: this.naming,
-      useBootstrap: this.useBootstrap,
-      assetBucket: portfolioBucket,
-    });
-
-    this.subGenerateResources(
-      productStack,
-      this.createL3ConstructProps(productStack),
-      this.getConfigParserProps(this.appConfigRaw),
-    );
-
-    return this.generateServiceCatalogProductParentStackResources(
-      this.baseConfigParser.serviceCatalogConfig!,
-      this.stack,
-      productStack,
-    );
-  }
-
-  private generateSageMakerStack(): Stack {
-    this.generateSageMakerBlueprintStack(this.baseConfigParser.sagemakerBlueprintConfig!);
-    this.addTagsAndSuppressions();
-    return this.stack;
-  }
-
-  private generateStandardStack(): Stack {
-    this.subGenerateResources(
-      this.stack,
-      this.createL3ConstructProps(this.stack),
-      this.getConfigParserProps(this.appConfigRaw),
-    );
     this.addTagsAndSuppressions();
     return this.stack;
   }
@@ -522,19 +495,15 @@ export abstract class MdaaCdkApp extends App {
       this.stack,
       ...Object.entries(this.additionalStacksMap).flatMap(x => Object.entries(x[1]).map(y => y[1])),
     ];
-
-    // Apply suppressions to all stacks (O(n) instead of O(n*m))
-    const suppressions = this.baseConfigParser.nagSuppressions?.by_path ?? [];
     allAccountStacks.forEach(stack => {
-      suppressions.forEach(suppression => {
+      this.baseConfigParser.nagSuppressions?.by_path?.forEach(suppression => {
         try {
           MdaaNagSuppressions.addConfigResourceSuppressionsByPath(stack, suppression.path, suppression.suppressions);
         } catch (error) {
           console.log(`Error adding suppression for path ${suppression.path} to stack ${stack}:`, error);
         }
       });
-
-      // Apply tags
+      // Apply our tags
       for (const tagKey in this.tags) {
         if (tagKey in this.tags) {
           Tags.of(stack).add(tagKey, this.tags[tagKey]);

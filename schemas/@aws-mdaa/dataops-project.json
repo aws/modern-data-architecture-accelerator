@@ -2,6 +2,40 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
+        "AdditionalBlueprintAccount": {
+            "additionalProperties": false,
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "authorizedDomainUnits": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "enabledRegions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
+                    },
+                    "type": "object"
+                },
+                "provisioningRole": {
+                    "$ref": "#/definitions/MdaaRoleRef"
+                }
+            },
+            "required": [
+                "account",
+                "provisioningRole"
+            ],
+            "type": "object"
+        },
         "Architecture": {
             "additionalProperties": false,
             "description": "Architectures supported by AWS Lambda",
@@ -19,53 +53,6 @@
                 "dockerPlatform",
                 "name"
             ],
-            "type": "object"
-        },
-        "AuthorizationPolicy": {
-            "additionalProperties": false,
-            "properties": {
-                "blueprintConfig": {
-                    "$ref": "#/definitions/BlueprintAuthorizationConfig"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "domainUnitId": {
-                    "type": "string"
-                },
-                "includeChildDomainUnits": {
-                    "type": "boolean"
-                },
-                "policyType": {
-                    "$ref": "#/definitions/PolicyType"
-                },
-                "principals": {
-                    "items": {
-                        "$ref": "#/definitions/PolicyPrincipal"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "policyType",
-                "principals"
-            ],
-            "type": "object"
-        },
-        "BlueprintAuthorizationConfig": {
-            "additionalProperties": false,
-            "properties": {
-                "includeChildDomainUnits": {
-                    "type": "boolean"
-                },
-                "projectDesignation": {
-                    "enum": [
-                        "CONTRIBUTOR",
-                        "OWNER"
-                    ],
-                    "type": "string"
-                }
-            },
             "type": "object"
         },
         "CfnAutoScalingReplacingUpdate": {
@@ -264,6 +251,32 @@
                 "stack",
                 "synthesizeLogicalId"
             ],
+            "type": "object"
+        },
+        "CfnCrawler.ScheduleProperty": {
+            "additionalProperties": false,
+            "description": "A scheduling object using a `cron` statement to schedule an event.",
+            "properties": {
+                "scheduleExpression": {
+                    "description": "A `cron` expression used to specify the schedule.\n\nFor more information, see [Time-Based Schedules for Jobs and Crawlers](https://docs.aws.amazon.com/glue/latest/dg/monitor-data-warehouse-schedule.html) . For example, to run something every day at 12:15 UTC, specify `cron(15 12 * * ? *)` .",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CfnCrawler.SchemaChangePolicyProperty": {
+            "additionalProperties": false,
+            "description": "The policy that specifies update and delete behaviors for the crawler.\n\nThe policy tells the crawler what to do in the event that it detects a change in a table that already exists in the customer's database at the time of the crawl. The `SchemaChangePolicy` does not affect whether or how new tables and partitions are added. New tables and partitions are always created regardless of the `SchemaChangePolicy` on a crawler.\n\nThe SchemaChangePolicy consists of two components, `UpdateBehavior` and `DeleteBehavior` .",
+            "properties": {
+                "deleteBehavior": {
+                    "description": "The deletion behavior when the crawler finds a deleted object.\n\nA value of `LOG` specifies that if a table or partition is found to no longer exist, do not delete it, only log that it was found to no longer exist.\n\nA value of `DELETE_FROM_DATABASE` specifies that if a table or partition is found to have been removed, delete it from the database.\n\nA value of `DEPRECATE_IN_DATABASE` specifies that if a table has been found to no longer exist, to add a property to the table that says \"DEPRECATED\" and includes a timestamp with the time of deprecation.",
+                    "type": "string"
+                },
+                "updateBehavior": {
+                    "description": "The update behavior when the crawler finds a changed schema.\n\nA value of `LOG` specifies that if a table or a partition already exists, and a change is detected, do not update it, only log that a change was detected. Add new tables and new partitions (including on existing tables).\n\nA value of `UPDATE_IN_DATABASE` specifies that if a table or partition already exists, and a change is detected, update it. Add new tables and partitions.",
+                    "type": "string"
+                }
+            },
             "type": "object"
         },
         "CfnCreationPolicy": {
@@ -748,6 +761,7 @@
             "additionalProperties": false,
             "properties": {
                 "databaseName": {
+                    "description": "Glue database name to use as the data source. The project's environment user\nwill be granted Lake Formation read permissions on this database and its tables.\n\nUse cases: Glue database import; Data asset registration\n\nAWS: Glue database referenced as a DataZone data source\n\nValidation: Required; valid Glue database name",
                     "type": "string"
                 }
             },
@@ -817,6 +831,46 @@
                     "type": "object"
                 }
             },
+            "type": "object"
+        },
+        "DatabaseCrawlerProps": {
+            "additionalProperties": false,
+            "properties": {
+                "classifiers": {
+                    "description": "Name of the custom classifier to use from the crawler.yaml configuration",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "extraConfiguration": {
+                    "additionalProperties": {},
+                    "description": "Crawler configuration as a string.  See:  https://docs.aws.amazon.com/glue/latest/dg/crawler-configuration.html",
+                    "type": "object"
+                },
+                "recrawlBehavior": {
+                    "description": "Recrawl behaviour: CRAWL_NEW_FOLDERS_ONLY or CRAWL_EVERYTHING or CRAWL_EVENT_MODE",
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/MdaaRoleRef"
+                },
+                "schedule": {
+                    "$ref": "#/definitions/CfnCrawler.ScheduleProperty",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional crawler execution schedule configuration enabling automated periodic data discovery and catalog updates. Defines when and how frequently the crawler will run to discover new data and update the Glue catalog with schema changes and new partitions.\n\nUse cases: Automated data discovery; Scheduled catalog updates; Periodic schema detection; Regular metadata refresh\n\nAWS: AWS Glue crawler schedule configuration for automated execution timing and frequency\n\nValidation: Must be valid CfnCrawler.ScheduleProperty if provided; optional for on-demand crawler execution"
+                },
+                "schemaChangePolicy": {
+                    "$ref": "#/definitions/CfnCrawler.SchemaChangePolicyProperty",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional schema change policy configuration controlling how the crawler handles detected schema modifications and table structure changes. Defines behavior for schema evolution including update actions, deletion policies, and change detection sensitivity.\n\nUse cases: Schema evolution management; Table structure change handling; Metadata consistency; Schema change detection\n\nAWS: AWS Glue crawler schema change policy for handling table structure modifications and schema evolution\n\nValidation: Must be valid CfnCrawler.SchemaChangePolicyProperty if provided; optional for default schema change handling"
+                },
+                "tablePrefix": {
+                    "description": "Optional string prefix to prepend to all table names created by the crawler enabling organized table naming and namespace management. Provides consistent table naming convention and helps avoid naming conflicts in shared Glue catalogs.\n\nUse cases: Table naming organization; Namespace management; Naming conflict avoidance; Consistent table naming\n\nAWS: AWS Glue crawler table prefix for systematic table naming and catalog organization\n\nValidation: Must be valid string if provided; optional for default table naming without prefix",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "role"
+            ],
             "type": "object"
         },
         "DatabaseGrantProps": {
@@ -908,6 +962,10 @@
             "additionalProperties": false,
             "description": "Configuration for a Glue database with S3 location mapping and naming options.\n\nUse cases: Data catalog creation; Database metadata management; S3 location mapping; Iceberg table support; DataOps database configuration; Data lake organization\n\nAWS: AWS Glue database with S3 location configuration for DataOps project data catalog and metadata management\n\nValidation: description must be non-empty string; locationBucketName must be valid S3 bucket name if specified; verbatimName and icebergCompliantName are mutually compatible",
             "properties": {
+                "crawler": {
+                    "$ref": "#/definitions/DatabaseCrawlerProps",
+                    "description": "Auto-create Glue Crawler for this database."
+                },
                 "createDatazoneDatasource": {
                     "description": "Auto-create DataZone data sources for this database.",
                     "type": "boolean"
@@ -2494,55 +2552,6 @@
             },
             "type": "object"
         },
-        "MdaaSageMakerBluePrintConfig": {
-            "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS SageMaker blueprint deployment that specifies domain association, and parameterization. Enables MDAA modules to be deployed as self-service SageMaker blueprints with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized blueprint offerings\n\nAWS: Configures AWS SageMaker blueprints for self-service deployment of MDAA modules with domain management\n\nValidation: domain_arn must be valid SageMaker domain ARN;",
-            "properties": {
-                "authorizedDomainUnits": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "blueprintName": {
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nDescription for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.\n\nUse cases: Product identification; User-friendly naming; SageMaker console display\n\nAWS: AWS SageMaker blueprint name for user interface display\n\nValidation: Must be non-empty string suitable for SageMaker blueprint naming",
-                    "type": "string"
-                },
-                "domainBucketName": {
-                    "type": "string"
-                },
-                "domainConfig": {
-                    "$ref": "#/definitions/DomainConfig"
-                },
-                "domainConfigSSMParam": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
-                    "type": "string"
-                },
-                "enabledRegions": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "parameters": {
-                    "additionalProperties": {
-                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
-                    },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS SageMaker blueprint parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
-                    "type": "object"
-                },
-                "provisioningRoleArn": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "provisioningRoleArn"
-            ],
-            "type": "object"
-        },
         "MdaaSageMakerBluePrintParameterConfig": {
             "additionalProperties": false,
             "properties": {
@@ -2582,6 +2591,62 @@
             },
             "required": [
                 "fieldType"
+            ],
+            "type": "object"
+        },
+        "MdaaSageMakerCustomBluePrintConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS SageMaker blueprint deployment that specifies domain association, and parameterization. Enables MDAA modules to be deployed as self-service SageMaker blueprints with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized blueprint offerings\n\nAWS: Configures AWS SageMaker blueprints for self-service deployment of MDAA modules with domain management\n\nValidation: domain_arn must be valid SageMaker domain ARN;",
+            "properties": {
+                "additionalAccounts": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/AdditionalBlueprintAccount"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional map of additional AWS accounts where the SageMaker blueprint should be enabled. Each entry maps a friendly account name to account-specific configuration including provisioning role ARN and optional parameters and authorized domain units.\n\nUse cases: Multi-account deployment; Cross-account provisioning; Account-specific configuration\n\nAWS: AWS SageMaker blueprint multi-account provisioning configuration\n\nValidation: Must be object with string keys and valid account configuration values if provided",
+                    "type": "object"
+                },
+                "authorizedDomainUnits": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "blueprintName": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nDescription for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.\n\nUse cases: Product identification; User-friendly naming; SageMaker console display\n\nAWS: AWS SageMaker blueprint name for user interface display\n\nValidation: Must be non-empty string suitable for SageMaker blueprint naming",
+                    "type": "string"
+                },
+                "domainBucketName": {
+                    "type": "string"
+                },
+                "domainConfig": {
+                    "$ref": "#/definitions/DomainConfig"
+                },
+                "domainConfigSSMParam": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
+                    "type": "string"
+                },
+                "enabledRegions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS SageMaker blueprint parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "type": "object"
+                },
+                "provisioningRole": {
+                    "$ref": "#/definitions/MdaaRoleRef"
+                }
+            },
+            "required": [
+                "provisioningRole"
             ],
             "type": "object"
         },
@@ -2827,12 +2892,6 @@
             ],
             "description": "A granular suppression"
         },
-        "NamedAuthorizationPolicies": {
-            "additionalProperties": {
-                "$ref": "#/definitions/AuthorizationPolicy"
-            },
-            "type": "object"
-        },
         "NamedClassifierProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/ClassifierProps"
@@ -2873,22 +2932,6 @@
                 "type": "string"
             },
             "description": "Mapping of descriptive principal names to their IAM ARNs for organized permission management.\n\nUse cases: Principal management, permission assignment, IAM organization\n\nAWS: IAM principal ARN mapping for Lake Formation permission grants\n\nValidation: Keys must be descriptive names; values must be valid IAM principal ARNs",
-            "type": "object"
-        },
-        "NamedPrincipalIdentifier": {
-            "additionalProperties": false,
-            "properties": {
-                "identifier": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "identifier",
-                "name"
-            ],
             "type": "object"
         },
         "NamedPrincipalProps": {
@@ -3006,48 +3049,6 @@
             ],
             "type": "object"
         },
-        "PolicyPrincipal": {
-            "additionalProperties": false,
-            "properties": {
-                "accountName": {
-                    "type": "string"
-                },
-                "allUsersGrantFilter": {
-                    "type": "boolean"
-                },
-                "groupIdentifier": {
-                    "$ref": "#/definitions/NamedPrincipalIdentifier"
-                },
-                "groupName": {
-                    "type": "string"
-                },
-                "userIdentifier": {
-                    "$ref": "#/definitions/NamedPrincipalIdentifier"
-                },
-                "userName": {
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
-        "PolicyType": {
-            "enum": [
-                "ADD_TO_PROJECT_MEMBER_POOL",
-                "CREATE_ASSET_TYPE",
-                "CREATE_DOMAIN_UNIT",
-                "CREATE_ENVIRONMENT",
-                "CREATE_ENVIRONMENT_FROM_BLUEPRINT",
-                "CREATE_ENVIRONMENT_PROFILE",
-                "CREATE_FORM_TYPE",
-                "CREATE_GLOSSARY",
-                "CREATE_PROJECT",
-                "CREATE_PROJECT_FROM_PROJECT_PROFILE",
-                "DELEGATE_CREATE_ENVIRONMENT_PROFILE",
-                "OVERRIDE_DOMAIN_UNIT_OWNERS",
-                "OVERRIDE_PROJECT_OWNERS"
-            ],
-            "type": "string"
-        },
         "Port": {
             "additionalProperties": false,
             "description": "Interface for classes that provide the connection-specification parts of a security group rule",
@@ -3118,35 +3119,13 @@
         "ProjectEnvironmentConfiguration": {
             "additionalProperties": false,
             "properties": {
-                "environmentParameters": {
-                    "description": "Array of environment parameters for DataZone project environment configuration enabling",
-                    "items": {
-                        "$ref": "#/definitions/ProjectEnvironmentParameter"
+                "parameters": {
+                    "additionalProperties": {
+                        "type": "string"
                     },
-                    "type": "array"
+                    "type": "object"
                 }
             },
-            "required": [
-                "environmentParameters"
-            ],
-            "type": "object"
-        },
-        "ProjectEnvironmentParameter": {
-            "additionalProperties": false,
-            "properties": {
-                "name": {
-                    "description": "Parameter name for DataZone project environment configuration enabling environment-specific settings",
-                    "type": "string"
-                },
-                "value": {
-                    "description": "Parameter value for DataZone project environment configuration enabling environment-specific values",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "value"
-            ],
             "type": "object"
         },
         "Record<string,Grant>": {
@@ -3260,56 +3239,54 @@
         "SageMakerProjectProps": {
             "additionalProperties": false,
             "properties": {
-                "account": {
-                    "type": "string"
-                },
-                "authorizations": {
-                    "$ref": "#/definitions/NamedAuthorizationPolicies"
-                },
                 "dataSources": {
                     "additionalProperties": {
                         "$ref": "#/definitions/DataSourceProps"
                     },
+                    "description": "Glue data sources to import into the project. Each data source references\na Glue database and creates Lake Formation read permissions for the project's\nenvironment user.\n\nUse cases: Importing existing Glue databases into SageMaker projects; Data asset discovery\n\nAWS: DataZone data sources with Glue run configuration\n\nValidation: Optional; map of data source name to DataSourceProps",
                     "type": "object"
                 },
                 "domainUnit": {
+                    "description": "Domain unit path where the project will be created (e.g., /some/domain/unit).\n\nUse cases: Project organizational placement; Governance scope targeting\n\nAWS: DataZone domain unit for project placement\n\nValidation: Optional; slash-delimited domain unit path",
                     "type": "string"
                 },
                 "environmentConfigs": {
                     "additionalProperties": {
                         "$ref": "#/definitions/ProjectEnvironmentConfiguration"
                     },
+                    "description": "Per-environment configuration overrides for this project's environments.\n\nUse cases: Project-specific environment customization\n\nAWS: DataZone project environment configurations\n\nValidation: Optional; map of environment name to ProjectEnvironmentConfiguration",
                     "type": "object"
                 },
                 "groups": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nContributor group references for project access enabling group-based project contribution and collective standard permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting group-based project collaboration and collective contribution.\n\nUse cases: Group-based project access; Collective contribution; Contributor permissions; Team collaboration; Standard access\n\nAWS: Amazon DataZone project contributor groups with PROJECT_CONTRIBUTOR designation for contributor-level access\n\nValidation: Must be array of valid MDAA group configuration names as defined in the SageMaker module groups section; references must exist in module configuration",
+                    "description": "MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation\nwith contributor-level access to the project.\n\nUse cases: Team-based project contribution; Group standard access\n\nAWS: DataZone project membership with PROJECT_CONTRIBUTOR role\n\nValidation: Optional; map of ID to group config name; names must exist in module groups config",
                     "type": "object"
                 },
                 "ownerGroups": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOwner group references for project ownership enabling group-based project administration and collective administrative permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting group-based project governance and collective administration.\n\nUse cases: Group-based project ownership; Collective administration; Full administrative access; Owner permissions; Team governance\n\nAWS: Amazon DataZone project owner groups with PROJECT_OWNER designation for full administrative access\n\nValidation: Must be array of valid MDAA group configuration names as defined in the SageMaker module groups section; references must exist in module configuration",
+                    "description": "MDAA group configuration names (from the SageMaker module groups section) that\nreceive PROJECT_OWNER designation with full administrative access to the project.\nThese are not DataZone group names or Identity Center group identifiers.\n\nUse cases: Team-based project ownership; Group admin access\n\nAWS: DataZone project membership with PROJECT_OWNER role\n\nValidation: Optional; map of ID to group config name; names must exist in module groups config",
                     "type": "object"
                 },
                 "ownerUsers": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOwner user references for project ownership enabling user-based project administration and full administrative permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting user-based project governance and individual administration.\n\nUse cases: User-based project ownership; Project administration; Full administrative access; Owner permissions; Project governance\n\nAWS: Amazon DataZone project owner users with PROJECT_OWNER designation for full administrative access\n\nValidation: Must be array of valid MDAA user configuration names as defined in the SageMaker module users section; references must exist in module configuration",
+                    "description": "MDAA user configuration names (from the SageMaker module users section) that\nreceive PROJECT_OWNER designation with full administrative access to the project.\nThese are not DataZone usernames or Identity Center identifiers.\n\nUse cases: User-based project ownership; Full project admin access\n\nAWS: DataZone project membership with PROJECT_OWNER role\n\nValidation: Optional; map of ID to user config name; names must exist in module users config",
                     "type": "object"
                 },
                 "profileName": {
+                    "description": "Name of the project profile to use for this project. The profile must\ntarget the same account as the project.\n\nUse cases: Profile-based project creation; Environment template selection\n\nAWS: DataZone project profile reference\n\nValidation: Required; string; must match a key in projectProfiles config",
                     "type": "string"
                 },
                 "users": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nContributor user references for project access enabling user-based project contribution and standard permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting user-based project collaboration and individual contribution.\n\nUse cases: User-based project access; Project contribution; Contributor permissions; Collaboration; Standard access\n\nAWS: Amazon DataZone project contributor users with PROJECT_CONTRIBUTOR designation for contributor-level access\n\nValidation: Must be array of valid MDAA user configuration names as defined in the SageMaker module users section; references must exist in module configuration",
+                    "description": "MDAA user configuration names that receive PROJECT_CONTRIBUTOR designation\nwith contributor-level access to the project.\n\nUse cases: User-based project contribution; Standard project access\n\nAWS: DataZone project membership with PROJECT_CONTRIBUTOR role\n\nValidation: Optional; map of ID to user config name; names must exist in module users config",
                     "type": "object"
                 }
             },
@@ -3880,7 +3857,7 @@
             "$ref": "#/definitions/DataOpsSageMakerProps"
         },
         "sagemakerBlueprint": {
-            "$ref": "#/definitions/MdaaSageMakerBluePrintConfig",
+            "$ref": "#/definitions/MdaaSageMakerCustomBluePrintConfig",
             "description": "Q-ENHANCED-PROPERTY\nOptional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access\n\nAWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode"
         },
         "securityGroupConfigs": {

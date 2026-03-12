@@ -8,6 +8,7 @@ import { DataZoneCDKApp } from '../lib/datazone';
 import { TestRegionFact } from '@aws-mdaa/testing';
 beforeEach(() => {
   process.env.CDK_DEFAULT_REGION = 'test-region';
+  process.env.CDK_DEFAULT_ACCOUNT = 'test-account';
   Fact.register(new TestRegionFact(), true);
 });
 test('SynthTest', () => {
@@ -17,6 +18,10 @@ test('SynthTest', () => {
     domain: 'test-domain',
     module_name: 'test-module',
     module_configs: './test/test-config.yaml',
+    additional_stacks: JSON.stringify([
+      { account: '1234567890', region: 'test-region' },
+      { account: '2234567890', region: 'test-region' },
+    ]),
   };
   const app = new DataZoneCDKApp({ context: context });
   app.generateStack();

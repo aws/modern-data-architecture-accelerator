@@ -1,0 +1,50 @@
+# SageMaker Unified Studio Project Profiles Configuration
+#
+# Defines standardized project templates with pre-configured blueprints and settings.
+# Each profile targets a specific AWS account and determines which blueprints are
+# automatically provisioned when users create projects.
+
+# Reference to the SMUS domain configuration in SSM Parameter Store
+domainConfigSSMParam: /{{org}}/{{domain}}/smus-dom/domain/domain1/config
+
+# Environment templates define the set of blueprints and their configuration
+# Templates can be reused across multiple project profiles for consistency
+projectProfileEnvironmentsTemplates:
+  common-template:
+    # Blueprint configuration - key must match the blueprintName in the blueprint config
+    ddb-table: # Custom DynamoDB blueprint deployed via smus-bp-ddb.yaml
+      # Deploy this blueprint automatically when the project is created
+      # Options: ON_CREATE (automatic), ON_DEMAND (manual trigger required)
+      deploymentMode: ON_CREATE
+
+      # Deployment order relative to other blueprints (higher number = deploys later)
+      # The built-in Tooling blueprint deploys first (order 0), then custom blueprints
+      # Use higher numbers if this blueprint depends on resources from other blueprints
+      deploymentOrder: 5
+
+      # Blueprint parameter configuration
+      parameters:
+        overrides:
+          # The KMS Key parameter will be set by individual projects
+          # isEditable: true means projects can override/specify this value
+          # isEditable: false would mean the value is fixed at the profile level
+          kmsKey:
+            isEditable: true # Delegate to the project - each project chooses its KMS key
+
+# Project profiles - one per account/team
+# Each profile targets a specific AWS account and uses the common template
+projectProfiles:
+  # Enterprise profile for projects in the same account as the SMUS domain
+  enterprise-profile:
+    # No account specified = uses the default account (where this config is deployed)
+    environmentsTemplate: common-template
+
+  # Team1 profile for projects in the team1 account
+  team1-profile:
+    account: "{{context:team1_account}}" # Projects deploy to team1 account
+    environmentsTemplate: common-template
+
+  # Team2 profile for projects in the team2 account
+  team2-profile:
+    account: "{{context:team2_account}}" # Projects deploy to team2 account
+    environmentsTemplate: common-template

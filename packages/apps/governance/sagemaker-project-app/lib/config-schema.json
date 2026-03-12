@@ -2,6 +2,40 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
+        "AdditionalBlueprintAccount": {
+            "additionalProperties": false,
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "authorizedDomainUnits": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "enabledRegions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
+                    },
+                    "type": "object"
+                },
+                "provisioningRole": {
+                    "$ref": "#/definitions/MdaaRoleRef"
+                }
+            },
+            "required": [
+                "account",
+                "provisioningRole"
+            ],
+            "type": "object"
+        },
         "Architecture": {
             "additionalProperties": false,
             "description": "Architectures supported by AWS Lambda",
@@ -19,53 +53,6 @@
                 "dockerPlatform",
                 "name"
             ],
-            "type": "object"
-        },
-        "AuthorizationPolicy": {
-            "additionalProperties": false,
-            "properties": {
-                "blueprintConfig": {
-                    "$ref": "#/definitions/BlueprintAuthorizationConfig"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "domainUnitId": {
-                    "type": "string"
-                },
-                "includeChildDomainUnits": {
-                    "type": "boolean"
-                },
-                "policyType": {
-                    "$ref": "#/definitions/PolicyType"
-                },
-                "principals": {
-                    "items": {
-                        "$ref": "#/definitions/PolicyPrincipal"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "policyType",
-                "principals"
-            ],
-            "type": "object"
-        },
-        "BlueprintAuthorizationConfig": {
-            "additionalProperties": false,
-            "properties": {
-                "includeChildDomainUnits": {
-                    "type": "boolean"
-                },
-                "projectDesignation": {
-                    "enum": [
-                        "CONTRIBUTOR",
-                        "OWNER"
-                    ],
-                    "type": "string"
-                }
-            },
             "type": "object"
         },
         "CfnAutoScalingReplacingUpdate": {
@@ -280,85 +267,6 @@
             },
             "type": "object"
         },
-        "CfnProjectProfile.EnvironmentConfigurationParameterProperty": {
-            "additionalProperties": false,
-            "description": "The environment configuration parameter.",
-            "properties": {
-                "isEditable": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/IResolvable"
-                        },
-                        {
-                            "type": "boolean"
-                        }
-                    ],
-                    "description": "Specifies whether the environment parameter is editable."
-                },
-                "name": {
-                    "description": "The name of the environment configuration parameter.",
-                    "type": "string"
-                },
-                "value": {
-                    "description": "The value of the environment configuration parameter.",
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
-        "CfnProjectProfile.EnvironmentConfigurationParametersDetailsProperty": {
-            "additionalProperties": false,
-            "description": "The details of the environment configuration parameter.",
-            "properties": {
-                "parameterOverrides": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/IResolvable"
-                        },
-                        {
-                            "items": {
-                                "anyOf": [
-                                    {
-                                        "$ref": "#/definitions/IResolvable"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/CfnProjectProfile.EnvironmentConfigurationParameterProperty"
-                                    }
-                                ]
-                            },
-                            "type": "array"
-                        }
-                    ],
-                    "description": "The parameter overrides."
-                },
-                "resolvedParameters": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/IResolvable"
-                        },
-                        {
-                            "items": {
-                                "anyOf": [
-                                    {
-                                        "$ref": "#/definitions/IResolvable"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/CfnProjectProfile.EnvironmentConfigurationParameterProperty"
-                                    }
-                                ]
-                            },
-                            "type": "array"
-                        }
-                    ],
-                    "description": "The resolved environment configuration parameters."
-                },
-                "ssmPath": {
-                    "description": "Ssm path environment configuration parameters.",
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
         "CfnResource": {
             "additionalProperties": false,
             "description": "Represents a CloudFormation resource.",
@@ -506,16 +414,6 @@
             "description": "Conditions for when an IAM Policy is in effect, specified in the following structure:\n\n`{ \"Operator\": { \"keyInRequestContext\": \"value\" } }`\n\nThe value can be either a single string value or an array of string values.\n\nFor more information, including which operators are supported, see [the IAM\ndocumentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition.html).",
             "type": "object"
         },
-        "ConfigurationParameter": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/IResolvable"
-                },
-                {
-                    "$ref": "#/definitions/CfnProjectProfile.EnvironmentConfigurationParametersDetailsProperty"
-                }
-            ]
-        },
         "Connections": {
             "additionalProperties": false,
             "description": "Manage the allowed network connections for constructs with Security Groups.\n\nSecurity Groups can be thought of as a firewall for network-connected\ndevices. This class makes it easy to allow network connections to and\nfrom security groups, and between security groups individually. When\nestablishing connectivity between security groups, it will automatically\nadd rules in both security groups\n\nThis object can manage one or more security groups.",
@@ -561,6 +459,7 @@
             "additionalProperties": false,
             "properties": {
                 "databaseName": {
+                    "description": "Glue database name to use as the data source. The project's environment user\nwill be granted Lake Formation read permissions on this database and its tables.\n\nUse cases: Glue database import; Data asset registration\n\nAWS: Glue database referenced as a DataZone data source\n\nValidation: Required; valid Glue database name",
                     "type": "string"
                 }
             },
@@ -1951,53 +1850,34 @@
             ],
             "type": "object"
         },
-        "MdaaSageMakerBluePrintConfig": {
+        "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS SageMaker blueprint deployment that specifies domain association, and parameterization. Enables MDAA modules to be deployed as self-service SageMaker blueprints with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized blueprint offerings\n\nAWS: Configures AWS SageMaker blueprints for self-service deployment of MDAA modules with domain management\n\nValidation: domain_arn must be valid SageMaker domain ARN;",
             "properties": {
-                "authorizedDomainUnits": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "blueprintName": {
+                "arn": {
+                    "description": "Full IAM role ARN for cross-account role references and explicit role identification.\n\nUse cases: Cross-account role references; Explicit role binding; Multi-account deployments\n\nAWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)\n\nValidation: Optional; must be a valid IAM role ARN if provided",
                     "type": "string"
                 },
-                "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nDescription for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.\n\nUse cases: Product identification; User-friendly naming; SageMaker console display\n\nAWS: AWS SageMaker blueprint name for user interface display\n\nValidation: Must be non-empty string suitable for SageMaker blueprint naming",
+                "id": {
+                    "description": "IAM role unique identifier for role resolution using the role's AWS-generated ID.\n\nUse cases: Stable role references; Role resolution by unique ID; Immutable role binding\n\nAWS: IAM role unique ID (e.g., AROA...)\n\nValidation: Optional; must be a valid IAM role unique ID if provided",
                     "type": "string"
                 },
-                "domainBucketName": {
+                "immutable": {
+                    "description": "Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.\n\nUse cases: Pre-existing role protection; Externally managed roles; Read-only role references\n\nAWS: Controls whether MDAA attaches policies or modifies the referenced IAM role\n\nValidation: Optional boolean; defaults to false",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "IAM role name for role resolution within the same AWS account.\n\nUse cases: Same-account role references; Role name-based resolution; Local IAM role binding\n\nAWS: IAM role name resolved via GetRole within the deployment account\n\nValidation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution",
                     "type": "string"
                 },
-                "domainConfig": {
-                    "$ref": "#/definitions/DomainConfig"
-                },
-                "domainConfigSSMParam": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
+                "refId": {
+                    "description": "Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.\n\nUse cases: Role reference identification; Configuration deduplication; Role lookup key\n\nAWS: Logical identifier for IAM role references within MDAA configuration\n\nValidation: Optional; must be unique within the configuration scope if provided",
                     "type": "string"
                 },
-                "enabledRegions": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "parameters": {
-                    "additionalProperties": {
-                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
-                    },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS SageMaker blueprint parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
-                    "type": "object"
-                },
-                "provisioningRoleArn": {
-                    "type": "string"
+                "sso": {
+                    "description": "Flag indicating the role should be resolved as an AWS SSO auto-generated role.\n\nUse cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access\n\nAWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention\n\nValidation: Optional boolean; defaults to false",
+                    "type": "boolean"
                 }
             },
-            "required": [
-                "provisioningRoleArn"
-            ],
             "type": "object"
         },
         "MdaaSageMakerBluePrintParameterConfig": {
@@ -2039,6 +1919,62 @@
             },
             "required": [
                 "fieldType"
+            ],
+            "type": "object"
+        },
+        "MdaaSageMakerCustomBluePrintConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS SageMaker blueprint deployment that specifies domain association, and parameterization. Enables MDAA modules to be deployed as self-service SageMaker blueprints with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized blueprint offerings\n\nAWS: Configures AWS SageMaker blueprints for self-service deployment of MDAA modules with domain management\n\nValidation: domain_arn must be valid SageMaker domain ARN;",
+            "properties": {
+                "additionalAccounts": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/AdditionalBlueprintAccount"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional map of additional AWS accounts where the SageMaker blueprint should be enabled. Each entry maps a friendly account name to account-specific configuration including provisioning role ARN and optional parameters and authorized domain units.\n\nUse cases: Multi-account deployment; Cross-account provisioning; Account-specific configuration\n\nAWS: AWS SageMaker blueprint multi-account provisioning configuration\n\nValidation: Must be object with string keys and valid account configuration values if provided",
+                    "type": "object"
+                },
+                "authorizedDomainUnits": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "blueprintName": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nDescription for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.\n\nUse cases: Product identification; User-friendly naming; SageMaker console display\n\nAWS: AWS SageMaker blueprint name for user interface display\n\nValidation: Must be non-empty string suitable for SageMaker blueprint naming",
+                    "type": "string"
+                },
+                "domainBucketName": {
+                    "type": "string"
+                },
+                "domainConfig": {
+                    "$ref": "#/definitions/DomainConfig"
+                },
+                "domainConfigSSMParam": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
+                    "type": "string"
+                },
+                "enabledRegions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaSageMakerBluePrintParameterConfig"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS SageMaker blueprint parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "type": "object"
+                },
+                "provisioningRole": {
+                    "$ref": "#/definitions/MdaaRoleRef"
+                }
+            },
+            "required": [
+                "provisioningRole"
             ],
             "type": "object"
         },
@@ -2187,28 +2123,6 @@
             ],
             "type": "object"
         },
-        "NamedAuthorizationPolicies": {
-            "additionalProperties": {
-                "$ref": "#/definitions/AuthorizationPolicy"
-            },
-            "type": "object"
-        },
-        "NamedPrincipalIdentifier": {
-            "additionalProperties": false,
-            "properties": {
-                "identifier": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "identifier",
-                "name"
-            ],
-            "type": "object"
-        },
         "NamedProfileEnvironmentConfigs": {
             "additionalProperties": {
                 "$ref": "#/definitions/ProfileEnvironmentConfig"
@@ -2322,47 +2236,19 @@
             ],
             "type": "object"
         },
-        "PolicyPrincipal": {
+        "ParameterOverrideProps": {
             "additionalProperties": false,
             "properties": {
-                "accountName": {
-                    "type": "string"
-                },
-                "allUsersGrantFilter": {
+                "isEditable": {
+                    "description": "Whether this parameter can be edited by project creators. When false,\nthe value is locked to the profile-defined value.\n\nUse cases: Compliance-enforced parameters; Locked vs. flexible overrides\n\nAWS: DataZone project profile parameter editability\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
-                "groupIdentifier": {
-                    "$ref": "#/definitions/NamedPrincipalIdentifier"
-                },
-                "groupName": {
-                    "type": "string"
-                },
-                "userIdentifier": {
-                    "$ref": "#/definitions/NamedPrincipalIdentifier"
-                },
-                "userName": {
+                "value": {
+                    "description": "Override value for this blueprint parameter.\n\nUse cases: Default parameter values; Compliance-enforced settings\n\nAWS: DataZone project profile parameter value\n\nValidation: Optional; string",
                     "type": "string"
                 }
             },
             "type": "object"
-        },
-        "PolicyType": {
-            "enum": [
-                "ADD_TO_PROJECT_MEMBER_POOL",
-                "CREATE_ASSET_TYPE",
-                "CREATE_DOMAIN_UNIT",
-                "CREATE_ENVIRONMENT",
-                "CREATE_ENVIRONMENT_FROM_BLUEPRINT",
-                "CREATE_ENVIRONMENT_PROFILE",
-                "CREATE_FORM_TYPE",
-                "CREATE_GLOSSARY",
-                "CREATE_PROJECT",
-                "CREATE_PROJECT_FROM_PROJECT_PROFILE",
-                "DELEGATE_CREATE_ENVIRONMENT_PROFILE",
-                "OVERRIDE_DOMAIN_UNIT_OWNERS",
-                "OVERRIDE_PROJECT_OWNERS"
-            ],
-            "type": "string"
         },
         "Port": {
             "additionalProperties": false,
@@ -2407,13 +2293,8 @@
         "ProfileEnvironmentConfig": {
             "additionalProperties": false,
             "properties": {
-                "configurationParameters": {
-                    "additionalProperties": {
-                        "$ref": "#/definitions/ConfigurationParameter"
-                    },
-                    "type": "object"
-                },
                 "deploymentMode": {
+                    "description": "When the environment is deployed relative to project creation.\nON_CREATE deploys immediately; ON_DEMAND requires manual trigger.\n\nUse cases: Automatic vs. manual environment provisioning\n\nAWS: DataZone environment deployment mode\n\nValidation: Optional; 'ON_CREATE' | 'ON_DEMAND'",
                     "enum": [
                         "ON_CREATE",
                         "ON_DEMAND"
@@ -2421,7 +2302,24 @@
                     "type": "string"
                 },
                 "deploymentOrder": {
+                    "description": "Numeric order for environment deployment. Lower numbers deploy first.\nTooling is always order 1, DataLake is always order 2.\n\nUse cases: Ordered environment provisioning; Dependency sequencing\n\nAWS: DataZone environment deployment order\n\nValidation: Optional; positive integer",
                     "type": "number"
+                },
+                "parameters": {
+                    "additionalProperties": false,
+                    "description": "Blueprint parameter overrides for this environment configuration.\nSupports per-parameter value and editability settings.\n\nUse cases: Blueprint-specific parameter customization; Compliance overrides\n\nAWS: DataZone project profile environment parameters\n\nValidation: Optional; object with overrides map of parameter name to ParameterOverrideProps",
+                    "properties": {
+                        "overrides": {
+                            "additionalProperties": {
+                                "$ref": "#/definitions/ParameterOverrideProps"
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "overrides"
+                    ],
+                    "type": "object"
                 }
             },
             "type": "object"
@@ -2429,54 +2327,36 @@
         "ProjectEnvironmentConfiguration": {
             "additionalProperties": false,
             "properties": {
-                "environmentParameters": {
-                    "description": "Array of environment parameters for DataZone project environment configuration enabling",
-                    "items": {
-                        "$ref": "#/definitions/ProjectEnvironmentParameter"
+                "parameters": {
+                    "additionalProperties": {
+                        "type": "string"
                     },
-                    "type": "array"
+                    "type": "object"
                 }
             },
-            "required": [
-                "environmentParameters"
-            ],
-            "type": "object"
-        },
-        "ProjectEnvironmentParameter": {
-            "additionalProperties": false,
-            "properties": {
-                "name": {
-                    "description": "Parameter name for DataZone project environment configuration enabling environment-specific settings",
-                    "type": "string"
-                },
-                "value": {
-                    "description": "Parameter value for DataZone project environment configuration enabling environment-specific values",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "value"
-            ],
             "type": "object"
         },
         "ProjectProfileProps": {
             "additionalProperties": false,
             "properties": {
                 "account": {
+                    "description": "Target AWS account ID for the profile's environments. Defaults to the\ndeploying stack's account if omitted.\n\nUse cases: Cross-account project profiles; Account-specific environment targeting\n\nAWS: Target account for DataZone environment provisioning\n\nValidation: Optional; valid 12-digit AWS account ID",
                     "type": "string"
                 },
                 "domainUnit": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional domain unit specification for DataZone project organization enabling hierarchical domain management and project categorization. Defines the domain unit within the DataZone domain for project organization and governance scope management.\n\nUse cases: Domain organization; Project categorization; Hierarchical management; Governance scope\n\nAWS: DataZone domain unit for project organization and governance management\n\nValidation: Must be valid domain unit string if provided; affects project organization and governance scope",
+                    "description": "Domain unit path within the DataZone domain where this project profile\nis scoped. Uses slash-delimited paths (e.g., /root/team-a).\n\nUse cases: Profile scoping to organizational units; Governance boundary control\n\nAWS: DataZone domain unit for project profile scoping\n\nValidation: Optional; valid domain unit path string",
                     "type": "string"
                 },
                 "environments": {
-                    "$ref": "#/definitions/NamedProfileEnvironmentConfigs"
+                    "$ref": "#/definitions/NamedProfileEnvironmentConfigs",
+                    "description": "Named environment configurations for this profile. Each key is a blueprint\nname that must exist in the domain's enabled blueprints. Merged with\nenvironments from the referenced environmentsTemplate.\n\nUse cases: Profile-specific environment definitions; Blueprint parameter overrides\n\nAWS: DataZone project profile environment configurations\n\nValidation: Optional; valid NamedProfileEnvironmentConfigs"
                 },
                 "environmentsTemplate": {
+                    "description": "Name of an environment template from projectProfileEnvironmentsTemplates.\nTemplate environments are merged with this profile's environments, with\nprofile-level values taking precedence.\n\nUse cases: Reusable environment definitions; Template-based profile configuration\n\nAWS: DataZone project profile environment template reference\n\nValidation: Optional; must match a key in projectProfileEnvironmentsTemplates",
                     "type": "string"
                 },
                 "region": {
+                    "description": "Target AWS region for the profile's environments. Defaults to the\ndeploying stack's region if omitted.\n\nUse cases: Cross-region project profiles; Region-specific environment targeting\n\nAWS: Target region for DataZone environment provisioning\n\nValidation: Optional; valid AWS region identifier",
                     "type": "string"
                 }
             },
@@ -2579,56 +2459,54 @@
         "SageMakerProjectProps": {
             "additionalProperties": false,
             "properties": {
-                "account": {
-                    "type": "string"
-                },
-                "authorizations": {
-                    "$ref": "#/definitions/NamedAuthorizationPolicies"
-                },
                 "dataSources": {
                     "additionalProperties": {
                         "$ref": "#/definitions/DataSourceProps"
                     },
+                    "description": "Glue data sources to import into the project. Each data source references\na Glue database and creates Lake Formation read permissions for the project's\nenvironment user.\n\nUse cases: Importing existing Glue databases into SageMaker projects; Data asset discovery\n\nAWS: DataZone data sources with Glue run configuration\n\nValidation: Optional; map of data source name to DataSourceProps",
                     "type": "object"
                 },
                 "domainUnit": {
+                    "description": "Domain unit path where the project will be created (e.g., /some/domain/unit).\n\nUse cases: Project organizational placement; Governance scope targeting\n\nAWS: DataZone domain unit for project placement\n\nValidation: Optional; slash-delimited domain unit path",
                     "type": "string"
                 },
                 "environmentConfigs": {
                     "additionalProperties": {
                         "$ref": "#/definitions/ProjectEnvironmentConfiguration"
                     },
+                    "description": "Per-environment configuration overrides for this project's environments.\n\nUse cases: Project-specific environment customization\n\nAWS: DataZone project environment configurations\n\nValidation: Optional; map of environment name to ProjectEnvironmentConfiguration",
                     "type": "object"
                 },
                 "groups": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nContributor group references for project access enabling group-based project contribution and collective standard permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting group-based project collaboration and collective contribution.\n\nUse cases: Group-based project access; Collective contribution; Contributor permissions; Team collaboration; Standard access\n\nAWS: Amazon DataZone project contributor groups with PROJECT_CONTRIBUTOR designation for contributor-level access\n\nValidation: Must be array of valid MDAA group configuration names as defined in the SageMaker module groups section; references must exist in module configuration",
+                    "description": "MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation\nwith contributor-level access to the project.\n\nUse cases: Team-based project contribution; Group standard access\n\nAWS: DataZone project membership with PROJECT_CONTRIBUTOR role\n\nValidation: Optional; map of ID to group config name; names must exist in module groups config",
                     "type": "object"
                 },
                 "ownerGroups": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOwner group references for project ownership enabling group-based project administration and collective administrative permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting group-based project governance and collective administration.\n\nUse cases: Group-based project ownership; Collective administration; Full administrative access; Owner permissions; Team governance\n\nAWS: Amazon DataZone project owner groups with PROJECT_OWNER designation for full administrative access\n\nValidation: Must be array of valid MDAA group configuration names as defined in the SageMaker module groups section; references must exist in module configuration",
+                    "description": "MDAA group configuration names (from the SageMaker module groups section) that\nreceive PROJECT_OWNER designation with full administrative access to the project.\nThese are not DataZone group names or Identity Center group identifiers.\n\nUse cases: Team-based project ownership; Group admin access\n\nAWS: DataZone project membership with PROJECT_OWNER role\n\nValidation: Optional; map of ID to group config name; names must exist in module groups config",
                     "type": "object"
                 },
                 "ownerUsers": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOwner user references for project ownership enabling user-based project administration and full administrative permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting user-based project governance and individual administration.\n\nUse cases: User-based project ownership; Project administration; Full administrative access; Owner permissions; Project governance\n\nAWS: Amazon DataZone project owner users with PROJECT_OWNER designation for full administrative access\n\nValidation: Must be array of valid MDAA user configuration names as defined in the SageMaker module users section; references must exist in module configuration",
+                    "description": "MDAA user configuration names (from the SageMaker module users section) that\nreceive PROJECT_OWNER designation with full administrative access to the project.\nThese are not DataZone usernames or Identity Center identifiers.\n\nUse cases: User-based project ownership; Full project admin access\n\nAWS: DataZone project membership with PROJECT_OWNER role\n\nValidation: Optional; map of ID to user config name; names must exist in module users config",
                     "type": "object"
                 },
                 "profileName": {
+                    "description": "Name of the project profile to use for this project. The profile must\ntarget the same account as the project.\n\nUse cases: Profile-based project creation; Environment template selection\n\nAWS: DataZone project profile reference\n\nValidation: Required; string; must match a key in projectProfiles config",
                     "type": "string"
                 },
                 "users": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nContributor user references for project access enabling user-based project contribution and standard permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting user-based project collaboration and individual contribution.\n\nUse cases: User-based project access; Project contribution; Contributor permissions; Collaboration; Standard access\n\nAWS: Amazon DataZone project contributor users with PROJECT_CONTRIBUTOR designation for contributor-level access\n\nValidation: Must be array of valid MDAA user configuration names as defined in the SageMaker module users section; references must exist in module configuration",
+                    "description": "MDAA user configuration names that receive PROJECT_CONTRIBUTOR designation\nwith contributor-level access to the project.\n\nUse cases: User-based project contribution; Standard project access\n\nAWS: DataZone project membership with PROJECT_CONTRIBUTOR role\n\nValidation: Optional; map of ID to user config name; names must exist in module users config",
                     "type": "object"
                 }
             },
@@ -3080,10 +2958,10 @@
     "properties": {
         "domainConfig": {
             "$ref": "#/definitions/DomainConfig",
-            "description": "Q-ENHANCED-PROPERTY\nOptional direct domain configuration for DataZone project setup enabling inline domain configuration management. Provides direct domain configuration object for DataZone project setup and governance configuration without external parameter references.\n\nUse cases: Direct configuration; Inline setup; Domain configuration; Governance setup\n\nAWS: DataZone domain configuration for project setup and governance management\n\nValidation: Must be valid DomainConfig object if provided; enables direct domain configuration when specified\n  *"
+            "description": "Direct domain configuration object for SageMaker project setup. Use this\nwhen SSM-based config resolution is not desired. Mutually exclusive with\ndomainConfigSSMParam.\n\nUse cases: Inline domain config; Testing; Single-stack deployments\n\nAWS: SageMaker (DataZone V2) domain configuration\n\nValidation: Optional; valid DomainConfig; mutually exclusive with domainConfigSSMParam"
         },
         "domainConfigSSMParam": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
+            "description": "SSM parameter base name containing SageMaker domain configuration. Allows\nall required domain config (domain ID, blueprint IDs, domain unit IDs) to be\npulled from SSM and APIs. If omitted, the full domainConfig object must be\nprovided instead.\n\nUse cases: Dynamic domain config resolution; Decoupled domain/project deployments\n\nAWS: SSM Parameter Store for SageMaker domain configuration\n\nValidation: Optional; valid SSM parameter name; mutually exclusive with domainConfig",
             "type": "string"
         },
         "nag_suppressions": {
@@ -3094,16 +2972,19 @@
             "additionalProperties": {
                 "$ref": "#/definitions/NamedProfileEnvironmentConfigs"
             },
+            "description": "Reusable environment templates that can be referenced by project profiles\nvia the environmentsTemplate property. Template environments are merged\nwith profile-specific environments.\n\nUse cases: Shared environment definitions; DRY profile configuration\n\nAWS: DataZone project profile environment templates\n\nValidation: Optional; map of template name to NamedProfileEnvironmentConfigs",
             "type": "object"
         },
         "projectProfiles": {
-            "$ref": "#/definitions/NamedProjectProfiles"
+            "$ref": "#/definitions/NamedProjectProfiles",
+            "description": "Project profiles defining environment blueprints and deployment configurations.\nProfiles are reusable templates that determine which environments are provisioned\nwhen a project is created.\n\nUse cases: Standardized project templates; Blueprint environment bundling\n\nAWS: DataZone project profiles with environment configurations\n\nValidation: Optional; valid NamedProjectProfiles"
         },
         "projects": {
-            "$ref": "#/definitions/NamedSageMakerProjects"
+            "$ref": "#/definitions/NamedSageMakerProjects",
+            "description": "SageMaker projects to create in the domain. Each project references a\nproject profile and can include data sources and membership assignments.\n\nUse cases: Project deployment; Data source registration; Team membership\n\nAWS: DataZone projects with profile-based environment provisioning\n\nValidation: Optional; valid NamedSageMakerProjects"
         },
         "sagemakerBlueprint": {
-            "$ref": "#/definitions/MdaaSageMakerBluePrintConfig",
+            "$ref": "#/definitions/MdaaSageMakerCustomBluePrintConfig",
             "description": "Q-ENHANCED-PROPERTY\nOptional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access\n\nAWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode"
         },
         "service_catalog_product_config": {
