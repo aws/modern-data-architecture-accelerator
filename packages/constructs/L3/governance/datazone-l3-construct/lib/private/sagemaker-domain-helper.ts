@@ -46,6 +46,21 @@ import {
 import { CommonDomainHelper, CommonDomainHelperProps } from './common-domain-helper';
 import { resolveCrossAccountProvisioningRole } from '@aws-mdaa/datazone-constructs/lib/utils';
 
+interface EnableBlueprintRoles {
+  lakeformationManageAccessRole: IRole;
+  blueprintProvisioningRole: IRole;
+}
+
+interface EnableBlueprintDomainInfo {
+  domainName: string;
+  domainConfig: DomainConfig;
+}
+
+interface EnableBlueprintTargetEnv {
+  account: string;
+  region?: string;
+}
+
 export class SageMakerDomainHelper extends CommonDomainHelper {
   private secondStageStack?: Stack;
 
@@ -457,12 +472,12 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       this.enableManagedBlueprints(
         domainProps.enabledManagedBlueprints,
         domainResources.domain,
-        this.props.account,
-        domainName,
-        domainConfig,
-        domainResources.lakeformationManageAccessRole,
-        domainDefaultBlueprintProvisioningRole,
-        this.props.region,
+        { account: this.props.account, region: this.props.region },
+        { domainName, domainConfig },
+        {
+          lakeformationManageAccessRole: domainResources.lakeformationManageAccessRole,
+          blueprintProvisioningRole: domainDefaultBlueprintProvisioningRole,
+        },
       );
     }
 
@@ -912,12 +927,12 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       this.enableManagedBlueprints(
         accountProps.enabledManagedBlueprints,
         crossAccountStack,
-        accountProps.account,
-        domainName,
-        crossAccountDomainConfig,
-        lakeformationManageAccessRole,
-        accountDefaultBlueprintProvisioningRole,
-        accountProps.region,
+        { account: accountProps.account, region: accountProps.region },
+        { domainName, domainConfig: crossAccountDomainConfig },
+        {
+          lakeformationManageAccessRole,
+          blueprintProvisioningRole: accountDefaultBlueprintProvisioningRole,
+        },
       );
     }
 
@@ -934,12 +949,9 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
   private enableManagedBlueprints(
     enabledManagedBlueprints: { [name: string]: EnabledBlueprintProps },
     scope: Construct,
-    enabledAccount: string,
-    domainName: string,
-    domainConfig: DomainConfig,
-    lakeformationManageAccessRole: IRole,
-    blueprintProvisioningRole: IRole,
-    enabledRegion?: string,
+    targetEnv: EnableBlueprintTargetEnv,
+    domainInfo: EnableBlueprintDomainInfo,
+    roles: EnableBlueprintRoles,
   ) {
     // Validate that Tooling and DataLake are not in enabledManagedBlueprints
     if ('Tooling' in enabledManagedBlueprints) {
@@ -957,25 +969,29 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       const authorizedDomainUnits = Object.fromEntries(
         (blueprintProps.authorizedDomainUnits ?? ['/root'])
           .map(unit => (unit.startsWith('/') ? unit : `/${unit}`))
-          .map(unit => [unit, domainConfig.getDomainUnitId(unit)]),
+          .map(unit => [unit, domainInfo.domainConfig.getDomainUnitId(unit)]),
       );
 
       const provisioningRole = blueprintProps.provisioningRole
         ? Role.fromRoleArn(
             scope,
-            `${domainName}-${blueprintName}-provisioning-role`,
-            resolveCrossAccountProvisioningRole(blueprintProps.provisioningRole, enabledAccount, this.props.partition),
+            `${domainInfo.domainName}-${blueprintName}-provisioning-role`,
+            resolveCrossAccountProvisioningRole(
+              blueprintProps.provisioningRole,
+              targetEnv.account,
+              this.props.partition,
+            ),
           )
-        : blueprintProvisioningRole;
+        : roles.blueprintProvisioningRole;
 
       this.createManagedBlueprintConfiguration(scope, {
-        account: enabledAccount,
-        region: enabledRegion ?? this.props.region,
-        domainName,
-        domainId: domainConfig.domainId,
+        account: targetEnv.account,
+        region: targetEnv.region ?? this.props.region,
+        domainName: domainInfo.domainName,
+        domainId: domainInfo.domainConfig.domainId,
         blueprintName,
-        lakeformationManageAccessRole,
-        regionalParameters: this.createBlueprintRegionalParams(blueprintProps, enabledRegion ?? this.props.region),
+        lakeformationManageAccessRole: roles.lakeformationManageAccessRole,
+        regionalParameters: this.createBlueprintRegionalParams(blueprintProps, targetEnv.region ?? this.props.region),
         authorizedDomainUnits,
         provisioningRole,
       });

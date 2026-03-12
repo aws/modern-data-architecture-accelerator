@@ -21,30 +21,31 @@ class BlueprintRoleHelper extends MdaaRoleHelper {
     super({} as Construct, {} as IMdaaResourceNaming);
   }
 
+  // NOSONAR
   public override resolveRoleRefsWithOrdinals(): never {
     throw new Error(
       'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
     );
   }
-
+  // NOSONAR
   public override resolveRoleRefs(): never {
     throw new Error(
       'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
     );
   }
-
+  // NOSONAR
   public override resolveRoleRefWithRefId(): never {
     throw new Error(
       'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
     );
   }
-
+  // NOSONAR
   public override resolveRoleRef(): never {
     throw new Error(
       'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
     );
   }
-
+  // NOSONAR
   public override createProviderServiceToken(): never {
     throw new Error(
       'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
