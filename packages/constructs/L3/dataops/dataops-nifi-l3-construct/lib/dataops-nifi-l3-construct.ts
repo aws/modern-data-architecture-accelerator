@@ -45,38 +45,33 @@ import {
 } from './nifi-options';
 
 /**
- * Q-ENHANCED-INTERFACE
- * NiFi cluster configuration interface with peer cluster networking for multi-cluster data flow architectures. Extends base NiFi cluster options with peer cluster definitions enabling secure cross-cluster communication and distributed data processing workflows.
+ * NiFi cluster configuration with peer cluster networking for multi-cluster data flow architectures.
  *
- * Use cases: Multi-cluster NiFi deployments; Cross-cluster data flows; Distributed processing; Cluster federation; Secure inter-cluster communication
+ * Extends base NiFi cluster options with peer cluster definitions enabling secure
+ * cross-cluster communication and distributed data processing workflows.
  *
- * AWS: NiFi cluster configuration with VPC security group rules for peer cluster access and cross-cluster networking
+ * Use cases: Multi-cluster NiFi deployments; Cross-cluster data flows; Distributed processing; Cluster federation
  *
- * Validation: peerClusters must reference valid cluster names within the same module; security groups must allow inter-cluster communication
+ * AWS: NiFi cluster configuration with VPC security group rules for peer cluster access
+ *
+ * Validation: peerClusters must reference valid cluster names within the same module
  */
 export interface NifiClusterOptionsWithPeers extends NifiClusterOptions {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Other clusters within this module which will be provided SecurityGroup and Node remote access to this cluster. Defines peer cluster relationships enabling secure cross-cluster communication and distributed data processing workflows between multiple NiFi clusters.
-   *
-   * Use cases: Multi-cluster communication; Distributed processing; Cluster federation; Cross-cluster data flows
-   *
-   * AWS: EC2 security group rules for inter-cluster NiFi communication and networking
-   *
-   * Validation: Optional array of cluster name strings; cluster names must reference valid clusters within the same module
-   **/
+  /** Peer cluster names within this module that get SecurityGroup and Node remote access to this cluster. */
   readonly peerClusters?: string[];
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Named NiFi cluster configuration interface for systematic cluster organization and management. Defines named cluster mappings for organized NiFi cluster deployment including cluster identification and configuration management for multi-cluster data flow architectures.
+ * Named NiFi cluster configuration mapping for organized multi-cluster deployment.
  *
- * Use cases: Named cluster sets; Cluster organization; Multi-environment NiFi deployments; Cluster management; Data flow architecture
+ * Defines named cluster mappings for systematic NiFi cluster deployment and management
+ * in multi-cluster data flow architectures.
  *
- * AWS: NiFi cluster configuration with named mappings for systematic cluster deployment and management
+ * Use cases: Named cluster sets; Cluster organization; Multi-environment NiFi deployments
  *
- * Validation: Names must be unique cluster identifiers; each entry must map to valid NifiClusterOptions configuration
+ * AWS: NiFi cluster configuration with named mappings for systematic deployment
+ *
+ * Validation: Names must be unique cluster identifiers; each entry must map to valid NifiClusterOptions
  */
 export interface NamedNifiClusterOptions {
   /**
@@ -85,226 +80,53 @@ export interface NamedNifiClusterOptions {
   [name: string]: NifiClusterOptionsWithPeers;
 }
 /**
- * Q-ENHANCED-INTERFACE
- * NiFi configuration interface for data flow orchestration and processing.
+ * NiFi deployment configuration for data flow orchestration and processing.
  *
- * Use cases: Data flow orchestration; Event-driven processing; Data routing; Flow management
+ * Defines the complete NiFi infrastructure including EKS cluster, networking,
+ * certificate management, and cluster configurations.
  *
- * AWS: Apache NiFi configuration for data flow orchestration and event-driven processing
+ * Use cases: Data flow orchestration; Multi-cluster NiFi deployment; EKS-based NiFi infrastructure
  *
- * Validation: Configuration must be valid for deployment; properties must conform to Apache NiFi and MDAA requirements
+ * AWS: Apache NiFi configuration for EKS-based data flow orchestration
+ *
+ * Validation: vpcId, subnetIds, and adminRoles required; clusters and registry optional
  */
 export interface NifiProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * If defined, an EC2 instance will be created with connectivity, permissions, and tooling to manage the EKS cluster. Provides administrative access to the NiFi EKS cluster through a dedicated management instance with kubectl and other Kubernetes management tools pre-configured for cluster operations.
-   *
-   * Use cases: EKS cluster administration; Kubectl access; Cluster troubleshooting; Administrative operations
-   *
-   * AWS: EC2 instance with EKS cluster access and Kubernetes management tools
-   *
-   * Validation: Optional property; when specified must be valid MgmtInstanceProps configuration
-   **/
+  /** Optional EC2 management instance for EKS cluster administration with kubectl access. */
   readonly mgmtInstance?: MgmtInstanceProps;
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * List of admin roles which will be provided access to EKS cluster resources. Defines IAM roles that receive administrative permissions to the NiFi EKS cluster including kubectl access, cluster management, and NiFi flow administration capabilities.
-   *
-   * Use cases: EKS cluster administration; Role-based access control; Administrative permissions; Cluster management
-   *
-   * AWS: EKS cluster RBAC configuration and IAM role mapping for administrative access
-   *
-   * Validation: Must be array of valid MdaaRoleRef objects; roles must exist and be assumable
-   **/
+  /** Admin roles with access to EKS cluster resources. */
   readonly adminRoles: MdaaRoleRef[];
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * VPC on which EKS and NiFi clusters will be deployed. Defines the network isolation boundary for the entire NiFi data flow infrastructure including EKS worker nodes, load balancers, and inter-cluster communication enabling secure network segmentation.
-   *
-   * Use cases: Network isolation; VPC-based security boundaries; Multi-AZ deployments; Private subnet deployments
-   *
-   * AWS: EKS cluster VPC configuration and EC2 VPC networking for NiFi infrastructure
-   *
-   * Validation: Must be existing VPC ID; requires sufficient IP address space and private subnets for EKS nodes
-   **/
+  /** VPC ID for EKS and NiFi cluster deployment. */
   readonly vpcId: string;
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Subnets on which EKS and NiFi clusters will be deployed. Defines named subnet mappings for NiFi cluster deployment across multiple availability zones enabling high availability and fault tolerance for data flow processing infrastructure.
-   *
-   * Use cases: Multi-AZ deployments; High availability; Subnet organization; Network segmentation
-   *
-   * AWS: EKS cluster subnet configuration and EC2 subnet placement for NiFi nodes
-   *
-   * Validation: Must be object with named subnet ID mappings; subnets must exist within specified VPC
-   *   **/
+  /** Named subnet ID mappings for cluster deployment. */
   readonly subnetIds: { [name: string]: string };
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Ingress rules to be added to the EKS control plane security group. Defines network access rules for the EKS control plane enabling secure communication between administrative clients and the Kubernetes API server for NiFi cluster management.
-   *
-   * Use cases: EKS API access; Administrative connectivity; Kubectl access; Control plane security
-   *
-   * AWS: EKS control plane security group ingress rules for Kubernetes API access
-   *
-   * Validation: Optional property; when specified must be valid MdaaSecurityGroupRuleProps configuration
-   *   **/
+  /** Ingress rules for the EKS control plane security group. */
   readonly eksSecurityGroupIngressRules?: MdaaSecurityGroupRuleProps;
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Egress rules to be added to all NiFi cluster security groups. Defines outbound network access rules applied globally to all NiFi clusters enabling controlled external connectivity for data sources, destinations, and service integrations. These may also be specified for each cluster.
-   *
-   * Use cases: External data source access; Service integrations; Internet connectivity; Global egress policies
-   *
-   * AWS: EC2 security group egress rules for NiFi cluster outbound network access
-   *
-   * Validation: Optional property; when specified must be valid MdaaSecurityGroupRuleProps configuration
-   *   **/
+  /** Global egress rules for all NiFi cluster security groups. Per-cluster rules also supported. */
   readonly securityGroupEgressRules?: MdaaSecurityGroupRuleProps;
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Security groups which will be provided ingress access to all NiFi cluster security groups. Defines security groups that receive inbound access to NiFi clusters enabling secure communication from other AWS resources and services. These may also be specified for each cluster.
-   *
-   * Use cases: Inter-service communication; Database access; Load balancer connectivity; Service integration
-   *
-   * AWS: EC2 security group ingress rules referencing other security groups for NiFi access
-   *
-   * Validation: Optional array of security group IDs; security groups must exist within the same VPC
-   **/
+  /** Security groups granted ingress to all NiFi cluster security groups. Per-cluster also supported. */
   readonly securityGroupIngressSGs?: string[];
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * IPv4 CIDRs which will be provided ingress access to all NiFi cluster security groups. Defines IP address ranges that receive inbound access to NiFi clusters enabling secure connectivity from specific networks or on-premises systems. These may also be specified for each cluster.
-   *
-   * Use cases: On-premises connectivity; Specific network access; Administrative access; External system integration
-   *
-   * AWS: EC2 security group ingress rules with IPv4 CIDR blocks for NiFi cluster access
-   *
-   * Validation: Optional array of valid IPv4 CIDR notation strings; must be properly formatted CIDR blocks
-   **/
+  /** IPv4 CIDRs granted ingress to all NiFi cluster security groups. Per-cluster also supported. */
   readonly securityGroupIngressIPv4s?: string[];
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Security groups which will be provided ingress access to all NiFi cluster EFS security groups. Defines security groups that receive access to the Elastic File System used by NiFi clusters for persistent storage and shared configuration. These may also be specified for each cluster.
-   *
-   * Use cases: EFS access; Persistent storage; Shared configuration; File system connectivity
-   *
-   * AWS: EFS security group ingress rules for NiFi cluster file system access
-   *
-   * Validation: Optional array of security group IDs; security groups must exist within the same VPC
-   **/
+  /** Security groups granted ingress to all NiFi cluster EFS security groups. Per-cluster also supported. */
   readonly additionalEfsIngressSecurityGroupIds?: string[];
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * NiFi cluster configurations to be created. Defines named NiFi cluster configurations for multi-cluster data flow architectures enabling organized deployment of multiple NiFi clusters with individual configuration settings and peer cluster relationships.
-   *
-   * Use cases: Multi-cluster deployments; Cluster organization; Data flow architecture; Environment separation
-   *
-   * AWS: NiFi cluster configuration with EKS deployment and cluster-specific settings
-   *
-   * Validation: Optional NamedNifiClusterOptions object; cluster names must be unique identifiers
-   *   **/
+  /** Named NiFi cluster configurations. */
   readonly clusters?: NamedNifiClusterOptions;
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * The certificate validity period for the internal CA cert. If using an ACM Private CA with short-term certificates, this should be set to less than 7 days. Defaults to 6 days. Controls the lifespan of the Certificate Authority certificate used for NiFi cluster TLS security.
-   *
-   * Use cases: Certificate management; TLS security; Short-term certificates; Security compliance
-   *
-   * AWS: ACM Private CA certificate validity configuration for NiFi cluster TLS
-   *
-   * Validation: Optional string in duration format; must be less than 7 days for ACM Private CA compatibility
-   **/
+  /** CA certificate validity period. Defaults to 6 days. Must be <7 days for ACM Private CA short-term certs. */
   readonly caCertDuration?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * The time before CA cert expiration at which point the internal CA cert will be renewed. Defaults to 12 hours. Defines the renewal window for Certificate Authority certificates ensuring continuous TLS security without service interruption.
-   *
-   * Use cases: Certificate renewal; Continuous security; Service availability; Automated certificate management
-   *
-   * AWS: Certificate renewal timing configuration for NiFi cluster TLS certificate management
-   *
-   * Validation: Optional string in duration format; should be reasonable time before certificate expiration
-   **/
+  /** Time before CA cert expiration to trigger renewal. Defaults to 12 hours. */
   readonly caCertRenewBefore?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * The certificate validity period for the Zookeeper and NiFi Node certs. If using an ACM Private CA with short-term certificates, this should be set to less than 6 days. Defaults to 5 days. Controls the lifespan of individual node certificates for secure inter-node communication.
-   *
-   * Use cases: Node certificate management; Inter-node TLS; Short-term certificates; Security compliance
-   *
-   * AWS: Node certificate validity configuration for NiFi and Zookeeper TLS communication
-   *
-   * Validation: Optional string in duration format; must be less than 6 days for ACM Private CA compatibility
-   **/
+  /** Node certificate validity period. Defaults to 5 days. Must be <6 days for ACM Private CA short-term certs. */
   readonly nodeCertDuration?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * The time before CA cert expiration at which point the Zookeeper and NiFi Node certs will be renewed. Defaults to 12 hours. Defines the renewal window for node certificates ensuring continuous secure communication between NiFi and Zookeeper nodes.
-   *
-   * Use cases: Node certificate renewal; Inter-node security; Service availability; Automated certificate management
-   *
-   * AWS: Node certificate renewal timing for NiFi and Zookeeper TLS certificate management
-   *
-   * Validation: Optional string in duration format; should be reasonable time before certificate expiration
-   **/
+  /** Time before node cert expiration to trigger renewal. Defaults to 12 hours. */
   readonly nodeCertRenewBefore?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * (Optional) If specified, this ACM Private CA will be used to sign the internal CA running within EKS. If not specified, an ACM Private CA will be created. Enables integration with existing certificate infrastructure for organizational certificate management and compliance.
-   *
-   * Use cases: Existing CA integration; Certificate infrastructure; Organizational compliance; Certificate hierarchy
-   *
-   * AWS: ACM Private CA ARN for signing NiFi cluster internal Certificate Authority
-   *
-   * Validation: Optional valid ACM Private CA ARN; CA must be active and accessible for certificate signing
-   **/
+  /** Existing ACM Private CA ARN for signing the internal CA. If omitted, a new CA is created. */
   readonly existingPrivateCaArn?: string;
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Certificate key algorithm specification for NiFi cluster TLS certificates. Defines the cryptographic algorithm used for certificate key generation enabling customization of security parameters and compliance with organizational security policies.
-   *
-   * Use cases: Security algorithm selection; Compliance requirements; Cryptographic standards; Certificate customization
-   *
-   * AWS: Certificate key algorithm configuration for NiFi cluster TLS certificate generation
-   *
-   * Validation: Optional string specifying valid key algorithm (e.g., RSA, ECDSA); must be supported algorithm
-   **/
+  /** Certificate key algorithm (e.g., RSA, ECDSA). */
   readonly certKeyAlg?: string;
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Certificate key size specification for NiFi cluster TLS certificates. Defines the bit length of cryptographic keys used in certificate generation enabling customization of security strength and compliance with organizational security requirements.
-   *
-   * Use cases: Security strength configuration; Compliance requirements; Key size standards; Certificate customization
-   *
-   * AWS: Certificate key size configuration for NiFi cluster TLS certificate generation
-   *
-   * Validation: Optional number specifying valid key size in bits (e.g., 2048, 4096); must be supported key size
-   **/
+  /** Certificate key size in bits (e.g., 2048, 4096). */
   readonly certKeySize?: number;
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * NiFi Registry configuration for flow versioning and template management. Defines NiFi Registry deployment settings enabling version control of data flows, template sharing, and collaborative flow development across NiFi clusters.
-   *
-   * Use cases: Flow versioning; Template management; Collaborative development; Flow sharing; Version control
-   *
-   * AWS: NiFi Registry deployment configuration for data flow version control and management
-   *
-   * Validation: Optional NifiRegistryProps configuration; when specified must be valid registry configuration
-   **/
+  /** NiFi Registry configuration for flow versioning and template management. */
   readonly registry?: NifiRegistryProps;
 }
 
@@ -316,86 +138,35 @@ export type NifiRegistryBucketProps = {
 };
 
 /**
- * Q-ENHANCED-INTERFACE
- * NiFi Registry configuration interface for flow versioning and template management.
+ * NiFi Registry configuration for flow versioning and template management.
  *
- * Use cases: Data flow orchestration; Event-driven processing; Data routing; Flow management
+ * Defines NiFi Registry deployment settings including image version, IAM policies,
+ * and bucket configurations for organized flow management.
  *
- * AWS: Apache NiFi configuration for data flow orchestration and event-driven processing
+ * Use cases: Flow versioning; Template management; Collaborative development; Flow sharing
  *
- * Validation: Configuration must be valid for deployment; properties must conform to Apache NiFi and MDAA requirements
+ * AWS: NiFi Registry deployment configuration for data flow version control
+ *
+ * Validation: All properties optional; buckets must have unique names
  */
 export interface NifiRegistryProps extends NifiIdentityAuthorizationOptions, NifiNetworkOptions {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * The tag of the NiFi docker image to use. If not specified, defaults to the latest tested version (currently 1.25.0). Specify 'latest' to pull the latest version (might be untested). Controls the NiFi Registry container version for deployment consistency and compatibility.
-   *
-   * Use cases: Version control; Container deployment; Compatibility management; Testing environments
-   *
-   * AWS: EKS container image specification for NiFi Registry deployment
-   *
-   * Validation: Optional string specifying valid Docker image tag; should use tested versions for production
-   **/
+  /** Docker image tag for NiFi Registry. Defaults to latest tested version (1.25.0). */
   readonly registryImageTag?: string;
-
-  /**
-   * Q-ENHANCED-PROPERTY
-   * AWS managed policies which will be granted to the NiFi Registry cluster role for access to AWS services. Defines AWS-managed IAM policies attached to the NiFi Registry service role enabling access to AWS services for flow storage, data access, and service integrations.
-   *
-   * Use cases: AWS service access; S3 integration; Service permissions; Registry operations
-   *
-   * AWS: IAM role policy attachments for NiFi Registry AWS service access
-   *
-   * Validation: Optional array of AwsManagedPolicySpec objects; policies must be valid AWS managed policies
-   *   **/
+  /** AWS managed policies for the NiFi Registry cluster role. */
   readonly registryRoleAwsManagedPolicies?: AwsManagedPolicySpec[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Customer managed policies which will be granted to the NiFi Registry cluster role for access to AWS services. Defines customer-created IAM policies attached to the NiFi Registry service role enabling customized access permissions for specific organizational requirements.
-   *
-   * Use cases: Custom permissions; Organizational policies; Specific access requirements; Fine-grained control
-   *
-   * AWS: IAM role policy attachments for NiFi Registry custom service access permissions
-   *
-   * Validation: Optional array of policy ARN strings; policies must exist and be customer-managed policies
-   **/
+  /** Customer managed policy ARNs for the NiFi Registry cluster role. */
   readonly registryRoleManagedPolicies?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * NiFi Registry bucket configurations with policy-based access control. Defines named bucket configurations for NiFi Registry flow storage with granular access permissions enabling organized flow management and role-based access to flow versions and templates.
-   *
-   * Use cases: Flow organization; Access control; Bucket management; Role-based permissions; Flow versioning
-   *
-   * AWS: NiFi Registry bucket configuration with policy-based access control for flow storage
-   *
-   * Validation: Optional object mapping bucket names to NifiRegistryBucketProps; bucket names must be unique
+   * NiFi Registry bucket configurations with policy-based access control.
    * @jsii ignore
    */
   readonly buckets?: { [bucketName: string]: NifiRegistryBucketProps };
 }
 
 export interface NifiL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required KMS key ARN for Nifi cluster resource encryption enabling customer-controlled encryption and enhanced security compliance. Provides customer-managed KMS key for encrypting EKS cluster resources, persistent volumes, and Nifi configuration ensuring data protection and security compliance.
-   *
-   * Use cases: Cluster encryption; Customer-controlled keys; Security compliance; Data protection
-   *
-   * AWS: KMS key ARN for Nifi EKS cluster encryption and customer-controlled data protection
-   *
-   * Validation: Must be valid KMS key ARN; required for cluster encryption and security compliance
-   **/
+  /** KMS key ARN for NiFi cluster resource encryption. */
   readonly kmsArn?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required Nifi configuration defining data flow orchestration setup including cluster configuration, registry settings, and network options. Provides complete Nifi deployment configuration with EKS cluster setup, flow registry, and data processing capabilities for event-driven data pipeline orchestration.
-   *
-   * Use cases: Data flow configuration; Cluster setup; Registry management; Pipeline orchestration
-   *
-   * AWS: Nifi configuration for data flow orchestration and event-driven processing infrastructure
-   *
-   * Validation: Must be valid NifiProps; required for Nifi deployment and data flow orchestration
-   **/
+  /** NiFi deployment configuration including clusters, registry, and network settings. */
   readonly nifi: NifiProps;
 }
 

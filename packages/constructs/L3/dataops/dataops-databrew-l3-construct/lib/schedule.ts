@@ -8,38 +8,11 @@ import { CfnSchedule, CfnScheduleProps } from 'aws-cdk-lib/aws-databrew';
 import { Construct } from 'constructs';
 
 export interface MdaaDataBrewScheduleProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required name for the DataBrew schedule enabling schedule identification and management. Provides the schedule identifier for DataBrew operations and serves as the primary reference for automated job execution and workflow orchestration.
-   *
-   * Use cases: Schedule identification; Workflow management; Job orchestration; Automation organization
-   *
-   * AWS: AWS Glue DataBrew schedule name for schedule identification and management
-   *
-   * Validation: Must be unique schedule name string; required for schedule creation and identification
-   **/
+  /** Unique name for the DataBrew schedule. */
   readonly name: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required cron expression defining when the scheduled jobs should run for automated execution timing. Specifies the schedule timing using standard cron format for precise control over job execution frequency and timing patterns.
-   *
-   * Use cases: Job timing control; Automated execution; Schedule frequency; Workflow timing
-   *
-   * AWS: AWS Glue DataBrew schedule cron expression for automated job execution timing
-   *
-   * Validation: Must be valid cron expression format; required for schedule timing and automated execution
-   **/
+  /** Cron expression defining when scheduled jobs should run. */
   readonly cronExpression: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of DataBrew job names to be executed according to the schedule for automated workflow orchestration. Specifies which DataBrew jobs will be triggered by this schedule, enabling coordinated execution of multiple data preparation jobs.
-   *
-   * Use cases: Job orchestration; Multi-job workflows; Coordinated execution; Batch processing automation
-   *
-   * AWS: AWS Glue DataBrew job names for scheduled execution and workflow orchestration
-   *
-   * Validation: Must be array of valid DataBrew job names if provided; jobs must exist for schedule association
-   **/
+  /** DataBrew job names to execute on this schedule. */
   readonly jobNames?: string[];
 }
 

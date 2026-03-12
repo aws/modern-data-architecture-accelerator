@@ -23,18 +23,17 @@
         },
         "AuroraEngineProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nAurora database engine configuration interface for GAIA GenAI with vector database and knowledge storage capabilities. Defines Aurora properties for GenAI applications including vector storage, knowledge base management, and database configuration for AI data persistence and retrieval.\n\nUse cases: Vector database storage; Knowledge base management; AI data persistence; Vector search; GenAI data storage; Database configuration\n\nAWS: Aurora database configuration for GAIA GenAI with vector storage and knowledge base management capabilities\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "createSeparateSecurityGroup": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag to create separate security group for Aurora database in GAIA GenAI deployment enabling isolated network access control. Controls whether Aurora database gets dedicated security group for enhanced network isolation and security management in GenAI vector database operations.\n\nUse cases: Network isolation; Security group separation; Database access control; Network security; Aurora isolation\nAWS: Aurora database security group configuration for network isolation and access control\nValidation: Boolean value; optional flag defaulting to shared security group if not specified",
+                    "description": "Create separate security group for Aurora",
                     "type": "boolean"
                 },
                 "maxCapacity": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional maximum Aurora Serverless capacity units for GAIA GenAI vector database enabling auto-scaling upper bound control. Defines the maximum compute capacity for Aurora Serverless database to control costs while supporting peak GenAI vector operations and knowledge base queries.\n\nUse cases: Auto-scaling configuration; Cost control; Maximum performance limit; Database capacity management\nAWS: Aurora Serverless maximum capacity configuration for auto-scaling and cost control\nValidation: Must be valid Aurora Serverless capacity unit value if provided; optional for auto-scaling configuration",
+                    "description": "Maximum Aurora Serverless capacity units",
                     "type": "number"
                 },
                 "minCapacity": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional minimum Aurora Serverless capacity units for GAIA GenAI vector database enabling auto-scaling lower bound control. Defines the minimum compute capacity for Aurora Serverless database to ensure baseline performance for GenAI vector operations and knowledge base queries.\n\nUse cases: Auto-scaling configuration; Minimum performance guarantee; Cost optimization; Database capacity management\nAWS: Aurora Serverless minimum capacity configuration for auto-scaling and performance management\nValidation: Must be valid Aurora Serverless capacity unit value if provided; optional for auto-scaling configuration",
+                    "description": "Minimum Aurora Serverless capacity units",
                     "type": "number"
                 }
             },
@@ -42,25 +41,25 @@
         },
         "AuthProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nAuthentication configuration interface for GAIA GenAI providing user authentication and authorization capabilities. Defines authentication properties for GenAI applications including user management, access control, and security configuration for secure AI application access.\n\nUse cases: GenAI user authentication; Access control; Security configuration; User management; AI application security; Identity management\n\nAWS: GAIA GenAI authentication configuration with user management and access control for secure AI applications\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
+            "description": "Authentication configuration for GAIA GenAI platform user access.\nSupports email/password, Active Directory, or existing Cognito User Pool integration.\n\nUse cases: Email/password authentication; AD enterprise SSO; Existing Cognito pool integration; Branded auth domains\n\nAWS: Amazon Cognito User Pools with optional AD identity provider\n\nValidation: Required; authType must be a valid SupportedAuthTypes value",
             "properties": {
                 "authType": {
                     "$ref": "#/definitions/SupportedAuthTypes",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired authentication type for GAIA GenAI application user access controlling the identity provider and authentication method. Determines how users authenticate to the GenAI platform, supporting email/password, Active Directory, or existing Cognito User Pool integration.\n\nUse cases: User authentication method; Identity provider selection; GenAI access control; Authentication strategy\nAWS: GAIA GenAI authentication type configuration for Cognito User Pool and identity provider integration\nValidation: Must be one of SupportedAuthTypes enum values: EMAIL_PASSWORD, ACTIVE_DIRECTORY, or EXISTING_POOL"
+                    "description": "Authentication method for the GAIA platform.\nDetermines identity provider: email/password (Cognito-managed), Active Directory (SAML), or existing Cognito pool.\n\nUse cases: Email/password signup; AD enterprise SSO; Reusing existing Cognito infrastructure\n\nAWS: Amazon Cognito User Pool authentication mode\n\nValidation: Required; Must be 'email_pass', 'ad', or 'existing' (SupportedAuthTypes enum)"
                 },
                 "cognitoDomain": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional Cognito User Pool domain name for GAIA GenAI application authentication providing custom domain for user sign-in and authentication flows. Enables branded authentication experience with custom domain for GenAI application user access.\n\nUse cases: Custom authentication domain; Branded user experience; Authentication URL customization; User sign-in customization\nAWS: Amazon Cognito User Pool domain configuration for custom authentication endpoints\nValidation: Must be valid domain name format if provided; optional for authentication customization",
+                    "description": "Custom Cognito User Pool domain for branded authentication URLs. Must be globally unique.\nRequired when authType is 'ad'.\n\nUse cases: Branded sign-in experience; Custom authentication URLs; AD integration domain\n\nAWS: Amazon Cognito User Pool domain\n\nValidation: Optional; Must be globally unique domain name",
                     "type": "string"
                 },
                 "existingPoolClientId": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional existing Cognito User Pool app client ID for GAIA GenAI application authentication enabling integration with pre-existing app clients. Allows reuse of existing app client configuration instead of creating new client for GenAI application access.\n\nUse cases: Existing app client integration; Client configuration reuse; Authentication consolidation; Centralized app management\nAWS: Amazon Cognito User Pool app client ID reference for existing client integration\nValidation: Must be valid Cognito app client ID format if provided; optional for existing client integration",
+                    "description": "Existing Cognito User Pool app client ID for integrating GAIA with a pre-existing app client.\nUsed when authType is 'existing'.\n\nUse cases: Existing app client reuse; Shared client configuration; Multi-app authentication\n\nAWS: Amazon Cognito User Pool App Client ID\n\nValidation: Optional; Must be valid Cognito app client ID format",
                     "type": "string"
                 },
                 "existingPoolDomain": {
                     "type": "string"
                 },
                 "existingPoolId": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional existing Cognito User Pool ID for GAIA GenAI application authentication enabling integration with pre-existing user pools. Allows reuse of existing user management infrastructure instead of creating new Cognito resources for GenAI application access.\n\nUse cases: Existing user pool integration; User management reuse; Infrastructure consolidation; Centralized authentication\nAWS: Amazon Cognito User Pool ID reference for existing user pool integration\nValidation: Must be valid Cognito User Pool ID format if provided; optional for existing pool integration",
+                    "description": "Existing Cognito User Pool ID for integrating GAIA with a pre-existing user pool.\nRequired when authType is 'existing'.\n\nUse cases: Existing user pool integration; Shared authentication infrastructure; Multi-app Cognito reuse\n\nAWS: Amazon Cognito User Pool ID\n\nValidation: Optional; Required when authType is 'existing'; Must be valid User Pool ID format",
                     "type": "string"
                 },
                 "idpSamlEmailClaimParamPath": {
@@ -80,18 +79,17 @@
         },
         "BackendApisProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nBackend API configuration interface for GAIA GenAI providing API management and service integration capabilities. Defines backend API properties for GenAI applications including REST API configuration, WebSocket management, and domain configuration for scalable AI service deployment.\n\nUse cases: API management; Service integration; REST API configuration; WebSocket management; Scalable AI services; GenAI backend orchestration\n\nAWS: Backend API configuration for GAIA GenAI providing API management and service integration\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "hostedZoneName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired Route53 hosted zone name for DNS management and domain resolution of GAIA API endpoints. Defines the hosted zone that will manage DNS records for both REST and WebSocket API custom domains enabling proper domain resolution and SSL certificate validation.\n\nUse cases: DNS management; Domain resolution; SSL certificate validation; Route53 hosted zone configuration\n\nAWS: Route53 hosted zone name for DNS record management and domain resolution\n\nValidation: Must be valid hosted zone name; required for DNS management and domain resolution",
+                    "description": "Route53 hosted zone name for DNS",
                     "type": "string"
                 },
                 "restApiDomainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired custom domain name for the GAIA REST API endpoint enabling branded API access and professional service deployment. Defines the fully qualified domain name that will be used for REST API Gateway custom domain configuration providing consistent API endpoint branding.\n\nUse cases: Custom API branding; Professional API endpoints; Domain-based API access; REST API Gateway configuration\n\nAWS: API Gateway custom domain name for REST API endpoint configuration and Route53 DNS management\n\nValidation: Must be valid fully qualified domain name; required for custom domain API configuration",
+                    "description": "Custom domain name for REST API",
                     "type": "string"
                 },
                 "socketApiDomainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired custom domain name for the GAIA WebSocket API endpoint enabling real-time communication and interactive AI experiences. Defines the fully qualified domain name for WebSocket API Gateway custom domain configuration supporting real-time GenAI interactions.\n\nUse cases: Real-time AI communication; WebSocket API branding; Interactive GenAI experiences; WebSocket API Gateway configuration\n\nAWS: API Gateway WebSocket custom domain name for real-time communication endpoint configuration\n\nValidation: Must be valid fully qualified domain name; required for WebSocket custom domain configuration",
+                    "description": "Custom domain name for WebSocket API",
                     "type": "string"
                 }
             },
@@ -104,18 +102,18 @@
         },
         "BedrockProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nAmazon Bedrock configuration interface for GAIA GenAI with foundation model integration and AI service capabilities. Defines Bedrock properties for GenAI applications including foundation model access, AI service configuration, and model management for enterprise AI solutions.\n\nUse cases: Foundation model integration; AI service configuration; Model management; Enterprise AI solutions; Bedrock model access; GenAI capabilities\n\nAWS: Amazon Bedrock configuration for GAIA GenAI with foundation model integration and AI service management\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
+            "description": "Amazon Bedrock integration configuration for GAIA GenAI foundation model access.\nControls Bedrock enablement, region selection, and optional cross-account access.\n\nUse cases: Bedrock foundation model enablement; Cross-region model access; Cross-account Bedrock integration; Regional compliance\n\nAWS: Amazon Bedrock with optional cross-account IAM role\n\nValidation: Optional; When provided, enabled and region are required",
             "properties": {
                 "enabled": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired boolean flag to enable or disable Amazon Bedrock integration for GAIA GenAI foundation model access. Controls whether Bedrock foundation models will be available for AI workloads and determines if Bedrock-specific resources and permissions will be configured.\n\nUse cases: Foundation model enablement; Bedrock service activation; AI capability control; Service integration toggle\n\nAWS: Amazon Bedrock service enablement for foundation model access and AI service integration\n\nValidation: Must be boolean value; required for Bedrock service configuration",
+                    "description": "Enables or disables Amazon Bedrock foundation model integration.\nWhen true, configures IAM permissions and resources for Bedrock model access.\n\nUse cases: Foundation model enablement; Bedrock service activation; AI capability toggle\n\nAWS: Amazon Bedrock service enablement\n\nValidation: Required; boolean",
                     "type": "boolean"
                 },
                 "region": {
                     "$ref": "#/definitions/SupportedRegion",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired AWS region specification for Amazon Bedrock foundation model access and service deployment. Defines the specific AWS region where Bedrock models will be accessed ensuring proper regional model availability and compliance with data residency requirements.\n\nUse cases: Regional model access; Data residency compliance; Service region specification; Foundation model availability\n\nAWS: AWS region for Amazon Bedrock foundation model access and service deployment\n\nValidation: Must be valid SupportedRegion enum value; required for regional Bedrock service access"
+                    "description": "AWS region for Bedrock foundation model access. Supports cross-region access.\nConsult regulatory restrictions before using out-of-region models.\n\nUse cases: Regional model access; Data residency compliance; Cross-region Bedrock usage\n\nAWS: AWS region for Amazon Bedrock API calls\n\nValidation: Required; Must be valid SupportedRegion enum value"
                 },
                 "roleArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role ARN for cross-account or cross-region Amazon Bedrock access enabling flexible service integration. Provides custom role specification for Bedrock service access when default service roles are insufficient or when cross-account access is required.\n\nUse cases: Cross-account Bedrock access; Custom IAM role specification; Advanced permission management; Cross-region service access\n\nAWS: IAM role ARN for Amazon Bedrock service access and cross-account integration\n\nValidation: Must be valid IAM role ARN format if provided; optional for custom role specification",
+                    "description": "IAM role ARN for cross-account or custom Bedrock access when default permissions are insufficient.\n\nUse cases: Cross-account Bedrock access; Custom IAM role for model invocation; Advanced permission management\n\nAWS: IAM role ARN for Bedrock STS AssumeRole\n\nValidation: Optional; Must be valid IAM role ARN format",
                     "type": "string"
                 }
             },
@@ -481,66 +479,66 @@
         },
         "CodeOverwritesProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nCode overwrite configuration interface for GAIA GenAI customization with application code modification capabilities. Defines code overwrite properties for GenAI application customization including custom code deployment and application modification for tailored AI solutions.\n\nUse cases: GenAI application customization; Custom code deployment; AI solution tailoring; Application modification; Custom GenAI features\n\nAWS: GAIA GenAI application code customization with custom code deployment and application modification\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
+            "description": "Custom code override paths for GAIA Lambda functions, layers, and batch jobs.\nAllows replacing default implementations with custom code for specialized GenAI requirements.\n\nUse cases: Custom REST API logic; Custom RAG inference; Custom WebSocket handlers; Custom data ingestion workflows\n\nAWS: Lambda function/layer code paths and Docker file paths for AWS Batch\n\nValidation: Optional; All paths must be valid relative file/directory paths when provided",
             "properties": {
                 "commonLibsLayerCodeZipPath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom ZIP file path for common libraries Lambda layer enabling shared code deployment and dependency management. Provides ability to deploy custom shared libraries and dependencies across multiple Lambda functions for consistent code reuse and dependency management.\n\nUse cases: Shared library deployment; Dependency management; Code reuse; Lambda layer customization; Common utilities\n\nAWS: Lambda layer ZIP file path for shared libraries and dependencies deployment\n\nValidation: Must be valid ZIP file path if provided; optional for shared library deployment",
+                    "description": "Custom ZIP path for common libraries Lambda layer shared across multiple GAIA Lambda functions.\n\nUse cases: Shared library deployment; Custom dependency management; Common utility code\n\nAWS: Lambda layer ZIP for shared dependencies\n\nValidation: Optional; Must be valid ZIP file path",
                     "type": "string"
                 },
                 "createAuroraWorkspaceCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for Aurora workspace creation Lambda function enabling customized workspace provisioning logic. Provides ability to override default Aurora workspace creation with custom implementation for specialized workspace configuration and provisioning requirements.\n\nUse cases: Custom workspace creation; Aurora provisioning customization; Workspace configuration; Database workspace setup; Custom provisioning logic\n\nAWS: Lambda function code path for custom Aurora workspace creation implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for workspace creation customization",
+                    "description": "Custom code path for Aurora workspace creation Lambda for specialized workspace provisioning.\n\nUse cases: Custom workspace creation logic; Aurora provisioning customization; Workspace configuration\n\nAWS: Lambda function code for Aurora workspace creation\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 },
                 "dataImportUploadHandlerCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for data import upload handler Lambda function enabling customized data ingestion and processing logic. Provides ability to override default data import handling with custom implementation for specialized data processing and ingestion requirements.\n\nUse cases: Custom data ingestion; Upload processing customization; Data import logic; File processing; Custom data handling\n\nAWS: Lambda function code path for custom data import upload handler implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for data import customization",
+                    "description": "Custom code path for data import upload handler Lambda for specialized data ingestion orchestration.\n\nUse cases: Custom data ingestion; Upload processing customization; Custom Step Functions triggering\n\nAWS: Lambda function code for S3 upload/SQS ingestion handler\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 },
                 "deleteWorkspaceHandlerCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for workspace deletion handler Lambda function enabling customized workspace cleanup and resource management logic. Provides ability to override default workspace deletion with custom implementation for specialized cleanup and resource management requirements.\n\nUse cases: Custom workspace cleanup; Resource management; Deletion logic customization; Workspace lifecycle; Custom cleanup procedures\n\nAWS: Lambda function code path for custom workspace deletion handler implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for workspace deletion customization",
+                    "description": "Custom code path for workspace deletion handler Lambda for specialized cleanup and resource management.\n\nUse cases: Custom workspace cleanup; Resource management; Custom deletion workflows\n\nAWS: Lambda function code for workspace deletion handler\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 },
                 "fileImportBatchJobDockerFilePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom Docker file path for file import batch job enabling customized batch processing container configuration. Provides ability to override default batch job container with custom Docker implementation for specialized file processing and batch operation requirements.\n\nUse cases: Custom batch processing; Container customization; File processing jobs; Batch operation logic; Custom Docker containers\n\nAWS: Docker file path for custom AWS Batch job container implementation\n\nValidation: Must be valid Docker file path if provided; optional for batch job customization",
+                    "description": "Custom Dockerfile path for file import AWS Batch job container for specialized batch processing.\n\nUse cases: Custom batch processing containers; Specialized file processing; Custom Unstructured.io configuration\n\nAWS: Dockerfile for AWS Batch job container\n\nValidation: Optional; Must be valid Dockerfile path",
                     "type": "string"
                 },
                 "genAiCoreLayerCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for GenAI core Lambda layer enabling customized AI core functionality and model integration. Provides ability to override default GenAI core behavior with custom implementation for specialized AI model integration and core GenAI functionality.\n\nUse cases: Custom AI core logic; Model integration customization; GenAI functionality modification; AI service customization; Core AI features\n\nAWS: Lambda layer code path for custom GenAI core functionality implementation\n\nValidation: Must be valid file path to Lambda layer code if provided; optional for GenAI core customization",
+                    "description": "Custom code path for GenAI core Lambda layer containing shared AI clients and service functionality.\n\nUse cases: Custom AI core logic; Model integration customization; Shared AI service clients\n\nAWS: Lambda layer code for GenAI core functionality\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 },
                 "langchainInterfaceHandlerCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for LangChain interface handler Lambda function enabling customized AI framework integration and chain orchestration. Provides ability to override default LangChain handling with custom implementation for specialized AI framework integration and chain management requirements.\n\nUse cases: Custom LangChain integration; AI framework customization; Chain orchestration; LangChain logic; Custom AI framework features\n\nAWS: Lambda function code path for custom LangChain interface handler implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for LangChain customization",
+                    "description": "Custom code path for LangChain interface handler Lambda for specialized AI chain orchestration.\n\nUse cases: Custom LangChain integration; Custom AI agent workflows; Specialized chain orchestration\n\nAWS: Lambda function code for LangChain model interface handler\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 },
                 "pgVectorDbSetupCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for PostgreSQL vector database setup Lambda function enabling customized vector database initialization. Provides ability to override default pgVector database setup with custom implementation for specialized vector database configuration and initialization.\n\nUse cases: Custom vector database setup; Database initialization customization; pgVector configuration; Vector database optimization; Custom database schema\n\nAWS: Lambda function code path for custom PostgreSQL vector database setup implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for database setup customization",
+                    "description": "Custom code path for Aurora pgVector database setup Lambda for specialized vector store initialization.\n\nUse cases: Custom vector database schema; Specialized pgVector configuration; Custom metadata setup\n\nAWS: Lambda function code for Aurora pgVector setup\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 },
                 "ragEnginesInferenceCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for RAG engines inference Lambda function enabling customized retrieval-augmented generation logic. Provides ability to override default RAG inference behavior with custom implementation for specialized document retrieval and AI response generation.\n\nUse cases: Custom RAG logic; Specialized inference behavior; Document retrieval customization; AI response generation; Custom RAG engines\n\nAWS: Lambda function code path for custom RAG engines inference implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for RAG customization",
+                    "description": "Custom code path for RAG engines inference Lambda for specialized document retrieval and AI response generation.\n\nUse cases: Custom RAG logic; Specialized inference behavior; Custom embedding/retrieval pipelines\n\nAWS: Lambda function code for RAG inference\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 },
                 "restApiHandlerCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for REST API handler Lambda function enabling customized API endpoint behavior and business logic. Provides ability to override default REST API handling with custom implementation for specialized GenAI API requirements and custom business logic integration.\n\nUse cases: Custom API logic; Specialized endpoint behavior; Business logic integration; API customization; Custom GenAI API features\n\nAWS: Lambda function code path for custom REST API Gateway handler implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for API customization",
+                    "description": "Custom code path for the REST API handler Lambda replacing default CRUD operations for workspaces, models, and search.\n\nUse cases: Custom API business logic; Specialized endpoint behavior; Custom GenAI API features\n\nAWS: Lambda function code for API Gateway REST handler\n\nValidation: Optional; Must be valid directory path containing Lambda handler code",
                     "type": "string"
                 },
                 "webSocketAuthorizerFunctionCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for WebSocket authorizer Lambda function enabling customized authentication and authorization for real-time connections. Provides ability to override default WebSocket authorization with custom implementation for specialized security and access control requirements.\n\nUse cases: Custom WebSocket authorization; Real-time authentication; Connection security; Access control customization; WebSocket security\n\nAWS: Lambda function code path for custom WebSocket authorizer implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for WebSocket authorization customization",
+                    "description": "Custom code path for WebSocket authorizer Lambda for specialized authentication and authorization.\nDefault verifies tokens from query parameters with authentication only; override for custom authorization logic.\n\nUse cases: Custom WebSocket authorization; Advanced token validation; Custom access control\n\nAWS: Lambda function code for WebSocket custom authorizer\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 },
                 "webSocketConnectionHandlerCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for WebSocket connection handler Lambda function enabling customized real-time connection management and session handling. Provides ability to override default WebSocket connection handling with custom implementation for specialized real-time communication requirements.\n\nUse cases: Custom WebSocket handling; Real-time connection management; Session handling customization; WebSocket logic; Custom real-time features\n\nAWS: Lambda function code path for custom WebSocket connection handler implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for WebSocket customization",
+                    "description": "Custom code path for WebSocket connection handler Lambda for specialized real-time connection management.\n\nUse cases: Custom WebSocket connection logic; Advanced session handling; Custom connection management\n\nAWS: Lambda function code for WebSocket connection handler\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 },
                 "webSocketIncomingMessageHandlerCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for WebSocket incoming message handler Lambda function enabling customized message processing and routing logic. Provides ability to override default incoming message handling with custom implementation for specialized message processing requirements.\n\nUse cases: Custom message processing; Incoming message handling; Message routing customization; WebSocket message logic; Custom message features\n\nAWS: Lambda function code path for custom WebSocket incoming message handler implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for message handling customization",
+                    "description": "Custom code path for WebSocket incoming message handler Lambda for specialized message routing.\n\nUse cases: Custom message processing; Advanced routing logic; Custom model interface selection\n\nAWS: Lambda function code for WebSocket incoming message handler\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 },
                 "webSocketOutgoingMessageHandlerCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for WebSocket outgoing message handler Lambda function enabling customized message delivery and broadcasting logic. Provides ability to override default outgoing message handling with custom implementation for specialized message delivery requirements.\n\nUse cases: Custom message delivery; Outgoing message handling; Message broadcasting; WebSocket delivery logic; Custom delivery features\n\nAWS: Lambda function code path for custom WebSocket outgoing message handler implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for message delivery customization",
+                    "description": "Custom code path for WebSocket outgoing message handler Lambda for specialized response delivery.\n\nUse cases: Custom message delivery; Response vetting; Custom broadcasting logic\n\nAWS: Lambda function code for WebSocket outgoing message handler\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 },
                 "websiteParserCodePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom code path for website parser Lambda function enabling customized web content parsing and extraction logic. Provides ability to override default website parsing with custom implementation for specialized web content extraction and processing requirements.\n\nUse cases: Custom web parsing; Content extraction customization; Website processing; Web scraping logic; Custom content parsing\n\nAWS: Lambda function code path for custom website parser implementation\n\nValidation: Must be valid file path to Lambda function code if provided; optional for website parsing customization",
+                    "description": "Custom code path for website parser Lambda for specialized web crawling and content extraction.\n\nUse cases: Custom web parsing; Advanced website crawling; Specialized content extraction\n\nAWS: Lambda function code for website crawling workflow\n\nValidation: Optional; Must be valid directory path",
                     "type": "string"
                 }
             },
@@ -548,7 +546,6 @@
         },
         "ConcurrencyProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConcurrency configuration interface for GAIA GenAI providing performance optimization and scaling capabilities. Defines concurrency properties for GenAI applications including Lambda concurrency limits, API throttling, and performance tuning for scalable AI workload management.\n\nUse cases: Performance optimization; Scaling capabilities; Lambda concurrency; API throttling; Performance tuning; GenAI workload management\n\nAWS: Concurrency configuration for GAIA GenAI with performance optimization and scaling capabilities\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "modelInterfaceConcurrentLambdas": {
                     "type": "number"
@@ -610,7 +607,6 @@
         },
         "CrossEncoderModelProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nCross-encoder model configuration interface for GAIA GenAI with semantic similarity and ranking capabilities. Defines cross-encoder model properties for GenAI applications including similarity scoring, document ranking, and semantic matching for enhanced AI search and retrieval.\n\nUse cases: Semantic similarity; Document ranking; Similarity scoring; Semantic matching; AI search enhancement; GenAI retrieval optimization\n\nAWS: Cross-encoder model configuration for GAIA GenAI with semantic similarity and ranking capabilities\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "isDefault": {
                     "type": "boolean"
@@ -748,7 +744,6 @@
         },
         "DomainConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA-compliant DataZone domain configuration providing domain management and integration capabilities. Extends standard CDK properties with MDAA naming conventions and enhanced security features for secure domain governance and catalog integration.\n\nUse cases: DataZone domain configuration; Domain governance setup; Catalog integration; Multi-domain management\n\nAWS: Creates Amazon DataZone domain configuration with KMS integration and Glue catalog connectivity\n\nValidation: All properties except ssmParamBase and domainUnits are required for complete domain configuration",
             "properties": {
                 "blueprintIds": {
                     "additionalProperties": {
@@ -760,63 +755,63 @@
                     "type": "boolean"
                 },
                 "createOutputs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.\n\nUse cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references\n\nAWS: CloudFormation outputs and exports for MDAA construct resource references and external integration\n\nValidation: Boolean value; defaults to true; enables CloudFormation output and export creation",
+                    "description": "Flag controlling CloudFormation output and stack export creation for construct resources",
                     "type": "boolean"
                 },
                 "createParams": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.\n\nUse cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management\n\nAWS: SSM parameter creation for MDAA construct resource references and infrastructure integration\n\nValidation: Boolean value; defaults to true; enables SSM parameter creation for resource references",
+                    "description": "Flag controlling SSM parameter creation for construct resource references enabling",
                     "type": "boolean"
                 },
                 "customResourceRoleName": {
                     "type": "string"
                 },
                 "domainArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ARN for AWS resource identification and IAM policy integration enabling secure domain access control. Provides the complete AWS resource identifier for the domain for IAM policies and cross-service access control.\n\nUse cases: AWS resource identification; IAM policy integration; Cross-service access; Resource-based policies\n\nAWS: Amazon DataZone domain ARN for AWS resource identification and IAM integration\n\nValidation: Must be valid DataZone domain ARN; required; follows AWS ARN pattern for DataZone domains",
+                    "description": "DataZone domain ARN for AWS resource identification and IAM policy integration enabling",
                     "type": "string"
                 },
                 "domainBucketArn": {
                     "type": "string"
                 },
                 "domainBucketUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain Bucket usage policy name. Provides IAM policy name for managing Bucket access and usage permissions for domain operations and data protection.\n\nUse cases: Bucket access management;\n\nAWS: IAM policy name for DataZone domain Bucket usage and access management\n\nValidation: Must be valid IAM policy name; required; defines Bucket access and usage permissions for domain",
+                    "description": "Domain Bucket usage policy name",
                     "type": "string"
                 },
                 "domainId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ID for unique domain identification within AWS enabling cross-service integration and reference. Provides the unique identifier assigned by DataZone service for domain operations and cross-service integration.\n\nUse cases: Unique domain identification; Cross-service integration; Domain operations; Service references\n\nAWS: Amazon DataZone domain ID for unique identification and cross-service integration\n\nValidation: Must be valid DataZone domain ID; required; assigned by DataZone service for unique identification",
+                    "description": "DataZone domain ID for unique domain identification within AWS enabling cross-service",
                     "type": "string"
                 },
                 "domainKmsKeyArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations. Provides encryption at rest for domain data and metadata with customer-controlled key management for enhanced security and compliance.\n\nUse cases: Domain encryption; Data protection compliance; Customer-controlled encryption; Secure domain operations\n\nAWS: AWS KMS key ARN for DataZone domain encryption and secure data protection\n\nValidation: Must be valid KMS key ARN; required; enables customer-managed encryption for domain data",
+                    "description": "KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations",
                     "type": "string"
                 },
                 "domainKmsUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain KMS usage policy name for key access management enabling controlled encryption key usage within the domain. Provides IAM policy name for managing KMS key access and usage permissions for domain operations and data protection.\n\nUse cases: KMS key access management; Encryption policy control; Key usage permissions; Domain security governance\n\nAWS: IAM policy name for DataZone domain KMS key usage and access management\n\nValidation: Must be valid IAM policy name; required; defines KMS key access and usage permissions for domain",
+                    "description": "Domain KMS usage policy name for key access management enabling controlled encryption key",
                     "type": "string"
                 },
                 "domainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain name for domain identification and management enabling unique domain naming within the DataZone service. Provides the primary identifier for the DataZone domain for governance and operational management.\n\nUse cases: Domain identification; Unique naming; Domain management; Service organization\n\nAWS: Amazon DataZone domain name for identification and management within the DataZone service\n\nValidation: Must be unique domain name string; required; used for domain identification and service management",
+                    "description": "DataZone domain name for domain identification and management enabling unique domain naming",
                     "type": "string"
                 },
                 "domainUnitIds": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of domain unit names to identifiers for hierarchical domain organization enabling structured domain management. Provides organizational structure within the domain for improved governance, access control, and operational management.\n\nUse cases: Hierarchical organization; Domain structure; Organizational governance; Structured management\n\nAWS: DataZone domain units for hierarchical organization and structured domain management\n\nValidation: Must be object with string keys and values if provided; enables hierarchical domain organization\n  *",
+                    "description": "Map of domain unit names to identifiers for hierarchical domain organization enabling",
                     "type": "object"
                 },
                 "domainVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain version for domain lifecycle management and versioning control enabling domain evolution tracking. Provides version control for domain configuration changes and lifecycle management for governance and compliance.\n\nUse cases: Version control; Domain lifecycle management; Configuration tracking; Governance compliance\n\nAWS: DataZone domain version for lifecycle management and configuration version control\n\nValidation: Must be valid version string; required; enables domain version control and lifecycle management",
+                    "description": "Domain version for domain lifecycle management and versioning control enabling domain evolution tracking",
                     "type": "string"
                 },
                 "glueCatalogArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone. Provides the Glue catalog resources that will be integrated with the DataZone domain for data discovery and governance.\n\nUse cases: Catalog integration; Data discovery; governance; Cross-service connectivity\n\nAWS: AWS Glue catalog ARNs for DataZone integration and data catalog connectivity\n\nValidation: Must be array of valid Glue catalog ARNs; required; enables catalog integration with DataZone domain",
+                    "description": "Array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "glueCatalogKmsKeyArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone. Provides encryption keys for Glue catalog data accessed through DataZone for data protection and governance.\n\nUse cases: Catalog encryption; Secure catalog integration; Data protection; governance\n\nAWS: AWS KMS key ARNs for Glue catalog encryption in DataZone integration\n\nValidation: Must be array of valid KMS key ARNs; required; enables secure catalog integration with DataZone",
+                    "description": "Array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone",
                     "items": {
                         "type": "string"
                     },
@@ -824,7 +819,7 @@
                 },
                 "naming": {
                     "$ref": "#/definitions/IMdaaResourceNaming",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.\n\nUse cases: Consistent naming; Resource identification; Naming conventions; Operational consistency\n\nAWS: MDAA resource naming for consistent resource identification and naming convention compliance\n\nValidation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming\n  *"
+                    "description": "MDAA naming implementation for consistent resource naming across all MDAA constructs"
                 },
                 "projectIds": {
                     "additionalProperties": {
@@ -836,7 +831,7 @@
                     "type": "boolean"
                 },
                 "ssmParamBase": {
-                    "description": "Q-ENHANCED-PROPERTY\nSSM parameter base path for domain configuration storage enabling centralized configuration management. Provides the base path for storing domain configuration parameters in SSM Parameter Store for centralized management and retrieval.\n\nUse cases: Centralized configuration; SSM integration; Configuration management; Parameter organization\n\nAWS: AWS Systems Manager parameter base path for domain configuration storage and management\n\nValidation: Must be valid SSM parameter path if provided; enables centralized domain configuration management",
+                    "description": "SSM parameter base path for domain configuration storage enabling centralized configuration management",
                     "type": "string"
                 }
             },
@@ -865,30 +860,24 @@
         },
         "EngineProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nAI engine configuration interface for GAIA GenAI providing AI processing and model orchestration capabilities. Defines engine properties for GenAI applications including AI model configuration, processing engines, and orchestration for scalable AI solution deployment.\n\nUse cases: AI model orchestration; Processing engines; Scalable AI solutions; Model configuration; AI processing capabilities; GenAI engine management\n\nAWS: AI engine configuration for GAIA GenAI with model orchestration and processing capabilities\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "aurora": {
-                    "$ref": "#/definitions/AuroraEngineProps",
-                    "description": "Q-ENHANCED-INTERFACE\nAurora database engine configuration interface for GAIA GenAI with vector database and knowledge storage capabilities. Defines Aurora properties for GenAI applications including vector storage, knowledge base management, and database configuration for AI data persistence and retrieval.\n\nUse cases: Vector database storage; Knowledge base management; AI data persistence; Vector search; GenAI data storage; Database configuration\n\nAWS: Aurora database configuration for GAIA GenAI with vector storage and knowledge base management capabilities\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements"
+                    "$ref": "#/definitions/AuroraEngineProps"
                 },
                 "kendra": {
-                    "$ref": "#/definitions/KendraEngineProps",
-                    "description": "Q-ENHANCED-INTERFACE\nKendra search engine configuration interface for GAIA GenAI with intelligent search and knowledge retrieval capabilities. Defines Kendra engine properties for GenAI applications including search configuration, knowledge base integration, and intelligent document retrieval for AI-powered search solutions.\n\nUse cases: Intelligent search; Knowledge retrieval; Document search; AI search capabilities; Search engine configuration; GenAI knowledge management\n\nAWS: Kendra search engine configuration for GAIA GenAI with intelligent search and knowledge retrieval capabilities\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements"
+                    "$ref": "#/definitions/KendraEngineProps"
                 },
                 "knowledgeBase": {
-                    "$ref": "#/definitions/KnowledgeBaseProps",
-                    "description": "Q-ENHANCED-INTERFACE\nKnowledge base configuration interface for GAIA GenAI providing knowledge management and AI knowledge integration capabilities. Defines knowledge base properties for GenAI applications including knowledge storage, retrieval configuration, and AI knowledge management for intelligent information access.\n\nUse cases: Knowledge management; AI knowledge integration; Knowledge storage; Information retrieval; Intelligent knowledge access; GenAI knowledge systems\n\nAWS: Knowledge base configuration for GAIA GenAI providing knowledge management and AI integration\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements"
+                    "$ref": "#/definitions/KnowledgeBaseProps"
                 },
                 "sagemaker": {
-                    "$ref": "#/definitions/SagemakerRagProps",
-                    "description": "Q-ENHANCED-INTERFACE\nSageMaker RAG configuration interface for GAIA GenAI with Retrieval-Augmented Generation and knowledge integration capabilities. Defines SageMaker RAG properties for GenAI applications including knowledge retrieval, context augmentation, and RAG model configuration for enhanced AI responses.\n\nUse cases: Retrieval-Augmented Generation; Knowledge integration; Context augmentation; Enhanced AI responses; RAG model configuration; GenAI knowledge enhancement\n\nAWS: SageMaker RAG configuration for GAIA GenAI with Retrieval-Augmented Generation and knowledge integration\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements"
+                    "$ref": "#/definitions/SagemakerRagProps"
                 }
             },
             "type": "object"
         },
         "ExternalKnowledgeBaseProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nExternal knowledge base configuration interface for GAIA GenAI with third-party knowledge integration and external data source capabilities. Defines external knowledge base properties for GenAI applications including external data integration, knowledge source configuration, and third-party knowledge access for AI knowledge.\n\nUse cases: External knowledge integration; Third-party data sources; Knowledge source configuration; External data access; AI knowledge; GenAI data integration\n\nAWS: External knowledge base configuration for GAIA GenAI with third-party knowledge integration and external data sources\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "kbId": {
                     "type": "string"
@@ -960,26 +949,25 @@
         },
         "GAIAProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nGAIA GenAI Accelerator configuration interface for GenAI application deployment with RAG capabilities, model integration, and conversational AI infrastructure. Defines complete GenAI platform setup including API Gateway, WebSocket connections, Lambda functions, DynamoDB tables, S3 buckets, and vector databases for production-ready conversational AI applications with document ingestion and retrieval capabilities.\n\nUse cases: Conversational AI applications; RAG-powered chatbots; Document-based AI assistants; GenAI platform deployment; Multi-model AI integration\n\nAWS: Complete GenAI platform with API Gateway, Lambda functions, DynamoDB, S3, Step Functions, and Bedrock/SageMaker integration for conversational AI\n\nValidation: Must extend SystemConfig validation; admin roles must have appropriate permissions; RAG configuration must specify valid vector database settings",
+            "description": "GAIA GenAI platform configuration extending SystemConfig with admin role access for team resources.\nConfigures the complete chatbot platform including RAG engines, LLM models, authentication, VPC networking, and API setup.\n\nUse cases: Conversational AI chatbots; RAG-powered document Q&A; Multi-model GenAI platforms; Enterprise AI assistants\n\nAWS: GAIA platform (API Gateway, Lambda, DynamoDB, S3, Step Functions, Bedrock, SageMaker, Cognito, KMS)\n\nValidation: Required; Must extend SystemConfig; dataAdminRoles must reference valid IAM roles",
             "properties": {
                 "api": {
                     "$ref": "#/definitions/BackendApisProps",
-                    "description": "Q-ENHANCED-PROPERTY\nBackend API configuration for GAIA GenAI with REST API and WebSocket domain management. Defines API endpoint configuration including custom domain names and hosted zone settings for scalable GenAI service deployment with professional domain management.\n\nUse cases: Custom API domains; Professional GenAI endpoints; Domain management; API Gateway configuration; Branded AI services\n\nAWS: AWS API Gateway custom domain configuration and Route53 hosted zone management\n\nValidation: Must be valid BackendApisProps configuration; domain names must be valid DNS names; optional configuration"
+                    "description": "Backend API configuration for REST and WebSocket domains"
                 },
                 "auth": {
                     "$ref": "#/definitions/AuthProps"
                 },
                 "bedrock": {
                     "$ref": "#/definitions/BedrockProps",
-                    "description": "Q-ENHANCED-INTERFACE\nAmazon Bedrock configuration interface for GAIA GenAI with foundation model integration and AI service capabilities. Defines Bedrock properties for GenAI applications including foundation model access, AI service configuration, and model management for enterprise AI solutions.\n\nUse cases: Foundation model integration; AI service configuration; Model management; Enterprise AI solutions; Bedrock model access; GenAI capabilities\n\nAWS: Amazon Bedrock configuration for GAIA GenAI with foundation model integration and AI service management\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements"
+                    "description": "Amazon Bedrock integration configuration for GAIA GenAI foundation model access.\nControls Bedrock enablement, region selection, and optional cross-account access.\n\nUse cases: Bedrock foundation model enablement; Cross-region model access; Cross-account Bedrock integration; Regional compliance\n\nAWS: Amazon Bedrock with optional cross-account IAM role\n\nValidation: Optional; When provided, enabled and region are required"
                 },
                 "codeOverwrites": {
                     "$ref": "#/definitions/CodeOverwritesProps",
-                    "description": "Q-ENHANCED-INTERFACE\nCode overwrite configuration interface for GAIA GenAI customization with application code modification capabilities. Defines code overwrite properties for GenAI application customization including custom code deployment and application modification for tailored AI solutions.\n\nUse cases: GenAI application customization; Custom code deployment; AI solution tailoring; Application modification; Custom GenAI features\n\nAWS: GAIA GenAI application code customization with custom code deployment and application modification\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements"
+                    "description": "Custom code override paths for GAIA Lambda functions, layers, and batch jobs.\nAllows replacing default implementations with custom code for specialized GenAI requirements.\n\nUse cases: Custom REST API logic; Custom RAG inference; Custom WebSocket handlers; Custom data ingestion workflows\n\nAWS: Lambda function/layer code paths and Docker file paths for AWS Batch\n\nValidation: Optional; All paths must be valid relative file/directory paths when provided"
                 },
                 "concurrency": {
-                    "$ref": "#/definitions/ConcurrencyProps",
-                    "description": "Q-ENHANCED-INTERFACE\nConcurrency configuration interface for GAIA GenAI providing performance optimization and scaling capabilities. Defines concurrency properties for GenAI applications including Lambda concurrency limits, API throttling, and performance tuning for scalable AI workload management.\n\nUse cases: Performance optimization; Scaling capabilities; Lambda concurrency; API throttling; Performance tuning; GenAI workload management\n\nAWS: Concurrency configuration for GAIA GenAI with performance optimization and scaling capabilities\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements"
+                    "$ref": "#/definitions/ConcurrencyProps"
                 },
                 "dataAdminRoles": {
                     "description": "List of admin roles which will be provided access to team resources (like KMS/Bucket)",
@@ -1005,8 +993,7 @@
                     "type": "string"
                 },
                 "rag": {
-                    "$ref": "#/definitions/RagProps",
-                    "description": "Q-ENHANCED-INTERFACE\nRAG configuration interface for GAIA GenAI with Retrieval-Augmented Generation and knowledge integration capabilities. Defines RAG properties for GenAI applications including retrieval engines, embedding models, and knowledge augmentation for enhanced AI response generation.\n\nUse cases: Retrieval-Augmented Generation; Knowledge augmentation; Enhanced AI responses; Retrieval engines; Embedding models; GenAI knowledge enhancement\n\nAWS: RAG configuration for GAIA GenAI with Retrieval-Augmented Generation and knowledge integration\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements"
+                    "$ref": "#/definitions/RagProps"
                 },
                 "setApiGateWayAccountCloudwatchRole": {
                     "type": "boolean"
@@ -1313,11 +1300,10 @@
         },
         "IMdaaResourceNaming": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nInterface specification for MDAA resource naming implementations that generate consistent, unique, and compliant AWS resource names. Implementations must support multi-tenant deployments by ensuring naming semantics prevent collisions across domains, environments, and modules within the same AWS account.\n\nUse cases: Custom naming for regulatory compliance; Integration with enterprise naming standards; Multi-tenant resource isolation\n\nAWS: Generates names for all AWS resources including S3 buckets, IAM roles, Glue databases, CloudFormation stacks, SSM parameters, and CloudFormation exports\n\nValidation: All generated names must comply with AWS service-specific naming requirements and be unique within account scope",
             "properties": {
                 "props": {
                     "$ref": "#/definitions/MdaaResourceNamingConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nConfiguration properties containing organizational context and CDK node access for the naming implementation. Provides the foundational data required to generate consistent resource names across all MDAA modules.\n\nUse cases: Access to org/env/domain/module context; CDK context retrieval for custom naming; Immutable naming configuration\n\nAWS: Source data for all AWS resource name generation\n\nValidation: Must contain valid MdaaResourceNamingConfig with all required properties"
+                    "description": "Configuration properties containing organizational context and CDK node access for the naming implementation"
                 }
             },
             "required": [
@@ -1744,14 +1730,13 @@
         },
         "KendraEngineProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nKendra search engine configuration interface for GAIA GenAI with intelligent search and knowledge retrieval capabilities. Defines Kendra engine properties for GenAI applications including search configuration, knowledge base integration, and intelligent document retrieval for AI-powered search solutions.\n\nUse cases: Intelligent search; Knowledge retrieval; Document search; AI search capabilities; Search engine configuration; GenAI knowledge management\n\nAWS: Kendra search engine configuration for GAIA GenAI with intelligent search and knowledge retrieval capabilities\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "createIndex": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired boolean flag to enable creation of new Kendra index for GAIA GenAI intelligent search capabilities. Controls whether a new Kendra search index will be created for document indexing and intelligent search functionality within the GenAI application.\n\nUse cases: Search index creation; Document indexing; Intelligent search setup; Knowledge base creation; Search capability enablement\n\nAWS: Amazon Kendra index creation for GAIA GenAI intelligent search and document retrieval capabilities\n\nValidation: Must be boolean value; required for Kendra index creation control",
+                    "description": "Whether to create a new Kendra index",
                     "type": "boolean"
                 },
                 "external": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of external Kendra index configurations for GAIA GenAI enabling integration with existing search indexes. Defines external Kendra indexes that will be integrated with the GenAI application for expanded search capabilities and knowledge retrieval from existing enterprise search infrastructure.\n\nUse cases: External index integration; Enterprise search integration; Existing index reuse; Multi-index search; Knowledge federation\n\nAWS: Amazon Kendra external index integration for expanded search capabilities and enterprise knowledge federation\n\nValidation: Must be array of valid KendraExternalProps if provided; optional for external index integration",
+                    "description": "External Kendra index configurations",
                     "items": {
                         "$ref": "#/definitions/KendraExternalProps"
                     },
@@ -1759,7 +1744,7 @@
                 },
                 "s3DataSourceConfig": {
                     "$ref": "#/definitions/KendraS3DataSourceConfigProps",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional S3 data source configuration for Kendra index enabling document ingestion from S3 buckets. Defines S3-based data source settings for automatic document indexing and search capability from S3 storage locations within the GenAI knowledge management system.\n\nUse cases: S3 document ingestion; Automatic indexing; Document data sources; Knowledge base population; S3-based search content\n\nAWS: Amazon Kendra S3 data source configuration for document ingestion and automatic indexing from S3 storage\n\nValidation: Must be valid KendraS3DataSourceConfigProps if provided; optional for S3 data source configuration"
+                    "description": "S3 data source configuration for Kendra index"
                 }
             },
             "required": [
@@ -1769,7 +1754,6 @@
         },
         "KendraExternalProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nAmazon Kendra external configuration interface for GAIA GenAI with enterprise search and knowledge discovery capabilities. Defines Kendra external properties for GenAI applications including external search integration, knowledge discovery, and document search for AI-powered information retrieval.\n\nUse cases: Enterprise search integration; Knowledge discovery; Document search; AI information retrieval; External search sources; GenAI search capabilities\n\nAWS: Amazon Kendra external configuration for GAIA GenAI with enterprise search and knowledge discovery integration\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "kendraId": {
                     "type": "string"
@@ -1822,7 +1806,6 @@
         },
         "KendraS3DataSourceConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nKendra S3 data source configuration interface for GAIA GenAI with document indexing and search capabilities. Defines Kendra S3 data source properties for GenAI applications including S3 document indexing, search configuration, and content discovery for AI-powered document search.\n\nUse cases: S3 document indexing; Document search; Content discovery; AI document retrieval; Search configuration; GenAI document management\n\nAWS: Kendra S3 data source configuration for GAIA GenAI with document indexing and search capabilities\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "bucketName": {
                     "type": "string"
@@ -1868,7 +1851,6 @@
         },
         "KnowledgeBaseProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nKnowledge base configuration interface for GAIA GenAI providing knowledge management and AI knowledge integration capabilities. Defines knowledge base properties for GenAI applications including knowledge storage, retrieval configuration, and AI knowledge management for intelligent information access.\n\nUse cases: Knowledge management; AI knowledge integration; Knowledge storage; Information retrieval; Intelligent knowledge access; GenAI knowledge systems\n\nAWS: Knowledge base configuration for GAIA GenAI providing knowledge management and AI integration\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "external": {
                     "items": {
@@ -1895,7 +1877,6 @@
         },
         "LlmsProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nLarge Language Model configuration interface for GAIA GenAI providing LLM integration and management capabilities. Defines LLM properties for GenAI applications including model selection, configuration, and integration for AI-powered conversational and text generation capabilities.\n\nUse cases: LLM integration; AI text generation; Conversational AI; Model selection; GenAI capabilities; Language model management\n\nAWS: Large Language Model configuration for GAIA GenAI with LLM integration and text generation capabilities\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "huggingFaceApiToken": {
                     "type": "string"
@@ -2213,14 +2194,13 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
+                    "description": "CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed",
                     "type": "string"
                 },
                 "suppressions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
+                    "description": "Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -2248,10 +2228,9 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
+                    "description": "Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -2265,26 +2244,25 @@
         },
         "MdaaResourceNamingConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA resource naming implementations that standardize AWS resource naming across domains, environments, and modules. This interface enables consistent, collision-free resource naming in multi-tenant MDAA deployments by providing organizational context and CDK node access for custom naming strategies.\n\nUse cases: Multi-domain data lake deployments requiring unique resource names; Cross-account data mesh architectures with consistent naming; Custom naming implementations for compliance requirements\n\nAWS: Configures naming patterns for all AWS resources deployed by MDAA modules including S3 buckets, IAM roles, Glue databases, and CloudFormation stacks\n\nValidation: All properties required; org/env/domain/moduleName must be valid AWS resource name components (alphanumeric, hyphens, underscores)",
             "properties": {
                 "cdkNode": {
                     "$ref": "#/definitions/Node",
-                    "description": "Q-ENHANCED-PROPERTY\nCDK construct node providing access to context values for custom naming implementations. Enables retrieval of additional configuration through tryGetContext() for advanced naming strategies beyond the standard org/env/domain/module pattern.\n\nUse cases: Custom naming with environment-specific prefixes; Integration with external naming services; Context-driven naming for compliance requirements\n\nAWS: CDK context system for CloudFormation template generation\n\nValidation: Must be valid CDK Node instance with accessible context\n  *"
+                    "description": "CDK construct node providing access to context values for custom naming implementations"
                 },
                 "domain": {
-                    "description": "Q-ENHANCED-PROPERTY\nDomain identifier from MDAA configuration representing logical business or organizational boundaries within the data architecture. Forms the third component of the default naming pattern and enables data mesh architectures with domain-specific resource isolation.\n\nUse cases: Data mesh domain separation; Line-of-business resource isolation; Cross-domain data sharing with clear ownership\n\nAWS: Domain component in all AWS resource names, SSM parameter paths, and CloudFormation export names\n\nValidation: Must be valid AWS resource name component (typically business domain names like 'finance', 'marketing', 'shared')",
+                    "description": "Domain identifier from MDAA configuration representing logical business or organizational boundaries",
                     "type": "string"
                 },
                 "env": {
-                    "description": "Q-ENHANCED-PROPERTY\nEnvironment identifier from MDAA configuration that distinguishes deployment stages within the same domain. Forms the second component of the default naming pattern enabling parallel dev/test/prod deployments without resource conflicts.\n\nUse cases: Multi-stage deployments in same account; Environment-specific resource isolation; Progressive deployment strategies\n\nAWS: Environment component in all AWS resource names and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically 'dev', 'test', 'prod', 'staging')",
+                    "description": "Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain",
                     "type": "string"
                 },
                 "moduleName": {
-                    "description": "Q-ENHANCED-PROPERTY\nModule name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment. Forms the final component of the default naming pattern and enables multiple instances of the same module type within the same scope.\n\nUse cases: Multiple data lake instances per domain; Separate analytics workloads; Module-specific resource grouping\n\nAWS: Module component in all AWS resource names, SSM parameter paths, and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically module function like 'datalake', 'warehouse', 'analytics')",
+                    "description": "Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment",
                     "type": "string"
                 },
                 "org": {
-                    "description": "Q-ENHANCED-PROPERTY\nOrganization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names. Forms the first component of the default naming pattern and ensures global uniqueness across multiple MDAA deployments.\n\nUse cases: Multi-organization AWS accounts; Shared service accounts with multiple tenants; Resource name collision prevention\n\nAWS: Prefix for all AWS resource names including S3 buckets, IAM roles, and CloudFormation stacks\n\nValidation: Must be valid AWS resource name component (3-63 characters, alphanumeric and hyphens only, no consecutive hyphens)",
+                    "description": "Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names",
                     "type": "string"
                 }
             },
@@ -2299,30 +2277,29 @@
         },
         "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for referencing IAM roles across MDAA modules using multiple identification methods. Enables flexible role resolution for cross-module dependencies, external role integration, and SSO-managed roles while supporting both mutable and immutable role references.\n\nUse cases: Cross-module IAM role sharing; External role integration from Landing Zone Accelerator; SSO-managed role references for federated access\n\nAWS: References AWS IAM roles for service permissions, cross-account access, and federated identity integration\n\nValidation: At least one of name, arn, or id must be provided; arn must be valid IAM role ARN format; name must be valid IAM role name",
             "properties": {
                 "arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nFull IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.\n\nUse cases: Cross-account role references; External role integration; Precise role identification with account/region context\n\nAWS: AWS IAM role ARN for cross-account permissions and explicit role targeting\n\nValidation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)",
+                    "description": "Full IAM role ARN for cross-account role references and explicit role identification.\n\nUse cases: Cross-account role references; Explicit role binding; Multi-account deployments\n\nAWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)\n\nValidation: Optional; must be a valid IAM role ARN if provided",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.\n\nUse cases: Stable role references across name changes; Precise role identification; Role references in automated systems\n\nAWS: AWS IAM role unique ID for stable role identification\n\nValidation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)",
+                    "description": "IAM role unique identifier for role resolution using the role's AWS-generated ID.\n\nUse cases: Stable role references; Role resolution by unique ID; Immutable role binding\n\nAWS: IAM role unique ID (e.g., AROA...)\n\nValidation: Optional; must be a valid IAM role unique ID if provided",
                     "type": "string"
                 },
                 "immutable": {
-                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.\n\nUse cases: External role protection; System role preservation; Landing Zone Accelerator role integration\n\nAWS: Role modification protection flag for IAM role management\n\nValidation: Boolean value, defaults to false if not specified",
+                    "description": "Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.\n\nUse cases: Pre-existing role protection; Externally managed roles; Read-only role references\n\nAWS: Controls whether MDAA attaches policies or modifies the referenced IAM role\n\nValidation: Optional boolean; defaults to false",
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.\n\nUse cases: Same-account role references; MDAA-generated role references; Simple role configuration\n\nAWS: AWS IAM role name for role lookup and permission assignment\n\nValidation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)",
+                    "description": "IAM role name for role resolution within the same AWS account.\n\nUse cases: Same-account role references; Role name-based resolution; Local IAM role binding\n\nAWS: IAM role name resolved via GetRole within the deployment account\n\nValidation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution",
                     "type": "string"
                 },
                 "refId": {
-                    "description": "Q-ENHANCED-PROPERTY\nUnique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.\n\nUse cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging\n\nAWS: Logical identifier for IAM role references in MDAA configurations\n\nValidation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended",
+                    "description": "Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.\n\nUse cases: Role reference identification; Configuration deduplication; Role lookup key\n\nAWS: Logical identifier for IAM role references within MDAA configuration\n\nValidation: Optional; must be unique within the configuration scope if provided",
                     "type": "string"
                 },
                 "sso": {
-                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.\n\nUse cases: AWS Identity Center integration; Federated user access; SSO-managed role references\n\nAWS: AWS Identity Center (SSO) role resolution for federated access\n\nValidation: Boolean value, implies immutable=true when set to true",
+                    "description": "Flag indicating the role should be resolved as an AWS SSO auto-generated role.\n\nUse cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access\n\nAWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention\n\nValidation: Optional boolean; defaults to false",
                     "type": "boolean"
                 }
             },
@@ -2421,17 +2398,16 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
+                    "description": "Human-readable description explaining the purpose and scope of the Service Catalog constraint",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
+                    "description": "Object containing named constraint rules that define the validation logic for Service Catalog product parameters",
                     "type": "object"
                 }
             },
@@ -2443,14 +2419,13 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
-                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
+                    "description": "Constraint assertion expression that defines the validation logic for Service Catalog product parameters",
                     "type": "string"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
+                    "description": "Human-readable description explaining the purpose and requirements of the constraint assertion",
                     "type": "string"
                 }
             },
@@ -2466,10 +2441,9 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
+                    "description": "Array of constraint assertions that define the validation logic to be applied when the condition is met",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
@@ -2477,7 +2451,7 @@
                 },
                 "condition": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
+                    "description": "Condition configuration that determines when the constraint rule assertions should be evaluated"
                 }
             },
             "required": [
@@ -2488,15 +2462,14 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
+                    "description": "Constraint configuration that defines additional validation rules for the Service Catalog product parameter"
                 },
                 "props": {
                     "$ref": "#/definitions/CfnParameterProps",
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
+                    "description": "CloudFormation parameter properties that define the parameter characteristics including type,"
                 }
             },
             "required": [
@@ -2506,29 +2479,28 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
+                    "description": "IAM role name that will be used to launch the Service Catalog product",
                     "type": "string"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
+                    "description": "Display name for the Service Catalog product that will be visible to end users in the Service Catalog console",
                     "type": "string"
                 },
                 "owner": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
+                    "description": "Owner identifier for the Service Catalog product, typically representing the team or organization",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "description": "Object containing named parameter configurations for the Service Catalog product",
                     "type": "object"
                 },
                 "portfolio_arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
+                    "description": "ARN of the AWS Service Catalog portfolio where the product will be associated",
                     "type": "string"
                 },
                 "portfolio_bucket_name": {
@@ -2571,23 +2543,22 @@
         },
         "ModelProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nAI model configuration interface for GAIA GenAI providing model management and deployment capabilities. Defines model properties for GenAI applications including model selection, configuration parameters, and deployment settings for AI model integration and management.\n\nUse cases: AI model management; Model deployment; Model configuration; AI model integration; Model selection; GenAI model orchestration\n\nAWS: AI model configuration for GAIA GenAI providing model management and deployment capabilities\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "dimensions": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired vector dimensions specification for GAIA GenAI model embedding configuration enabling vector-based AI operations. Defines the dimensionality of vector embeddings produced by the model for semantic search, similarity matching, and vector-based AI operations within the GenAI application.\n\nUse cases: Vector embedding configuration; Semantic search setup; Similarity matching; Vector operations; Embedding dimensionality; AI vector processing\n\nAWS: AI model vector dimensions for GAIA GenAI embedding configuration and vector-based operations\n\nValidation: Must be positive integer; required for vector embedding configuration",
+                    "description": "Vector embedding dimensions",
                     "type": "number"
                 },
                 "isDefault": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional boolean flag to designate this model as the default for GAIA GenAI operations enabling default model selection. Controls whether this model will be used as the default choice for AI operations when no specific model is requested, providing fallback model configuration.\n\nUse cases: Default model selection; Fallback model configuration; Primary model designation; Model prioritization; Default AI operations\n\nAWS: AI model default designation for GAIA GenAI default model selection and fallback configuration\n\nValidation: Must be boolean value if provided; optional for default model designation",
+                    "description": "Whether this is the default model",
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired model name identifier for GAIA GenAI model deployment enabling specific model selection and configuration. Defines the specific AI model that will be deployed and used for inference within the GenAI application, providing model-specific capabilities and performance characteristics.\n\nUse cases: Model selection; Specific model deployment; Model identification; AI capability configuration; Model-specific features\n\nAWS: AI model name for GAIA GenAI model deployment and specific model selection\n\nValidation: Must be valid model name string; required for model identification and deployment",
+                    "description": "Model name identifier",
                     "type": "string"
                 },
                 "provider": {
                     "$ref": "#/definitions/ModelProvider",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired model provider specification for GAIA GenAI model deployment enabling provider-specific model integration. Defines the AI model provider that will be used for model deployment and inference, supporting various AI service providers and model ecosystems within the GenAI application.\n\nUse cases: Model provider selection; Provider-specific integration; Model ecosystem choice; AI service provider configuration; Model deployment strategy\n\nAWS: AI model provider configuration for GAIA GenAI model deployment and provider-specific integration\n\nValidation: Must be valid ModelProvider enum value; required for model provider specification"
+                    "description": "Model provider (sagemaker, bedrock, openai)"
                 }
             },
             "required": [
@@ -2742,17 +2713,16 @@
         },
         "RagProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nRAG configuration interface for GAIA GenAI with Retrieval-Augmented Generation and knowledge integration capabilities. Defines RAG properties for GenAI applications including retrieval engines, embedding models, and knowledge augmentation for enhanced AI response generation.\n\nUse cases: Retrieval-Augmented Generation; Knowledge augmentation; Enhanced AI responses; Retrieval engines; Embedding models; GenAI knowledge enhancement\n\nAWS: RAG configuration for GAIA GenAI with Retrieval-Augmented Generation and knowledge integration\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "crossEncoderModels": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of cross-encoder models for GAIA GenAI RAG semantic similarity and ranking capabilities. Defines cross-encoder models that will be used for document ranking, relevance scoring, and semantic similarity assessment to improve retrieval quality and response accuracy.\n\nUse cases: Document ranking; Relevance scoring; Semantic similarity; Retrieval quality; Response accuracy; RAG ranking optimization\n\nAWS: Cross-encoder models for GAIA GenAI RAG semantic similarity and document ranking capabilities\n\nValidation: Must be array of valid CrossEncoderModelProps; required for RAG cross-encoder model configuration",
+                    "description": "Cross-encoder models for document ranking",
                     "items": {
                         "$ref": "#/definitions/CrossEncoderModelProps"
                     },
                     "type": "array"
                 },
                 "embeddingsModels": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of embedding models for GAIA GenAI RAG vector processing enabling semantic search and similarity matching. Defines the embedding models that will be used for converting text to vector representations for semantic search, document similarity, and knowledge retrieval operations.\n\nUse cases: Vector embeddings; Semantic search; Document similarity; Text vectorization; Knowledge matching; RAG vector processing\n\nAWS: Embedding models for GAIA GenAI RAG vector processing and semantic search capabilities\n\nValidation: Must be array of valid ModelProps; required for RAG embedding model configuration",
+                    "description": "Embedding models for vector processing",
                     "items": {
                         "$ref": "#/definitions/ModelProps"
                     },
@@ -2760,7 +2730,7 @@
                 },
                 "engines": {
                     "$ref": "#/definitions/EngineProps",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired retrieval engine configuration for GAIA GenAI RAG implementation enabling knowledge retrieval and document search capabilities. Defines the retrieval engines that will be used for knowledge augmentation including search engines, vector databases, and knowledge bases for enhanced AI response generation.\n\nUse cases: Knowledge retrieval; Document search; Retrieval engine configuration; Knowledge augmentation; RAG implementation; Search capabilities\n\nAWS: Retrieval engine configuration for GAIA GenAI RAG with knowledge retrieval and document search capabilities\n\nValidation: Must be valid EngineProps configuration; required for RAG retrieval engine setup"
+                    "description": "Retrieval engine configuration"
                 }
             },
             "required": [
@@ -2866,27 +2836,27 @@
         },
         "SagemakerLlmModelConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nGAIA SageMaker LLM model configuration interface for large language model deployment with auto-scaling and instance management. Defines LLM deployment properties including model selection, instance type specification, and auto-scaling configuration for production-ready conversational AI and text generation services in GAIA GenAI applications.\n\nUse cases: Production LLM deployment; Auto-scaling LLM services; Conversational AI backends; Text generation endpoints; Custom LLM hosting; GAIA chatbot infrastructure\n\nAWS: SageMaker LLM endpoints with auto-scaling configuration for GAIA GenAI large language model hosting with production-grade scaling capabilities\n\nValidation: model must be valid SupportedSageMakerModels; instanceType must be valid SageMaker instance type; instance counts must be positive integers with minimum <= initial <= maximum",
+            "description": "SageMaker-hosted LLM model configuration with auto-scaling for GAIA chatbot backends.\nSupports Falcon, Mistral, and Llama2 models with configurable instance types and scaling.\n\nUse cases: SageMaker LLM deployment; Auto-scaling chatbot backends; Custom instance sizing; Production LLM hosting\n\nAWS: Amazon SageMaker real-time inference endpoints with auto-scaling\n\nValidation: Required model field; instance counts must satisfy min <= initial <= max when provided",
             "properties": {
                 "initialInstanceCount": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional initial instance count for SageMaker LLM endpoint enabling deployment scaling and availability configuration. Defines the number of instances that will be initially deployed for the LLM endpoint, providing baseline capacity for conversational AI and text generation workloads.\n\nUse cases: Initial capacity planning; Deployment scaling; Availability configuration; Baseline capacity; LLM endpoint sizing\n\nAWS: Amazon SageMaker LLM endpoint initial instance count for deployment scaling and capacity planning\n\nValidation: Must be positive integer if provided; must be between minimum and maximum instance counts; optional for initial capacity",
+                    "description": "Initial number of instances for the LLM endpoint.\n\nUse cases: Initial capacity planning; Baseline availability; Deployment sizing\n\nAWS: SageMaker endpoint initial instance count\n\nValidation: Optional; Positive integer; Should be between min and max counts",
                     "type": "number"
                 },
                 "instanceType": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional SageMaker instance type for LLM model hosting enabling compute resource specification and performance optimization. Defines the EC2 instance type that will host the large language model, allowing optimization for model size, performance requirements, and cost considerations.\n\nUse cases: Compute resource specification; Performance optimization; Cost optimization; Instance sizing; LLM hosting optimization\n\nAWS: Amazon SageMaker instance type for LLM model hosting and compute resource specification\n\nValidation: Must be valid SageMaker instance type if provided; optional for instance type specification",
+                    "description": "SageMaker instance type for LLM hosting.\n\nUse cases: Compute resource sizing; Performance optimization; Cost management\n\nAWS: Amazon SageMaker endpoint instance type\n\nValidation: Optional; Must be valid SageMaker instance type (e.g., ml.g5.2xlarge)",
                     "type": "string"
                 },
                 "maximumInstanceCount": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional maximum instance count for SageMaker LLM endpoint auto-scaling enabling performance scaling and capacity limits. Defines the maximum number of instances that can be deployed during auto-scaling operations, providing performance scaling capabilities while controlling maximum costs.\n\nUse cases: Performance scaling; Capacity limits; Auto-scaling configuration; Maximum capacity; Cost control\n\nAWS: Amazon SageMaker LLM endpoint maximum instance count for auto-scaling performance optimization and capacity control\n\nValidation: Must be positive integer if provided; must be greater than or equal to initial and minimum counts; optional for auto-scaling configuration",
+                    "description": "Maximum instance count for LLM endpoint auto-scaling.\n\nUse cases: Peak capacity control; Cost limits; Auto-scaling upper bound\n\nAWS: SageMaker endpoint auto-scaling maximum\n\nValidation: Optional; Positive integer; Must be >= initial and min counts",
                     "type": "number"
                 },
                 "minimumInstanceCount": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional minimum instance count for SageMaker LLM endpoint auto-scaling enabling cost optimization and scaling boundaries. Defines the minimum number of instances that will be maintained during auto-scaling operations, providing cost control and minimum availability guarantees.\n\nUse cases: Cost optimization; Auto-scaling boundaries; Minimum availability; Scaling limits; Cost control\n\nAWS: Amazon SageMaker LLM endpoint minimum instance count for auto-scaling cost optimization and availability control\n\nValidation: Must be positive integer if provided; must be less than or equal to initial and maximum counts; optional for auto-scaling configuration",
+                    "description": "Minimum instance count for LLM endpoint auto-scaling.\n\nUse cases: Cost optimization; Minimum availability guarantee; Auto-scaling lower bound\n\nAWS: SageMaker endpoint auto-scaling minimum\n\nValidation: Optional; Positive integer; Must be <= initial and max counts",
                     "type": "number"
                 },
                 "model": {
                     "$ref": "#/definitions/SupportedSageMakerModels",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired SageMaker LLM model specification for GAIA GenAI large language model deployment enabling specific model selection and capabilities. Defines the specific large language model that will be deployed on SageMaker for conversational AI, text generation, and natural language processing within the GAIA GenAI application.\n\nUse cases: LLM model selection; Conversational AI; Text generation; Natural language processing; Model-specific capabilities; GAIA chatbot backend\n\nAWS: Amazon SageMaker LLM model for GAIA GenAI large language model deployment and hosting\n\nValidation: Must be valid SupportedSageMakerModels enum value; required for LLM model deployment"
+                    "description": "SageMaker LLM model to deploy for conversational AI.\n\nUse cases: LLM model selection; Chatbot backend model; Text generation endpoint\n\nAWS: Amazon SageMaker hosted LLM model\n\nValidation: Required; Must be valid SupportedSageMakerModels enum value (FalconLite, Llama2_13b_Chat, Mistral7b_Instruct2)"
                 }
             },
             "required": [
@@ -2896,7 +2866,6 @@
         },
         "SagemakerRagProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nSageMaker RAG configuration interface for GAIA GenAI with Retrieval-Augmented Generation and knowledge integration capabilities. Defines SageMaker RAG properties for GenAI applications including knowledge retrieval, context augmentation, and RAG model configuration for enhanced AI responses.\n\nUse cases: Retrieval-Augmented Generation; Knowledge integration; Context augmentation; Enhanced AI responses; RAG model configuration; GenAI knowledge enhancement\n\nAWS: SageMaker RAG configuration for GAIA GenAI with Retrieval-Augmented Generation and knowledge integration\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
             "properties": {
                 "initialInstanceCount": {
                     "type": "number"
@@ -3403,32 +3372,32 @@
         },
         "VpcProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nVPC configuration interface for GAIA GenAI infrastructure with network isolation and security capabilities. Defines VPC properties for GenAI application deployment including network configuration, subnet management, and security group configuration for secure AI workload isolation.\n\nUse cases: GenAI network isolation; VPC security configuration; AI workload networking; Secure GenAI deployment; Network segmentation\n\nAWS: VPC configuration for GAIA GenAI infrastructure with network isolation and security for AI workloads\n\nValidation: Configuration must be valid for GenAI deployment; properties must conform to GAIA and AWS AI service requirements",
+            "description": "VPC networking configuration for GAIA GenAI infrastructure deployment.\nDefines network isolation boundaries with separate app and data tiers for secure AI workload hosting.\n\nUse cases: GenAI network isolation; Multi-tier VPC deployment; Secure AI workload hosting; Network segmentation for chatbot infrastructure\n\nAWS: Amazon VPC with app/data subnet tiers and security groups\n\nValidation: Required; All IDs must reference existing VPC resources",
             "properties": {
                 "appSecurityGroupId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired security group identifier for GAIA GenAI application tier components enabling application access control and network security. Defines the security group that will control network access to application components including web servers, API gateways, and frontend AI services.\n\nUse cases: Application tier security; Web server access control; API gateway security; Frontend service security; User access control\n\nAWS: Amazon EC2 security group identifier for GAIA GenAI application tier network access control and security\n\nValidation: Must be valid security group identifier; required for application tier security configuration",
+                    "description": "Security group ID controlling network access for application tier components (Lambda, API handlers).\n\nUse cases: Application tier security; API handler access control; Lambda function networking\n\nAWS: Amazon EC2 Security Group\n\nValidation: Required; Must be valid security group ID (sg-xxx format)",
                     "type": "string"
                 },
                 "appSubnets": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of application subnet identifiers for GAIA GenAI application components enabling application tier network segmentation. Defines the specific subnets within the VPC that will host application components including web servers, API gateways, and frontend AI services for user-facing GenAI functionality.\n\nUse cases: Application tier networking; Web server subnet placement; API gateway networking; Frontend service networking; User-facing AI services\n\nAWS: Amazon VPC subnet identifiers for GAIA GenAI application tier components and user-facing services\n\nValidation: Must be array of valid subnet identifiers; required for application tier deployment; subnets must be in specified VPC",
+                    "description": "Subnet IDs for the application tier hosting Lambda functions, API handlers, and user-facing services.\n\nUse cases: Lambda function placement; API handler networking; Application tier isolation; User-facing AI services\n\nAWS: Amazon VPC subnets for application tier\n\nValidation: Required; Array of valid subnet IDs; must be in the specified VPC",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "dataSecurityGroupId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired security group identifier for GAIA GenAI data tier components enabling data access control and network security. Defines the security group that will control network access to data processing components including databases, storage services, and backend AI infrastructure.\n\nUse cases: Data tier security; Database access control; Backend service security; Data processing security; Network access control\n\nAWS: Amazon EC2 security group identifier for GAIA GenAI data tier network access control and security\n\nValidation: Must be valid security group identifier; required for data tier security configuration",
+                    "description": "Security group ID controlling network access to data tier components (databases, storage).\n\nUse cases: Database access control; Backend service security; Data processing network rules\n\nAWS: Amazon EC2 Security Group\n\nValidation: Required; Must be valid security group ID (sg-xxx format)",
                     "type": "string"
                 },
                 "dataSubnets": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of data subnet identifiers for GAIA GenAI data processing components enabling data tier network segmentation. Defines the specific subnets within the VPC that will host data processing components including databases, data storage, and backend AI services for secure data handling.\n\nUse cases: Data tier networking; Database subnet placement; Backend service networking; Data processing isolation; Secure data handling\n\nAWS: Amazon VPC subnet identifiers for GAIA GenAI data tier components and data processing services\n\nValidation: Must be array of valid subnet identifiers; required for data tier deployment; subnets must be in specified VPC",
+                    "description": "Subnet IDs for the data tier hosting databases (Aurora, DynamoDB) and backend AI services.\nThese subnets should have no direct internet access for data security.\n\nUse cases: Database subnet placement; Backend AI service networking; Data processing isolation; Secure data handling\n\nAWS: Amazon VPC subnets for data tier\n\nValidation: Required; Array of valid subnet IDs; must be in the specified VPC",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "vpcId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired VPC identifier for GAIA GenAI infrastructure deployment enabling network isolation and security boundaries. Defines the Virtual Private Cloud that will host the GAIA GenAI application components providing network-level security and isolation for AI workloads and data processing.\n\nUse cases: GenAI network isolation; VPC-based security; AI workload networking; Secure GenAI deployment; Network boundaries\n\nAWS: Amazon VPC identifier for GAIA GenAI infrastructure deployment with network isolation and security\n\nValidation: Must be valid VPC identifier; required for VPC-based GAIA deployment",
+                    "description": "VPC identifier for hosting GAIA GenAI application components.\nAll Lambda functions, databases, and endpoints will be deployed within this VPC.\n\nUse cases: GenAI network isolation; VPC-bound AI workloads; Secure chatbot deployment; Network boundary definition\n\nAWS: Amazon VPC\n\nValidation: Required; Must be valid VPC ID (vpc-xxx format)",
                     "type": "string"
                 }
             },
@@ -3445,7 +3414,7 @@
     "properties": {
         "gaia": {
             "$ref": "#/definitions/GAIAProps",
-            "description": "Q-ENHANCED-PROPERTY\nRequired GAIA platform configuration defining all aspects of the generative AI deployment including model integration, authentication, and conversational interface setup. Provides GenAI platform setup with secure authentication, model access, and AI-powered conversational capabilities.\n\nUse cases: GenAI platform configuration; Model integration setup; Conversational AI interface and authentication management\n\nAWS: GAIA GenAI platform configuration for complete AI-powered chatbot deployment and model integration\n\nValidation: Must be valid GAIAProps; required; defines all GenAI platform and conversational interface characteristics"
+            "description": "Complete GAIA generative AI platform configuration including RAG engines, LLM models, authentication, VPC networking, and chatbot API setup.\nEncompasses all sub-configurations for Bedrock/SageMaker model integration, Cognito auth, Aurora/Kendra RAG, and custom code overwrites.\n\nUse cases: GenAI chatbot deployment; RAG-powered document Q&A; Multi-model AI platform setup; Enterprise conversational AI\n\nAWS: GAIA platform (API Gateway, Lambda, DynamoDB, S3, Step Functions, Bedrock, SageMaker, Cognito)\n\nValidation: Required; Must be valid GAIAProps extending SystemConfig"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",

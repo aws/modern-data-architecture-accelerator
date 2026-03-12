@@ -15,48 +15,45 @@ import * as configSchema from './config-schema.json';
 
 export interface SageMakerNotebookConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional asset deployment configuration for SageMaker notebook instances enabling automated code and resource deployment. Provides mechanism for deploying notebooks, scripts, and other assets to notebook instances for consistent development environments.
+   * Asset deployment configuration for automated notebook code and resource provisioning.
    *
-   * Use cases: Automated asset deployment; Consistent development environments; Code and resource provisioning
+   * Use cases: Automated asset deployment, consistent development environments, code provisioning
    *
-   * AWS: Amazon SageMaker notebook instance asset deployment for development environment setup
+   * AWS: SageMaker notebook instance asset deployment
    *
-   * Validation: Must be valid NotebookAssetDeploymentConfig if provided; enables automated asset deployment to notebooks
+   * Validation: Optional; NotebookAssetDeploymentConfig
    **/
   readonly assetDeploymentConfig?: NotebookAssetDeploymentConfig;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of lifecycle configuration names to lifecycle configurations enabling automated notebook instance management. Provides startup and shutdown scripts for notebook instances to ensure consistent environment setup and resource management.
+   * Map of lifecycle configuration names to lifecycle configs with startup/shutdown scripts.
    *
-   * Use cases: Automated environment setup; Consistent notebook configuration; Resource management and optimization
+   * Use cases: Automated environment setup, consistent notebook configuration, resource management
    *
-   * AWS: Amazon SageMaker lifecycle configurations for automated notebook instance management
+   * AWS: SageMaker lifecycle configurations
    *
-   * Validation: Must be valid NamedLifecycleConfigProps if provided; enables automated notebook lifecycle management
+   * Validation: Optional; NamedLifecycleConfigProps (map of name to config)
    **/
   readonly lifecycleConfigs?: NamedLifecycleConfigProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional KMS key ARN for notebook instance encryption enabling secure data science development with customer-controlled encryption. Provides encryption at rest for notebook instance storage and ensures data protection compliance for sensitive development work.
+   * Existing KMS key ARN for notebook instance encryption.
+   * If omitted, a customer-managed key is created automatically.
    *
-   * Use cases: Secure development environments; Data protection compliance; Customer-controlled encryption for notebooks
+   * Use cases: Customer-controlled encryption, data protection compliance, key reuse
    *
-   * AWS: AWS KMS key for SageMaker notebook instance encryption and secure development
+   * AWS: KMS key for SageMaker notebook encryption
    *
-   * Validation: Must be valid KMS key ARN if provided; enables encrypted storage for notebook instances
+   * Validation: Optional; String; must be valid KMS key ARN
    **/
   readonly kmsKeyArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of notebook names to notebook instance configurations enabling data science development environment provisioning. Provides complete notebook instance setup with compute resources, networking, and access controls for machine learning development.
+   * Map of notebook names to notebook instance configurations with compute, networking, and access controls.
    *
-   * Use cases: Data science development; ML notebook provisioning; development environment setup
+   * Use cases: Data science development, ML notebook provisioning, development environment setup
    *
-   * AWS: Amazon SageMaker notebook instances for data science and machine learning development
+   * AWS: SageMaker notebook instances
    *
-   * Validation: Must be valid NotebookWithIdProps if provided; defines all notebook instance configurations and capabilities
-   *   **/
+   * Validation: Optional; NotebookWithIdProps (map of notebook name to config)
+   **/
   readonly notebooks?: NotebookWithIdProps;
 }
 

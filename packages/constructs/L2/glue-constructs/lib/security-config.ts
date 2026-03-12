@@ -18,16 +18,7 @@ export interface MdaaSecurityConfigProps extends MdaaConstructProps {
   readonly cloudWatchKmsKey: IMdaaKmsKey;
   readonly jobBookMarkKmsKey: IMdaaKmsKey;
   readonly s3OutputKmsKey: IMdaaKmsKey;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional security configuration name for custom identification overriding automatic MDAA naming conventions. When specified, provides custom naming for the security configuration for specific organizational or integration requirements.
-   *
-   * Use cases: Custom naming; Organizational requirements; Integration needs; Specific naming conventions
-   *
-   * AWS: Glue security configuration name for custom identification and configuration management
-   *
-   * Validation: Must be valid configuration name string if provided; overrides automatic MDAA naming
-   **/
+  /** Security configuration name for custom identification overriding automatic MDAA naming conventions */
   readonly securityConfigurationName?: string;
 }
 

@@ -17,16 +17,7 @@ import { Construct } from 'constructs';
  * Properties for creating a Secret Ec2 KeyPair
  */
 export interface MdaaEC2SecretKeyPairProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required name for the EC2 key pair providing unique identification and MDAA naming conventions. Specifies the key pair identifier used for EC2 instance access and operational management within the secure infrastructure.
-   *
-   * Use cases: Key pair identification; EC2 instance access; Operational management; Unique key naming
-   *
-   * AWS: Amazon EC2 key pair name for instance access and identification
-   *
-   * Validation: Must be unique key pair name string; required; used for EC2 instance SSH access
-   **/
+  /** Name for the EC2 key pair providing unique identification and MDAA naming conventions */
   readonly name: string;
   readonly kmsKey: IKey;
   readonly readPrincipals?: PrincipalBase[];
@@ -87,16 +78,7 @@ export class MdaaEC2SecretKeyPair extends Construct {
 
     if (props.readPrincipals && props.readPrincipals.length > 0) {
       const secretAccessStatement = new PolicyStatement({
-        /**
-         * Q-ENHANCED-PROPERTY
-         * Required array of IAM actions for Secrets Manager access enabling secure key pair retrieval and usage. Specifies the specific Secrets Manager actions required for reading key pair secrets and enabling authorized access to SSH key material.
-         *
-         * Use cases: Secret retrieval; Key pair access; Secure credential management; Authorized key access
-         *
-         * AWS: IAM policy actions for Secrets Manager key pair secret access and retrieval operations
-         *
-         * Validation: Must include DescribeSecret and GetSecretValue actions; required for secret access functionality
-         */
+        /** IAM actions for Secrets Manager key pair secret access */
         actions: ['secretsmanager:DescribeSecret', 'secretsmanager:GetSecretValue'],
         resources: [this.secret.secretArn],
         principals: props.readPrincipals,

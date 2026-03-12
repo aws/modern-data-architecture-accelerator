@@ -12,15 +12,15 @@ import * as configSchema from './config-schema.json';
 
 export interface MacieSessionConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required Macie session configuration defining data discovery and classification capabilities including sensitive data detection, security monitoring, and compliance reporting. Provides complete Macie session setup with data protection monitoring and governance features.
+   * Macie session settings controlling finding publication frequency and session status.
+   * Deploys a Macie session for automated sensitive data discovery and classification.
    *
-   * Use cases: Data discovery and classification; Sensitive data protection; Security monitoring and compliance reporting
+   * Use cases: Sensitive data discovery automation; PII detection; Compliance monitoring
    *
-   * AWS: Amazon Macie session configuration for data discovery and protection monitoring
+   * AWS: Amazon Macie CfnSession
    *
-   * Validation: Must be valid MacieSessionProps; required; defines all Macie session capabilities and monitoring features
-   **/
+   * Validation: Required; valid MacieSessionProps
+   */
   readonly session: MacieSessionProps;
 }
 

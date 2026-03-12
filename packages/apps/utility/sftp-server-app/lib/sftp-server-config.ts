@@ -12,15 +12,15 @@ import * as configSchema from './config-schema.json';
 
 export interface SftpServerConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required SFTP server configuration defining all aspects of the secure file transfer service including networking, authentication, and access controls. Provides server setup with VPC security, identity integration, and file transfer workflow management.
+   * SFTP server configuration defining VPC networking, subnet placement, and
+   * CIDR-based access control for the Transfer Family server.
    *
-   * Use cases: Secure file transfer configuration; VPC networking setup; Authentication and access control management
+   * Use cases: Secure file transfer setup; VPC-based SFTP deployment; B2B file exchange
    *
-   * AWS: AWS Transfer Family SFTP server configuration for complete secure file transfer deployment
+   * AWS: Transfer Family SFTP server with VPC endpoint and security group
    *
-   * Validation: Must be valid ServerProps; required; defines all SFTP server deployment and security characteristics
-   **/
+   * Validation: Required; must be valid ServerProps
+   */
   readonly server: ServerProps;
 }
 

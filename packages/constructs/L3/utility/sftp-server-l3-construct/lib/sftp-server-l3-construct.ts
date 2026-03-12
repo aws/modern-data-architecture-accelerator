@@ -14,59 +14,61 @@ import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
- * Q-ENHANCED-INTERFACE
- * AWS Transfer Family SFTP server configuration for secure file transfer to S3 data lakes. Defines SFTP server deployment with VPC networking, subnet placement, and CIDR-based access control for secure B2B file exchange and data ingestion workflows.
+ * Transfer Family SFTP server configuration for secure file transfer to S3.
+ * MDAA creates a security group allowing port 22 ingress from specified CIDRs,
+ * deploys the server on specified VPC/subnets, and optionally allocates a public IP.
  *
- * Use cases: B2B file exchange; Secure data ingestion; Partner file uploads; Legacy system integration
+ * Use cases: B2B file exchange; Secure data ingestion from partners; Legacy system integration
  *
- * AWS: AWS Transfer Family SFTP server with VPC endpoint and security group configuration for secure file transfer to S3
+ * AWS: Transfer Family SFTP server with VPC endpoint, security group, and CloudWatch logging
  *
- * Validation: vpcId must be valid VPC identifier; subnetIds must be valid subnet identifiers; ingressCidrs must be valid CIDR blocks
+ * Validation: vpcId, subnetIds, and ingressCidrs required
  */
 export interface ServerProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required VPC identifier where the SFTP server will be deployed enabling network isolation and security boundaries. Defines the Virtual Private Cloud that will host the SFTP server providing network-level security and isolation for secure file transfer operations and data ingestion workflows.
+   * VPC ID where the SFTP server will be deployed. The security group and
+   * server endpoints are created within this VPC.
    *
-   * Use cases: Network isolation; VPC deployment; Security boundaries; Private file transfer environments; Network-level security
+   * Use cases: VPC-based SFTP deployment; Network isolation for file transfers
    *
-   * AWS: Amazon VPC identifier for AWS Transfer Family SFTP server deployment and network isolation
+   * AWS: VPC for Transfer Family server endpoint and security group
    *
-   * Validation: Must be valid VPC identifier; required for VPC-based SFTP server deployment
-   **/
+   * Validation: Required; must be existing VPC ID
+   */
   readonly vpcId: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of subnet identifiers where the SFTP server will be hosted enabling multi-AZ deployment and network distribution. Defines the specific subnets within the VPC that will host the SFTP server endpoints providing availability and network segmentation for file transfer operations.
+   * Subnet IDs where the SFTP server will have network interfaces.
+   * Use multiple subnets across AZs for high availability.
    *
-   * Use cases: Multi-AZ deployment; Network segmentation; Availability distribution; Subnet-level isolation; Network architecture
+   * Use cases: Multi-AZ SFTP deployment; Network segmentation
    *
-   * AWS: Amazon VPC subnet identifiers for AWS Transfer Family SFTP server deployment and network distribution
+   * AWS: VPC subnets for Transfer Family server endpoint placement
    *
-   * Validation: Must be array of valid subnet identifiers; required for SFTP server deployment; subnets must be in specified VPC
-   **/
+   * Validation: Required; must be valid subnet IDs within the specified VPC
+   */
   readonly subnetIds: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional boolean flag to enable internet-facing SFTP server with public IP address allocation enabling external client access. Controls whether the SFTP server will be accessible from the internet with public IP addresses or remain internal to the VPC for private access only.
+   * Whether to allocate a public Elastic IP for internet-facing access.
+   * When false, the server is only accessible within the VPC.
    *
-   * Use cases: External client access; Internet connectivity; Public SFTP access; B2B file exchange; External partner integration
+   * Use cases: External partner file uploads; Internet-accessible SFTP endpoint
    *
-   * AWS: AWS Transfer Family SFTP server internet-facing configuration for public IP allocation and external access
+   * AWS: Elastic IP allocation for Transfer Family public endpoint
    *
-   * Validation: Must be boolean value if provided; optional for internet accessibility control
-   **/
+   * Validation: Optional; boolean
+   * @default false
+   */
   readonly internetFacing?: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of CIDR blocks defining network access control for SFTP server connections enabling IP-based access restriction. Specifies the IP address ranges that will be permitted to connect to the SFTP server through security group rules for network-level access control and security.
+   * CIDR blocks permitted to connect to the SFTP server on port 22.
+   * All other ingress is denied by default.
    *
-   * Use cases: IP-based access control; Network security; Client IP restriction; Security group configuration; Access management
+   * Use cases: IP-based access control; Partner network whitelisting
    *
-   * AWS: Amazon EC2 security group CIDR blocks for AWS Transfer Family SFTP server network access control
+   * AWS: Security group ingress rules for Transfer Family server (TCP 22)
    *
-   * Validation: Must be array of valid CIDR blocks; required for security group ingress rules and access control
-   **/
+   * Validation: Required; array of valid CIDR blocks (e.g. 10.0.0.0/8)
+   */
   readonly ingressCidrs: string[];
   /**
    * Optional Transfer Family security policy name controlling cryptographic algorithms for SFTP connections.
@@ -76,16 +78,7 @@ export interface ServerProps {
   readonly securityPolicyName?: string;
 }
 export interface SftpServerL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required SFTP server configuration defining file transfer infrastructure including VPC networking, security groups, and access control settings. Provides complete server setup with network security, ingress rules, and connectivity configuration for secure file transfer operations and data ingestion workflows.
-   *
-   * Use cases: SFTP server configuration; File transfer infrastructure; Network security; Secure connectivity
-   *
-   * AWS: AWS Transfer Family SFTP server configuration for secure file transfer and data ingestion
-   *
-   * Validation: Must be valid ServerProps; required for SFTP server deployment and file transfer infrastructure
-   **/
+  /** SFTP server configuration for Transfer Family deployment. */
   readonly server: ServerProps;
 }
 

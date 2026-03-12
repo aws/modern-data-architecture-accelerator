@@ -39,27 +39,7 @@ export interface RestApiProps extends MdaaL3ConstructProps {
   readonly byUserIdIndex: string;
   readonly modelsParameter: ssm.StringParameter;
   readonly models: SageMakerModelEndpoint[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of CIDR blocks allowed to access the GAIA REST API through WAF IP allowlist rules enabling network-level access control. Defines network-level access control for the generative AI REST API by restricting access to specific IP address ranges for enhanced security.
-   *
-   * Use cases: Corporate network access control; IP-based security restrictions; Network perimeter enforcement; Geographic access limitations
-   *
-   * AWS: AWS WAF IPSet addresses for API Gateway access control and network security
-   *
-   * Validation: Must be valid CIDR notation strings if provided; enables IP-based access control when specified
-   **/
   readonly allowedCidrs?: string[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional API Gateway stage name for REST API deployment and environment management enabling stage-based deployment control. Provides stage configuration for API deployment affecting URL structure, environment separation, and deployment management.
-   *
-   * Use cases: Stage management; Environment separation; Deployment control; URL structure
-   *
-   * AWS: Amazon API Gateway stage name for REST API deployment and environment management
-   *
-   * Validation: Must be valid stage name string if provided; affects API deployment and environment organization
-   **/
   readonly stageName?: string;
   readonly encryptionKey: MdaaKmsKey;
 }

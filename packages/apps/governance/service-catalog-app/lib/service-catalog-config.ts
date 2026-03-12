@@ -12,62 +12,59 @@ import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Service Catalog portfolio management providing provider and access control settings. Defines portfolio-specific configuration including provider information, descriptions, and role-based access control for Service Catalog governance.
+ * Service Catalog portfolio configuration with provider info and role-based access.
  *
- * Use cases: Service Catalog portfolio configuration; Provider management; Role-based portfolio access control
+ * Use cases: Self-service infrastructure provisioning; Governed product catalogs; Role-based portfolio access
  *
- * AWS: Configures AWS Service Catalog portfolios with provider information and access control settings
+ * AWS: Service Catalog portfolio with principal associations
  *
- * Validation: providerName is required; description and access are optional
+ * Validation: providerName required; description and access optional
  */
 export interface PortfolioConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required provider name for the Service Catalog portfolio enabling identification and management of portfolio ownership. Specifies the organization or team responsible for maintaining and providing the products within this portfolio.
+   * Organization or team name responsible for this portfolio's products.
    *
-   * Use cases: Portfolio ownership identification; Provider accountability; Portfolio management organization
+   * Use cases: Portfolio ownership identification; Provider accountability
    *
-   * AWS: AWS Service Catalog portfolio provider name for ownership and management identification
+   * AWS: Service Catalog portfolio provider name
    *
-   * Validation: Must be non-empty string; required; identifies the portfolio provider and ownership
-   **/
+   * Validation: Required; non-empty string
+   */
   readonly providerName: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional description of the Service Catalog portfolio providing context and purpose information for users. Helps users understand the portfolio contents, intended use cases, and available products for better portfolio selection.
+   * Portfolio description for users to understand contents and purpose.
    *
-   * Use cases: Portfolio documentation; User guidance; Portfolio purpose explanation
+   * Use cases: Portfolio documentation; User guidance
    *
-   * AWS: AWS Service Catalog portfolio description for user information and guidance
+   * AWS: Service Catalog portfolio description
    *
-   * Validation: Must be string if provided; provides portfolio context and purpose information
-   **/
+   * Validation: Optional; string
+   */
   readonly description?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of role references with access to this Service Catalog portfolio enabling controlled access to portfolio products. Provides role-based access control for portfolio visibility and product provisioning capabilities.
+   * Roles granted access to this portfolio for product provisioning.
+   * Creates IAM principal associations on the portfolio.
    *
-   * Use cases: Role-based portfolio access; Controlled product provisioning; Access management for Service Catalog
+   * Use cases: Role-based portfolio access; Controlled product provisioning
    *
-   * AWS: AWS Service Catalog portfolio access control for role-based product access
+   * AWS: Service Catalog portfolio principal associations (IAM type)
    *
-   * Validation: Must be array of valid MdaaRoleRef objects if provided; controls portfolio access and visibility
-   **/
+   * Validation: Optional; array of valid MdaaRoleRef
+   */
   readonly access?: MdaaRoleRef[];
 }
 
 export interface MdaaServiceCatalogProductConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of portfolio names to portfolio configurations enabling Service Catalog portfolio management. Provides complete portfolio setup with provider information, access control, and governance settings for self-service infrastructure provisioning.
+   * Map of portfolio names to portfolio configurations.
+   * Each entry creates a Service Catalog portfolio with optional role-based access.
    *
-   * Use cases: Portfolio management; Self-service provisioning; Governance-controlled infrastructure deployment
+   * Use cases: Multi-portfolio governance; Self-service infrastructure provisioning
    *
-   * AWS: AWS Service Catalog portfolio configuration for complete portfolio management and governance
+   * AWS: Service Catalog portfolios with principal associations
    *
-   * Validation: Must be object with string keys and valid PortfolioConfig values; required; defines all portfolio configurations
-   *   **/
+   * Validation: Required; keys are portfolio display names, values must be valid PortfolioConfig
+   */
   readonly portfolios: { [portfolioName: string]: PortfolioConfig };
 }
 

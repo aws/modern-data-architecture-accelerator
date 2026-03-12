@@ -4,21 +4,19 @@
  */
 
 /**
- * Q-ENHANCED-INTERFACE
- * Data Quality Rule interface for structured rule objects defining validation logic. Represents a single data quality check that can be applied to Glue Catalog tables.
+ * Structured rule object defining a single data quality validation check for Glue Catalog tables.
  *
- * Use cases: Rule definition; Data validation; Quality checks; Structured rule configuration
+ * Use cases: Rule definition, data validation, quality checks, structured rule configuration
  *
- * AWS: AWS Glue Data Quality rule definition in structured format
+ * AWS: AWS Glue Data Quality rule definition in structured format, converted to DQDL
  *
- * Validation: ruleType is required; other fields depend on specific rule type
+ * Validation: ruleType is required; other fields depend on the specific rule type
  */
 export interface DataQualityRule {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required rule type identifier specifying which validation to perform. Determines which other fields are required and how the rule is evaluated.
+   * Rule type identifier (e.g. IsComplete, ColumnValues, Uniqueness, RowCount, CustomSql).
    *
-   * Use cases: Rule identification; Validation type selection; Rule builder routing
+   * Use cases: Rule identification, validation type selection
    *
    * AWS: AWS Glue Data Quality rule type
    *
@@ -27,22 +25,20 @@ export interface DataQualityRule {
   readonly ruleType: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Column name to validate for column-specific rules. Specifies which column in the table to apply the validation rule to.
+   * Column name for column-specific rules.
    *
-   * Use cases: Column targeting; Field validation; Column-level checks
+   * Use cases: Column targeting, field validation
    *
    * AWS: AWS Glue Catalog table column name
    *
-   * Validation: Required for most rule types except RowCount and ColumnCount; must be valid column name in target table
+   * Validation: Required for most rule types except RowCount and ColumnCount; must be a valid column name
    */
   readonly column?: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Comparison operator for threshold and value-based rules. Defines how to compare the measured value against the threshold or expected value.
+   * Comparison operator for threshold and value-based rules (e.g. =, >, <, >=, <=, in).
    *
-   * Use cases: Threshold comparison; Value validation; Range checks
+   * Use cases: Threshold comparison, value validation, range checks
    *
    * AWS: Comparison operator for Glue Data Quality rules
    *
@@ -51,22 +47,20 @@ export interface DataQualityRule {
   readonly comparisonOperator?: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Threshold value for percentage-based rules like Completeness and Uniqueness. Represents the minimum acceptable percentage as a decimal between 0.0 and 1.0.
+   * Threshold value (0.0–1.0) for percentage-based rules like Completeness and Uniqueness.
    *
-   * Use cases: Completeness validation; Uniqueness checks; Percentage thresholds
+   * Use cases: Completeness validation, uniqueness checks
    *
    * AWS: Threshold for Glue Data Quality percentage-based rules
    *
-   * Validation: Must be between 0.0 and 1.0; default is 0.95; used for Completeness and Uniqueness rules
+   * Validation: Must be between 0.0 and 1.0; defaults to 0.95
    */
   readonly threshold?: number;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Numeric value for comparison in count and statistical rules. Used as the expected or threshold value for rules like RowCount, Mean, and StandardDeviation.
+   * Numeric value for count and statistical rules (e.g. RowCount, Mean, StandardDeviation).
    *
-   * Use cases: Row count validation; Statistical thresholds; Numeric comparisons
+   * Use cases: Row count validation, statistical thresholds, numeric comparisons
    *
    * AWS: Numeric value for Glue Data Quality rule comparisons
    *
@@ -75,62 +69,57 @@ export interface DataQualityRule {
   readonly value?: number;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Array of allowed values for ColumnValues rule with 'in' operator. Defines the set of acceptable values for a column.
+   * Allowed values list for ColumnValues rule with 'in' operator.
    *
-   * Use cases: Enum validation; Allowed value lists; Categorical data validation
+   * Use cases: Enum validation, allowed value lists, categorical data validation
    *
-   * AWS: Allowed values list for Glue Data Quality ColumnValues rule
+   * AWS: Allowed values for Glue Data Quality ColumnValues rule
    *
    * Validation: Required for ColumnValues rule; can contain strings or numbers
    */
   readonly values?: (string | number)[];
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional WHERE clause to filter rows before applying the rule. Allows conditional validation on a subset of data.
+   * SQL WHERE clause to filter rows before applying the rule.
    *
-   * Use cases: Conditional validation; Row filtering; Subset checks
+   * Use cases: Conditional validation, row filtering, subset checks
    *
    * AWS: WHERE clause for Glue Data Quality rule filtering
    *
-   * Validation: Must be valid SQL WHERE condition; use single quotes for string literals; example: "status = 'active'"
+   * Validation: Must be a valid SQL WHERE condition; use single quotes for string literals
    */
   readonly where?: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * SQL query for CustomSql rule type returning a single numeric value. Enables custom validation logic using SQL expressions.
+   * SQL query for CustomSql rule type, must return a single numeric value.
    *
-   * Use cases: Custom validation logic; Complex checks; SQL-based rules
+   * Use cases: Custom validation logic, complex checks, SQL-based rules
    *
    * AWS: Custom SQL query for Glue Data Quality CustomSql rule
    *
-   * Validation: Required for CustomSql rule; must be SELECT statement returning single numeric value
+   * Validation: Required for CustomSql rule; must be a SELECT returning a single numeric value
    */
   readonly sql?: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Expected data type for ColumnDataType rule validation. Specifies the required data type for a column.
+   * Expected data type for ColumnDataType rule (e.g. STRING, INT, DATE, DECIMAL).
    *
-   * Use cases: Schema validation; Type checking; Data type enforcement
+   * Use cases: Schema validation, type checking, data type enforcement
    *
    * AWS: Expected column data type for Glue Data Quality validation
    *
-   * Validation: Required for ColumnDataType rule; must be valid Glue data type (e.g., STRING, INT, DATE, DECIMAL, BIGINT, DOUBLE)
+   * Validation: Required for ColumnDataType rule; must be a valid Glue data type
    */
   readonly dataType?: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Time duration for DataFreshness rule specifying maximum data age. Defines how recent the data must be.
+   * Duration for DataFreshness rule specifying maximum data age (e.g. '24 hours', '7 days').
    *
-   * Use cases: Data freshness validation; Timeliness checks; Recency requirements
+   * Use cases: Data freshness validation, timeliness checks, recency requirements
    *
    * AWS: Duration threshold for Glue Data Quality DataFreshness rule
    *
-   * Validation: Required for DataFreshness rule; format: '<number> <unit>' (e.g., '24 hours', '7 days'); default is '24 hours'
+   * Validation: Required for DataFreshness rule; format: '<number> <unit>'; defaults to '24 hours'
    */
   readonly duration?: string;
 }

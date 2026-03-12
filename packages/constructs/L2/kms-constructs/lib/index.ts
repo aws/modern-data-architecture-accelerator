@@ -45,16 +45,7 @@ export interface MdaaKmsKeyProps extends MdaaConstructProps {
 
   readonly keyAdminRoleIds?: string[];
 
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional human-readable description of the KMS key explaining its purpose and intended usage. Helps users and administrators understand the key's role in the data architecture and make appropriate usage decisions.
-   *
-   * Use cases: Key purpose documentation; Administrative clarity; Compliance documentation
-   *
-   * AWS: AWS KMS key description for management and identification purposes
-   *
-   * Validation: Must be descriptive text if provided; recommended for key management clarity
-   **/
+  /** Human-readable description of the KMS key explaining its purpose and intended usage */
   readonly description?: string;
 
   readonly alias?: string;

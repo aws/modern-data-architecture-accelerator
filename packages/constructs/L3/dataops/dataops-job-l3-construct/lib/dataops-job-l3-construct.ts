@@ -30,8 +30,7 @@ export type JobCommandPythonVersion = '2' | '3' | undefined;
 export type JobCommandName = 'glueetl' | 'pythonshell';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Glue job logging with CloudWatch log retention management and compliance requirements. Defines log retention settings for Glue job execution logs ensuring proper log management, compliance, and cost optimization for DataOps job monitoring and audit trails.
+ * Configuration for Glue job logging with CloudWatch log retention management.
  *
  * Use cases: Log retention management; Compliance requirements; Cost optimization; Audit trail management
  *
@@ -40,22 +39,12 @@ export type JobCommandName = 'glueetl' | 'pythonshell';
  * Validation: logGroupRetentionDays is required with specific allowed values for retention period
  */
 export interface LoggingConfig {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required CloudWatch log group retention period in days for Glue job log management and compliance requirements. Defines how long job execution logs are retained in CloudWatch with specific allowed values for log retention, compliance management, and storage cost optimization.
-   *
-   * Use cases: Log retention management; Compliance requirements; Storage cost optimization; Audit trail management
-   *
-   * AWS: CloudWatch log group retention for Glue job execution logs and audit trail management
-   *
-   * Validation: Must be 1,3,5,7,14,30,60,90,120,150,180,365,400,545,731,1827,3653, or 0; required for log retention configuration
-   **/
+  /** CloudWatch log group retention in days. Allowed: 1,3,5,7,14,30,60,90,120,150,180,365,400,545,731,1827,3653, or 0. */
   readonly logGroupRetentionDays: number;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Glue job command specification with script execution and runtime environment settings. Defines job command configuration including job type, Python version, and script location for Glue ETL and Python shell job execution within DataOps workflows.
+ * Configuration for a Glue job command specifying script execution and runtime environment.
  *
  * Use cases: Job command configuration; Script execution; Runtime environment; ETL job setup
  *
@@ -64,46 +53,18 @@ export interface LoggingConfig {
  * Validation: name and scriptLocation are required; pythonVersion is optional with specific constraints
  */
 export interface JobCommand {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required job command name specification controlling Glue job execution type and runtime environment. Defines whether to use glueetl for ETL jobs with Spark runtime or pythonshell for Python script execution with different resource allocation and capabilities.
-   *
-   * Use cases: Job type selection; Runtime environment; Execution model; Resource allocation
-   *
-   * AWS: Glue job command name for execution type and runtime environment selection
-   *
-   * Validation: Must be glueetl or pythonshell; required for job command type and execution environment
-   *   **/
+  /** Job type: 'glueetl' for Spark ETL or 'pythonshell' for Python scripts. */
   readonly name: JobCommandName;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional Python version specification for Glue job runtime environment enabling version-specific script execution and compatibility. When specified, controls the Python runtime version for job execution ensuring script compatibility and feature availability.
-   *
-   * Use cases: Python version control; Runtime compatibility; Script execution; Version management
-   *
-   * AWS: Glue job Python version for runtime environment and script compatibility
-   *
-   * Validation: Must be 2 or 3 if provided; controls Python runtime version for job execution
-   *   **/
+  /** Python version for job runtime ('2' or '3'). */
   readonly pythonVersion?: JobCommandPythonVersion;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required relative path to Glue script for job execution enabling script location specification and code deployment. Provides the S3 path or relative location of the Glue script that will be executed by the job for ETL processing and data transformation.
-   *
-   * Use cases: Script location; Code deployment; Job execution; ETL processing
-   *
-   * AWS: Glue job script location for code execution and ETL processing
-   *
-   * Validation: Must be valid script path; required for job script location and code execution
-   **/
+  /** Relative path to the Glue script for job execution. */
   readonly scriptLocation: string;
 }
 
 export type JobWorkerType = 'Standard' | 'G.1X' | 'G.2X';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Glue job properties providing ETL job configuration and resource management capabilities. Defines complete Glue job setup including execution roles, commands, capacity allocation, retry policies, and monitoring for DataOps ETL processing and data transformation workflows.
+ * Configuration for a Glue job including execution roles, commands, capacity, and monitoring.
  *
  * Use cases: ETL job configuration; Data transformation; Job resource management; DataOps processing
  *
@@ -112,214 +73,43 @@ export type JobWorkerType = 'Standard' | 'G.1X' | 'G.2X';
  * Validation: executionRoleArn, command, and description are required; other properties are optional with specific constraints
  */
 export interface JobConfig {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required execution role ARN for Glue job permissions enabling secure job execution and AWS service access. Provides the IAM role that the Glue job will assume for executing ETL operations and accessing AWS services during data processing workflows.
-   *
-   * Use cases: Job permissions; Service access; Secure execution; IAM role management
-   *
-   * AWS: IAM role ARN for Glue job execution permissions and service access
-   *
-   * Validation: Must be valid IAM role ARN; required for job execution permissions and service access
-   **/
+  /** IAM role ARN for Glue job execution permissions. */
   readonly executionRoleArn: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required job command configuration defining script execution and runtime environment for Glue job processing. Provides the command specification including job type, Python version, and script location for ETL job execution and data transformation.
-   *
-   * Use cases: Script execution; Runtime configuration; Job command setup; ETL processing
-   *
-   * AWS: Glue job command for script execution and runtime environment configuration
-   *
-   * Validation: Must be valid JobCommand; required for job command configuration and script execution
-   *   **/
+  /** Job command configuration defining script and runtime environment. */
   readonly command: JobCommand;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional template reference for job configuration inheritance enabling reusable job configurations and standardized setups. When specified, inherits configuration from a template defined elsewhere in the configuration for consistent job setup and management.
-   *
-   * Use cases: Configuration inheritance; Template reuse; Standardized setup; Configuration management
-   *
-   * AWS: Job template reference for configuration inheritance and standardized job setup
-   *
-   * Validation: Must be valid template name if provided; enables configuration inheritance from defined templates
-   **/
+  /** Template name for configuration inheritance. */
   readonly template?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional allocated capacity specification for Glue job resource allocation controlling job performance and cost management. Defines the number of capacity units allocated to the job for processing performance and resource utilization optimization.
-   *
-   * Use cases: Resource allocation; Performance tuning; Cost management; Capacity planning
-   *
-   * AWS: Glue job allocated capacity for resource allocation and performance optimization
-   *
-   * Validation: Must be positive integer if provided; controls job resource allocation and performance
-   **/
+  /** Number of capacity units allocated to the job. */
   readonly allocatedCapacity?: number;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of connection names for Glue job network connectivity enabling database and external system access. Provides network connections for accessing databases, VPC resources, and external systems during ETL processing and data integration.
-   *
-   * Use cases: Database connectivity; VPC access; External system integration; Network configuration
-   *
-   * AWS: Glue job connections for database and external system connectivity
-   *
-   * Validation: Must be array of valid connection names if provided; enables database and external system access
-   **/
+  /** Connection names for database and external system access. */
   readonly connections?: string[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional default arguments map for Glue job parameter configuration enabling job customization and runtime behavior control. Provides default parameters and arguments that will be passed to the job for runtime configuration and behavior customization.
-   *
-   * Use cases: Job parameters; Runtime configuration; Behavior customization; Parameter management
-   *
-   * AWS: Glue job default arguments for runtime configuration and parameter management
-   *
-   * Validation: Must be valid ConfigurationElement if provided; enables job parameter configuration and customization
-   **/
+  /** Default arguments passed to the job at runtime. */
   readonly defaultArguments?: ConfigurationElement;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required job description for documentation and operational management enabling job identification and purpose documentation. Provides descriptive information about the job's purpose, functionality, and operational characteristics for management and documentation.
-   *
-   * Use cases: Job documentation; Operational management; Purpose identification; Management information
-   *
-   * AWS: Glue job description for documentation and operational management
-   *
-   * Validation: Must be descriptive text; required for job documentation and operational management
-   **/
+  /** Job description for documentation and management. */
   readonly description: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional execution property configuration for Glue job concurrency control enabling parallel execution management and resource optimization. Defines execution properties including maximum concurrent executions for job scheduling and resource management.
-   *
-   * Use cases: Concurrency control; Parallel execution; Resource management; Job scheduling
-   *
-   * AWS: Glue job execution properties for concurrency control and parallel execution management
-   *
-   * Validation: Must be valid ExecutionPropertyProperty if provided; controls job concurrency and parallel execution
-   *   **/
+  /** Execution properties including maximum concurrent runs. */
   readonly executionProperty?: CfnJob.ExecutionPropertyProperty;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional Glue version specification for runtime environment control enabling version-specific features and compatibility. Defines the Glue runtime version for job execution ensuring feature availability and compatibility with job requirements.
-   *
-   * Use cases: Runtime version control; Feature availability; Compatibility management; Version specification
-   *
-   * AWS: Glue version for runtime environment and feature availability
-   *
-   * Validation: Must be valid Glue version if provided; controls runtime environment and feature availability
-   **/
+  /** Glue runtime version for the job. */
   readonly glueVersion?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional maximum capacity specification for Glue job resource limits controlling maximum resource allocation and cost management. Defines the maximum number of DPUs (Data Processing Units) that can be allocated to the job for resource control and cost optimization.
-   *
-   * Use cases: Resource limits; Cost control; Maximum allocation; Resource management
-   *
-   * AWS: Glue job maximum capacity for resource limits and cost control
-   *
-   * Validation: Must be positive number if provided; controls maximum DPU allocation and resource limits
-   **/
+  /** Maximum DPU capacity for the job. */
   readonly maxCapacity?: number;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional maximum retry count for Glue job failure handling enabling automatic retry and error recovery. Defines the maximum number of retries before job failure occurs for automatic error recovery and job reliability.
-   *
-   * Use cases: Error recovery; Automatic retry; Job reliability; Failure handling
-   *
-   * AWS: Glue job maximum retries for automatic error recovery and job reliability
-   *
-   * Validation: Must be non-negative integer if provided; controls automatic retry behavior and error recovery
-   **/
+  /** Maximum retry count before job failure. */
   readonly maxRetries?: number;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional notification property configuration for Glue job monitoring and alerting enabling job status notifications and operational awareness. Defines notification settings including notification delay for job monitoring and operational alerting.
-   *
-   * Use cases: Job monitoring; Status notifications; Operational alerting; Monitoring configuration
-   *
-   * AWS: Glue job notification properties for monitoring and alerting configuration
-   *
-   * Validation: Must be valid NotificationPropertyProperty if provided; enables job monitoring and alerting
-   *   **/
+  /** Notification settings for job monitoring and alerting. */
   readonly notificationProperty?: CfnJob.NotificationPropertyProperty;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional number of workers specification for Glue job parallel processing enabling distributed processing and performance optimization. Defines the number of workers assigned to the job for parallel processing and distributed data transformation.
-   *
-   * Use cases: Parallel processing; Distributed processing; Performance optimization; Worker allocation
-   *
-   * AWS: Glue job number of workers for parallel processing and performance optimization
-   *
-   * Validation: Must be positive integer if provided; controls parallel processing and worker allocation
-   **/
+  /** Number of workers for parallel processing. */
   readonly numberOfWorkers?: number;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional timeout specification for Glue job execution limits enabling job runtime control and resource management. Defines the maximum execution time for the job in minutes for runtime control and resource optimization.
-   *
-   * Use cases: Runtime control; Execution limits; Resource management; Timeout configuration
-   *
-   * AWS: Glue job timeout for execution time limits and resource management
-   *
-   * Validation: Must be positive integer in minutes if provided; controls job execution time limits
-   **/
+  /** Job timeout in minutes. */
   readonly timeout?: number;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional worker type specification for Glue job compute resource selection enabling performance and cost optimization. Defines the type of workers (Standard, G.1X, G.2X) for compute resource allocation and performance characteristics.
-   *
-   * Use cases: Compute resource selection; Performance optimization; Cost management; Worker type configuration
-   *
-   * AWS: Glue job worker type for compute resource allocation and performance optimization
-   *
-   * Validation: Must be Standard, G.1X, or G.2X if provided; controls compute resource type and performance
-   *   **/
+  /** Worker type: 'Standard', 'G.1X', or 'G.2X'. */
   readonly workerType?: JobWorkerType;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of additional script paths for Glue job dependency management enabling modular ETL development and code reuse. Provides relative paths to additional Glue scripts referenced by the main ETL script for modular development and code organization.
-   *
-   * Use cases: Script dependencies; Modular development; Code reuse; Dependency management
-   *
-   * AWS: Additional Glue scripts for job dependencies and modular ETL development
-   *
-   * Validation: Must be array of valid script paths if provided; enables script dependencies and modular development
-   **/
+  /** Relative paths to additional Python scripts for the job. */
   readonly additionalScripts?: string[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of additional JAR file paths for Glue job library dependencies enabling Java library integration and extended functionality. Provides relative paths to JAR files referenced by the ETL script for Java library integration and extended processing capabilities.
-   *
-   * Use cases: Java library integration; Extended functionality; Library dependencies; JAR file management
-   *
-   * AWS: Additional JAR files for Glue job library dependencies and Java integration
-   *
-   * Validation: Must be array of valid JAR file paths if provided; enables Java library integration and extended functionality
-   **/
+  /** Relative paths to additional JAR files for the job. */
   readonly additionalJars?: string[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of additional file paths for Glue job resource dependencies enabling external file access and resource management. Provides relative paths to additional files referenced by the ETL script for external resource access and file dependencies.
-   *
-   * Use cases: File dependencies; External resources; Resource management; File access
-   *
-   * AWS: Additional files for Glue job resource dependencies and external file access
-   *
-   * Validation: Must be array of valid file paths if provided; enables external file access and resource dependencies
-   **/
+  /** Relative paths to additional files for the job. */
   readonly additionalFiles?: string[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional continuous logging configuration for Glue job real-time monitoring enabling live log streaming and troubleshooting support. When enabled, streams job logs to CloudWatch Logs in real-time for live monitoring and troubleshooting during job execution.
-   *
-   * Use cases: Real-time monitoring; Live log streaming; Troubleshooting support; Operational visibility
-   *
-   * AWS: Glue job continuous logging for real-time monitoring and troubleshooting
-   *
-   * Validation: Must be valid LoggingConfig if provided; enables real-time log streaming and monitoring
-   **/
+  /** Continuous logging configuration for real-time monitoring. */
   readonly continuousLogging?: LoggingConfig;
 }
 

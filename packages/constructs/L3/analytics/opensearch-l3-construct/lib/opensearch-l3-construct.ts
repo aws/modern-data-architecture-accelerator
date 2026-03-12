@@ -24,139 +24,130 @@ import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Construct } from 'constructs';
 
 /**
- * Q-ENHANCED-INTERFACE
- * SecurityGroupIngressProps configuration interface for search analytics and log analysis.
+ * Ingress rules for the OpenSearch domain security group.
+ * Supports both IPv4 CIDR blocks and security group references.
  *
- * Use cases: Search analytics; Log analysis; Full-text search; Data indexing
+ * Use cases: IP-based access control; Security group-based service connectivity
  *
- * AWS: Amazon OpenSearch configuration for search analytics and log analysis
+ * AWS: VPC security group ingress rules for OpenSearch domain
  *
- * Validation: Configuration must be valid for deployment; properties must conform to Amazon OpenSearch and MDAA requirements
+ * Validation: At least one of ipv4 or sg should be specified
  */
 export interface SecurityGroupIngressProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * IPv4 CIDR blocks for OpenSearch domain ingress access control enabling network-based access restrictions. Specifies the IPv4 address ranges that are allowed to access the OpenSearch domain, supporting network-level security and access control for search analytics workloads.
+   * IPv4 CIDR blocks allowed to access the OpenSearch domain.
    *
-   * Use cases: Network access control; IP-based restrictions; VPC security; Client connectivity control
+   * Use cases: Network-based access control; VPC CIDR allowlisting; Client IP restrictions
    *
-   * AWS: Amazon OpenSearch domain security group ingress rules for IPv4 network access control
+   * AWS: Security group ingress rules with IPv4 CIDR sources
    *
-   * Validation: Must be array of valid IPv4 CIDR blocks if specified; CIDR blocks must be properly formatted (e.g., '10.0.0.0/16')
-   **/
+   * Validation: Optional; array of valid IPv4 CIDR blocks (e.g., '10.0.0.0/16')
+   */
   readonly ipv4?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Security group IDs for OpenSearch domain ingress access control enabling security group-based access restrictions. Specifies the security groups that are allowed to access the OpenSearch domain, supporting fine-grained network security and access control patterns.
+   * Security group IDs allowed to access the OpenSearch domain.
    *
-   * Use cases: Security group-based access; Fine-grained network control; Service-to-service communication; Application tier access
+   * Use cases: Service-to-service access; Application tier connectivity; Security group chaining
    *
-   * AWS: Amazon OpenSearch domain security group ingress rules for security group-based access control
+   * AWS: Security group ingress rules with security group sources
    *
-   * Validation: Must be array of valid security group IDs if specified; security groups must exist in the same VPC
-   **/
+   * Validation: Optional; array of valid security group IDs in the same VPC
+   */
   readonly sg?: string[];
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * SubnetConfig configuration interface for search analytics and log analysis.
+ * Subnet placement configuration for OpenSearch domain nodes.
+ * Number of subnets must match or exceed the zone awareness availability zone count.
  *
- * Use cases: Search analytics; Log analysis; Full-text search; Data indexing
+ * Use cases: Multi-AZ node placement; VPC subnet selection; Availability zone distribution
  *
- * AWS: Amazon OpenSearch configuration for search analytics and log analysis
+ * AWS: OpenSearch domain VPC subnet configuration
  *
- * Validation: Configuration must be valid for deployment; properties must conform to Amazon OpenSearch and MDAA requirements
+ * Validation: subnetId and availabilityZone required; must match actual subnet AZ
  */
 export interface SubnetConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Subnet identifier for OpenSearch domain placement enabling VPC network isolation and availability zone distribution. Specifies the subnet where OpenSearch domain nodes will be deployed, supporting network isolation and multi-AZ deployment patterns for high availability.
+   * VPC subnet ID for OpenSearch node placement.
    *
-   * Use cases: VPC network isolation; Multi-AZ deployment; Network placement control; High availability configuration
+   * Use cases: VPC network isolation; Subnet-specific deployment
    *
-   * AWS: Amazon OpenSearch domain subnet configuration for VPC deployment and network isolation
+   * AWS: VPC subnet for OpenSearch domain nodes
    *
-   * Validation: Must be valid subnet ID; required; subnet must exist in the specified VPC and availability zone
-   **/
+   * Validation: Required; valid subnet ID in the specified VPC
+   */
   readonly subnetId: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Availability zone for OpenSearch domain node placement enabling geographic distribution and fault tolerance. Specifies the availability zone where the subnet is located, supporting multi-AZ deployment patterns and high availability configurations.
+   * Availability zone of the subnet (e.g., us-east-1a).
+   * Must match the actual AZ of the specified subnet.
    *
-   * Use cases: Multi-AZ deployment; Fault tolerance; Geographic distribution; High availability; Disaster recovery
+   * Use cases: Multi-AZ distribution; Fault tolerance; Geographic placement
    *
-   * AWS: Amazon OpenSearch domain availability zone configuration for high availability and fault tolerance
+   * AWS: Availability zone for OpenSearch node placement
    *
-   * Validation: Must be valid availability zone name; required; must match the availability zone of the specified subnet
-   **/
+   * Validation: Required; valid AZ name matching the subnet's AZ
+   */
   readonly availabilityZone: string;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * CustomEndpointConfig configuration interface for search analytics and log analysis.
+ * Custom endpoint configuration for branded OpenSearch domain access.
+ * Configures custom domain name, SSL certificate, and optional Route53 DNS integration.
+ * If acmCertificateArn is omitted, a new ACM certificate is created automatically.
  *
- * Use cases: Search analytics; Log analysis; Full-text search; Data indexing
+ * Use cases: Branded domain access; Custom SSL certificates; Automated DNS record creation
  *
- * AWS: Amazon OpenSearch configuration for search analytics and log analysis
+ * AWS: OpenSearch custom endpoint with ACM certificate and optional Route53 CNAME
  *
- * Validation: Configuration must be valid for deployment; properties must conform to Amazon OpenSearch and MDAA requirements
+ * Validation: domainName required; route53HostedZoneDomainName required when route53HostedZoneEnabled is true
  */
 export interface CustomEndpointConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Fully qualified domain name for OpenSearch custom endpoint enabling branded domain access and SSL certificate management. Specifies the custom domain name for accessing the OpenSearch domain, supporting branded access patterns and custom SSL certificate configuration.
+   * Fully qualified domain name for the custom endpoint (e.g., search.example.com).
    *
-   * Use cases: Branded domain access; Custom SSL certificates; Domain-specific access; Professional endpoint naming
+   * Use cases: Branded domain access; Professional endpoint naming
    *
-   * AWS: Amazon OpenSearch domain custom endpoint configuration for branded domain access
+   * AWS: OpenSearch custom endpoint domain name
    *
-   * Validation: Must be valid FQDN format; required when customEndpoint section is specified; domain must be resolvable
-   **/
+   * Validation: Required; valid FQDN
+   */
   readonly domainName: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * ACM certificate ARN for custom endpoint SSL/TLS encryption enabling secure custom domain access. When specified, uses existing ACM certificate for SSL/TLS encryption; otherwise, a new certificate will be automatically created for the custom domain.
+   * Existing ACM certificate ARN for SSL/TLS. If omitted, a new certificate is created.
    *
-   * Use cases: Custom SSL certificates; Existing certificate reuse; SSL/TLS encryption; Secure domain access
+   * Use cases: Existing certificate reuse; Custom SSL management
    *
-   * AWS: AWS Certificate Manager certificate for OpenSearch custom endpoint SSL/TLS encryption
+   * AWS: ACM certificate for OpenSearch custom endpoint
    *
-   * Validation: Must be valid ACM certificate ARN if specified; certificate must be valid for the specified domain name
-   **/
+   * Validation: Optional; valid ACM certificate ARN matching the domain name
+   */
   readonly acmCertificateArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Route53 hosted zone enablement for custom endpoint DNS management enabling automated DNS record creation. When enabled, automatically creates DNS records in Route53 for the custom endpoint; when disabled, DNS management must be handled externally.
+   * Enable automatic Route53 CNAME record creation for the custom endpoint.
    *
-   * Use cases: Automated DNS management; Route53 integration; DNS record automation; Domain resolution setup
+   * Use cases: Automated DNS management; Route53 integration
    *
-   * AWS: Amazon Route53 hosted zone integration for OpenSearch custom endpoint DNS management
+   * AWS: Route53 CNAME record for OpenSearch custom endpoint
    *
-   * Validation: Boolean value; when true, enables automatic DNS record creation in Route53 hosted zone
-   **/
+   * Validation: Optional; boolean
+   */
   readonly route53HostedZoneEnabled?: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Route53 hosted zone domain name for DNS management enabling domain-specific DNS configuration. Specifies the domain name used in the hosted zone for DNS record creation, supporting domain-specific DNS management and resolution.
+   * Route53 hosted zone domain name for DNS record creation (e.g., example.com).
+   * Required when route53HostedZoneEnabled is true.
    *
-   * Use cases: Domain-specific DNS; Hosted zone configuration; DNS management; Domain resolution
+   * Use cases: Hosted zone selection; Domain-specific DNS configuration
    *
-   * AWS: Amazon Route53 hosted zone domain name for OpenSearch custom endpoint DNS management
+   * AWS: Route53 hosted zone for CNAME record creation
    *
-   * Validation: Must be valid domain name if specified; domain must exist in Route53 hosted zone
-   **/
+   * Validation: Optional; valid domain name matching an existing Route53 hosted zone
+   */
   readonly route53HostedZoneDomainName?: string;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * SAML authentication configuration for OpenSearch domain SSO integration
- *
- * Use cases: Single Sign-On; Centralized user management; Corporate identity integration
- *
- * AWS: Amazon OpenSearch domain SAML authentication configuration
+ * SAML authentication configuration for OpenSearch Dashboard SSO integration.
+ * Requires the IdP entity ID and metadata XML content for SAML 2.0 setup.
  */
 export interface SamlAuthenticationConfig {
   /**
@@ -180,197 +171,186 @@ export interface SamlAuthenticationConfig {
 
 export interface OpensearchDomainProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Data admin role reference for OpenSearch domain administration enabling domain management and dashboard access. Specifies the IAM role that will be granted administrative access to OpenSearch Dashboard for SAML configuration and domain management through the web interface.
+   * IAM role granted admin access to OpenSearch Dashboard for SAML configuration and domain management.
    *
-   * Use cases: Domain administration; Dashboard access; SAML configuration; Administrative management; Security configuration
+   * Use cases: Domain administration; Dashboard SAML setup; Security configuration
    *
-   * AWS: Amazon OpenSearch domain admin role for dashboard access and domain administration
+   * AWS: IAM role with OpenSearch admin permissions
    *
-   * Validation: Must be valid MdaaRoleRef; required; role must have appropriate permissions for OpenSearch administration
-   **/
+   * Validation: Required; valid MdaaRoleRef
+   */
   readonly dataAdminRole: MdaaRoleRef;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Functional name for OpenSearch domain enabling organized domain identification and MDAA naming convention application. Provides the base name for the OpenSearch domain which will be processed through MDAA naming conventions, with automatic ID suffixing if the resultant name exceeds 28 characters.
+   * Functional name for the OpenSearch domain. Processed through MDAA naming conventions;
+   * if the resulting name exceeds 28 characters, a random ID suffix is appended to a truncated name.
    *
-   * Use cases: Domain identification; Naming convention application; Organized domain management; Resource naming
+   * Use cases: Domain identification; MDAA naming convention compliance
    *
-   * AWS: Amazon OpenSearch domain name with MDAA naming convention processing
+   * AWS: OpenSearch domain name
    *
-   * Validation: Must be valid domain name; required; processed through MDAA naming conventions with automatic truncation and ID suffixing
-   **/
+   * Validation: Required; string
+   */
   readonly opensearchDomainName: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Custom endpoint configuration for branded domain access enabling professional endpoint naming and SSL certificate management. When specified, configures custom domain name, SSL certificates, and DNS management for branded access to the OpenSearch domain.
+   * Custom endpoint configuration for branded domain access with SSL and optional Route53 DNS.
    *
-   * Use cases: Branded domain access; Custom SSL certificates; Professional endpoint naming; DNS management
+   * Use cases: Branded domain access; Custom SSL certificates; Automated DNS management
    *
-   * AWS: Amazon OpenSearch domain custom endpoint configuration for branded access and SSL management
+   * AWS: OpenSearch custom endpoint with ACM and Route53
    *
-   * Validation: Must be valid CustomEndpointConfig if specified; enables custom domain access when provided
-   **/
+   * Validation: Optional; valid CustomEndpointConfig
+   */
   readonly customEndpoint?: CustomEndpointConfig;
   /**
-   * Q-ENHANCED-PROPERTY
-   * VPC identifier for OpenSearch domain deployment enabling network isolation and security controls. Specifies the VPC where the OpenSearch domain will be created, providing network-level isolation and security for search analytics workloads.
+   * VPC ID for OpenSearch domain deployment. The domain is VPC-bound without public addresses.
    *
-   * Use cases: Network isolation; VPC security; Private domain deployment; Network access control
+   * Use cases: Network isolation; Private domain deployment; VPC security
    *
-   * AWS: Amazon OpenSearch domain VPC configuration for network isolation and security
+   * AWS: VPC for OpenSearch domain network configuration
    *
-   * Validation: Must be valid VPC ID; required; VPC must exist and be accessible for domain deployment
-   **/
+   * Validation: Required; valid VPC ID
+   */
   readonly vpcId: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Subnet configurations for OpenSearch domain node placement enabling multi-AZ deployment and high availability. Specifies the subnets where domain nodes will be deployed, supporting availability zone distribution and fault tolerance for search analytics workloads.
+   * Subnet configurations for domain node placement. Number of subnets must match or exceed
+   * the zoneAwareness availabilityZoneCount.
    *
-   * Use cases: Multi-AZ deployment; High availability; Fault tolerance; Network placement control; Availability zone distribution
+   * Use cases: Multi-AZ deployment; High availability; Fault tolerance
    *
-   * AWS: Amazon OpenSearch domain subnet configuration for multi-AZ deployment and high availability
+   * AWS: VPC subnets for OpenSearch domain nodes
    *
-   * Validation: Must be array of valid SubnetConfig objects; required; number of subnets must match or exceed zone awareness configuration
-   **/
+   * Validation: Required; array of SubnetConfig with matching AZs
+   */
   readonly subnets: SubnetConfig[];
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Security group ingress configuration for OpenSearch domain access control enabling network-based access restrictions. Defines the network access rules for the OpenSearch domain, supporting IP-based and security group-based access control patterns.
+   * Security group ingress rules controlling network access to the domain.
+   * All egress is permitted by default; no ingress is permitted by default.
    *
-   * Use cases: Network access control; Security group-based access; IP-based restrictions; Client connectivity control
+   * Use cases: Network access control; IP and security group-based restrictions
    *
-   * AWS: Amazon OpenSearch domain security group ingress rules for network access control
+   * AWS: VPC security group for OpenSearch domain
    *
-   * Validation: Must be valid SecurityGroupIngressProps; required; defines network access patterns for domain security
-   *   **/
+   * Validation: Required; valid SecurityGroupIngressProps
+   */
   readonly securityGroupIngress: SecurityGroupIngressProps;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Zone awareness configuration for OpenSearch cluster shard distribution enabling multi-AZ fault tolerance and performance optimization. When specified, enables shard distribution across 2 or 3 availability zones for improved fault tolerance and search performance.
+   * Zone awareness configuration for shard distribution across 2 or 3 availability zones.
    *
-   * Use cases: Multi-AZ fault tolerance; Shard distribution; Performance optimization; High availability; Disaster recovery
+   * Use cases: Multi-AZ fault tolerance; Shard distribution; High availability
    *
-   * AWS: Amazon OpenSearch domain zone awareness configuration for multi-AZ shard distribution
+   * AWS: OpenSearch zone awareness for cross-AZ shard replication
    *
-   * Validation: Must be valid ZoneAwarenessConfig if specified; enables shard distribution across specified availability zones
-   **/
+   * Validation: Optional; valid ZoneAwarenessConfig
+   */
   readonly zoneAwareness?: ZoneAwarenessConfig;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Cluster capacity configuration for OpenSearch domain node sizing enabling performance optimization and cost management. Defines the node types, counts, and capacity settings for the OpenSearch cluster to match workload requirements and performance needs.
+   * Cluster capacity configuration defining master nodes, data nodes, and warm nodes.
    *
-   * Use cases: Performance optimization; Cost management; Workload sizing; Cluster scaling; Resource allocation
+   * Use cases: Performance sizing; Cost management; Workload-specific capacity
    *
-   * AWS: Amazon OpenSearch domain capacity configuration for cluster node sizing and performance
+   * AWS: OpenSearch cluster node types and counts
    *
-   * Validation: Must be valid CapacityConfig; required; defines cluster node configuration and capacity settings
-   **/
+   * Validation: Required; valid CapacityConfig
+   */
   readonly capacity: CapacityConfig;
   /**
-   * Q-ENHANCED-PROPERTY
-   * EBS storage configuration for OpenSearch cluster nodes enabling persistent storage and performance optimization. Defines the EBS volume settings for cluster nodes including volume type, size, and performance characteristics for data storage.
+   * EBS storage configuration for cluster data nodes (volume type, size, IOPS).
    *
-   * Use cases: Persistent storage; Performance optimization; Storage sizing; Data retention; I/O performance tuning
+   * Use cases: Storage sizing; I/O performance tuning; Data retention capacity
    *
-   * AWS: Amazon OpenSearch domain EBS storage configuration for cluster node persistent storage
+   * AWS: EBS volumes attached to OpenSearch data nodes
    *
-   * Validation: Must be valid EbsOptions; required; defines EBS volume configuration for cluster nodes
-   *   **/
+   * Validation: Required; valid EbsOptions
+   */
   readonly ebs: EbsOptions;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Automated snapshot start hour for OpenSearch domain backup scheduling enabling data protection and recovery capabilities. Specifies the hour of day when automated snapshot creation will begin, supporting data backup and disaster recovery requirements.
+   * Hour of day (0-23 UTC) when automated snapshot creation begins.
    *
-   * Use cases: Data backup; Disaster recovery; Automated snapshots; Data protection; Recovery point management
+   * Use cases: Backup scheduling; Data protection; Recovery point management
    *
-   * AWS: Amazon OpenSearch domain automated snapshot configuration for data backup and recovery
+   * AWS: OpenSearch automated snapshot configuration
    *
-   * Validation: Must be integer between 0-23; required; defines the hour when automated snapshots begin
-   **/
+   * Validation: Required; integer 0-23
+   */
   readonly automatedSnapshotStartHour: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * OpenSearch engine version for domain deployment enabling version-specific features and compatibility. Specifies the OpenSearch engine version in x.y format where x is major version and y is minor version, controlling available features and compatibility.
+   * OpenSearch engine version in x.y format (e.g., '2.3').
    *
-   * Use cases: Version-specific features; Compatibility control; Feature availability; Engine capabilities; Version management
+   * Use cases: Version-specific features; Compatibility control; Engine selection
    *
-   * AWS: Amazon OpenSearch domain engine version for feature availability and compatibility
+   * AWS: OpenSearch engine version
    *
-   * Validation: Must be valid OpenSearch version in x.y format; required; version must be supported by AWS OpenSearch service
-   **/
+   * Validation: Required; supported OpenSearch version string
+   */
   readonly opensearchEngineVersion: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Automatic version upgrade enablement for OpenSearch domain maintenance enabling automated engine updates and security patches. When enabled, allows AWS to automatically upgrade the OpenSearch engine version for security and feature updates; when disabled, requires manual version management.
+   * Allow automatic OpenSearch engine version upgrades for security patches and features.
    *
-   * Use cases: Automated maintenance; Security updates; Version management; Feature updates; Maintenance automation
+   * Use cases: Automated maintenance; Security patching; Version management
    *
-   * AWS: Amazon OpenSearch domain automatic version upgrade configuration for maintenance and security
+   * AWS: OpenSearch automatic version upgrade setting
    *
-   * Validation: Must be boolean; required; controls automatic version upgrade behavior for domain maintenance
-   **/
+   * Validation: Required; boolean
+   */
   readonly enableVersionUpgrade: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Domain access policy statements for fine-grained access control enabling resource-based permissions and security policies. Defines IAM policy statements that control access to the OpenSearch domain, supporting fine-grained access control and security policies.
+   * IAM policy statements defining domain access control.
+   * Note: IP-based policies cannot be applied to VPC-bound domains.
    *
-   * Use cases: Fine-grained access control; Resource-based permissions; Security policies; Access management; Permission control
+   * Use cases: Fine-grained access control; Resource-based permissions; Domain security
    *
-   * AWS: Amazon OpenSearch domain access policies for fine-grained access control and security
+   * AWS: OpenSearch domain access policies
    *
-   * Validation: Must be array of valid PolicyStatementProps; required; defines access control policies for domain security
-   **/
+   * Validation: Required; array of valid PolicyStatementProps
+   */
   readonly accessPolicies: PolicyStatementProps[];
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * SAML authentication configuration for SSO integration enabling centralized identity management and corporate authentication. When specified, configures SAML-based authentication for OpenSearch Dashboard access through corporate identity providers like Okta, Azure AD, or AWS IAM Identity Center.
+   * SAML authentication configuration for SSO integration with corporate identity providers
+   * (e.g., Okta, Azure AD, AWS IAM Identity Center).
    *
-   * Use cases: Single Sign-On; Centralized user management; Corporate identity integration; SAML 2.0 authentication; Multi-factor authentication
+   * Use cases: Single Sign-On; Corporate identity integration; Centralized authentication
    *
-   * AWS: Amazon OpenSearch domain SAML authentication for SSO integration and centralized identity management
+   * AWS: OpenSearch SAML authentication for Dashboard SSO
    *
-   * Validation: Must be valid SamlAuthenticationConfig if specified; requires idpEntityId and idpMetadataContent for SAML integration
-   **/
+   * Validation: Optional; valid SamlAuthenticationConfig with idpEntityId and idpMetadataXml
+   */
   readonly samlAuthentication?: SamlAuthenticationConfig;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Event notification configuration for OpenSearch domain monitoring enabling operational awareness and alerting. Configures email notifications for domain events, cluster status changes, and operational alerts for proactive monitoring and management.
+   * Event notification configuration for domain monitoring via SNS email subscriptions.
    *
-   * Use cases: Operational monitoring; Event alerting; Domain status tracking; Proactive management; Notification automation
+   * Use cases: Operational alerting; Domain health monitoring; Event tracking
    *
-   * AWS: Amazon SNS notifications for OpenSearch domain events and operational monitoring
+   * AWS: SNS topic with email subscriptions for OpenSearch domain events
    *
-   * Validation: Must be valid EventNotificationsProps if specified; enables domain event monitoring and alerting
-   **/
+   * Validation: Optional; valid EventNotificationsProps
+   */
   readonly eventNotifications?: EventNotificationsProps;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * EventNotificationsProps configuration interface for search analytics and log analysis.
+ * Email notification configuration for OpenSearch domain events.
  *
- * Use cases: Search analytics; Log analysis; Full-text search; Data indexing
+ * Use cases: Operational alerting; Domain health monitoring; Event notification
  *
- * AWS: Amazon OpenSearch configuration for search analytics and log analysis
+ * AWS: SNS email subscriptions for OpenSearch domain events
  *
- * Validation: Configuration must be valid for deployment; properties must conform to Amazon OpenSearch and MDAA requirements
+ * Validation: email array optional
  */
 export interface EventNotificationsProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Email addresses for OpenSearch domain event notifications enabling operational alerting and monitoring. Specifies the email addresses that will receive notifications for domain events, cluster status changes, and operational alerts for proactive domain management.
+   * Email addresses to receive OpenSearch domain event notifications.
+   * An SNS topic is created regardless; if no emails specified, other subscription types can be added directly.
    *
-   * Use cases: Operational alerting; Email notifications; Domain monitoring; Proactive management; Event tracking
+   * Use cases: Operational alerting; Team notification; Domain monitoring
    *
-   * AWS: Amazon SNS email subscriptions for OpenSearch domain event notifications and monitoring
+   * AWS: SNS email subscriptions
    *
-   * Validation: Must be array of valid email addresses if specified; enables email-based domain event notifications
-   **/
+   * Validation: Optional; array of valid email addresses
+   */
   readonly email?: string[];
 }
 
@@ -380,16 +360,7 @@ export interface SuppressionProps {
 }
 
 export interface OpensearchL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required OpenSearch domain configuration defining search and analytics infrastructure including cluster settings, security configuration, and access controls. Provides complete domain setup with VPC networking, encryption, monitoring, and dashboard access for search and analytics operations.
-   *
-   * Use cases: Search domain configuration; Analytics infrastructure; Security setup; Dashboard access
-   *
-   * AWS: OpenSearch domain configuration for search and analytics infrastructure deployment
-   *
-   * Validation: Must be valid OpensearchDomainProps; required for OpenSearch domain deployment and search infrastructure
-   *   **/
+  // Complete OpenSearch domain configuration
   readonly domain: OpensearchDomainProps;
 }
 //This stack creates all the resources required for a Data Warehouse

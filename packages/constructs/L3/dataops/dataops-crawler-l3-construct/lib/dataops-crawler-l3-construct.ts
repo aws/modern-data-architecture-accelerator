@@ -15,70 +15,64 @@ import { Rule } from 'aws-cdk-lib/aws-events';
 import { ConfigurationElement } from '@aws-mdaa/config';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Glue crawler target definitions enabling multi-source data discovery across S3, JDBC, DynamoDB, and catalog sources. Defines the specific data sources that Glue crawlers will scan for automated schema inference and metadata cataloging in data lake operations.
+ * Crawler target definitions for multi-source data discovery across S3, JDBC, DynamoDB, and catalog sources.
  *
- * Use cases: S3 data lake discovery; Database table cataloging; DynamoDB schema inference; Cross-catalog metadata synchronization
+ * Use cases: S3 data lake discovery, database table cataloging, DynamoDB schema inference, cross-catalog synchronization
  *
- * AWS: AWS Glue crawler targets for automated data discovery and schema inference across multiple data source types
+ * AWS: AWS Glue crawler targets for automated data discovery and schema inference
  *
- * Validation: At least one target type must be specified; all target arrays must contain valid CloudFormation target definitions
+ * Validation: At least one target type should be specified; arrays must contain valid CloudFormation target definitions
  */
 export interface CrawlerTargets {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of Glue catalog target configurations for cross-catalog metadata synchronization and existing table discovery. Enables crawlers to discover and synchronize metadata from existing Glue catalog tables and databases for comprehensive data catalog management.
+   * Glue catalog targets for discovering and synchronizing existing catalog metadata.
    *
-   * Use cases: Cross-catalog synchronization; Existing table discovery; Metadata consolidation; Catalog-to-catalog migration
+   * Use cases: Cross-catalog synchronization, existing table discovery, metadata consolidation
    *
-   * AWS: AWS Glue crawler catalog targets for discovering and synchronizing existing Glue catalog metadata
+   * AWS: AWS Glue crawler catalog targets
    *
-   * Validation: Must be array of valid CfnCrawler.CatalogTargetProperty if provided; optional for catalog-based discovery
+   * Validation: Must be array of valid CfnCrawler.CatalogTargetProperty if provided
    **/
   readonly catalogTargets?: CfnCrawler.CatalogTargetProperty[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of DynamoDB target configurations for NoSQL table schema discovery and metadata cataloging. Enables crawlers to discover DynamoDB table structures and create corresponding Glue catalog entries for analytics and ETL operations.
+   * DynamoDB targets for NoSQL table schema discovery and catalog integration.
    *
-   * Use cases: DynamoDB schema discovery; NoSQL table cataloging; DynamoDB analytics enablement; Cross-service data integration
+   * Use cases: DynamoDB schema discovery, NoSQL table cataloging, cross-service data integration
    *
-   * AWS: AWS Glue crawler DynamoDB targets for NoSQL table schema discovery and catalog integration
+   * AWS: AWS Glue crawler DynamoDB targets
    *
-   * Validation: Must be array of valid CfnCrawler.DynamoDBTargetProperty if provided; optional for DynamoDB discovery
+   * Validation: Must be array of valid CfnCrawler.DynamoDBTargetProperty if provided
    **/
   readonly dynamoDbTargets?: CfnCrawler.DynamoDBTargetProperty[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of JDBC target configurations for relational database schema discovery and table cataloging. Enables crawlers to connect to JDBC-compatible databases and discover table schemas for data lake integration and analytics.
+   * JDBC targets for relational database schema discovery and table cataloging.
    *
-   * Use cases: Relational database discovery; JDBC schema cataloging; Database-to-lake integration; Cross-database analytics
+   * Use cases: Relational database discovery, JDBC schema cataloging, database-to-lake integration
    *
-   * AWS: AWS Glue crawler JDBC targets for relational database schema discovery and catalog integration
+   * AWS: AWS Glue crawler JDBC targets
    *
-   * Validation: Must be array of valid CfnCrawler.JdbcTargetProperty if provided; optional for JDBC database discovery
+   * Validation: Must be array of valid CfnCrawler.JdbcTargetProperty if provided
    **/
   readonly jdbcTargets?: CfnCrawler.JdbcTargetProperty[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of S3 target configurations for data lake object discovery and schema inference. Enables crawlers to scan S3 buckets and prefixes to automatically discover data files and infer schemas for Glue catalog population.
+   * S3 targets for data lake object discovery and automatic schema inference.
    *
-   * Use cases: S3 data lake discovery; Automatic schema inference; Data file cataloging; Partition discovery
+   * Use cases: S3 data lake discovery, automatic schema inference, partition discovery
    *
-   * AWS: AWS Glue crawler S3 targets for data lake object discovery and automatic schema inference
+   * AWS: AWS Glue crawler S3 targets
    *
-   * Validation: Must be array of valid CfnCrawler.S3TargetProperty if provided; optional for S3 data discovery
+   * Validation: Must be array of valid CfnCrawler.S3TargetProperty if provided
    **/
   readonly s3Targets?: CfnCrawler.S3TargetProperty[];
 }
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Glue crawler definition with automated data discovery and cataloging capabilities for data lake operations. Defines crawler configuration including execution roles, target data sources, scheduling, and metadata management for systematic data catalog population.
+ * Configuration for a Glue crawler including execution role, targets, scheduling, and schema management.
  *
- * Use cases: Automated S3 data discovery; Scheduled database cataloging; Schema change detection; Data lake metadata management
+ * Use cases: Automated S3 data discovery, scheduled database cataloging, schema change detection, data lake metadata management
  *
- * AWS: AWS Glue crawler configuration for automated data discovery, schema inference, and Glue catalog population
+ * AWS: AWS Glue crawler configuration for automated data discovery and Glue catalog population
  *
- * Validation: executionRoleArn, databaseName, description, and targets are required; schedule and extraConfiguration are optional
+ * Validation: executionRoleArn, databaseName, description, and targets are required; schedule, schemaChangePolicy, and tablePrefix are optional
  */
 export interface CrawlerDefinition {
   /**
@@ -94,14 +88,13 @@ export interface CrawlerDefinition {
    */
   readonly description: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required crawler targets configuration specifying data sources to be crawled and cataloged. Defines the specific data locations including S3 buckets, databases, and other data sources that the crawler will scan for schema discovery and metadata extraction.
+   * Crawler targets specifying data sources (S3, JDBC, DynamoDB, catalog) to crawl.
    *
-   * Use cases: Data source specification; Multi-source crawling; Target data location definition; Comprehensive data discovery
+   * Use cases: Data source specification, multi-source crawling, comprehensive data discovery
    *
-   * AWS: AWS Glue crawler targets configuration for specifying data sources to crawl and catalog
+   * AWS: AWS Glue crawler targets configuration
    *
-   * Validation: Must be valid CrawlerTargets configuration; required for crawler data source specification
+   * Validation: Must be a valid CrawlerTargets object; required
    **/
   readonly targets: CrawlerTargets;
   /**
@@ -109,36 +102,33 @@ export interface CrawlerDefinition {
    */
   readonly extraConfiguration?: ConfigurationElement;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional crawler execution schedule configuration enabling automated periodic data discovery and catalog updates. Defines when and how frequently the crawler will run to discover new data and update the Glue catalog with schema changes and new partitions.
+   * Cron or rate schedule for automated periodic crawler execution.
    *
-   * Use cases: Automated data discovery; Scheduled catalog updates; Periodic schema detection; Regular metadata refresh
+   * Use cases: Automated data discovery, scheduled catalog updates, periodic schema detection
    *
-   * AWS: AWS Glue crawler schedule configuration for automated execution timing and frequency
+   * AWS: AWS Glue crawler schedule configuration
    *
-   * Validation: Must be valid CfnCrawler.ScheduleProperty if provided; optional for on-demand crawler execution
+   * Validation: Must be valid CfnCrawler.ScheduleProperty if provided
    **/
   readonly schedule?: CfnCrawler.ScheduleProperty;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional schema change policy configuration controlling how the crawler handles detected schema modifications and table structure changes. Defines behavior for schema evolution including update actions, deletion policies, and change detection sensitivity.
+   * Policy controlling how the crawler handles detected schema modifications.
    *
-   * Use cases: Schema evolution management; Table structure change handling; Metadata consistency; Schema change detection
+   * Use cases: Schema evolution management, table structure change handling, metadata consistency
    *
-   * AWS: AWS Glue crawler schema change policy for handling table structure modifications and schema evolution
+   * AWS: AWS Glue crawler schema change policy
    *
-   * Validation: Must be valid CfnCrawler.SchemaChangePolicyProperty if provided; optional for default schema change handling
+   * Validation: Must be valid CfnCrawler.SchemaChangePolicyProperty if provided
    **/
   readonly schemaChangePolicy?: CfnCrawler.SchemaChangePolicyProperty;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional string prefix to prepend to all table names created by the crawler enabling organized table naming and namespace management. Provides consistent table naming convention and helps avoid naming conflicts in shared Glue catalogs.
+   * String prefix prepended to all table names created by the crawler.
    *
-   * Use cases: Table naming organization; Namespace management; Naming conflict avoidance; Consistent table naming
+   * Use cases: Table naming organization, namespace management, naming conflict avoidance
    *
-   * AWS: AWS Glue crawler table prefix for systematic table naming and catalog organization
+   * AWS: AWS Glue crawler table prefix
    *
-   * Validation: Must be valid string if provided; optional for default table naming without prefix
+   * Validation: Must be a valid string if provided
    **/
   readonly tablePrefix?: string;
   /**
@@ -152,27 +142,9 @@ export interface CrawlerDefinition {
 }
 export interface GlueCrawlerL3ConstructProps extends MdaaL3ConstructProps {
   readonly crawlerConfigs: { [key: string]: CrawlerDefinition };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required Glue security configuration name for crawler security and encryption enabling secure data discovery and compliance. Provides the security configuration that will be used by all crawlers for encryption, access control, and security compliance during data discovery operations.
-   *
-   * Use cases: Crawler security; Data encryption; Compliance configuration; Secure discovery
-   *
-   * AWS: Glue security configuration for crawler security and encryption compliance
-   *
-   * Validation: Must be valid security configuration name; required for crawler security and encryption compliance
-   **/
+  // Glue security configuration name for crawler encryption and access control
   readonly securityConfigurationName?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for crawler association and resource coordination enabling project-based resource organization and management. Provides the project identifier that associates crawlers with the DataOps project for resource coordination and governance integration.
-   *
-   * Use cases: Project association; Resource coordination; DataOps integration; Project management
-   *
-   * AWS: DataOps project name for crawler association and project-based resource organization
-   *
-   * Validation: Must be valid project name; required for crawler project association and resource coordination
-   **/
+  // DataOps project name for crawler association and SSM parameter coordination
   readonly projectName?: string;
   readonly notificationTopicArn?: string;
 }

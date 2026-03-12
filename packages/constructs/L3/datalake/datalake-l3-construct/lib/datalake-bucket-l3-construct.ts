@@ -32,165 +32,81 @@ import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for S3 inventory generation targeting specific prefixes within data lake buckets. Enables automated inventory reporting for data governance, cost analysis, and compliance auditing of data lake contents with configurable scope and scheduling.
+ * S3 inventory configuration for a specific prefix within a data lake bucket.
+ * Generates automated inventory reports for governance, cost analysis, and compliance.
  *
- * Use cases: Data governance reporting; Cost analysis by prefix; Compliance auditing of data lake contents
+ * Use cases: Prefix-scoped inventory; Cross-bucket inventory delivery; Compliance auditing
  *
- * AWS: Configures AWS S3 inventory for automated bucket content reporting and analysis
+ * AWS: S3 inventory configuration
  *
- * Validation: prefix must be valid S3 object prefix; inventoryName must be valid inventory configuration name
+ * Validation: prefix required; destination fields optional
  */
 export interface InventoryDefinition {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 prefix that will be included in the inventory report for targeted content analysis. Enables focused inventory generation on specific data lake sections for efficient governance and cost analysis.
+   * S3 prefix to include in the inventory report.
    *
-   * Use cases: Targeted inventory generation; Specific data section analysis; Focused governance reporting
+   * Use cases: Targeted inventory on specific data paths
    *
-   * AWS: S3 inventory prefix filter for targeted bucket content reporting
+   * AWS: S3 inventory prefix filter
    *
-   * Validation: Must be valid S3 object prefix; required; defines scope of inventory generation
-   **/
+   * Validation: Required; valid S3 prefix
+   */
   readonly prefix: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional destination bucket for inventory report storage enabling centralized inventory management. If not specified, inventory reports are written back to the source bucket under /inventory prefix for local storage.
+   * Destination bucket for inventory reports. Defaults to the source bucket
+   * under the /inventory prefix if not specified.
    *
-   * Use cases: Centralized inventory management; Cross-bucket inventory storage; Inventory report organization
+   * Use cases: Centralized inventory collection; Cross-bucket reporting
    *
-   * AWS: S3 inventory destination bucket for centralized report storage
+   * AWS: S3 inventory destination bucket
    *
-   * Validation: Must be valid S3 bucket name if provided; defaults to source bucket
-   **/
+   * Validation: Optional; valid S3 bucket name
+   */
   readonly destinationBucket?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional S3 prefix for inventory report organization within the destination bucket. Enables structured inventory report storage and prevents conflicts with other bucket contents.
+   * S3 prefix within the destination bucket for inventory report storage.
    *
-   * Use cases: Inventory report organization; Structured storage; Conflict prevention
+   * Use cases: Organized inventory report storage; Conflict prevention
    *
-   * AWS: S3 inventory destination prefix for organized report storage
+   * AWS: S3 inventory destination prefix
    *
-   * Validation: Must be valid S3 object prefix if provided; defaults to /inventory
-   **/
+   * Validation: Optional; valid S3 prefix
+   */
   readonly destinationPrefix?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional AWS account ID for destination bucket ownership validation ensuring secure inventory delivery. Used by S3 service to validate bucket ownership before writing inventory reports for cross-account scenarios.
+   * AWS account ID owning the destination bucket for cross-account inventory delivery.
    *
-   * Use cases: Cross-account inventory delivery; Bucket ownership validation; Secure inventory storage
+   * Use cases: Cross-account inventory; Bucket ownership validation
    *
-   * AWS: S3 inventory destination account validation for secure cross-account delivery
+   * AWS: S3 inventory destination account
    *
-   * Validation: Must be valid 12-digit AWS account ID if provided; used for ownership validation
-   **/
+   * Validation: Optional; 12-digit AWS account ID
+   */
   readonly destinationAccount?: string;
 }
 
 export interface LakeFormationLocation {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 prefix that will be registered as a LakeFormation location for fine-grained access control. Defines the specific path within the bucket that will be subject to table-level and column-level permissions through LakeFormation.
-   *
-   * Use cases: Fine-grained access control; Table-level permissions; Specific path access management
-   *
-   * AWS: LakeFormation location registration for S3 prefix-based access control
-   *
-   * Validation: Must be valid S3 object prefix; required; used for LakeFormation location registration
-   **/
+  /** S3 prefix to register as a LakeFormation location. */
   readonly prefix: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag granting write access to the LakeFormation role in addition to read permissions. When enabled, allows data modification operations through LakeFormation-controlled access for data processing workflows.
-   *
-   * Use cases: Data processing workflows; Write access control; LakeFormation permission management
-   *
-   * AWS: LakeFormation location permissions for read and write access control
-   *
-   * Validation: Boolean value; defaults to false (read-only); enables write access when true
-   **/
+  /** Grant write access to the LakeFormation role for this location. */
   readonly write?: boolean;
 }
 
 export interface BucketDefinition {
   readonly bucketZone: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of access policy configurations that define permissions for different roles and S3 prefixes within the bucket. Each policy specifies read, write, and administrative access patterns for secure data lake operations.
-   *
-   * Use cases: Role-based access control; Prefix-specific permissions; Secure data lake operations
-   *
-   * AWS: S3 bucket policies and IAM permissions for granular data access control
-   *
-   * Validation: Must be array of valid AccessPolicyProps objects; required; defines bucket access patterns
-   **/
+  /** Access policies defining role-based permissions per S3 prefix. */
   readonly accessPolicies: AccessPolicyProps[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of S3 lifecycle configuration rules for automated data management and cost optimization. Defines transitions between storage classes and expiration policies based on data age and access patterns.
-   *
-   * Use cases: Cost optimization; Automated data archival; Compliance-driven data retention
-   *
-   * AWS: S3 lifecycle configuration for automated object management and cost control
-   *
-   * Validation: Must be array of valid LifecycleConfigurationRuleProps objects if provided
-   **/
+  /** S3 lifecycle rules for automated storage class transitions and expiration. */
   readonly lifecycleConfiguration?: LifecycleConfigurationRuleProps[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of inventory configurations for automated bucket content reporting and analysis. Enables data governance, cost analysis, and compliance auditing through scheduled inventory generation.
-   *
-   * Use cases: Data governance reporting; Cost analysis; Compliance auditing of bucket contents
-   *
-   * AWS: S3 inventory configuration for automated bucket content reporting
-   *
-   * Validation: Must be object with string keys and InventoryDefinition values if provided
-   *   **/
+  /** S3 inventory configurations keyed by name. */
   readonly inventories?: { [key: string]: InventoryDefinition };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag enabling EventBridge notifications for bucket data events allowing integration with event-driven architectures. Enables real-time processing workflows and automated responses to data changes.
-   *
-   * Use cases: Event-driven data processing; Real-time workflow triggers; Automated data pipeline activation
-   *
-   * AWS: S3 EventBridge notification configuration for event-driven architecture integration
-   *
-   * Validation: Boolean value; enables EventBridge notifications when true
-   **/
+  /** Enable EventBridge notifications for bucket data events. */
   readonly enableEventBridgeNotifications?: boolean;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of LakeFormation location configurations for fine-grained access control registration. Enables table-level and column-level permissions through LakeFormation for enhanced data security and governance.
-   *
-   * Use cases: Fine-grained access control; Table-level permissions; Enhanced data security and governance
-   *
-   * AWS: LakeFormation location registration for granular data access control
-   *
-   * Validation: Must be object with string keys and LakeFormationLocation values if provided
-   *   **/
+  /** LakeFormation location registrations keyed by name. */
   readonly lakeFormationLocations?: { [key: string]: LakeFormationLocation };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag controlling automatic creation of folder structure based on access policy prefixes. When enabled, creates organized folder hierarchy for improved data organization and user navigation.
-   *
-   * Use cases: Data organization; User navigation; Structured folder hierarchy
-   *
-   * AWS: S3 object creation for folder structure organization and user experience
-   *
-   * Validation: Boolean value; defaults to true; creates folder objects when enabled
-   **/
+  /** Create folder placeholder objects for access policy prefixes. */
   readonly createFolderSkeleton?: boolean;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag controlling default deny behavior for unlisted roles ensuring secure bucket access by default. When true (default), any roles not explicitly listed in access policies are blocked from accessing bucket objects for enhanced security posture.
-   *
-   * Use cases: Security by default; Access control enforcement; Unauthorized access prevention
-   *
-   * AWS: S3 bucket policy deny statements for unlisted roles and enhanced access control
-   *
-   * Validation: Boolean value; defaults to true; blocks unlisted roles when enabled for security
-   **/
+  /** Deny access to roles not listed in access policies. */
   readonly defaultDeny?: boolean;
 }
 
@@ -199,14 +115,7 @@ export interface AccessPolicyProps {
    * Name of the access policy
    */
   readonly name: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 object prefix path defining the scope of access permissions within data lake buckets. Specifies the directory-like path structure where the access policy rules will be applied, enabling fine-grained access control for different data domains or datasets within the same bucket.
-   *
-   * Use cases: Fine-grained data access control; Dataset-specific permissions; Multi-tenant data organization; Domain-based data segregation
-   * AWS: S3 bucket policy prefix condition for object-level access control in data lake buckets
-   * Validation: Must be valid S3 prefix path; typically starts with '/' for root-level organization
-   *   */
+  /** S3 prefix path where this access policy applies (e.g., '/', '/data'). */
   readonly s3Prefix: string;
   /**
    * List of role ids which will be granted readonly access to the S3 prefix
@@ -249,16 +158,7 @@ export interface LifecycleConfigurationRuleProps {
   readonly noncurrentVersionsToRetain?: number;
 }
 export interface DataLakeL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of bucket definitions that define the structure and configuration of the data lake. Each bucket represents a different zone or purpose within the data lake architecture with specific access policies and lifecycle configurations.
-   *
-   * Use cases: Multi-zone data lake structure; Raw/processed/curated data separation; Zone-specific access controls
-   *
-   * AWS: AWS S3 bucket creation and configuration for structured data lake architecture
-   *
-   * Validation: Must be array of valid BucketDefinition objects; each bucket must have unique bucketZone identifier
-   *   **/
+  /** Bucket definitions forming the data lake structure. */
   readonly buckets: BucketDefinition[];
 }
 

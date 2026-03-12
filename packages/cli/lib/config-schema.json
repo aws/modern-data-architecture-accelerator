@@ -423,7 +423,6 @@
         },
         "Deployment": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nAWS deployment targeting configuration interface for specifying target account and region for MDAA module deployment. Defines deployment destination parameters that override CDK defaults, enabling cross-account and cross-region deployment targeting for multi-environment MDAA infrastructure orchestration.\n\nUse cases: Cross-account deployments; Multi-region infrastructure; Environment-specific targeting; Account isolation; Regional data residency\n\nAWS: AWS account and region targeting for CloudFormation stack deployment with CDK default override capabilities\n\nValidation: account must be valid 12-digit AWS account ID; region must be valid AWS region identifier; both optional with CDK defaults",
             "properties": {
                 "account": {
                     "description": "The target account. If not specified, defaults to the CDK default account.",
@@ -642,7 +641,6 @@
         },
         "DomainConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA-compliant DataZone domain configuration providing domain management and integration capabilities. Extends standard CDK properties with MDAA naming conventions and enhanced security features for secure domain governance and catalog integration.\n\nUse cases: DataZone domain configuration; Domain governance setup; Catalog integration; Multi-domain management\n\nAWS: Creates Amazon DataZone domain configuration with KMS integration and Glue catalog connectivity\n\nValidation: All properties except ssmParamBase and domainUnits are required for complete domain configuration",
             "properties": {
                 "blueprintIds": {
                     "additionalProperties": {
@@ -654,63 +652,63 @@
                     "type": "boolean"
                 },
                 "createOutputs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.\n\nUse cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references\n\nAWS: CloudFormation outputs and exports for MDAA construct resource references and external integration\n\nValidation: Boolean value; defaults to true; enables CloudFormation output and export creation",
+                    "description": "Flag controlling CloudFormation output and stack export creation for construct resources",
                     "type": "boolean"
                 },
                 "createParams": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.\n\nUse cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management\n\nAWS: SSM parameter creation for MDAA construct resource references and infrastructure integration\n\nValidation: Boolean value; defaults to true; enables SSM parameter creation for resource references",
+                    "description": "Flag controlling SSM parameter creation for construct resource references enabling",
                     "type": "boolean"
                 },
                 "customResourceRoleName": {
                     "type": "string"
                 },
                 "domainArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ARN for AWS resource identification and IAM policy integration enabling secure domain access control. Provides the complete AWS resource identifier for the domain for IAM policies and cross-service access control.\n\nUse cases: AWS resource identification; IAM policy integration; Cross-service access; Resource-based policies\n\nAWS: Amazon DataZone domain ARN for AWS resource identification and IAM integration\n\nValidation: Must be valid DataZone domain ARN; required; follows AWS ARN pattern for DataZone domains",
+                    "description": "DataZone domain ARN for AWS resource identification and IAM policy integration enabling",
                     "type": "string"
                 },
                 "domainBucketArn": {
                     "type": "string"
                 },
                 "domainBucketUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain Bucket usage policy name. Provides IAM policy name for managing Bucket access and usage permissions for domain operations and data protection.\n\nUse cases: Bucket access management;\n\nAWS: IAM policy name for DataZone domain Bucket usage and access management\n\nValidation: Must be valid IAM policy name; required; defines Bucket access and usage permissions for domain",
+                    "description": "Domain Bucket usage policy name",
                     "type": "string"
                 },
                 "domainId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ID for unique domain identification within AWS enabling cross-service integration and reference. Provides the unique identifier assigned by DataZone service for domain operations and cross-service integration.\n\nUse cases: Unique domain identification; Cross-service integration; Domain operations; Service references\n\nAWS: Amazon DataZone domain ID for unique identification and cross-service integration\n\nValidation: Must be valid DataZone domain ID; required; assigned by DataZone service for unique identification",
+                    "description": "DataZone domain ID for unique domain identification within AWS enabling cross-service",
                     "type": "string"
                 },
                 "domainKmsKeyArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations. Provides encryption at rest for domain data and metadata with customer-controlled key management for enhanced security and compliance.\n\nUse cases: Domain encryption; Data protection compliance; Customer-controlled encryption; Secure domain operations\n\nAWS: AWS KMS key ARN for DataZone domain encryption and secure data protection\n\nValidation: Must be valid KMS key ARN; required; enables customer-managed encryption for domain data",
+                    "description": "KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations",
                     "type": "string"
                 },
                 "domainKmsUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain KMS usage policy name for key access management enabling controlled encryption key usage within the domain. Provides IAM policy name for managing KMS key access and usage permissions for domain operations and data protection.\n\nUse cases: KMS key access management; Encryption policy control; Key usage permissions; Domain security governance\n\nAWS: IAM policy name for DataZone domain KMS key usage and access management\n\nValidation: Must be valid IAM policy name; required; defines KMS key access and usage permissions for domain",
+                    "description": "Domain KMS usage policy name for key access management enabling controlled encryption key",
                     "type": "string"
                 },
                 "domainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain name for domain identification and management enabling unique domain naming within the DataZone service. Provides the primary identifier for the DataZone domain for governance and operational management.\n\nUse cases: Domain identification; Unique naming; Domain management; Service organization\n\nAWS: Amazon DataZone domain name for identification and management within the DataZone service\n\nValidation: Must be unique domain name string; required; used for domain identification and service management",
+                    "description": "DataZone domain name for domain identification and management enabling unique domain naming",
                     "type": "string"
                 },
                 "domainUnitIds": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of domain unit names to identifiers for hierarchical domain organization enabling structured domain management. Provides organizational structure within the domain for improved governance, access control, and operational management.\n\nUse cases: Hierarchical organization; Domain structure; Organizational governance; Structured management\n\nAWS: DataZone domain units for hierarchical organization and structured domain management\n\nValidation: Must be object with string keys and values if provided; enables hierarchical domain organization\n  *",
+                    "description": "Map of domain unit names to identifiers for hierarchical domain organization enabling",
                     "type": "object"
                 },
                 "domainVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain version for domain lifecycle management and versioning control enabling domain evolution tracking. Provides version control for domain configuration changes and lifecycle management for governance and compliance.\n\nUse cases: Version control; Domain lifecycle management; Configuration tracking; Governance compliance\n\nAWS: DataZone domain version for lifecycle management and configuration version control\n\nValidation: Must be valid version string; required; enables domain version control and lifecycle management",
+                    "description": "Domain version for domain lifecycle management and versioning control enabling domain evolution tracking",
                     "type": "string"
                 },
                 "glueCatalogArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone. Provides the Glue catalog resources that will be integrated with the DataZone domain for data discovery and governance.\n\nUse cases: Catalog integration; Data discovery; governance; Cross-service connectivity\n\nAWS: AWS Glue catalog ARNs for DataZone integration and data catalog connectivity\n\nValidation: Must be array of valid Glue catalog ARNs; required; enables catalog integration with DataZone domain",
+                    "description": "Array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "glueCatalogKmsKeyArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone. Provides encryption keys for Glue catalog data accessed through DataZone for data protection and governance.\n\nUse cases: Catalog encryption; Secure catalog integration; Data protection; governance\n\nAWS: AWS KMS key ARNs for Glue catalog encryption in DataZone integration\n\nValidation: Must be array of valid KMS key ARNs; required; enables secure catalog integration with DataZone",
+                    "description": "Array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone",
                     "items": {
                         "type": "string"
                     },
@@ -718,7 +716,7 @@
                 },
                 "naming": {
                     "$ref": "#/definitions/IMdaaResourceNaming",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.\n\nUse cases: Consistent naming; Resource identification; Naming conventions; Operational consistency\n\nAWS: MDAA resource naming for consistent resource identification and naming convention compliance\n\nValidation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming\n  *"
+                    "description": "MDAA naming implementation for consistent resource naming across all MDAA constructs"
                 },
                 "projectIds": {
                     "additionalProperties": {
@@ -730,7 +728,7 @@
                     "type": "boolean"
                 },
                 "ssmParamBase": {
-                    "description": "Q-ENHANCED-PROPERTY\nSSM parameter base path for domain configuration storage enabling centralized configuration management. Provides the base path for storing domain configuration parameters in SSM Parameter Store for centralized management and retrieval.\n\nUse cases: Centralized configuration; SSM integration; Configuration management; Parameter organization\n\nAWS: AWS Systems Manager parameter base path for domain configuration storage and management\n\nValidation: Must be valid SSM parameter path if provided; enables centralized domain configuration management",
+                    "description": "SSM parameter base path for domain configuration storage enabling centralized configuration management",
                     "type": "string"
                 }
             },
@@ -778,18 +776,17 @@
         },
         "HookConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nHook configuration interface for MDAA CLI deployment lifecycle management enabling custom pre/post deployment actions and validation steps. Defines hook commands that execute at specific deployment phases for custom validation, preparation, and cleanup operations in MDAA orchestration workflows.\n\nUse cases: Pre-deployment validation; Post-deployment testing; Custom setup scripts; Environment preparation; Cleanup operations\n\nAWS: Custom deployment lifecycle management for MDAA module orchestration and validation workflows\n\nValidation: Hook commands must be valid shell commands; execution context must be appropriate for deployment phase",
             "properties": {
                 "after_success": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag restricting hook execution to successful deployment scenarios only. When enabled, ensures the hook only runs after successful deployment completion, useful for post-deployment validation, notification, or cleanup operations that should not run on failed deployments.\n\nUse cases: Post-deployment validation; Success notifications; Cleanup after success; Conditional operations; Success-only actions\n\nAWS: MDAA CLI deployment lifecycle control for success-conditional hook execution\n\nValidation: Boolean value; defaults to false; controls hook execution timing based on deployment success",
+                    "description": "Flag restricting hook execution to successful deployment scenarios only",
                     "type": "boolean"
                 },
                 "command": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional shell command to execute during deployment lifecycle hook enabling custom validation, preparation, and cleanup operations. Defines the specific command that will be executed at the designated deployment phase for custom logic, validation scripts, or environment preparation tasks.\n\nUse cases: Custom validation scripts; Environment preparation; Pre-deployment checks; Post-deployment testing; Cleanup operations\n\nAWS: Shell command execution during MDAA CLI deployment lifecycle for custom deployment logic\n\nValidation: Must be valid shell command if provided; executed in deployment context with appropriate permissions",
+                    "description": "Shell command to execute during deployment lifecycle hook enabling custom validation,",
                     "type": "string"
                 },
                 "exit_if_fail": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling deployment termination behavior when hook execution fails. When enabled, causes the entire MDAA deployment to exit if the hook command fails, providing strict validation and quality gates for deployment processes.\n\nUse cases: Strict validation gates; Quality control; Deployment safety; Critical validation enforcement; Failure handling\n\nAWS: MDAA CLI deployment control for hook failure handling and deployment termination\n\nValidation: Boolean value; defaults to false; controls deployment continuation on hook failure",
+                    "description": "Flag controlling deployment termination behavior when hook execution fails",
                     "type": "boolean"
                 }
             },
@@ -1081,11 +1078,10 @@
         },
         "IMdaaResourceNaming": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nInterface specification for MDAA resource naming implementations that generate consistent, unique, and compliant AWS resource names. Implementations must support multi-tenant deployments by ensuring naming semantics prevent collisions across domains, environments, and modules within the same AWS account.\n\nUse cases: Custom naming for regulatory compliance; Integration with enterprise naming standards; Multi-tenant resource isolation\n\nAWS: Generates names for all AWS resources including S3 buckets, IAM roles, Glue databases, CloudFormation stacks, SSM parameters, and CloudFormation exports\n\nValidation: All generated names must comply with AWS service-specific naming requirements and be unique within account scope",
             "properties": {
                 "props": {
                     "$ref": "#/definitions/MdaaResourceNamingConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nConfiguration properties containing organizational context and CDK node access for the naming implementation. Provides the foundational data required to generate consistent resource names across all MDAA modules.\n\nUse cases: Access to org/env/domain/module context; CDK context retrieval for custom naming; Immutable naming configuration\n\nAWS: Source data for all AWS resource name generation\n\nValidation: Must contain valid MdaaResourceNamingConfig with all required properties"
+                    "description": "Configuration properties containing organizational context and CDK node access for the naming implementation"
                 }
             },
             "required": [
@@ -1568,19 +1564,18 @@
         },
         "MdaaCustomAspect": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for custom CDK aspects that apply cross-cutting concerns to all MDAA-deployed resources. Enables integration of custom security checks, compliance validations, and resource modifications across the entire MDAA infrastructure deployment.\n\nUse cases: Custom security policy enforcement; Organization-specific compliance checks; Automated resource tagging and modification\n\nAWS: Applies custom logic to all AWS resources during CDK synthesis and deployment\n\nValidation: aspect_module must be valid module path; aspect_class must be exported class implementing CDK IAspect interface",
             "properties": {
                 "aspect_class": {
-                    "description": "Q-ENHANCED-PROPERTY\nClass name of the custom CDK aspect implementation within the specified module. Must implement the CDK IAspect interface to provide visit() method for resource inspection and modification.\n\nUse cases: Specific aspect class selection; Multiple aspects per module; Aspect implementation targeting\n\nAWS: CDK aspect class instantiation for resource processing during synthesis\n\nValidation: Must be valid exported class name implementing CDK IAspect interface with visit() method",
+                    "description": "Class name of the custom CDK aspect implementation within the specified module",
                     "type": "string"
                 },
                 "aspect_module": {
-                    "description": "Q-ENHANCED-PROPERTY\nModule path or package name containing the custom CDK aspect implementation. Specifies the location of the aspect code that will be dynamically loaded and applied to all MDAA resources during deployment.\n\nUse cases: Custom security aspect modules; Organization-specific compliance aspects; Third-party aspect integrations\n\nAWS: CDK aspect module loading for resource modification during synthesis\n\nValidation: Must be valid Node.js module path or npm package name; module must export the specified aspect class",
+                    "description": "Module path or package name containing the custom CDK aspect implementation",
                     "type": "string"
                 },
                 "aspect_props": {
                     "additionalProperties": {},
-                    "description": "Q-ENHANCED-PROPERTY\nOptional configuration properties passed to the custom aspect constructor for aspect-specific behavior customization. Enables parameterized aspect behavior and environment-specific aspect configuration.\n\nUse cases: Aspect behavior customization; Environment-specific aspect settings; Parameterized compliance rules\n\nAWS: Aspect constructor parameters for customized resource processing behavior\n\nValidation: Must be valid configuration object matching aspect constructor parameter expectations",
+                    "description": "Configuration properties passed to the custom aspect constructor for aspect-specific behavior customization",
                     "type": "object"
                 }
             },
@@ -1592,19 +1587,18 @@
         },
         "MdaaCustomNaming": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for custom MDAA naming implementations that override the default org-env-domain-module naming pattern. Enables integration with enterprise naming standards, regulatory requirements, and organization-specific resource naming conventions.\n\nUse cases: Enterprise naming standard compliance; Regulatory naming requirements; Custom naming for legacy system integration\n\nAWS: Controls naming patterns for all AWS resources deployed by MDAA including S3 buckets, IAM roles, and CloudFormation stacks\n\nValidation: naming_module must be valid module path; naming_class must implement IMdaaResourceNaming interface",
             "properties": {
                 "naming_class": {
-                    "description": "Q-ENHANCED-PROPERTY\nClass name of the custom MDAA naming implementation within the specified module. Must implement the IMdaaResourceNaming interface to provide consistent resource naming methods across all MDAA modules.\n\nUse cases: Specific naming class selection; Multiple naming strategies per module; Naming implementation targeting\n\nAWS: Naming class instantiation for custom AWS resource name generation\n\nValidation: Must be valid exported class name implementing IMdaaResourceNaming interface with required naming methods",
+                    "description": "Class name of the custom MDAA naming implementation within the specified module",
                     "type": "string"
                 },
                 "naming_module": {
-                    "description": "Q-ENHANCED-PROPERTY\nModule path or package name containing the custom MDAA naming implementation. Specifies the location of the naming code that will be dynamically loaded to generate resource names according to custom patterns.\n\nUse cases: Custom naming implementation modules; Enterprise naming standard packages; Third-party naming integrations\n\nAWS: Naming module loading for custom AWS resource name generation patterns\n\nValidation: Must be valid Node.js module path or npm package name; module must export the specified naming class",
+                    "description": "Module path or package name containing the custom MDAA naming implementation",
                     "type": "string"
                 },
                 "naming_props": {
                     "additionalProperties": {},
-                    "description": "Q-ENHANCED-PROPERTY\nOptional configuration properties passed to the custom naming implementation constructor for naming behavior customization. Enables parameterized naming patterns and environment-specific naming configuration.\n\nUse cases: Naming behavior customization; Environment-specific naming patterns; Parameterized naming rules\n\nAWS: Naming constructor parameters for customized AWS resource name generation behavior\n\nValidation: Must be valid configuration object matching naming constructor parameter expectations",
+                    "description": "Configuration properties passed to the custom naming implementation constructor for naming",
                     "type": "object"
                 }
             },
@@ -1659,19 +1653,18 @@
         },
         "MdaaDomainConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nMdaaDomainConfig configuration interface for MDAA deployment orchestration and configuration management.\n\nUse cases: Multi-module deployment; Configuration management; Environment orchestration; CLI operations\n\nAWS: MDAA CLI configuration for deployment orchestration and configuration management\n\nValidation: Configuration must be valid for deployment; properties must conform to MDAA CLI and MDAA requirements",
             "properties": {
                 "account": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional target AWS account number for MDAA deployments enabling cross-account deployment scenarios. Supports multi-account data architecture strategies and organizational account separation with consistent configuration management.\n\nUse cases: Cross-account deployments; Multi-account data architecture; Organizational account separation\n\nAWS: AWS account targeting for MDAA resource deployments and cross-account permissions\n\nValidation: Must be valid 12-digit AWS account number if provided; defaults to CDK default account",
+                    "description": "Target AWS account number for MDAA deployments enabling cross-account deployment scenarios",
                     "type": "string"
                 },
                 "context": {
                     "additionalProperties": {},
-                    "description": "Q-ENHANCED-PROPERTY\nOptional additional CDK context key/value pairs for domain-wide configuration enabling flexible deployment customization across all environments. Provides mechanism to pass custom configuration values to CDK applications for domain-wide behavior and resource configuration.\n\nUse cases: Domain-wide configuration; CDK context customization; Deployment parameter passing; Cross-environment configuration\n\nAWS: AWS CDK context configuration for domain-wide deployment customization and resource configuration\n\nValidation: Must be valid ConfigurationElement if provided; enables custom CDK context for domain flexibility",
+                    "description": "Additional CDK context key/value pairs for domain-wide configuration enabling flexible",
                     "type": "object"
                 },
                 "custom_aspects": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of custom CDK aspects for advanced deployment customization and cross-cutting concerns across all domain environments. Enables injection of custom logic, validation rules, and modifications across all CDK constructs within the domain for organization-specific requirements.\n\nUse cases: Domain-wide custom validation; Cross-cutting concerns; Organization-specific modifications; Policy enforcement\n\nAWS: CDK aspect system for custom deployment logic and cross-construct modifications across domain\n\nValidation: Must be array of valid MdaaCustomAspect objects if provided; aspects applied across all CDK constructs in domain\n  *",
+                    "description": "Array of custom CDK aspects for advanced deployment customization and cross-cutting",
                     "items": {
                         "$ref": "#/definitions/MdaaCustomAspect"
                     },
@@ -1685,33 +1678,33 @@
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaEnvironmentConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional environment templates configuration for reusable environment definitions enabling template-based environment creation and standardization. Defines reusable environment configurations that can be referenced and extended by actual environments for consistent deployment patterns and reduced configuration duplication.\n\nUse cases: Environment standardization; Template-based deployment; Configuration reuse; Consistent environment patterns\n\nAWS: MDAA environment template configuration for standardized deployment patterns and environment consistency\n\nValidation: Must be object with string keys and valid MdaaEnvironmentConfig values if provided; templates can be referenced by environments",
+                    "description": "Environment templates configuration for reusable environment definitions enabling",
                     "type": "object"
                 },
                 "environments": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaEnvironmentConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nRequired map of environment names to environment configurations for multi-environment MDAA deployment orchestration. Defines the environments that will be deployed as part of this domain with their specific configurations, supporting complex multi-environment data platform architectures.\n\nUse cases: Multi-environment deployment; Environment orchestration; Domain-wide configuration; Environment management\n\nAWS: MDAA environment deployment configuration for multi-environment orchestration and management\n\nValidation: Must be object with string keys and valid MdaaEnvironmentConfig values; required for domain deployment\n  *",
+                    "description": "Map of environment names to environment configurations for multi-environment MDAA deployment orchestration",
                     "type": "object"
                 },
                 "mdaa_version": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional MDAA version override for domain-wide version control enabling consistent version management across all environments. Allows the entire domain to use a specific MDAA version for consistency, compatibility management, and coordinated upgrades.\n\nUse cases: Domain-wide versioning; Consistent version management; Coordinated upgrades; Version compatibility\n\nAWS: MDAA CLI version control for domain-wide deployment and compatibility management\n\nValidation: Must be valid MDAA version string if provided; controls domain deployment version and feature availability",
+                    "description": "MDAA version override for domain-wide version control enabling consistent version",
                     "type": "string"
                 },
                 "region": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional target AWS region for MDAA deployments overriding CDK default region settings. Enables region-specific deployments and supports multi-region data architecture strategies with consistent configuration management.\n\nUse cases: Region-specific deployments; Multi-region data architecture; Geographic data placement\n\nAWS: AWS region selection for all MDAA resource deployments and regional service configuration\n\nValidation: Must be valid AWS region identifier if provided; defaults to CDK default region",
+                    "description": "Target AWS region for MDAA deployments overriding CDK default region settings",
                     "type": "string"
                 },
                 "tag_config_data": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional tag configuration data providing direct tagging parameters for domain-wide resource tagging strategy. Defines tagging data that will be passed directly to all environments and modules without file-based configuration, enabling consistent tagging across the domain.\n\nUse cases: Domain-wide tagging; Consistent tagging strategy; Direct tag parameter passing; Centralized tagging\n\nAWS: AWS resource tagging configuration data for domain-wide tagging strategy and consistency\n\nValidation: Must be valid TagElement if provided; passed to all environments and modules for consistent tagging",
+                    "description": "Tag configuration data providing direct tagging parameters for domain-wide resource tagging strategy",
                     "type": "object"
                 },
                 "tag_configs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of tag configuration file paths for domain-wide resource tagging strategy compilation. Defines ordered list of tag configuration files that will be merged to create the effective tagging strategy for all environments, with later files taking precedence.\n\nUse cases: Domain-wide tag configuration; Centralized tagging strategy; Tag inheritance; Configuration file management\n\nAWS: AWS resource tagging configuration compilation for domain-wide tagging strategy\n\nValidation: Must be array of valid file paths if provided; files merged in order with later files taking precedence",
+                    "description": "Array of tag configuration file paths for domain-wide resource tagging strategy compilation",
                     "items": {
                         "type": "string"
                     },
@@ -1719,7 +1712,7 @@
                 },
                 "terraform": {
                     "$ref": "#/definitions/TerraformConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional Terraform configuration for Terraform module integration enabling hybrid CDK/Terraform deployments within MDAA. Provides configuration for Terraform modules that can be deployed alongside CDK modules for comprehensive infrastructure management and tool integration.\n\nUse cases: Hybrid CDK/Terraform deployment; Terraform module integration; Multi-tool infrastructure; Legacy Terraform integration\n\nAWS: Terraform configuration for hybrid infrastructure deployment and multi-tool integration with MDAA\n\nValidation: Must be valid TerraformConfig if provided; enables Terraform module deployment alongside CDK modules"
+                    "description": "Terraform configuration for Terraform module integration enabling hybrid CDK/Terraform deployments within MDAA"
                 }
             },
             "required": [
@@ -1729,19 +1722,18 @@
         },
         "MdaaEnvironmentConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nMDAA environment configuration interface for multi-environment deployment management with template inheritance and account targeting capabilities. Defines environment-specific configuration including account/region targeting, module configuration, and template-based configuration inheritance for systematic multi-environment MDAA deployments.\n\nUse cases: Multi-environment deployments; Template-based configuration; Account/region targeting; Environment-specific module configuration; Configuration inheritance\n\nAWS: Multi-account and multi-region MDAA deployment configuration with environment-specific targeting and template inheritance\n\nValidation: account and region must be valid AWS identifiers; template must reference existing environment template; modules must be valid MDAA module configurations",
             "properties": {
                 "account": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional target AWS account ID for MDAA environment deployment enabling multi-account deployment strategies. Specifies the destination AWS account where the MDAA environment and modules will be deployed, supporting cross-account deployment patterns and account isolation strategies.\n\nUse cases: Multi-account deployment; Account isolation; Cross-account resource deployment; Environment segregation by account\n\nAWS: AWS account targeting for MDAA deployment and resource creation across multiple AWS accounts\n\nValidation: Must be valid 12-digit AWS account ID if provided; enables cross-account deployment when specified",
+                    "description": "Target AWS account ID for MDAA environment deployment enabling multi-account deployment strategies",
                     "type": "string"
                 },
                 "context": {
                     "additionalProperties": {},
-                    "description": "Q-ENHANCED-PROPERTY\nOptional additional CDK context key/value pairs for environment-specific configuration enabling flexible deployment customization. Provides mechanism to pass custom configuration values to CDK applications for environment-specific behavior and resource configuration.\n\nUse cases: Environment-specific configuration; CDK context customization; Deployment parameter passing; Custom resource configuration\n\nAWS: AWS CDK context configuration for environment-specific deployment customization and resource configuration\n\nValidation: Must be valid ConfigurationElement if provided; enables custom CDK context for deployment flexibility",
+                    "description": "Additional CDK context key/value pairs for environment-specific configuration enabling",
                     "type": "object"
                 },
                 "custom_aspects": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of custom CDK aspects for advanced deployment customization and cross-cutting concerns in environment deployment. Enables injection of custom logic, validation rules, and modifications across all CDK constructs within the environment for organization-specific requirements.\n\nUse cases: Custom validation rules; Cross-cutting concerns; Organization-specific modifications; Advanced customization; Policy enforcement\n\nAWS: CDK aspect system for custom deployment logic and cross-construct modifications within environments\n\nValidation: Must be array of valid MdaaCustomAspect objects if provided; aspects applied across all CDK constructs in environment\n  *",
+                    "description": "Array of custom CDK aspects for advanced deployment customization and cross-cutting",
                     "items": {
                         "$ref": "#/definitions/MdaaCustomAspect"
                     },
@@ -1749,47 +1741,47 @@
                 },
                 "custom_naming": {
                     "$ref": "#/definitions/MdaaCustomNaming",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom naming configuration for environment-specific resource naming conventions enabling organization-specific naming patterns. Allows customization of default MDAA naming patterns for individual environments to align with specific requirements while maintaining overall consistency.\n\nUse cases: Environment-specific naming; Custom naming patterns; Organization alignment; Naming convention customization\n\nAWS: Custom naming patterns for AWS resources deployed by specific MDAA environments\n\nValidation: Must be valid MdaaCustomNaming configuration if provided; overrides default naming for environment resources\n  *"
+                    "description": "Custom naming configuration for environment-specific resource naming conventions enabling"
                 },
                 "mdaa_version": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional MDAA version override for environment-specific version control enabling selective version management across environments. Allows individual environments to use different MDAA versions for gradual upgrades, compatibility management, and version-specific feature requirements.\n\nUse cases: Environment-specific versioning; Gradual MDAA upgrades; Version compatibility; Selective version management\n\nAWS: MDAA CLI version control for environment-specific deployment and compatibility management\n\nValidation: Must be valid MDAA version string if provided; controls environment deployment version and feature availability",
+                    "description": "MDAA version override for environment-specific version control enabling selective version",
                     "type": "string"
                 },
                 "modules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaModuleConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of MDAA module names to their configuration enabling multi-module deployment orchestration. Defines which MDAA modules to deploy in this environment with their specific configurations, supporting complex data platform architectures with multiple integrated components.\n\nUse cases: Multi-module deployment; Data platform orchestration; Component integration; Modular architecture deployment\n\nAWS: MDAA module deployment configuration for orchestrated data platform component deployment\n\nValidation: Must be object with string keys and valid MdaaModuleConfig values if provided; module names must be valid MDAA modules\n  *",
+                    "description": "Map of MDAA module names to their configuration enabling multi-module deployment orchestration",
                     "type": "object"
                 },
                 "region": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional target AWS region for MDAA environment deployment enabling multi-region deployment strategies. Specifies the destination AWS region where the MDAA environment and modules will be deployed, supporting regional deployment patterns and geographic distribution strategies.\n\nUse cases: Multi-region deployment; Geographic distribution; Regional compliance requirements; Disaster recovery deployment\n\nAWS: AWS region targeting for MDAA deployment and resource creation across multiple AWS regions\n\nValidation: Must be valid AWS region identifier if provided; enables cross-region deployment when specified",
+                    "description": "Target AWS region for MDAA environment deployment enabling multi-region deployment strategies",
                     "type": "string"
                 },
                 "tag_config_data": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional tag configuration data providing direct tagging parameters for environment resource tagging strategy. Defines tagging data that will be passed directly to modules without file-based configuration, enabling inline tagging configuration and dynamic tagging scenarios.\n\nUse cases: Inline tag configuration; Dynamic tagging; Direct tag parameter passing; Tagging without files; Runtime tagging configuration\n\nAWS: AWS resource tagging configuration data for direct parameter passing and runtime tagging\n\nValidation: Must be valid TagElement if provided; passed directly to modules for resource tagging",
+                    "description": "Tag configuration data providing direct tagging parameters for environment resource tagging strategy",
                     "type": "object"
                 },
                 "tag_configs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of tag configuration file paths for resource tagging strategy compilation. Defines ordered list of tag configuration files that will be merged to create the effective tagging strategy, with later files taking precedence for tag inheritance and override scenarios.\n\nUse cases: Tag configuration compilation; Resource tagging strategy; Tag inheritance; Configuration file management; Tagging governance\n\nAWS: AWS resource tagging configuration compilation for tagging strategy\n\nValidation: Must be array of valid file paths if provided; files merged in order with later files taking precedence",
+                    "description": "Array of tag configuration file paths for resource tagging strategy compilation",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "template": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional environment template reference for template-based environment configuration enabling configuration inheritance and standardization. Specifies the name of an environment template from env_templates that will be used as the base configuration for this environment, with template values being overridable by specific environment values.\n\nUse cases: Template-based configuration; Configuration inheritance; Environment standardization; Configuration reuse\n\nAWS: MDAA environment template reference for standardized environment configuration and inheritance\n\nValidation: Must be valid template name from env_templates if provided; template values can be overridden by environment-specific values",
+                    "description": "Environment template reference for template-based environment configuration enabling",
                     "type": "string"
                 },
                 "terraform": {
                     "$ref": "#/definitions/TerraformConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional Terraform configuration for environment-specific Terraform module deployment enabling hybrid infrastructure deployment strategies. Provides Terraform-specific configuration including backend settings for environments using Terraform modules alongside CDK modules.\n\nUse cases: Terraform module deployment; Hybrid infrastructure; Backend configuration; Multi-tool deployment\n\nAWS: Terraform configuration for environment-specific infrastructure deployment and state management\n\nValidation: Must be valid TerraformConfig if provided; enables Terraform module deployment within environment"
+                    "description": "Terraform configuration for environment-specific Terraform module deployment enabling"
                 },
                 "use_bootstrap": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling CDK bootstrap environment usage for environment deployment enabling bootstrap dependency management. Controls whether the environment requires CDK bootstrap resources for deployment operations, with default true ensuring bootstrap availability for CDK deployments.\n\nUse cases: Bootstrap dependency management; CDK deployment control; Environment preparation; Bootstrap resource usage\n\nAWS: AWS CDK bootstrap environment usage for environment deployment operations and stack management\n\nValidation: Boolean value; defaults to true; controls bootstrap environment dependency for CDK deployments",
+                    "description": "Flag controlling CDK bootstrap environment usage for environment deployment enabling",
                     "type": "boolean"
                 }
             },
@@ -2030,10 +2022,9 @@
         },
         "MdaaModuleConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nMDAA module deployment configuration interface for individual module orchestration within multi-module data architectures. Defines module-specific deployment parameters including module type (CDK/Terraform), source paths, execution context, dependency management, and deployment targeting for systematic module deployment with dependency resolution and configuration inheritance.\n\nUse cases: Individual module deployment; CDK and Terraform module support; Module dependency management; Configuration inheritance; Selective module deployment\n\nAWS: Module-scoped AWS resource deployment with CloudFormation or Terraform state management, dependency resolution, and configuration context\n\nValidation: module_type must be 'cdk' or 'tf'; module_path must be valid file path or npm package name; context must be valid configuration elements; dependencies must reference existing modules",
             "properties": {
                 "additional_accounts": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of additional AWS account IDs for cross-account resource deployment enabling multi-account MDAA infrastructure orchestration. Specifies additional accounts where the module may deploy resources beyond the primary target account for cross-account data sharing and multi-account architectures.\n\nUse cases: Cross-account deployments; Multi-account architectures; Account isolation; Shared services; Cross-account data access\n\nAWS: AWS account targeting for cross-account CloudFormation deployments and resource sharing\n\nValidation: Must be array of valid 12-digit AWS account IDs if provided; enables cross-account deployment when specified",
+                    "description": "Array of additional AWS account IDs for cross-account resource deployment enabling",
                     "items": {
                         "type": "string"
                     },
@@ -2043,11 +2034,11 @@
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nDeprecated additional CDK context specification replaced by context property for consistent configuration management. Previously used for additional CDK Context key/value pairs, now superseded by the more context property.\n\nUse cases: Legacy CDK context specification; Backward compatibility; Migration to context property\n\nAWS: Legacy CDK context configuration for deployment\n\nValidation: Deprecated - use context instead; maintained for backward compatibility\n  *",
+                    "description": "Deprecated additional CDK context specification replaced by context property for consistent configuration management",
                     "type": "object"
                 },
                 "additional_stacks": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of additional deployment configurations for multi-stack and multi-region deployment scenarios. Defines additional account/region combinations where the module may deploy resources enabling complex deployment topologies and multi-region architectures.\n\nUse cases: Multi-stack deployments; Multi-region architectures; Complex deployment topologies; Regional redundancy; Distributed infrastructure\n\nAWS: AWS CloudFormation stack deployment targeting for multi-region and multi-account scenarios\n\nValidation: Must be array of valid Deployment objects if provided; enables multi-stack deployment when specified\n  *",
+                    "description": "Array of additional deployment configurations for multi-stack and multi-region deployment scenarios",
                     "items": {
                         "$ref": "#/definitions/Deployment"
                     },
@@ -2059,27 +2050,27 @@
                 },
                 "app_config_data": {
                     "additionalProperties": {},
-                    "description": "Q-ENHANCED-PROPERTY\nDeprecated application configuration data replaced by module_config_data for consistent configuration management. Previously used for config data passed directly to modules, now superseded by the more module_config_data property.\n\nUse cases: Legacy app configuration data; Backward compatibility; Migration to module_config_data\n\nAWS: Legacy MDAA application configuration data management\n\nValidation: Deprecated - use module_config_data instead; maintained for backward compatibility",
+                    "description": "Deprecated application configuration data replaced by module_config_data for consistent configuration management",
                     "type": "object"
                 },
                 "app_configs": {
-                    "description": "Q-ENHANCED-PROPERTY\nDeprecated application configuration file paths replaced by module_configs for consistent configuration management. Previously used for MDAA app configuration files, now superseded by the more module_configs property.\n\nUse cases: Legacy app configuration; Backward compatibility; Migration to module_configs\n\nAWS: Legacy MDAA application configuration file management\n\nValidation: Deprecated - use module_configs instead; maintained for backward compatibility",
+                    "description": "Deprecated application configuration file paths replaced by module_configs for consistent configuration management",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "cdk_app": {
-                    "description": "Q-ENHANCED-PROPERTY\nDeprecated CDK application path specification replaced by module_path for consistent module sourcing. Previously used to specify the MDAA CDK Module/App to be deployed, now superseded by the more flexible module_path property.\n\nUse cases: Legacy CDK app specification; Backward compatibility; Migration to module_path\n\nAWS: Legacy MDAA CDK application specification for deployment\n\nValidation: Deprecated - use module_path instead; maintained for backward compatibility",
+                    "description": "Deprecated CDK application path specification replaced by module_path for consistent module sourcing",
                     "type": "string"
                 },
                 "context": {
                     "additionalProperties": {},
-                    "description": "Q-ENHANCED-PROPERTY\nOptional CDK context configuration providing deployment-specific context and configuration data for module execution. Defines key/value pairs that will be passed to CDK applications as context, enabling environment-specific configuration and deployment customization.\n\nUse cases: Environment-specific configuration; CDK context data; Deployment customization; Configuration inheritance; Module parameterization\n\nAWS: CDK context configuration for deployment-specific parameters and environment customization\n\nValidation: Must be valid ConfigurationElement if provided; passed as CDK context for module configuration",
+                    "description": "CDK context configuration providing deployment-specific context and configuration data for module execution",
                     "type": "object"
                 },
                 "custom_aspects": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of custom CDK aspects for advanced deployment customization and cross-cutting concerns in module deployment. Enables injection of custom logic, validation rules, and modifications across all CDK constructs within the module for organization-specific requirements and advanced customization.\n\nUse cases: Custom validation rules; Cross-cutting concerns; Organization-specific modifications; Advanced customization; Policy enforcement at module level\n\nAWS: CDK aspect system for custom deployment logic and cross-construct modifications within modules\n\nValidation: Must be array of valid MdaaCustomAspect objects if provided; aspects applied across all CDK constructs in module\n  *",
+                    "description": "Array of custom CDK aspects for advanced deployment customization and cross-cutting",
                     "items": {
                         "$ref": "#/definitions/MdaaCustomAspect"
                     },
@@ -2087,34 +2078,34 @@
                 },
                 "custom_naming": {
                     "$ref": "#/definitions/MdaaCustomNaming",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional custom naming configuration for module-specific resource naming conventions enabling organization-specific naming patterns at module level. Allows customization of default MDAA naming patterns for individual modules to align with specific requirements while maintaining overall consistency.\n\nUse cases: Module-specific naming; Custom naming patterns; Organization alignment; Naming convention customization; Module-level branding\n\nAWS: Custom naming patterns for AWS resources deployed by specific MDAA modules\n\nValidation: Must be valid MdaaCustomNaming configuration if provided; overrides default naming for module resources\n  *"
+                    "description": "Custom naming configuration for module-specific resource naming conventions enabling"
                 },
                 "mdaa_compliant": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag indicating whether the module implements MDAA-compliant behaviors and security controls. When enabled, MDAA expects the module to follow MDAA compliance patterns including security configurations, naming conventions, and governance requirements.\n\nUse cases: Compliance enforcement; Security validation; MDAA pattern adherence; Governance requirements; Standard compliance\n\nAWS: MDAA compliance validation for security controls and governance pattern enforcement\n\nValidation: Must be boolean if provided; defaults to true for MDAA modules; controls compliance expectations",
+                    "description": "Flag indicating whether the module implements MDAA-compliant behaviors and security controls",
                     "type": "boolean"
                 },
                 "mdaa_version": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional MDAA version override for module-specific version control enabling selective version management across modules. Allows individual modules to use different MDAA versions for gradual upgrades, compatibility management, and version-specific feature requirements.\n\nUse cases: Module-specific versioning; Gradual MDAA upgrades; Version compatibility; Selective version management; Feature-specific versions\n\nAWS: MDAA CLI version control for module-specific deployment and compatibility management\n\nValidation: Must be valid MDAA version string if provided; controls module deployment version and feature availability",
+                    "description": "MDAA version override for module-specific version control enabling selective version management across modules",
                     "type": "string"
                 },
                 "module_config_data": {
                     "additionalProperties": {},
-                    "description": "Q-ENHANCED-PROPERTY\nOptional module configuration data providing direct configuration parameters for module execution. Defines configuration data that will be passed directly to modules without file-based configuration, enabling inline configuration and dynamic configuration scenarios.\n\nUse cases: Inline module configuration; Dynamic configuration; Direct parameter passing; Configuration without files; Runtime configuration\n\nAWS: MDAA module configuration data for direct parameter passing and runtime configuration\n\nValidation: Must be valid ConfigurationElement if provided; passed directly to modules for configuration",
+                    "description": "Module configuration data providing direct configuration parameters for module execution",
                     "type": "object"
                 },
                 "module_configs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of module configuration file paths for module configuration compilation. Defines ordered list of configuration files that will be merged to create the effective module configuration, with later files taking precedence for configuration inheritance and override scenarios.\n\nUse cases: Module configuration compilation; Configuration inheritance; Configuration file management; Multi-file configuration; Override scenarios\n\nAWS: MDAA module configuration compilation for deployment configuration\n\nValidation: Must be array of valid file paths if provided; files merged in order with later files taking precedence",
+                    "description": "Array of module configuration file paths for module configuration compilation",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "module_path": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional module path specification for MDAA module location and source identification. Defines the file system path or npm package name for the module to be deployed, enabling local development, npm package deployment, and flexible module sourcing strategies.\n\nUse cases: Module source specification; Local development; NPM package deployment; Flexible module sourcing; Path-based module loading\n\nAWS: MDAA CLI module loading and source resolution for deployment orchestration\n\nValidation: Must be valid file path or npm package name if provided; used for module location and loading",
+                    "description": "Module path specification for MDAA module location and source identification",
                     "type": "string"
                 },
                 "module_type": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional module type specification controlling deployment engine selection for MDAA module orchestration. Determines whether the module will be deployed using CDK (CloudFormation) or Terraform infrastructure-as-code engines, enabling hybrid deployment strategies and tool-specific optimizations.\n\nUse cases: Deployment engine selection; CDK vs Terraform choice; Hybrid infrastructure deployment; Tool-specific optimizations\n\nAWS: MDAA CLI deployment engine selection for CloudFormation or Terraform-based resource deployment\n\nValidation: Must be 'cdk' or 'tf' if provided; defaults to 'cdk'; determines deployment engine and state management\n  *",
+                    "description": "Module type specification controlling deployment engine selection for MDAA module orchestration",
                     "enum": [
                         "cdk",
                         "tf"
@@ -2123,21 +2114,21 @@
                 },
                 "postdeploy": {
                     "$ref": "#/definitions/HookConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional post-deployment hook configuration for custom validation and cleanup operations after module deployment. Defines hook commands that execute after module deployment enabling post-deployment validation, notification, and custom cleanup logic.\n\nUse cases: Post-deployment validation; Cleanup operations; Success notifications; Integration testing; Deployment verification\n\nAWS: MDAA CLI post-deployment lifecycle hook for custom validation and cleanup operations\n\nValidation: Must be valid HookConfig object if provided; enables post-deployment automation when specified"
+                    "description": "Post-deployment hook configuration for custom validation and cleanup operations after module deployment"
                 },
                 "predeploy": {
                     "$ref": "#/definitions/HookConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional pre-deployment hook configuration for custom validation and setup operations before module deployment. Defines hook commands that execute before module deployment enabling pre-deployment validation, environment setup, and custom preparation logic.\n\nUse cases: Pre-deployment validation; Environment setup; Custom preparation; Validation gates; Setup automation\n\nAWS: MDAA CLI pre-deployment lifecycle hook for custom validation and setup operations\n\nValidation: Must be valid HookConfig object if provided; enables pre-deployment automation when specified"
+                    "description": "Pre-deployment hook configuration for custom validation and setup operations before module deployment"
                 },
                 "tag_config_data": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional tag configuration data providing direct tagging parameters for resource tagging strategy. Defines tagging data that will be passed directly to modules without file-based configuration, enabling inline tagging configuration and dynamic tagging scenarios.\n\nUse cases: Inline tag configuration; Dynamic tagging; Direct tag parameter passing; Tagging without files; Runtime tagging configuration\n\nAWS: AWS resource tagging configuration data for direct parameter passing and runtime tagging\n\nValidation: Must be valid TagElement if provided; passed directly to modules for resource tagging",
+                    "description": "Tag configuration data providing direct tagging parameters for resource tagging strategy",
                     "type": "object"
                 },
                 "tag_configs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of tag configuration file paths for resource tagging strategy compilation. Defines ordered list of tag configuration files that will be merged to create the effective tagging strategy, with later files taking precedence for tag inheritance and override scenarios.\n\nUse cases: Tag configuration compilation; Resource tagging strategy; Tag inheritance; Configuration file management; Tagging governance\n\nAWS: AWS resource tagging configuration compilation for tagging strategy\n\nValidation: Must be array of valid file paths if provided; files merged in order with later files taking precedence",
+                    "description": "Array of tag configuration file paths for resource tagging strategy compilation",
                     "items": {
                         "type": "string"
                     },
@@ -2145,10 +2136,10 @@
                 },
                 "terraform": {
                     "$ref": "#/definitions/TerraformConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional Terraform-specific configuration for modules using Terraform deployment engine enabling Terraform backend and provider configuration. Provides Terraform-specific settings including backend configuration and provider overrides for Terraform-based MDAA modules.\n\nUse cases: Terraform backend configuration; Provider overrides; Terraform-specific settings; State management; Terraform deployment\n\nAWS: Terraform AWS provider configuration and backend settings for infrastructure deployment\n\nValidation: Must be valid TerraformConfig object if provided; enables Terraform-specific configuration when specified"
+                    "description": "Terraform-specific configuration for modules using Terraform deployment engine enabling"
                 },
                 "use_bootstrap": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling CDK bootstrap environment usage for module deployment enabling bootstrap dependency management. Controls whether the module requires CDK bootstrap resources for deployment operations, with default true ensuring bootstrap availability for CDK deployments.\n\nUse cases: Bootstrap dependency management; CDK deployment control; Environment preparation; Bootstrap resource usage; Deployment requirements\n\nAWS: AWS CDK bootstrap environment usage for module deployment operations and stack management\n\nValidation: Boolean value; defaults to true; controls bootstrap environment dependency for CDK deployments",
+                    "description": "Flag controlling CDK bootstrap environment usage for module deployment enabling bootstrap",
                     "type": "boolean"
                 }
             },
@@ -2156,14 +2147,13 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
+                    "description": "CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed",
                     "type": "string"
                 },
                 "suppressions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
+                    "description": "Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -2191,10 +2181,9 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
+                    "description": "Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -2208,26 +2197,25 @@
         },
         "MdaaResourceNamingConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA resource naming implementations that standardize AWS resource naming across domains, environments, and modules. This interface enables consistent, collision-free resource naming in multi-tenant MDAA deployments by providing organizational context and CDK node access for custom naming strategies.\n\nUse cases: Multi-domain data lake deployments requiring unique resource names; Cross-account data mesh architectures with consistent naming; Custom naming implementations for compliance requirements\n\nAWS: Configures naming patterns for all AWS resources deployed by MDAA modules including S3 buckets, IAM roles, Glue databases, and CloudFormation stacks\n\nValidation: All properties required; org/env/domain/moduleName must be valid AWS resource name components (alphanumeric, hyphens, underscores)",
             "properties": {
                 "cdkNode": {
                     "$ref": "#/definitions/Node",
-                    "description": "Q-ENHANCED-PROPERTY\nCDK construct node providing access to context values for custom naming implementations. Enables retrieval of additional configuration through tryGetContext() for advanced naming strategies beyond the standard org/env/domain/module pattern.\n\nUse cases: Custom naming with environment-specific prefixes; Integration with external naming services; Context-driven naming for compliance requirements\n\nAWS: CDK context system for CloudFormation template generation\n\nValidation: Must be valid CDK Node instance with accessible context\n  *"
+                    "description": "CDK construct node providing access to context values for custom naming implementations"
                 },
                 "domain": {
-                    "description": "Q-ENHANCED-PROPERTY\nDomain identifier from MDAA configuration representing logical business or organizational boundaries within the data architecture. Forms the third component of the default naming pattern and enables data mesh architectures with domain-specific resource isolation.\n\nUse cases: Data mesh domain separation; Line-of-business resource isolation; Cross-domain data sharing with clear ownership\n\nAWS: Domain component in all AWS resource names, SSM parameter paths, and CloudFormation export names\n\nValidation: Must be valid AWS resource name component (typically business domain names like 'finance', 'marketing', 'shared')",
+                    "description": "Domain identifier from MDAA configuration representing logical business or organizational boundaries",
                     "type": "string"
                 },
                 "env": {
-                    "description": "Q-ENHANCED-PROPERTY\nEnvironment identifier from MDAA configuration that distinguishes deployment stages within the same domain. Forms the second component of the default naming pattern enabling parallel dev/test/prod deployments without resource conflicts.\n\nUse cases: Multi-stage deployments in same account; Environment-specific resource isolation; Progressive deployment strategies\n\nAWS: Environment component in all AWS resource names and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically 'dev', 'test', 'prod', 'staging')",
+                    "description": "Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain",
                     "type": "string"
                 },
                 "moduleName": {
-                    "description": "Q-ENHANCED-PROPERTY\nModule name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment. Forms the final component of the default naming pattern and enables multiple instances of the same module type within the same scope.\n\nUse cases: Multiple data lake instances per domain; Separate analytics workloads; Module-specific resource grouping\n\nAWS: Module component in all AWS resource names, SSM parameter paths, and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically module function like 'datalake', 'warehouse', 'analytics')",
+                    "description": "Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment",
                     "type": "string"
                 },
                 "org": {
-                    "description": "Q-ENHANCED-PROPERTY\nOrganization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names. Forms the first component of the default naming pattern and ensures global uniqueness across multiple MDAA deployments.\n\nUse cases: Multi-organization AWS accounts; Shared service accounts with multiple tenants; Resource name collision prevention\n\nAWS: Prefix for all AWS resource names including S3 buckets, IAM roles, and CloudFormation stacks\n\nValidation: Must be valid AWS resource name component (3-63 characters, alphanumeric and hyphens only, no consecutive hyphens)",
+                    "description": "Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names",
                     "type": "string"
                 }
             },
@@ -2333,17 +2321,16 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
+                    "description": "Human-readable description explaining the purpose and scope of the Service Catalog constraint",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
+                    "description": "Object containing named constraint rules that define the validation logic for Service Catalog product parameters",
                     "type": "object"
                 }
             },
@@ -2355,14 +2342,13 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
-                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
+                    "description": "Constraint assertion expression that defines the validation logic for Service Catalog product parameters",
                     "type": "string"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
+                    "description": "Human-readable description explaining the purpose and requirements of the constraint assertion",
                     "type": "string"
                 }
             },
@@ -2378,10 +2364,9 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
+                    "description": "Array of constraint assertions that define the validation logic to be applied when the condition is met",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
@@ -2389,7 +2374,7 @@
                 },
                 "condition": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
+                    "description": "Condition configuration that determines when the constraint rule assertions should be evaluated"
                 }
             },
             "required": [
@@ -2400,15 +2385,14 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
+                    "description": "Constraint configuration that defines additional validation rules for the Service Catalog product parameter"
                 },
                 "props": {
                     "$ref": "#/definitions/CfnParameterProps",
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
+                    "description": "CloudFormation parameter properties that define the parameter characteristics including type,"
                 }
             },
             "required": [
@@ -2418,29 +2402,28 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
+                    "description": "IAM role name that will be used to launch the Service Catalog product",
                     "type": "string"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
+                    "description": "Display name for the Service Catalog product that will be visible to end users in the Service Catalog console",
                     "type": "string"
                 },
                 "owner": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
+                    "description": "Owner identifier for the Service Catalog product, typically representing the team or organization",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "description": "Object containing named parameter configurations for the Service Catalog product",
                     "type": "object"
                 },
                 "portfolio_arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
+                    "description": "ARN of the AWS Service Catalog portfolio where the product will be associated",
                     "type": "string"
                 },
                 "portfolio_bucket_name": {
@@ -3052,11 +3035,10 @@
         },
         "TerraformConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nTerraform backend configuration interface for MDAA Terraform module deployment with S3 state management and backend override capabilities. Defines Terraform-specific configuration including S3 backend settings for state management, enabling Terraform module deployment within MDAA orchestration with customizable backend configuration.\n\nUse cases: Terraform state management; S3 backend configuration; Terraform module deployment; Infrastructure as Code with Terraform; Backend customization\n\nAWS: Terraform S3 backend configuration for state management with customizable backend settings for MDAA Terraform module deployment\n\nValidation: S3 backend configuration must include valid S3 bucket and key settings; backend configuration must be valid Terraform backend syntax",
             "properties": {
                 "override": {
                     "additionalProperties": false,
-                    "description": "Q-ENHANCED-PROPERTY\nOptional Terraform configuration override settings for customizing Terraform backend and provider configuration within MDAA orchestration. Provides ability to override default Terraform settings including backend configuration, provider settings, and other Terraform-specific parameters for advanced Terraform module deployment scenarios.\n\nUse cases: Terraform backend customization; Provider configuration override; Advanced Terraform settings; Custom state management; Terraform deployment customization\n\nAWS: Terraform configuration override for customized backend and provider settings within MDAA Terraform module deployment\n\nValidation: Must be valid Terraform configuration structure if provided; backend configuration must be valid Terraform syntax; optional for Terraform customization",
+                    "description": "Terraform configuration override settings for customizing Terraform backend and provider",
                     "properties": {
                         "terraform": {
                             "additionalProperties": false,
@@ -3066,7 +3048,7 @@
                                     "properties": {
                                         "s3": {
                                             "additionalProperties": {},
-                                            "description": "Q-ENHANCED-PROPERTY\nRequired S3 backend configuration for Terraform state management enabling remote state storage and collaboration. Defines S3-specific backend settings including bucket, key, region, and other S3 backend parameters for Terraform state management within MDAA orchestration.\n\nUse cases: Remote state storage; Team collaboration; State locking; Terraform backend configuration; S3 state management\n\nAWS: Terraform S3 backend configuration for remote state storage and management in Amazon S3\n\nValidation: Must be valid S3 backend configuration object; required for Terraform remote state management",
+                                            "description": "S3 backend configuration for Terraform state management enabling remote state storage and collaboration",
                                             "type": "object"
                                         }
                                     },
@@ -3300,7 +3282,7 @@
     },
     "properties": {
         "account": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional target AWS account number for MDAA deployments enabling cross-account deployment scenarios. Supports multi-account data architecture strategies and organizational account separation with consistent configuration management.\n\nUse cases: Cross-account deployments; Multi-account data architecture; Organizational account separation\n\nAWS: AWS account targeting for MDAA resource deployments and cross-account permissions\n\nValidation: Must be valid 12-digit AWS account number if provided; defaults to CDK default account",
+            "description": "Target AWS account number for MDAA deployments enabling cross-account deployment scenarios",
             "type": "string"
         },
         "context": {
@@ -3323,7 +3305,7 @@
             "additionalProperties": {
                 "$ref": "#/definitions/MdaaDomainConfig"
             },
-            "description": "Q-ENHANCED-PROPERTY\nRequired map of domain configurations defining the organizational structure and deployment targets for MDAA modules. Each domain represents a logical grouping of environments and modules with specific deployment characteristics and operational boundaries.\n\nUse cases: Organizational structure definition; Deployment target specification; Logical module grouping\n\nAWS: Domain-based organization for AWS resource deployment and operational management\n\nValidation: Must be object with string keys and MdaaDomainConfig values; required; at least one domain must be defined\n  *",
+            "description": "Map of domain configurations defining the organizational structure and deployment targets for MDAA modules",
             "type": "object"
         },
         "env_templates": {
@@ -3334,7 +3316,7 @@
             "type": "object"
         },
         "log_suppressions": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling CDK Nag suppression logging for compliance and debugging purposes. When enabled, provides detailed logging of security rule suppressions to support compliance auditing and security review processes.\n\nUse cases: Compliance auditing; Security review processes; Suppression tracking and documentation\n\nAWS: CDK Nag suppression logging for security compliance tracking and audit trails\n\nValidation: Boolean value; defaults to false; enables suppression logging when true",
+            "description": "Flag controlling CDK Nag suppression logging for compliance and debugging purposes",
             "type": "boolean"
         },
         "mdaa_version": {
@@ -3342,24 +3324,24 @@
             "type": "string"
         },
         "naming_class": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional class name for custom MDAA naming implementation within the specified module. Must implement IMdaaResourceNaming interface to provide consistent resource naming methods across all MDAA modules and deployments.\n\nUse cases: Specific naming class selection; Multiple naming strategies per module; Custom naming implementation targeting\n\nAWS: Naming class instantiation for custom AWS resource name generation patterns\n\nValidation: Must be valid exported class name implementing IMdaaResourceNaming interface if provided",
+            "description": "Class name for custom MDAA naming implementation within the specified module",
             "type": "string"
         },
         "naming_module": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional module path for custom MDAA naming implementation overriding the default org-env-domain-module pattern. Enables integration with enterprise naming standards and regulatory requirements for consistent resource naming across the organization.\n\nUse cases: Enterprise naming standard compliance; Regulatory naming requirements; Custom naming for legacy integration\n\nAWS: Custom naming module loading for AWS resource name generation across all MDAA deployments\n\nValidation: Must be valid Node.js module path if provided; module must export the specified naming class",
+            "description": "Module path for custom MDAA naming implementation overriding the default org-env-domain-module pattern",
             "type": "string"
         },
         "naming_props": {
             "additionalProperties": {},
-            "description": "Q-ENHANCED-PROPERTY\nOptional configuration properties passed to custom naming implementation constructor for naming behavior customization. Enables parameterized naming patterns and environment-specific naming configuration for flexible organizational requirements.\n\nUse cases: Naming behavior customization; Environment-specific naming patterns; Parameterized naming rules\n\nAWS: Naming constructor parameters for customized AWS resource name generation behavior\n\nValidation: Must be valid configuration object matching naming constructor expectations if provided",
+            "description": "Configuration properties passed to custom naming implementation constructor for naming behavior customization",
             "type": "object"
         },
         "organization": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired organization identifier that serves as the top-level namespace for all AWS resource names and forms the foundation of the MDAA naming hierarchy. Ensures global uniqueness and organizational consistency across all data platform deployments.\n\nUse cases: Organizational namespace definition; Global resource name uniqueness; Multi-organization AWS account management\n\nAWS: Organization prefix for all AWS resource names across all MDAA deployments\n\nValidation: Must be valid organization identifier; required; forms basis of all resource naming",
+            "description": "Organization identifier that serves as the top-level namespace for all AWS resource names",
             "type": "string"
         },
         "region": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional target AWS region for MDAA deployments overriding CDK default region settings. Enables region-specific deployments and supports multi-region data architecture strategies with consistent configuration management.\n\nUse cases: Region-specific deployments; Multi-region data architecture; Geographic data placement\n\nAWS: AWS region selection for all MDAA resource deployments and regional service configuration\n\nValidation: Must be valid AWS region identifier if provided; defaults to CDK default region",
+            "description": "Target AWS region for MDAA deployments overriding CDK default region settings",
             "type": "string"
         },
         "tag_config_data": {
@@ -3370,7 +3352,7 @@
             "type": "object"
         },
         "tag_configs": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional array of tag configuration file paths for centralized tagging strategy implementation. Enables consistent resource tagging across all MDAA deployments with hierarchical tag precedence and organizational tagging standards.\n\nUse cases: Centralized tagging strategy; Organizational tagging standards; Cost allocation and resource management\n\nAWS: AWS resource tagging configuration for all MDAA-deployed resources\n\nValidation: Must be array of valid file paths if provided; files processed in order with later precedence",
+            "description": "Array of tag configuration file paths for centralized tagging strategy implementation",
             "items": {
                 "type": "string"
             },

@@ -15,140 +15,32 @@ import { MdaaDatazoneProject } from './project';
 import { Stack } from 'aws-cdk-lib';
 
 export interface MdaaDatazoneEnvironmentProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataZone project reference for environment association enabling project-environment integration. Specifies the DataZone project that this environment belongs to for project-environment association and integration.
-   *
-   * Use cases: Project association; Environment integration; Project-environment relationship; Integration management
-   *
-   * AWS: DataZone project reference for environment association and project integration
-   *
-   * Validation: Must be valid MdaaDatazoneProject instance; required for environment creation
-   **/
+  /** DataZone project reference for environment association enabling project-environment integration */
   readonly project: MdaaDatazoneProject;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required IAM role for DataZone environment user access enabling user-based environment operations. Specifies the IAM role that DataZone users will assume when accessing and operating within the environment.
-   *
-   * Use cases: User access; Environment operations; Role assumption; User permissions
-   *
-   * AWS: IAM role for DataZone environment user access and operations
-   *
-   * Validation: Must be valid IRole instance; required for environment user access
-   **/
+  /** IAM role for DataZone environment user access enabling user-based environment operations */
   readonly envUserRole: IRole;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required Lake Formation manage access role for automated data governance enabling permission management and access control. Specifies the IAM role that DataZone will use to manage Lake Formation permissions and access control for data assets within the environment.
-   *
-   * Use cases: Automated access control; Lake Formation integration; Permission management; Data governance automation
-   *
-   * AWS: IAM role for Lake Formation manage access enabling automated data governance
-   *
-   * Validation: Must be valid IRole instance; required for Lake Formation integration
-   **/
+  /** Lake Formation manage access role for automated data governance enabling permission */
   readonly lakeformationManageAccessRole: IRole;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 bucket for DataZone environment data storage enabling environment data management. Specifies the S3 bucket where environment data and subscription data will be stored for data management and access.
-   *
-   * Use cases: Data storage; Environment data; Subscription data; Data management
-   *
-   * AWS: S3 bucket for DataZone environment data storage and management
-   *
-   * Validation: Must be valid IBucket instance; required for environment data storage
-   **/
+  /** S3 bucket for DataZone environment data storage enabling environment data management */
   readonly envBucket: IBucket;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required AWS account ID for environment deployment enabling account-specific resource creation. Specifies the AWS account where the environment will be deployed for account-specific resource management.
-   *
-   * Use cases: Account deployment; Resource creation; Account-specific management; Deployment targeting
-   *
-   * AWS: AWS account ID for environment deployment and resource creation
-   *
-   * Validation: Must be valid AWS account ID string; required for environment deployment
-   **/
+  /** AWS account ID for environment deployment enabling account-specific resource creation */
   readonly account: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required AWS region for environment deployment enabling region-specific resource creation. Specifies the AWS region where the environment will be deployed for region-specific resource management.
-   *
-   * Use cases: Region deployment; Resource creation; Region-specific management; Deployment targeting
-   *
-   * AWS: AWS region for environment deployment and resource creation
-   *
-   * Validation: Must be valid AWS region string; required for environment deployment
-   **/
+  /** AWS region for environment deployment enabling region-specific resource creation */
   readonly region: string;
 }
 
 export class MdaaDatazoneEnvironment extends Construct {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Environment properties configuration for DataZone environment setup providing access to environment settings. Exposes the environment properties for configuration access and environment management.
-   *
-   * Use cases: Configuration access; Environment settings; Property retrieval; Environment management
-   *
-   * AWS: DataZone environment properties for configuration access and management
-   *
-   * Validation: Initialized from constructor props; provides read-only access to environment configuration
-   **/
+  /** Environment properties configuration for DataZone environment setup providing access to environment settings */
   readonly props: MdaaDatazoneEnvironmentProps;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * CloudFormation DataZone environment resource for environment deployment and management. Exposes the underlying CloudFormation environment resource for advanced configuration and dependency management.
-   *
-   * Use cases: Environment deployment; CloudFormation management; Advanced configuration; Dependency management
-   *
-   * AWS: CloudFormation DataZone environment resource for environment deployment and management
-   *
-   * Validation: Created during construct initialization; represents the deployed DataZone environment
-   **/
+  /** CloudFormation DataZone environment resource for environment deployment and management */
   public readonly env: CfnEnvironment;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Glue database for DataZone subscription data storage enabling subscription data management. Provides the Glue database created for storing subscription data and metadata within the DataZone environment.
-   *
-   * Use cases: Subscription data storage; Database management; Metadata storage; Data cataloging
-   *
-   * AWS: Glue database for DataZone subscription data storage and management
-   *
-   * Validation: Created during construct initialization; used for subscription data storage
-   **/
+  /** Glue database for DataZone subscription data storage enabling subscription data management */
   public readonly subDatabase: CfnDatabase;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Generated subscription database name after applying naming conventions for consistent resource identification. Provides the final database name for subscription data after applying organizational naming conventions.
-   *
-   * Use cases: Database identification; Naming consistency; Resource naming; Database management
-   *
-   * AWS: Glue database name for subscription data after naming convention application
-   *
-   * Validation: Generated from props.naming.resourceName; applies naming conventions to database name
-   **/
+  /** Generated subscription database name after applying naming conventions for consistent resource identification */
   public readonly subDatabaseName: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * DataZone subscription target for data subscription management enabling subscription workflows. Provides the subscription target resource for managing data subscriptions within the DataZone environment.
-   *
-   * Use cases: Subscription management; Data subscriptions; Subscription workflows; Target management
-   *
-   * AWS: DataZone subscription target for subscription management and workflows
-   *
-   * Validation: Created during construct initialization; enables subscription workflows
-   **/
+  /** DataZone subscription target for data subscription management enabling subscription workflows */
   public readonly subTarget: CfnSubscriptionTarget;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Lake Formation manage access role for automated data governance enabling permission management. Exposes the Lake Formation role for access control and permission management within the environment.
-   *
-   * Use cases: Access control; Permission management; Data governance; Role access
-   *
-   * AWS: IAM role for Lake Formation manage access and data governance
-   *
-   * Validation: Initialized from props.lakeformationManageAccessRole; provides Lake Formation permissions
-   **/
+  /** Lake Formation manage access role for automated data governance enabling permission management */
   public readonly lakeformationManageAccessRole: IRole;
 
   private readonly constructScope: Construct;

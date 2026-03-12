@@ -492,60 +492,60 @@
         },
         "ClassifierConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nGlue classifier configuration union interface for multi-format data classification with CSV, Grok, JSON, and XML classifier support. Defines classifier configuration properties for DataOps projects enabling format-specific data recognition including structured CSV, pattern-based Grok, hierarchical JSON, and XML document parsing configurations.\n\nUse cases: Multi-format data classification; Format-specific parsing; Data schema detection; Custom pattern recognition; Structured data parsing; Document format recognition\n\nAWS: AWS Glue classifier configuration with support for CSV, Grok, JSON, and XML data format classification and schema detection\n\nValidation: Exactly one classifier type must be specified; csvClassifier must be valid ClassifierCsvProps if specified; other classifiers must be valid CloudFormation classifier properties",
+            "description": "Configuration for classifier format-specific settings supporting CSV, Grok, JSON, and XML classifiers.\n\nUse cases: Multi-format data classification; Format-specific parsing; Data schema detection; Custom pattern recognition; Structured data parsing; Document format recognition\n\nAWS: AWS Glue classifier configuration with support for CSV, Grok, JSON, and XML data format classification and schema detection\n\nValidation: Exactly one classifier type must be specified; csvClassifier must be valid ClassifierCsvProps if specified; other classifiers must be valid CloudFormation classifier properties",
             "properties": {
                 "csvClassifier": {
                     "$ref": "#/definitions/ClassifierCsvProps",
-                    "description": "Q-ENHANCED-PROPERTY\nCSV classifier configuration for comma-separated value data format recognition with delimiter and header parsing capabilities. Enables CSV-specific data classification including delimiter specification, header detection, and column parsing for structured data processing in DataOps workflows.\n\nUse cases: CSV data classification; Delimiter-based parsing; Header detection; Structured data processing\n\nAWS: AWS Glue CSV classifier configuration for CSV data format recognition and schema detection\n\nValidation: Must be valid ClassifierCsvProps configuration; see AWS CloudFormation CSV classifier documentation for detailed properties"
+                    "description": "CSV classifier configuration."
                 },
                 "grokClassifier": {
                     "$ref": "#/definitions/CfnClassifier.GrokClassifierProperty",
-                    "description": "Q-ENHANCED-PROPERTY\nGrok classifier configuration for pattern-based data format recognition with custom pattern matching capabilities. Enables Grok pattern-based data classification for log files and semi-structured data using regular expression patterns for flexible data parsing and schema extraction.\n\nUse cases: Log file parsing; Pattern-based recognition; Semi-structured data; Custom format processing\n\nAWS: AWS Glue Grok classifier configuration for pattern-based data format recognition and parsing\n\nValidation: Must be valid GrokClassifierProperty configuration; see AWS CloudFormation Grok classifier documentation for pattern specifications\n  *"
+                    "description": "Grok pattern-based classifier configuration."
                 },
                 "jsonClassifier": {
                     "$ref": "#/definitions/CfnClassifier.JsonClassifierProperty",
-                    "description": "Q-ENHANCED-PROPERTY\nJSON classifier configuration for JavaScript Object Notation data format recognition with hierarchical structure parsing. Enables JSON-specific data classification for nested and hierarchical data structures, supporting complex data parsing and schema inference for JSON-based data sources.\n\nUse cases: JSON data classification; Hierarchical data parsing; Nested structure recognition; API data processing\n\nAWS: AWS Glue JSON classifier configuration for JSON data format recognition and schema detection\n\nValidation: Must be valid JsonClassifierProperty configuration; see AWS CloudFormation JSON classifier documentation for path specifications\n  *"
+                    "description": "JSON classifier configuration."
                 },
                 "xmlClassifier": {
                     "$ref": "#/definitions/CfnClassifier.XMLClassifierProperty",
-                    "description": "Q-ENHANCED-PROPERTY\nXML classifier configuration for Extensible Markup Language data format recognition with tag-based structure parsing. Enables XML-specific data classification for document-based data structures, supporting XML parsing and schema inference for document-oriented data sources.\n\nUse cases: XML document parsing; Tag-based recognition; Document structure processing; Markup language handling\n\nAWS: AWS Glue XML classifier configuration for XML data format recognition and schema detection\n\nValidation: Must be valid XMLClassifierProperty configuration; see AWS CloudFormation XML classifier documentation for row tag specifications\n  *"
+                    "description": "XML classifier configuration."
                 }
             },
             "type": "object"
         },
         "ClassifierCsvProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nGlue CSV classifier configuration interface for CSV data format recognition with delimiter, header, and column parsing options. Defines CSV-specific classifier properties for DataOps projects including delimiter specification, header detection, column trimming, and quote symbol handling for accurate CSV data schema detection and parsing.\n\nUse cases: CSV data classification; Delimiter-based parsing; Header detection; Column schema inference; CSV format recognition; Data parsing configuration\n\nAWS: AWS Glue CSV classifier with configurable parsing options for CSV data format recognition and schema detection\n\nValidation: delimiter must be valid CSV delimiter character if specified; containsHeader must be valid header detection option; header must be valid column names if specified; quoteSymbol must be valid quote character",
+            "description": "Configuration for a Glue CSV classifier with delimiter, header, and column parsing options.\n\nUse cases: CSV data classification; Delimiter-based parsing; Header detection; Column schema inference; CSV format recognition; Data parsing configuration\n\nAWS: AWS Glue CSV classifier with configurable parsing options for CSV data format recognition and schema detection\n\nValidation: delimiter must be valid CSV delimiter character if specified; containsHeader must be valid header detection option; header must be valid column names if specified; quoteSymbol must be valid quote character",
             "properties": {
                 "allowSingleColumn": {
-                    "description": "Q-ENHANCED-PROPERTY\nSingle column CSV parsing allowance for simplified CSV data structure recognition enabling processing of single-column CSV files. When enabled, allows the classifier to recognize and process CSV files containing only a single column, supporting simplified data formats and edge cases in data processing workflows.\n\nUse cases: Single-column CSV processing; Simplified data formats; Edge case handling; Basic CSV structure recognition\n\nAWS: AWS Glue CSV classifier allowSingleColumn property for single-column CSV file recognition\n\nValidation: Must be boolean; enables recognition of single-column CSV files when true",
+                    "description": "Allow recognition of single-column CSV files.",
                     "type": "boolean"
                 },
                 "containsHeader": {
-                    "description": "Q-ENHANCED-PROPERTY\nHeader detection configuration for CSV parsing with automatic header row recognition enabling intelligent column naming. Specifies how the classifier should detect and handle header rows in CSV files, supporting automatic column naming and schema inference for structured data processing.\n\nUse cases: Automatic header detection; Column naming; Schema inference; Structured CSV processing\n\nAWS: AWS Glue CSV classifier containsHeader property for header row detection and processing\n\nValidation: Must be valid header detection option ('UNKNOWN', 'PRESENT', 'ABSENT'); controls header row processing behavior",
+                    "description": "Header detection: 'UNKNOWN', 'PRESENT', or 'ABSENT'.",
                     "type": "string"
                 },
                 "delimiter": {
-                    "description": "Q-ENHANCED-PROPERTY\nCSV field delimiter specification for column separation parsing enabling custom delimiter support. Defines the character used to separate fields in CSV files, supporting various CSV formats and regional conventions for flexible data parsing and schema detection.\n\nUse cases: Custom delimiter support; Regional CSV formats; Field separation; Flexible CSV parsing\n\nAWS: AWS Glue CSV classifier delimiter property for custom field separation in CSV parsing\n\nValidation: Must be valid CSV delimiter character; common values include comma, semicolon, tab, pipe",
+                    "description": "Field delimiter character (e.g., comma, semicolon, tab).",
                     "type": "string"
                 },
                 "disableValueTrimming": {
-                    "description": "Q-ENHANCED-PROPERTY\nValue trimming control for CSV field processing with whitespace handling configuration enabling precise data parsing. When disabled, prevents automatic trimming of leading and trailing whitespace from CSV field values, preserving exact data formatting for sensitive data processing scenarios.\n\nUse cases: Exact data preservation; Whitespace-sensitive data; Precise formatting; Data integrity maintenance\n\nAWS: AWS Glue CSV classifier disableValueTrimming property for whitespace handling control\n\nValidation: Must be boolean; when true, disables automatic whitespace trimming from field values",
+                    "description": "When true, disables automatic whitespace trimming from field values.",
                     "type": "boolean"
                 },
                 "header": {
-                    "description": "Q-ENHANCED-PROPERTY\nExplicit column header specification for CSV schema definition enabling predefined column naming. Provides explicit column names for CSV files, overriding automatic header detection and enabling consistent schema application for files with varying or missing headers.\n\nUse cases: Predefined column naming; Consistent schema application; Header override; Schema standardization\n\nAWS: AWS Glue CSV classifier header property for explicit column name specification\n\nValidation: Must be array of valid column names; overrides automatic header detection when specified",
+                    "description": "Explicit column names, overriding automatic header detection.",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nClassifier name specification for identification and management enabling organized classifier administration. Provides a unique name for the CSV classifier, supporting classifier organization and management within DataOps projects and Glue catalog administration.\n\nUse cases: Classifier identification; Organization; Management; Catalog administration\n\nAWS: AWS Glue classifier name property for classifier identification and management\n\nValidation: Must be valid Glue classifier name; must be unique within the account and region",
+                    "description": "Classifier name for identification and management.",
                     "type": "string"
                 },
                 "quoteSymbol": {
-                    "description": "Q-ENHANCED-PROPERTY\nQuote symbol specification for CSV field enclosure parsing enabling quoted field support. Defines the character used to enclose fields containing special characters or delimiters, supporting complex CSV formats with embedded delimiters and special characters.\n\nUse cases: Quoted field support; Special character handling; Complex CSV formats; Embedded delimiter processing\n\nAWS: AWS Glue CSV classifier quoteSymbol property for field enclosure character specification\n\nValidation: Must be valid quote character; commonly double quote or single quote; enables proper parsing of enclosed fields",
+                    "description": "Quote character for field enclosure (e.g., double quote).",
                     "type": "string"
                 }
             },
@@ -553,15 +553,15 @@
         },
         "ClassifierProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nGlue classifier configuration interface for custom data format recognition with type-specific configuration management. Defines classifier properties for DataOps projects including classifier type selection and format-specific configuration for automated data schema detection and parsing in ETL workflows.\n\nUse cases: Custom data format recognition; Schema detection automation; Data parsing configuration; ETL data classification; Format-specific processing; Automated schema inference\n\nAWS: AWS Glue classifiers with custom configuration for automated data format recognition and schema detection in DataOps workflows\n\nValidation: classifierType must be valid ClassifierType enum value; configuration must be valid ClassifierConfigProps for specified type; configuration must match classifier type requirements",
+            "description": "Configuration for a Glue classifier with type selection and format-specific settings.\n\nUse cases: Custom data format recognition; Schema detection automation; Data parsing configuration; ETL data classification; Format-specific processing; Automated schema inference\n\nAWS: AWS Glue classifiers with custom configuration for automated data format recognition and schema detection in DataOps workflows\n\nValidation: classifierType must be valid ClassifierType enum value; configuration must be valid ClassifierConfigProps for specified type; configuration must match classifier type requirements",
             "properties": {
                 "classifierType": {
                     "$ref": "#/definitions/ClassifierType",
-                    "description": "Q-ENHANCED-PROPERTY\nClassifier type specification for data format recognition with support for CSV, Grok, JSON, and XML formats. Defines the specific type of classifier to create, enabling format-appropriate data parsing and schema detection for diverse data sources in DataOps workflows.\n\nUse cases: Format-specific classification; Data type recognition; Schema detection; Format-appropriate parsing\n\nAWS: AWS Glue classifier type selection for format-specific data recognition and parsing\n\nValidation: Must be valid ClassifierType enum value ('csv', 'grok', 'json', 'xml'); determines classifier behavior and configuration requirements\n  *"
+                    "description": "Classifier type: 'csv', 'grok', 'json', or 'xml'."
                 },
                 "configuration": {
                     "$ref": "#/definitions/ClassifierConfigProps",
-                    "description": "Q-ENHANCED-PROPERTY\nType-specific classifier configuration properties for customized data format recognition and parsing behavior. Provides detailed configuration options specific to the selected classifier type, enabling fine-tuned data parsing and schema detection for optimal data processing results.\n\nUse cases: Custom parsing configuration; Format-specific tuning; Schema detection optimization; Data processing customization\n\nAWS: AWS Glue classifier configuration properties for customized data format recognition and parsing\n\nValidation: Must be valid ClassifierConfigProps for specified classifier type; configuration must match classifier type requirements; see AWS CloudFormation Glue classifier documentation"
+                    "description": "Format-specific classifier configuration properties."
                 }
             },
             "required": [
@@ -586,28 +586,28 @@
         },
         "ConnectionPhysical": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nPhysical connection configuration interface for Glue connection VPC networking with availability zone and security group management. Defines physical networking properties for DataOps project connections including AZ placement, security group configuration, and subnet specification for secure external data source connectivity.\n\nUse cases: VPC connection configuration; Network security; External data source connectivity; Secure networking\n\nAWS: Glue connection physical requirements for VPC networking and security configuration\n\nValidation: All properties are optional; must be valid AWS networking identifiers when provided",
+            "description": "Physical connection requirements for Glue connection VPC networking.\n\nUse cases: VPC connection configuration; Network security; External data source connectivity; Secure networking\n\nAWS: Glue connection physical requirements for VPC networking and security configuration\n\nValidation: All properties are optional; must be valid AWS networking identifiers when provided",
             "properties": {
                 "availabilityZone": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional availability zone specification for Glue connection placement enabling zone-specific networking and resource locality. Defines the AZ where the connection will be established affecting network latency and availability for external data source connectivity.\n\nUse cases: Zone-specific placement; Network locality; Availability optimization; Connection placement\n\nAWS: AWS Availability Zone for Glue connection placement and networking optimization\n\nValidation: Must be valid AWS Availability Zone string if provided; affects connection placement and network performance",
+                    "description": "Availability zone for connection placement.",
                     "type": "string"
                 },
                 "projectSecurityGroupNames": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of project-generated security group names for connection network access control enabling organized security management. Specifies security groups generated within the project configuration for connection access control and network security.\n\nUse cases: Project security groups; Network access control; Organized security; Connection security\n\nAWS: Project-generated security group names for Glue connection network access control\n\nValidation: Must be array of valid security group names if provided; references project-generated security groups",
+                    "description": "Project-generated security group names for connection access control.",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "securityGroupIdList": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of security group IDs for VPC connection access control enabling external security group integration. Specifies existing security group IDs for connection network access control and integration with external VPC security configurations.\n\nUse cases: External security groups; VPC integration; Network access control; Security group reuse\n\nAWS: AWS security group IDs for Glue connection VPC access control and network security\n\nValidation: Must be array of valid security group IDs if provided; must exist in the specified VPC",
+                    "description": "Existing security group IDs for VPC connection access control.",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "subnetId": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional subnet ID for connection VPC placement enabling subnet-specific networking and access control. Specifies the VPC subnet where the connection will be established for network isolation and connectivity management.\n\nUse cases: Subnet placement; Network isolation; VPC connectivity; Network segmentation\n\nAWS: AWS VPC subnet ID for Glue connection placement and network isolation\n\nValidation: Must be valid VPC subnet ID if provided; must be in the specified availability zone and VPC",
+                    "description": "Subnet ID for connection VPC placement.",
                     "type": "string"
                 }
             },
@@ -615,23 +615,23 @@
         },
         "ConnectionProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nGlue connection configuration interface for external data source connectivity with multi-protocol support and connection property management. Defines connection properties for DataOps projects including connection type specification, authentication properties, and match criteria for database, streaming, and network connections.\n\nUse cases: External data source connectivity; Database connections; Streaming data connections; Network connectivity; Authentication management; Multi-protocol data access\n\nAWS: AWS Glue connections with multi-protocol support for JDBC, Kafka, MongoDB, and network connections in DataOps workflows\n\nValidation: connectionType must be valid ConnectionType enum value; connectionProperties must be valid for specified connection type; matchCriteria must be valid selection criteria",
+            "description": "Configuration for a Glue connection with multi-protocol support for external data sources.\n\nUse cases: External data source connectivity; Database connections; Streaming data connections; Network connectivity; Authentication management; Multi-protocol data access\n\nAWS: AWS Glue connections with multi-protocol support for JDBC, Kafka, MongoDB, and network connections in DataOps workflows\n\nValidation: connectionType must be valid ConnectionType enum value; connectionProperties must be valid for specified connection type; matchCriteria must be valid selection criteria",
             "properties": {
                 "connectionProperties": {
                     "additionalProperties": {},
-                    "description": "Q-ENHANCED-PROPERTY\nOptional connection properties for authentication and configuration enabling flexible external data source integration. Defines key-value pairs for connection-specific configuration including authentication credentials, connection strings, and protocol-specific parameters.\n\nUse cases: Authentication configuration; Connection strings; Protocol parameters; Credential management\n\nAWS: AWS Glue connection properties for authentication and configuration management\n\nValidation: Must be valid ConfigurationElement if provided; properties must be appropriate for connection type",
+                    "description": "Key-value pairs for authentication and connection configuration.",
                     "type": "object"
                 },
                 "connectionType": {
                     "$ref": "#/definitions/ConnectionType",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired connection type specification for external data source connectivity enabling multi-protocol data access. Defines the connection protocol type (JDBC, Kafka, MongoDB, Network) affecting connection properties and authentication requirements for DataOps external data integration.\n\nUse cases: Protocol specification; Data source connectivity; Connection type selection; Multi-protocol access\n\nAWS: AWS Glue connection type for external data source protocol specification and connectivity\n\nValidation: Must be valid ConnectionType enum value; required for connection creation and protocol specification\n  *"
+                    "description": "Connection type: 'JDBC', 'KAFKA', 'MONGODB', or 'NETWORK'."
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional connection description for documentation and management clarity enabling operational understanding of external data source purpose. Provides human-readable description of the connection's purpose and the external data source it connects to.\n\nUse cases: Connection documentation; Operational clarity; Data source explanation; Management understanding\n\nAWS: AWS Glue connection description for documentation and operational clarity\n\nValidation: Must be descriptive text if provided; recommended for connection documentation and operational understanding",
+                    "description": "Description of the connection's purpose.",
                     "type": "string"
                 },
                 "matchCriteria": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional match criteria for connection selection enabling automated connection selection based on data source characteristics. Defines criteria that can be used for automatic connection selection in ETL jobs and data processing workflows.\n\nUse cases: Automated connection selection; Connection matching; ETL job configuration; Data source selection\n\nAWS: AWS Glue connection match criteria for automated connection selection and job configuration\n\nValidation: Must be array of valid selection criteria strings if provided; enables automated connection selection when specified",
+                    "description": "Criteria for automated connection selection in ETL jobs.",
                     "items": {
                         "type": "string"
                     },
@@ -639,7 +639,7 @@
                 },
                 "physicalConnectionRequirements": {
                     "$ref": "#/definitions/ConnectionPhysical",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional physical connection requirements for VPC networking enabling secure external data source connectivity. Defines VPC networking configuration for connections including availability zone, security groups, and subnet specification for secure data access.\n\nUse cases: VPC connectivity; Secure networking; Network isolation; External data access\n\nAWS: AWS Glue connection physical requirements for VPC networking and secure connectivity\n\nValidation: Must be valid ConnectionPhysical object if provided; enables VPC networking when specified\n  *"
+                    "description": "VPC networking requirements for the connection."
                 }
             },
             "required": [
@@ -699,19 +699,19 @@
         },
         "DataOpsDatazoneProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nDataZone configuration interface for data governance.\n\nUse cases: DataOps project management; Glue database configuration; Lake Formation integration; Data workflow orchestration; Project resource management\n\nAWS: AWS service configuration and deployment\n\nValidation: Configuration must be valid for deployment; properties must conform to AWS service and MDAA requirements",
+            "description": "DataZone configuration for data governance integration.\n\nUse cases: DataOps project management; Glue database configuration; Lake Formation integration; Data workflow orchestration; Project resource management\n\nAWS: AWS service configuration and deployment\n\nValidation: Configuration must be valid for deployment; properties must conform to AWS service and MDAA requirements",
             "properties": {
                 "domainConfig": {
                     "$ref": "#/definitions/DomainConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional direct domain configuration for DataZone project setup enabling inline domain configuration management. Provides direct domain configuration object for DataZone project setup and governance configuration without external parameter references.\n\nUse cases: Direct configuration; Inline setup; Domain configuration; Governance setup\n\nAWS: DataZone domain configuration for project setup and governance management\n\nValidation: Must be valid DomainConfig object if provided; enables direct domain configuration when specified\n  *"
+                    "description": "Direct domain configuration object."
                 },
                 "domainConfigSSMParam": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
+                    "description": "SSM parameter name containing domain configuration.",
                     "type": "string"
                 },
                 "project": {
                     "$ref": "#/definitions/DataZoneProjectProps",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone project configuration for DataOps project integration enabling data governance and catalog management. Defines the DataZone project settings including domain configuration, environment setup, and user/group access permissions for organized data governance within the DataOps project.\n\nUse cases: DataZone integration; Data governance; Project configuration; Access management; Catalog integration\n\nAWS: Amazon DataZone project configuration for DataOps project data governance and catalog management\n\nValidation: Must be valid DataZoneProjectProps configuration; required for DataZone integration"
+                    "description": "DataZone project configuration for DataOps integration."
                 }
             },
             "required": [
@@ -723,20 +723,20 @@
             "additionalProperties": false,
             "properties": {
                 "createDataAdminOwners": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional automatic data admin owner assignment for SageMaker project enabling simplified administrative access management. When enabled, automatically assigns data admin roles as project owners with full administrative permissions, simplifying project setup and access control for administrative teams.\n\nUse cases: Automated admin access; Simplified setup; Administrative permissions; Owner assignment; Access management\n\nAWS: Automatic owner assignment for SageMaker project with data admin role integration\n\nValidation: Must be boolean; defaults to false; data admin roles must be defined in project configuration",
+                    "description": "Auto-assign data admin roles as project owners.",
                     "type": "boolean"
                 },
                 "domainConfig": {
                     "$ref": "#/definitions/DomainConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional direct domain configuration for DataZone project setup enabling inline domain configuration management. Provides direct domain configuration object for DataZone project setup and governance configuration without external parameter references.\n\nUse cases: Direct configuration; Inline setup; Domain configuration; Governance setup\n\nAWS: DataZone domain configuration for project setup and governance management\n\nValidation: Must be valid DomainConfig object if provided; enables direct domain configuration when specified\n  *"
+                    "description": "Direct domain configuration object."
                 },
                 "domainConfigSSMParam": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
+                    "description": "SSM parameter name containing domain configuration.",
                     "type": "string"
                 },
                 "project": {
                     "$ref": "#/definitions/SageMakerProjectProps",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired SageMaker project configuration for DataOps project integration enabling ML workflow and data science capabilities. Defines the SageMaker project settings including domain configuration, user/group access permissions, and ML workflow integration for organized data science activities within the DataOps project.\n\nUse cases: SageMaker integration; ML workflows; Data science capabilities; Project configuration; Access management\n\nAWS: Amazon SageMaker project configuration for DataOps project ML workflow and data science integration\n\nValidation: Must be valid SageMakerProjectProps configuration; required for SageMaker integration"
+                    "description": "SageMaker project configuration for DataOps integration."
                 }
             },
             "required": [
@@ -761,7 +761,7 @@
             "properties": {
                 "lakeformationManageAccessRole": {
                     "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired Lake Formation manage access role reference for DataZone environment data governance enabling automated access control and permission management. Specifies the IAM role that DataZone will use to manage Lake Formation permissions and access control for data assets within the environment, supporting automated data governance workflows.\n\nUse cases: Automated access control; Lake Formation integration; Permission management; Data governance automation; Environment access management\n\nAWS: IAM role reference for Amazon DataZone Lake Formation manage access role enabling automated data governance\n\nValidation: Must be valid MdaaRoleRef; role must have appropriate Lake Formation permissions; required for DataZone environment setup"
+                    "description": "Lake Formation manage access role reference for DataZone environment governance."
                 }
             },
             "required": [
@@ -774,46 +774,46 @@
             "properties": {
                 "domainConfig": {
                     "$ref": "#/definitions/DomainConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional direct domain configuration for DataZone project setup enabling inline domain configuration management. Provides direct domain configuration object for DataZone project setup and governance configuration without external parameter references.\n\nUse cases: Direct configuration; Inline setup; Domain configuration; Governance setup\n\nAWS: DataZone domain configuration for project setup and governance management\n\nValidation: Must be valid DomainConfig object if provided; enables direct domain configuration when specified\n  *"
+                    "description": "Direct domain configuration object."
                 },
                 "domainConfigSSMParam": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.\n\nUse cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup\n\nAWS: AWS Systems Manager parameter for DataZone domain configuration reference\n\nValidation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration",
+                    "description": "SSM parameter name containing domain configuration.",
                     "type": "string"
                 },
                 "domainUnit": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional domain unit identifier for DataZone organizational hierarchy enabling multi-level data governance structure. Specifies the domain unit within the DataZone domain for organizing projects into logical groupings and hierarchical governance structures.\n\nUse cases: Organizational hierarchy; Domain unit grouping; Multi-level governance; Project organization\n\nAWS: Amazon DataZone domain unit identifier for organizational hierarchy and project grouping\n\nValidation: Must be valid domain unit identifier if provided; domain unit must exist in the DataZone domain",
+                    "description": "Domain unit identifier for organizational hierarchy.",
                     "type": "string"
                 },
                 "environment": {
                     "$ref": "#/definitions/DataZoneEnvironmentProps",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional DataZone environment configuration for project environment setup enabling VPC connectivity and Lake Formation integration. Defines environment-specific settings including Lake Formation manage access role for data governance and access control within the DataZone project environment.\n\nUse cases: Environment setup; VPC connectivity; Lake Formation integration; Access control; Data governance\n\nAWS: Amazon DataZone environment configuration for project environment setup and Lake Formation integration\n\nValidation: Must be valid DataZoneEnvironmentProps if provided; enables environment-specific configuration when specified"
+                    "description": "DataZone environment configuration for VPC connectivity and Lake Formation integration."
                 },
                 "groups": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nContributor group references for project access enabling group-based project contribution and collective standard permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting group-based project collaboration and collective contribution.\n\nUse cases: Group-based project access; Collective contribution; Contributor permissions; Team collaboration; Standard access\n\nAWS: Amazon DataZone project contributor groups with PROJECT_CONTRIBUTOR designation for contributor-level access\n\nValidation: Must be array of valid MDAA group configuration names as defined in the module groups section; references must exist in module configuration",
+                    "description": "MDAA module group config names with PROJECT_CONTRIBUTOR designation.",
                     "type": "object"
                 },
                 "ownerGroups": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOwner group references for project ownership enabling group-based project administration and collective administrative permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting group-based project governance and collective administration.\n\nUse cases: Group-based project ownership; Collective administration; Full administrative access; Owner permissions; Team governance\n\nAWS: Amazon DataZone project owner groups with PROJECT_OWNER designation for full administrative access\n\nValidation: Must be array of valid MDAA group configuration names as defined in the module groups section; references must exist in module configuration",
+                    "description": "MDAA module group config names with PROJECT_OWNER designation.",
                     "type": "object"
                 },
                 "ownerUsers": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOwner user references for project ownership enabling user-based project administration and full administrative permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting user-based project governance and individual administration.\n\nUse cases: User-based project ownership; Project administration; Full administrative access; Owner permissions; Project governance\n\nAWS: Amazon DataZone project owner users with PROJECT_OWNER designation for full administrative access\n\nValidation: Must be array of valid MDAA user configuration names as defined in the module users section; references must exist in module configuration",
+                    "description": "MDAA module user config names with PROJECT_OWNER designation.",
                     "type": "object"
                 },
                 "users": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nContributor user references for project access enabling user-based project contribution and standard permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting user-based project collaboration and individual contribution.\n\nUse cases: User-based project access; Project contribution; Contributor permissions; Collaboration; Standard access\n\nAWS: Amazon DataZone project contributor users with PROJECT_CONTRIBUTOR designation for contributor-level access\n\nValidation: Must be array of valid MDAA user configuration names as defined in the module users section; references must exist in module configuration",
+                    "description": "MDAA module user config names with PROJECT_CONTRIBUTOR designation.",
                     "type": "object"
                 }
             },
@@ -821,10 +821,10 @@
         },
         "DatabaseGrantProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nDatabase grant configuration interface for Lake Formation permissions with database-level access control and principal assignment capabilities. Defines database grant properties for Lake Formation permission management including database targeting, permission types, and principal assignments for data lake governance.\n\nUse cases: Database access permissions; Lake Formation grants; Data governance; Principal-database access; Permission management\n\nAWS: AWS Lake Formation database grant configuration for database-level permissions and access control\n\nValidation: Database and principals must be specified; permissions must be valid Lake Formation database permissions",
+            "description": "Configuration for a Lake Formation database grant with permissions and principal assignment.\n\nUse cases: Database access permissions; Lake Formation grants; Data governance; Principal-database access; Permission management\n\nAWS: AWS Lake Formation database grant configuration for database-level permissions and access control\n\nValidation: Database and principals must be specified; permissions must be valid Lake Formation database permissions",
             "properties": {
                 "databasePermissions": {
-                    "description": "Q-ENHANCED-PROPERTY\nLake Formation database-level permissions configuration for controlling database access patterns. Defines the level of database access granted to principals, supporting read-only, read-write, or administrative access patterns for data lake governance and access control.\n\nUse cases: Database access control; Read-only analytics access; Administrative database management; Data governance permissions\n\nAWS: AWS Lake Formation database permissions for database-level access control\n\nValidation: Must be 'read', 'write', or 'super'; defaults to 'read'; controls database-level access patterns\n  *",
+                    "description": "Database-level permissions: 'read', 'write', or 'super'.",
                     "enum": [
                         "read",
                         "super",
@@ -834,14 +834,14 @@
                 },
                 "principalArns": {
                     "$ref": "#/definitions/NamedPrincipalArnProps",
-                    "description": "Q-ENHANCED-PROPERTY\nDirect principal ARN mapping for Lake Formation grant assignment with inline principal specification. Provides shorthand method for specifying principals directly by ARN without requiring separate principal definitions, simplifying configuration for straightforward access control scenarios.\n\nUse cases: Direct principal assignment; Simplified configuration; Inline principal specification; Straightforward access control\n\nAWS: AWS Lake Formation principal grants using direct ARN specification for simplified access control\n\nValidation: ARNs must be valid IAM principal ARNs (roles, users, or groups); names must be unique identifiers"
+                    "description": "Direct principal ARN mapping for inline principal specification."
                 },
                 "principals": {
                     "$ref": "#/definitions/NamedPrincipalProps",
-                    "description": "Q-ENHANCED-PROPERTY\nNamed principal references for Lake Formation grant assignment using predefined principal configurations. References principals defined in the 'principals:' section of the configuration, enabling organized and reusable principal management for database access control.\n\nUse cases: Reusable principal management; Organized access control; Named principal references; Systematic permission assignment\n\nAWS: AWS Lake Formation principal grants using named principal configurations for organized access control\n\nValidation: Principal names must exist in the 'principals:' section; must reference valid named principal configurations"
+                    "description": "Named principal references from the 'principals:' configuration section."
                 },
                 "tablePermissions": {
-                    "description": "Q-ENHANCED-PROPERTY\nLake Formation table-level permissions configuration for controlling table access patterns within the database. Defines the level of table access granted to principals, enabling fine-grained access control for individual tables while maintaining database-level organization.\n\nUse cases: Table-level access control; Fine-grained permissions; Table-specific analytics access; Data governance at table level\n\nAWS: AWS Lake Formation table permissions for table-level access control within databases\n\nValidation: Must be 'read', 'write', or 'super'; defaults to 'read'; controls table-level access patterns",
+                    "description": "Table-level permissions: 'read', 'write', or 'super'.",
                     "enum": [
                         "read",
                         "super",
@@ -850,7 +850,7 @@
                     "type": "string"
                 },
                 "tables": {
-                    "description": "Q-ENHANCED-PROPERTY\nSpecific table names for targeted Lake Formation grant creation within the database. Enables fine-grained access control by specifying exact tables for permission grants, supporting selective data access patterns and table-specific governance requirements.\n\nUse cases: Selective table access; Fine-grained permissions; Table-specific data access; Targeted governance\n\nAWS: AWS Lake Formation table-specific grants for targeted table access control\n\nValidation: Table names must exist in the database before grants can be created; must be valid Glue table identifiers",
+                    "description": "Specific table names for targeted grant creation.",
                     "items": {
                         "type": "string"
                     },
@@ -861,33 +861,33 @@
         },
         "DatabaseLakeFormationProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nLake Formation database permissions configuration interface for DataOps project database access control with automatic data admin role grant management. Enables automatic creation of Lake Formation super grants for data admin roles on project databases, simplifying permission management for DataOps teams while maintaining fine-grained access control.\n\nUse cases: Automated data admin permissions; DataOps team access management; Lake Formation grant automation; Database permission simplification; Project-level access control\n\nAWS: AWS Lake Formation database permissions with automatic super grants for data admin roles on DataOps project databases\n\nValidation: createSuperGrantsForDataAdminRoles must be boolean; data admin roles must exist in the account; database must be registered with Lake Formation",
+            "description": "Lake Formation database permissions configuration for automatic grant management on project databases.\n\nUse cases: Automated data admin permissions; DataOps team access management; Lake Formation grant automation; Database permission simplification; Project-level access control\n\nAWS: AWS Lake Formation database permissions with automatic super grants for data admin roles on DataOps project databases\n\nValidation: createSuperGrantsForDataAdminRoles must be boolean; data admin roles must exist in the account; database must be registered with Lake Formation",
             "properties": {
                 "createCrossAccountResourceLinkAccounts": {
-                    "description": "Q-ENHANCED-PROPERTY\nCross-account resource link creation for multi-account Lake Formation access with automatic stack generation. Specifies target account numbers for cross-account resource link creation, enabling multi-account data sharing while maintaining governance boundaries through Lake Formation.\n\nUse cases: Multi-account data sharing; Cross-account analytics; Federated data access; Account boundary management\n\nAWS: AWS Lake Formation cross-account resource links with automatic stack creation for multi-account access\n\nValidation: Must be valid AWS account numbers; additional stacks created for each account; accounts must have Lake Formation enabled",
+                    "description": "Target account numbers for cross-account resource link creation.",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "createCrossAccountResourceLinkName": {
-                    "description": "Q-ENHANCED-PROPERTY\nCustom name for cross-account resource link creation with naming convention override. Specifies the name for the resource link when creating cross-account access, enabling organized resource link management and avoiding naming conflicts in multi-account scenarios.\n\nUse cases: Custom resource link naming; Naming conflict avoidance; Organized multi-account access; Resource link management\n\nAWS: AWS Lake Formation resource link name for cross-account access organization\n\nValidation: Must be valid Lake Formation resource link name; defaults to database name if not specified",
+                    "description": "Custom name for cross-account resource links. Defaults to database name.",
                     "type": "string"
                 },
                 "createReadGrantsForDataEngineerRoles": {
-                    "description": "Q-ENHANCED-PROPERTY\nAutomatic Lake Formation read grant creation for data engineer roles on project databases. When enabled, automatically creates read-only permissions for data engineer roles, enabling data exploration and analysis while maintaining appropriate access boundaries for engineering teams.\n\nUse cases: Engineering team read access; Data exploration; Analysis permissions; Engineering access control\n\nAWS: AWS Lake Formation read grants for data engineer roles with database read permissions\n\nValidation: Must be boolean; defaults to false; data engineer roles must exist in the account",
+                    "description": "Auto-create read grants for data engineer roles on this database.",
                     "type": "boolean"
                 },
                 "createReadWriteGrantsForProjectExecutionRoles": {
-                    "description": "Q-ENHANCED-PROPERTY\nAutomatic Lake Formation read/write grant creation for project execution roles on databases and S3 locations. When enabled, automatically creates read/write permissions for project execution roles, enabling automated data processing while maintaining execution-level access control.\n\nUse cases: Automated data processing; Project execution access; ETL pipeline permissions; Automated workflow access\n\nAWS: AWS Lake Formation read/write grants for project execution roles with database and S3 location permissions\n\nValidation: Must be boolean; defaults to false; project execution roles must exist; databases must be registered with Lake Formation",
+                    "description": "Auto-create read/write grants for project execution roles on this database and S3 locations.",
                     "type": "boolean"
                 },
                 "createSuperGrantsForDataAdminRoles": {
-                    "description": "Q-ENHANCED-PROPERTY\nAutomatic Lake Formation super grant creation for data admin roles on project databases. When enabled, automatically creates read/write/super permissions for data admin roles, simplifying administrative access management while maintaining security boundaries for DataOps projects.\n\nUse cases: Automated admin access; DataOps team management; Administrative permission simplification; Project-level admin control\n\nAWS: AWS Lake Formation super grants for data admin roles providing database permissions\n\nValidation: Must be boolean; defaults to false; data admin roles must exist in the account",
+                    "description": "Auto-create super grants for data admin roles on this database.",
                     "type": "boolean"
                 },
                 "databaseTagValues": {
-                    "description": "Q-ENHANCED-PROPERTY\nSpecific tag values to associate with the database for Lake Formation tag-based access control. Defines which specific tag values from the project-level lfTags definitions should be assigned to this database resource, enabling database-level classification and access control.\n\nUse cases: Database classification; Resource tagging; Database-level access control; Tag value assignment\n\nAWS: AWS Lake Formation tag values for database resource classification\n\nValidation: Tag keys must exist in project-level lfTags; tag values must be valid values from project-level lfTags definitions",
+                    "description": "LF-Tag values to associate with this database for tag-based access control.",
                     "items": {
                         "$ref": "#/definitions/LFTagConfig"
                     },
@@ -895,49 +895,49 @@
                 },
                 "grants": {
                     "$ref": "#/definitions/NamedDatabaseGrantProps",
-                    "description": "Q-ENHANCED-PROPERTY\nNamed Lake Formation grant collection for organized database permission management. Defines a collection of named database grants with specific permission configurations, enabling systematic and reusable permission management for complex access control scenarios.\n\nUse cases: Organized permission management; Named grant collections; Systematic access control; Reusable grant configurations\n\nAWS: AWS Lake Formation database grants with named configurations for organized permission management\n\nValidation: Grant names must be unique identifiers; each grant must map to valid DatabaseGrantProps configuration"
+                    "description": "Named Lake Formation grant configurations for this database."
                 },
                 "tagBasedGrants": {
                     "$ref": "#/definitions/NamedTagBasedGrants",
-                    "description": "Q-ENHANCED-PROPERTY\nTag-based grant collection for Lake Formation tag-based access control enabling attribute-based permissions. Defines permissions based on LF-Tag expressions, allowing flexible and scalable access control policies based on resource tags rather than individual resource grants.\n\nUse cases: Attribute-based access control; Scalable permissions; Tag-based policies; Dynamic access control\n\nAWS: AWS Lake Formation tag-based permissions for attribute-based access control\n\nValidation: Grant names must be unique identifiers; each grant must have valid LF-Tag expression and principal ARNs"
+                    "description": "Tag-based grant configurations for LF-Tag-based access control."
                 }
             },
             "type": "object"
         },
         "DatabaseProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nGlue database configuration interface for data catalog management with S3 location mapping and naming convention control. Defines database properties for DataOps projects including description, naming options, Iceberg compliance, and S3 bucket location specification for organized data lake metadata management.\n\nUse cases: Data catalog creation; Database metadata management; S3 location mapping; Iceberg table support; DataOps database configuration; Data lake organization\n\nAWS: AWS Glue database with S3 location configuration for DataOps project data catalog and metadata management\n\nValidation: description must be non-empty string; locationBucketName must be valid S3 bucket name if specified; verbatimName and icebergCompliantName are mutually compatible",
+            "description": "Configuration for a Glue database with S3 location mapping and naming options.\n\nUse cases: Data catalog creation; Database metadata management; S3 location mapping; Iceberg table support; DataOps database configuration; Data lake organization\n\nAWS: AWS Glue database with S3 location configuration for DataOps project data catalog and metadata management\n\nValidation: description must be non-empty string; locationBucketName must be valid S3 bucket name if specified; verbatimName and icebergCompliantName are mutually compatible",
             "properties": {
                 "createDatazoneDatasource": {
-                    "description": "Q-ENHANCED-PROPERTY\nDataZone data source creation for automated data discovery and cataloging integration enabling data governance. When enabled, automatically creates DataZone data sources for the database, supporting automated data discovery, cataloging, and governance workflows within DataZone domains.\n\nUse cases: Automated data discovery; DataZone integration; Data cataloging; Governance automation; Data source management\n\nAWS: AWS DataZone data source creation for automated database discovery and cataloging integration\n\nValidation: Must be boolean; DataZone domain must exist; database must be compatible with DataZone data source requirements",
+                    "description": "Auto-create DataZone data sources for this database.",
                     "type": "boolean"
                 },
                 "createSagemakerDatasource": {
-                    "description": "Q-ENHANCED-PROPERTY\nSagemaker data source creation for automated data discovery and cataloging integration enabling data governance. When enabled, automatically creates Sagemaker data sources for the database, supporting automated data discovery, cataloging, and governance workflows within Sagemaker domains.\n\nUse cases: Automated data discovery; Sagemaker integration; Data cataloging; Governance automation; Data source management\n\nAWS: AWS Sagemaker data source creation for automated database discovery and cataloging integration\n\nValidation: Must be boolean; Sagemaker domain must exist; database must be compatible with Sagemaker data source requirements",
+                    "description": "Auto-create SageMaker data sources for this database.",
                     "type": "boolean"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nDescriptive text for the Glue database providing context and purpose information for data catalog management. Enables documentation and understanding of database purpose within DataOps projects, supporting data governance and team collaboration through clear database identification.\n\nUse cases: Database documentation; Data catalog organization; Team collaboration; Database purpose identification\n\nAWS: AWS Glue database description for data catalog documentation and organization\n\nValidation: Must be non-empty string; required property for database creation",
+                    "description": "Description of the database's purpose.",
                     "type": "string"
                 },
                 "icebergCompliantName": {
-                    "description": "Q-ENHANCED-PROPERTY\nIceberg-compliant database naming with hyphen-to-underscore transformation for Apache Iceberg table format compatibility. When enabled, replaces hyphens with underscores in database names to ensure compatibility with Iceberg table format requirements and naming conventions.\n\nUse cases: Iceberg table compatibility; Database naming compliance; Apache Iceberg integration; Format-specific naming\n\nAWS: AWS Glue database name transformation for Apache Iceberg table format compatibility\n\nValidation: Must be boolean; applies to both verbatim and conventional database names; ensures Iceberg naming compliance",
+                    "description": "Replace hyphens with underscores for Apache Iceberg compatibility.",
                     "type": "boolean"
                 },
                 "lakeFormation": {
                     "$ref": "#/definitions/DatabaseLakeFormationProps",
-                    "description": "Q-ENHANCED-PROPERTY\nLake Formation configuration for database access control and permission management enabling fine-grained data governance. Defines Lake Formation-specific settings including automatic grant creation, cross-account access, and permission management for data lake governance and access control.\n\nUse cases: Data governance; Access control; Permission management; Cross-account sharing; Lake Formation integration\n\nAWS: AWS Lake Formation database configuration for data governance and access control\n\nValidation: Must be valid DatabaseLakeFormationProps configuration; Lake Formation must be enabled in the account"
+                    "description": "Lake Formation configuration for access control and permission management."
                 },
                 "locationBucketName": {
-                    "description": "Q-ENHANCED-PROPERTY\nS3 bucket name for database data storage location specification enabling organized data lake storage management. Specifies the target S3 bucket where all database data will be stored, supporting data lake organization and storage management for DataOps projects.\n\nUse cases: Data lake organization; S3 storage management; Database data location; Storage bucket specification\n\nAWS: AWS Glue database location URI pointing to S3 bucket for data storage organization\n\nValidation: Must be valid S3 bucket name if specified; bucket must exist and be accessible",
+                    "description": "S3 bucket name for database data storage location.",
                     "type": "string"
                 },
                 "locationPrefix": {
-                    "description": "Q-ENHANCED-PROPERTY\nS3 prefix for database data organization within the specified bucket enabling hierarchical data storage management. Defines the S3 prefix path where database data will be organized, supporting structured data lake storage and logical data separation within buckets.\n\nUse cases: Hierarchical data organization; S3 prefix management; Data separation; Storage path organization\n\nAWS: AWS Glue database location URI with S3 prefix for hierarchical data organization\n\nValidation: Must be valid S3 prefix path; combined with bucket name forms complete S3 location URI",
+                    "description": "S3 prefix for data organization within the bucket.",
                     "type": "string"
                 },
                 "verbatimName": {
-                    "description": "Q-ENHANCED-PROPERTY\nExact database name specification bypassing naming convention application for precise database naming control. When enabled, creates the database with the exact specified name without applying organizational naming conventions, supporting legacy system integration and specific naming requirements.\n\nUse cases: Legacy system integration; Exact naming requirements; Naming convention bypass; Specific database naming\n\nAWS: AWS Glue database name without naming convention transformation for precise naming control\n\nValidation: Must be boolean; defaults to false; when true, naming conventions do not apply",
+                    "description": "Use exact database name without applying naming conventions.",
                     "type": "boolean"
                 }
             },
@@ -1066,7 +1066,6 @@
         },
         "DomainConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA-compliant DataZone domain configuration providing domain management and integration capabilities. Extends standard CDK properties with MDAA naming conventions and enhanced security features for secure domain governance and catalog integration.\n\nUse cases: DataZone domain configuration; Domain governance setup; Catalog integration; Multi-domain management\n\nAWS: Creates Amazon DataZone domain configuration with KMS integration and Glue catalog connectivity\n\nValidation: All properties except ssmParamBase and domainUnits are required for complete domain configuration",
             "properties": {
                 "blueprintIds": {
                     "additionalProperties": {
@@ -1078,63 +1077,63 @@
                     "type": "boolean"
                 },
                 "createOutputs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.\n\nUse cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references\n\nAWS: CloudFormation outputs and exports for MDAA construct resource references and external integration\n\nValidation: Boolean value; defaults to true; enables CloudFormation output and export creation",
+                    "description": "Flag controlling CloudFormation output and stack export creation for construct resources",
                     "type": "boolean"
                 },
                 "createParams": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.\n\nUse cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management\n\nAWS: SSM parameter creation for MDAA construct resource references and infrastructure integration\n\nValidation: Boolean value; defaults to true; enables SSM parameter creation for resource references",
+                    "description": "Flag controlling SSM parameter creation for construct resource references enabling",
                     "type": "boolean"
                 },
                 "customResourceRoleName": {
                     "type": "string"
                 },
                 "domainArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ARN for AWS resource identification and IAM policy integration enabling secure domain access control. Provides the complete AWS resource identifier for the domain for IAM policies and cross-service access control.\n\nUse cases: AWS resource identification; IAM policy integration; Cross-service access; Resource-based policies\n\nAWS: Amazon DataZone domain ARN for AWS resource identification and IAM integration\n\nValidation: Must be valid DataZone domain ARN; required; follows AWS ARN pattern for DataZone domains",
+                    "description": "DataZone domain ARN for AWS resource identification and IAM policy integration enabling",
                     "type": "string"
                 },
                 "domainBucketArn": {
                     "type": "string"
                 },
                 "domainBucketUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain Bucket usage policy name. Provides IAM policy name for managing Bucket access and usage permissions for domain operations and data protection.\n\nUse cases: Bucket access management;\n\nAWS: IAM policy name for DataZone domain Bucket usage and access management\n\nValidation: Must be valid IAM policy name; required; defines Bucket access and usage permissions for domain",
+                    "description": "Domain Bucket usage policy name",
                     "type": "string"
                 },
                 "domainId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ID for unique domain identification within AWS enabling cross-service integration and reference. Provides the unique identifier assigned by DataZone service for domain operations and cross-service integration.\n\nUse cases: Unique domain identification; Cross-service integration; Domain operations; Service references\n\nAWS: Amazon DataZone domain ID for unique identification and cross-service integration\n\nValidation: Must be valid DataZone domain ID; required; assigned by DataZone service for unique identification",
+                    "description": "DataZone domain ID for unique domain identification within AWS enabling cross-service",
                     "type": "string"
                 },
                 "domainKmsKeyArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations. Provides encryption at rest for domain data and metadata with customer-controlled key management for enhanced security and compliance.\n\nUse cases: Domain encryption; Data protection compliance; Customer-controlled encryption; Secure domain operations\n\nAWS: AWS KMS key ARN for DataZone domain encryption and secure data protection\n\nValidation: Must be valid KMS key ARN; required; enables customer-managed encryption for domain data",
+                    "description": "KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations",
                     "type": "string"
                 },
                 "domainKmsUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain KMS usage policy name for key access management enabling controlled encryption key usage within the domain. Provides IAM policy name for managing KMS key access and usage permissions for domain operations and data protection.\n\nUse cases: KMS key access management; Encryption policy control; Key usage permissions; Domain security governance\n\nAWS: IAM policy name for DataZone domain KMS key usage and access management\n\nValidation: Must be valid IAM policy name; required; defines KMS key access and usage permissions for domain",
+                    "description": "Domain KMS usage policy name for key access management enabling controlled encryption key",
                     "type": "string"
                 },
                 "domainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain name for domain identification and management enabling unique domain naming within the DataZone service. Provides the primary identifier for the DataZone domain for governance and operational management.\n\nUse cases: Domain identification; Unique naming; Domain management; Service organization\n\nAWS: Amazon DataZone domain name for identification and management within the DataZone service\n\nValidation: Must be unique domain name string; required; used for domain identification and service management",
+                    "description": "DataZone domain name for domain identification and management enabling unique domain naming",
                     "type": "string"
                 },
                 "domainUnitIds": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of domain unit names to identifiers for hierarchical domain organization enabling structured domain management. Provides organizational structure within the domain for improved governance, access control, and operational management.\n\nUse cases: Hierarchical organization; Domain structure; Organizational governance; Structured management\n\nAWS: DataZone domain units for hierarchical organization and structured domain management\n\nValidation: Must be object with string keys and values if provided; enables hierarchical domain organization\n  *",
+                    "description": "Map of domain unit names to identifiers for hierarchical domain organization enabling",
                     "type": "object"
                 },
                 "domainVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain version for domain lifecycle management and versioning control enabling domain evolution tracking. Provides version control for domain configuration changes and lifecycle management for governance and compliance.\n\nUse cases: Version control; Domain lifecycle management; Configuration tracking; Governance compliance\n\nAWS: DataZone domain version for lifecycle management and configuration version control\n\nValidation: Must be valid version string; required; enables domain version control and lifecycle management",
+                    "description": "Domain version for domain lifecycle management and versioning control enabling domain evolution tracking",
                     "type": "string"
                 },
                 "glueCatalogArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone. Provides the Glue catalog resources that will be integrated with the DataZone domain for data discovery and governance.\n\nUse cases: Catalog integration; Data discovery; governance; Cross-service connectivity\n\nAWS: AWS Glue catalog ARNs for DataZone integration and data catalog connectivity\n\nValidation: Must be array of valid Glue catalog ARNs; required; enables catalog integration with DataZone domain",
+                    "description": "Array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "glueCatalogKmsKeyArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone. Provides encryption keys for Glue catalog data accessed through DataZone for data protection and governance.\n\nUse cases: Catalog encryption; Secure catalog integration; Data protection; governance\n\nAWS: AWS KMS key ARNs for Glue catalog encryption in DataZone integration\n\nValidation: Must be array of valid KMS key ARNs; required; enables secure catalog integration with DataZone",
+                    "description": "Array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone",
                     "items": {
                         "type": "string"
                     },
@@ -1142,7 +1141,7 @@
                 },
                 "naming": {
                     "$ref": "#/definitions/IMdaaResourceNaming",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.\n\nUse cases: Consistent naming; Resource identification; Naming conventions; Operational consistency\n\nAWS: MDAA resource naming for consistent resource identification and naming convention compliance\n\nValidation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming\n  *"
+                    "description": "MDAA naming implementation for consistent resource naming across all MDAA constructs"
                 },
                 "projectIds": {
                     "additionalProperties": {
@@ -1154,7 +1153,7 @@
                     "type": "boolean"
                 },
                 "ssmParamBase": {
-                    "description": "Q-ENHANCED-PROPERTY\nSSM parameter base path for domain configuration storage enabling centralized configuration management. Provides the base path for storing domain configuration parameters in SSM Parameter Store for centralized management and retrieval.\n\nUse cases: Centralized configuration; SSM integration; Configuration management; Parameter organization\n\nAWS: AWS Systems Manager parameter base path for domain configuration storage and management\n\nValidation: Must be valid SSM parameter path if provided; enables centralized domain configuration management",
+                    "description": "SSM parameter base path for domain configuration storage enabling centralized configuration management",
                     "type": "string"
                 }
             },
@@ -1183,10 +1182,10 @@
         },
         "FailureNotificationsProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nDataOps failure notification configuration interface for email-based alerting on pipeline and job failures. Defines notification properties for DataOps projects including email recipient specification for automated failure alerts and operational monitoring of data processing workflows and ETL job execution.\n\nUse cases: Failure alerting; Email notifications; Operational monitoring; Pipeline failure alerts; Job failure notifications; DataOps monitoring\n\nAWS: SNS-based email notifications for DataOps pipeline and job failure alerting with configurable recipient lists\n\nValidation: email must be valid email addresses if specified; email addresses must be properly formatted for SNS delivery",
+            "description": "Configuration for DataOps failure notifications with email-based alerting.\n\nUse cases: Failure alerting; Email notifications; Operational monitoring; Pipeline failure alerts; Job failure notifications; DataOps monitoring\n\nAWS: SNS-based email notifications for DataOps pipeline and job failure alerting with configurable recipient lists\n\nValidation: email must be valid email addresses if specified; email addresses must be properly formatted for SNS delivery",
             "properties": {
                 "email": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of email addresses for failure notification delivery enabling automated alerting and operational awareness. Specifies email recipients who will receive notifications when DataOps project jobs, pipelines, or workflows fail for proactive monitoring and response.\n\nUse cases: Failure alerting; Email notifications; Operational monitoring; Proactive response\n\nAWS: SNS email notifications for DataOps failure alerting and operational monitoring\n\nValidation: Must be an array of valid email addresses if provided; enables automated failure notifications when specified",
+                    "description": "Email addresses for failure notification delivery.",
                     "items": {
                         "type": "string"
                     },
@@ -1500,11 +1499,10 @@
         },
         "IMdaaResourceNaming": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nInterface specification for MDAA resource naming implementations that generate consistent, unique, and compliant AWS resource names. Implementations must support multi-tenant deployments by ensuring naming semantics prevent collisions across domains, environments, and modules within the same AWS account.\n\nUse cases: Custom naming for regulatory compliance; Integration with enterprise naming standards; Multi-tenant resource isolation\n\nAWS: Generates names for all AWS resources including S3 buckets, IAM roles, Glue databases, CloudFormation stacks, SSM parameters, and CloudFormation exports\n\nValidation: All generated names must comply with AWS service-specific naming requirements and be unique within account scope",
             "properties": {
                 "props": {
                     "$ref": "#/definitions/MdaaResourceNamingConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nConfiguration properties containing organizational context and CDK node access for the naming implementation. Provides the foundational data required to generate consistent resource names across all MDAA modules.\n\nUse cases: Access to org/env/domain/module context; CDK context retrieval for custom naming; Immutable naming configuration\n\nAWS: Source data for all AWS resource name generation\n\nValidation: Must contain valid MdaaResourceNamingConfig with all required properties"
+                    "description": "Configuration properties containing organizational context and CDK node access for the naming implementation"
                 }
             },
             "required": [
@@ -1950,18 +1948,17 @@
         },
         "LFTagConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nLake Formation tag configuration interface for tag-based access control enabling fine-grained data governance and resource classification. Defines LF-Tag properties including tag key, allowed values, and catalog scope for implementing attribute-based access control (ABAC) in Lake Formation data governance.\n\nUse cases: Tag-based access control; Data governance; Resource classification; Attribute-based permissions; Data catalog organization; Fine-grained access control\n\nAWS: AWS Lake Formation tag configuration for tag-based access control and data governance\n\nValidation: tagKey must be unique within catalog; tagValues must be non-empty array; catalogId must be valid AWS account ID if specified",
             "properties": {
                 "catalogId": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional AWS account ID for Lake Formation tag catalog scope enabling cross-account tag management and governance. Specifies the catalog where the tag will be created, defaulting to current account for local tag management.\n\nUse cases: Cross-account governance; Catalog scope; Multi-account tags; Centralized governance; Account-specific tags\n\nAWS: AWS Lake Formation catalog ID for tag scope and cross-account governance\n\nValidation: Must be valid 12-digit AWS account ID if specified; defaults to current account",
+                    "description": "AWS account ID for tag catalog scope",
                     "type": "string"
                 },
                 "tagKey": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired Lake Formation tag key name for resource classification and access control enabling tag-based data governance. Defines the tag key that will be used to classify data resources and control access through Lake Formation tag-based permissions.\n\nUse cases: Resource classification; Tag-based access control; Data governance; Permission management; Resource organization\n\nAWS: AWS Lake Formation tag key for tag-based access control and resource classification\n\nValidation: Must be unique tag key string within catalog; required for tag creation and access control",
+                    "description": "Lake Formation tag key name",
                     "type": "string"
                 },
                 "tagValues": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of allowed values for Lake Formation tag enabling controlled vocabulary and consistent resource classification. Defines the permitted values that can be assigned to this tag key for systematic data governance and access control.\n\nUse cases: Controlled vocabulary; Consistent classification; Value constraints; Data governance; Access control values\n\nAWS: AWS Lake Formation tag allowed values for controlled vocabulary and consistent classification\n\nValidation: Must be non-empty string array; required for tag value constraints and governance",
+                    "description": "Allowed values for the tag",
                     "items": {
                         "type": "string"
                     },
@@ -1988,15 +1985,15 @@
                     }
                 ]
             },
-            "description": "Q-ENHANCED-INTERFACE\nLake Formation tag expression interface for tag-based permission filtering enabling attribute-based access control (ABAC) and fine-grained data governance. Maps LF-Tag keys to their allowed values for defining resource access patterns through tag-based permissions.\n\nUse cases: Tag-based filtering; ABAC implementation; Permission scoping; Resource selection; Fine-grained access control; Data governance\n\nAWS: AWS Lake Formation tag expression for tag-based permission filtering and ABAC\n\nExample: { environment: ['dev', 'test'], data_tier: ['bronze', 'silver'] }\n\nValidation: Keys must be valid LF-Tag keys; values must be string or string array of allowed tag values",
+            "description": "LF-Tag expression mapping tag keys to allowed values for tag-based permission filtering.\n\nUse cases: Tag-based filtering, ABAC implementation, permission scoping, resource selection\n\nAWS: AWS Lake Formation tag expression for tag-based permission filtering\n\nValidation: Keys must be valid LF-Tag keys; values must be string or string array of allowed tag values",
             "type": "object"
         },
         "LakeFormationConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nLake Formation configuration interface for centralized tag-based access control management. Defines project-wide Lake Formation resources including tag vocabulary definitions that are shared across all databases in the project.\n\nUse cases: Centralized tag management; Project-wide TBAC; Tag vocabulary definition; Shared governance configuration\n\nAWS: AWS Lake Formation project-level configuration for centralized tag-based access control\n\nValidation: lfTags must have unique tag keys; tag values must be non-empty arrays",
+            "description": "Project-level Lake Formation configuration for centralized tag-based access control.\n\nUse cases: Centralized tag management, project-wide TBAC, tag vocabulary definition\n\nAWS: AWS Lake Formation project-level configuration for tag-based access control\n\nValidation: lfTags must have unique tag keys; tag values must be non-empty arrays",
             "properties": {
                 "lfTags": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of Lake Formation tag definitions for tag-based access control vocabulary. Defines the tag keys and their allowed values that can be used across all databases in the project for implementing consistent tag-based access control policies.\n\nUse cases: Tag vocabulary definition; Project-wide TBAC; Centralized tag management; Consistent classification\n\nAWS: AWS Lake Formation tags for tag-based access control vocabulary\n\nValidation: Tag keys must be unique; tag values must be non-empty arrays; tags are created at account level",
+                    "description": "Lake Formation tag definitions (key + allowed values) shared across all project databases.\n\nUse cases: Tag vocabulary definition, project-wide TBAC, centralized tag management\n\nAWS: AWS Lake Formation tags for tag-based access control\n\nValidation: Tag keys must be unique; tag values must be non-empty arrays; tags are created at account level",
                     "items": {
                         "$ref": "#/definitions/LFTagConfig"
                     },
@@ -2044,10 +2041,9 @@
         },
         "MdaaCidrPeer": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nMdaaCidrPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "cidr": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired CIDR block specification for network access control in security group rules enabling IP range-based access control. Defines the IP address range that will be allowed or denied access through security group rules for network-level access control and security boundaries.\n\nUse cases: IP range access control; Network security boundaries; CIDR-based filtering; Network access management\n\nAWS: Amazon EC2 security group CIDR block for IP range-based network access control\n\nValidation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-based security group rules",
+                    "description": "CIDR block specification for network access control in security group rules enabling IP",
                     "type": "string"
                 },
                 "description": {
@@ -2066,7 +2062,7 @@
                     "type": "array"
                 },
                 "toPort": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
+                    "description": "The ending port number for the security group rule defining the upper bound of the port range",
                     "type": "number"
                 }
             },
@@ -2354,14 +2350,13 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
+                    "description": "CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed",
                     "type": "string"
                 },
                 "suppressions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
+                    "description": "Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -2389,10 +2384,9 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
+                    "description": "Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -2406,7 +2400,6 @@
         },
         "MdaaPrefixListPeer": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nMdaaPrefixListPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -2415,7 +2408,7 @@
                     "type": "number"
                 },
                 "prefixList": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired prefix list identifier for managed IP range access control in security group rules enabling AWS service and managed IP range-based access control. Defines the prefix list ID that contains managed IP ranges for AWS services or custom IP ranges for streamlined security group rule management.\n\nUse cases: AWS service access; Managed IP ranges; Prefix list-based filtering; Streamlined rule management\n\nAWS: Amazon EC2 prefix list identifier for managed IP range-based network access control\n\nValidation: Must be valid prefix list ID format (pl-xxxxxxxxx); required for prefix list-based security group rules",
+                    "description": "Prefix list identifier for managed IP range access control in security group rules enabling",
                     "type": "string"
                 },
                 "protocol": {
@@ -2428,7 +2421,7 @@
                     "type": "array"
                 },
                 "toPort": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
+                    "description": "The ending port number for the security group rule defining the upper bound of the port range",
                     "type": "number"
                 }
             },
@@ -2440,26 +2433,25 @@
         },
         "MdaaResourceNamingConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA resource naming implementations that standardize AWS resource naming across domains, environments, and modules. This interface enables consistent, collision-free resource naming in multi-tenant MDAA deployments by providing organizational context and CDK node access for custom naming strategies.\n\nUse cases: Multi-domain data lake deployments requiring unique resource names; Cross-account data mesh architectures with consistent naming; Custom naming implementations for compliance requirements\n\nAWS: Configures naming patterns for all AWS resources deployed by MDAA modules including S3 buckets, IAM roles, Glue databases, and CloudFormation stacks\n\nValidation: All properties required; org/env/domain/moduleName must be valid AWS resource name components (alphanumeric, hyphens, underscores)",
             "properties": {
                 "cdkNode": {
                     "$ref": "#/definitions/Node",
-                    "description": "Q-ENHANCED-PROPERTY\nCDK construct node providing access to context values for custom naming implementations. Enables retrieval of additional configuration through tryGetContext() for advanced naming strategies beyond the standard org/env/domain/module pattern.\n\nUse cases: Custom naming with environment-specific prefixes; Integration with external naming services; Context-driven naming for compliance requirements\n\nAWS: CDK context system for CloudFormation template generation\n\nValidation: Must be valid CDK Node instance with accessible context\n  *"
+                    "description": "CDK construct node providing access to context values for custom naming implementations"
                 },
                 "domain": {
-                    "description": "Q-ENHANCED-PROPERTY\nDomain identifier from MDAA configuration representing logical business or organizational boundaries within the data architecture. Forms the third component of the default naming pattern and enables data mesh architectures with domain-specific resource isolation.\n\nUse cases: Data mesh domain separation; Line-of-business resource isolation; Cross-domain data sharing with clear ownership\n\nAWS: Domain component in all AWS resource names, SSM parameter paths, and CloudFormation export names\n\nValidation: Must be valid AWS resource name component (typically business domain names like 'finance', 'marketing', 'shared')",
+                    "description": "Domain identifier from MDAA configuration representing logical business or organizational boundaries",
                     "type": "string"
                 },
                 "env": {
-                    "description": "Q-ENHANCED-PROPERTY\nEnvironment identifier from MDAA configuration that distinguishes deployment stages within the same domain. Forms the second component of the default naming pattern enabling parallel dev/test/prod deployments without resource conflicts.\n\nUse cases: Multi-stage deployments in same account; Environment-specific resource isolation; Progressive deployment strategies\n\nAWS: Environment component in all AWS resource names and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically 'dev', 'test', 'prod', 'staging')",
+                    "description": "Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain",
                     "type": "string"
                 },
                 "moduleName": {
-                    "description": "Q-ENHANCED-PROPERTY\nModule name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment. Forms the final component of the default naming pattern and enables multiple instances of the same module type within the same scope.\n\nUse cases: Multiple data lake instances per domain; Separate analytics workloads; Module-specific resource grouping\n\nAWS: Module component in all AWS resource names, SSM parameter paths, and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically module function like 'datalake', 'warehouse', 'analytics')",
+                    "description": "Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment",
                     "type": "string"
                 },
                 "org": {
-                    "description": "Q-ENHANCED-PROPERTY\nOrganization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names. Forms the first component of the default naming pattern and ensures global uniqueness across multiple MDAA deployments.\n\nUse cases: Multi-organization AWS accounts; Shared service accounts with multiple tenants; Resource name collision prevention\n\nAWS: Prefix for all AWS resource names including S3 buckets, IAM roles, and CloudFormation stacks\n\nValidation: Must be valid AWS resource name component (3-63 characters, alphanumeric and hyphens only, no consecutive hyphens)",
+                    "description": "Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names",
                     "type": "string"
                 }
             },
@@ -2474,30 +2466,29 @@
         },
         "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for referencing IAM roles across MDAA modules using multiple identification methods. Enables flexible role resolution for cross-module dependencies, external role integration, and SSO-managed roles while supporting both mutable and immutable role references.\n\nUse cases: Cross-module IAM role sharing; External role integration from Landing Zone Accelerator; SSO-managed role references for federated access\n\nAWS: References AWS IAM roles for service permissions, cross-account access, and federated identity integration\n\nValidation: At least one of name, arn, or id must be provided; arn must be valid IAM role ARN format; name must be valid IAM role name",
             "properties": {
                 "arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nFull IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.\n\nUse cases: Cross-account role references; External role integration; Precise role identification with account/region context\n\nAWS: AWS IAM role ARN for cross-account permissions and explicit role targeting\n\nValidation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)",
+                    "description": "Full IAM role ARN for cross-account role references and explicit role identification.\n\nUse cases: Cross-account role references; Explicit role binding; Multi-account deployments\n\nAWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)\n\nValidation: Optional; must be a valid IAM role ARN if provided",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.\n\nUse cases: Stable role references across name changes; Precise role identification; Role references in automated systems\n\nAWS: AWS IAM role unique ID for stable role identification\n\nValidation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)",
+                    "description": "IAM role unique identifier for role resolution using the role's AWS-generated ID.\n\nUse cases: Stable role references; Role resolution by unique ID; Immutable role binding\n\nAWS: IAM role unique ID (e.g., AROA...)\n\nValidation: Optional; must be a valid IAM role unique ID if provided",
                     "type": "string"
                 },
                 "immutable": {
-                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.\n\nUse cases: External role protection; System role preservation; Landing Zone Accelerator role integration\n\nAWS: Role modification protection flag for IAM role management\n\nValidation: Boolean value, defaults to false if not specified",
+                    "description": "Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.\n\nUse cases: Pre-existing role protection; Externally managed roles; Read-only role references\n\nAWS: Controls whether MDAA attaches policies or modifies the referenced IAM role\n\nValidation: Optional boolean; defaults to false",
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.\n\nUse cases: Same-account role references; MDAA-generated role references; Simple role configuration\n\nAWS: AWS IAM role name for role lookup and permission assignment\n\nValidation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)",
+                    "description": "IAM role name for role resolution within the same AWS account.\n\nUse cases: Same-account role references; Role name-based resolution; Local IAM role binding\n\nAWS: IAM role name resolved via GetRole within the deployment account\n\nValidation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution",
                     "type": "string"
                 },
                 "refId": {
-                    "description": "Q-ENHANCED-PROPERTY\nUnique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.\n\nUse cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging\n\nAWS: Logical identifier for IAM role references in MDAA configurations\n\nValidation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended",
+                    "description": "Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.\n\nUse cases: Role reference identification; Configuration deduplication; Role lookup key\n\nAWS: Logical identifier for IAM role references within MDAA configuration\n\nValidation: Optional; must be unique within the configuration scope if provided",
                     "type": "string"
                 },
                 "sso": {
-                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.\n\nUse cases: AWS Identity Center integration; Federated user access; SSO-managed role references\n\nAWS: AWS Identity Center (SSO) role resolution for federated access\n\nValidation: Boolean value, implies immutable=true when set to true",
+                    "description": "Flag indicating the role should be resolved as an AWS SSO auto-generated role.\n\nUse cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access\n\nAWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention\n\nValidation: Optional boolean; defaults to false",
                     "type": "boolean"
                 }
             },
@@ -2596,7 +2587,6 @@
         },
         "MdaaSecurityGroupPeer": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -2608,7 +2598,7 @@
                     "type": "string"
                 },
                 "sgId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired security group identifier for security group-based access control in network rules enabling security group reference-based access control. Defines the security group ID that will be referenced in security group rules for allowing access between security groups and resources.\n\nUse cases: Security group reference; Cross-security group access; Resource-based access control; Security group chaining\n\nAWS: Amazon EC2 security group identifier for security group-based network access control\n\nValidation: Must be valid security group ID format (sg-xxxxxxxxx); required for security group-based rules",
+                    "description": "Security group identifier for security group-based access control in network rules enabling",
                     "type": "string"
                 },
                 "suppressions": {
@@ -2618,7 +2608,7 @@
                     "type": "array"
                 },
                 "toPort": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
+                    "description": "The ending port number for the security group rule defining the upper bound of the port range",
                     "type": "number"
                 }
             },
@@ -2630,24 +2620,23 @@
         },
         "MdaaSecurityGroupRuleProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupRuleProps configuration interface for compute infrastructure and instance management.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "ipv4": {
-                    "description": "Q-ENHANCED-PROPERTY\nIPv4 CIDR block rules for security group traffic control defining IP address-based access restrictions. Specifies IPv4 CIDR blocks that are allowed or denied access through the security group for network-level access control and IP-based security policies.\n\nUse cases: IP-based access control; Network segmentation; CIDR-based restrictions; Geographic access control; Network security policies\n\nAWS: AWS EC2 SecurityGroup rules with IPv4 CIDR block sources/destinations\n\nValidation: Must be valid MdaaCidrPeer array with valid CIDR notation; optional array for IP-based rules\n  *",
+                    "description": "IPv4 CIDR block rules for security group traffic control defining IP address-based access restrictions",
                     "items": {
                         "$ref": "#/definitions/MdaaCidrPeer"
                     },
                     "type": "array"
                 },
                 "prefixList": {
-                    "description": "Q-ENHANCED-PROPERTY\nPrefix list rules for security group traffic control defining managed prefix list-based access restrictions. Specifies AWS-managed or customer-managed prefix lists for scalable IP address range management and centralized network access control.\n\nUse cases: Managed IP ranges; Scalable access control; Centralized IP management; AWS service access; Regional IP restrictions\n\nAWS: AWS EC2 SecurityGroup rules with prefix list sources/destinations\n\nValidation: Must be valid MdaaPrefixListPeer array with valid prefix list IDs; optional array for prefix list-based rules\n  *",
+                    "description": "Prefix list rules for security group traffic control defining managed prefix list-based access restrictions",
                     "items": {
                         "$ref": "#/definitions/MdaaPrefixListPeer"
                     },
                     "type": "array"
                 },
                 "sg": {
-                    "description": "Q-ENHANCED-PROPERTY\nSecurity group rules for cross-security group traffic control defining security group-based access restrictions. Specifies other security groups that are allowed access through this security group for resource-level access control and security group chaining.\n\nUse cases: Cross-security group access; Resource-based access control; Security group chaining; Service-to-service communication; Layered security\n\nAWS: AWS EC2 SecurityGroup rules with security group sources/destinations\n\nValidation: Must be valid MdaaSecurityGroupPeer array with valid security group IDs; optional array for SG-based rules\n  *",
+                    "description": "Security group rules for cross-security group traffic control defining security group-based access restrictions",
                     "items": {
                         "$ref": "#/definitions/MdaaSecurityGroupPeer"
                     },
@@ -2658,17 +2647,16 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
+                    "description": "Human-readable description explaining the purpose and scope of the Service Catalog constraint",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
+                    "description": "Object containing named constraint rules that define the validation logic for Service Catalog product parameters",
                     "type": "object"
                 }
             },
@@ -2680,14 +2668,13 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
-                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
+                    "description": "Constraint assertion expression that defines the validation logic for Service Catalog product parameters",
                     "type": "string"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
+                    "description": "Human-readable description explaining the purpose and requirements of the constraint assertion",
                     "type": "string"
                 }
             },
@@ -2703,10 +2690,9 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
+                    "description": "Array of constraint assertions that define the validation logic to be applied when the condition is met",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
@@ -2714,7 +2700,7 @@
                 },
                 "condition": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
+                    "description": "Condition configuration that determines when the constraint rule assertions should be evaluated"
                 }
             },
             "required": [
@@ -2725,15 +2711,14 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
+                    "description": "Constraint configuration that defines additional validation rules for the Service Catalog product parameter"
                 },
                 "props": {
                     "$ref": "#/definitions/CfnParameterProps",
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
+                    "description": "CloudFormation parameter properties that define the parameter characteristics including type,"
                 }
             },
             "required": [
@@ -2743,29 +2728,28 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
+                    "description": "IAM role name that will be used to launch the Service Catalog product",
                     "type": "string"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
+                    "description": "Display name for the Service Catalog product that will be visible to end users in the Service Catalog console",
                     "type": "string"
                 },
                 "owner": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
+                    "description": "Owner identifier for the Service Catalog product, typically representing the team or organization",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "description": "Object containing named parameter configurations for the Service Catalog product",
                     "type": "object"
                 },
                 "portfolio_arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
+                    "description": "ARN of the AWS Service Catalog portfolio where the product will be associated",
                     "type": "string"
                 },
                 "portfolio_bucket_name": {
@@ -2853,42 +2837,42 @@
             "additionalProperties": {
                 "$ref": "#/definitions/ClassifierProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed Glue classifier collection interface for managing multiple classifiers with string-based naming for organized data format recognition. Enables configuration of multiple Glue classifiers with unique identifiers, supporting multi-format DataOps projects and organized data classification management for diverse data source processing.\n\nUse cases: Multi-classifier projects; Classifier collection management; Named classifier organization; Format recognition management; DataOps classifier organization; Data format governance\n\nAWS: Multiple AWS Glue classifiers with organized naming for DataOps project data format recognition and classification management\n\nValidation: Classifier names must be valid Glue classifier identifiers; each ClassifierProps must be valid classifier configuration; names must be unique within collection",
+            "description": "Named map of classifier names to classifier configurations.\n\nUse cases: Multi-classifier projects; Classifier collection management; Named classifier organization; Format recognition management; DataOps classifier organization; Data format governance\n\nAWS: Multiple AWS Glue classifiers with organized naming for DataOps project data format recognition and classification management\n\nValidation: Classifier names must be valid Glue classifier identifiers; each ClassifierProps must be valid classifier configuration; names must be unique within collection",
             "type": "object"
         },
         "NamedConnectionProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/ConnectionProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed Glue connection collection interface for managing multiple external data source connections with string-based naming for organized connectivity management. Enables configuration of multiple Glue connections with unique identifiers, supporting multi-source DataOps projects and organized connection management for diverse external data systems.\n\nUse cases: Multi-connection projects; Connection collection management; Named connection organization; External data source management; DataOps connection organization; Data source governance\n\nAWS: Multiple AWS Glue connections with organized naming for DataOps project external data source connectivity and connection management\n\nValidation: Connection names must be valid Glue connection identifiers; each ConnectionProps must be valid connection configuration; names must be unique within collection",
+            "description": "Named map of connection names to connection configurations.\n\nUse cases: Multi-connection projects; Connection collection management; Named connection organization; External data source management; DataOps connection organization; Data source governance\n\nAWS: Multiple AWS Glue connections with organized naming for DataOps project external data source connectivity and connection management\n\nValidation: Connection names must be valid Glue connection identifiers; each ConnectionProps must be valid connection configuration; names must be unique within collection",
             "type": "object"
         },
         "NamedDatabaseGrantProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/DatabaseGrantProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed database grant configuration interface for Lake Formation permissions management with database-level access control capabilities. Defines named database grant mappings for systematic Lake Formation permission assignment to principals with database-specific access patterns in data lake governance.\n\nUse cases: Database-level access control; Named permission sets; Lake Formation governance; Principal-database mapping; Data access management\n\nAWS: AWS Lake Formation database permissions with named grant configurations for systematic access control\n\nValidation: Names must be unique identifiers; each entry must map to valid DatabaseGrantProps configuration",
+            "description": "Named map of database grant names to grant configurations.\n\nUse cases: Database-level access control; Named permission sets; Lake Formation governance; Principal-database mapping; Data access management\n\nAWS: AWS Lake Formation database permissions with named grant configurations for systematic access control\n\nValidation: Names must be unique identifiers; each entry must map to valid DatabaseGrantProps configuration",
             "type": "object"
         },
         "NamedDatabaseProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/DatabaseProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed Glue database collection interface for managing multiple databases with string-based naming for organized data catalog management. Enables configuration of multiple Glue databases with unique identifiers, supporting multi-database DataOps projects and organized metadata management for data lake governance.\n\nUse cases: Multi-database projects; Database collection management; Named database organization; Data catalog management; DataOps database organization; Metadata governance\n\nAWS: Multiple AWS Glue databases with organized naming for DataOps project data catalog and metadata management\n\nValidation: Database names must be valid Glue database identifiers; each DatabaseProps must be valid database configuration; names must be unique within collection",
+            "description": "Named map of database names to database configurations.\n\nUse cases: Multi-database projects; Database collection management; Named database organization; Data catalog management; DataOps database organization; Metadata governance\n\nAWS: Multiple AWS Glue databases with organized naming for DataOps project data catalog and metadata management\n\nValidation: Database names must be valid Glue database identifiers; each DatabaseProps must be valid database configuration; names must be unique within collection",
             "type": "object"
         },
         "NamedPrincipalArnProps": {
             "additionalProperties": {
                 "type": "string"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed principal ARN configuration interface for IAM role and user management with systematic principal organization capabilities. Defines named principal ARN mappings for organized role and user management in DataOps project access control and resource permissions.\n\nUse cases: Named role management; Principal organization; Access control mapping; Role-based permissions; Identity management\n\nAWS: IAM principal ARN organization with named mappings for systematic role and user management in DataOps projects\n\nValidation: Names must be unique identifiers; ARNs must be valid IAM principal ARNs (roles, users, or groups)",
+            "description": "Named map of principal names to IAM principal ARNs.\n\nUse cases: Named role management; Principal organization; Access control mapping; Role-based permissions; Identity management\n\nAWS: IAM principal ARN organization with named mappings for systematic role and user management in DataOps projects\n\nValidation: Names must be unique identifiers; ARNs must be valid IAM principal ARNs (roles, users, or groups)",
             "type": "object"
         },
         "NamedPrincipalArns": {
             "additionalProperties": {
                 "type": "string"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed principal ARNs mapping interface for systematic IAM principal management and permission assignment. Maps descriptive principal names to their IAM ARNs for organized permission grant management and clear principal identification.\n\nUse cases: Principal management; Permission assignment; IAM organization; Grant management; Principal identification\n\nAWS: IAM principal ARN mapping for Lake Formation permission grants\n\nExample: { dataAnalyst: 'arn:aws:iam::123456789012:role/DataAnalyst', dataScientist: 'arn:aws:iam::123456789012:role/DataScientist' }\n\nValidation: Keys must be descriptive names; values must be valid IAM principal ARNs",
+            "description": "Mapping of descriptive principal names to their IAM ARNs for organized permission management.\n\nUse cases: Principal management, permission assignment, IAM organization\n\nAWS: IAM principal ARN mapping for Lake Formation permission grants\n\nValidation: Keys must be descriptive names; values must be valid IAM principal ARNs",
             "type": "object"
         },
         "NamedPrincipalIdentifier": {
@@ -2911,21 +2895,20 @@
             "additionalProperties": {
                 "$ref": "#/definitions/PrincipalProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed Lake Formation principal collection interface for managing multiple data lake access principals with string-based naming for organized permission management. Enables configuration of multiple Lake Formation principals with unique identifiers, supporting multi-principal data governance and organized access control management for fine-grained data lake security.\n\nUse cases: Multi-principal access control; Principal collection management; Named principal organization; Data lake permission management; Lake Formation governance; Access control organization\n\nAWS: Multiple Lake Formation principals with organized naming for data lake access control and permission management\n\nValidation: Principal names must be valid identifiers; each PrincipalProps must be valid principal configuration; names must be unique within collection",
             "type": "object"
         },
         "NamedSecurityGroupConfigProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/SecurityGroupConfigProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed security group configuration collection interface for managing multiple security groups with string-based naming for organized network access control. Enables configuration of multiple security groups with unique identifiers, supporting multi-tier DataOps projects and organized network security management for diverse infrastructure components.\n\nUse cases: Multi-tier security; Security group collection management; Named security organization; Network access control; DataOps security organization; Infrastructure security governance\n\nAWS: Multiple EC2 security groups with organized naming for DataOps project network security and access control management\n\nValidation: Security group names must be valid identifiers; each SecurityGroupConfigProps must be valid security group configuration; names must be unique within collection",
+            "description": "Named map of security group names to security group configurations.\n\nUse cases: Multi-tier security; Security group collection management; Named security organization; Network access control; DataOps security organization; Infrastructure security governance\n\nAWS: Multiple EC2 security groups with organized naming for DataOps project network security and access control management\n\nValidation: Security group names must be valid identifiers; each SecurityGroupConfigProps must be valid security group configuration; names must be unique within collection",
             "type": "object"
         },
         "NamedTagBasedGrants": {
             "additionalProperties": {
                 "$ref": "#/definitions/TagBasedGrantConfig"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed tag-based grant configuration interface for Lake Formation tag-based access control with organized grant management capabilities. Defines named tag-based grant mappings for systematic Lake Formation ABAC permission assignment with descriptive grant identifiers.\n\nUse cases: Named tag-based grants; ABAC organization; Grant management; Permission mapping; Systematic access control\n\nAWS: AWS Lake Formation tag-based grants with named configurations for organized ABAC management\n\nValidation: Names must be unique identifiers; each entry must map to valid TagBasedGrantConfig configuration",
+            "description": "Named map of tag-based grant configurations for organized Lake Formation ABAC management.\n\nUse cases: Named tag-based grants, ABAC organization, grant management\n\nAWS: AWS Lake Formation tag-based grants with named configurations\n\nValidation: Names must be unique identifiers; each entry must be a valid TagBasedGrantConfig",
             "type": "object"
         },
         "Node": {
@@ -3107,27 +3090,27 @@
         },
         "PrincipalProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nPrincipalProps configuration interface for resource configuration and infrastructure management.\n\nUse cases: Data lake security; Access control; Fine-grained permissions; Data governance\n\nAWS: AWS service configuration and deployment\n\nValidation: Configuration must be valid for deployment; properties must conform to AWS service and MDAA requirements",
+            "description": "Defines a Lake Formation principal for grant assignment.\nSupports federated groups, federated users, and IAM roles as principal types.\nFederated principals require a matching federationProviderArn.\n\nUse cases: Federated group access; Individual user permissions; IAM role-based grants; Cross-account principals\n\nAWS: Lake Formation principals (federated via IAM SAML providers or direct IAM roles)\n\nValidation: At least one principal type required; federated types require federationProviderArn",
             "properties": {
                 "account": {
-                    "description": "Q-ENHANCED-PROPERTY\nPrincipal account ID specification for cross-account access control enabling multi-account Lake Formation permissions and account boundary management. Optionally specifies the account ID for cases where the account cannot be determined from the role ARN, supporting cross-account access scenarios.\n\nUse cases: Cross-account access; Account boundary management; Multi-account permissions; Account specification\n\nAWS: AWS account ID for cross-account Lake Formation permissions and multi-account access control\n\nValidation: Must be valid AWS account ID if specified; used when account cannot be determined from role ARN",
+                    "description": "AWS account ID for cross-account principal resolution.\nUsed when the account cannot be determined from the role ARN.\n\nUse cases: Cross-account grants; Multi-account Lake Formation permissions\n\nAWS: AWS account ID for principal resolution\n\nValidation: Optional; 12-digit AWS account ID",
                     "type": "string"
                 },
                 "federatedGroup": {
-                    "description": "Q-ENHANCED-PROPERTY\nFederated group name for Lake Formation access control enabling Active Directory group-based permissions and enterprise identity integration. Specifies the federated group from external identity providers that will receive Lake Formation permissions, supporting enterprise identity management and group-based access control.\n\nUse cases: Enterprise identity integration; Group-based permissions; Active Directory integration; Federated access control\n\nAWS: AWS Lake Formation federated group principal for enterprise identity integration and group-based access\n\nValidation: Must be valid federated group name if specified; requires federation provider configuration; mutually exclusive with other principal types",
+                    "description": "Federated group name for group-based Lake Formation permissions.\nCombined with federationProviderArn to construct the principal identity.\n\nUse cases: Active Directory group access; Enterprise group-based governance; Team-level data permissions\n\nAWS: Lake Formation federated group principal via IAM SAML provider\n\nValidation: Optional; requires federationProviderArn when specified",
                     "type": "string"
                 },
                 "federatedUser": {
-                    "description": "Q-ENHANCED-PROPERTY\nFederated user name for Lake Formation access control enabling individual user-based permissions and enterprise identity integration. Specifies the federated user from external identity providers that will receive Lake Formation permissions, supporting individual user access control and enterprise identity management.\n\nUse cases: Individual user permissions; Enterprise identity integration; User-based access control; Federated user access\n\nAWS: AWS Lake Formation federated user principal for enterprise identity integration and user-based access\n\nValidation: Must be valid federated user name if specified; requires federation provider configuration; mutually exclusive with other principal types",
+                    "description": "Federated user name for individual Lake Formation permissions.\nCombined with federationProviderArn to construct the principal identity.\n\nUse cases: Individual user data access; User-specific permissions; Federated user governance\n\nAWS: Lake Formation federated user principal via IAM SAML provider\n\nValidation: Optional; requires federationProviderArn when specified",
                     "type": "string"
                 },
                 "federationProviderArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nIAM federation provider ARN for federated identity integration enabling external identity provider trust relationships. Specifies the ARN of the IAM federation provider that Active Directory or other identity systems use to federate into the AWS environment for Lake Formation access control.\n\nUse cases: Federation provider integration; External identity trust; Active Directory federation; Identity provider configuration\n\nAWS: AWS IAM federation provider ARN for external identity integration and federated access control\n\nValidation: Must be valid IAM federation provider ARN if specified; provider must exist and be configured for federation",
+                    "description": "IAM federation provider ARN for resolving federated group/user principals.\nMust reference an existing IAM SAML identity provider.\n\nUse cases: SAML provider integration; Active Directory federation; External IdP connectivity\n\nAWS: IAM SAML identity provider ARN (arn:aws:iam::account:saml-provider/name)\n\nValidation: Optional; required when federatedGroup or federatedUser is specified",
                     "type": "string"
                 },
                 "role": {
                     "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role reference for Lake Formation access control enabling role-based permissions and AWS native identity management. Specifies the IAM role that will receive Lake Formation permissions, supporting AWS native identity management and role-based access control patterns.\n\nUse cases: Role-based permissions; AWS native identity; IAM role access; Native access control\n\nAWS: AWS IAM role for Lake Formation permissions and native AWS identity-based access control\n\nValidation: Must be valid MdaaRoleRef if specified; role must exist and be accessible; mutually exclusive with federated principals"
+                    "description": "IAM role reference for role-based Lake Formation permissions.\nCan be specified by ARN, name, or SSM parameter reference.\n\nUse cases: IAM role-based data access; Service role permissions; Cross-account role grants\n\nAWS: IAM role for Lake Formation grant assignment\n\nValidation: Optional; valid MdaaRoleRef; mutually exclusive with federated principal types"
                 }
             },
             "type": "object"
@@ -3136,7 +3119,7 @@
             "additionalProperties": false,
             "properties": {
                 "environmentParameters": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of environment parameters for DataZone project environment configuration enabling customizable environment settings. Defines the collection of environment parameters that configure the DataZone project environment for specific deployment and operational requirements.\n\nUse cases: Environment configuration; Parameter collections; Deployment settings; Operational customization\n\nAWS: DataZone project environment parameters for environment configuration and customization\n\nValidation: Must be array of valid ProjectEnvironmentParameter objects; required for environment configuration",
+                    "description": "Array of environment parameters for DataZone project environment configuration enabling",
                     "items": {
                         "$ref": "#/definitions/ProjectEnvironmentParameter"
                     },
@@ -3152,11 +3135,11 @@
             "additionalProperties": false,
             "properties": {
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired parameter name for DataZone project environment configuration enabling environment-specific settings. Specifies the name of the environment parameter for configuration management and environment customization within DataZone projects.\n\nUse cases: Environment configuration; Parameter naming; Configuration management; Environment customization\n\nAWS: DataZone project environment parameter name for configuration identification and management\n\nValidation: Must be non-empty string; required for environment parameter configuration",
+                    "description": "Parameter name for DataZone project environment configuration enabling environment-specific settings",
                     "type": "string"
                 },
                 "value": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired parameter value for DataZone project environment configuration enabling environment-specific values. Specifies the value of the environment parameter for configuration application and environment customization within DataZone projects.\n\nUse cases: Environment values; Configuration application; Environment customization; Parameter values\n\nAWS: DataZone project environment parameter value for configuration application and management\n\nValidation: Must be non-empty string; required for environment parameter configuration",
+                    "description": "Parameter value for DataZone project environment configuration enabling environment-specific values",
                     "type": "string"
                 }
             },
@@ -3337,14 +3320,14 @@
         },
         "SecurityGroupConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nEC2 security group configuration interface for network access control with VPC placement and egress rule management. Defines security group properties for DataOps projects including VPC specification and egress rule configuration for controlled network access and secure communication between infrastructure components.\n\nUse cases: Network security configuration; VPC security groups; Egress rule management; Network access control; Infrastructure security; Secure communication\n\nAWS: EC2 security groups with VPC placement and configurable egress rules for DataOps project network security and access control\n\nValidation: vpcId must be valid VPC identifier; securityGroupEgressRules must be valid MdaaSecurityGroupRuleProps if specified; egress rules must be properly configured",
+            "description": "Configuration for a project security group with VPC placement and egress rules.\n\nUse cases: Network security configuration; VPC security groups; Egress rule management; Network access control; Infrastructure security; Secure communication\n\nAWS: EC2 security groups with VPC placement and configurable egress rules for DataOps project network security and access control\n\nValidation: vpcId must be valid VPC identifier; securityGroupEgressRules must be valid MdaaSecurityGroupRuleProps if specified; egress rules must be properly configured",
             "properties": {
                 "securityGroupEgressRules": {
                     "$ref": "#/definitions/MdaaSecurityGroupRuleProps",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional security group egress rules for outbound traffic control enabling fine-grained network access management. Defines egress rules for the security group controlling outbound network traffic from DataOps project resources for enhanced security and compliance.\n\nUse cases: Outbound traffic control; Network security; Access management; Compliance requirements\n\nAWS: AWS security group egress rules for outbound traffic control and network security\n\nValidation: Must be valid MdaaSecurityGroupRuleProps if provided; configures outbound traffic control when specified\n  *"
+                    "description": "Egress rules for outbound traffic control."
                 },
                 "vpcId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired VPC ID for security group deployment enabling VPC-specific network access control and resource isolation. Specifies the VPC where the security group will be created affecting network boundaries and access control scope for DataOps project resources.\n\nUse cases: VPC deployment; Network isolation; Access control scope; Resource boundaries\n\nAWS: AWS VPC ID for security group deployment and network access control\n\nValidation: Must be valid VPC ID string; required for security group creation and network access control",
+                    "description": "VPC ID for security group deployment.",
                     "type": "string"
                 }
             },
@@ -3562,21 +3545,21 @@
         },
         "TagBasedGrantConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nLake Formation tag-based grant configuration interface for implementing fine-grained permissions through LF-Tag expressions. Defines grant properties including principals, permissions, resource types, and tag expressions for systematic tag-based access control and data governance.\n\nUse cases: Tag-based permissions; Fine-grained access control; ABAC implementation; Permission management; Data governance; Resource access control\n\nAWS: AWS Lake Formation tag-based permission grant configuration for ABAC and data governance\n\nValidation: principalArns must be non-empty; permissions must be valid LF permissions; lfTagExpression must be valid tag expression",
+            "description": "Tag-based grant configuration defining principals, permissions, and LF-Tag expression for fine-grained access control.\n\nUse cases: Tag-based permissions, fine-grained access control, ABAC implementation, data governance\n\nAWS: AWS Lake Formation tag-based permission grant configuration\n\nValidation: principalArns, permissions, and lfTagExpression are required; permissionsWithGrantOption and resourceType are optional",
             "properties": {
                 "lfTagExpression": {
                     "$ref": "#/definitions/LFTagExpression",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired LF-Tag expression defining resource selection criteria for tag-based permissions enabling attribute-based access control. Specifies which resources the permissions apply to based on their LF-Tag values for fine-grained data governance.\n\nUse cases: Resource filtering; ABAC implementation; Tag-based selection; Fine-grained access; Data governance; Resource matching\n\nAWS: AWS Lake Formation tag expression for resource selection and ABAC\n\nValidation: Must be non-empty LFTagExpression; tag keys must exist; tag values must be valid; required for tag-based permissions"
+                    "description": "LF-Tag expression defining which resources the permissions apply to.\n\nUse cases: Resource filtering, ABAC implementation, tag-based selection, data governance\n\nAWS: AWS Lake Formation tag expression for resource selection\n\nValidation: Must be non-empty LFTagExpression; tag keys must exist; tag values must be valid; required"
                 },
                 "permissions": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Lake Formation permissions to grant enabling data access and governance operations. Defines the specific LF permissions that principals will receive for resources matching the tag expression.\n\nUse cases: Permission definition; Access control; Data operations; Governance permissions; Resource access\n\nAWS: AWS Lake Formation permissions for data access and governance operations\n\nExamples: ['DESCRIBE', 'SELECT'], ['DESCRIBE', 'ALTER', 'CREATE_TABLE'], ['ALL']\n\nValidation: Must be non-empty array of valid Lake Formation permission strings; required for access control",
+                    "description": "Lake Formation permissions to grant (e.g. DESCRIBE, SELECT, ALTER, CREATE_TABLE, ALL).\n\nUse cases: Permission definition, access control, data operations\n\nAWS: AWS Lake Formation permissions\n\nValidation: Must be non-empty array of valid Lake Formation permission strings; required",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "permissionsWithGrantOption": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of Lake Formation permissions with grant option enabling permission delegation and administrative capabilities. Defines permissions that can be further granted by the recipient principals to other principals.\n\nUse cases: Permission delegation; Administrative access; Grant management; Permission propagation; Delegated administration\n\nAWS: AWS Lake Formation permissions with grant option for permission delegation\n\nValidation: Must be array of valid Lake Formation permission strings if specified; subset of permissions array",
+                    "description": "Permissions that recipients can further grant to other principals.\n\nUse cases: Permission delegation, administrative access, grant management\n\nAWS: AWS Lake Formation permissions with grant option\n\nValidation: Must be array of valid Lake Formation permission strings if specified; should be a subset of permissions",
                     "items": {
                         "type": "string"
                     },
@@ -3584,10 +3567,10 @@
                 },
                 "principalArns": {
                     "$ref": "#/definitions/NamedPrincipalArns",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired mapping of principal names to IAM ARNs for Lake Formation permission grant assignment enabling organized principal management. Defines the IAM principals that will receive tag-based permissions for data access and governance operations.\n\nUse cases: Principal assignment; Permission recipients; IAM integration; Access control; Principal management\n\nAWS: IAM principal ARNs for Lake Formation tag-based permission grants\n\nValidation: Must be non-empty NamedPrincipalArns; ARNs must be valid IAM principal ARNs; required for permission grants"
+                    "description": "Map of principal names to IAM ARNs receiving the tag-based permissions.\n\nUse cases: Principal assignment, permission recipients, IAM integration\n\nAWS: IAM principal ARNs for Lake Formation permission grants\n\nValidation: Must be non-empty; ARNs must be valid IAM principal ARNs; required"
                 },
                 "resourceType": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional Lake Formation resource type specification for permission scope enabling database-level or table-level access control. Defines whether the tag-based permissions apply to databases or tables for appropriate governance granularity.\n\nUse cases: Resource type selection; Permission scope; Database access; Table access; Granular control\n\nAWS: AWS Lake Formation resource type for permission scope and access control\n\nValidation: Must be 'DATABASE' or 'TABLE'; defaults to 'TABLE' for table-level permissions",
+                    "description": "Resource type scope: DATABASE or TABLE (defaults to TABLE).\n\nUse cases: Resource type selection, permission scope, granular control\n\nAWS: AWS Lake Formation resource type for permission scope\n\nValidation: Must be 'DATABASE' or 'TABLE' if provided",
                     "enum": [
                         "DATABASE",
                         "TABLE"
@@ -3838,21 +3821,21 @@
     "properties": {
         "classifiers": {
             "$ref": "#/definitions/NamedClassifierProps",
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of classifier names to custom Glue classifier definitions enabling specialized data format recognition and parsing. Provides custom classification logic for non-standard data formats, proprietary file types, and specialized parsing requirements.\n\nUse cases: Custom data format recognition; Specialized parsing logic; Non-standard file type classification\n\nAWS: AWS Glue custom classifier definitions for specialized data format recognition and parsing\n\nValidation: Must be valid NamedClassifierProps if provided; defines custom classification logic"
+            "description": "Custom Glue classifier definitions for specialized data format recognition.\n\nUse cases: Non-standard format parsing; Proprietary file type classification\n\nAWS: Glue custom classifiers\n\nValidation: Optional; valid NamedClassifierProps"
         },
         "connections": {
             "$ref": "#/definitions/NamedConnectionProps",
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of connection names to Glue connection definitions enabling secure connectivity to external data sources and databases. Provides connection configuration for JDBC databases, data warehouses, and other external systems requiring authentication.\n\nUse cases: External data source connectivity; Database connection management; Secure authentication configuration\n\nAWS: AWS Glue connection definitions for external data source connectivity and authentication\n\nValidation: Must be valid NamedConnectionProps if provided; defines external system connections"
+            "description": "Glue connection definitions for secure connectivity to external data sources.\n\nUse cases: JDBC database connections; Data warehouse connectivity\n\nAWS: Glue connections\n\nValidation: Optional; valid NamedConnectionProps"
         },
         "dataAdminRoles": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired array of data admin role references with full administrative access to all project resources including databases, security, and configuration management. Provides administrative permissions for project management, security administration, and resource configuration.\n\nUse cases: Project administration; Security management; Resource configuration and administrative control\n\nAWS: AWS IAM roles with full DataOps project administrative access and management permissions\n\nValidation: Must be array of valid MdaaRoleRef objects; required; roles receive full project administrative access",
+            "description": "Data admin roles with full administrative access to all project resources.\n\nUse cases: Project administration; Security management; Resource configuration\n\nAWS: IAM roles with full DataOps admin permissions\n\nValidation: Required; array of MdaaRoleRef",
             "items": {
                 "$ref": "#/definitions/MdaaRoleRef"
             },
             "type": "array"
         },
         "dataEngineerRoles": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional array of data engineer role references with operational access to project resources for data pipeline development and maintenance. Provides controlled access to project infrastructure for data engineering operations, pipeline development, and operational management.\n\nUse cases: Data engineering operations; Pipeline development access; Operational resource management\n\nAWS: AWS IAM roles with DataOps project operational access and resource management permissions\n\nValidation: Must be array of valid MdaaRoleRef objects if provided; roles receive operational project access",
+            "description": "Data engineer roles with operational access to project resources (jobs, crawlers, databases).\n\nUse cases: Pipeline development access; Operational resource management\n\nAWS: IAM roles with DataOps operational permissions\n\nValidation: Optional; array of MdaaRoleRef",
             "items": {
                 "$ref": "#/definitions/MdaaRoleRef"
             },
@@ -3860,37 +3843,37 @@
         },
         "databases": {
             "$ref": "#/definitions/NamedDatabaseProps",
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of database names to Glue database definitions enabling centralized metadata management and catalog organization. Provides database configuration for data catalog organization, table management, and metadata coordination within the project.\n\nUse cases: Centralized metadata management; Data catalog organization; Database-specific configuration and table coordination\n\nAWS: AWS Glue database definitions for metadata management and catalog organization\n\nValidation: Must be valid NamedDatabaseProps if provided; defines project database infrastructure\n  *"
+            "description": "Glue database definitions for centralized metadata management and catalog organization.\n\nUse cases: Data catalog organization; Table management; Metadata coordination\n\nAWS: Glue databases\n\nValidation: Optional; valid NamedDatabaseProps"
         },
         "datazone": {
             "$ref": "#/definitions/DataOpsDatazoneProps",
-            "description": "Q-ENHANCED-PROPERTY\nOptional DataZone configuration for data governance and catalog integration enabling data discovery and governance capabilities. Provides DataZone domain integration for data asset management, governance workflows, and collaborative data discovery.\n\nUse cases: Data governance integration; Collaborative data discovery; Data asset management and governance workflows\n\nAWS: Amazon DataZone integration for data governance and collaborative discovery capabilities\n\nValidation: Must be valid DatazoneProps if provided; enables DataZone governance integration"
+            "description": "DataZone configuration for data governance and catalog integration.\nMutually exclusive with sagemaker.\n\nUse cases: Data governance; Collaborative data discovery; Asset management\n\nAWS: Amazon DataZone\n\nValidation: Optional; valid DataOpsDatazoneProps; cannot be set with sagemaker"
         },
         "failureNotifications": {
             "$ref": "#/definitions/FailureNotificationsProps",
-            "description": "Q-ENHANCED-PROPERTY\nOptional failure notification configuration for Glue job monitoring and alerting enabling proactive error management and operational visibility. Provides notification setup for job failures, errors, and operational issues within the project.\n\nUse cases: Proactive error management; Operational alerting; Job failure notification and monitoring\n\nAWS: AWS SNS and CloudWatch integration for Glue job failure notifications and monitoring\n\nValidation: Must be valid FailureNotificationsProps if provided; enables failure alerting and monitoring"
+            "description": "Failure notification configuration for Glue job monitoring and alerting.\n\nUse cases: Job failure alerts; Operational monitoring\n\nAWS: SNS/CloudWatch integration for Glue job notifications\n\nValidation: Optional; valid FailureNotificationsProps"
         },
         "glueCatalogKmsKeyArn": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional KMS key ARN for Glue Catalog encryption ensuring metadata protection compliance for all project catalog operations. Provides encryption at rest for catalog metadata with customer-controlled key management for enhanced security.\n\nUse cases: Catalog metadata encryption; Metadata protection compliance; Customer key management for catalog data\n\nAWS: AWS KMS key for Glue Catalog encryption and metadata protection in project operations\n\nValidation: Must be valid KMS key ARN if provided; used for all project catalog encryption",
+            "description": "KMS key ARN for Glue Catalog metadata encryption.\n\nUse cases: Catalog metadata protection; Encryption compliance\n\nAWS: KMS key for Glue Catalog encryption\n\nValidation: Optional; valid KMS key ARN",
             "type": "string"
         },
         "lakeFormation": {
             "$ref": "#/definitions/LakeFormationConfig",
-            "description": "Q-ENHANCED-PROPERTY\nOptional project-level Lake Formation configuration for centralized tag-based access control management. Defines project-wide Lake Formation resources including tag vocabulary that is shared across all databases in the project.\n\nUse cases: Centralized tag management; Project-wide TBAC vocabulary; Shared governance configuration\n\nAWS: AWS Lake Formation project-level configuration for centralized tag-based access control\n\nValidation: Must be valid ProjectLakeFormationConfig if provided; lfTags define project-wide tag vocabulary"
+            "description": "Project-level Lake Formation configuration for centralized tag-based access control.\nDefines project-wide LF-tag vocabulary shared across all databases.\n\nUse cases: Centralized tag management; Project-wide TBAC; Shared governance\n\nAWS: Lake Formation project-level configuration\n\nValidation: Optional; valid LakeFormationConfig"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "projectExecutionRoles": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional array of pre-defined execution role references for project resource operations enabling consistent role usage across project components. Provides standardized execution roles for Glue jobs, crawlers, and other project resources requiring specific permissions.\n\nUse cases: Standardized execution roles; Consistent permission management; Cross-component role coordination\n\nAWS: AWS IAM roles for project resource execution and cross-service operations\n\nValidation: Must be array of valid MdaaRoleRef objects if provided; roles used for project resource execution",
+            "description": "Pre-defined execution roles for project resource operations (jobs, crawlers).\n\nUse cases: Standardized execution roles; Cross-component role coordination\n\nAWS: IAM execution roles\n\nValidation: Optional; array of MdaaRoleRef",
             "items": {
                 "$ref": "#/definitions/MdaaRoleRef"
             },
             "type": "array"
         },
         "s3OutputKmsKeyArn": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional KMS key ARN for S3 output encryption ensuring data protection compliance for all project output data. Provides encryption at rest for project-generated data with customer-controlled key management for enhanced security posture.\n\nUse cases: Output data encryption; Data protection compliance; Customer key management for project outputs\n\nAWS: AWS KMS key for S3 output encryption and data protection in project operations\n\nValidation: Must be valid KMS key ARN if provided; used for all project S3 output encryption",
+            "description": "KMS key ARN for encrypting S3 output data from project operations.\n\nUse cases: Output data encryption; Data protection compliance\n\nAWS: KMS key for S3 encryption\n\nValidation: Optional; valid KMS key ARN",
             "type": "string"
         },
         "sagemaker": {
@@ -3902,7 +3885,7 @@
         },
         "securityGroupConfigs": {
             "$ref": "#/definitions/NamedSecurityGroupConfigProps",
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of security group names to configuration definitions enabling shared network security controls across project resources. Provides centralized security group management for consistent network access control and resource coordination.\n\nUse cases: Shared network security controls; Centralized security group management; Consistent access control across resources\n\nAWS: Amazon VPC security groups for project resource network access control and coordination\n\nValidation: Must be valid NamedSecurityGroupConfigProps if provided; defines shared security group infrastructure\n  *"
+            "description": "Shared security group configurations for project resources.\n\nUse cases: Centralized network security; Consistent access control\n\nAWS: VPC security groups\n\nValidation: Optional; valid NamedSecurityGroupConfigProps"
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",

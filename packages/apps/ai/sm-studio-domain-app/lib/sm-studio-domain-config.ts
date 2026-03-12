@@ -12,15 +12,13 @@ import * as configSchema from './config-schema.json';
 
 export interface SageMakerStudioDomainConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required SageMaker Studio domain configuration defining all aspects of the ML development environment including security, networking, and user settings. Provides domain setup with VPC security, authentication, and user workspace configuration for ML development workflows.
+   * SageMaker Studio domain configuration with VPC networking, authentication, user profiles, and lifecycle settings.
    *
-   * Use cases: ML development environment configuration; Security and networking setup; User workspace management
+   * Use cases: ML development environment, collaborative data science, secure ML workspaces
    *
-   * AWS: Amazon SageMaker Studio domain configuration for complete ML development environment deployment
+   * AWS: SageMaker Studio Domain
    *
-   * Validation: Must be valid DomainProps; required; defines all domain deployment and security characteristics
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_opensearch.DomainProps.html
+   * Validation: Required; DomainProps
    **/
   readonly domain: DomainProps;
 }

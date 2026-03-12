@@ -13,15 +13,16 @@ import * as configSchema from './config-schema.json';
 
 export interface QuickSightAccountConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required QuickSight account configuration defining all aspects of the account setup including authentication, permissions, and service configuration. Provides account provisioning with proper security and access controls for business intelligence operations.
+   * QuickSight account configuration defining edition, authentication, networking, and security settings.
+   * The module deploys a QS service role, security group for VPC data source connectivity,
+   * and the QS account itself. Manual post-deployment configuration is required.
    *
-   * Use cases: Account provisioning; Authentication setup; Service configuration and access control
+   * Use cases: QuickSight account provisioning; VPC data source connectivity; IP-based access restrictions
    *
-   * AWS: Amazon QuickSight account configuration for complete service setup and management
+   * AWS: QuickSight account with service role, VPC security group, and account-level settings
    *
-   * Validation: Must be valid AccountProps; required; defines all account setup characteristics
-   **/
+   * Validation: Required; valid AccountProps
+   */
   readonly account: AccountProps;
 }
 

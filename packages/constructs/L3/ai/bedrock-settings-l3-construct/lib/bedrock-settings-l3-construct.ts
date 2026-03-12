@@ -32,25 +32,25 @@ const LAMBDA_SRC_DIR = '../src/python/bedrock-settings';
  */
 export interface BedrockSettingsL3ConstructProps extends MdaaL3ConstructProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Enable S3 bucket creation for model invocation audit logs providing audit trail and compliance support for generative AI usage. Creates an encrypted S3 bucket with appropriate IAM policies and KMS encryption to store detailed Bedrock model invocation logs for regulatory compliance, security monitoring, and long-term audit retention.
+   * Enables S3 bucket creation for model invocation audit logs.
+   * Creates an encrypted S3 bucket with Bedrock service permissions and KMS key policies for long-term audit retention.
    *
-   * Use cases: HIPAA compliance for healthcare AI applications; Financial services regulatory audit requirements; Government security monitoring for AI model usage; Long-term audit retention for compliance frameworks
+   * Use cases: Regulatory compliance auditing, long-term log retention, security monitoring, governance
    *
-   * AWS: Amazon Bedrock ModelInvocationLogging configuration with S3 destination and encrypted bucket storage
+   * AWS: Amazon Bedrock ModelInvocationLogging with S3 destination
    *
-   * Validation: Boolean value (true/false); When true, creates encrypted S3 bucket with Bedrock service permissions and KMS key policies
+   * Validation: Required; Boolean
    **/
   readonly enableAuditLoggingToS3: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Enable CloudWatch Log Group creation for model invocation audit logs providing real-time monitoring and alerting capabilities for generative AI usage. Creates an encrypted CloudWatch Log Group with infinite retention for real-time log analysis, automated alerting, and operational monitoring of AI model usage patterns and performance metrics.
+   * Enables CloudWatch Log Group creation for model invocation audit logs.
+   * Creates an encrypted CloudWatch Log Group with infinite retention for real-time monitoring and alerting.
    *
-   * Use cases: Real-time monitoring of AI model usage patterns; Automated alerting for unusual AI activity; Performance monitoring for model response times; Cost tracking and analysis for model invocation volumes
+   * Use cases: Real-time AI usage monitoring, automated alerting, performance tracking, cost analysis
    *
-   * AWS: Amazon Bedrock ModelInvocationLogging configuration with CloudWatch Logs destination and encrypted log group
+   * AWS: Amazon Bedrock ModelInvocationLogging with CloudWatch Logs destination
    *
-   * Validation: Boolean value (true/false); When true, creates encrypted CloudWatch Log Group with infinite retention and Bedrock service permissions
+   * Validation: Required; Boolean
    **/
   readonly enableAuditLoggingToCloudwatch: boolean;
 }

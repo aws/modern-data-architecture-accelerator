@@ -18,400 +18,382 @@ import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for individual data lake bucket setup providing access control and operational features. Defines bucket-specific settings including access policies, inventory management, event notifications, and Lake Formation integration for structured data lake operations.
+ * Individual bucket configuration within the data lake, defining access policies,
+ * inventory, event notifications, LakeFormation locations, and lifecycle rules.
  *
- * Use cases: Data lake zone configuration; Bucket-specific access control; Operational feature management
+ * Use cases: Zone-specific bucket setup (raw/transformed/curated); Per-bucket access control; Operational feature toggles
  *
- * AWS: Configures individual S3 buckets within data lake architecture with policies, notifications, and Lake Formation integration
+ * AWS: S3 bucket with bucket policy, inventory, EventBridge, LakeFormation integration
  *
- * Validation: accessPolicies is required; all access policy names must exist in parent accessPolicies configuration
+ * Validation: accessPolicies required; all policy names must exist in parent accessPolicies config
  */
 export interface BucketConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of access policy names to be applied to this bucket enabling role-based access control and permission management. Links the bucket to specific access policies defined in the parent configuration for consistent permission enforcement.
+   * Access policy names to apply to this bucket. Each name must reference a policy
+   * defined in the top-level accessPolicies configuration.
    *
-   * Use cases: Role-based access control; Permission policy application; Consistent access management across buckets
+   * Use cases: Role-based bucket access; Multi-policy composition per bucket
    *
-   * AWS: AWS S3 bucket policies derived from named access policy configurations
+   * AWS: S3 bucket policy statements derived from named access policies
    *
-   * Validation: Must be array of strings; required; all policy names must exist in parent accessPolicies configuration
-   **/
+   * Validation: Required; array of strings; each must match a key in accessPolicies
+   */
   readonly accessPolicies: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of inventory configuration names to inventory definitions enabling bucket content tracking and analysis. Provides detailed inventory reporting for compliance, cost analysis, and data governance within the data lake.
+   * S3 inventory configurations for automated bucket content reporting.
+   * Each entry generates inventory data for the specified prefix.
    *
-   * Use cases: Bucket content tracking; Compliance reporting; Cost analysis and data governance
+   * Use cases: Data governance reporting; Cost analysis by prefix; Compliance auditing
    *
-   * AWS: AWS S3 inventory configuration for bucket content tracking and analysis
+   * AWS: S3 inventory configuration
    *
-   * Validation: Must be object with string keys and InventoryDefinition values if provided; enables inventory tracking
-   *   **/
+   * Validation: Optional; map of inventory name to InventoryDefinition
+   */
   readonly inventories?: { [key: string]: InventoryDefinition };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag enabling EventBridge notifications for bucket data events allowing event-driven processing and automation. Enables integration with EventBridge rules for automated data processing workflows and event-driven architectures.
+   * Enable EventBridge notifications for S3 data events on this bucket.
    *
-   * Use cases: Event-driven data processing; Automated workflow triggers; Real-time data event handling
+   * Use cases: Event-driven data pipelines; Real-time processing triggers
    *
-   * AWS: Amazon S3 EventBridge notification configuration for event-driven processing
+   * AWS: S3 EventBridge notification configuration
    *
-   * Validation: Boolean value; enables EventBridge notifications when true; allows event-driven automation
-   **/
+   * Validation: Optional; boolean
+   */
   readonly enableEventBridgeNotifications?: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of Lake Formation location names to location configurations enabling fine-grained data access control through Lake Formation. Provides table and column-level permissions for advanced data governance and access control within the data lake.
+   * LakeFormation location registrations for fine-grained access control
+   * at specific S3 prefixes within this bucket.
    *
-   * Use cases: Fine-grained data access control; Table/column-level permissions; Advanced data governance
+   * Use cases: Table/column-level permissions; LakeFormation-governed data zones
    *
-   * AWS: AWS Lake Formation resource registration and permission management for fine-grained access
+   * AWS: LakeFormation resource registration
    *
-   * Validation: Must be object with string keys and LakeFormationLocationConfig values if provided; enables Lake Formation integration
-   *   **/
+   * Validation: Optional; map of location name to LakeFormationLocationConfig
+   */
   readonly lakeFormationLocations?: { [key: string]: LakeFormationLocationConfig };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag controlling automatic creation of folder objects for each access policy prefix enabling organized data structure. Creates placeholder objects to establish folder structure for better data organization and navigation.
+   * Create folder placeholder objects for each access policy prefix.
    *
-   * Use cases: Data organization; Folder structure establishment; Consistent data layout across buckets
+   * Use cases: Pre-populated folder structure; Console navigation
    *
-   * AWS: AWS S3 object creation for folder structure and data organization
+   * AWS: S3 zero-byte objects as folder markers
    *
-   * Validation: Boolean value; defaults to true; creates folder objects for access policy prefixes when enabled
-   **/
+   * Validation: Optional; boolean
+   * @default true
+   */
   readonly createFolderSkeleton?: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional lifecycle configuration name reference for automated data management and cost optimization. Links the bucket to a named lifecycle configuration for automated data archival and retention management.
+   * Name of a lifecycle configuration from the top-level lifecycleConfigurations
+   * to apply to this bucket.
    *
-   * Use cases: Automated data archival; Cost optimization; Data retention management
+   * Use cases: Automated archival; Cost optimization; Data retention
    *
-   * AWS: AWS S3 lifecycle configuration for automated object management and cost optimization
+   * AWS: S3 lifecycle rules
    *
-   * Validation: Must be valid lifecycle configuration name if provided; configuration must exist in parent lifecycleConfigurations
-   **/
+   * Validation: Optional; must match a key in lifecycleConfigurations if provided
+   */
   readonly lifecycleConfiguration?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag controlling default deny behavior for roles not explicitly listed in access policies ensuring secure-by-default access control. Provides additional security by blocking access from roles not specifically granted permissions.
+   * Deny access to any role not explicitly listed in access policies.
    *
-   * Use cases: Secure-by-default access; Additional security controls; Explicit permission enforcement
+   * Use cases: Secure-by-default bucket access; Explicit-only permissions
    *
-   * AWS: AWS S3 bucket policy deny statements for enhanced security and access control
+   * AWS: S3 bucket policy deny statements
    *
-   * Validation: Boolean value; defaults to true; blocks unlisted roles when enabled for enhanced security
-   **/
+   * Validation: Optional; boolean
+   * @default true
+   */
   readonly defaultDeny?: boolean;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Lake Formation location registration enabling fine-grained data access control at the S3 prefix level. Defines specific S3 locations to be registered with Lake Formation for table and column-level permission management within the data lake.
+ * S3 prefix to register as a LakeFormation location for fine-grained access control.
  *
- * Use cases: Fine-grained data access control; S3 prefix-level permissions; Lake Formation resource registration
+ * Use cases: Table/column-level permissions; LakeFormation-governed data paths
  *
- * AWS: Configures AWS Lake Formation resource registration for specific S3 locations and access control
+ * AWS: LakeFormation resource registration
  *
- * Validation: prefix is required; write is optional boolean for access level control
+ * Validation: prefix required; write optional
  */
 export interface LakeFormationLocationConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 prefix defining the specific location within the bucket to be registered with Lake Formation. Specifies the exact path where Lake Formation will manage fine-grained access control and permissions for data governance.
+   * S3 prefix within the bucket to register with LakeFormation.
    *
-   * Use cases: Specific location registration; Prefix-level access control; Granular data governance
+   * Use cases: Prefix-level LakeFormation governance; Data zone registration
    *
-   * AWS: AWS Lake Formation resource registration for specific S3 prefix locations
+   * AWS: LakeFormation location S3 path
    *
-   * Validation: Must be valid S3 prefix string; required; defines the exact location for Lake Formation management
-   **/
+   * Validation: Required; valid S3 prefix string
+   */
   readonly prefix: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag granting read-write access to the Lake Formation role for this location enabling data management permissions. When enabled, provides full read and write access for data operations and management within the registered location.
+   * Grant write access to the LakeFormation role for this location.
+   * When false or omitted, only read access is granted.
    *
-   * Use cases: Full data access permissions; Read-write operations; data management capabilities
+   * Use cases: Read-write data processing; ETL write access
    *
-   * AWS: AWS Lake Formation permission grants for read-write access to registered locations
+   * AWS: LakeFormation location permissions
    *
-   * Validation: Boolean value; optional; grants read-write access when true, read-only when false or omitted
-   **/
+   * Validation: Optional; boolean
+   * @default false
+   */
   readonly write?: boolean;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for access policy rules defining role-based permissions for specific S3 prefixes within data lake buckets. Specifies granular access control with different permission levels for different roles at the prefix level.
+ * Access policy rule defining role-based permissions for a specific S3 prefix.
+ * Roles are referenced by name from the top-level roles configuration.
  *
- * Use cases: Prefix-level access control; Role-based permissions; Granular data access management
+ * Use cases: Prefix-level read/write/super access; Multi-role permission sets
  *
- * AWS: Configures AWS S3 bucket policy conditions for role-based access control at prefix level
+ * AWS: S3 bucket policy conditions per prefix
  *
- * Validation: prefix is required; role arrays are optional but must reference valid role names from parent configuration
+ * Validation: prefix required; role arrays optional but must reference valid role names
  */
 export interface AccessPolicyRuleConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 prefix where this access policy rule will be applied enabling location-specific access control within buckets. Defines the specific path within the bucket where the role-based permissions will be enforced for granular data access management.
+   * S3 prefix path where this access rule applies (e.g., '/data', '/').
    *
-   * Use cases: Location-specific access control; Prefix-based permissions; Granular data path management
+   * Use cases: Dataset-specific permissions; Root-level admin access
    *
-   * AWS: AWS S3 bucket policy prefix conditions for location-specific access control
+   * AWS: S3 bucket policy prefix condition
    *
-   * Validation: Must be valid S3 prefix string; required; defines the specific location for access control enforcement
-   **/
+   * Validation: Required; valid S3 prefix string
+   */
   readonly prefix: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of role names that will receive read-only access to this prefix enabling controlled data consumption. Provides read access for roles that need to consume data without modification capabilities for secure data access patterns.
+   * Role names granted read-only access to this prefix.
    *
-   * Use cases: Read-only data access; Data consumption; Secure data viewing without modification
+   * Use cases: Data consumers; Analysts with view-only access
    *
-   * AWS: AWS S3 bucket policy allow statements for read-only access to specific prefixes
+   * AWS: S3 bucket policy allow (GetObject, ListBucket)
    *
-   * Validation: Must be array of valid role names if provided; roles must exist in parent roles configuration
-   **/
+   * Validation: Optional; array of role names from top-level roles config
+   */
   readonly ReadRoles?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of role names that will receive read-write access to this prefix enabling full data operations. Provides data access for roles that need to both consume and modify data within the specified prefix.
+   * Role names granted read-write access to this prefix.
+   * Write access creates delete markers but cannot permanently delete versions.
    *
-   * Use cases: Full data operations; Data modification; data management capabilities
+   * Use cases: ETL pipelines; Data engineers writing processed data
    *
-   * AWS: AWS S3 bucket policy allow statements for read-write access to specific prefixes
+   * AWS: S3 bucket policy allow (GetObject, PutObject, DeleteObject)
    *
-   * Validation: Must be array of valid role names if provided; roles must exist in parent roles configuration
-   **/
+   * Validation: Optional; array of role names from top-level roles config
+   */
   readonly ReadWriteRoles?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of role names that will receive superuser access to this prefix enabling administrative operations including policy management. Provides full administrative access including the ability to manage access policies and perform administrative operations.
+   * Role names granted superuser access including permanent version deletion.
    *
-   * Use cases: Administrative operations; Policy management; Full administrative control over prefix data
+   * Use cases: Data administrators; Compliance-driven data purge
    *
-   * AWS: AWS S3 bucket policy allow statements for administrative access to specific prefixes
+   * AWS: S3 bucket policy allow (full object operations including DeleteObjectVersion)
    *
-   * Validation: Must be array of valid role names if provided; roles must exist in parent roles configuration
-   **/
+   * Validation: Optional; array of role names from top-level roles config
+   */
   readonly ReadWriteSuperRoles?: string[];
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for named access policies containing access rules for data lake bucket permissions. Wraps access policy rules to create reusable, named permission sets that can be applied to multiple buckets within the data lake architecture.
+ * Named access policy wrapping an access rule for reuse across multiple buckets.
  *
- * Use cases: Reusable permission sets; Named access policies; Consistent access control across buckets
+ * Use cases: Reusable permission sets; Consistent access patterns across zones
  *
- * AWS: Configures named AWS S3 bucket policy configurations for reusable access control patterns
+ * AWS: S3 bucket policy rule set
  *
- * Validation: rule is required and must be valid AccessPolicyRuleConfig
+ * Validation: rule required
  */
 export interface AccessPolicyConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required access policy rule configuration defining the specific permissions and roles for this named policy. Contains the detailed permission specifications including prefixes, roles, and access levels that will be applied when this policy is referenced.
+   * The access rule defining prefix, roles, and permission levels for this policy.
    *
-   * Use cases: Permission specification; Role-based access definition; Detailed access control configuration
+   * Use cases: Permission specification; Role-to-prefix mapping
    *
-   * AWS: AWS S3 bucket policy rule configuration for specific permission patterns
+   * AWS: S3 bucket policy conditions
    *
-   * Validation: Must be valid AccessPolicyRuleConfig; required; defines all permission specifications for this policy
-   **/
+   * Validation: Required; valid AccessPolicyRuleConfig
+   */
   readonly rule: AccessPolicyRuleConfig;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for S3 lifecycle transition rules enabling automated data archival and cost optimization. Defines specific transition rules for moving objects between storage classes based on age and access patterns for cost-effective data management.
+ * Storage class transition rule specifying when objects move to a different tier.
  *
- * Use cases: Automated data archival; Cost optimization; Storage class transitions based on data age
+ * Use cases: Progressive archival (IA → Glacier → Deep Archive); Version-aware transitions
  *
- * AWS: Configures AWS S3 lifecycle transition rules for automated object storage class management
+ * AWS: S3 lifecycle transition rule
  *
- * Validation: Days and StorageClass are required; NewerNoncurrentVersions is optional
+ * Validation: Days and StorageClass required; NewerNoncurrentVersions optional
  */
 export interface LifecycleTransitionConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required number of days after object creation when the transition to the specified storage class will occur. Defines the age threshold for automatic data archival and storage class optimization within the lifecycle management strategy.
+   * Number of days after object creation (or becoming noncurrent) to trigger the transition.
    *
-   * Use cases: Age-based archival; Automated storage optimization; Cost-effective data lifecycle management
+   * Use cases: Age-based archival; Cost optimization scheduling
    *
-   * AWS: AWS S3 lifecycle rule transition days for automated storage class changes
+   * AWS: S3 lifecycle transition days
    *
-   * Validation: Must be positive integer; required; defines the age threshold for storage class transition
-   **/
+   * Validation: Required; positive integer
+   */
   readonly Days: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required target storage class for the lifecycle transition enabling cost optimization through appropriate storage tiers. Specifies the destination storage class for objects meeting the age criteria for automated cost optimization.
+   * Target S3 storage class for the transition.
    *
-   * Use cases: Storage class optimization; Cost reduction; Appropriate storage tier selection
+   * Use cases: STANDARD_IA, GLACIER_IR, GLACIER, DEEP_ARCHIVE tier selection
    *
-   * AWS: AWS S3 storage classes for lifecycle transition targets and cost optimization
+   * AWS: S3 storage class
    *
-   * Validation: Must be valid S3 storage class name; required; defines target storage class for transition
-   **/
+   * Validation: Required; valid S3 storage class name
+   */
   readonly StorageClass: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional number of newer noncurrent versions to retain before applying transition rules enabling version-aware lifecycle management. Provides control over version retention during lifecycle transitions for data protection and compliance.
+   * Number of newer noncurrent versions to retain before applying this transition.
+   * Only applicable for noncurrent version transitions.
    *
-   * Use cases: Version-aware lifecycle management; Data protection during transitions; Compliance-driven version retention
+   * Use cases: Version retention during archival; Keeping recent versions accessible
    *
-   * AWS: AWS S3 lifecycle rule noncurrent version transition controls for version management
+   * AWS: S3 lifecycle noncurrent version retention
    *
-   * Validation: Must be non-negative integer if provided; controls version retention during transitions
-   **/
+   * Validation: Optional; non-negative integer
+   */
   readonly NewerNoncurrentVersions?: number;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for S3 lifecycle configuration rules enabling automated data management and cost optimization. Defines complete lifecycle behavior including transitions, expiration, and version management for efficient data lake operations.
+ * Complete lifecycle rule with transitions, expiration, multipart cleanup,
+ * and noncurrent version management. Multiple rules can be grouped into
+ * a named LifecycleConfigurationConfig.
  *
- * Use cases: Comprehensive data lifecycle management; Automated cost optimization; Data retention and expiration policies
+ * Use cases: Multi-tier archival with expiration; Multipart upload cleanup; Version lifecycle
  *
- * AWS: Configures AWS S3 lifecycle configuration rules for complete automated object management
+ * AWS: S3 lifecycle rule
  *
- * Validation: Status is required; all other properties are optional for flexible lifecycle configuration
+ * Validation: Status required ('Enabled'/'Disabled'); all other fields optional
  */
 export interface LifecycleConfigurationRuleConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required status of the lifecycle rule enabling or disabling the rule for lifecycle management. Controls whether the lifecycle rule is active and will be applied to objects matching the rule criteria.
+   * Whether this lifecycle rule is active.
    *
-   * Use cases: Rule activation control; Lifecycle management enablement; Rule-specific configuration control
+   * Use cases: Temporarily disabling rules; Staged rollout
    *
-   * AWS: AWS S3 lifecycle rule status for rule activation and management
+   * AWS: S3 lifecycle rule status
    *
-   * Validation: Must be "Enabled" or "Disabled"; required; controls rule activation and application
-   **/
+   * Validation: Required; 'Enabled' or 'Disabled'
+   */
   readonly Status: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional S3 prefix filter for applying lifecycle rules to specific object paths enabling targeted lifecycle management. Restricts the lifecycle rule application to objects with specific prefixes for granular lifecycle control.
+   * S3 prefix filter restricting which objects this rule applies to.
    *
-   * Use cases: Targeted lifecycle management; Prefix-specific rules; Granular object lifecycle control
+   * Use cases: Prefix-specific archival; Dataset-targeted lifecycle
    *
-   * AWS: AWS S3 lifecycle rule prefix filter for targeted object management
+   * AWS: S3 lifecycle rule prefix filter
    *
-   * Validation: Must be valid S3 prefix string if provided; restricts rule application to specific object paths
-   **/
+   * Validation: Optional; valid S3 prefix string
+   */
   readonly Prefix?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional minimum object size filter for lifecycle rule application enabling size-based lifecycle management. Applies lifecycle rules only to objects larger than the specified size for appropriate lifecycle handling.
+   * Minimum object size (bytes) for rule application.
    *
-   * Use cases: Size-based lifecycle management; Large object handling; Appropriate lifecycle rule application
+   * Use cases: Excluding small metadata files from archival
    *
-   * AWS: AWS S3 lifecycle rule object size filter for size-based management
+   * AWS: S3 lifecycle rule object size filter
    *
-   * Validation: Must be positive integer if provided; defines minimum object size for rule application
-   **/
+   * Validation: Optional; positive integer
+   */
   readonly ObjectSizeGreaterThan?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional maximum object size filter for lifecycle rule application enabling size-based lifecycle management. Applies lifecycle rules only to objects smaller than the specified size for appropriate lifecycle handling.
+   * Maximum object size (bytes) for rule application.
    *
-   * Use cases: Size-based lifecycle management; Small object handling; Appropriate lifecycle rule application
+   * Use cases: Targeting small files for different lifecycle treatment
    *
-   * AWS: AWS S3 lifecycle rule object size filter for size-based management
+   * AWS: S3 lifecycle rule object size filter
    *
-   * Validation: Must be positive integer if provided; defines maximum object size for rule application
-   **/
+   * Validation: Optional; positive integer
+   */
   readonly ObjectSizeLessThan?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional number of days after which incomplete multipart uploads will be automatically aborted enabling storage cleanup and cost control. Prevents incomplete uploads from consuming storage indefinitely and incurring unnecessary costs.
+   * Days after which incomplete multipart uploads are automatically aborted.
    *
-   * Use cases: Storage cleanup; Cost control; Incomplete upload management
+   * Use cases: Storage cleanup; Cost control for abandoned uploads
    *
-   * AWS: AWS S3 lifecycle rule abort incomplete multipart upload for storage cleanup
+   * AWS: S3 lifecycle AbortIncompleteMultipartUpload
    *
-   * Validation: Must be positive integer if provided; defines cleanup period for incomplete uploads
-   **/
+   * Validation: Optional; positive integer
+   */
   readonly AbortIncompleteMultipartUploadAfter?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of transition configurations for current object versions enabling automated storage class optimization. Defines multiple transition rules for moving objects through different storage classes based on age for cost optimization.
+   * Storage class transitions for current object versions.
    *
-   * Use cases: Multi-tier storage optimization; Automated cost reduction; Progressive data archival
+   * Use cases: Progressive archival (STANDARD_IA → GLACIER → DEEP_ARCHIVE)
    *
-   * AWS: AWS S3 lifecycle rule transitions for automated storage class management
+   * AWS: S3 lifecycle transitions
    *
-   * Validation: Must be array of valid LifecycleTransitionConfig if provided; defines storage class transitions
-   **/
+   * Validation: Optional; array of LifecycleTransitionConfig
+   */
   readonly Transitions?: LifecycleTransitionConfig[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional number of days after which current object versions will be automatically deleted enabling data retention management. Provides automatic cleanup of old data for compliance and cost control within the data lifecycle strategy.
+   * Days after creation when current object versions expire (are deleted).
+   * Cannot be set together with ExpiredObjectDeleteMarker.
    *
-   * Use cases: Data retention management; Automatic cleanup; Compliance-driven data expiration
+   * Use cases: Data retention enforcement; Compliance-driven expiration
    *
-   * AWS: AWS S3 lifecycle rule expiration for automated object deletion
+   * AWS: S3 lifecycle expiration
    *
-   * Validation: Must be positive integer if provided; defines retention period before automatic deletion
-   **/
+   * Validation: Optional; positive integer; mutually exclusive with ExpiredObjectDeleteMarker
+   */
   readonly ExpirationDays?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag enabling automatic deletion of expired object delete markers for storage optimization. Removes unnecessary delete markers to reduce storage costs and improve bucket performance in versioned buckets.
+   * Permanently remove expired object delete markers to reduce storage overhead.
+   * Cannot be set together with ExpirationDays.
    *
-   * Use cases: Storage optimization; Delete marker cleanup; Versioned bucket performance improvement
+   * Use cases: Delete marker cleanup in versioned buckets
    *
-   * AWS: AWS S3 lifecycle rule expired object delete marker removal for optimization
+   * AWS: S3 lifecycle ExpiredObjectDeleteMarker
    *
-   * Validation: Boolean value; enables delete marker cleanup when true for storage optimization
-   **/
+   * Validation: Optional; boolean; mutually exclusive with ExpirationDays
+   */
   readonly ExpiredObjectDeleteMarker?: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of transition configurations for noncurrent object versions enabling version-aware storage optimization. Defines transition rules for older versions of objects to optimize storage costs while maintaining version history.
+   * Storage class transitions for noncurrent (previous) object versions.
    *
-   * Use cases: Version-aware storage optimization; Historical data archival; Cost-effective version management
+   * Use cases: Archiving old versions; Cost-effective version retention
    *
-   * AWS: AWS S3 lifecycle rule noncurrent version transitions for version management
+   * AWS: S3 lifecycle noncurrent version transitions
    *
-   * Validation: Must be array of valid LifecycleTransitionConfig if provided; defines version transition rules
-   **/
+   * Validation: Optional; array of LifecycleTransitionConfig
+   */
   readonly NoncurrentVersionTransitions?: LifecycleTransitionConfig[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional number of days after which noncurrent object versions will be automatically deleted enabling version retention management. Provides automatic cleanup of old object versions for compliance and cost control.
+   * Days after which noncurrent versions expire (are permanently deleted).
    *
-   * Use cases: Version retention management; Automatic version cleanup; Cost control for versioned objects
+   * Use cases: Version retention limits; Compliance-driven version cleanup
    *
-   * AWS: AWS S3 lifecycle rule noncurrent version expiration for version management
+   * AWS: S3 lifecycle noncurrent version expiration
    *
-   * Validation: Must be positive integer if provided; defines retention period for noncurrent versions
-   **/
+   * Validation: Optional; positive integer
+   */
   readonly NoncurrentVersionExpirationDays?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional number of noncurrent versions to retain before applying expiration rules enabling controlled version history management. Maintains a specified number of object versions while allowing older versions to be automatically cleaned up for balanced version management.
+   * Number of noncurrent versions to retain before applying expiration.
    *
-   * Use cases: Controlled version history; Balanced version management; Version retention with cleanup
+   * Use cases: Keeping N recent versions; Balanced version history
    *
-   * AWS: AWS S3 lifecycle rule noncurrent version retention for controlled version management
+   * AWS: S3 lifecycle NoncurrentVersionsToRetain
    *
-   * Validation: Must be non-negative integer if provided; defines number of versions to retain before cleanup
-   **/
+   * Validation: Optional; non-negative integer
+   */
   readonly NoncurrentVersionsToRetain?: number;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for named lifecycle configuration collections enabling reusable lifecycle rule sets. Organizes multiple lifecycle rules under named configurations that can be applied to different buckets within the data lake architecture.
+ * Named collection of lifecycle rules that can be applied to data lake buckets.
+ * Each key is a rule name, value is the rule configuration.
  *
- * Use cases: Reusable lifecycle rule sets; Named lifecycle configurations; Consistent lifecycle management across buckets
+ * Use cases: Reusable lifecycle rule sets; Shared archival policies across buckets
  *
- * AWS: Configures named collections of AWS S3 lifecycle rules for reusable lifecycle management patterns
+ * AWS: S3 lifecycle configuration rule collection
  *
- * Validation: Must be object with string keys and LifecycleConfigurationRuleConfig values
+ * Validation: Keys are rule names; values must be valid LifecycleConfigurationRuleConfig
  */
 export interface LifecycleConfigurationConfig {
   [ruleName: string]: LifecycleConfigurationRuleConfig;
@@ -419,48 +401,48 @@ export interface LifecycleConfigurationConfig {
 
 export interface DataLakeConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of named role references for use in access policies enabling role-based access control across data lake buckets. Each role name can reference multiple physical IAM roles for flexible access management and cross-account scenarios.
+   * Named role references for use in access policies. Each key is a logical role name,
+   * value is an array of physical IAM role references (ARN, name, ID, or SSM parameter).
    *
-   * Use cases: Role-based access control; Cross-account data access; Flexible permission management; Multi-role access patterns
+   * Use cases: Multi-role access patterns; Cross-account data access; SSO role mapping
    *
-   * AWS: AWS IAM role references for S3 bucket policy conditions and LakeFormation permissions
+   * AWS: IAM role references for S3 bucket policies and LakeFormation permissions
    *
-   * Validation: Must be object with string keys and MdaaRoleRef array values; roles referenced in access policies must be defined
-   *   **/
+   * Validation: Required; map of role name to MdaaRoleRef[]; roles referenced in accessPolicies must be defined here
+   */
   readonly roles: { [key: string]: MdaaRoleRef[] };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of named access policies defining permission sets for data lake buckets. Each policy specifies read, write, and administrative access for different roles and S3 prefixes within the data lake architecture.
+   * Named access policies defining role-based permissions per S3 prefix.
+   * Policies are referenced by name in bucket configurations.
    *
-   * Use cases: Granular access control; Prefix-based permissions; Role-based data access
+   * Use cases: Reusable permission sets; Prefix-level read/write/super access
    *
-   * AWS: AWS S3 bucket policies and LakeFormation permissions for data access control
+   * AWS: S3 bucket policy rule sets
    *
-   * Validation: Must be object with string keys and AccessPolicyConfig values; policies referenced in buckets must be defined
-   *   **/
+   * Validation: Required; map of policy name to AccessPolicyConfig; policies referenced in buckets must be defined here
+   */
   readonly accessPolicies: { [key: string]: AccessPolicyConfig };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of named lifecycle configurations for automated data management and cost optimization. Defines rules for transitioning data between storage classes and expiring old data based on age and access patterns.
+   * Named lifecycle configurations containing sets of lifecycle rules.
+   * Referenced by name in bucket configurations.
    *
-   * Use cases: Cost optimization; Automated data archival; Compliance-driven data retention
+   * Use cases: Shared archival strategies; Environment-specific retention policies
    *
-   * AWS: AWS S3 lifecycle configuration rules for automated object management
+   * AWS: S3 lifecycle configuration rule collections
    *
-   * Validation: Must be object with string keys and LifecycleConfigurationConfig values if provided
-   *   **/
+   * Validation: Optional; map of config name to LifecycleConfigurationConfig
+   */
   readonly lifecycleConfigurations?: { [configName: string]: LifecycleConfigurationConfig };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of named bucket definitions that define the structure and configuration of the data lake. Each bucket represents a different zone or purpose within the data lake with specific access policies and operational features.
+   * Data lake bucket definitions keyed by zone name (e.g., 'raw', 'transformed', 'curated').
+   * Each bucket gets its own S3 bucket with the specified access policies and features.
    *
-   * Use cases: Multi-zone data lake structure; Raw/processed/curated data separation; Zone-specific configurations
+   * Use cases: Multi-zone data lake; Raw/processed/curated separation; Zone-specific access
    *
-   * AWS: AWS S3 bucket creation and configuration for structured data lake architecture
+   * AWS: S3 buckets with bucket policies, encryption, versioning
    *
-   * Validation: Must be object with string keys and BucketConfig values; bucket names must be unique
-   *   **/
+   * Validation: Required; map of zone name to BucketConfig; zone names must be unique
+   */
   readonly buckets: { [key: string]: BucketConfig };
 }
 

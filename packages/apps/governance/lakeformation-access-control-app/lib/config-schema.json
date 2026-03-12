@@ -541,7 +541,6 @@
         },
         "DomainConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA-compliant DataZone domain configuration providing domain management and integration capabilities. Extends standard CDK properties with MDAA naming conventions and enhanced security features for secure domain governance and catalog integration.\n\nUse cases: DataZone domain configuration; Domain governance setup; Catalog integration; Multi-domain management\n\nAWS: Creates Amazon DataZone domain configuration with KMS integration and Glue catalog connectivity\n\nValidation: All properties except ssmParamBase and domainUnits are required for complete domain configuration",
             "properties": {
                 "blueprintIds": {
                     "additionalProperties": {
@@ -553,63 +552,63 @@
                     "type": "boolean"
                 },
                 "createOutputs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.\n\nUse cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references\n\nAWS: CloudFormation outputs and exports for MDAA construct resource references and external integration\n\nValidation: Boolean value; defaults to true; enables CloudFormation output and export creation",
+                    "description": "Flag controlling CloudFormation output and stack export creation for construct resources",
                     "type": "boolean"
                 },
                 "createParams": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.\n\nUse cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management\n\nAWS: SSM parameter creation for MDAA construct resource references and infrastructure integration\n\nValidation: Boolean value; defaults to true; enables SSM parameter creation for resource references",
+                    "description": "Flag controlling SSM parameter creation for construct resource references enabling",
                     "type": "boolean"
                 },
                 "customResourceRoleName": {
                     "type": "string"
                 },
                 "domainArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ARN for AWS resource identification and IAM policy integration enabling secure domain access control. Provides the complete AWS resource identifier for the domain for IAM policies and cross-service access control.\n\nUse cases: AWS resource identification; IAM policy integration; Cross-service access; Resource-based policies\n\nAWS: Amazon DataZone domain ARN for AWS resource identification and IAM integration\n\nValidation: Must be valid DataZone domain ARN; required; follows AWS ARN pattern for DataZone domains",
+                    "description": "DataZone domain ARN for AWS resource identification and IAM policy integration enabling",
                     "type": "string"
                 },
                 "domainBucketArn": {
                     "type": "string"
                 },
                 "domainBucketUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain Bucket usage policy name. Provides IAM policy name for managing Bucket access and usage permissions for domain operations and data protection.\n\nUse cases: Bucket access management;\n\nAWS: IAM policy name for DataZone domain Bucket usage and access management\n\nValidation: Must be valid IAM policy name; required; defines Bucket access and usage permissions for domain",
+                    "description": "Domain Bucket usage policy name",
                     "type": "string"
                 },
                 "domainId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ID for unique domain identification within AWS enabling cross-service integration and reference. Provides the unique identifier assigned by DataZone service for domain operations and cross-service integration.\n\nUse cases: Unique domain identification; Cross-service integration; Domain operations; Service references\n\nAWS: Amazon DataZone domain ID for unique identification and cross-service integration\n\nValidation: Must be valid DataZone domain ID; required; assigned by DataZone service for unique identification",
+                    "description": "DataZone domain ID for unique domain identification within AWS enabling cross-service",
                     "type": "string"
                 },
                 "domainKmsKeyArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations. Provides encryption at rest for domain data and metadata with customer-controlled key management for enhanced security and compliance.\n\nUse cases: Domain encryption; Data protection compliance; Customer-controlled encryption; Secure domain operations\n\nAWS: AWS KMS key ARN for DataZone domain encryption and secure data protection\n\nValidation: Must be valid KMS key ARN; required; enables customer-managed encryption for domain data",
+                    "description": "KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations",
                     "type": "string"
                 },
                 "domainKmsUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain KMS usage policy name for key access management enabling controlled encryption key usage within the domain. Provides IAM policy name for managing KMS key access and usage permissions for domain operations and data protection.\n\nUse cases: KMS key access management; Encryption policy control; Key usage permissions; Domain security governance\n\nAWS: IAM policy name for DataZone domain KMS key usage and access management\n\nValidation: Must be valid IAM policy name; required; defines KMS key access and usage permissions for domain",
+                    "description": "Domain KMS usage policy name for key access management enabling controlled encryption key",
                     "type": "string"
                 },
                 "domainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain name for domain identification and management enabling unique domain naming within the DataZone service. Provides the primary identifier for the DataZone domain for governance and operational management.\n\nUse cases: Domain identification; Unique naming; Domain management; Service organization\n\nAWS: Amazon DataZone domain name for identification and management within the DataZone service\n\nValidation: Must be unique domain name string; required; used for domain identification and service management",
+                    "description": "DataZone domain name for domain identification and management enabling unique domain naming",
                     "type": "string"
                 },
                 "domainUnitIds": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of domain unit names to identifiers for hierarchical domain organization enabling structured domain management. Provides organizational structure within the domain for improved governance, access control, and operational management.\n\nUse cases: Hierarchical organization; Domain structure; Organizational governance; Structured management\n\nAWS: DataZone domain units for hierarchical organization and structured domain management\n\nValidation: Must be object with string keys and values if provided; enables hierarchical domain organization\n  *",
+                    "description": "Map of domain unit names to identifiers for hierarchical domain organization enabling",
                     "type": "object"
                 },
                 "domainVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain version for domain lifecycle management and versioning control enabling domain evolution tracking. Provides version control for domain configuration changes and lifecycle management for governance and compliance.\n\nUse cases: Version control; Domain lifecycle management; Configuration tracking; Governance compliance\n\nAWS: DataZone domain version for lifecycle management and configuration version control\n\nValidation: Must be valid version string; required; enables domain version control and lifecycle management",
+                    "description": "Domain version for domain lifecycle management and versioning control enabling domain evolution tracking",
                     "type": "string"
                 },
                 "glueCatalogArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone. Provides the Glue catalog resources that will be integrated with the DataZone domain for data discovery and governance.\n\nUse cases: Catalog integration; Data discovery; governance; Cross-service connectivity\n\nAWS: AWS Glue catalog ARNs for DataZone integration and data catalog connectivity\n\nValidation: Must be array of valid Glue catalog ARNs; required; enables catalog integration with DataZone domain",
+                    "description": "Array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "glueCatalogKmsKeyArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone. Provides encryption keys for Glue catalog data accessed through DataZone for data protection and governance.\n\nUse cases: Catalog encryption; Secure catalog integration; Data protection; governance\n\nAWS: AWS KMS key ARNs for Glue catalog encryption in DataZone integration\n\nValidation: Must be array of valid KMS key ARNs; required; enables secure catalog integration with DataZone",
+                    "description": "Array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone",
                     "items": {
                         "type": "string"
                     },
@@ -617,7 +616,7 @@
                 },
                 "naming": {
                     "$ref": "#/definitions/IMdaaResourceNaming",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.\n\nUse cases: Consistent naming; Resource identification; Naming conventions; Operational consistency\n\nAWS: MDAA resource naming for consistent resource identification and naming convention compliance\n\nValidation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming\n  *"
+                    "description": "MDAA naming implementation for consistent resource naming across all MDAA constructs"
                 },
                 "projectIds": {
                     "additionalProperties": {
@@ -629,7 +628,7 @@
                     "type": "boolean"
                 },
                 "ssmParamBase": {
-                    "description": "Q-ENHANCED-PROPERTY\nSSM parameter base path for domain configuration storage enabling centralized configuration management. Provides the base path for storing domain configuration parameters in SSM Parameter Store for centralized management and retrieval.\n\nUse cases: Centralized configuration; SSM integration; Configuration management; Parameter organization\n\nAWS: AWS Systems Manager parameter base path for domain configuration storage and management\n\nValidation: Must be valid SSM parameter path if provided; enables centralized domain configuration management",
+                    "description": "SSM parameter base path for domain configuration storage enabling centralized configuration management",
                     "type": "string"
                 }
             },
@@ -660,7 +659,7 @@
             "additionalProperties": {
                 "type": "string"
             },
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for federation provider mapping enabling identity system integration with Lake Formation. Maps federation provider names to ARNs for seamless integration between external identity systems and AWS Lake Formation permissions.\n\nUse cases: Identity system integration; Federation provider mapping; External identity system connectivity\n\nAWS: Maps federation provider names to AWS IAM identity provider ARNs for Lake Formation integration\n\nValidation: Must be object with string keys and valid ARN values",
+            "description": "Maps federation provider logical names to IAM SAML identity provider ARNs.\nReferenced by PrincipalConfig.federationProvider to resolve federated principal identities.\n\nUse cases: SAML provider registration; Multi-provider federation; Identity system mapping\n\nAWS: IAM SAML identity provider ARNs (arn:aws:iam::account:saml-provider/name)\n\nValidation: String keys to valid IAM identity provider ARNs",
             "type": "object"
         },
         "FunctionReference": {
@@ -684,14 +683,15 @@
         },
         "GrantConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for Lake Formation permission grants enabling database and table-level access control. Defines granular permissions for databases, tables, and principals with flexible permission levels for fine-grained data governance.\n\nUse cases: Granular data access control; Database and table permissions; Fine-grained data governance\n\nAWS: Configures AWS Lake Formation grants for database and table-level access control and permissions\n\nValidation: database and principals are required; permission levels must be valid values",
+            "description": "Defines a Lake Formation grant with database/table scope and permission level.\nGrants are applied to existing Glue databases and optionally scoped to specific tables.\nPermission levels ('read', 'write', 'super') map to Lake Formation permission arrays.\n\nUse cases: Database-scoped read access; Table-level write permissions; Super-user grants for admin principals\n\nAWS: Lake Formation CfnPrincipalPermissions for database and table grants\n\nValidation: database and principals required; permission levels default to 'read'",
             "properties": {
                 "database": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired name of the existing Glue Database for Lake Formation grant application enabling database-level access control. Specifies the target database where permissions will be applied for data access governance and control.\n\nUse cases: Database-level access control; Target database specification; Data governance scope definition\n\nAWS: AWS Glue Database for Lake Formation grant target and access control scope\n\nValidation: Must be valid existing Glue Database name; required; defines grant target database",
+                    "description": "Target Glue database name for the grant. Must already exist in the Glue Catalog.\n\nUse cases: Database-scoped permissions; Grant target specification\n\nAWS: Glue database for Lake Formation grant application\n\nValidation: Required; existing Glue database name",
                     "type": "string"
                 },
                 "databasePermissions": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional database permission level configuration enabling controlled database access with read, write, or super permissions. Defines the level of access granted to principals for database-level operations and management.\n\nUse cases: Database permission control; Access level management; Database operation authorization\n\nAWS: AWS Lake Formation database permissions for access level control and authorization\n\nValidation: Must be 'read', 'write', or 'super' if provided; defaults to 'read'; controls database access level\n  *",
+                    "default": "'read'",
+                    "description": "Database-level permission level. Maps to Lake Formation permissions:\n'read' → [DESCRIBE], 'write' → [DESCRIBE, CREATE_TABLE, ALTER], 'super' → [DESCRIBE, CREATE_TABLE, ALTER, DROP].\n\nUse cases: Database read access; Schema management permissions; Full database admin\n\nAWS: Lake Formation database permissions\n\nValidation: Optional; 'read' | 'write' | 'super'",
                     "enum": [
                         "read",
                         "super",
@@ -700,14 +700,15 @@
                     "type": "string"
                 },
                 "principals": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of principal names for Lake Formation grant recipients enabling controlled access assignment. References configured principals who will receive the specified permissions for the database and table resources.\n\nUse cases: Permission recipient specification; Access assignment; Principal-based access control\n\nAWS: AWS Lake Formation grant principals for permission assignment and access control\n\nValidation: Must be array of valid principal names; required; principals must exist in principals configuration",
+                    "description": "Logical principal names referencing entries in the principals configuration.\nEach named principal receives the specified database and table permissions.\n\nUse cases: Multi-principal grants; Group and role permission assignment\n\nAWS: Lake Formation grant recipients\n\nValidation: Required; array of keys from the principals map",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "tablePermissions": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional table permission level configuration enabling controlled table access with read, write, or super permissions. Defines the level of access granted to principals for table-level operations and data management.\n\nUse cases: Table permission control; Data access level management; Table operation authorization\n\nAWS: AWS Lake Formation table permissions for data access level control and authorization\n\nValidation: Must be 'read', 'write', or 'super' if provided; defaults to 'read'; controls table access level",
+                    "default": "'read'",
+                    "description": "Table-level permission level. Maps to Lake Formation permissions:\n'read' → [SELECT, DESCRIBE], 'write' → [SELECT, DESCRIBE, INSERT, DELETE],\n'super' → [SELECT, DESCRIBE, INSERT, DELETE, ALTER, DROP].\n\nUse cases: Table read access; Data write permissions; Full table admin\n\nAWS: Lake Formation table permissions\n\nValidation: Optional; 'read' | 'write' | 'super'",
                     "enum": [
                         "read",
                         "super",
@@ -716,7 +717,7 @@
                     "type": "string"
                 },
                 "tables": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of table names for Lake Formation grant application enabling table-level access control. Specifies target tables where permissions will be applied, with '*' wildcard support for all tables within the database.\n\nUse cases: Table-level access control; Granular table permissions; Wildcard table access management\n\nAWS: AWS Glue tables for Lake Formation grant targets and table-level access control\n\nValidation: Must be array of valid table names or '*' for all tables if provided; enables table-specific access",
+                    "description": "Table names within the database for table-level grants.\nUse '*' to grant on all tables. If omitted, only database-level permissions apply.\n\nUse cases: Table-level access control; Selective table permissions; Wildcard table grants\n\nAWS: Glue table names for Lake Formation table-level grants\n\nValidation: Optional; array of existing table names or '*'",
                     "items": {
                         "type": "string"
                     },
@@ -1015,11 +1016,10 @@
         },
         "IMdaaResourceNaming": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nInterface specification for MDAA resource naming implementations that generate consistent, unique, and compliant AWS resource names. Implementations must support multi-tenant deployments by ensuring naming semantics prevent collisions across domains, environments, and modules within the same AWS account.\n\nUse cases: Custom naming for regulatory compliance; Integration with enterprise naming standards; Multi-tenant resource isolation\n\nAWS: Generates names for all AWS resources including S3 buckets, IAM roles, Glue databases, CloudFormation stacks, SSM parameters, and CloudFormation exports\n\nValidation: All generated names must comply with AWS service-specific naming requirements and be unique within account scope",
             "properties": {
                 "props": {
                     "$ref": "#/definitions/MdaaResourceNamingConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nConfiguration properties containing organizational context and CDK node access for the naming implementation. Provides the foundational data required to generate consistent resource names across all MDAA modules.\n\nUse cases: Access to org/env/domain/module context; CDK context retrieval for custom naming; Immutable naming configuration\n\nAWS: Source data for all AWS resource name generation\n\nValidation: Must contain valid MdaaResourceNamingConfig with all required properties"
+                    "description": "Configuration properties containing organizational context and CDK node access for the naming implementation"
                 }
             },
             "required": [
@@ -1778,14 +1778,13 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
+                    "description": "CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed",
                     "type": "string"
                 },
                 "suppressions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
+                    "description": "Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -1813,10 +1812,9 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
+                    "description": "Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -1830,26 +1828,25 @@
         },
         "MdaaResourceNamingConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA resource naming implementations that standardize AWS resource naming across domains, environments, and modules. This interface enables consistent, collision-free resource naming in multi-tenant MDAA deployments by providing organizational context and CDK node access for custom naming strategies.\n\nUse cases: Multi-domain data lake deployments requiring unique resource names; Cross-account data mesh architectures with consistent naming; Custom naming implementations for compliance requirements\n\nAWS: Configures naming patterns for all AWS resources deployed by MDAA modules including S3 buckets, IAM roles, Glue databases, and CloudFormation stacks\n\nValidation: All properties required; org/env/domain/moduleName must be valid AWS resource name components (alphanumeric, hyphens, underscores)",
             "properties": {
                 "cdkNode": {
                     "$ref": "#/definitions/Node",
-                    "description": "Q-ENHANCED-PROPERTY\nCDK construct node providing access to context values for custom naming implementations. Enables retrieval of additional configuration through tryGetContext() for advanced naming strategies beyond the standard org/env/domain/module pattern.\n\nUse cases: Custom naming with environment-specific prefixes; Integration with external naming services; Context-driven naming for compliance requirements\n\nAWS: CDK context system for CloudFormation template generation\n\nValidation: Must be valid CDK Node instance with accessible context\n  *"
+                    "description": "CDK construct node providing access to context values for custom naming implementations"
                 },
                 "domain": {
-                    "description": "Q-ENHANCED-PROPERTY\nDomain identifier from MDAA configuration representing logical business or organizational boundaries within the data architecture. Forms the third component of the default naming pattern and enables data mesh architectures with domain-specific resource isolation.\n\nUse cases: Data mesh domain separation; Line-of-business resource isolation; Cross-domain data sharing with clear ownership\n\nAWS: Domain component in all AWS resource names, SSM parameter paths, and CloudFormation export names\n\nValidation: Must be valid AWS resource name component (typically business domain names like 'finance', 'marketing', 'shared')",
+                    "description": "Domain identifier from MDAA configuration representing logical business or organizational boundaries",
                     "type": "string"
                 },
                 "env": {
-                    "description": "Q-ENHANCED-PROPERTY\nEnvironment identifier from MDAA configuration that distinguishes deployment stages within the same domain. Forms the second component of the default naming pattern enabling parallel dev/test/prod deployments without resource conflicts.\n\nUse cases: Multi-stage deployments in same account; Environment-specific resource isolation; Progressive deployment strategies\n\nAWS: Environment component in all AWS resource names and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically 'dev', 'test', 'prod', 'staging')",
+                    "description": "Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain",
                     "type": "string"
                 },
                 "moduleName": {
-                    "description": "Q-ENHANCED-PROPERTY\nModule name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment. Forms the final component of the default naming pattern and enables multiple instances of the same module type within the same scope.\n\nUse cases: Multiple data lake instances per domain; Separate analytics workloads; Module-specific resource grouping\n\nAWS: Module component in all AWS resource names, SSM parameter paths, and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically module function like 'datalake', 'warehouse', 'analytics')",
+                    "description": "Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment",
                     "type": "string"
                 },
                 "org": {
-                    "description": "Q-ENHANCED-PROPERTY\nOrganization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names. Forms the first component of the default naming pattern and ensures global uniqueness across multiple MDAA deployments.\n\nUse cases: Multi-organization AWS accounts; Shared service accounts with multiple tenants; Resource name collision prevention\n\nAWS: Prefix for all AWS resource names including S3 buckets, IAM roles, and CloudFormation stacks\n\nValidation: Must be valid AWS resource name component (3-63 characters, alphanumeric and hyphens only, no consecutive hyphens)",
+                    "description": "Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names",
                     "type": "string"
                 }
             },
@@ -1864,30 +1861,29 @@
         },
         "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for referencing IAM roles across MDAA modules using multiple identification methods. Enables flexible role resolution for cross-module dependencies, external role integration, and SSO-managed roles while supporting both mutable and immutable role references.\n\nUse cases: Cross-module IAM role sharing; External role integration from Landing Zone Accelerator; SSO-managed role references for federated access\n\nAWS: References AWS IAM roles for service permissions, cross-account access, and federated identity integration\n\nValidation: At least one of name, arn, or id must be provided; arn must be valid IAM role ARN format; name must be valid IAM role name",
             "properties": {
                 "arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nFull IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.\n\nUse cases: Cross-account role references; External role integration; Precise role identification with account/region context\n\nAWS: AWS IAM role ARN for cross-account permissions and explicit role targeting\n\nValidation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)",
+                    "description": "Full IAM role ARN for cross-account role references and explicit role identification.\n\nUse cases: Cross-account role references; Explicit role binding; Multi-account deployments\n\nAWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)\n\nValidation: Optional; must be a valid IAM role ARN if provided",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.\n\nUse cases: Stable role references across name changes; Precise role identification; Role references in automated systems\n\nAWS: AWS IAM role unique ID for stable role identification\n\nValidation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)",
+                    "description": "IAM role unique identifier for role resolution using the role's AWS-generated ID.\n\nUse cases: Stable role references; Role resolution by unique ID; Immutable role binding\n\nAWS: IAM role unique ID (e.g., AROA...)\n\nValidation: Optional; must be a valid IAM role unique ID if provided",
                     "type": "string"
                 },
                 "immutable": {
-                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.\n\nUse cases: External role protection; System role preservation; Landing Zone Accelerator role integration\n\nAWS: Role modification protection flag for IAM role management\n\nValidation: Boolean value, defaults to false if not specified",
+                    "description": "Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.\n\nUse cases: Pre-existing role protection; Externally managed roles; Read-only role references\n\nAWS: Controls whether MDAA attaches policies or modifies the referenced IAM role\n\nValidation: Optional boolean; defaults to false",
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.\n\nUse cases: Same-account role references; MDAA-generated role references; Simple role configuration\n\nAWS: AWS IAM role name for role lookup and permission assignment\n\nValidation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)",
+                    "description": "IAM role name for role resolution within the same AWS account.\n\nUse cases: Same-account role references; Role name-based resolution; Local IAM role binding\n\nAWS: IAM role name resolved via GetRole within the deployment account\n\nValidation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution",
                     "type": "string"
                 },
                 "refId": {
-                    "description": "Q-ENHANCED-PROPERTY\nUnique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.\n\nUse cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging\n\nAWS: Logical identifier for IAM role references in MDAA configurations\n\nValidation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended",
+                    "description": "Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.\n\nUse cases: Role reference identification; Configuration deduplication; Role lookup key\n\nAWS: Logical identifier for IAM role references within MDAA configuration\n\nValidation: Optional; must be unique within the configuration scope if provided",
                     "type": "string"
                 },
                 "sso": {
-                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.\n\nUse cases: AWS Identity Center integration; Federated user access; SSO-managed role references\n\nAWS: AWS Identity Center (SSO) role resolution for federated access\n\nValidation: Boolean value, implies immutable=true when set to true",
+                    "description": "Flag indicating the role should be resolved as an AWS SSO auto-generated role.\n\nUse cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access\n\nAWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention\n\nValidation: Optional boolean; defaults to false",
                     "type": "boolean"
                 }
             },
@@ -1986,17 +1982,16 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
+                    "description": "Human-readable description explaining the purpose and scope of the Service Catalog constraint",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
+                    "description": "Object containing named constraint rules that define the validation logic for Service Catalog product parameters",
                     "type": "object"
                 }
             },
@@ -2008,14 +2003,13 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
-                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
+                    "description": "Constraint assertion expression that defines the validation logic for Service Catalog product parameters",
                     "type": "string"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
+                    "description": "Human-readable description explaining the purpose and requirements of the constraint assertion",
                     "type": "string"
                 }
             },
@@ -2031,10 +2025,9 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
+                    "description": "Array of constraint assertions that define the validation logic to be applied when the condition is met",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
@@ -2042,7 +2035,7 @@
                 },
                 "condition": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
+                    "description": "Condition configuration that determines when the constraint rule assertions should be evaluated"
                 }
             },
             "required": [
@@ -2053,15 +2046,14 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
+                    "description": "Constraint configuration that defines additional validation rules for the Service Catalog product parameter"
                 },
                 "props": {
                     "$ref": "#/definitions/CfnParameterProps",
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
+                    "description": "CloudFormation parameter properties that define the parameter characteristics including type,"
                 }
             },
             "required": [
@@ -2071,29 +2063,28 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
+                    "description": "IAM role name that will be used to launch the Service Catalog product",
                     "type": "string"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
+                    "description": "Display name for the Service Catalog product that will be visible to end users in the Service Catalog console",
                     "type": "string"
                 },
                 "owner": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
+                    "description": "Owner identifier for the Service Catalog product, typically representing the team or organization",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "description": "Object containing named parameter configurations for the Service Catalog product",
                     "type": "object"
                 },
                 "portfolio_arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
+                    "description": "ARN of the AWS Service Catalog portfolio where the product will be associated",
                     "type": "string"
                 },
                 "portfolio_bucket_name": {
@@ -2247,23 +2238,23 @@
         },
         "PrincipalConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for Lake Formation principal management enabling identity and access control configuration. Defines principal types including federated users, groups, and IAM roles for flexible Lake Formation permission management across different identity systems.\n\nUse cases: Identity management; Federated access control; Cross-identity system integration\n\nAWS: Configures AWS Lake Formation principals for identity-based access control and permission management\n\nValidation: At least one principal type must be specified; federationProvider must exist if referenced",
+            "description": "Defines a Lake Formation principal for config-level grant assignment.\nSupports federated groups, federated users, and IAM roles. Federated principals\nrequire a matching federationProvider name from the federationProviders config section.\n\nUse cases: Federated group access; Individual user permissions; IAM role-based grants\n\nAWS: Lake Formation principals (federated via IAM SAML providers or direct IAM roles)\n\nValidation: At least one principal type required; federationProvider must reference a configured provider",
             "properties": {
                 "federatedGroup": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional federated group name for Lake Formation grants enabling group-based access control through identity federation. Provides group-level permissions for federated identity systems integrated with Lake Formation for scalable access management.\n\nUse cases: Group-based access control; Federated identity integration; Scalable permission management\n\nAWS: AWS Lake Formation federated group principals for identity-based access control\n\nValidation: Must be valid federated group name if provided; requires federationProvider configuration",
+                    "description": "Federated group name for group-based Lake Formation permissions.\nResolved with the referenced federationProvider to construct the principal identity.\n\nUse cases: Active Directory group access; Enterprise group-based governance\n\nAWS: Lake Formation federated group principal via IAM SAML provider\n\nValidation: Optional; requires federationProvider when specified",
                     "type": "string"
                 },
                 "federatedUser": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional federated user name for Lake Formation grants enabling individual user access control through identity federation. Provides user-specific permissions for federated identity systems integrated with Lake Formation for granular access management.\n\nUse cases: Individual user access; Federated identity integration; Granular permission management\n\nAWS: AWS Lake Formation federated user principals for identity-based access control\n\nValidation: Must be valid federated user name if provided; requires federationProvider configuration",
+                    "description": "Federated user name for individual Lake Formation permissions.\nResolved with the referenced federationProvider to construct the principal identity.\n\nUse cases: Individual user data access; Federated user-specific permissions\n\nAWS: Lake Formation federated user principal via IAM SAML provider\n\nValidation: Optional; requires federationProvider when specified",
                     "type": "string"
                 },
                 "federationProvider": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional federation provider name reference linking to configured identity providers enabling federated access integration. References federation provider configuration for identity system integration with Lake Formation permissions.\n\nUse cases: Identity provider integration; Federated access configuration; Cross-system identity management\n\nAWS: AWS IAM identity provider integration for Lake Formation federated access\n\nValidation: Must reference valid federation provider from federationProviders configuration if provided",
+                    "description": "Logical name of a federation provider defined in the federationProviders config section.\nResolved to the provider ARN at deployment time.\n\nUse cases: SAML provider reference; Identity provider mapping\n\nAWS: IAM SAML identity provider reference\n\nValidation: Optional; must match a key in federationProviders if specified",
                     "type": "string"
                 },
                 "role": {
                     "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role reference for Lake Formation grants enabling role-based access control within AWS identity systems. Provides IAM role-based permissions for native AWS identity integration with Lake Formation access management.\n\nUse cases: IAM role-based access; Native AWS identity integration; Role-based permission management\n\nAWS: AWS IAM roles for Lake Formation role-based access control and permission management\n\nValidation: Must be valid MdaaRoleRef if provided; enables IAM role-based Lake Formation access"
+                    "description": "IAM role reference for role-based Lake Formation permissions.\nCan be specified by ARN, name, or SSM parameter reference.\n\nUse cases: IAM role-based data access; Service role permissions; Cross-account role grants\n\nAWS: IAM role for Lake Formation grant assignment\n\nValidation: Optional; valid MdaaRoleRef"
                 }
             },
             "type": "object"
@@ -2317,25 +2308,26 @@
         },
         "ResourceLinkConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for Lake Formation resource link management enabling cross-account and cross-database data sharing. Defines resource links for sharing databases across accounts with controlled access and permission management.\n\nUse cases: Cross-account data sharing; Database resource linking; Controlled data access across accounts\n\nAWS: Configures AWS Lake Formation resource links for cross-account database sharing and access\n\nValidation: targetDatabase is required; accounts must be valid AWS account IDs if provided",
+            "description": "Defines a Lake Formation resource link for cross-account database sharing.\nResource links create local references to databases in other accounts,\nenabling cross-account queries and data sharing with controlled DESCRIBE permissions.\n\nUse cases: Cross-account database sharing; Data mesh resource linking; Federated catalog access\n\nAWS: Lake Formation resource links (CfnDatabase with TargetDatabase)\n\nValidation: targetDatabase required; account IDs must be valid 12-digit AWS account IDs",
             "properties": {
                 "fromAccount": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional account ID where the resource link will be created enabling flexible resource link deployment. Specifies the destination account for resource link creation, defaulting to local account if not specified.\n\nUse cases: Resource link deployment control; Destination account specification; Flexible link placement\n\nAWS: AWS account ID for Lake Formation resource link deployment and management\n\nValidation: Must be valid AWS account ID if provided; defaults to local account for resource link creation",
+                    "default": "local account",
+                    "description": "AWS account ID where the resource link will be created.\nIf omitted, the resource link is created in the local (deployment) account.\n\nUse cases: Remote resource link deployment; Cross-account link placement\n\nAWS: Destination account for resource link creation\n\nValidation: Optional; 12-digit AWS account ID",
                     "type": "string"
                 },
                 "grantPrincipals": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of principal names for resource link DESCRIBE permissions enabling controlled resource link access. Grants DESCRIBE permissions to specified principals for resource link visibility and metadata access.\n\nUse cases: Resource link access control; Metadata access permissions; Controlled resource link visibility\n\nAWS: AWS Lake Formation resource link DESCRIBE permissions for access control\n\nValidation: Must be array of valid principal names if provided; principals must exist in principals configuration",
+                    "description": "Logical principal names granted DESCRIBE access to the resource link.\nReferences entries in the principals configuration map.\n\nUse cases: Resource link visibility control; Metadata access permissions\n\nAWS: Lake Formation DESCRIBE grants on resource link\n\nValidation: Optional; array of keys from the principals map",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "targetAccount": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional target account ID where the source database exists enabling cross-account resource link configuration. Specifies the AWS account containing the database to be shared through the resource link.\n\nUse cases: Cross-account resource sharing; Source account specification; Multi-account data access\n\nAWS: AWS account ID for Lake Formation cross-account resource link configuration\n\nValidation: Must be valid AWS account ID if provided; defines source account for resource link",
+                    "description": "AWS account ID where the target database exists.\nRequired for cross-account resource links.\n\nUse cases: Cross-account database sharing; Multi-account data access\n\nAWS: Source account for Lake Formation resource link\n\nValidation: Optional; 12-digit AWS account ID",
                     "type": "string"
                 },
                 "targetDatabase": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired name of the target database for resource link creation enabling cross-account database sharing. Specifies the source database that will be shared through the resource link for cross-account data access.\n\nUse cases: Cross-account database sharing; Target database specification; Resource link source definition\n\nAWS: AWS Lake Formation resource link target database for cross-account sharing\n\nValidation: Must be valid database name; required; defines the database to be shared via resource link",
+                    "description": "Name of the target database to link to. Must exist in the target account's Glue Catalog.\n\nUse cases: Cross-account database reference; Resource link target specification\n\nAWS: Glue database name in the target account\n\nValidation: Required; existing database name",
                     "type": "string"
                 }
             },
@@ -2858,13 +2850,13 @@
     "properties": {
         "federationProviders": {
             "$ref": "#/definitions/FederationProviderConfig",
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of federation provider names to ARNs enabling identity system integration with Lake Formation. Maps external identity providers to AWS IAM identity provider ARNs for seamless federated access integration.\n\nUse cases: Identity system integration; Federation provider mapping; External identity connectivity\n\nAWS: AWS IAM identity provider ARNs for Lake Formation federated access integration\n\nValidation: Must be object with string keys and valid ARN values if provided; enables federated identity integration"
+            "description": "Maps federation provider logical names to IAM SAML identity provider ARNs.\nReferenced by PrincipalConfig.federationProvider to resolve federated identities.\n\nUse cases: SAML provider registration; Multi-provider federation; Identity system mapping\n\nAWS: IAM SAML identity provider ARNs\n\nValidation: Optional; map of string keys to valid IAM identity provider ARNs"
         },
         "grants": {
             "additionalProperties": {
                 "$ref": "#/definitions/GrantConfig"
             },
-            "description": "Q-ENHANCED-PROPERTY\nRequired map of grant names to Lake Formation grant configurations enabling database and table-level access control. Provides granular permission management for databases, tables, and principals with flexible access levels for fine-grained data governance.\n\nUse cases: Granular permission management; Database and table access control; Fine-grained data governance\n\nAWS: AWS Lake Formation grants for database and table-level access control\n\nValidation: Must be object with string keys and valid GrantConfig values; required; defines all permission grants\n  *",
+            "description": "Named Lake Formation grant configurations defining database/table-level access control.\nEach grant specifies a target database, optional tables, permission levels, and recipient principals.\nThe module deploys CfnPrincipalPermissions resources for each grant/principal combination.\n\nUse cases: Database-scoped read access; Table-level write permissions; Multi-principal grant management\n\nAWS: Lake Formation CfnPrincipalPermissions for database and table grants\n\nValidation: Required; map of string keys to GrantConfig",
             "type": "object"
         },
         "nag_suppressions": {
@@ -2875,14 +2867,14 @@
             "additionalProperties": {
                 "$ref": "#/definitions/PrincipalConfig"
             },
-            "description": "Q-ENHANCED-PROPERTY\nRequired map of principal names to principal configurations enabling identity and access management. Defines all principals including federated users, groups, and IAM roles for flexible Lake Formation permission assignment across identity systems.\n\nUse cases: Identity management; Principal configuration; Cross-identity system integration\n\nAWS: AWS Lake Formation principals for identity-based access control and permission management\n\nValidation: Must be object with string keys and valid PrincipalConfig values; required; defines all access principals\n  *",
+            "description": "Named principal definitions for Lake Formation grant assignment.\nEach principal can be a federated group, federated user, or IAM role.\nReferenced by name in grant and resource link configurations.\n\nUse cases: Federated group/user access; IAM role-based grants; Multi-principal governance\n\nAWS: Lake Formation principals (federated via IAM SAML providers or direct IAM roles)\n\nValidation: Required; map of string keys to PrincipalConfig",
             "type": "object"
         },
         "resourceLinks": {
             "additionalProperties": {
                 "$ref": "#/definitions/ResourceLinkConfig"
             },
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of resource link names to resource link configurations enabling cross-account database sharing and access. Provides controlled data sharing across AWS accounts with permission management and access control for collaborative data architectures.\n\nUse cases: Cross-account data sharing; Database resource linking; Collaborative data access across accounts\n\nAWS: AWS Lake Formation resource links for cross-account database sharing and controlled access\n\nValidation: Must be object with string keys and valid ResourceLinkConfig values if provided; enables cross-account sharing\n  *",
+            "description": "Named resource link configurations for cross-account database sharing.\nEach resource link creates a local Glue database reference pointing to a database\nin another account, with optional DESCRIBE grants for specified principals.\n\nUse cases: Cross-account database sharing; Data mesh resource linking; Federated catalog access\n\nAWS: Lake Formation resource links (CfnDatabase with TargetDatabase)\n\nValidation: Optional; map of string keys to ResourceLinkConfig",
             "type": "object"
         },
         "sagemakerBlueprint": {

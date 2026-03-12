@@ -41,37 +41,35 @@ export function mergeDeep<T>(target: T, ...sources: Array<T>): T {
 }
 export interface GlueJobConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for job integration and resource autowiring with existing project infrastructure. Enables seamless integration with deployed project resources including databases, IAM roles, and security configurations for coordinated data processing operations.
+   * DataOps project name for job resource autowiring (databases, roles, security).
    *
-   * Use cases: Project resource integration; Coordinated data processing; Infrastructure autowiring and resource sharing
+   * Use cases: Project integration; Shared infrastructure reuse
    *
-   * AWS: AWS Glue job project integration for resource coordination and shared infrastructure
+   * AWS: DataOps project reference
    *
-   * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
-   **/
+   * Validation: Optional; must match an existing deployed project
+   */
   readonly projectName?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of job names to job definitions enabling multiple ETL processing workflows and data transformation operations. Provides job configuration for different data sources, transformation logic, and output destinations within the data lake architecture.
+   * Map of job names to Glue job definitions for ETL processing and data transformation.
    *
-   * Use cases: Multi-job ETL workflows; Data transformation operations; processing pipeline configuration
+   * Use cases: Multi-job ETL workflows; Data transformation pipelines
    *
-   * AWS: AWS Glue job definitions for ETL processing and data transformation workflows
+   * AWS: AWS Glue jobs
    *
-   * Validation: Must be object with string keys and valid JobConfig values; required; defines all job processing operations
-   *   **/
+   * Validation: Required; map of string to JobConfig
+   */
   readonly jobs: { [key: string]: JobConfig };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of job template names to reusable job configurations enabling consistent job patterns and configuration inheritance. Provides template-based job configuration for standardized processing patterns, reducing duplication and ensuring consistency across similar jobs.
+   * Reusable job templates that can be inherited by job definitions via the `template` field.
+   * Template properties are deep-merged with job-specific overrides.
    *
-   * Use cases: Reusable job patterns; Configuration inheritance; Standardized processing templates and consistency
+   * Use cases: Standardized job patterns; Configuration inheritance; Reduced duplication
    *
-   * AWS: AWS Glue job template configurations for reusable processing patterns and inheritance
+   * AWS: Glue job configuration templates
    *
-   * Validation: Must be object with string keys and valid JobConfig values if provided; enables template inheritance
-   *   **/
+   * Validation: Optional; map of template name to JobConfig
+   */
   readonly templates?: { [key: string]: JobConfig };
 }
 

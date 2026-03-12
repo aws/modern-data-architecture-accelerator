@@ -18,95 +18,94 @@ import * as configSchema from './config-schema.json';
 import { ConfigurationElement } from '@aws-mdaa/config';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for managed policy generation providing policy document and suppression management. Enables creation of IAM managed policies with custom policy documents, CDK Nag suppressions, and flexible naming conventions for compliant policy management.
+ * Managed policy generation configuration with policy document and CDK Nag suppressions.
  *
- * Use cases: Custom managed policy creation; Policy document management; CDK Nag suppression handling
+ * Use cases: Custom IAM managed policy creation; Reusable permission sets
  *
- * AWS: Creates AWS IAM managed policies with custom policy documents and compliance controls
+ * AWS: IAM managed policy with custom policy document
  *
- * Validation: policyDocument is required; suppressions and verbatimPolicyName are optional
+ * Validation: policyDocument required; suppressions and verbatimPolicyName optional
  */
 export interface GenerateManagedPolicyConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required policy document configuration element defining the IAM policy permissions and statements. Specifies the complete policy document with permissions, resources, and conditions for the managed policy creation.
+   * Policy document defining IAM permissions and statements.
    *
-   * Use cases: IAM policy definition; Permission specification; Resource access control configuration
+   * Use cases: IAM permission specification; Resource access control
    *
-   * AWS: AWS IAM managed policy document for permission and access control definition
+   * AWS: IAM managed policy document
    *
-   * Validation: Must be valid ConfigurationElement; required; defines complete policy document and permissions
-   **/
+   * Validation: Required; must be valid IAM policy document structure
+   */
   readonly policyDocument: ConfigurationElement;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of CDK Nag suppression configurations for policy compliance management enabling controlled suppression of specific compliance rules. Provides mechanism to suppress specific CDK Nag rules when justified for policy requirements.
+   * CDK Nag suppressions for justified policy exceptions.
    *
-   * Use cases: Compliance rule suppression; CDK Nag management; Justified policy exception handling
+   * Use cases: Controlled compliance rule suppression with documented justification
    *
-   * AWS: CDK Nag suppression configuration for IAM policy compliance management
+   * AWS: CDK Nag suppression configuration for IAM policy compliance
    *
-   * Validation: Must be array of valid SuppressionProps if provided; enables controlled compliance rule suppression
-   **/
+   * Validation: Optional; array of valid SuppressionProps
+   */
   readonly suppressions?: SuppressionProps[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag controlling policy naming convention enabling verbatim policy names without MDAA prefixes. When enabled, uses the exact policy name specified without applying MDAA naming conventions for specific naming requirements.
+   * When true, uses the exact policy name without MDAA naming prefixes.
    *
-   * Use cases: Exact policy naming; Custom naming requirements; Integration with existing policy naming schemes
+   * Use cases: Integration with existing naming schemes; Exact policy name requirements
    *
-   * AWS: AWS IAM managed policy naming configuration for custom naming patterns
+   * AWS: IAM managed policy naming control
    *
-   * Validation: Boolean value; controls policy naming convention application; enables verbatim naming when true
-   **/
+   * Validation: Optional; boolean
+   * @default false
+   */
   readonly verbatimPolicyName?: boolean;
 }
 
 export interface RolesConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of named IAM roles to generate providing configuration including trust policies, permissions, and federation settings. Enables automated provisioning of compliant IAM roles for data platform services and users.
+   * Map of role names to role generation configurations.
+   * Each entry creates an IAM role with trust policies, persona-based permissions,
+   * and optional managed policy attachments.
    *
-   * Use cases: Service role automation; User role provisioning; Cross-account access role creation
+   * Use cases: Service role automation; User role provisioning; Cross-account access roles
    *
-   * AWS: AWS IAM role creation with trust policies, permissions, and MDAA naming conventions
+   * AWS: IAM roles with trust policies and managed policy attachments
    *
-   * Validation: Must be object with string keys and GenerateRoleProps values if provided; role names must be unique
-   *   **/
+   * Validation: Optional; keys are unique role names, values must be valid GenerateRoleProps
+   */
   readonly generateRoles?: { [key: string]: GenerateRoleProps };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of named managed policies to generate with custom policy documents and suppression configurations. Enables creation of reusable permission sets for consistent access control across multiple roles and services.
+   * Map of policy names to managed policy generation configurations.
+   * Each entry creates a reusable IAM managed policy with custom permissions.
    *
-   * Use cases: Reusable permission sets; Standardized access policies; Custom permission templates
+   * Use cases: Reusable permission sets; Standardized access policies
    *
-   * AWS: AWS IAM managed policy creation with custom policy documents and MDAA naming
+   * AWS: IAM managed policies with custom policy documents
    *
-   * Validation: Must be object with string keys and GenerateManagedPolicyConfig values if provided; policy names must be unique
-   *   **/
+   * Validation: Optional; keys are unique policy names, values must be valid GenerateManagedPolicyConfig
+   */
   readonly generatePolicies?: { [key: string]: GenerateManagedPolicyConfig };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of federation configurations for SAML or OIDC identity provider integration. Enables federated access to AWS resources through external identity providers for centralized identity management and SSO capabilities.
+   * Map of federation names to SAML/OIDC identity provider configurations.
+   * Enables federated access via existing providers (providerArn) or new ones (samlDoc).
    *
-   * Use cases: SAML federation setup; OIDC provider integration; Centralized identity management
+   * Use cases: SAML federation setup; SSO integration; External identity provider trust
    *
-   * AWS: AWS IAM identity provider configuration for federated access and SSO integration
+   * AWS: IAM SAML identity providers for federated authentication
    *
-   * Validation: Must be object with string keys and FederationProps values if provided; federation names must be unique
-   *   **/
+   * Validation: Optional; keys are unique federation names, values must be valid FederationProps
+   */
   readonly federations?: { [key: string]: FederationProps };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag controlling automatic generation of MDAA persona-based managed policies for common data platform roles. When enabled, creates standardized permission sets for data engineers, analysts, and administrators following MDAA best practices.
+   * When true, creates MDAA persona-based managed policies for common data platform roles
+   * (data-admin, data-engineer, data-scientist).
    *
-   * Use cases: Standardized role personas; Best practice permissions; Simplified role management
+   * Use cases: Standardized role personas; Best-practice permission sets
    *
-   * AWS: AWS IAM managed policy generation for common data platform role patterns
+   * AWS: IAM managed policies for predefined data platform personas
    *
-   * Validation: Boolean value; defaults to true; enables automatic persona policy creation when true
-   **/
+   * Validation: Optional; boolean
+   * @default true
+   */
   readonly createPersonaManagedPolicies?: boolean;
 }
 
@@ -124,28 +123,8 @@ export class RolesConfigParser extends MdaaAppConfigParser<RolesConfigContents> 
       const configPolicyProps = nameAndConfigPolicyProps[1];
       const def: GenerateManagedPolicyWithNameProps = {
         name: policyName,
-        /**
-         * Q-ENHANCED-PROPERTY
-         * Required IAM policy document defining permissions and access controls for the managed policy. Provides the complete policy document structure including statements, actions, resources, and conditions for IAM permission management and access control.
-         *
-         * Use cases: Permission definition; Access control; IAM policy creation; Security management; Resource access control
-         *
-         * AWS: IAM managed policy document for permission and access control definition
-         *
-         * Validation: Must be valid IAM policy document JSON; required for policy creation and permission management
-         */
         policyDocument: PolicyDocument.fromJson(configPolicyProps.policyDocument),
         suppressions: configPolicyProps.suppressions,
-        /**
-         * Q-ENHANCED-PROPERTY
-         * Optional flag controlling whether to use the exact policy name without MDAA naming conventions for specific policy naming requirements. When enabled, uses the exact policy name specified without applying MDAA naming transformations for compliance or integration requirements.
-         *
-         * Use cases: Exact policy naming; Compliance requirements; Integration constraints; Specific naming needs; Policy name preservation
-         *
-         * AWS: IAM managed policy name control for exact policy naming without naming convention modifications
-         *
-         * Validation: Boolean value; defaults to false; enables exact policy naming when true
-         */
         verbatimPolicyName: configPolicyProps.verbatimPolicyName,
       };
       return def;

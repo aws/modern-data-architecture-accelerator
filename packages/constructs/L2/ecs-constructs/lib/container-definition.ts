@@ -30,16 +30,7 @@ export interface MdaaECSContainerDefinitionProps extends MdaaConstructProps {
   readonly taskDefinition: TaskDefinition;
   readonly image: ContainerImage;
   readonly containerName?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional command array for container execution overriding the default CMD built into the container image. Provides custom command execution for container startup and application initialization with proper command-line argument handling.
-   *
-   * Use cases: Custom command execution; Application startup; Command override; Container initialization
-   *
-   * AWS: Docker container command for custom execution and application startup configuration
-   *
-   * Validation: Must be array of command strings if provided; overrides container image CMD when specified
-   **/
+  /** Command array for container execution overriding the default CMD built into the container image */
   readonly command?: string[];
   readonly cpu?: number;
   readonly disableNetworking?: boolean;
@@ -50,16 +41,7 @@ export interface MdaaECSContainerDefinitionProps extends MdaaConstructProps {
   };
   readonly dockerSecurityOptions?: string[];
   readonly entryPoint?: string[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional environment variables map for container configuration enabling application configuration and runtime parameter passing. Provides environment variables for container applications with secure configuration management and runtime customization.
-   *
-   * Use cases: Application configuration; Runtime parameters; Environment setup; Configuration management
-   *
-   * AWS: Container environment variables for application configuration and runtime parameter management
-   *
-   * Validation: Must be object with string keys and values if provided; enables application configuration
-   *   **/
+  /** Environment variables map for container configuration enabling application configuration */
   readonly environment?: {
     [key: string]: string;
   };

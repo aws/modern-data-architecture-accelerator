@@ -12,14 +12,14 @@ import * as configSchema from './config-schema.json';
 
 export interface DataScienceTeamConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required data science team configuration defining all aspects of the team infrastructure including shared resources, collaboration tools, and ML development environment setup. Provides team setup with shared storage, compute resources, and collaborative ML development capabilities.
+   * Complete data science team infrastructure configuration.
+   * Defines SageMaker Studio domain, S3 mini data lake, Athena workgroup, execution roles, and user profiles.
    *
-   * Use cases: Team infrastructure configuration; Shared resource setup; Collaborative ML development; Team-based resource management
+   * Use cases: Team ML environment setup, shared data lake access, collaborative notebook development, SageMaker Studio provisioning
    *
-   * AWS: Data science team infrastructure configuration for complete ML team deployment and resource coordination
+   * AWS: SageMaker Studio Domain, S3, Athena, IAM roles
    *
-   * Validation: Must be valid DataScienceTeamProps; required; defines all team infrastructure and collaboration characteristics
+   * Validation: Required; DataScienceTeamProps
    **/
   readonly team: DataScienceTeamProps;
 }

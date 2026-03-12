@@ -13,59 +13,62 @@ import * as configSchema from './config-schema.json';
 
 export interface AuditConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of role references with read access to audit logs enabling controlled access to audit data for compliance and security analysis. Provides secure access to audit trails for authorized personnel and compliance monitoring systems.
+   * Roles granted read access to audit logs and decrypt access to the audit KMS key.
+   * The audit module deploys a KMS-encrypted S3 bucket for CloudTrail logs and
+   * Glue/Athena tables for querying — read roles get access to both.
    *
-   * Use cases: Controlled audit access; Compliance monitoring; Security analysis; Audit trail review and investigation
+   * Use cases: Compliance team audit access; Security investigation read access; Cross-team log sharing
    *
-   * AWS: AWS IAM roles with S3 and Athena access for audit log reading and analysis
+   * AWS: IAM roles, S3 bucket policy, KMS key policy
    *
-   * Validation: Must be array of valid MdaaRoleRef objects if provided; roles receive read access to audit infrastructure
-   **/
+   * Validation: Optional; array of MdaaRoleRef; supports id, arn, and name references
+   */
   readonly readRoles?: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of source account IDs from which audit logs will be accepted enabling cross-account audit log aggregation. Provides centralized audit collection from multiple AWS accounts for organizational audit trails.
+   * Additional AWS account IDs from which CloudTrail logs and S3 inventories are accepted.
+   * The local account is granted access automatically.
    *
-   * Use cases: Cross-account audit aggregation; Centralized audit collection; Multi-account compliance monitoring
+   * Use cases: Cross-account CloudTrail aggregation; Multi-account S3 inventory collection
    *
-   * AWS: AWS S3 bucket policies for cross-account audit log delivery and aggregation
+   * AWS: S3 bucket policy conditions scoped per source account
    *
-   * Validation: Must be array of valid AWS account IDs if provided; enables cross-account audit log acceptance
-   **/
+   * Validation: Optional; array of 12-digit AWS account ID strings
+   */
   readonly sourceAccounts?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of source regions from which audit logs will be accepted enabling multi-region audit log collection. Provides regional audit coverage for global AWS deployments and multi-region compliance requirements.
+   * Additional AWS regions from which CloudTrail logs and S3 inventories are accepted.
+   * The local region is granted access automatically.
    *
-   * Use cases: Multi-region audit collection; Global audit coverage; Regional compliance monitoring
+   * Use cases: Multi-region CloudTrail collection; Global audit centralization
    *
-   * AWS: AWS S3 bucket policies for multi-region audit log delivery and regional coverage
+   * AWS: S3 bucket policy, Glue audit table partitioned by region
    *
-   * Validation: Must be array of valid AWS region names if provided; enables multi-region audit log acceptance
-   **/
+   * Validation: Optional; array of valid AWS region names (e.g. "us-east-1")
+   */
   readonly sourceRegions?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional S3 prefix specification for inventory data organization within the audit bucket enabling structured inventory management. Provides organized storage of S3 inventory reports for audit analysis and compliance reporting.
+   * S3 key prefix under which inventory reports are permitted to be written.
+   * Controls the bucket policy prefix scope for inventory delivery.
    *
-   * Use cases: Inventory data organization; Structured audit storage; S3 inventory management and analysis
+   * Use cases: Inventory data isolation; Prefix-scoped access control
    *
-   * AWS: AWS S3 bucket prefix configuration for inventory data organization and management
+   * AWS: S3 bucket policy prefix, inventory delivery path
    *
-   * Validation: Must be valid S3 prefix string if provided; defines inventory data storage organization
-   **/
+   * Validation: Optional; string; must be a valid S3 prefix
+   * @default "inventory/"
+   */
   readonly inventoryPrefix?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of bucket inventory configurations enabling S3 inventory tracking and audit analysis. Provides detailed inventory reporting for S3 buckets across the organization for compliance and audit purposes.
+   * Bucket inventories queryable via the Glue/Athena inventory table.
+   * Each entry identifies a source bucket and inventory configuration by
+   * "<source_bucket>/<source_inventory_id>" format parsed into BucketInventoryProps.
    *
-   * Use cases: S3 inventory tracking; bucket auditing; Storage compliance monitoring
+   * Use cases: S3 inventory auditing via Athena; Cross-bucket inventory aggregation
    *
-   * AWS: AWS S3 inventory configuration for bucket tracking and audit analysis
+   * AWS: Glue table, S3 inventory configuration
    *
-   * Validation: Must be array of valid BucketInventoryProps if provided; defines S3 inventory tracking configuration
-   **/
+   * Validation: Optional; array of BucketInventoryProps (bucketName + inventoryName)
+   */
   readonly inventories?: BucketInventoryProps[];
 }
 

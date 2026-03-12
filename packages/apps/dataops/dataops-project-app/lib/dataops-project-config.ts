@@ -21,142 +21,132 @@ import * as configSchema from './config-schema.json';
 
 export interface DataOpsProjectConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of data engineer role references with operational access to project resources for data pipeline development and maintenance. Provides controlled access to project infrastructure for data engineering operations, pipeline development, and operational management.
+   * Data engineer roles with operational access to project resources (jobs, crawlers, databases).
    *
-   * Use cases: Data engineering operations; Pipeline development access; Operational resource management
+   * Use cases: Pipeline development access; Operational resource management
    *
-   * AWS: AWS IAM roles with DataOps project operational access and resource management permissions
+   * AWS: IAM roles with DataOps operational permissions
    *
-   * Validation: Must be array of valid MdaaRoleRef objects if provided; roles receive operational project access
-   **/
+   * Validation: Optional; array of MdaaRoleRef
+   */
   readonly dataEngineerRoles?: MdaaRoleRef[];
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of data admin role references with full administrative access to all project resources including databases, security, and configuration management. Provides administrative permissions for project management, security administration, and resource configuration.
+   * Data admin roles with full administrative access to all project resources.
    *
-   * Use cases: Project administration; Security management; Resource configuration and administrative control
+   * Use cases: Project administration; Security management; Resource configuration
    *
-   * AWS: AWS IAM roles with full DataOps project administrative access and management permissions
+   * AWS: IAM roles with full DataOps admin permissions
    *
-   * Validation: Must be array of valid MdaaRoleRef objects; required; roles receive full project administrative access
-   **/
+   * Validation: Required; array of MdaaRoleRef
+   */
   readonly dataAdminRoles: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of database names to Glue database definitions enabling centralized metadata management and catalog organization. Provides database configuration for data catalog organization, table management, and metadata coordination within the project.
+   * Glue database definitions for centralized metadata management and catalog organization.
    *
-   * Use cases: Centralized metadata management; Data catalog organization; Database-specific configuration and table coordination
+   * Use cases: Data catalog organization; Table management; Metadata coordination
    *
-   * AWS: AWS Glue database definitions for metadata management and catalog organization
+   * AWS: Glue databases
    *
-   * Validation: Must be valid NamedDatabaseProps if provided; defines project database infrastructure
-   *   **/
+   * Validation: Optional; valid NamedDatabaseProps
+   */
   readonly databases?: NamedDatabaseProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of classifier names to custom Glue classifier definitions enabling specialized data format recognition and parsing. Provides custom classification logic for non-standard data formats, proprietary file types, and specialized parsing requirements.
+   * Custom Glue classifier definitions for specialized data format recognition.
    *
-   * Use cases: Custom data format recognition; Specialized parsing logic; Non-standard file type classification
+   * Use cases: Non-standard format parsing; Proprietary file type classification
    *
-   * AWS: AWS Glue custom classifier definitions for specialized data format recognition and parsing
+   * AWS: Glue custom classifiers
    *
-   * Validation: Must be valid NamedClassifierProps if provided; defines custom classification logic
-   **/
+   * Validation: Optional; valid NamedClassifierProps
+   */
   readonly classifiers?: NamedClassifierProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of connection names to Glue connection definitions enabling secure connectivity to external data sources and databases. Provides connection configuration for JDBC databases, data warehouses, and other external systems requiring authentication.
+   * Glue connection definitions for secure connectivity to external data sources.
    *
-   * Use cases: External data source connectivity; Database connection management; Secure authentication configuration
+   * Use cases: JDBC database connections; Data warehouse connectivity
    *
-   * AWS: AWS Glue connection definitions for external data source connectivity and authentication
+   * AWS: Glue connections
    *
-   * Validation: Must be valid NamedConnectionProps if provided; defines external system connections
-   **/
+   * Validation: Optional; valid NamedConnectionProps
+   */
   readonly connections?: NamedConnectionProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of pre-defined execution role references for project resource operations enabling consistent role usage across project components. Provides standardized execution roles for Glue jobs, crawlers, and other project resources requiring specific permissions.
+   * Pre-defined execution roles for project resource operations (jobs, crawlers).
    *
-   * Use cases: Standardized execution roles; Consistent permission management; Cross-component role coordination
+   * Use cases: Standardized execution roles; Cross-component role coordination
    *
-   * AWS: AWS IAM roles for project resource execution and cross-service operations
+   * AWS: IAM execution roles
    *
-   * Validation: Must be array of valid MdaaRoleRef objects if provided; roles used for project resource execution
-   **/
+   * Validation: Optional; array of MdaaRoleRef
+   */
   readonly projectExecutionRoles?: MdaaRoleRef[];
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional KMS key ARN for S3 output encryption ensuring data protection compliance for all project output data. Provides encryption at rest for project-generated data with customer-controlled key management for enhanced security posture.
+   * KMS key ARN for encrypting S3 output data from project operations.
    *
-   * Use cases: Output data encryption; Data protection compliance; Customer key management for project outputs
+   * Use cases: Output data encryption; Data protection compliance
    *
-   * AWS: AWS KMS key for S3 output encryption and data protection in project operations
+   * AWS: KMS key for S3 encryption
    *
-   * Validation: Must be valid KMS key ARN if provided; used for all project S3 output encryption
-   **/
+   * Validation: Optional; valid KMS key ARN
+   */
   readonly s3OutputKmsKeyArn?: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional KMS key ARN for Glue Catalog encryption ensuring metadata protection compliance for all project catalog operations. Provides encryption at rest for catalog metadata with customer-controlled key management for enhanced security.
+   * KMS key ARN for Glue Catalog metadata encryption.
    *
-   * Use cases: Catalog metadata encryption; Metadata protection compliance; Customer key management for catalog data
+   * Use cases: Catalog metadata protection; Encryption compliance
    *
-   * AWS: AWS KMS key for Glue Catalog encryption and metadata protection in project operations
+   * AWS: KMS key for Glue Catalog encryption
    *
-   * Validation: Must be valid KMS key ARN if provided; used for all project catalog encryption
-   **/
+   * Validation: Optional; valid KMS key ARN
+   */
   readonly glueCatalogKmsKeyArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional failure notification configuration for Glue job monitoring and alerting enabling proactive error management and operational visibility. Provides notification setup for job failures, errors, and operational issues within the project.
+   * Failure notification configuration for Glue job monitoring and alerting.
    *
-   * Use cases: Proactive error management; Operational alerting; Job failure notification and monitoring
+   * Use cases: Job failure alerts; Operational monitoring
    *
-   * AWS: AWS SNS and CloudWatch integration for Glue job failure notifications and monitoring
+   * AWS: SNS/CloudWatch integration for Glue job notifications
    *
-   * Validation: Must be valid FailureNotificationsProps if provided; enables failure alerting and monitoring
-   **/
+   * Validation: Optional; valid FailureNotificationsProps
+   */
   readonly failureNotifications?: FailureNotificationsProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of security group names to configuration definitions enabling shared network security controls across project resources. Provides centralized security group management for consistent network access control and resource coordination.
+   * Shared security group configurations for project resources.
    *
-   * Use cases: Shared network security controls; Centralized security group management; Consistent access control across resources
+   * Use cases: Centralized network security; Consistent access control
    *
-   * AWS: Amazon VPC security groups for project resource network access control and coordination
+   * AWS: VPC security groups
    *
-   * Validation: Must be valid NamedSecurityGroupConfigProps if provided; defines shared security group infrastructure
-   *   **/
+   * Validation: Optional; valid NamedSecurityGroupConfigProps
+   */
   readonly securityGroupConfigs?: NamedSecurityGroupConfigProps;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional DataZone configuration for data governance and catalog integration enabling data discovery and governance capabilities. Provides DataZone domain integration for data asset management, governance workflows, and collaborative data discovery.
+   * DataZone configuration for data governance and catalog integration.
+   * Mutually exclusive with sagemaker.
    *
-   * Use cases: Data governance integration; Collaborative data discovery; Data asset management and governance workflows
+   * Use cases: Data governance; Collaborative data discovery; Asset management
    *
-   * AWS: Amazon DataZone integration for data governance and collaborative discovery capabilities
+   * AWS: Amazon DataZone
    *
-   * Validation: Must be valid DatazoneProps if provided; enables DataZone governance integration
-   **/
+   * Validation: Optional; valid DataOpsDatazoneProps; cannot be set with sagemaker
+   */
   readonly datazone?: DataOpsDatazoneProps;
   readonly sagemaker?: DataOpsSageMakerProps;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional project-level Lake Formation configuration for centralized tag-based access control management. Defines project-wide Lake Formation resources including tag vocabulary that is shared across all databases in the project.
+   * Project-level Lake Formation configuration for centralized tag-based access control.
+   * Defines project-wide LF-tag vocabulary shared across all databases.
    *
-   * Use cases: Centralized tag management; Project-wide TBAC vocabulary; Shared governance configuration
+   * Use cases: Centralized tag management; Project-wide TBAC; Shared governance
    *
-   * AWS: AWS Lake Formation project-level configuration for centralized tag-based access control
+   * AWS: Lake Formation project-level configuration
    *
-   * Validation: Must be valid ProjectLakeFormationConfig if provided; lfTags define project-wide tag vocabulary
-   **/
+   * Validation: Optional; valid LakeFormationConfig
+   */
   readonly lakeFormation?: LakeFormationConfig;
 }
 

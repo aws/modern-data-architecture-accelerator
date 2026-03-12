@@ -11,72 +11,72 @@ import * as configSchema from './config-schema.json';
 
 export interface AthenaWorkgroupConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of admin role references with full access to Athena workgroup resources including management and configuration. Provides administrative permissions for workgroup management, cost control configuration, and user access administration.
+   * Admin roles granted full access to Athena workgroup resources including KMS key, results bucket,
+   * and workgroup management. The module deploys a KMS-encrypted results bucket and Athena workgroup
+   * with managed IAM policies for controlled access.
    *
-   * Use cases: Workgroup administration; Cost control management; User access administration
+   * Use cases: Workgroup administration; Results bucket management; KMS key administration
    *
-   * AWS: AWS IAM roles with full Athena workgroup administrative access and management permissions
+   * AWS: IAM roles with full Athena workgroup, S3 results bucket, and KMS key access
    *
-   * Validation: Must be array of valid MdaaRoleRef objects; required; roles receive full workgroup administrative access
-   **/
+   * Validation: Required; array of valid MdaaRoleRef
+   */
   readonly dataAdminRoles: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of user role references with query execution access to the Athena workgroup for data analytics operations. Enables controlled access to workgroup resources for query execution, result retrieval, and data analysis workflows.
+   * User roles granted query execution access to the workgroup and read/write access to the results bucket.
+   * Immutable roles (e.g., SSO roles) receive bucket/KMS access only and must be bound to the managed policy externally.
    *
-   * Use cases: Query execution access; Data analytics operations; Controlled workgroup usage
+   * Use cases: Query execution access; Data analytics operations; SSO role integration
    *
-   * AWS: AWS IAM roles with Athena workgroup query execution and data access permissions
+   * AWS: IAM roles with Athena workgroup usage and results bucket access
    *
-   * Validation: Must be array of valid MdaaRoleRef objects; required; roles receive workgroup usage permissions
-   **/
+   * Validation: Required; array of valid MdaaRoleRef
+   */
   readonly athenaUserRoles: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional workgroup configuration settings for query cost controls and performance optimization. Enables fine-tuned control over query execution limits, cost management, and performance characteristics for the workgroup.
+   * Workgroup configuration settings for query cost controls and performance limits.
    *
-   * Use cases: Query cost control; Performance optimization; Resource usage management
+   * Use cases: Query cost control; Bytes-scanned limits; Resource usage management
    *
-   * AWS: Amazon Athena workgroup configuration for cost controls and performance settings
+   * AWS: Athena workgroup configuration settings
    *
-   * Validation: Must be valid WorkgroupConfigurationConfig if provided; enables cost and performance controls
-   **/
+   * Validation: Optional; valid WorkgroupConfigurationConfig
+   */
   readonly workgroupConfiguration?: WorkgroupConfigurationConfig;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional verbatim policy name prefix for cross-account policy portability bypassing MDAA naming conventions. Enables consistent policy naming across accounts for integration with SSO permission sets and cross-account access patterns.
+   * Verbatim policy name prefix bypassing MDAA naming conventions.
+   * Useful for cross-account policy portability and SSO permission set integration
+   * where policy names must be stable across accounts.
    *
-   * Use cases: Cross-account policy portability; SSO permission set integration; Consistent naming across accounts
+   * Use cases: Cross-account policy portability; SSO permission set integration; Stable policy naming
    *
-   * AWS: AWS IAM policy naming for cross-account consistency and SSO integration
+   * AWS: IAM managed policy naming prefix
    *
-   * Validation: Must be valid policy name prefix if provided; used instead of MDAA naming for policy names
-   **/
+   * Validation: Optional; string prefix used instead of MDAA naming for policy names
+   */
   readonly verbatimPolicyNamePrefix?: string;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Athena workgroup settings controlling query execution limits and cost management. Enables fine-grained control over query resource consumption and cost optimization for data analytics workloads.
+ * Athena workgroup configuration settings for query cost controls.
  *
- * Use cases: Query cost control; Resource usage limits; Performance optimization for analytics workloads
+ * Use cases: Query cost control; Bytes-scanned limits; Runaway query prevention
  *
- * AWS: Configures Amazon Athena workgroup settings for cost controls and query execution limits
+ * AWS: Athena workgroup configuration
  *
- * Validation: All properties are optional; bytesScannedCutoffPerQuery must be positive integer if provided
+ * Validation: All properties optional
  */
 export interface WorkgroupConfigurationConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional upper limit for bytes scanned per query controlling cost and preventing runaway queries. Enables cost control by limiting the amount of data each query can scan, preventing expensive queries from consuming excessive resources.
+   * Upper limit in bytes for data scanned per query. Queries exceeding this limit are cancelled.
+   * Prevents runaway queries from consuming excessive resources.
    *
-   * Use cases: Query cost control; Runaway query prevention; Resource usage optimization
+   * Use cases: Query cost control; Runaway query prevention; Resource usage limits
    *
-   * AWS: Amazon Athena workgroup bytes scanned cutoff for query cost control and resource limits
+   * AWS: Athena workgroup bytes scanned cutoff per query
    *
-   * Validation: Must be positive integer in bytes if provided; enforces per-query scanning limits
-   **/
+   * Validation: Optional; positive integer in bytes
+   */
   readonly bytesScannedCutoffPerQuery?: number;
 }
 

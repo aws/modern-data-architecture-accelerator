@@ -12,16 +12,7 @@ export interface KubernetesCmdProps {
   readonly cluster: MdaaEKSCluster;
   readonly cmd: string[];
   readonly namespace?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional timeout duration for kubectl command execution enabling controlled operation timing and failure handling. Defines the maximum time to wait for kubectl command completion preventing indefinite execution and enabling proper error handling.
-   *
-   * Use cases: Command timeout control; Execution timing; Failure handling; Operation limits
-   *
-   * AWS: Timeout configuration for kubectl command execution against EKS cluster
-   *
-   * Validation: Must be valid Duration if provided; defaults to 5 minutes; controls command execution timing
-   **/
+  /** Timeout duration for kubectl command execution enabling controlled operation timing and failure handling */
   readonly timeout?: Duration;
   readonly executionKey?: string;
   readonly expectedOutput?: string;

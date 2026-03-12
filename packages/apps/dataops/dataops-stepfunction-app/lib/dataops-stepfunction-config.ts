@@ -12,26 +12,24 @@ import * as configSchema from './config-schema.json';
 
 export interface StepFunctionConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for Step Functions integration and resource autowiring with existing project infrastructure. Enables seamless integration with deployed project resources including Lambda functions, Glue jobs, and other AWS services for coordinated serverless orchestration.
+   * DataOps project name for Step Functions resource autowiring.
    *
-   * Use cases: Project resource integration; Coordinated serverless orchestration; Infrastructure autowiring and service coordination
+   * Use cases: Project integration; Service coordination
    *
-   * AWS: AWS Step Functions project integration for resource coordination and shared infrastructure
+   * AWS: DataOps project reference
    *
-   * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
-   **/
+   * Validation: Optional; must match an existing deployed project
+   */
   readonly projectName?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of Step Functions definitions enabling complex serverless workflow orchestration and state machine coordination. Provides state machine configuration for conditional execution, error handling, and service integration patterns within the data processing architecture.
+   * Step Functions state machine definitions for serverless workflow orchestration.
    *
-   * Use cases: Serverless workflow orchestration; State machine coordination; Complex conditional execution and error handling patterns
+   * Use cases: ETL orchestration; Conditional execution; Error handling workflows
    *
-   * AWS: AWS Step Functions state machine definitions for serverless workflow orchestration and coordination
+   * AWS: AWS Step Functions state machines
    *
-   * Validation: Must be array of valid StepFunctionProps objects; required; defines all state machine orchestration operations
-   *   **/
+   * Validation: Required; array of StepFunctionProps
+   */
   readonly stepfunctionDefinitions: StepFunctionProps[];
 }
 

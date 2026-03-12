@@ -16,70 +16,70 @@ import { Stack } from 'aws-cdk-lib';
 
 export interface MdaaDataOpsConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required Glue security configuration name for DataOps job security enabling encryption and access control for data processing operations. Provides the security configuration that will be used by Glue jobs for encryption at rest, in transit, and CloudWatch logs encryption.
+   * Glue security configuration name for job encryption (at rest, in transit, CloudWatch logs).
+   * Auto-resolved from project when projectName is set.
    *
-   * Use cases: Glue job security; Encryption configuration; Security compliance; Data protection
+   * Use cases: Job encryption; Security compliance
    *
-   * AWS: Glue security configuration for DataOps job encryption and security compliance
+   * AWS: Glue security configuration
    *
-   * Validation: Must be valid security configuration name; required for Glue job security and encryption
-   **/
+   * Validation: Optional; auto-wired from project if projectName provided
+   */
   readonly securityConfigurationName?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for resource coordination and shared infrastructure enabling project-based resource organization and management. Provides the project identifier that coordinates shared resources across DataOps applications and workflows.
+   * DataOps project name enabling auto-wiring of shared resources (bucket, KMS key,
+   * SNS topic, deployment role, security configuration) via SSM parameters.
    *
-   * Use cases: Project coordination; Resource organization; Shared infrastructure; Project management
+   * Use cases: Project resource coordination; Shared infrastructure reuse
    *
-   * AWS: DataOps project name for resource coordination and shared infrastructure management
+   * AWS: DataOps project SSM parameter references
    *
-   * Validation: Must be valid project name; required for project coordination and resource organization
-   **/
+   * Validation: Optional; must match an existing deployed project
+   */
   readonly projectName?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.
+   * S3 bucket name for project storage (scripts, artifacts, temp files).
+   * Auto-resolved from project when projectName is set.
    *
-   * Use cases: Project storage; Data artifacts; Script storage; Centralized storage management
+   * Use cases: Script storage; Processing artifacts; Centralized project storage
    *
-   * AWS: S3 bucket for DataOps project storage and artifact management
+   * AWS: S3 bucket
    *
-   * Validation: Must be valid S3 bucket name; required for project storage and artifact management
-   **/
+   * Validation: Optional; auto-wired from project if projectName provided
+   */
   readonly bucketName?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.
+   * SNS topic ARN for job notifications and workflow alerts.
+   * Auto-resolved from project when projectName is set.
    *
-   * Use cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication
+   * Use cases: Job failure alerts; Workflow status notifications
    *
-   * AWS: SNS topic ARN for DataOps notifications and workflow coordination
+   * AWS: SNS topic
    *
-   * Validation: Must be valid SNS topic ARN; required for notifications and workflow coordination
-   **/
+   * Validation: Optional; auto-wired from project if projectName provided
+   */
   readonly notificationTopicArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.
+   * IAM role ARN for deployment operations and resource management.
+   * Auto-resolved from project when projectName is set.
    *
-   * Use cases: Deployment operations; Resource management; IAM permissions; Secure deployment
+   * Use cases: Deployment permissions; Resource provisioning
    *
-   * AWS: IAM role ARN for DataOps deployment operations and resource management
+   * AWS: IAM role
    *
-   * Validation: Must be valid IAM role ARN; required for deployment operations and resource management
-   **/
+   * Validation: Optional; auto-wired from project if projectName provided
+   */
   readonly deploymentRoleArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required KMS key ARN for DataOps encryption enabling data protection and security compliance. Provides the customer-managed KMS key for encrypting DataOps resources, data, and operational artifacts ensuring data protection and compliance.
+   * KMS key ARN for encrypting DataOps resources and data.
+   * Auto-resolved from project when projectName is set.
    *
-   * Use cases: Data encryption; Security compliance; Key management; Data protection
+   * Use cases: Data encryption; Security compliance
    *
-   * AWS: KMS key ARN for DataOps encryption and data protection compliance
+   * AWS: KMS key
    *
-   * Validation: Must be valid KMS key ARN; required for encryption and data protection compliance
-   **/
+   * Validation: Optional; auto-wired from project if projectName provided
+   */
   readonly kmsArn?: string;
 }
 

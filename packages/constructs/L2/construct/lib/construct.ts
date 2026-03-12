@@ -9,52 +9,16 @@ import { CfnOutput, Token } from 'aws-cdk-lib';
 import { ParameterTier, StringParameter, StringParameterProps } from 'aws-cdk-lib/aws-ssm';
 
 export interface MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.
-   *
-   * Use cases: Consistent naming; Resource identification; Naming conventions; Operational consistency
-   *
-   * AWS: MDAA resource naming for consistent resource identification and naming convention compliance
-   *
-   * Validation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming
-   *   **/
+  /** MDAA naming implementation for consistent resource naming across all MDAA constructs */
   readonly naming: IMdaaResourceNaming;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.
-   *
-   * Use cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management
-   *
-   * AWS: SSM parameter creation for MDAA construct resource references and infrastructure integration
-   *
-   * Validation: Boolean value; defaults to true; enables SSM parameter creation for resource references
-   **/
+  /** Flag controlling SSM parameter creation for construct resource references enabling */
   readonly createParams?: boolean;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.
-   *
-   * Use cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references
-   *
-   * AWS: CloudFormation outputs and exports for MDAA construct resource references and external integration
-   *
-   * Validation: Boolean value; defaults to true; enables CloudFormation output and export creation
-   **/
+  /** Flag controlling CloudFormation output and stack export creation for construct resources */
   readonly createOutputs?: boolean;
 }
 
 export interface MdaaParamAndOutputProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required name component for SSM parameter and CloudFormation output naming enabling consistent resource identification and reference management. Provides the primary name component that will be processed through MDAA naming conventions for parameter and output generation.
-   *
-   * Use cases: Resource naming; Parameter identification; Output naming; Reference management
-   *
-   * AWS: Name component for SSM parameter and CloudFormation output naming and resource identification
-   *
-   * Validation: Must be descriptive name string; required; processed through MDAA naming conventions
-   **/
+  /** Name component for SSM parameter and CloudFormation output naming enabling consistent */
   readonly name: string;
   readonly resourceType: string;
   readonly resourceId?: string;

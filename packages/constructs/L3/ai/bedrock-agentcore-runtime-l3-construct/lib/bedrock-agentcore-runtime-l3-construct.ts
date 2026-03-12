@@ -22,211 +22,199 @@ import {
 } from './utils';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Container configuration for Bedrock AgentCore Runtime Docker image deployment enabling custom agent runtime execution. Defines container image source and platform configuration for deploying custom agent runtimes with Docker containers in Amazon Bedrock AgentCore.
+ * Docker container configuration for Bedrock AgentCore Runtime deployment.
+ * Specify either a pre-built ECR image (containerUri) or build from source (codePath).
  *
- * Use cases: Custom agent runtime deployment; Docker container configuration; Platform-specific builds; Container image management
+ * Use cases: Pre-built ECR image deployment, custom runtime development from source, platform-specific builds
  *
- * AWS: Bedrock AgentCore Runtime container configuration for custom agent runtime Docker image deployment
+ * AWS: Bedrock AgentCore Runtime container configuration
  *
- * Validation: Must specify either containerUri or codePath; platform must be linux/arm64 or linux/amd64
+ * Validation: Must specify either containerUri or codePath (mutually exclusive); platform defaults to linux/arm64
  */
 export interface ContainerConfigurationProperty {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional pre-built container image URI from ECR for agent runtime deployment enabling use of existing container images. Provides direct reference to existing Docker images in ECR for agent runtime deployment without building from source.
+   * Pre-built container image URI from ECR.
+   * Mutually exclusive with codePath.
    *
-   * Use cases: Pre-built image deployment; ECR image reference; Existing container usage; Image reuse
+   * Use cases: Pre-built image deployment, ECR image reference, image reuse
    *
-   * AWS: ECR container image URI for Bedrock AgentCore Runtime deployment
+   * AWS: ECR container image URI
    *
-   * Validation: Must be valid ECR image URI if provided; mutually exclusive with codePath
+   * Validation: Optional; String; valid ECR image URI; mutually exclusive with codePath
    **/
   readonly containerUri?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional local directory path containing Dockerfile and agent code for building container image enabling custom agent runtime development. Provides path to source code directory for building Docker images and deploying custom agent runtimes from local development.
+   * Local directory path containing Dockerfile and agent code for building the container image.
+   * Mutually exclusive with containerUri.
    *
-   * Use cases: Custom runtime development; Local image building; Source code deployment; Development workflow
+   * Use cases: Custom runtime development, local image building, source code deployment
    *
-   * AWS: Local directory path for Docker image build and Bedrock AgentCore Runtime deployment
+   * AWS: Docker image build source for Bedrock AgentCore Runtime
    *
-   * Validation: Must be valid directory path containing Dockerfile if provided; mutually exclusive with containerUri
+   * Validation: Optional; String; valid directory path with Dockerfile; mutually exclusive with containerUri
    **/
   readonly codePath?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional container platform specification for multi-architecture support enabling ARM64 or AMD64 builds. Defines the target platform architecture for Docker image builds with AgentCore requiring ARM64 for optimal performance.
+   * Target platform architecture for Docker image builds.
    *
-   * Use cases: Platform-specific builds; ARM64 optimization; Multi-architecture support; Performance tuning
+   * Use cases: ARM64 optimization, multi-architecture support, platform-specific builds
    *
-   * AWS: Docker platform specification for Bedrock AgentCore Runtime container builds
+   * AWS: Docker platform for Bedrock AgentCore Runtime container
    *
-   * Validation: Must be linux/arm64 or linux/amd64 if provided; defaults to linux/arm64 for AgentCore
+   * Validation: Optional; String; linux/arm64 or linux/amd64
+   * @default linux/arm64
    **/
   readonly platform?: string;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Agent runtime artifact configuration defining container deployment for Bedrock AgentCore Runtime. Specifies the container configuration for deploying custom agent runtimes with Docker images in Amazon Bedrock AgentCore service.
+ * Agent runtime artifact defining the container deployment for Bedrock AgentCore Runtime.
  *
- * Use cases: Runtime artifact configuration; Container deployment; Agent runtime packaging; Deployment specification
+ * Use cases: Runtime artifact configuration, container deployment, agent runtime packaging
  *
- * AWS: Bedrock AgentCore Runtime artifact configuration for container-based agent runtime deployment
+ * AWS: Bedrock AgentCore Runtime artifact
  *
- * Validation: containerConfiguration is required for agent runtime deployment
+ * Validation: containerConfiguration is required
  */
 export interface AgentRuntimeArtifactProperty {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required container configuration for agent runtime Docker image deployment enabling custom runtime execution. Defines the Docker container image source and configuration for deploying custom agent runtimes in Bedrock AgentCore.
+   * Container configuration for the agent runtime Docker image.
    *
-   * Use cases: Container deployment; Docker image configuration; Runtime packaging; Custom agent execution
+   * Use cases: Container deployment, Docker image configuration, runtime packaging
    *
-   * AWS: Bedrock AgentCore Runtime container configuration for Docker-based agent runtime deployment
+   * AWS: Bedrock AgentCore Runtime container configuration
    *
-   * Validation: Required property; must be valid ContainerConfigurationProperty with either containerUri or codePath
+   * Validation: Required; ContainerConfigurationProperty; must specify containerUri or codePath
    **/
   readonly containerConfiguration: ContainerConfigurationProperty;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * VPC network configuration for Bedrock AgentCore Runtime deployment. MDAA enforces VPC deployment to maintain the highest security standards by ensuring agent runtimes are deployed in isolated network environments.
+ * VPC network configuration for Bedrock AgentCore Runtime deployment.
+ * MDAA enforces VPC mode for all runtimes to ensure network isolation and security.
  *
- * Use cases: VPC deployment; Network isolation; Private subnet usage; Security configuration
+ * Use cases: VPC deployment, network isolation, private subnet usage, security configuration
  *
- * AWS: Bedrock AgentCore Runtime VPC network configuration for secure deployment
+ * AWS: Bedrock AgentCore Runtime VPC network configuration
  *
- * Validation: securityGroups and subnets are required with 1-16 items each
+ * Validation: Both securityGroups and subnets required with 1-16 items each
  */
 export interface NetworkConfigurationProperty {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required security group IDs for agent runtime network access control enabling traffic filtering and security boundaries. Defines security groups that control inbound and outbound network traffic for agent runtime instances in VPC deployments.
+   * Security group IDs controlling inbound/outbound traffic for runtime instances.
    *
-   * Use cases: Network access control; Traffic filtering; Security boundaries; Firewall rules
+   * Use cases: Network access control, traffic filtering, security boundaries
    *
-   * AWS: VPC security group IDs for Bedrock AgentCore Runtime network access control
+   * AWS: VPC security groups for Bedrock AgentCore Runtime
    *
-   * Validation: Required array with 1-16 security group IDs; security groups must exist in the specified VPC
+   * Validation: Required; String[]; 1-16 security group IDs
    **/
   readonly securityGroups: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required subnet IDs for agent runtime deployment enabling multi-AZ placement and network isolation. Defines subnets where agent runtime instances will be deployed for high availability and network segmentation.
+   * Subnet IDs for runtime instance placement enabling multi-AZ deployment.
    *
-   * Use cases: Multi-AZ deployment; Network isolation; High availability; Subnet placement
+   * Use cases: Multi-AZ deployment, network isolation, high availability
    *
-   * AWS: VPC subnet IDs for Bedrock AgentCore Runtime deployment and network placement
+   * AWS: VPC subnets for Bedrock AgentCore Runtime
    *
-   * Validation: Required array with 1-16 subnet IDs; subnets must exist in the specified VPC
+   * Validation: Required; String[]; 1-16 subnet IDs
    **/
   readonly subnets: string[];
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Lifecycle configuration for Bedrock AgentCore Runtime session management enabling timeout and lifetime controls. Defines session timeout and maximum lifetime settings for agent runtime instances controlling resource usage and session management.
+ * Lifecycle configuration for Bedrock AgentCore Runtime session management.
+ * Controls idle timeout and maximum session lifetime for runtime instances.
  *
- * Use cases: Session management; Resource control; Timeout configuration; Lifecycle management
+ * Use cases: Session management, resource optimization, timeout configuration, cost control
  *
- * AWS: Bedrock AgentCore Runtime lifecycle configuration for session and resource management
+ * AWS: Bedrock AgentCore Runtime lifecycle configuration
  *
- * Validation: idleRuntimeSessionTimeout and maxLifetime must be between 60 and 28800 seconds if provided
+ * Validation: Both values must be between 60 and 28800 seconds if provided
  */
 export interface LifecycleConfigurationProperty {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional idle session timeout in seconds for automatic session termination enabling resource optimization. Defines the duration of inactivity before agent runtime sessions are automatically terminated to optimize resource usage.
+   * Idle session timeout in seconds before automatic termination.
    *
-   * Use cases: Idle timeout; Resource optimization; Session cleanup; Cost control
+   * Use cases: Idle timeout, resource optimization, session cleanup, cost control
    *
-   * AWS: Bedrock AgentCore Runtime idle session timeout for automatic resource cleanup
+   * AWS: Bedrock AgentCore Runtime idle session timeout
    *
-   * Validation: Must be between 60 and 28800 seconds if provided; controls idle session termination
+   * Validation: Optional; Number; 60-28800 seconds
    **/
   readonly idleRuntimeSessionTimeout?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional maximum lifetime in seconds for agent runtime sessions enabling forced session termination. Defines the maximum duration for agent runtime sessions before forced termination regardless of activity status.
+   * Maximum session lifetime in seconds before forced termination regardless of activity.
    *
-   * Use cases: Maximum lifetime; Forced termination; Resource limits; Session boundaries
+   * Use cases: Maximum lifetime enforcement, resource limits, session boundaries
    *
-   * AWS: Bedrock AgentCore Runtime maximum lifetime for session duration limits
+   * AWS: Bedrock AgentCore Runtime maximum lifetime
    *
-   * Validation: Must be between 60 and 28800 seconds if provided; controls maximum session duration
+   * Validation: Optional; Number; 60-28800 seconds
    **/
   readonly maxLifetime?: number;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Custom JWT authorizer configuration for Bedrock AgentCore Runtime authentication enabling token-based access control. Defines JWT token validation with OIDC discovery for secure agent runtime access using custom identity providers.
+ * Custom JWT authorizer configuration for token-based authentication via OIDC.
  *
- * Use cases: JWT authentication; Token validation; OIDC integration; Access control
+ * Use cases: JWT authentication, OIDC integration, token validation, identity provider connection
  *
- * AWS: Bedrock AgentCore Runtime JWT authorizer for token-based authentication and access control
+ * AWS: Bedrock AgentCore Runtime JWT authorizer
  *
- * Validation: discoveryUrl is required and must match OIDC well-known configuration URL pattern
+ * Validation: discoveryUrl required; must end with /.well-known/openid-configuration
  */
 export interface CustomJwtAuthorizerProperty {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required OIDC discovery URL for JWT token validation enabling identity provider integration. Defines the OpenID Connect discovery endpoint for validating JWT tokens and authenticating agent runtime access.
+   * OIDC discovery URL for JWT token validation.
    *
-   * Use cases: OIDC integration; Token validation; Identity provider connection; Authentication configuration
+   * Use cases: OIDC integration, token validation, identity provider connection
    *
-   * AWS: OIDC discovery URL for Bedrock AgentCore Runtime JWT token validation
+   * AWS: OIDC discovery URL for JWT validation
    *
-   * Validation: Required; must match pattern ending with /.well-known/openid-configuration
+   * Validation: Required; String; must end with /.well-known/openid-configuration
    **/
   readonly discoveryUrl: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of allowed audience values for JWT token validation enabling client application filtering. Defines the allowed audience claim values in JWT tokens for restricting access to authorized client applications.
+   * Allowed audience values for JWT token validation.
    *
-   * Use cases: Audience validation; Client filtering; Token validation; Access restriction
+   * Use cases: Audience validation, client filtering, access restriction
    *
-   * AWS: JWT audience claim validation for Bedrock AgentCore Runtime access control
+   * AWS: JWT audience claim validation
    *
-   * Validation: Optional array of audience strings; validates against aud claim in JWT tokens
+   * Validation: Optional; String[]; validates against aud claim
    **/
   readonly allowedAudience?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of allowed client IDs for JWT token validation enabling client-specific access control. Defines the allowed client_id claim values in JWT tokens for restricting access to specific client applications.
+   * Allowed client IDs for JWT token validation.
    *
-   * Use cases: Client ID validation; Application filtering; Token validation; Access control
+   * Use cases: Client ID validation, application filtering, access control
    *
-   * AWS: JWT client_id claim validation for Bedrock AgentCore Runtime access control
+   * AWS: JWT client_id claim validation
    *
-   * Validation: Optional array of client ID strings; validates against client_id claim in JWT tokens
+   * Validation: Optional; String[]; validates against client_id claim
    **/
   readonly allowedClients?: string[];
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Authorizer configuration for Bedrock AgentCore Runtime access control enabling authentication and authorization. Defines authentication mechanisms for agent runtime access with support for custom JWT authorizers and identity validation.
+ * Authorizer configuration for Bedrock AgentCore Runtime access control.
  *
- * Use cases: Access control; Authentication; Authorization; Identity validation
+ * Use cases: Access control, JWT authentication, authorization, identity validation
  *
- * AWS: Bedrock AgentCore Runtime authorizer configuration for access control and authentication
+ * AWS: Bedrock AgentCore Runtime authorizer
  *
  * Validation: customJwtAuthorizer must be valid CustomJwtAuthorizerProperty if provided
  */
 export interface AuthorizerConfigurationProperty {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional custom JWT authorizer configuration for token-based authentication enabling identity provider integration. Defines JWT token validation with OIDC discovery for secure agent runtime access control.
+   * Custom JWT authorizer for token-based authentication via OIDC.
    *
-   * Use cases: JWT authentication; Token validation; OIDC integration; Custom authorization
+   * Use cases: JWT authentication, token validation, OIDC integration
    *
-   * AWS: Custom JWT authorizer for Bedrock AgentCore Runtime token-based authentication
+   * AWS: Custom JWT authorizer for Bedrock AgentCore Runtime
    *
-   * Validation: Must be valid CustomJwtAuthorizerProperty if provided; enables JWT-based access control
+   * Validation: Optional; CustomJwtAuthorizerProperty
    **/
   readonly customJwtAuthorizer?: CustomJwtAuthorizerProperty;
   /**
@@ -236,25 +224,23 @@ export interface AuthorizerConfigurationProperty {
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Request header configuration for Bedrock AgentCore Runtime header forwarding enabling custom header passthrough. Defines allowed HTTP headers that will be forwarded to agent runtime instances for custom request handling.
+ * Request header configuration for HTTP header forwarding to agent runtime instances.
  *
- * Use cases: Header forwarding; Custom headers; Request context; Header passthrough
+ * Use cases: Header forwarding, custom request context, header passthrough
  *
- * AWS: Bedrock AgentCore Runtime request header configuration for HTTP header forwarding
+ * AWS: Bedrock AgentCore Runtime request header configuration
  *
  * Validation: requestHeaderAllowlist must contain 1-20 header names if provided
  */
 export interface RequestHeaderConfigurationProperty {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of HTTP header names to forward to agent runtime enabling custom request context. Defines the list of HTTP headers that will be passed through to agent runtime instances for custom request handling and context.
+   * HTTP header names to forward to the agent runtime.
    *
-   * Use cases: Header forwarding; Request context; Custom headers; Context passthrough
+   * Use cases: Header forwarding, request context, custom headers
    *
-   * AWS: HTTP header allowlist for Bedrock AgentCore Runtime request forwarding
+   * AWS: HTTP header allowlist for Bedrock AgentCore Runtime
    *
-   * Validation: Must contain 1-20 header names if provided; defines headers forwarded to runtime
+   * Validation: Optional; String[]; 1-20 header names
    **/
   readonly requestHeaderAllowlist?: string[];
   /**
@@ -264,351 +250,309 @@ export interface RequestHeaderConfigurationProperty {
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * IAM policy statement for inline policy documents defining permissions. Represents a single statement in an IAM policy document with effect, actions, resources, and optional conditions.
+ * IAM policy statement for inline policy documents.
+ * Represents a single statement with effect, actions, resources, and optional conditions.
  *
- * Use cases: Permission definition; Policy statements; Access control; Resource permissions
+ * Use cases: Permission definition, access control rules, resource permissions
  *
- * AWS: IAM policy statement structure for inline policy documents
+ * AWS: IAM policy statement
  *
- * Validation: Effect must be Allow or Deny; Action and Resource can be single string or array
+ * Validation: Effect must be Allow or Deny; Action and Resource required
  */
 export interface PolicyStatementProperty {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional statement ID for identifying the policy statement. Provides a unique identifier for the statement within the policy document.
+   * Statement identifier for the policy statement.
    *
-   * Use cases: Statement identification; Policy organization; Statement reference
+   * Use cases: Statement identification, policy organization
    *
-   * AWS: IAM policy statement ID for identification
+   * AWS: IAM policy statement ID
    *
-   * Validation: Optional string identifier for the statement
+   * Validation: Optional; String
    **/
   /** @jsii ignore */
   readonly Sid?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required effect for the policy statement defining whether to allow or deny access. Specifies whether the statement allows or denies the specified actions on the specified resources.
+   * Whether to allow or deny the specified actions.
    *
-   * Use cases: Access control; Permission definition; Allow or deny actions
+   * Use cases: Access control, permission definition
    *
-   * AWS: IAM policy statement effect for access control
+   * AWS: IAM policy statement effect
    *
-   * Validation: Must be 'Allow' or 'Deny'
+   * Validation: Required; 'Allow' or 'Deny'
    **/
   /** @jsii ignore */
   readonly Effect: 'Allow' | 'Deny';
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required action or actions for the policy statement defining permitted or denied operations. Specifies the AWS service actions that are allowed or denied by the statement.
+   * AWS service actions allowed or denied by this statement.
    *
-   * Use cases: Action definition; Service operations; Permission scope
+   * Use cases: Action definition, service operations, permission scope
    *
-   * AWS: IAM policy statement actions for service operations
+   * AWS: IAM policy statement actions
    *
-   * Validation: Can be single action string or array of action strings
+   * Validation: Required; String or String[]
    **/
   /** @jsii ignore */
   readonly Action: string | string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required resource or resources for the policy statement defining scope of permissions. Specifies the AWS resources to which the actions apply.
+   * AWS resources to which the actions apply.
    *
-   * Use cases: Resource scope; Permission boundaries; Resource targeting
+   * Use cases: Resource scope, permission boundaries, resource targeting
    *
-   * AWS: IAM policy statement resources for permission scope
+   * AWS: IAM policy statement resources
    *
-   * Validation: Can be single resource ARN string or array of resource ARN strings
+   * Validation: Required; String (ARN) or String[]
    **/
   /** @jsii ignore */
   readonly Resource: string | string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional conditions for the policy statement enabling context-based access control. Defines conditions under which the statement is in effect using condition operators and keys.
+   * Conditions under which the statement is in effect.
    *
-   * Use cases: Conditional access; Context-based permissions; Fine-grained control
+   * Use cases: Conditional access, context-based permissions, fine-grained control
    *
-   * AWS: IAM policy statement conditions for context-based access control
+   * AWS: IAM policy statement conditions
    *
-   * Validation: Object with condition operators as keys and condition key-value pairs
+   * Validation: Optional; Record<string, Record<string, string | string[]>>
    **/
   /** @jsii ignore */
   readonly Condition?: Record<string, Record<string, string | string[]>>;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * IAM policy document structure for inline policies. Defines the structure of an IAM policy document containing an array of policy statements.
+ * IAM policy document structure for inline policies.
  *
- * Use cases: Inline policy definition; Policy document structure; Permission documents
+ * Use cases: Inline policy definition, permission documents
  *
- * AWS: IAM policy document structure for inline policies
+ * AWS: IAM policy document
  *
- * Validation: Must contain Statement array with at least one policy statement
+ * Validation: Statement array required with at least one PolicyStatementProperty
  */
 export interface PolicyDocumentProperty {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of policy statements defining permissions. Contains the individual statements that make up the policy document.
+   * Array of policy statements defining permissions.
    *
-   * Use cases: Policy statements; Permission definitions; Access control rules
+   * Use cases: Policy statements, permission definitions, access control rules
    *
-   * AWS: IAM policy document statements array
+   * AWS: IAM policy document statements
    *
-   * Validation: Required array of PolicyStatementProperty objects
+   * Validation: Required; PolicyStatementProperty[]
    **/
   /** @jsii ignore */
   readonly Statement: PolicyStatementProperty[];
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * IAM policy configuration for Bedrock AgentCore Runtime role permissions enabling custom policy attachment. Defines IAM policies to attach to the agent runtime execution role for granting AWS service access permissions.
+ * IAM policy configuration for the runtime execution role.
+ * Supports managed policy ARNs or inline policy documents (mutually exclusive).
  *
- * Use cases: IAM permissions; Policy attachment; Service access; Permission management
+ * Use cases: Custom permissions, managed policy attachment, inline policy definition
  *
- * AWS: IAM policy configuration for Bedrock AgentCore Runtime execution role permissions
+ * AWS: IAM policies for Bedrock AgentCore Runtime execution role
  *
- * Validation: Must specify either policyArn for managed policies or policyDocument for inline policies
+ * Validation: Must specify either policyArn or policyDocument (mutually exclusive)
  */
 export interface PolicyProperty {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional managed policy ARN for attaching AWS managed or customer managed policies enabling standardized permissions. Defines the ARN of an existing IAM policy to attach to the agent runtime execution role.
+   * ARN of an existing managed policy to attach to the runtime role.
    *
-   * Use cases: Managed policy attachment; Standardized permissions; Policy reuse; Permission templates
+   * Use cases: Managed policy attachment, standardized permissions, policy reuse
    *
-   * AWS: IAM managed policy ARN for Bedrock AgentCore Runtime role attachment
+   * AWS: IAM managed policy ARN
    *
-   * Validation: Must be valid IAM policy ARN if provided; mutually exclusive with policyDocument
+   * Validation: Optional; String; valid IAM policy ARN; mutually exclusive with policyDocument
    **/
   readonly policyArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional inline policy document for custom permissions enabling specific service access. Defines custom IAM policy statements to embed in the agent runtime execution role for granular permission control.
+   * Inline policy document for custom permissions on the runtime role.
    *
-   * Use cases: Custom permissions; Inline policies; Granular access; Specific service access
+   * Use cases: Custom permissions, inline policies, granular access control
    *
-   * AWS: IAM inline policy document for Bedrock AgentCore Runtime role permissions
+   * AWS: IAM inline policy document
    *
-   * Validation: Must be valid IAM policy document if provided; mutually exclusive with policyArn
+   * Validation: Optional; PolicyDocumentProperty; mutually exclusive with policyArn
    **/
   readonly policyDocument?: PolicyDocumentProperty;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Runtime endpoint configuration for Bedrock AgentCore Runtime API access enabling agent runtime invocation. Defines the endpoint configuration for accessing and invoking agent runtimes through the Bedrock AgentCore API.
+ * Runtime endpoint configuration for invoking the agent runtime via Bedrock AgentCore API.
  *
- * Use cases: Runtime invocation; API access; Endpoint configuration; Agent access
+ * Use cases: Runtime invocation, API access, endpoint management
  *
- * AWS: Bedrock AgentCore Runtime endpoint for agent runtime API access and invocation
+ * AWS: Bedrock AgentCore Runtime endpoint
  *
- * Validation: name must match pattern for alphanumeric and underscores only
+ * Validation: name must match ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ if provided
  */
 export interface RuntimeEndpointProperty {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional endpoint name for agent runtime API access enabling endpoint identification. Defines the name for the runtime endpoint used to invoke the agent runtime through the Bedrock AgentCore API.
+   * Endpoint name for API access identification.
    *
-   * Use cases: Endpoint naming; API identification; Runtime access; Endpoint management
+   * Use cases: Endpoint naming, API identification, runtime access
    *
-   * AWS: Bedrock AgentCore Runtime endpoint name for API access identification
+   * AWS: Bedrock AgentCore Runtime endpoint name
    *
-   * Validation: Must match pattern ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ if provided; alphanumeric and underscores only
+   * Validation: Optional; String; alphanumeric and underscores; max 48 chars
    **/
   readonly name?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional description for the runtime endpoint providing documentation and context. Enables clear understanding of endpoint purpose and usage for operational management.
+   * Description of the runtime endpoint.
    *
-   * Use cases: Endpoint documentation; Context description; Operational clarity; Management information
+   * Use cases: Endpoint documentation, operational clarity
    *
-   * AWS: Bedrock AgentCore Runtime endpoint description for documentation and context
+   * AWS: Bedrock AgentCore Runtime endpoint description
    *
-   * Validation: Must be descriptive string if provided; enhances endpoint documentation
+   * Validation: Optional; String
    **/
   readonly description?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional agent runtime version for endpoint configuration enabling version-specific access. Defines the specific version of the agent runtime to use for the endpoint invocation.
+   * Specific agent runtime version for the endpoint.
    *
-   * Use cases: Version control; Specific version access; Version management; Deployment control
+   * Use cases: Version control, version-specific access, deployment control
    *
-   * AWS: Bedrock AgentCore Runtime version for endpoint version-specific access
+   * AWS: Bedrock AgentCore Runtime version
    *
-   * Validation: Must be valid runtime version if provided; enables version-specific endpoint access
+   * Validation: Optional; String
    **/
   readonly agentRuntimeVersion?: string;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Bedrock AgentCore Runtime configuration interface for custom agent runtime deployment. Defines complete configuration for deploying custom agent runtimes with Docker containers in Amazon Bedrock AgentCore service.
+ * Complete configuration for deploying a custom agent runtime in Bedrock AgentCore.
+ * Defines container deployment, VPC networking, lifecycle, auth, and endpoint settings.
  *
- * Use cases: Custom agent runtime deployment; Container-based agents; Agent runtime configuration; Custom runtime execution
+ * Use cases: Custom agent runtime deployment, container-based agents, runtime configuration
  *
- * AWS: Amazon Bedrock AgentCore Runtime for custom agent runtime deployment and execution
+ * AWS: Amazon Bedrock AgentCore Runtime
  *
- * Validation: agentRuntimeName, agentRuntimeArtifact, and networkConfiguration are required; networkConfiguration must use VPC mode
+ * Validation: agentRuntimeName, agentRuntimeArtifact, and networkConfiguration are required
  */
 export interface BedrockAgentcoreRuntimeProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required name for the agent runtime providing unique identification within the Bedrock AgentCore service. Enables runtime organization and management for custom agent runtime deployment and execution.
+   * Unique name for the agent runtime.
    *
-   * Use cases: Runtime identification; Agent organization; Runtime management; Configuration identification
+   * Use cases: Runtime identification, agent organization, configuration management
    *
-   * AWS: Bedrock AgentCore Runtime name for identification and organization
+   * AWS: Bedrock AgentCore Runtime name
    *
-   * Validation: Required string; must be unique runtime name for identification
+   * Validation: Required; String
    **/
   readonly agentRuntimeName: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional description for the agent runtime providing documentation and context. Enables clear understanding of runtime purpose and functionality for operational management.
+   * Description of the agent runtime.
    *
-   * Use cases: Runtime documentation; Context description; Operational clarity; Management information
+   * Use cases: Runtime documentation, operational clarity
    *
-   * AWS: Bedrock AgentCore Runtime description for documentation and context
+   * AWS: Bedrock AgentCore Runtime description
    *
-   * Validation: Must be descriptive string if provided; enhances runtime documentation
+   * Validation: Optional; String
    **/
   readonly description?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required agent runtime artifact configuration defining container deployment. Specifies the Docker container image source and configuration for deploying the custom agent runtime.
+   * Container deployment configuration specifying Docker image source.
    *
-   * Use cases: Container deployment; Runtime artifact; Docker configuration; Deployment specification
+   * Use cases: Container deployment, Docker image configuration, runtime packaging
    *
-   * AWS: Bedrock AgentCore Runtime artifact for container-based deployment
+   * AWS: Bedrock AgentCore Runtime artifact
    *
-   * Validation: Required property; must be valid AgentRuntimeArtifactProperty with container configuration
+   * Validation: Required; AgentRuntimeArtifactProperty
    **/
   readonly agentRuntimeArtifact: AgentRuntimeArtifactProperty;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional environment variables for agent runtime configuration enabling runtime customization. Defines key-value pairs of environment variables passed to the agent runtime container for configuration and behavior control.
+   * Key-value environment variables passed to the runtime container.
    *
-   * Use cases: Runtime configuration; Environment customization; Configuration management; Behavior control
+   * Use cases: Runtime configuration, environment customization, behavior control
    *
-   * AWS: Environment variables for Bedrock AgentCore Runtime container configuration
+   * AWS: Bedrock AgentCore Runtime container environment variables
    *
-   * Validation: Must be object with string key-value pairs if provided; passed to runtime container
+   * Validation: Optional; Record<string, string>
    **/
   readonly environmentVariables?: { [key: string]: string };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required network configuration for agent runtime deployment in VPC mode. MDAA enforces VPC deployment to maintain the highest security standards by ensuring agent runtimes are deployed in isolated network environments.
+   * VPC network configuration for secure runtime deployment.
+   * MDAA enforces VPC mode for all runtimes.
    *
-   * Use cases: VPC deployment; Network isolation; Private subnet usage; Security configuration
+   * Use cases: VPC deployment, network isolation, private subnet usage, security
    *
-   * AWS: Bedrock AgentCore Runtime network configuration for secure VPC deployment
+   * AWS: Bedrock AgentCore Runtime VPC network configuration
    *
-   * Validation: Required property; must be valid NetworkConfigurationProperty with VPC mode
+   * Validation: Required; NetworkConfigurationProperty; 1-16 security groups and subnets
    **/
   readonly networkConfiguration: NetworkConfigurationProperty;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional lifecycle configuration for session management enabling timeout and lifetime controls. Defines session timeout and maximum lifetime settings for agent runtime instances.
+   * Session timeout and maximum lifetime settings.
    *
-   * Use cases: Session management; Resource control; Timeout configuration; Lifecycle management
+   * Use cases: Session management, resource control, timeout configuration
    *
-   * AWS: Bedrock AgentCore Runtime lifecycle configuration for session management
+   * AWS: Bedrock AgentCore Runtime lifecycle configuration
    *
-   * Validation: Must be valid LifecycleConfigurationProperty if provided; timeout values between 60-28800 seconds
+   * Validation: Optional; LifecycleConfigurationProperty; values 60-28800 seconds
    **/
   readonly lifecycleConfiguration?: LifecycleConfigurationProperty;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional authorizer configuration for access control enabling authentication and authorization. Defines authentication mechanisms for agent runtime access with support for custom JWT authorizers.
+   * Authentication configuration with JWT authorizer support.
    *
-   * Use cases: Access control; Authentication; Authorization; Identity validation
+   * Use cases: Access control, JWT authentication, OIDC integration
    *
-   * AWS: Bedrock AgentCore Runtime authorizer for access control and authentication
+   * AWS: Bedrock AgentCore Runtime authorizer
    *
-   * Validation: Must be valid AuthorizerConfigurationProperty if provided; enables JWT-based access control
+   * Validation: Optional; AuthorizerConfigurationProperty
    **/
   readonly authorizerConfiguration?: AuthorizerConfigurationProperty;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional request header configuration for header forwarding enabling custom header passthrough. Defines allowed HTTP headers that will be forwarded to agent runtime instances.
+   * HTTP headers to forward to agent runtime instances.
    *
-   * Use cases: Header forwarding; Custom headers; Request context; Header passthrough
+   * Use cases: Header forwarding, custom request context, header passthrough
    *
-   * AWS: Bedrock AgentCore Runtime request header configuration for HTTP header forwarding
+   * AWS: Bedrock AgentCore Runtime request header configuration
    *
-   * Validation: Must be valid RequestHeaderConfigurationProperty if provided; 1-20 headers allowed
+   * Validation: Optional; RequestHeaderConfigurationProperty; 1-20 headers
    **/
   readonly requestHeaderConfiguration?: RequestHeaderConfigurationProperty;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional protocol configuration for agent runtime communication enabling protocol-specific settings. Defines protocol-level configuration for agent runtime communication and behavior.
+   * Protocol-level configuration for runtime communication.
    *
-   * Use cases: Protocol configuration; Communication settings; Protocol behavior; Runtime communication
+   * Use cases: Protocol configuration, communication settings
    *
-   * AWS: Bedrock AgentCore Runtime protocol configuration for communication settings
+   * AWS: Bedrock AgentCore Runtime protocol configuration
    *
-   * Validation: Must be valid protocol configuration if provided; defines runtime communication behavior
+   * Validation: Optional; Record<string, unknown>
    **/
   readonly protocolConfiguration?: Record<string, unknown>;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional existing IAM role ARN for agent runtime execution enabling role reuse. When provided, uses existing IAM role instead of creating new role for agent runtime execution.
+   * Existing IAM role ARN for runtime execution.
+   * If omitted, a new role is created.
    *
-   * Use cases: Role reuse; Existing role usage; Permission management; Role reference
+   * Use cases: Role reuse, existing role usage, permission management
    *
-   * AWS: IAM role ARN for Bedrock AgentCore Runtime execution permissions
+   * AWS: IAM role for Bedrock AgentCore Runtime execution
    *
-   * Validation: Must be valid IAM role ARN if provided; used instead of creating new role
+   * Validation: Optional; String; valid IAM role ARN
    **/
   readonly roleArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of IAM policies for runtime role permissions enabling custom service access. Defines additional IAM policies to attach to the agent runtime execution role for AWS service access.
+   * IAM policies to attach to the runtime execution role.
    *
-   * Use cases: IAM permissions; Policy attachment; Service access; Permission management
+   * Use cases: Custom permissions, service access, policy attachment
    *
-   * AWS: IAM policies for Bedrock AgentCore Runtime execution role permissions
+   * AWS: IAM policies for runtime execution role
    *
-   * Validation: Must be array of valid PolicyProperty if provided; attached to runtime execution role
+   * Validation: Optional; PolicyProperty[]
    **/
   readonly policies?: PolicyProperty[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional runtime endpoint configuration for agent runtime API access enabling runtime invocation. Defines the endpoint configuration for accessing and invoking the agent runtime through the Bedrock AgentCore API.
+   * Endpoint configuration for invoking the runtime via Bedrock AgentCore API.
    *
-   * Use cases: Runtime invocation; API access; Endpoint configuration; Agent access
+   * Use cases: Runtime invocation, API access, endpoint management
    *
-   * AWS: Bedrock AgentCore Runtime endpoint for agent runtime API access and invocation
+   * AWS: Bedrock AgentCore Runtime endpoint
    *
-   * Validation: Must be valid RuntimeEndpointProperty if provided; enables runtime API access
+   * Validation: Optional; RuntimeEndpointProperty
    **/
   readonly runtimeEndpoint?: RuntimeEndpointProperty;
 }
 
-/**
- * Q-ENHANCED-INTERFACE
- * L3 construct properties for Bedrock AgentCore Runtime deployment extending base MDAA construct properties. Combines runtime configuration with MDAA infrastructure properties for integrated deployment.
- *
- * Use cases: Construct configuration; MDAA integration; Infrastructure deployment; Runtime deployment
- *
- * AWS: MDAA L3 construct properties for Bedrock AgentCore Runtime deployment
- *
- * Validation: Must include valid BedrockAgentcoreRuntimeProps and MdaaL3ConstructProps
- */
+/** L3 construct props combining runtime config with MDAA infrastructure properties. */
 export interface BedrockAgentcoreRuntimeL3ConstructProps extends MdaaL3ConstructProps, BedrockAgentcoreRuntimeProps {}
 
-/**
- * Q-ENHANCED-CLASS
- * Bedrock AgentCore Runtime L3 construct for deploying custom agent runtimes with Docker containers. Provides high-level abstraction for creating Bedrock AgentCore Runtimes with container deployment, IAM role management, and endpoint configuration.
- *
- * Use cases: Custom agent runtime deployment; Container-based agents; Agent runtime management; Custom runtime execution
- *
- * AWS: Amazon Bedrock AgentCore Runtime for custom agent runtime deployment and execution
- *
- * Validation: Validates all configuration properties and creates required AWS resources
- */
 export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
   public readonly runtime: CfnResource;
   public readonly runtimeEndpoint?: CfnResource;

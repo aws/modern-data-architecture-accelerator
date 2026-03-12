@@ -26,164 +26,134 @@ import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Step Functions state machine properties providing workflow orchestration and execution management capabilities. Defines state machine configuration including execution roles, logging, monitoring, and EventBridge integration for DataOps workflow automation and orchestration.
+ * Configuration for a Step Functions state machine including execution role, logging, and EventBridge integration.
  *
- * Use cases: Workflow orchestration; State machine configuration; DataOps automation; Process coordination
+ * Use cases: Workflow orchestration, state machine configuration, DataOps automation, process coordination
  *
- * AWS: Step Functions state machine configuration for workflow orchestration and process automation
+ * AWS: AWS Step Functions state machine configuration for workflow orchestration
  *
  * Validation: stateMachineName, stateMachineType, stateMachineExecutionRole, logExecutionData, and rawStepFunctionDef are required
  */
 export interface StepFunctionProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required state machine name for Step Functions identification and workflow management enabling unique state machine identification and operational management. Provides the name for the Step Functions state machine for workflow identification and management within the DataOps environment.
+   * Name for the Step Functions state machine.
    *
-   * Use cases: State machine identification; Workflow naming; Operational management; Resource identification
+   * Use cases: State machine identification, workflow naming
    *
-   * AWS: Step Functions state machine name for workflow identification and management
+   * AWS: Step Functions state machine name
    *
-   * Validation: Must be valid state machine name; required for state machine creation and identification
+   * Validation: Must be a valid state machine name; required
    **/
   readonly stateMachineName: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required state machine type specification controlling execution model and performance characteristics for workflow optimization. Defines whether to use STANDARD for long-running workflows or EXPRESS for high-volume, short-duration executions with different pricing and feature sets.
+   * State machine type: STANDARD for long-running or EXPRESS for high-volume short-duration workflows.
    *
-   * Use cases: Execution model selection; Performance optimization; Cost management; Workflow characteristics
+   * Use cases: Execution model selection, performance optimization, cost management
    *
-   * AWS: Step Functions state machine type for execution model and performance optimization
+   * AWS: Step Functions state machine type
    *
-   * Validation: Must be STANDARD or EXPRESS; required for state machine type and execution model selection
+   * Validation: Must be STANDARD or EXPRESS; required
    **/
   readonly stateMachineType: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required execution role ARN for Step Functions state machine permissions enabling secure workflow execution and AWS service integration. Provides the IAM role that the state machine will assume for executing workflow steps and accessing AWS services during workflow execution.
+   * IAM role ARN the state machine assumes for executing workflow steps.
    *
-   * Use cases: Workflow permissions; Service integration; Secure execution; IAM role management
+   * Use cases: Workflow permissions, service integration, secure execution
    *
-   * AWS: IAM role ARN for Step Functions state machine execution permissions and service access
+   * AWS: IAM role ARN for Step Functions execution
    *
-   * Validation: Must be valid IAM role ARN; required for state machine execution permissions and service access
+   * Validation: Must be a valid IAM role ARN; required
    **/
   readonly stateMachineExecutionRole: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional CloudWatch log group retention period in days for execution log management and compliance requirements. Defines how long execution logs are retained in CloudWatch with specific allowed values for log retention and compliance management.
+   * CloudWatch log group retention in days (0 for infinite, defaults to 731).
    *
-   * Use cases: Log retention management; Compliance requirements; Storage cost optimization; Audit trail management
+   * Use cases: Log retention management, compliance requirements, storage cost optimization
    *
-   * AWS: CloudWatch log group retention for Step Functions execution logs and audit trail management
+   * AWS: CloudWatch log group retention for Step Functions execution logs
    *
-   * Validation: Must be 1,3,5,7,14,30,60,90,120,150,180,365,400,545,731,1827,3653, or 0 if provided; defaults to 731 days
+   * Validation: Must be 1,3,5,7,14,30,60,90,120,150,180,365,400,545,731,1827,3653, or 0 if provided
    **/
   readonly logGroupRetentionDays?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required flag controlling execution data logging for Step Functions monitoring and debugging enabling detailed execution tracking and troubleshooting. When enabled, logs parameter values and execution data during state machine execution for monitoring and debugging capabilities.
+   * Whether to log parameter values and execution data during state machine execution.
    *
-   * Use cases: Execution monitoring; Debugging support; Operational visibility; Troubleshooting assistance
+   * Use cases: Execution monitoring, debugging, operational visibility
    *
-   * AWS: Step Functions execution data logging for monitoring and debugging capabilities
+   * AWS: Step Functions execution data logging
    *
-   * Validation: Must be boolean value; required for execution data logging configuration and monitoring
+   * Validation: Must be boolean; required
    **/
   readonly logExecutionData: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required state machine definition as JSON object exported from Step Functions console enabling workflow logic specification and state transitions. Provides the complete state machine definition including states, transitions, and workflow logic for Step Functions execution.
+   * State machine definition as a JSON object (as exported from Step Functions console).
    *
-   * Use cases: Workflow definition; State transitions; Business logic; Process specification
+   * Use cases: Workflow definition, state transitions, business logic specification
    *
-   * AWS: Step Functions state machine definition for workflow logic and state transitions
+   * AWS: Step Functions state machine definition
    *
-   * Validation: Must be valid JSON object with state machine definition; required for workflow logic and execution
-   *   **/
+   * Validation: Must be a valid JSON object with state machine definition; required
+   **/
   readonly rawStepFunctionDef: { [key: string]: unknown };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional CDK Nag suppressions array for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification for compliance auditing and security review.
+   * CDK Nag suppressions for controlled security rule exceptions with justification.
    *
-   * Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions
+   * Use cases: Compliance management, security rule exceptions, audit documentation
    *
-   * AWS: CDK Nag suppressions for Step Functions compliance rule management and security exception documentation
+   * AWS: CDK Nag suppressions for Step Functions compliance
    *
-   * Validation: Must be array of valid SuppressionProps if provided; enables structured compliance rule management
+   * Validation: Must be array of valid SuppressionProps if provided
    **/
   readonly suppressions?: SuppressionProps[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional EventBridge configuration for Step Functions integration enabling event-driven workflow triggering and external system integration. Provides EventBridge setup for triggering state machines based on events and integrating with external systems and services.
+   * EventBridge configuration for event-driven state machine triggering.
    *
-   * Use cases: Event-driven workflows; External integration; Automated triggering; Event processing
+   * Use cases: Event-driven workflows, external integration, automated triggering
    *
-   * AWS: EventBridge integration for Step Functions event-driven workflow triggering and external integration
+   * AWS: Amazon EventBridge integration for Step Functions triggers
    *
-   * Validation: Must be valid EventBridgeProps if provided; enables event-driven workflow triggering and integration
+   * Validation: Must be valid EventBridgeProps if provided
    **/
   readonly eventBridge?: EventBridgeProps;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for CDK Nag suppression properties with structured compliance rule exception management. Defines suppression configuration for managing security rule exceptions with proper identification and justification for compliance auditing and security review processes.
+ * CDK Nag suppression entry with rule ID and justification reason.
  *
- * Use cases: Compliance rule exceptions; Security suppressions; Audit documentation; Structured exception management
+ * Use cases: Compliance rule exceptions, security suppressions, audit documentation
  *
- * AWS: CDK Nag suppression configuration for compliance rule exception management and audit documentation
+ * AWS: CDK Nag suppression configuration for compliance rule exception management
  *
- * Validation: id and reason are required for proper suppression identification and justification
+ * Validation: id and reason are both required
  */
 export interface SuppressionProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required suppression rule ID for CDK Nag rule identification enabling specific security rule exception management. Provides the specific CDK Nag rule identifier that will be suppressed for targeted compliance rule exception handling.
+   * CDK Nag rule ID to suppress (e.g. 'AwsSolutions-IAM5').
    *
-   * Use cases: Rule identification; Specific suppressions; Compliance management; Security rule exceptions
+   * Use cases: Rule identification, specific suppressions
    *
-   * AWS: CDK Nag rule ID for specific security rule suppression and compliance exception management
+   * AWS: CDK Nag rule ID
    *
-   * Validation: Must be valid CDK Nag rule ID; required for specific rule suppression and compliance management
+   * Validation: Must be a valid CDK Nag rule ID; required
    **/
   readonly id: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required suppression justification reason for compliance documentation and audit trail enabling proper exception documentation and security review. Provides the business or technical justification for suppressing the security rule for compliance auditing and security review processes.
+   * Business or technical justification for the suppression.
    *
-   * Use cases: Exception justification; Compliance documentation; Audit trail; Security review support
+   * Use cases: Exception justification, compliance documentation, audit trail
    *
-   * AWS: Suppression reason for CDK Nag rule exception justification and compliance documentation
+   * AWS: Suppression reason for CDK Nag compliance documentation
    *
-   * Validation: Must be descriptive justification text; required for proper exception documentation and audit trail
+   * Validation: Must be descriptive justification text; required
    **/
   readonly reason: string;
 }
 
 export interface StepFunctionL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for Step Functions integration and resource coordination enabling project-based resource organization and management. Provides the project identifier that coordinates Step Functions resources with other DataOps infrastructure and workflows.
-   *
-   * Use cases: Project coordination; Resource organization; DataOps integration; Project management
-   *
-   * AWS: DataOps project name for Step Functions resource coordination and project-based organization
-   *
-   * Validation: Must be valid project name; required for project coordination and resource organization
-   **/
+  // DataOps project name for Step Functions resource coordination and SSM parameters
   readonly projectName?: string;
   readonly kmsArn?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of Step Functions definitions for workflow orchestration deployment enabling state machine configuration and management. Provides state machine specifications including definitions, roles, logging, and EventBridge integration for DataOps workflow automation.
-   *
-   * Use cases: Workflow configuration; State machine deployment; Orchestration setup; Automation definition
-   *
-   * AWS: Step Functions definitions for workflow orchestration deployment and automation configuration
-   *
-   * Validation: Must be array of valid StepFunctionProps; required for Step Functions deployment and workflow configuration
-   *   **/
+  // Array of Step Functions state machine definitions to deploy
   readonly stepfunctionDefinitions: StepFunctionProps[];
 }
 

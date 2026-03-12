@@ -13,154 +13,37 @@ import { Construct } from 'constructs';
 import { DomainConfig } from './domain_config';
 
 export interface ProjectEnvironmentParameter {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required parameter name for DataZone project environment configuration enabling environment-specific settings. Specifies the name of the environment parameter for configuration management and environment customization within DataZone projects.
-   *
-   * Use cases: Environment configuration; Parameter naming; Configuration management; Environment customization
-   *
-   * AWS: DataZone project environment parameter name for configuration identification and management
-   *
-   * Validation: Must be non-empty string; required for environment parameter configuration
-   **/
+  /** Parameter name for DataZone project environment configuration enabling environment-specific settings */
   readonly name: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required parameter value for DataZone project environment configuration enabling environment-specific values. Specifies the value of the environment parameter for configuration application and environment customization within DataZone projects.
-   *
-   * Use cases: Environment values; Configuration application; Environment customization; Parameter values
-   *
-   * AWS: DataZone project environment parameter value for configuration application and management
-   *
-   * Validation: Must be non-empty string; required for environment parameter configuration
-   **/
+  /** Parameter value for DataZone project environment configuration enabling environment-specific values */
   readonly value: string;
 }
 
 export interface ProjectEnvironmentConfiguration {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of environment parameters for DataZone project environment configuration enabling customizable environment settings. Defines the collection of environment parameters that configure the DataZone project environment for specific deployment and operational requirements.
-   *
-   * Use cases: Environment configuration; Parameter collections; Deployment settings; Operational customization
-   *
-   * AWS: DataZone project environment parameters for environment configuration and customization
-   *
-   * Validation: Must be array of valid ProjectEnvironmentParameter objects; required for environment configuration
-   **/
+  /** Array of environment parameters for DataZone project environment configuration enabling */
   readonly environmentParameters: ProjectEnvironmentParameter[];
 }
 
 export interface MdaaDatazoneProjectProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional project name for DataZone project identification overriding automatic naming conventions. When specified, provides custom naming for the DataZone project for specific organizational or integration requirements.
-   *
-   * Use cases: Custom project naming; Organizational requirements; Integration with existing systems; Specific naming conventions
-   *
-   * AWS: Amazon DataZone project name for identification and management within the DataZone domain
-   *
-   * Validation: Must be valid project name string if provided; overrides automatic naming when specified
-   **/
+  /** Project name for DataZone project identification overriding automatic naming conventions */
   readonly name?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional domain unit specification for project organization within DataZone domains enabling hierarchical project management. Provides organizational structure for projects within domains for improved governance and access control.
-   *
-   * Use cases: Project organization; Hierarchical management; Domain structure; Organizational governance
-   *
-   * AWS: DataZone domain unit for project organization and hierarchical management within domains
-   *
-   * Validation: Must be valid domain unit string if provided; enables hierarchical project organization
-   **/
+  /** Domain unit specification for project organization within DataZone domains enabling */
   readonly domainUnit?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required domain configuration for DataZone project integration enabling domain association and configuration management. Provides domain configuration object for project-domain association and integration with DataZone domain settings.
-   *
-   * Use cases: Domain integration; Project-domain association; Configuration management; Domain settings
-   *
-   * AWS: DataZone domain configuration for project integration and domain association
-   *
-   * Validation: Must be valid DomainConfig object; required for DataZone project creation
-   *   **/
+  /** Domain configuration for DataZone project integration enabling domain association and configuration management */
   readonly domainConfig: DomainConfig;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional profile name for DataZone project profile association enabling profile-based project configuration. Specifies the profile name for associating the project with a specific DataZone profile configuration for standardized project settings.
-   *
-   * Use cases: Profile association; Standardized configuration; Profile-based settings; Project templates
-   *
-   * AWS: DataZone project profile name for profile-based project configuration and standardization
-   *
-   * Validation: Must be valid profile name string if provided; profile must exist in the DataZone domain
-   **/
+  /** Profile name for DataZone project profile association enabling profile-based project configuration */
   readonly profileName?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional project profile ID for direct profile association enabling explicit profile configuration. Specifies the profile ID for direct association with a DataZone project profile for explicit configuration management.
-   *
-   * Use cases: Direct profile association; Explicit configuration; Profile ID reference; Configuration management
-   *
-   * AWS: DataZone project profile ID for direct profile association and configuration
-   *
-   * Validation: Must be valid profile ID string if provided; profile must exist in the DataZone domain
-   **/
+  /** Project profile ID for direct profile association enabling explicit profile configuration */
   readonly projectProfileId?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional environment configurations for DataZone project environment setup enabling environment-specific parameter management. Defines named environment configurations with parameters for customizing DataZone project environments with specific settings and values.
-   *
-   * Use cases: Environment customization; Parameter management; Environment-specific settings; Configuration collections
-   *
-   * AWS: DataZone project environment configurations for environment-specific parameter management
-   *
-   * Validation: Must be object mapping environment names to ProjectEnvironmentConfiguration if provided; enables environment customization
-   **/
+  /** Environment configurations for DataZone project environment setup enabling */
   readonly environmentConfigurations?: { [name: string]: ProjectEnvironmentConfiguration };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Owner user references for project ownership enabling user-based project administration and full administrative permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting user-based project governance and individual administration.
-   *
-   * Use cases: User-based project ownership; Project administration; Full administrative access; Owner permissions; Project governance
-   *
-   * AWS: Amazon DataZone project owner users with PROJECT_OWNER designation for full administrative access
-   *
-   * Validation: Must be array of valid MDAA user configuration names as defined in the module users section; references must exist in module configuration
-   **/
+  /** Owner user references for project ownership enabling user-based project administration and full */
   readonly ownerUsers?: { [id: string]: string };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Owner group references for project ownership enabling group-based project administration and collective administrative permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting group-based project governance and collective administration.
-   *
-   * Use cases: Group-based project ownership; Collective administration; Full administrative access; Owner permissions; Team governance
-   *
-   * AWS: Amazon DataZone project owner groups with PROJECT_OWNER designation for full administrative access
-   *
-   * Validation: Must be array of valid MDAA group configuration names as defined in the module groups section; references must exist in module configuration
-   **/
+  /** Owner group references for project ownership enabling group-based project administration and */
   readonly ownerGroups?: { [id: string]: string };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Contributor user references for project access enabling user-based project contribution and standard permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting user-based project collaboration and individual contribution.
-   *
-   * Use cases: User-based project access; Project contribution; Contributor permissions; Collaboration; Standard access
-   *
-   * AWS: Amazon DataZone project contributor users with PROJECT_CONTRIBUTOR designation for contributor-level access
-   *
-   * Validation: Must be array of valid MDAA user configuration names as defined in the module users section; references must exist in module configuration
-   **/
+  /** Contributor user references for project access enabling user-based project contribution and standard permissions */
   readonly users?: { [id: string]: string };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Contributor group references for project access enabling group-based project contribution and collective standard permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting group-based project collaboration and collective contribution.
-   *
-   * Use cases: Group-based project access; Collective contribution; Contributor permissions; Team collaboration; Standard access
-   *
-   * AWS: Amazon DataZone project contributor groups with PROJECT_CONTRIBUTOR designation for contributor-level access
-   *
-   * Validation: Must be array of valid MDAA group configuration names as defined in the module groups section; references must exist in module configuration
-   **/
+  /** Contributor group references for project access enabling group-based project contribution and */
   readonly groups?: { [id: string]: string };
 }
 
@@ -168,50 +51,14 @@ export interface MdaaDatazoneProjectProps extends MdaaConstructProps {
  * A construct which creates a compliant Datazone Project.
  */
 export class MdaaDatazoneProject extends Construct {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Domain configuration object for DataZone project domain integration providing domain settings and configuration access. Exposes the domain configuration for the project enabling access to domain-specific settings and integration parameters.
-   *
-   * Use cases: Domain configuration access; Integration settings; Domain parameters; Configuration retrieval
-   *
-   * AWS: DataZone domain configuration for project domain integration and settings access
-   *
-   * Validation: Initialized from props.domainConfig; provides read-only access to domain configuration
-   **/
+  /** Domain configuration object for DataZone project domain integration providing domain settings and configuration access */
   public readonly domainConfig: DomainConfig;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * IAM managed policy for DataZone domain KMS key usage enabling encryption and decryption operations. Provides managed policy that grants permissions to use the domain KMS key for data encryption and decryption within the DataZone project.
-   *
-   * Use cases: KMS key usage; Encryption operations; Decryption operations; Key permissions
-   *
-   * AWS: IAM managed policy for DataZone domain KMS key usage and encryption operations
-   *
-   * Validation: Retrieved from domain configuration; provides KMS key usage permissions
-   **/
+  /** IAM managed policy for DataZone domain KMS key usage enabling encryption and decryption operations */
   public readonly domainKmsUsagePolicy: IManagedPolicy;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * CloudFormation DataZone project resource for project deployment and management. Exposes the underlying CloudFormation project resource for advanced configuration and dependency management.
-   *
-   * Use cases: Project deployment; CloudFormation management; Advanced configuration; Dependency management
-   *
-   * AWS: CloudFormation DataZone project resource for project deployment and management
-   *
-   * Validation: Created during construct initialization; represents the deployed DataZone project
-   **/
+  /** CloudFormation DataZone project resource for project deployment and management */
   public readonly project: CfnProject;
   protected props: MdaaDatazoneProjectProps;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Generated project name after applying naming conventions for consistent resource identification. Provides the final project name after applying organizational naming conventions for consistent resource naming and identification.
-   *
-   * Use cases: Resource identification; Naming consistency; Project naming; Resource management
-   *
-   * AWS: DataZone project name after naming convention application for resource identification
-   *
-   * Validation: Generated from props.naming.resourceName; applies naming conventions to project name
-   **/
+  /** Generated project name after applying naming conventions for consistent resource identification */
   public generatedProjectName: string;
   protected customResourceRole: IRole;
   constructor(scope: Construct, id: string, props: MdaaDatazoneProjectProps) {

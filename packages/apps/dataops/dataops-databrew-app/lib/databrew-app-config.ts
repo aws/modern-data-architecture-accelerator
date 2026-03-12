@@ -12,55 +12,51 @@ import { MdaaDataOpsConfigParser, MdaaDataOpsConfigContents } from '@aws-mdaa/da
 
 export interface DataBrewConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for DataBrew integration and resource autowiring with existing project infrastructure. Enables seamless integration with deployed project resources including S3 buckets, IAM roles, and security configurations for coordinated data preparation operations.
+   * DataOps project name for DataBrew resource autowiring.
    *
-   * Use cases: Project resource integration; Coordinated data preparation; Infrastructure autowiring and resource sharing
+   * Use cases: Project integration; Shared infrastructure reuse
    *
-   * AWS: AWS Glue DataBrew project integration for resource coordination and shared infrastructure
+   * AWS: DataOps project reference
    *
-   * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
-   **/
+   * Validation: Optional; must match an existing deployed project
+   */
   readonly projectName?: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of recipe names to recipe definitions enabling reusable data transformation and cleansing workflows. Provides recipe configuration for data preparation steps, transformation logic, and cleansing operations within the data preparation architecture.
+   * Map of recipe names to DataBrew recipe definitions for reusable data transformations.
    *
-   * Use cases: Reusable transformation workflows; Data cleansing operations; Visual data preparation recipe management
+   * Use cases: Reusable transformation workflows; Data cleansing operations
    *
-   * AWS: AWS Glue DataBrew recipe definitions for data transformation and preparation workflows
+   * AWS: AWS Glue DataBrew recipes
    *
-   * Validation: Must be object with string keys and valid RecipeProps values if provided; defines transformation operations
-   *   **/
+   * Validation: Optional; map of string to RecipeProps
+   */
   readonly recipes?: {
     [key: string]: RecipeProps;
   };
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of dataset names to dataset definitions enabling data source configuration and connection management. Provides dataset configuration for various data sources, formats, and connection patterns within the data preparation workflows.
+   * Map of dataset names to DataBrew dataset definitions for data source configuration.
    *
-   * Use cases: Data source configuration; Connection management; Dataset-specific preparation workflows
+   * Use cases: Data source connections; Format-specific dataset configuration
    *
-   * AWS: AWS Glue DataBrew dataset definitions for data source configuration and management
+   * AWS: AWS Glue DataBrew datasets
    *
-   * Validation: Must be object with string keys and valid DatasetProps values if provided; defines data source connections
-   *   **/
+   * Validation: Optional; map of string to DatasetProps
+   */
   readonly datasets?: {
     [key: string]: DatasetProps;
   };
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of job names to DataBrew job definitions enabling automated data preparation and profiling operations. Provides job configuration for scheduled data preparation, profiling, and transformation workflows within the data lake architecture.
+   * Map of job names to DataBrew job definitions for automated data preparation and profiling.
    *
-   * Use cases: Automated data preparation; Scheduled profiling operations; Data transformation job management
+   * Use cases: Automated data preparation; Scheduled profiling; Transformation jobs
    *
-   * AWS: AWS Glue DataBrew job definitions for automated data preparation and profiling workflows
+   * AWS: AWS Glue DataBrew jobs
    *
-   * Validation: Must be object with string keys and valid DataBrewJobProps values if provided; defines preparation jobs
-   *   **/
+   * Validation: Optional; map of string to DataBrewJobProps
+   */
   readonly jobs?: {
     [key: string]: DataBrewJobProps;
   };

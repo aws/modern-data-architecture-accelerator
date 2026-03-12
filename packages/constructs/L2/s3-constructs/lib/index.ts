@@ -24,30 +24,12 @@ export interface MdaaBucketProps extends mdaa_construct.MdaaConstructProps {
   readonly additionalKmsKeyArns?: string[];
   readonly enforceExclusiveKmsKeys?: boolean;
   readonly encryptionKey: IMdaaKmsKey;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional physical name for the S3 bucket that will be processed through MDAA naming conventions. If not specified, CloudFormation will assign a unique name. When provided, enables predictable bucket naming for cross-stack references and external integrations.
-   *
-   * Use cases: Predictable bucket naming; Cross-stack references; External system integration
-   *
-   * AWS: AWS S3 bucket physical name for resource identification and cross-service integration
-   *
-   * Validation: Must be valid S3 bucket name if provided (3-63 characters, lowercase, no underscores); processed through MDAA naming
-   **/
+  /** Physical name for the S3 bucket that will be processed through MDAA naming conventions */
   readonly bucketName?: string;
   readonly eventBridgeEnabled?: boolean;
   readonly lifecycleRules?: LifecycleRule[];
 
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of inventory configurations for automated bucket content reporting and analysis. Enables scheduled generation of object metadata reports for data governance, cost analysis, and compliance auditing purposes.
-   *
-   * Use cases: Data governance reporting; Cost analysis and optimization; Compliance auditing and object tracking
-   *
-   * AWS: AWS S3 inventory configuration for automated bucket content reporting and analysis
-   *
-   * Validation: Must be array of valid Inventory objects if provided; defines inventory generation schedule and content
-   *   **/
+  /** Array of inventory configurations for automated bucket content reporting and analysis */
   readonly inventories?: Inventory[];
 
   readonly transferAcceleration?: boolean;

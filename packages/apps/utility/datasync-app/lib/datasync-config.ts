@@ -23,106 +23,111 @@ import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for DataSync location management organized by storage type enabling data source and destination configuration. Provides type-specific location configuration for different storage systems including S3, SMB, NFS, and object storage for flexible data movement operations.
+ * DataSync location configuration organized by storage protocol type.
+ * Each property maps location names to protocol-specific location settings.
  *
- * Use cases: Multi-protocol data source configuration; Storage type organization; location management
+ * Use cases: Multi-protocol data source/destination setup; Organizing locations by S3, SMB, NFS, or object storage type
  *
- * AWS: Configures AWS DataSync locations for different storage types and protocols for data movement operations
+ * AWS: AWS DataSync locations grouped by storage protocol
  *
- * Validation: All properties are optional; each must be valid location configuration map if provided
+ * Validation: All properties optional; each must be a valid map of location names to LocationProps
  */
 export interface LocationsByTypeConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of S3 location names to S3 location configurations enabling cloud-native data storage integration. Provides S3 bucket and prefix configuration for cloud data movement operations with encryption and access control capabilities.
+   * Map of S3 location names to S3 location configurations.
+   * Each entry creates a DataSync S3 location for cloud-native data transfers.
    *
-   * Use cases: S3 data integration; Cloud storage operations; Encrypted data movement; Cloud-to-cloud data synchronization
+   * Use cases: S3-to-S3 data migration; Cloud storage as transfer source or destination
    *
-   * AWS: AWS DataSync S3 locations for cloud storage integration and data movement
+   * AWS: DataSync LocationS3 resources
    *
-   * Validation: Must be object with string keys and valid LocationS3Props values if provided; defines S3 storage locations
-   *   **/
+   * Validation: Optional; keys are location names, values must be valid LocationS3Props
+   */
   readonly s3?: { [name: string]: LocationS3Props };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of SMB location names to SMB share configurations enabling Windows file share integration. Provides SMB/CIFS protocol support for Windows-based file systems and network attached storage integration.
+   * Map of SMB location names to SMB share configurations.
+   * Each entry creates a DataSync SMB location for Windows file share transfers.
+   * Credentials must be pre-stored in Secrets Manager.
    *
-   * Use cases: Windows file share integration; SMB/CIFS protocol support; Network attached storage connectivity
+   * Use cases: Windows file share migration; On-premises NAS data transfer via SMB protocol
    *
-   * AWS: AWS DataSync SMB locations for Windows file share integration and SMB protocol support
+   * AWS: DataSync LocationSMB resources
    *
-   * Validation: Must be object with string keys and valid LocationSmbProps values if provided; defines SMB share locations
-   *   **/
+   * Validation: Optional; keys are location names, values must be valid LocationSmbProps
+   */
   readonly smb?: { [name: string]: LocationSmbProps };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of NFS location names to NFS mount configurations enabling Unix/Linux file system integration. Provides NFS protocol support for Unix-based file systems and network file system connectivity.
+   * Map of NFS location names to NFS mount configurations.
+   * Each entry creates a DataSync NFS location for Unix/Linux file system transfers.
    *
-   * Use cases: Unix/Linux file system integration; NFS protocol support; Network file system connectivity
+   * Use cases: Linux NFS export migration; Unix file system data transfer to AWS
    *
-   * AWS: AWS DataSync NFS locations for Unix file system integration and NFS protocol support
+   * AWS: DataSync LocationNFS resources
    *
-   * Validation: Must be object with string keys and valid LocationNfsProps values if provided; defines NFS mount locations
-   *   **/
+   * Validation: Optional; keys are location names, values must be valid LocationNfsProps
+   */
   readonly nfs?: { [name: string]: LocationNfsProps };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of object storage location names to object storage configurations enabling S3-compatible storage integration. Provides support for S3-compatible object storage systems and third-party cloud storage services.
+   * Map of object storage location names to S3-compatible object storage configurations.
+   * Each entry creates a DataSync object storage location for third-party cloud storage transfers.
+   * Credentials must be pre-stored in Secrets Manager.
    *
-   * Use cases: S3-compatible storage integration; Third-party cloud storage; Object storage protocol support
+   * Use cases: Google Cloud Storage to S3 migration; Third-party object storage synchronization
    *
-   * AWS: AWS DataSync object storage locations for S3-compatible storage integration and connectivity
+   * AWS: DataSync LocationObjectStorage resources
    *
-   * Validation: Must be object with string keys and valid LocationObjectStorageProps values if provided; defines object storage locations
-   *   **/
+   * Validation: Optional; keys are location names, values must be valid LocationObjectStorageProps
+   */
   readonly objectStorage?: { [name: string]: LocationObjectStorageProps };
 }
 
 export interface DataSyncConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional VPC configuration for DataSync agent deployment enabling secure network connectivity and private data transfer operations. Provides VPC networking setup for agents requiring private network access to on-premises or VPC-based storage systems.
+   * VPC for DataSync agent deployment. MDAA creates a security group with required
+   * ingress rules and a VPC endpoint for the DataSync service.
+   * Two-stage deployment: first pass creates networking, second pass registers agents.
    *
-   * Use cases: Private network connectivity; Secure data transfer; VPC-based agent deployment for on-premises integration
+   * Use cases: Private agent-to-service communication; VPC endpoint automation; Security group creation
    *
-   * AWS: Amazon VPC configuration for DataSync agent networking and private connectivity
+   * AWS: VPC, VPC endpoints, security groups for DataSync service
    *
-   * Validation: Must be valid VpcProps if provided; enables VPC networking for DataSync agents and secure connectivity
-   **/
+   * Validation: Optional; requires vpcId and vpcCidrBlock
+   */
   readonly vpc?: VpcProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of agent names to DataSync agent configurations enabling on-premises and hybrid connectivity. Provides agent deployment for connecting on-premises storage systems to AWS for data movement and synchronization operations.
+   * Map of agent names to DataSync agent configurations.
+   * Agents must be deployed (e.g. EC2 with DataSync AMI) before activation.
+   * Omit activationKey on first pass to create networking; add it on second pass to register.
    *
-   * Use cases: On-premises connectivity; Hybrid data movement; Agent-based data transfer for local storage systems
+   * Use cases: On-premises storage connectivity; Multi-AZ agent resiliency; Two-stage agent activation
    *
-   * AWS: AWS DataSync agents for on-premises and hybrid storage connectivity and data movement
+   * AWS: DataSync agents for on-premises and hybrid data transfer
    *
-   * Validation: Must be object with string keys and valid AgentProps values if provided; defines agent deployment configuration
-   *   **/
+   * Validation: Optional; keys are agent names, values must be valid AgentProps
+   */
   readonly agents?: { [name: string]: AgentProps };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional location configuration organized by storage type enabling data source and destination management. Provides structured location configuration for different storage protocols and systems for flexible data movement operations.
+   * DataSync locations organized by storage protocol type (S3, SMB, NFS, object storage).
+   * Locations serve as source or destination endpoints for DataSync tasks.
    *
-   * Use cases: Multi-protocol location management; Storage system integration; data source configuration
+   * Use cases: Multi-protocol location setup; Source/destination endpoint configuration
    *
-   * AWS: AWS DataSync locations for various storage types and protocols for data movement operations
+   * AWS: DataSync locations (S3, SMB, NFS, ObjectStorage)
    *
-   * Validation: Must be valid LocationsByTypeConfig if provided; defines all storage location configurations by type
-   *   **/
+   * Validation: Optional; must be valid LocationsByTypeConfig
+   */
   readonly locations?: LocationsByTypeConfig;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of task names to DataSync task configurations enabling automated data transfer and synchronization workflows. Provides task configuration for scheduled and on-demand data movement between configured locations with filtering and scheduling capabilities.
+   * Map of task names to DataSync task configurations.
+   * Tasks define data transfer operations between source and destination locations
+   * with optional scheduling, filtering, and transfer options.
    *
-   * Use cases: Automated data transfer; Scheduled synchronization; Data movement workflow management
+   * Use cases: Scheduled data synchronization; One-time migration; Incremental transfers with filtering
    *
-   * AWS: AWS DataSync tasks for automated data transfer and synchronization between storage locations
+   * AWS: DataSync tasks with CloudWatch logging
    *
-   * Validation: Must be object with string keys and valid TaskProps values if provided; defines data transfer task configuration
-   *   **/
+   * Validation: Optional; keys are task names, values must be valid TaskProps
+   */
   readonly tasks?: { [name: string]: TaskProps };
 }
 

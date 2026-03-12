@@ -12,26 +12,24 @@ import * as configSchema from './config-schema.json';
 
 export interface GlueWorkflowConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for workflow integration and resource autowiring with existing project infrastructure. Enables seamless integration with deployed project resources including jobs, crawlers, databases, and IAM roles for coordinated workflow orchestration.
+   * DataOps project name for workflow resource autowiring.
    *
-   * Use cases: Project resource integration; Coordinated workflow orchestration; Infrastructure autowiring and resource coordination
+   * Use cases: Project integration; Resource coordination
    *
-   * AWS: AWS Glue workflow project integration for resource coordination and shared infrastructure
+   * AWS: DataOps project reference
    *
-   * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
-   **/
+   * Validation: Optional; must match an existing deployed project
+   */
   readonly projectName?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of workflow definitions enabling complex ETL pipeline orchestration and job coordination. Provides workflow configuration for job sequencing, trigger management, and conditional execution patterns within the data processing architecture.
+   * Glue workflow definitions for ETL pipeline orchestration and job coordination.
    *
-   * Use cases: ETL pipeline orchestration; Job sequencing and coordination; Complex workflow execution patterns
+   * Use cases: ETL pipeline sequencing; Trigger management; Conditional execution
    *
-   * AWS: AWS Glue workflow definitions for ETL pipeline orchestration and job coordination
+   * AWS: AWS Glue workflows
    *
-   * Validation: Must be array of valid WorkflowProps objects; required; defines all workflow orchestration operations
-   *   **/
+   * Validation: Required; array of WorkflowProps
+   */
   readonly workflowDefinitions: WorkflowProps[];
 }
 

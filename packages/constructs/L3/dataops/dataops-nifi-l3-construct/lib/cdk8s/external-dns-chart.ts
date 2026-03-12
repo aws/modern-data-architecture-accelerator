@@ -8,16 +8,7 @@ import { Construct } from 'constructs';
 import * as k8s from './imports/k8s';
 
 export interface ExternalDnsChartProps extends cdk8s.ChartProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required AWS region for External DNS deployment enabling region-specific Route 53 integration and DNS management. Specifies the target AWS region for External DNS operations affecting Route 53 hosted zone access and DNS record management.
-   *
-   * Use cases: Regional DNS management; Route 53 integration; Region-specific deployment; DNS zone targeting
-   *
-   * AWS: AWS region specification for External DNS Route 53 integration and DNS management
-   *
-   * Validation: Must be valid AWS region string; required for External DNS regional deployment and Route 53 access
-   **/
+  /** AWS region for External DNS Route 53 integration. */
   readonly region: string;
   readonly externalDnsRoleArn: string;
 }

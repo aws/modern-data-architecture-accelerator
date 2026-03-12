@@ -14,16 +14,7 @@ import { Construct } from 'constructs';
 export type LifecycleConfigAppType = 'JupyterServer' | 'JupyterLab' | 'KernelGateway';
 
 export interface MdaaStudioLifecycleConfigProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional lifecycle configuration name for custom identification overriding automatic MDAA naming conventions. When specified, provides custom naming for the lifecycle configuration for specific organizational or integration requirements.
-   *
-   * Use cases: Custom naming; Organizational requirements; Integration needs; Specific naming conventions
-   *
-   * AWS: SageMaker Studio lifecycle configuration name for custom identification and configuration management
-   *
-   * Validation: Must be valid configuration name string if provided; overrides automatic MDAA naming
-   **/
+  /** Lifecycle configuration name for custom identification overriding automatic MDAA naming conventions */
   readonly lifecycleConfigName?: string;
   readonly lifecycleConfigContent: string;
   readonly lifecycleConfigAppType: LifecycleConfigAppType;

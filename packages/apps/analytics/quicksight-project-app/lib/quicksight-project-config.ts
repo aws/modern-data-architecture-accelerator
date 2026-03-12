@@ -15,38 +15,40 @@ import * as configSchema from './config-schema.json';
 
 export interface QuickSightProjectConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional nested map of data source types to data source configurations enabling data connectivity for QuickSight projects. Provides flexible data source setup with support for multiple data source types and configurations for business intelligence operations.
+   * Nested map of data source type to data source configurations for QuickSight project data connectivity.
+   * Outer key is the data source type (e.g., REDSHIFT, ATHENA), inner key is a unique data source ID.
+   * Supports credential pairs, secret ARN references, VPC connections, and SSL configuration.
    *
-   * Use cases: Data source connectivity; Multi-source data integration; Flexible data connection management
+   * Use cases: Redshift data source setup; Athena connectivity; Multi-source BI integration
    *
-   * AWS: Amazon QuickSight data sources for data connectivity and integration
+   * AWS: QuickSight data sources with credentials, VPC connections, and type-specific parameters
    *
-   * Validation: Must be nested object with string keys and valid DataSourceProps values if provided; enables data connectivity
-   *   **/
+   * Validation: Optional; nested map of type → ID → DataSourceProps
+   */
   readonly dataSources?: { [key: string]: { [key: string]: DataSourceProps } };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of principal names to principal identifiers enabling access control and permission management for QuickSight projects. Defines all principals who will have access to the project resources and capabilities for controlled business intelligence operations.
+   * Named QuickSight principals (users or groups) referenced in folder and data source permissions.
+   * Each key is a logical name, value is the QuickSight principal ARN.
    *
-   * Use cases: Access control; Principal management; Permission assignment for QuickSight project resources
+   * Use cases: Principal-based access control; Group permission assignment; User management
    *
-   * AWS: Amazon QuickSight principal configuration for project access control and permission management
+   * AWS: QuickSight user/group ARNs for permission assignment
    *
-   * Validation: Must be object with string keys and valid principal identifier values; required; defines project access control
-   *   **/
+   * Validation: Required; map of string keys to QuickSight principal ARNs
+   */
   readonly principals: { [key: string]: string };
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of shared folder names to shared folder configurations enabling collaborative workspace management within QuickSight projects. Provides organized, shared workspace areas for collaborative business intelligence development and asset sharing.
+   * Named shared folder configurations for collaborative QuickSight workspace management.
+   * Each folder supports hierarchical sub-folders and principal-based permissions
+   * (READER_FOLDER or AUTHOR_FOLDER actions).
    *
-   * Use cases: Collaborative workspaces; Shared asset management; Organized project resource sharing
+   * Use cases: Team-based BI workspaces; Dev/test/prod folder separation; Asset organization
    *
-   * AWS: Amazon QuickSight shared folders for collaborative workspace and asset management
+   * AWS: QuickSight shared folders with hierarchical structure and permission management
    *
-   * Validation: Must be object with string keys and valid SharedFoldersProps values if provided; enables collaborative workspaces
-   *   **/
+   * Validation: Optional; map of string keys to SharedFoldersProps
+   */
   readonly sharedFolders?: { [key: string]: SharedFoldersProps };
 }
 

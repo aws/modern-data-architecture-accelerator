@@ -22,14 +22,14 @@ import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-mdaa/kms-cons
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
 /**
- * Q-ENHANCED-INTERFACE
- * GAIA GenAI Accelerator configuration interface for GenAI application deployment with RAG capabilities, model integration, and conversational AI infrastructure. Defines complete GenAI platform setup including API Gateway, WebSocket connections, Lambda functions, DynamoDB tables, S3 buckets, and vector databases for production-ready conversational AI applications with document ingestion and retrieval capabilities.
+ * GAIA GenAI platform configuration extending SystemConfig with admin role access for team resources.
+ * Configures the complete chatbot platform including RAG engines, LLM models, authentication, VPC networking, and API setup.
  *
- * Use cases: Conversational AI applications; RAG-powered chatbots; Document-based AI assistants; GenAI platform deployment; Multi-model AI integration
+ * Use cases: Conversational AI chatbots; RAG-powered document Q&A; Multi-model GenAI platforms; Enterprise AI assistants
  *
- * AWS: Complete GenAI platform with API Gateway, Lambda functions, DynamoDB, S3, Step Functions, and Bedrock/SageMaker integration for conversational AI
+ * AWS: GAIA platform (API Gateway, Lambda, DynamoDB, S3, Step Functions, Bedrock, SageMaker, Cognito, KMS)
  *
- * Validation: Must extend SystemConfig validation; admin roles must have appropriate permissions; RAG configuration must specify valid vector database settings
+ * Validation: Required; Must extend SystemConfig; dataAdminRoles must reference valid IAM roles
  */
 export interface GAIAProps extends SystemConfig {
   /**
@@ -37,17 +37,18 @@ export interface GAIAProps extends SystemConfig {
    */
   readonly dataAdminRoles: MdaaRoleRef[];
 }
+/** L3 construct props for GAIA GenAI platform deployment. */
 export interface GAIAL3ConstructProps extends MdaaL3ConstructProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required GAIA configuration defining generative AI platform setup including chatbot infrastructure, RAG engines, authentication, and AI model integration. Provides complete GenAI platform configuration with system settings, security controls, and AI application capabilities for enterprise AI deployment.
+   * Complete GAIA generative AI platform configuration including RAG engines, LLM models, authentication, VPC networking, and chatbot API setup.
+   * Encompasses all sub-configurations for Bedrock/SageMaker model integration, Cognito auth, Aurora/Kendra RAG, and custom code overwrites.
    *
-   * Use cases: GenAI platform configuration; AI system setup; Chatbot deployment; RAG system configuration
+   * Use cases: GenAI chatbot deployment; RAG-powered document Q&A; Multi-model AI platform setup; Enterprise conversational AI
    *
-   * AWS: GAIA platform configuration for generative AI infrastructure and application deployment
+   * AWS: GAIA platform (API Gateway, Lambda, DynamoDB, S3, Step Functions, Bedrock, SageMaker, Cognito)
    *
-   * Validation: Must be valid GAIAProps extending SystemConfig; required for GAIA platform deployment and AI infrastructure
-   **/
+   * Validation: Required; Must be valid GAIAProps extending SystemConfig
+   */
   readonly gaia: GAIAProps;
 }
 

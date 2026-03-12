@@ -12,40 +12,42 @@ import * as configSchema from './config-schema.json';
 import { ConfigurationElement } from '@aws-mdaa/config';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for OpenSearch domain deployment extending base OpenSearch domain properties with configuration-driven access policies. Enables flexible access policy configuration through external configuration elements for dynamic policy management.
+ * Extends OpensearchDomainProps with config-driven access policies using ConfigurationElement
+ * instead of PolicyStatementProps. Access policies are converted to PolicyStatement objects
+ * at parse time via PolicyStatement.fromJson().
  *
- * Use cases: Dynamic access policy configuration; External policy management; Flexible domain access control
+ * Use cases: YAML-driven access policy configuration; Dynamic policy management
  *
- * AWS: Extends Amazon OpenSearch domain configuration with configurable access policies for flexible security management
+ * AWS: OpenSearch domain access policies defined as JSON configuration elements
  *
- * Validation: Inherits OpensearchDomainProps validation except accessPolicies; accessPolicies must be array of ConfigurationElement
+ * Validation: Inherits OpensearchDomainProps validation; accessPolicies must be valid ConfigurationElement array
  */
 export interface OpensearchDomainConfig extends Omit<OpensearchDomainProps, 'accessPolicies'> {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of configuration elements defining access policies for the OpenSearch domain enabling dynamic policy management. Provides flexible access control configuration through external policy definitions for adaptable security management.
+   * Access policy definitions as configuration elements (JSON objects).
+   * Converted to IAM PolicyStatement objects at parse time via PolicyStatement.fromJson().
    *
-   * Use cases: Dynamic access policy configuration; External policy management; Flexible security configuration
+   * Use cases: YAML-driven access policies; Dynamic policy configuration
    *
-   * AWS: Amazon OpenSearch domain access policies for IAM-based access control and security
+   * AWS: OpenSearch domain access policies (IAM policy statement JSON)
    *
-   * Validation: Must be array of valid ConfigurationElement objects; required; defines domain access control policies
-   **/
+   * Validation: Required; array of valid IAM policy statement JSON objects as ConfigurationElement
+   */
   readonly accessPolicies: ConfigurationElement[];
 }
 
 export interface OpensearchConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required OpenSearch domain configuration defining all aspects of the domain deployment including security, networking, and access controls. Provides domain setup with VPC security, encryption, and configurable access policies.
+   * Complete OpenSearch domain configuration including cluster settings, networking, security,
+   * and access controls. The module deploys a KMS-encrypted, VPC-bound OpenSearch domain with
+   * security group controls, CloudWatch logging, and optional SAML SSO integration.
    *
-   * Use cases: Complete domain configuration; Security and networking setup; Access control and policy management; Search and analytics deployment
+   * Use cases: Search and analytics domain deployment; Log analysis infrastructure; Full-text search
    *
-   * AWS: Amazon OpenSearch domain configuration for complete deployment and security setup
+   * AWS: OpenSearch domain with KMS encryption, VPC networking, CloudWatch logs, and optional SAML SSO
    *
-   * Validation: Must be valid OpensearchDomainConfig; required; defines all domain deployment characteristics
-   *   **/
+   * Validation: Required; valid OpensearchDomainConfig
+   */
   readonly domain: OpensearchDomainConfig;
 }
 
@@ -57,16 +59,6 @@ export class OpensearchConfigParser extends MdaaAppConfigParser<OpensearchConfig
     this.domain = {
       ...this.configContents.domain,
       ...{
-        /**
-         * Q-ENHANCED-PROPERTY
-         * Required array of IAM policy statements for OpenSearch domain access control enabling fine-grained permissions and security management. Defines access policies that control who can access the OpenSearch domain and what operations they can perform for security and access management.
-         *
-         * Use cases: Access control; Security management; Permission definition; Domain security; Fine-grained access control
-         *
-         * AWS: Amazon OpenSearch Service domain access policies for IAM-based access control and security management
-         *
-         * Validation: Must be array of valid IAM policy statement objects; required for domain access control and security configuration
-         */
         accessPolicies: this.configContents.domain.accessPolicies.map(x => PolicyStatement.fromJson(x)),
       },
     };

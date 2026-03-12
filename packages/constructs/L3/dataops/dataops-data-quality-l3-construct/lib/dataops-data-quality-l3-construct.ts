@@ -15,58 +15,53 @@ import { DataOpsProjectUtils } from '@aws-mdaa/dataops-project-l3-construct';
 export { DataQualityRule } from './dqdl-builder';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Target table configuration for Glue Data Quality ruleset specifying the database and table to validate. Defines the Glue Catalog table that will be monitored and validated by the data quality rules.
+ * Target table in the Glue Catalog for data quality ruleset validation.
  *
- * Use cases: Table identification; Data quality target specification; Catalog reference
+ * Use cases: Table identification for data quality checks, cross-account catalog access
  *
  * AWS: AWS Glue Data Quality ruleset target table configuration
  *
- * Validation: databaseName and tableName are required; catalogId is optional
+ * Validation: databaseName and tableName are required; catalogId is optional for cross-account access
  */
 export interface DataQualityTargetTable {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required Glue database name containing the target table for data quality validation. Specifies the database in the Glue Catalog where the table to be validated resides.
+   * Glue database name containing the target table.
    *
-   * Use cases: Database identification; Catalog navigation; Table location
+   * Use cases: Database identification, catalog navigation
    *
-   * AWS: AWS Glue Catalog database name for data quality target table
+   * AWS: AWS Glue Catalog database name
    *
-   * Validation: Must be valid Glue database name; required; database must exist
+   * Validation: Must be a valid Glue database name; required
    */
   readonly databaseName: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required Glue table name to be validated by data quality rules. Specifies the specific table within the database that will be monitored for data quality issues.
+   * Glue table name to validate with data quality rules.
    *
-   * Use cases: Table identification; Data quality target; Validation scope
+   * Use cases: Table identification, validation scope definition
    *
-   * AWS: AWS Glue Catalog table name for data quality validation
+   * AWS: AWS Glue Catalog table name
    *
-   * Validation: Must be valid Glue table name; required; table must exist before ruleset evaluation
+   * Validation: Must be a valid Glue table name; required; table must exist before ruleset evaluation
    */
   readonly tableName: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional AWS account ID for cross-account Glue Catalog access. Specifies the account containing the Glue Catalog when accessing tables in a different AWS account.
+   * AWS account ID for cross-account Glue Catalog access.
    *
-   * Use cases: Cross-account access; Multi-account architectures; Catalog federation
+   * Use cases: Cross-account access, multi-account architectures, catalog federation
    *
-   * AWS: AWS Glue Catalog ID for cross-account table access
+   * AWS: AWS Glue Catalog ID (account ID)
    *
-   * Validation: Must be valid AWS account ID if provided; optional for same-account access
+   * Validation: Must be a valid AWS account ID if provided
    */
   readonly catalogId?: string;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Data Quality ruleset definition with target table and validation rules. Defines a complete set of data quality checks for a specific Glue Catalog table.
+ * Data Quality ruleset definition with target table and validation rules.
  *
- * Use cases: Data quality monitoring; Validation automation; Quality assurance; Data governance
+ * Use cases: Data quality monitoring, validation automation, quality assurance, data governance
  *
  * AWS: AWS Glue Data Quality ruleset configuration
  *
@@ -74,10 +69,9 @@ export interface DataQualityTargetTable {
  */
 export interface DataQualityRulesetDefinition {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional description explaining the purpose and scope of the ruleset. Documents what data quality aspects are being validated.
+   * Description explaining the purpose and scope of the ruleset.
    *
-   * Use cases: Documentation; Ruleset purpose; Quality criteria explanation
+   * Use cases: Documentation, ruleset purpose explanation
    *
    * AWS: AWS Glue Data Quality ruleset description
    *
@@ -86,74 +80,36 @@ export interface DataQualityRulesetDefinition {
   readonly description?: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required target table configuration specifying which table to validate. Defines the Glue Catalog table that will be monitored.
+   * Target table specifying which Glue Catalog table to validate.
    *
-   * Use cases: Table targeting; Validation scope; Catalog reference
+   * Use cases: Table targeting, validation scope, catalog reference
    *
-   * AWS: AWS Glue Data Quality target table configuration
+   * AWS: AWS Glue Data Quality target table
    *
-   * Validation: Must be valid DataQualityTargetTable; required; table must exist
+   * Validation: Must be a valid DataQualityTargetTable; required
    */
   readonly targetTable: DataQualityTargetTable;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required ruleset definition as either DQDL string or array of rule objects. Defines the data quality validation rules to apply.
+   * Ruleset as either a raw DQDL string or an array of structured rule objects.
    *
-   * Use cases: Rule definition; Validation logic; Quality criteria
+   * Use cases: Rule definition, validation logic, quality criteria specification
    *
    * AWS: AWS Glue Data Quality rules in DQDL format
    *
-   * Validation: Must be valid DQDL string or array of DataQualityRule objects; required
+   * Validation: Must be a valid DQDL string or array of DataQualityRule objects; required
    */
   readonly ruleset: string | DataQualityRule[];
 }
 
-/**
- * Q-ENHANCED-INTERFACE
- * Properties for DataOps Data Quality L3 Construct enabling automated data quality monitoring. Configures Glue Data Quality rulesets for validating data in Glue Catalog tables.
- *
- * Use cases: Data quality automation; Validation monitoring; Quality assurance; Data governance
- *
- * AWS: AWS Glue Data Quality configuration for DataOps workflows
- *
- * Validation: rulesetConfigs and projectName are required
- */
 export interface DataOpsDataQualityL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of ruleset names to ruleset definitions for data quality monitoring. The keys serve as the unique ruleset names and must be valid AWS Glue ruleset names (alphanumeric, hyphens, periods, underscores).
-   *
-   * Use cases: Multi-table validation; Quality monitoring; Ruleset management
-   *
-   * AWS: AWS Glue Data Quality ruleset definitions
-   *
-   * Validation: Must be an object with string keys (used as ruleset names) and valid DataQualityRulesetDefinition values; required
-   */
+  // Map of ruleset names to ruleset definitions for data quality monitoring
   readonly rulesetConfigs: { [key: string]: DataQualityRulesetDefinition };
 
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for resource coordination and naming. Links the rulesets to the DataOps project infrastructure.
-   *
-   * Use cases: Project integration; Resource coordination; Naming conventions
-   *
-   * AWS: DataOps project name for resource organization
-   *
-   * Validation: Must be valid project name; required
-   */
+  // DataOps project name for resource coordination and SSM parameter naming
   readonly projectName?: string;
 }
 
-/**
- * Q-ENHANCED-CLASS
- * L3 Construct for deploying AWS Glue Data Quality rulesets in DataOps workflows. Creates and manages data quality rulesets for automated validation of Glue Catalog tables.
- *
- * Use cases: Data quality automation; Table validation; Quality monitoring; Data governance
- *
- * AWS: AWS Glue Data Quality rulesets for automated data validation
- */
 export class DataOpsDataQualityL3Construct extends MdaaL3Construct {
   public readonly rulesets: { [key: string]: glue.CfnDataQualityRuleset } = {};
   public readonly props: DataOpsDataQualityL3ConstructProps;

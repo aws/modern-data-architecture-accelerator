@@ -10,163 +10,164 @@ import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for SFTP public key management enabling secure SSH key-based authentication for SFTP users. Provides public key configuration for secure, password-less authentication to SFTP servers with proper key management.
+ * SSH public key for SFTP user authentication.
+ * Private keys are managed externally.
  *
- * Use cases: SSH key-based authentication; Secure SFTP access; Public key management for user authentication
+ * Use cases: SSH key-based SFTP authentication; Password-less secure access
  *
- * AWS: Configures public keys for AWS Transfer Family SFTP user authentication and secure access
+ * AWS: Transfer Family user SSH public key
  *
- * Validation: publicKey is required and must be valid SSH public key format
+ * Validation: publicKey required; must be valid SSH public key format (e.g. ssh-rsa AAAA...)
  */
 export interface PublicKeyConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required SSH public key contents for secure SFTP user authentication enabling password-less access to SFTP servers. Provides secure authentication mechanism using SSH public key cryptography for enhanced security and access control.
+   * SSH public key contents for user authentication.
+   * Corresponding private key must be managed externally.
    *
-   * Use cases: SSH key authentication; Secure SFTP access; Password-less authentication for enhanced security
+   * Use cases: SSH key-based SFTP login; Secure password-less authentication
    *
-   * AWS: AWS Transfer Family user public key for SSH-based authentication and secure access
+   * AWS: Transfer Family user SSH public key for authentication
    *
-   * Validation: Must be valid SSH public key format; required; used for secure user authentication
-   **/
+   * Validation: Required; must be valid SSH public key format
+   */
   readonly publicKey: string;
 }
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for SFTP bucket access management enabling secure S3 bucket integration with SFTP servers. Provides bucket configuration for SFTP user home directories with encryption and access control capabilities.
+ * S3 bucket configuration for SFTP user home directories.
+ * Files uploaded via SFTP are stored in this bucket with KMS encryption.
  *
- * Use cases: SFTP home directory configuration; S3 bucket integration; Encrypted file storage for SFTP operations
+ * Use cases: SFTP home directory storage; Encrypted file storage for SFTP operations
  *
- * AWS: Configures S3 buckets for AWS Transfer Family SFTP user home directories with KMS encryption
+ * AWS: S3 bucket with KMS encryption for Transfer Family user file storage
  *
- * Validation: bucketName and kmsKeyArn are required; bucket must exist and be accessible
+ * Validation: bucketName and kmsKeyArn required
  */
 export interface BucketConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 bucket name for SFTP user home directory storage enabling secure file storage and organization. Provides the target S3 bucket where SFTP users will store and retrieve files with proper access controls and organization.
+   * S3 bucket name for SFTP user file storage. Accepts bucket names
+   * or SSM parameter references.
    *
-   * Use cases: SFTP file storage; User home directory configuration; S3 integration for file management
+   * Use cases: SFTP home directory bucket; Cross-account bucket access
    *
-   * AWS: Amazon S3 bucket for Transfer Family SFTP user file storage and home directory
+   * AWS: S3 bucket for Transfer Family user home directory
    *
-   * Validation: Must be valid S3 bucket name; required; bucket must exist and be accessible by SFTP service
-   **/
+   * Validation: Required; must be valid S3 bucket name or SSM parameter path
+   */
   readonly bucketName: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required KMS key ARN for encrypting files written through the SFTP server ensuring data protection compliance. Provides encryption at rest for all files uploaded via SFTP with customer-controlled key management for enhanced security.
+   * KMS key ARN for encrypting files uploaded via SFTP.
+   * Accepts key ARNs or SSM parameter references.
    *
-   * Use cases: File encryption; Data protection compliance; Customer key management for SFTP uploads
+   * Use cases: Data-at-rest encryption for SFTP uploads; Compliance requirements
    *
-   * AWS: AWS KMS key for S3 object encryption in Transfer Family SFTP operations
+   * AWS: KMS key for S3 object encryption in Transfer Family operations
    *
-   * Validation: Must be valid KMS key ARN; required; used for all SFTP file encryption operations
-   **/
+   * Validation: Required; must be valid KMS key ARN or SSM parameter path
+   */
   readonly kmsKeyArn: string;
 }
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for SFTP user management enabling user setup with bucket access, authentication, and directory configuration. Provides complete user configuration for SFTP access with home directory mapping and security controls.
+ * SFTP user configuration linking authentication keys, S3 storage, and home directory.
+ * References named entries from the publicKeys and buckets config sections.
  *
- * Use cases: SFTP user configuration; Home directory setup; User access control and authentication management
+ * Use cases: SFTP user provisioning; Home directory mapping; Multi-key authentication
  *
- * AWS: Configures AWS Transfer Family SFTP users with S3 access, authentication, and directory permissions
+ * AWS: Transfer Family user with S3 home directory and SSH key authentication
  *
- * Validation: bucket, homeDirectory, and publicKeys are required; bucket and publicKeys must reference valid configurations
+ * Validation: bucket, homeDirectory, and publicKeys required
  */
 export interface UserConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required reference to bucket configuration name for user home directory storage enabling organized file access and storage. Links the user to a specific S3 bucket configuration for home directory operations and file management.
+   * Name of a bucket entry from the buckets config section.
+   * Links this user to a specific S3 bucket for home directory storage.
    *
-   * Use cases: Home directory configuration; Bucket access mapping; User-specific storage organization
+   * Use cases: User-to-bucket mapping; Shared bucket configuration across users
    *
-   * AWS: AWS Transfer Family user home directory bucket configuration for file storage
+   * AWS: Transfer Family user home directory bucket reference
    *
-   * Validation: Must reference valid bucket name from buckets configuration; required; defines user storage location
-   **/
+   * Validation: Required; must reference a valid key from the buckets config
+   */
   readonly bucket: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 prefix for user home directory within the configured bucket enabling user-specific file organization. Provides isolated directory space for each user within the shared bucket for organized file management and access control.
+   * S3 prefix for the user's home directory within the configured bucket
+   * (e.g. /incoming).
    *
-   * Use cases: User directory isolation; File organization; User-specific storage space within shared buckets
+   * Use cases: User directory isolation; Organized file storage per user
    *
-   * AWS: AWS Transfer Family user home directory prefix for S3 object organization
+   * AWS: Transfer Family user home directory S3 prefix
    *
-   * Validation: Must be valid S3 prefix string; required; defines user-specific directory within bucket
-   **/
+   * Validation: Required; valid S3 prefix string
+   */
   readonly homeDirectory: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of public key references for user authentication enabling multi-key access and key rotation capabilities. Links the user to configured public keys for SSH authentication with support for multiple keys and key management.
+   * Names of public key entries from the publicKeys config section.
+   * Supports multiple keys for key rotation and multi-device access.
    *
-   * Use cases: Multi-key authentication; Key rotation support; Flexible authentication configuration
+   * Use cases: Multi-key authentication; Key rotation support
    *
-   * AWS: AWS Transfer Family user public key references for SSH authentication and access
+   * AWS: Transfer Family user SSH public key references
    *
-   * Validation: Must be array of valid public key names from publicKeys configuration; required; defines user authentication keys
-   **/
+   * Validation: Required; array of valid key names from publicKeys config
+   */
   readonly publicKeys: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional IAM role ARN for user S3 access permissions enabling fine-grained access control beyond home directory. Provides custom IAM role for specific access patterns and permissions beyond the default home directory access.
+   * Existing IAM role ARN for user S3 access. Accepts role ARNs or SSM parameter references.
+   * If omitted, MDAA creates a minimally-scoped role automatically.
    *
-   * Use cases: Custom access permissions; Fine-grained S3 access control; Specialized user access patterns
+   * Use cases: Custom access permissions; Pre-existing role reuse; Cross-account access
    *
-   * AWS: AWS IAM role for Transfer Family user S3 access permissions and custom access control
+   * AWS: IAM role for Transfer Family user S3 and KMS access
    *
-   * Validation: Must be valid IAM role ARN if provided; enables custom access permissions for user operations
-   **/
+   * Validation: Optional; must be valid IAM role ARN or SSM parameter path
+   */
   readonly accessRoleArn?: string;
 }
 
 export interface SftpUserConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required SFTP server ID for user association enabling user management on specific SFTP servers. Links users to the target SFTP server for access control and user provisioning operations.
+   * Transfer Family server ID to associate users with.
+   * Accepts server IDs or SSM parameter references.
    *
-   * Use cases: Server-specific user management; User provisioning; SFTP server association and access control
+   * Use cases: Linking users to a deployed SFTP server
    *
-   * AWS: AWS Transfer Family server ID for user association and server-specific management
+   * AWS: Transfer Family server ID for user association
    *
-   * Validation: Must be valid Transfer Family server ID; required; server must exist and be accessible
-   **/
+   * Validation: Required; must be valid Transfer Family server ID or SSM parameter path
+   */
   readonly serverId: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of public key names to public key configurations enabling SSH key management for user authentication. Provides centralized public key management for secure, password-less authentication across SFTP users.
+   * Map of key names to SSH public key configurations.
+   * Referenced by users in the publicKeys array for authentication.
    *
-   * Use cases: SSH key management; Centralized authentication configuration; Public key organization and reuse
+   * Use cases: Centralized SSH key management; Key reuse across multiple users
    *
-   * AWS: AWS Transfer Family public key configuration for SSH authentication and key management
+   * AWS: Transfer Family SSH public keys for user authentication
    *
-   * Validation: Must be object with string keys and valid PublicKeyConfig values; required; defines authentication keys
-   *   **/
+   * Validation: Required; keys are unique names, values must be valid PublicKeyConfig
+   */
   readonly publicKeys: { [key: string]: PublicKeyConfig };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of bucket names to bucket configurations enabling S3 storage management for SFTP operations. Provides centralized bucket configuration for user home directories with encryption and access control settings.
+   * Map of bucket names to S3 bucket configurations with KMS encryption.
+   * Referenced by users in the bucket field for home directory storage.
    *
-   * Use cases: S3 storage configuration; Home directory management; Centralized bucket settings and encryption
+   * Use cases: Centralized bucket configuration; Shared storage across users
    *
-   * AWS: Amazon S3 bucket configuration for Transfer Family user storage and file management
+   * AWS: S3 buckets with KMS encryption for Transfer Family user storage
    *
-   * Validation: Must be object with string keys and valid BucketConfig values; required; defines storage configuration
-   *   **/
+   * Validation: Required; keys are unique names, values must be valid BucketConfig
+   */
   readonly buckets: { [key: string]: BucketConfig };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of user names to user configurations enabling SFTP user management and provisioning. Provides complete user setup with authentication, storage access, and directory configuration for secure file transfer operations.
+   * Map of user names to SFTP user configurations.
+   * Each user references entries from publicKeys and buckets sections.
+   * If no accessRoleArn is specified, MDAA creates a minimally-scoped IAM role.
    *
-   * Use cases: SFTP user provisioning; Access control management; User-specific configuration and permissions
+   * Use cases: SFTP user provisioning; Per-user home directory and key assignment
    *
-   * AWS: AWS Transfer Family user configuration for complete user management and access control
+   * AWS: Transfer Family users with S3 home directories and SSH authentication
    *
-   * Validation: Must be object with string keys and valid UserConfig values; required; defines all user configurations
-   *   **/
+   * Validation: Required; keys are unique user names, values must be valid UserConfig
+   */
   readonly users: { [key: string]: UserConfig };
 }
 

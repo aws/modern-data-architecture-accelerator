@@ -45,11 +45,16 @@ import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Machine-to-Machine API Gateway configuration for programmatic data lake access with Cognito client credentials authentication. Defines REST API deployment with WAF protection, CIDR-based access control, and event metadata mapping for secure service-to-service data lake interactions.
- * Use cases: Automated data lake access; Service-to-service authentication; Programmatic data operations; API-based data integration
- * AWS: API Gateway REST API with Cognito User Pool client credentials flow and WAF WebACL for secure machine-to-machine access
- * Validation: adminRoles must be valid IAM role ARNs; allowedCidrs must be valid CIDR block format; eventMetadataMappings must be valid key-value pairs
+ * REST API configuration for machine-to-machine data lake access.
+ * Deploys API Gateway with Cognito client credentials auth, WAF WebACL with
+ * CIDR-based IP filtering, and Lambda integration for S3 data operations.
+ * A default WAF is always generated; additional WAFs can be attached via wafArns.
+ *
+ * Use cases: Automated data lake ingestion; Service-to-service data operations; Programmatic S3 access via REST API
+ *
+ * AWS: API Gateway REST API, Cognito User Pool, WAF WebACL, Lambda integration
+ *
+ * Validation: adminRoles, targetBucketName, targetPrefix, allowedCidrs, and concurrencyLimit required
  */
 export interface M2MApiProps {
   /**
@@ -58,22 +63,25 @@ export interface M2MApiProps {
    */
   readonly adminRoles: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional API Gateway stage name for machine-to-machine API deployment enabling environment-specific API endpoints. Defines the deployment stage for the API Gateway REST API, allowing for development, staging, and production environment separation.
+   * API Gateway deployment stage name (e.g. dev, staging, prod).
    *
-   * Use cases: Environment separation; API versioning; Deployment stages; Environment-specific endpoints
-   * AWS: API Gateway deployment stage name for environment-specific API endpoints
-   * Validation: Must be valid API Gateway stage name if provided; defaults to 'prod' if not specified
-   *   */
+   * Use cases: Environment separation; Multi-stage API deployment
+   *
+   * AWS: API Gateway deployment stage
+   *
+   * Validation: Optional; valid API Gateway stage name
+   * @default prod
+   */
   readonly stageName?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 bucket name for machine-to-machine API data operations specifying the target data lake bucket. Identifies the primary S3 bucket where API operations will read from and write data, enabling programmatic data lake access and manipulation.
+   * S3 bucket name where API operations read/write data.
    *
-   * Use cases: Data lake access; Programmatic data operations; API data storage; Automated data processing
-   * AWS: S3 bucket target for API Gateway Lambda integration data operations
-   * Validation: Must be valid S3 bucket name; bucket must exist and be accessible; required for API functionality
-   *   */
+   * Use cases: Data lake target for API-driven ingestion and retrieval
+   *
+   * AWS: S3 bucket for Lambda integration data operations
+   *
+   * Validation: Required; must be existing S3 bucket name
+   */
   readonly targetBucketName: string;
   /**
    * Required. Identifies the target prefix within the bucket
@@ -85,22 +93,26 @@ export interface M2MApiProps {
    */
   readonly metadataTargetPrefix?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of CIDR blocks defining network access restrictions for the machine-to-machine API enabling IP-based access control. Specifies allowed IP ranges that can connect to the API Gateway resource policy, providing network-level security for automated data lake access.
+   * IPv4 CIDR blocks permitted to access the API. All other IPs are denied
+   * by the WAF WebACL IP set rule.
    *
-   * Use cases: Network access control; IP-based security; Corporate network restrictions; API access limitations
-   * AWS: API Gateway resource policy IP restrictions for network-based access control
-   * Validation: Must be array of valid CIDR block format (e.g., "10.0.0.0/8"); required for API security
-   *   */
+   * Use cases: Corporate network restrictions; IP-based API access control
+   *
+   * AWS: WAF WebACL IP set for API Gateway access filtering
+   *
+   * Validation: Required; array of valid CIDR blocks (e.g. 10.0.0.0/8)
+   */
   readonly allowedCidrs: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required concurrency limit for API Lambda functions controlling the maximum number of concurrent API requests. Defines the Lambda reserved concurrency to prevent resource exhaustion and ensure predictable API performance for machine-to-machine data lake operations.
+   * Reserved concurrency limit for the API integration Lambda function.
+   * Prevents resource exhaustion and ensures predictable API performance.
    *
-   * Use cases: Performance control; Resource management; Cost optimization; API throttling; Concurrent request limiting
-   * AWS: AWS Lambda reserved concurrency for API Gateway integration performance control
-   * Validation: Must be positive integer; required for Lambda concurrency management
-   *   */
+   * Use cases: API throttling; Cost control; Predictable Lambda scaling
+   *
+   * AWS: Lambda reserved concurrency for API Gateway integration
+   *
+   * Validation: Required; positive integer
+   */
   readonly concurrencyLimit: number;
 
   /**
@@ -141,11 +153,14 @@ export interface M2MApiProps {
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Named Cognito app client collection for multi-application machine-to-machine authentication. Maps client names to app client configurations, enabling organized credential management for multiple applications accessing the M2M API.
- * Use cases: Multi-application API access; Named client credential sets; Organized application authentication
- * AWS: Multiple Cognito User Pool app clients with organized naming for systematic client credential management
- * Validation: Client names must be unique identifiers; each AppClientProps must be valid Cognito app client configuration
+ * Map of Cognito app client names to client configurations.
+ * A Client ID and Secret are generated for each entry.
+ *
+ * Use cases: Multi-application M2M API access; Named client credential management
+ *
+ * AWS: Cognito User Pool app clients for client credentials OAuth flow
+ *
+ * Validation: Keys must be unique client names; values must be valid AppClientProps
  */
 export interface NamedAppClientProps {
   /** @jsii ignore */
@@ -153,39 +168,48 @@ export interface NamedAppClientProps {
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Cognito User Pool app client properties defining token validity periods for machine-to-machine API authentication. Configures authentication token lifetimes for secure API access with customizable validity periods for different token types.
- * Use cases: M2M API authentication configuration; Token lifetime management; Secure API client credential setup
- * AWS: Configures AWS Cognito User Pool app client with token validity settings for API Gateway authentication
- * Validation: Token validity values must be within AWS Cognito limits - ID/access tokens: 5 minutes to 1 day; refresh tokens: 60 minutes to 10 years
+ * Cognito app client token validity configuration for M2M API authentication.
+ * Controls ID, access, and refresh token lifetimes for the client credentials flow.
+ *
+ * Use cases: Token lifetime tuning; Security policy compliance; Long-lived service credentials
+ *
+ * AWS: Cognito User Pool app client token validity settings
+ *
+ * Validation: All optional; ID/access tokens: 5-1440 min; refresh tokens: 1-87600 hours
  */
 export interface AppClientProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional ID token validity period in minutes for machine-to-machine API authentication controlling identity token lifespan. Determines how long ID tokens remain valid for user identity verification in API Gateway authentication flows.
+   * ID token validity period in minutes.
    *
-   * Use cases: Identity verification duration; Authentication security; Token lifecycle management; User session control
-   * AWS: AWS Cognito User Pool app client ID token validity configuration for API Gateway authentication
-   * Validation: Must be between 5 minutes and 1440 minutes (1 day); defaults to 60 minutes if not specified
-   *   */
+   * Use cases: Identity verification duration control
+   *
+   * AWS: Cognito app client ID token validity
+   *
+   * Validation: Optional; 5-1440 minutes
+   * @default 60
+   */
   readonly idTokenValidityMinutes?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional refresh token validity period in hours for machine-to-machine API authentication controlling token refresh capability. Determines how long refresh tokens remain valid for obtaining new access tokens without re-authentication.
+   * Refresh token validity period in hours.
    *
-   * Use cases: Long-term authentication; Token refresh capability; Session persistence; Automated API access
-   * AWS: AWS Cognito User Pool app client refresh token validity configuration for API Gateway authentication
-   * Validation: Must be between 1 hour and 87600 hours (10 years); defaults to 720 hours (30 days) if not specified
-   *   */
+   * Use cases: Long-lived service authentication; Token refresh without re-auth
+   *
+   * AWS: Cognito app client refresh token validity
+   *
+   * Validation: Optional; 1-87600 hours (up to 10 years)
+   * @default 720 (30 days)
+   */
   readonly refreshTokenValidityHours?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional access token validity period in minutes for machine-to-machine API authentication controlling how long access tokens remain valid. Determines the lifespan of access tokens used for API Gateway authentication, balancing security with operational convenience.
+   * Access token validity period in minutes.
    *
-   * Use cases: API authentication security; Token lifecycle management; Security policy compliance; Access control duration
-   * AWS: AWS Cognito User Pool app client access token validity configuration for API Gateway authentication
-   * Validation: Must be between 5 minutes and 1440 minutes (1 day); defaults to 60 minutes if not specified
-   *   */
+   * Use cases: API access duration control; Security policy compliance
+   *
+   * AWS: Cognito app client access token validity
+   *
+   * Validation: Optional; 5-1440 minutes
+   * @default 60
+   */
   readonly accessTokenValidityMinutes?: number;
 }
 

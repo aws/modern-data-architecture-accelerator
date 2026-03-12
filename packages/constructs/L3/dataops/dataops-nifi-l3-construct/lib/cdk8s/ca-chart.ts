@@ -13,49 +13,13 @@ export interface CaIssuerChartProps extends cdk8s.ChartProps {
   readonly awsRegion: string;
   readonly keystorePasswordSecretName: string;
   readonly rootClusterIssuerName: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required certificate authority certificate duration specification controlling CA certificate lifecycle and validity period. Defines the validity period for CA certificates affecting certificate chain trust and renewal frequency.
-   *
-   * Use cases: CA certificate lifecycle; Validity period control; Certificate chain management; Trust duration
-   *
-   * AWS: Certificate authority certificate duration for lifecycle management and trust establishment
-   *
-   * Validation: Must be valid duration string; required for CA certificate lifecycle and validity management
-   **/
+  /** CA certificate validity period (e.g., '144h0m0s'). */
   readonly caCertDuration: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required certificate authority certificate renewal threshold for proactive CA certificate management enabling continuous trust chain maintenance. Specifies when CA certificates should be renewed before expiration to maintain continuous certificate authority operations.
-   *
-   * Use cases: CA certificate renewal; Proactive management; Continuous trust; Automated renewal
-   *
-   * AWS: Certificate authority certificate renewal threshold for proactive CA management
-   *
-   * Validation: Must be valid renewal threshold string; required for CA certificate renewal management
-   **/
+  /** Time before CA cert expiration to trigger renewal (e.g., '48h0m0s'). */
   readonly caCertRenewBefore: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required certificate key algorithm specification for CA certificate cryptographic configuration determining security strength and compatibility. Defines the cryptographic algorithm used for CA certificate key generation affecting security level and certificate compatibility.
-   *
-   * Use cases: Cryptographic configuration; Security strength; Algorithm selection; CA certificate generation
-   *
-   * AWS: Certificate key algorithm for CA certificate cryptographic configuration and security
-   *
-   * Validation: Must be valid key algorithm string; required for CA certificate cryptographic configuration
-   **/
+  /** Certificate key algorithm (e.g., ECDSA, RSA). */
   readonly certKeyAlg: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required certificate key size specification for CA certificate cryptographic strength determining security level and computational requirements. Defines the key size in bits for CA certificate generation affecting security strength and performance characteristics.
-   *
-   * Use cases: Cryptographic strength; Security level; Key size configuration; CA certificate security
-   *
-   * AWS: Certificate key size for CA certificate cryptographic strength and security configuration
-   *
-   * Validation: Must be valid key size number; required for CA certificate cryptographic strength configuration
-   **/
+  /** Certificate key size in bits (e.g., 384, 2048). */
   readonly certKeySize: number;
 }
 

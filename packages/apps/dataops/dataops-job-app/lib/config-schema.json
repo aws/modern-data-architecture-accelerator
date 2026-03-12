@@ -563,7 +563,6 @@
         },
         "DomainConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA-compliant DataZone domain configuration providing domain management and integration capabilities. Extends standard CDK properties with MDAA naming conventions and enhanced security features for secure domain governance and catalog integration.\n\nUse cases: DataZone domain configuration; Domain governance setup; Catalog integration; Multi-domain management\n\nAWS: Creates Amazon DataZone domain configuration with KMS integration and Glue catalog connectivity\n\nValidation: All properties except ssmParamBase and domainUnits are required for complete domain configuration",
             "properties": {
                 "blueprintIds": {
                     "additionalProperties": {
@@ -575,63 +574,63 @@
                     "type": "boolean"
                 },
                 "createOutputs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.\n\nUse cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references\n\nAWS: CloudFormation outputs and exports for MDAA construct resource references and external integration\n\nValidation: Boolean value; defaults to true; enables CloudFormation output and export creation",
+                    "description": "Flag controlling CloudFormation output and stack export creation for construct resources",
                     "type": "boolean"
                 },
                 "createParams": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.\n\nUse cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management\n\nAWS: SSM parameter creation for MDAA construct resource references and infrastructure integration\n\nValidation: Boolean value; defaults to true; enables SSM parameter creation for resource references",
+                    "description": "Flag controlling SSM parameter creation for construct resource references enabling",
                     "type": "boolean"
                 },
                 "customResourceRoleName": {
                     "type": "string"
                 },
                 "domainArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ARN for AWS resource identification and IAM policy integration enabling secure domain access control. Provides the complete AWS resource identifier for the domain for IAM policies and cross-service access control.\n\nUse cases: AWS resource identification; IAM policy integration; Cross-service access; Resource-based policies\n\nAWS: Amazon DataZone domain ARN for AWS resource identification and IAM integration\n\nValidation: Must be valid DataZone domain ARN; required; follows AWS ARN pattern for DataZone domains",
+                    "description": "DataZone domain ARN for AWS resource identification and IAM policy integration enabling",
                     "type": "string"
                 },
                 "domainBucketArn": {
                     "type": "string"
                 },
                 "domainBucketUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain Bucket usage policy name. Provides IAM policy name for managing Bucket access and usage permissions for domain operations and data protection.\n\nUse cases: Bucket access management;\n\nAWS: IAM policy name for DataZone domain Bucket usage and access management\n\nValidation: Must be valid IAM policy name; required; defines Bucket access and usage permissions for domain",
+                    "description": "Domain Bucket usage policy name",
                     "type": "string"
                 },
                 "domainId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ID for unique domain identification within AWS enabling cross-service integration and reference. Provides the unique identifier assigned by DataZone service for domain operations and cross-service integration.\n\nUse cases: Unique domain identification; Cross-service integration; Domain operations; Service references\n\nAWS: Amazon DataZone domain ID for unique identification and cross-service integration\n\nValidation: Must be valid DataZone domain ID; required; assigned by DataZone service for unique identification",
+                    "description": "DataZone domain ID for unique domain identification within AWS enabling cross-service",
                     "type": "string"
                 },
                 "domainKmsKeyArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations. Provides encryption at rest for domain data and metadata with customer-controlled key management for enhanced security and compliance.\n\nUse cases: Domain encryption; Data protection compliance; Customer-controlled encryption; Secure domain operations\n\nAWS: AWS KMS key ARN for DataZone domain encryption and secure data protection\n\nValidation: Must be valid KMS key ARN; required; enables customer-managed encryption for domain data",
+                    "description": "KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations",
                     "type": "string"
                 },
                 "domainKmsUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain KMS usage policy name for key access management enabling controlled encryption key usage within the domain. Provides IAM policy name for managing KMS key access and usage permissions for domain operations and data protection.\n\nUse cases: KMS key access management; Encryption policy control; Key usage permissions; Domain security governance\n\nAWS: IAM policy name for DataZone domain KMS key usage and access management\n\nValidation: Must be valid IAM policy name; required; defines KMS key access and usage permissions for domain",
+                    "description": "Domain KMS usage policy name for key access management enabling controlled encryption key",
                     "type": "string"
                 },
                 "domainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain name for domain identification and management enabling unique domain naming within the DataZone service. Provides the primary identifier for the DataZone domain for governance and operational management.\n\nUse cases: Domain identification; Unique naming; Domain management; Service organization\n\nAWS: Amazon DataZone domain name for identification and management within the DataZone service\n\nValidation: Must be unique domain name string; required; used for domain identification and service management",
+                    "description": "DataZone domain name for domain identification and management enabling unique domain naming",
                     "type": "string"
                 },
                 "domainUnitIds": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of domain unit names to identifiers for hierarchical domain organization enabling structured domain management. Provides organizational structure within the domain for improved governance, access control, and operational management.\n\nUse cases: Hierarchical organization; Domain structure; Organizational governance; Structured management\n\nAWS: DataZone domain units for hierarchical organization and structured domain management\n\nValidation: Must be object with string keys and values if provided; enables hierarchical domain organization\n  *",
+                    "description": "Map of domain unit names to identifiers for hierarchical domain organization enabling",
                     "type": "object"
                 },
                 "domainVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain version for domain lifecycle management and versioning control enabling domain evolution tracking. Provides version control for domain configuration changes and lifecycle management for governance and compliance.\n\nUse cases: Version control; Domain lifecycle management; Configuration tracking; Governance compliance\n\nAWS: DataZone domain version for lifecycle management and configuration version control\n\nValidation: Must be valid version string; required; enables domain version control and lifecycle management",
+                    "description": "Domain version for domain lifecycle management and versioning control enabling domain evolution tracking",
                     "type": "string"
                 },
                 "glueCatalogArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone. Provides the Glue catalog resources that will be integrated with the DataZone domain for data discovery and governance.\n\nUse cases: Catalog integration; Data discovery; governance; Cross-service connectivity\n\nAWS: AWS Glue catalog ARNs for DataZone integration and data catalog connectivity\n\nValidation: Must be array of valid Glue catalog ARNs; required; enables catalog integration with DataZone domain",
+                    "description": "Array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "glueCatalogKmsKeyArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone. Provides encryption keys for Glue catalog data accessed through DataZone for data protection and governance.\n\nUse cases: Catalog encryption; Secure catalog integration; Data protection; governance\n\nAWS: AWS KMS key ARNs for Glue catalog encryption in DataZone integration\n\nValidation: Must be array of valid KMS key ARNs; required; enables secure catalog integration with DataZone",
+                    "description": "Array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone",
                     "items": {
                         "type": "string"
                     },
@@ -639,7 +638,7 @@
                 },
                 "naming": {
                     "$ref": "#/definitions/IMdaaResourceNaming",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.\n\nUse cases: Consistent naming; Resource identification; Naming conventions; Operational consistency\n\nAWS: MDAA resource naming for consistent resource identification and naming convention compliance\n\nValidation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming\n  *"
+                    "description": "MDAA naming implementation for consistent resource naming across all MDAA constructs"
                 },
                 "projectIds": {
                     "additionalProperties": {
@@ -651,7 +650,7 @@
                     "type": "boolean"
                 },
                 "ssmParamBase": {
-                    "description": "Q-ENHANCED-PROPERTY\nSSM parameter base path for domain configuration storage enabling centralized configuration management. Provides the base path for storing domain configuration parameters in SSM Parameter Store for centralized management and retrieval.\n\nUse cases: Centralized configuration; SSM integration; Configuration management; Parameter organization\n\nAWS: AWS Systems Manager parameter base path for domain configuration storage and management\n\nValidation: Must be valid SSM parameter path if provided; enables centralized domain configuration management",
+                    "description": "SSM parameter base path for domain configuration storage enabling centralized configuration management",
                     "type": "string"
                 }
             },
@@ -983,11 +982,10 @@
         },
         "IMdaaResourceNaming": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nInterface specification for MDAA resource naming implementations that generate consistent, unique, and compliant AWS resource names. Implementations must support multi-tenant deployments by ensuring naming semantics prevent collisions across domains, environments, and modules within the same AWS account.\n\nUse cases: Custom naming for regulatory compliance; Integration with enterprise naming standards; Multi-tenant resource isolation\n\nAWS: Generates names for all AWS resources including S3 buckets, IAM roles, Glue databases, CloudFormation stacks, SSM parameters, and CloudFormation exports\n\nValidation: All generated names must comply with AWS service-specific naming requirements and be unique within account scope",
             "properties": {
                 "props": {
                     "$ref": "#/definitions/MdaaResourceNamingConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nConfiguration properties containing organizational context and CDK node access for the naming implementation. Provides the foundational data required to generate consistent resource names across all MDAA modules.\n\nUse cases: Access to org/env/domain/module context; CDK context retrieval for custom naming; Immutable naming configuration\n\nAWS: Source data for all AWS resource name generation\n\nValidation: Must contain valid MdaaResourceNamingConfig with all required properties"
+                    "description": "Configuration properties containing organizational context and CDK node access for the naming implementation"
                 }
             },
             "required": [
@@ -1414,18 +1412,18 @@
         },
         "JobCommand": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for Glue job command specification with script execution and runtime environment settings. Defines job command configuration including job type, Python version, and script location for Glue ETL and Python shell job execution within DataOps workflows.\n\nUse cases: Job command configuration; Script execution; Runtime environment; ETL job setup\n\nAWS: Glue job command configuration for script execution and runtime environment\n\nValidation: name and scriptLocation are required; pythonVersion is optional with specific constraints",
+            "description": "Configuration for a Glue job command specifying script execution and runtime environment.\n\nUse cases: Job command configuration; Script execution; Runtime environment; ETL job setup\n\nAWS: Glue job command configuration for script execution and runtime environment\n\nValidation: name and scriptLocation are required; pythonVersion is optional with specific constraints",
             "properties": {
                 "name": {
                     "$ref": "#/definitions/JobCommandName",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired job command name specification controlling Glue job execution type and runtime environment. Defines whether to use glueetl for ETL jobs with Spark runtime or pythonshell for Python script execution with different resource allocation and capabilities.\n\nUse cases: Job type selection; Runtime environment; Execution model; Resource allocation\n\nAWS: Glue job command name for execution type and runtime environment selection\n\nValidation: Must be glueetl or pythonshell; required for job command type and execution environment\n  *"
+                    "description": "Job type: 'glueetl' for Spark ETL or 'pythonshell' for Python scripts."
                 },
                 "pythonVersion": {
                     "$ref": "#/definitions/JobCommandPythonVersion",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional Python version specification for Glue job runtime environment enabling version-specific script execution and compatibility. When specified, controls the Python runtime version for job execution ensuring script compatibility and feature availability.\n\nUse cases: Python version control; Runtime compatibility; Script execution; Version management\n\nAWS: Glue job Python version for runtime environment and script compatibility\n\nValidation: Must be 2 or 3 if provided; controls Python runtime version for job execution\n  *"
+                    "description": "Python version for job runtime ('2' or '3')."
                 },
                 "scriptLocation": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired relative path to Glue script for job execution enabling script location specification and code deployment. Provides the S3 path or relative location of the Glue script that will be executed by the job for ETL processing and data transformation.\n\nUse cases: Script location; Code deployment; Job execution; ETL processing\n\nAWS: Glue job script location for code execution and ETL processing\n\nValidation: Must be valid script path; required for job script location and code execution",
+                    "description": "Relative path to the Glue script for job execution.",
                     "type": "string"
                 }
             },
@@ -1451,39 +1449,39 @@
         },
         "JobConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for Glue job properties providing ETL job configuration and resource management capabilities. Defines complete Glue job setup including execution roles, commands, capacity allocation, retry policies, and monitoring for DataOps ETL processing and data transformation workflows.\n\nUse cases: ETL job configuration; Data transformation; Job resource management; DataOps processing\n\nAWS: Glue job configuration for ETL processing and data transformation workflows\n\nValidation: executionRoleArn, command, and description are required; other properties are optional with specific constraints",
+            "description": "Configuration for a Glue job including execution roles, commands, capacity, and monitoring.\n\nUse cases: ETL job configuration; Data transformation; Job resource management; DataOps processing\n\nAWS: Glue job configuration for ETL processing and data transformation workflows\n\nValidation: executionRoleArn, command, and description are required; other properties are optional with specific constraints",
             "properties": {
                 "additionalFiles": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of additional file paths for Glue job resource dependencies enabling external file access and resource management. Provides relative paths to additional files referenced by the ETL script for external resource access and file dependencies.\n\nUse cases: File dependencies; External resources; Resource management; File access\n\nAWS: Additional files for Glue job resource dependencies and external file access\n\nValidation: Must be array of valid file paths if provided; enables external file access and resource dependencies",
+                    "description": "Relative paths to additional files for the job.",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "additionalJars": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of additional JAR file paths for Glue job library dependencies enabling Java library integration and extended functionality. Provides relative paths to JAR files referenced by the ETL script for Java library integration and extended processing capabilities.\n\nUse cases: Java library integration; Extended functionality; Library dependencies; JAR file management\n\nAWS: Additional JAR files for Glue job library dependencies and Java integration\n\nValidation: Must be array of valid JAR file paths if provided; enables Java library integration and extended functionality",
+                    "description": "Relative paths to additional JAR files for the job.",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "additionalScripts": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of additional script paths for Glue job dependency management enabling modular ETL development and code reuse. Provides relative paths to additional Glue scripts referenced by the main ETL script for modular development and code organization.\n\nUse cases: Script dependencies; Modular development; Code reuse; Dependency management\n\nAWS: Additional Glue scripts for job dependencies and modular ETL development\n\nValidation: Must be array of valid script paths if provided; enables script dependencies and modular development",
+                    "description": "Relative paths to additional Python scripts for the job.",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "allocatedCapacity": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional allocated capacity specification for Glue job resource allocation controlling job performance and cost management. Defines the number of capacity units allocated to the job for processing performance and resource utilization optimization.\n\nUse cases: Resource allocation; Performance tuning; Cost management; Capacity planning\n\nAWS: Glue job allocated capacity for resource allocation and performance optimization\n\nValidation: Must be positive integer if provided; controls job resource allocation and performance",
+                    "description": "Number of capacity units allocated to the job.",
                     "type": "number"
                 },
                 "command": {
                     "$ref": "#/definitions/JobCommand",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired job command configuration defining script execution and runtime environment for Glue job processing. Provides the command specification including job type, Python version, and script location for ETL job execution and data transformation.\n\nUse cases: Script execution; Runtime configuration; Job command setup; ETL processing\n\nAWS: Glue job command for script execution and runtime environment configuration\n\nValidation: Must be valid JobCommand; required for job command configuration and script execution\n  *"
+                    "description": "Job command configuration defining script and runtime environment."
                 },
                 "connections": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of connection names for Glue job network connectivity enabling database and external system access. Provides network connections for accessing databases, VPC resources, and external systems during ETL processing and data integration.\n\nUse cases: Database connectivity; VPC access; External system integration; Network configuration\n\nAWS: Glue job connections for database and external system connectivity\n\nValidation: Must be array of valid connection names if provided; enables database and external system access",
+                    "description": "Connection names for database and external system access.",
                     "items": {
                         "type": "string"
                     },
@@ -1491,55 +1489,55 @@
                 },
                 "continuousLogging": {
                     "$ref": "#/definitions/LoggingConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional continuous logging configuration for Glue job real-time monitoring enabling live log streaming and troubleshooting support. When enabled, streams job logs to CloudWatch Logs in real-time for live monitoring and troubleshooting during job execution.\n\nUse cases: Real-time monitoring; Live log streaming; Troubleshooting support; Operational visibility\n\nAWS: Glue job continuous logging for real-time monitoring and troubleshooting\n\nValidation: Must be valid LoggingConfig if provided; enables real-time log streaming and monitoring"
+                    "description": "Continuous logging configuration for real-time monitoring."
                 },
                 "defaultArguments": {
                     "additionalProperties": {},
-                    "description": "Q-ENHANCED-PROPERTY\nOptional default arguments map for Glue job parameter configuration enabling job customization and runtime behavior control. Provides default parameters and arguments that will be passed to the job for runtime configuration and behavior customization.\n\nUse cases: Job parameters; Runtime configuration; Behavior customization; Parameter management\n\nAWS: Glue job default arguments for runtime configuration and parameter management\n\nValidation: Must be valid ConfigurationElement if provided; enables job parameter configuration and customization",
+                    "description": "Default arguments passed to the job at runtime.",
                     "type": "object"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired job description for documentation and operational management enabling job identification and purpose documentation. Provides descriptive information about the job's purpose, functionality, and operational characteristics for management and documentation.\n\nUse cases: Job documentation; Operational management; Purpose identification; Management information\n\nAWS: Glue job description for documentation and operational management\n\nValidation: Must be descriptive text; required for job documentation and operational management",
+                    "description": "Job description for documentation and management.",
                     "type": "string"
                 },
                 "executionProperty": {
                     "$ref": "#/definitions/CfnJob.ExecutionPropertyProperty",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional execution property configuration for Glue job concurrency control enabling parallel execution management and resource optimization. Defines execution properties including maximum concurrent executions for job scheduling and resource management.\n\nUse cases: Concurrency control; Parallel execution; Resource management; Job scheduling\n\nAWS: Glue job execution properties for concurrency control and parallel execution management\n\nValidation: Must be valid ExecutionPropertyProperty if provided; controls job concurrency and parallel execution\n  *"
+                    "description": "Execution properties including maximum concurrent runs."
                 },
                 "executionRoleArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired execution role ARN for Glue job permissions enabling secure job execution and AWS service access. Provides the IAM role that the Glue job will assume for executing ETL operations and accessing AWS services during data processing workflows.\n\nUse cases: Job permissions; Service access; Secure execution; IAM role management\n\nAWS: IAM role ARN for Glue job execution permissions and service access\n\nValidation: Must be valid IAM role ARN; required for job execution permissions and service access",
+                    "description": "IAM role ARN for Glue job execution permissions.",
                     "type": "string"
                 },
                 "glueVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional Glue version specification for runtime environment control enabling version-specific features and compatibility. Defines the Glue runtime version for job execution ensuring feature availability and compatibility with job requirements.\n\nUse cases: Runtime version control; Feature availability; Compatibility management; Version specification\n\nAWS: Glue version for runtime environment and feature availability\n\nValidation: Must be valid Glue version if provided; controls runtime environment and feature availability",
+                    "description": "Glue runtime version for the job.",
                     "type": "string"
                 },
                 "maxCapacity": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional maximum capacity specification for Glue job resource limits controlling maximum resource allocation and cost management. Defines the maximum number of DPUs (Data Processing Units) that can be allocated to the job for resource control and cost optimization.\n\nUse cases: Resource limits; Cost control; Maximum allocation; Resource management\n\nAWS: Glue job maximum capacity for resource limits and cost control\n\nValidation: Must be positive number if provided; controls maximum DPU allocation and resource limits",
+                    "description": "Maximum DPU capacity for the job.",
                     "type": "number"
                 },
                 "maxRetries": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional maximum retry count for Glue job failure handling enabling automatic retry and error recovery. Defines the maximum number of retries before job failure occurs for automatic error recovery and job reliability.\n\nUse cases: Error recovery; Automatic retry; Job reliability; Failure handling\n\nAWS: Glue job maximum retries for automatic error recovery and job reliability\n\nValidation: Must be non-negative integer if provided; controls automatic retry behavior and error recovery",
+                    "description": "Maximum retry count before job failure.",
                     "type": "number"
                 },
                 "notificationProperty": {
                     "$ref": "#/definitions/CfnJob.NotificationPropertyProperty",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional notification property configuration for Glue job monitoring and alerting enabling job status notifications and operational awareness. Defines notification settings including notification delay for job monitoring and operational alerting.\n\nUse cases: Job monitoring; Status notifications; Operational alerting; Monitoring configuration\n\nAWS: Glue job notification properties for monitoring and alerting configuration\n\nValidation: Must be valid NotificationPropertyProperty if provided; enables job monitoring and alerting\n  *"
+                    "description": "Notification settings for job monitoring and alerting."
                 },
                 "numberOfWorkers": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional number of workers specification for Glue job parallel processing enabling distributed processing and performance optimization. Defines the number of workers assigned to the job for parallel processing and distributed data transformation.\n\nUse cases: Parallel processing; Distributed processing; Performance optimization; Worker allocation\n\nAWS: Glue job number of workers for parallel processing and performance optimization\n\nValidation: Must be positive integer if provided; controls parallel processing and worker allocation",
+                    "description": "Number of workers for parallel processing.",
                     "type": "number"
                 },
                 "template": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional template reference for job configuration inheritance enabling reusable job configurations and standardized setups. When specified, inherits configuration from a template defined elsewhere in the configuration for consistent job setup and management.\n\nUse cases: Configuration inheritance; Template reuse; Standardized setup; Configuration management\n\nAWS: Job template reference for configuration inheritance and standardized job setup\n\nValidation: Must be valid template name if provided; enables configuration inheritance from defined templates",
+                    "description": "Template name for configuration inheritance.",
                     "type": "string"
                 },
                 "timeout": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional timeout specification for Glue job execution limits enabling job runtime control and resource management. Defines the maximum execution time for the job in minutes for runtime control and resource optimization.\n\nUse cases: Runtime control; Execution limits; Resource management; Timeout configuration\n\nAWS: Glue job timeout for execution time limits and resource management\n\nValidation: Must be positive integer in minutes if provided; controls job execution time limits",
+                    "description": "Job timeout in minutes.",
                     "type": "number"
                 },
                 "workerType": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional worker type specification for Glue job compute resource selection enabling performance and cost optimization. Defines the type of workers (Standard, G.1X, G.2X) for compute resource allocation and performance characteristics.\n\nUse cases: Compute resource selection; Performance optimization; Cost management; Worker type configuration\n\nAWS: Glue job worker type for compute resource allocation and performance optimization\n\nValidation: Must be Standard, G.1X, or G.2X if provided; controls compute resource type and performance\n  *",
+                    "description": "Worker type: 'Standard', 'G.1X', or 'G.2X'.",
                     "enum": [
                         "G.1X",
                         "G.2X",
@@ -1613,10 +1611,10 @@
         },
         "LoggingConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for Glue job logging with CloudWatch log retention management and compliance requirements. Defines log retention settings for Glue job execution logs ensuring proper log management, compliance, and cost optimization for DataOps job monitoring and audit trails.\n\nUse cases: Log retention management; Compliance requirements; Cost optimization; Audit trail management\n\nAWS: CloudWatch log group retention for Glue job execution logs and monitoring\n\nValidation: logGroupRetentionDays is required with specific allowed values for retention period",
+            "description": "Configuration for Glue job logging with CloudWatch log retention management.\n\nUse cases: Log retention management; Compliance requirements; Cost optimization; Audit trail management\n\nAWS: CloudWatch log group retention for Glue job execution logs and monitoring\n\nValidation: logGroupRetentionDays is required with specific allowed values for retention period",
             "properties": {
                 "logGroupRetentionDays": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired CloudWatch log group retention period in days for Glue job log management and compliance requirements. Defines how long job execution logs are retained in CloudWatch with specific allowed values for log retention, compliance management, and storage cost optimization.\n\nUse cases: Log retention management; Compliance requirements; Storage cost optimization; Audit trail management\n\nAWS: CloudWatch log group retention for Glue job execution logs and audit trail management\n\nValidation: Must be 1,3,5,7,14,30,60,90,120,150,180,365,400,545,731,1827,3653, or 0; required for log retention configuration",
+                    "description": "CloudWatch log group retention in days. Allowed: 1,3,5,7,14,30,60,90,120,150,180,365,400,545,731,1827,3653, or 0.",
                     "type": "number"
                 }
             },
@@ -1903,14 +1901,13 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
+                    "description": "CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed",
                     "type": "string"
                 },
                 "suppressions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
+                    "description": "Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -1938,10 +1935,9 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
+                    "description": "Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -1955,26 +1951,25 @@
         },
         "MdaaResourceNamingConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA resource naming implementations that standardize AWS resource naming across domains, environments, and modules. This interface enables consistent, collision-free resource naming in multi-tenant MDAA deployments by providing organizational context and CDK node access for custom naming strategies.\n\nUse cases: Multi-domain data lake deployments requiring unique resource names; Cross-account data mesh architectures with consistent naming; Custom naming implementations for compliance requirements\n\nAWS: Configures naming patterns for all AWS resources deployed by MDAA modules including S3 buckets, IAM roles, Glue databases, and CloudFormation stacks\n\nValidation: All properties required; org/env/domain/moduleName must be valid AWS resource name components (alphanumeric, hyphens, underscores)",
             "properties": {
                 "cdkNode": {
                     "$ref": "#/definitions/Node",
-                    "description": "Q-ENHANCED-PROPERTY\nCDK construct node providing access to context values for custom naming implementations. Enables retrieval of additional configuration through tryGetContext() for advanced naming strategies beyond the standard org/env/domain/module pattern.\n\nUse cases: Custom naming with environment-specific prefixes; Integration with external naming services; Context-driven naming for compliance requirements\n\nAWS: CDK context system for CloudFormation template generation\n\nValidation: Must be valid CDK Node instance with accessible context\n  *"
+                    "description": "CDK construct node providing access to context values for custom naming implementations"
                 },
                 "domain": {
-                    "description": "Q-ENHANCED-PROPERTY\nDomain identifier from MDAA configuration representing logical business or organizational boundaries within the data architecture. Forms the third component of the default naming pattern and enables data mesh architectures with domain-specific resource isolation.\n\nUse cases: Data mesh domain separation; Line-of-business resource isolation; Cross-domain data sharing with clear ownership\n\nAWS: Domain component in all AWS resource names, SSM parameter paths, and CloudFormation export names\n\nValidation: Must be valid AWS resource name component (typically business domain names like 'finance', 'marketing', 'shared')",
+                    "description": "Domain identifier from MDAA configuration representing logical business or organizational boundaries",
                     "type": "string"
                 },
                 "env": {
-                    "description": "Q-ENHANCED-PROPERTY\nEnvironment identifier from MDAA configuration that distinguishes deployment stages within the same domain. Forms the second component of the default naming pattern enabling parallel dev/test/prod deployments without resource conflicts.\n\nUse cases: Multi-stage deployments in same account; Environment-specific resource isolation; Progressive deployment strategies\n\nAWS: Environment component in all AWS resource names and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically 'dev', 'test', 'prod', 'staging')",
+                    "description": "Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain",
                     "type": "string"
                 },
                 "moduleName": {
-                    "description": "Q-ENHANCED-PROPERTY\nModule name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment. Forms the final component of the default naming pattern and enables multiple instances of the same module type within the same scope.\n\nUse cases: Multiple data lake instances per domain; Separate analytics workloads; Module-specific resource grouping\n\nAWS: Module component in all AWS resource names, SSM parameter paths, and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically module function like 'datalake', 'warehouse', 'analytics')",
+                    "description": "Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment",
                     "type": "string"
                 },
                 "org": {
-                    "description": "Q-ENHANCED-PROPERTY\nOrganization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names. Forms the first component of the default naming pattern and ensures global uniqueness across multiple MDAA deployments.\n\nUse cases: Multi-organization AWS accounts; Shared service accounts with multiple tenants; Resource name collision prevention\n\nAWS: Prefix for all AWS resource names including S3 buckets, IAM roles, and CloudFormation stacks\n\nValidation: Must be valid AWS resource name component (3-63 characters, alphanumeric and hyphens only, no consecutive hyphens)",
+                    "description": "Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names",
                     "type": "string"
                 }
             },
@@ -2080,17 +2075,16 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
+                    "description": "Human-readable description explaining the purpose and scope of the Service Catalog constraint",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
+                    "description": "Object containing named constraint rules that define the validation logic for Service Catalog product parameters",
                     "type": "object"
                 }
             },
@@ -2102,14 +2096,13 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
-                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
+                    "description": "Constraint assertion expression that defines the validation logic for Service Catalog product parameters",
                     "type": "string"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
+                    "description": "Human-readable description explaining the purpose and requirements of the constraint assertion",
                     "type": "string"
                 }
             },
@@ -2125,10 +2118,9 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
+                    "description": "Array of constraint assertions that define the validation logic to be applied when the condition is met",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
@@ -2136,7 +2128,7 @@
                 },
                 "condition": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
+                    "description": "Condition configuration that determines when the constraint rule assertions should be evaluated"
                 }
             },
             "required": [
@@ -2147,15 +2139,14 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
+                    "description": "Constraint configuration that defines additional validation rules for the Service Catalog product parameter"
                 },
                 "props": {
                     "$ref": "#/definitions/CfnParameterProps",
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
+                    "description": "CloudFormation parameter properties that define the parameter characteristics including type,"
                 }
             },
             "required": [
@@ -2165,29 +2156,28 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
+                    "description": "IAM role name that will be used to launch the Service Catalog product",
                     "type": "string"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
+                    "description": "Display name for the Service Catalog product that will be visible to end users in the Service Catalog console",
                     "type": "string"
                 },
                 "owner": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
+                    "description": "Owner identifier for the Service Catalog product, typically representing the team or organization",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "description": "Object containing named parameter configurations for the Service Catalog product",
                     "type": "object"
                 },
                 "portfolio_arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
+                    "description": "ARN of the AWS Service Catalog portfolio where the product will be associated",
                     "type": "string"
                 },
                 "portfolio_bucket_name": {
@@ -2899,22 +2889,22 @@
     },
     "properties": {
         "bucketName": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
+            "description": "S3 bucket name for project storage (scripts, artifacts, temp files).\nAuto-resolved from project when projectName is set.\n\nUse cases: Script storage; Processing artifacts; Centralized project storage\n\nAWS: S3 bucket\n\nValidation: Optional; auto-wired from project if projectName provided",
             "type": "string"
         },
         "deploymentRoleArn": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.\n\nUse cases: Deployment operations; Resource management; IAM permissions; Secure deployment\n\nAWS: IAM role ARN for DataOps deployment operations and resource management\n\nValidation: Must be valid IAM role ARN; required for deployment operations and resource management",
+            "description": "IAM role ARN for deployment operations and resource management.\nAuto-resolved from project when projectName is set.\n\nUse cases: Deployment permissions; Resource provisioning\n\nAWS: IAM role\n\nValidation: Optional; auto-wired from project if projectName provided",
             "type": "string"
         },
         "jobs": {
             "additionalProperties": {
                 "$ref": "#/definitions/JobConfig"
             },
-            "description": "Q-ENHANCED-PROPERTY\nRequired map of job names to job definitions enabling multiple ETL processing workflows and data transformation operations. Provides job configuration for different data sources, transformation logic, and output destinations within the data lake architecture.\n\nUse cases: Multi-job ETL workflows; Data transformation operations; processing pipeline configuration\n\nAWS: AWS Glue job definitions for ETL processing and data transformation workflows\n\nValidation: Must be object with string keys and valid JobConfig values; required; defines all job processing operations\n  *",
+            "description": "Map of job names to Glue job definitions for ETL processing and data transformation.\n\nUse cases: Multi-job ETL workflows; Data transformation pipelines\n\nAWS: AWS Glue jobs\n\nValidation: Required; map of string to JobConfig",
             "type": "object"
         },
         "kmsArn": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for DataOps encryption enabling data protection and security compliance. Provides the customer-managed KMS key for encrypting DataOps resources, data, and operational artifacts ensuring data protection and compliance.\n\nUse cases: Data encryption; Security compliance; Key management; Data protection\n\nAWS: KMS key ARN for DataOps encryption and data protection compliance\n\nValidation: Must be valid KMS key ARN; required for encryption and data protection compliance",
+            "description": "KMS key ARN for encrypting DataOps resources and data.\nAuto-resolved from project when projectName is set.\n\nUse cases: Data encryption; Security compliance\n\nAWS: KMS key\n\nValidation: Optional; auto-wired from project if projectName provided",
             "type": "string"
         },
         "nag_suppressions": {
@@ -2922,11 +2912,11 @@
             "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "notificationTopicArn": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
+            "description": "SNS topic ARN for job notifications and workflow alerts.\nAuto-resolved from project when projectName is set.\n\nUse cases: Job failure alerts; Workflow status notifications\n\nAWS: SNS topic\n\nValidation: Optional; auto-wired from project if projectName provided",
             "type": "string"
         },
         "projectName": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired DataOps project name for job integration and resource autowiring with existing project infrastructure. Enables seamless integration with deployed project resources including databases, IAM roles, and security configurations for coordinated data processing operations.\n\nUse cases: Project resource integration; Coordinated data processing; Infrastructure autowiring and resource sharing\n\nAWS: AWS Glue job project integration for resource coordination and shared infrastructure\n\nValidation: Must be valid DataOps project name; required; project must exist with deployed resources",
+            "description": "DataOps project name for job resource autowiring (databases, roles, security).\n\nUse cases: Project integration; Shared infrastructure reuse\n\nAWS: DataOps project reference\n\nValidation: Optional; must match an existing deployed project",
             "type": "string"
         },
         "sagemakerBlueprint": {
@@ -2934,7 +2924,7 @@
             "description": "Q-ENHANCED-PROPERTY\nOptional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access\n\nAWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode"
         },
         "securityConfigurationName": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired Glue security configuration name for DataOps job security enabling encryption and access control for data processing operations. Provides the security configuration that will be used by Glue jobs for encryption at rest, in transit, and CloudWatch logs encryption.\n\nUse cases: Glue job security; Encryption configuration; Security compliance; Data protection\n\nAWS: Glue security configuration for DataOps job encryption and security compliance\n\nValidation: Must be valid security configuration name; required for Glue job security and encryption",
+            "description": "Glue security configuration name for job encryption (at rest, in transit, CloudWatch logs).\nAuto-resolved from project when projectName is set.\n\nUse cases: Job encryption; Security compliance\n\nAWS: Glue security configuration\n\nValidation: Optional; auto-wired from project if projectName provided",
             "type": "string"
         },
         "service_catalog_product_config": {
@@ -2945,7 +2935,7 @@
             "additionalProperties": {
                 "$ref": "#/definitions/JobConfig"
             },
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of job template names to reusable job configurations enabling consistent job patterns and configuration inheritance. Provides template-based job configuration for standardized processing patterns, reducing duplication and ensuring consistency across similar jobs.\n\nUse cases: Reusable job patterns; Configuration inheritance; Standardized processing templates and consistency\n\nAWS: AWS Glue job template configurations for reusable processing patterns and inheritance\n\nValidation: Must be object with string keys and valid JobConfig values if provided; enables template inheritance\n  *",
+            "description": "Reusable job templates that can be inherited by job definitions via the `template` field.\nTemplate properties are deep-merged with job-specific overrides.\n\nUse cases: Standardized job patterns; Configuration inheritance; Reduced duplication\n\nAWS: Glue job configuration templates\n\nValidation: Optional; map of template name to JobConfig",
             "type": "object"
         }
     },

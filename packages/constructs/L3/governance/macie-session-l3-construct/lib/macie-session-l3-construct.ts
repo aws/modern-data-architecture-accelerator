@@ -8,50 +8,34 @@ import { CfnSession } from 'aws-cdk-lib/aws-macie';
 import { Construct } from 'constructs';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Amazon Macie session configuration interface for data security monitoring with finding publication frequency and session status management. Defines Macie session properties for automated sensitive data discovery and classification including configurable finding publication intervals and session activation control for data privacy compliance.
- *
- * Use cases: Sensitive data discovery; Data privacy compliance; Security monitoring; Data classification automation; PII detection; Compliance reporting
- *
- * AWS: Amazon Macie session with configurable finding publication frequency for automated sensitive data discovery and privacy monitoring
- *
- * Validation: findingPublishingFrequency must be valid SessionFindingPublishingFrequencyEnum value; status must be valid SessionStatusEnum value if specified
+ * Macie session configuration controlling finding publication and session lifecycle.
  */
 export interface MacieSessionProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required finding publication frequency for Amazon Macie session controlling how often security findings are published and reported. Defines the frequency at which Macie will publish findings about sensitive data discovery and security issues for compliance monitoring and security response.
+   * How often Macie publishes findings about sensitive data discovery.
    *
-   * Use cases: Finding publication control; Security reporting frequency; Compliance monitoring; Alert frequency management
+   * Use cases: Near-real-time alerting (FIFTEEN_MINUTES); Balanced reporting (ONE_HOUR); Low-frequency summaries (SIX_HOURS)
    *
-   * AWS: Amazon Macie session finding publication frequency for security finding reporting and compliance monitoring
+   * AWS: Amazon Macie session findingPublishingFrequency
    *
-   * Validation: Must be valid SessionFindingPublishingFrequencyEnum value; required for finding publication configuration
-   **/
+   * Validation: Required; FIFTEEN_MINUTES | ONE_HOUR | SIX_HOURS
+   */
   readonly findingPublishingFrequency: SessionFindingPublishingFrequencyEnum;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional session status for Amazon Macie session controlling whether data security monitoring is active or paused. Defines the operational status of the Macie session enabling control over when sensitive data discovery and classification activities are performed.
+   * Whether the Macie session is actively monitoring or paused.
    *
-   * Use cases: Session activation control; Monitoring pause/resume; Operational status management; Cost control
+   * Use cases: Pause monitoring during maintenance; Resume after onboarding
    *
-   * AWS: Amazon Macie session status for controlling data security monitoring activation and operational state
+   * AWS: Amazon Macie session status
    *
-   * Validation: Must be valid SessionStatusEnum value if provided; optional for session status control
-   **/
+   * Validation: Optional; ENABLED | PAUSED
+   * @default ENABLED
+   */
   readonly status?: SessionStatusEnum;
 }
+/** Internal props for the Macie Session L3 construct. */
 export interface MacieSessionL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required Macie session configuration defining data security monitoring setup including finding publication frequency and session status. Provides session configuration for automated data discovery, classification, and security monitoring with configurable finding publication and session management.
-   *
-   * Use cases: Data security monitoring; Session configuration; Finding publication; Security automation
-   *
-   * AWS: Macie session configuration for automated data security monitoring and classification
-   *
-   * Validation: Must be valid MacieSessionProps; required for Macie session deployment and data security monitoring
-   **/
+  /** Macie session configuration. */
   readonly session: MacieSessionProps;
 }
 

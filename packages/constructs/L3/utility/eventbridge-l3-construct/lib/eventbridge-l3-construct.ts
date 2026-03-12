@@ -9,79 +9,90 @@ import { ArnPrincipal, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 /**
- * Q-ENHANCED-INTERFACE
- * EventBridge principal configuration for cross-account and cross-service event bus access control. Defines IAM principals that can publish events to custom EventBridge event buses, supporting both AWS service principals and cross-account ARN-based access for event-driven architectures.
+ * Principal authorized to publish events to a custom EventBridge event bus.
+ * Specify exactly one of arn or service — not both.
  *
- * Use cases: Cross-account event publishing; AWS service event integration; Multi-account event-driven architectures
+ * Use cases: Cross-account event publishing via ARN; AWS service integration via service principal
  *
- * AWS: EventBridge event bus resource policy principals for controlling event publishing permissions and cross-account access
+ * AWS: EventBridge event bus resource policy principal
  *
- * Validation: Either arn (valid IAM principal ARN) or service (valid AWS service name) must be specified, but not both
+ * Validation: Exactly one of arn or service must be specified
  */
 export interface EventBusPrincipalProps {
+  /**
+   * IAM principal ARN for cross-account event publishing access.
+   * Mutually exclusive with service.
+   *
+   * Use cases: Cross-account event bus access; Specific IAM role/user event publishing
+   *
+   * AWS: IAM principal ARN for EventBridge resource policy
+   *
+   * Validation: Optional; must be valid IAM principal ARN; mutually exclusive with service
+   */
   readonly arn?: string;
+  /**
+   * AWS service principal name for service-based event publishing access
+   * (e.g. some-service.amazonaws.com). Mutually exclusive with arn.
+   *
+   * Use cases: AWS service event integration; Service-to-bus event routing
+   *
+   * AWS: AWS service principal for EventBridge resource policy
+   *
+   * Validation: Optional; must be valid AWS service principal; mutually exclusive with arn
+   */
   readonly service?: string;
 }
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for EventBridge custom event bus properties defining access control and retention settings. Configures event bus permissions and archive retention for secure, compliant event-driven architectures with cross-account access capabilities.
+ * Custom EventBridge event bus configuration with access control and archive retention.
+ * Principals are granted PutEvent access via resource policy.
+ * An event archive is automatically created for each bus.
  *
- * Use cases: Custom event bus configuration; Cross-account event publishing; Event archive retention management
+ * Use cases: Custom event bus with cross-account publishing; Event archival for replay and debugging
  *
- * AWS: Configures AWS EventBridge custom event bus with resource policies and archive settings
+ * AWS: EventBridge custom event bus with resource policy and event archive
  *
- * Validation: principals array is optional; archiveRetention must be positive integer for days
+ * Validation: All properties optional; archiveRetention must be positive integer (days)
  */
 export interface EventBusProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of IAM principals authorized to publish events to the custom EventBridge event bus enabling cross-account and cross-service event publishing. Defines specific AWS service principals or cross-account ARNs that can publish events to the event bus for event-driven architecture integration.
+   * Principals authorized to publish events to this bus via resource policy.
+   * Each entry must specify exactly one of arn or service.
    *
-   * Use cases: Cross-account event publishing; AWS service integration; Multi-account event architectures; Event publishing permissions
+   * Use cases: Cross-account event publishing; AWS service event integration
    *
-   * AWS: EventBridge event bus resource policy principals for event publishing access control and permissions
+   * AWS: EventBridge event bus resource policy principals (PutEvent access)
    *
-   * Validation: Must be array of valid EventBusPrincipalProps if provided; each principal must specify either arn or service but not both
-   **/
+   * Validation: Optional; array of valid EventBusPrincipalProps
+   */
   readonly principals?: EventBusPrincipalProps[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional event archive retention period in days for EventBridge event replay and historical event access. Defines how long events are retained in the event archive enabling event replay capabilities and historical event analysis for debugging and recovery scenarios.
+   * Number of days to retain events in the automatically created archive.
+   * Enables event replay for debugging and recovery.
    *
-   * Use cases: Event replay; Historical analysis; Debugging support; Event recovery; Compliance retention; Event archiving
+   * Use cases: Event replay; Historical event analysis; Compliance retention
    *
-   * AWS: Amazon EventBridge event archive retention configuration for event replay and historical access
+   * AWS: EventBridge event archive retention period
    *
-   * Validation: Must be positive integer if provided; represents retention period in days; enables event archive when specified
-   **/
+   * Validation: Optional; positive integer representing days
+   */
   readonly archiveRetention?: number;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Named event bus configuration interface for EventBridge with systematic event bus organization and management capabilities. Defines named event bus mappings for organized event-driven architectures including bus sets and systematic event bus administration.
+ * Map of event bus names to EventBusProps configurations.
  *
- * Use cases: Named event bus sets; Event bus organization; Systematic event bus administration; Multi-bus event architectures
+ * Use cases: Defining multiple named event buses in a single configuration
  *
- * AWS: Amazon EventBridge named event bus configuration with systematic organization and management
+ * AWS: EventBridge custom event bus name-to-config mapping
  *
- * Validation: String keys must be unique event bus names; values must be valid EventBusProps configurations
+ * Validation: Keys must be unique event bus names; values must be valid EventBusProps
  */
 export interface NamedEventBusProps {
   /** @jsii ignore */
   readonly [name: string]: EventBusProps;
 }
 export interface EventBridgeL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of event bus names to event bus configurations for custom event routing and messaging infrastructure enabling event-driven architecture and application integration. Provides event bus configurations with access controls, archival settings, and principal permissions for event management and routing.
-   *
-   * Use cases: Custom event routing; Event-driven architecture; Application integration; Event management
-   *
-   * AWS: EventBridge custom event buses for event routing and application integration
-   *
-   * Validation: Must be valid NamedEventBusProps if provided; enables custom event bus deployment and event-driven architecture
-   **/
+  /** Named event bus configurations for custom event routing. */
   readonly eventBuses?: NamedEventBusProps;
 }
 

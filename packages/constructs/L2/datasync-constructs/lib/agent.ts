@@ -8,31 +8,12 @@ import { CfnAgent, CfnAgentProps } from 'aws-cdk-lib/aws-datasync';
 import { Construct } from 'constructs';
 
 export interface MdaaDataSyncAgentProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required agent activation key obtained from DataSync console or HTTP GET request enabling agent registration and authentication. Provides secure agent activation and registration with the DataSync service for authorized data transfer operations.
-   *
-   * Use cases: Agent activation; Service registration; Secure authentication; Agent authorization for data transfer
-   *
-   * AWS: AWS DataSync agent activation key for service registration and secure agent authentication
-   *
-   * Validation: Must be valid activation key string; required; obtained from DataSync console or agent IP address
-   **/
+  /** Agent activation key obtained from DataSync console or HTTP GET request enabling agent */
   readonly activationKey: string;
   readonly agentName?: string;
   readonly securityGroupArns: string[];
   readonly subnetArns: string[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required VPC endpoint ID for private DataSync agent access through AWS PrivateLink enabling secure data transfer without internet connectivity. Provides private network access to DataSync service through VPC endpoints for enhanced security and network isolation.
-   *
-   * Use cases: Private network data transfer; VPC-isolated operations; Enhanced security; PrivateLink connectivity
-   *
-   * AWS: AWS VPC endpoint ID for DataSync service access through PrivateLink for private network operations
-   *
-   * Validation: Must be valid VPC endpoint ID format (vpce-xxxxxxxxx); required for VPC-based agent operations
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-agent.html#cfn-datasync-agent-vpcendpointid
-   */
+  /** VPC endpoint ID for private DataSync agent access through AWS PrivateLink enabling secure */
   readonly vpcEndpointId: string;
 }
 

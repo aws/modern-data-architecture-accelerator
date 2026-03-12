@@ -18,244 +18,252 @@ import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Lake Formation principal management enabling identity and access control configuration. Defines principal types including federated users, groups, and IAM roles for flexible Lake Formation permission management across different identity systems.
+ * Defines a Lake Formation principal for config-level grant assignment.
+ * Supports federated groups, federated users, and IAM roles. Federated principals
+ * require a matching federationProvider name from the federationProviders config section.
  *
- * Use cases: Identity management; Federated access control; Cross-identity system integration
+ * Use cases: Federated group access; Individual user permissions; IAM role-based grants
  *
- * AWS: Configures AWS Lake Formation principals for identity-based access control and permission management
+ * AWS: Lake Formation principals (federated via IAM SAML providers or direct IAM roles)
  *
- * Validation: At least one principal type must be specified; federationProvider must exist if referenced
+ * Validation: At least one principal type required; federationProvider must reference a configured provider
  */
 export interface PrincipalConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional federated group name for Lake Formation grants enabling group-based access control through identity federation. Provides group-level permissions for federated identity systems integrated with Lake Formation for scalable access management.
+   * Federated group name for group-based Lake Formation permissions.
+   * Resolved with the referenced federationProvider to construct the principal identity.
    *
-   * Use cases: Group-based access control; Federated identity integration; Scalable permission management
+   * Use cases: Active Directory group access; Enterprise group-based governance
    *
-   * AWS: AWS Lake Formation federated group principals for identity-based access control
+   * AWS: Lake Formation federated group principal via IAM SAML provider
    *
-   * Validation: Must be valid federated group name if provided; requires federationProvider configuration
-   **/
+   * Validation: Optional; requires federationProvider when specified
+   */
   readonly federatedGroup?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional federated user name for Lake Formation grants enabling individual user access control through identity federation. Provides user-specific permissions for federated identity systems integrated with Lake Formation for granular access management.
+   * Federated user name for individual Lake Formation permissions.
+   * Resolved with the referenced federationProvider to construct the principal identity.
    *
-   * Use cases: Individual user access; Federated identity integration; Granular permission management
+   * Use cases: Individual user data access; Federated user-specific permissions
    *
-   * AWS: AWS Lake Formation federated user principals for identity-based access control
+   * AWS: Lake Formation federated user principal via IAM SAML provider
    *
-   * Validation: Must be valid federated user name if provided; requires federationProvider configuration
-   **/
+   * Validation: Optional; requires federationProvider when specified
+   */
   readonly federatedUser?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional federation provider name reference linking to configured identity providers enabling federated access integration. References federation provider configuration for identity system integration with Lake Formation permissions.
+   * Logical name of a federation provider defined in the federationProviders config section.
+   * Resolved to the provider ARN at deployment time.
    *
-   * Use cases: Identity provider integration; Federated access configuration; Cross-system identity management
+   * Use cases: SAML provider reference; Identity provider mapping
    *
-   * AWS: AWS IAM identity provider integration for Lake Formation federated access
+   * AWS: IAM SAML identity provider reference
    *
-   * Validation: Must reference valid federation provider from federationProviders configuration if provided
-   **/
+   * Validation: Optional; must match a key in federationProviders if specified
+   */
   readonly federationProvider?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional IAM role reference for Lake Formation grants enabling role-based access control within AWS identity systems. Provides IAM role-based permissions for native AWS identity integration with Lake Formation access management.
+   * IAM role reference for role-based Lake Formation permissions.
+   * Can be specified by ARN, name, or SSM parameter reference.
    *
-   * Use cases: IAM role-based access; Native AWS identity integration; Role-based permission management
+   * Use cases: IAM role-based data access; Service role permissions; Cross-account role grants
    *
-   * AWS: AWS IAM roles for Lake Formation role-based access control and permission management
+   * AWS: IAM role for Lake Formation grant assignment
    *
-   * Validation: Must be valid MdaaRoleRef if provided; enables IAM role-based Lake Formation access
-   **/
+   * Validation: Optional; valid MdaaRoleRef
+   */
   readonly role?: MdaaRoleRef;
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Lake Formation permission grants enabling database and table-level access control. Defines granular permissions for databases, tables, and principals with flexible permission levels for fine-grained data governance.
+ * Defines a Lake Formation grant with database/table scope and permission level.
+ * Grants are applied to existing Glue databases and optionally scoped to specific tables.
+ * Permission levels ('read', 'write', 'super') map to Lake Formation permission arrays.
  *
- * Use cases: Granular data access control; Database and table permissions; Fine-grained data governance
+ * Use cases: Database-scoped read access; Table-level write permissions; Super-user grants for admin principals
  *
- * AWS: Configures AWS Lake Formation grants for database and table-level access control and permissions
+ * AWS: Lake Formation CfnPrincipalPermissions for database and table grants
  *
- * Validation: database and principals are required; permission levels must be valid values
+ * Validation: database and principals required; permission levels default to 'read'
  */
 export interface GrantConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required name of the existing Glue Database for Lake Formation grant application enabling database-level access control. Specifies the target database where permissions will be applied for data access governance and control.
+   * Target Glue database name for the grant. Must already exist in the Glue Catalog.
    *
-   * Use cases: Database-level access control; Target database specification; Data governance scope definition
+   * Use cases: Database-scoped permissions; Grant target specification
    *
-   * AWS: AWS Glue Database for Lake Formation grant target and access control scope
+   * AWS: Glue database for Lake Formation grant application
    *
-   * Validation: Must be valid existing Glue Database name; required; defines grant target database
-   **/
+   * Validation: Required; existing Glue database name
+   */
   readonly database: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional database permission level configuration enabling controlled database access with read, write, or super permissions. Defines the level of access granted to principals for database-level operations and management.
+   * Database-level permission level. Maps to Lake Formation permissions:
+   * 'read' → [DESCRIBE], 'write' → [DESCRIBE, CREATE_TABLE, ALTER], 'super' → [DESCRIBE, CREATE_TABLE, ALTER, DROP].
    *
-   * Use cases: Database permission control; Access level management; Database operation authorization
+   * Use cases: Database read access; Schema management permissions; Full database admin
    *
-   * AWS: AWS Lake Formation database permissions for access level control and authorization
+   * AWS: Lake Formation database permissions
    *
-   * Validation: Must be 'read', 'write', or 'super' if provided; defaults to 'read'; controls database access level
-   *   **/
+   * Validation: Optional; 'read' | 'write' | 'super'
+   * @default 'read'
+   */
   readonly databasePermissions?: PermissionsConfig;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of table names for Lake Formation grant application enabling table-level access control. Specifies target tables where permissions will be applied, with '*' wildcard support for all tables within the database.
+   * Table names within the database for table-level grants.
+   * Use '*' to grant on all tables. If omitted, only database-level permissions apply.
    *
-   * Use cases: Table-level access control; Granular table permissions; Wildcard table access management
+   * Use cases: Table-level access control; Selective table permissions; Wildcard table grants
    *
-   * AWS: AWS Glue tables for Lake Formation grant targets and table-level access control
+   * AWS: Glue table names for Lake Formation table-level grants
    *
-   * Validation: Must be array of valid table names or '*' for all tables if provided; enables table-specific access
-   **/
+   * Validation: Optional; array of existing table names or '*'
+   */
   readonly tables?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional table permission level configuration enabling controlled table access with read, write, or super permissions. Defines the level of access granted to principals for table-level operations and data management.
+   * Table-level permission level. Maps to Lake Formation permissions:
+   * 'read' → [SELECT, DESCRIBE], 'write' → [SELECT, DESCRIBE, INSERT, DELETE],
+   * 'super' → [SELECT, DESCRIBE, INSERT, DELETE, ALTER, DROP].
    *
-   * Use cases: Table permission control; Data access level management; Table operation authorization
+   * Use cases: Table read access; Data write permissions; Full table admin
    *
-   * AWS: AWS Lake Formation table permissions for data access level control and authorization
+   * AWS: Lake Formation table permissions
    *
-   * Validation: Must be 'read', 'write', or 'super' if provided; defaults to 'read'; controls table access level
-   **/
+   * Validation: Optional; 'read' | 'write' | 'super'
+   * @default 'read'
+   */
   readonly tablePermissions?: PermissionsConfig;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of principal names for Lake Formation grant recipients enabling controlled access assignment. References configured principals who will receive the specified permissions for the database and table resources.
+   * Logical principal names referencing entries in the principals configuration.
+   * Each named principal receives the specified database and table permissions.
    *
-   * Use cases: Permission recipient specification; Access assignment; Principal-based access control
+   * Use cases: Multi-principal grants; Group and role permission assignment
    *
-   * AWS: AWS Lake Formation grant principals for permission assignment and access control
+   * AWS: Lake Formation grant recipients
    *
-   * Validation: Must be array of valid principal names; required; principals must exist in principals configuration
-   **/
+   * Validation: Required; array of keys from the principals map
+   */
   readonly principals: string[];
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for federation provider mapping enabling identity system integration with Lake Formation. Maps federation provider names to ARNs for seamless integration between external identity systems and AWS Lake Formation permissions.
+ * Maps federation provider logical names to IAM SAML identity provider ARNs.
+ * Referenced by PrincipalConfig.federationProvider to resolve federated principal identities.
  *
- * Use cases: Identity system integration; Federation provider mapping; External identity system connectivity
+ * Use cases: SAML provider registration; Multi-provider federation; Identity system mapping
  *
- * AWS: Maps federation provider names to AWS IAM identity provider ARNs for Lake Formation integration
+ * AWS: IAM SAML identity provider ARNs (arn:aws:iam::account:saml-provider/name)
  *
- * Validation: Must be object with string keys and valid ARN values
+ * Validation: String keys to valid IAM identity provider ARNs
  */
 export interface FederationProviderConfig {
   [key: string]: string;
 }
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for Lake Formation resource link management enabling cross-account and cross-database data sharing. Defines resource links for sharing databases across accounts with controlled access and permission management.
+ * Defines a Lake Formation resource link for cross-account database sharing.
+ * Resource links create local references to databases in other accounts,
+ * enabling cross-account queries and data sharing with controlled DESCRIBE permissions.
  *
- * Use cases: Cross-account data sharing; Database resource linking; Controlled data access across accounts
+ * Use cases: Cross-account database sharing; Data mesh resource linking; Federated catalog access
  *
- * AWS: Configures AWS Lake Formation resource links for cross-account database sharing and access
+ * AWS: Lake Formation resource links (CfnDatabase with TargetDatabase)
  *
- * Validation: targetDatabase is required; accounts must be valid AWS account IDs if provided
+ * Validation: targetDatabase required; account IDs must be valid 12-digit AWS account IDs
  */
 export interface ResourceLinkConfig {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required name of the target database for resource link creation enabling cross-account database sharing. Specifies the source database that will be shared through the resource link for cross-account data access.
+   * Name of the target database to link to. Must exist in the target account's Glue Catalog.
    *
-   * Use cases: Cross-account database sharing; Target database specification; Resource link source definition
+   * Use cases: Cross-account database reference; Resource link target specification
    *
-   * AWS: AWS Lake Formation resource link target database for cross-account sharing
+   * AWS: Glue database name in the target account
    *
-   * Validation: Must be valid database name; required; defines the database to be shared via resource link
-   **/
+   * Validation: Required; existing database name
+   */
   readonly targetDatabase: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional target account ID where the source database exists enabling cross-account resource link configuration. Specifies the AWS account containing the database to be shared through the resource link.
+   * AWS account ID where the target database exists.
+   * Required for cross-account resource links.
    *
-   * Use cases: Cross-account resource sharing; Source account specification; Multi-account data access
+   * Use cases: Cross-account database sharing; Multi-account data access
    *
-   * AWS: AWS account ID for Lake Formation cross-account resource link configuration
+   * AWS: Source account for Lake Formation resource link
    *
-   * Validation: Must be valid AWS account ID if provided; defines source account for resource link
-   **/
+   * Validation: Optional; 12-digit AWS account ID
+   */
   readonly targetAccount?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional account ID where the resource link will be created enabling flexible resource link deployment. Specifies the destination account for resource link creation, defaulting to local account if not specified.
+   * AWS account ID where the resource link will be created.
+   * If omitted, the resource link is created in the local (deployment) account.
    *
-   * Use cases: Resource link deployment control; Destination account specification; Flexible link placement
+   * Use cases: Remote resource link deployment; Cross-account link placement
    *
-   * AWS: AWS account ID for Lake Formation resource link deployment and management
+   * AWS: Destination account for resource link creation
    *
-   * Validation: Must be valid AWS account ID if provided; defaults to local account for resource link creation
-   **/
+   * Validation: Optional; 12-digit AWS account ID
+   * @default local account
+   */
   readonly fromAccount?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of principal names for resource link DESCRIBE permissions enabling controlled resource link access. Grants DESCRIBE permissions to specified principals for resource link visibility and metadata access.
+   * Logical principal names granted DESCRIBE access to the resource link.
+   * References entries in the principals configuration map.
    *
-   * Use cases: Resource link access control; Metadata access permissions; Controlled resource link visibility
+   * Use cases: Resource link visibility control; Metadata access permissions
    *
-   * AWS: AWS Lake Formation resource link DESCRIBE permissions for access control
+   * AWS: Lake Formation DESCRIBE grants on resource link
    *
-   * Validation: Must be array of valid principal names if provided; principals must exist in principals configuration
-   **/
+   * Validation: Optional; array of keys from the principals map
+   */
   readonly grantPrincipals?: string[];
 }
 
 export interface LakeFormationAccessControlConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of grant names to Lake Formation grant configurations enabling database and table-level access control. Provides granular permission management for databases, tables, and principals with flexible access levels for fine-grained data governance.
+   * Named Lake Formation grant configurations defining database/table-level access control.
+   * Each grant specifies a target database, optional tables, permission levels, and recipient principals.
+   * The module deploys CfnPrincipalPermissions resources for each grant/principal combination.
    *
-   * Use cases: Granular permission management; Database and table access control; Fine-grained data governance
+   * Use cases: Database-scoped read access; Table-level write permissions; Multi-principal grant management
    *
-   * AWS: AWS Lake Formation grants for database and table-level access control
+   * AWS: Lake Formation CfnPrincipalPermissions for database and table grants
    *
-   * Validation: Must be object with string keys and valid GrantConfig values; required; defines all permission grants
-   *   **/
+   * Validation: Required; map of string keys to GrantConfig
+   */
   readonly grants: { [key: string]: GrantConfig };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of principal names to principal configurations enabling identity and access management. Defines all principals including federated users, groups, and IAM roles for flexible Lake Formation permission assignment across identity systems.
+   * Named principal definitions for Lake Formation grant assignment.
+   * Each principal can be a federated group, federated user, or IAM role.
+   * Referenced by name in grant and resource link configurations.
    *
-   * Use cases: Identity management; Principal configuration; Cross-identity system integration
+   * Use cases: Federated group/user access; IAM role-based grants; Multi-principal governance
    *
-   * AWS: AWS Lake Formation principals for identity-based access control and permission management
+   * AWS: Lake Formation principals (federated via IAM SAML providers or direct IAM roles)
    *
-   * Validation: Must be object with string keys and valid PrincipalConfig values; required; defines all access principals
-   *   **/
+   * Validation: Required; map of string keys to PrincipalConfig
+   */
   readonly principals: { [key: string]: PrincipalConfig };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of federation provider names to ARNs enabling identity system integration with Lake Formation. Maps external identity providers to AWS IAM identity provider ARNs for seamless federated access integration.
+   * Maps federation provider logical names to IAM SAML identity provider ARNs.
+   * Referenced by PrincipalConfig.federationProvider to resolve federated identities.
    *
-   * Use cases: Identity system integration; Federation provider mapping; External identity connectivity
+   * Use cases: SAML provider registration; Multi-provider federation; Identity system mapping
    *
-   * AWS: AWS IAM identity provider ARNs for Lake Formation federated access integration
+   * AWS: IAM SAML identity provider ARNs
    *
-   * Validation: Must be object with string keys and valid ARN values if provided; enables federated identity integration
-   **/
+   * Validation: Optional; map of string keys to valid IAM identity provider ARNs
+   */
   readonly federationProviders?: FederationProviderConfig;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of resource link names to resource link configurations enabling cross-account database sharing and access. Provides controlled data sharing across AWS accounts with permission management and access control for collaborative data architectures.
+   * Named resource link configurations for cross-account database sharing.
+   * Each resource link creates a local Glue database reference pointing to a database
+   * in another account, with optional DESCRIBE grants for specified principals.
    *
-   * Use cases: Cross-account data sharing; Database resource linking; Collaborative data access across accounts
+   * Use cases: Cross-account database sharing; Data mesh resource linking; Federated catalog access
    *
-   * AWS: AWS Lake Formation resource links for cross-account database sharing and controlled access
+   * AWS: Lake Formation resource links (CfnDatabase with TargetDatabase)
    *
-   * Validation: Must be object with string keys and valid ResourceLinkConfig values if provided; enables cross-account sharing
-   *   **/
+   * Validation: Optional; map of string keys to ResourceLinkConfig
+   */
   readonly resourceLinks?: { [key: string]: ResourceLinkConfig };
 }
 
@@ -275,27 +283,7 @@ export class LakeFormationAccessControlConfigParser extends MdaaAppConfigParser<
       const resourceLinkProps: ResourceLinkProps = {
         targetDatabase: configResourceLink.targetDatabase,
         targetAccount: configResourceLink.targetAccount,
-        /**
-         * Q-ENHANCED-PROPERTY
-         * Required array of IAM principals to be granted access to the LakeFormation resource link enabling cross-account data sharing and access control. Defines the specific IAM principals that will receive permissions to access the shared database resource through the resource link.
-         *
-         * Use cases: Cross-account data sharing; Access control; Principal permission management; Data lake access; Resource link permissions
-         *
-         * AWS: AWS LakeFormation resource link principal grants for cross-account database access and data sharing
-         *
-         * Validation: Must be array of valid IAM principal ARNs; required for resource link access control and permission management
-         */
         grantPrincipals: principals,
-        /**
-         * Q-ENHANCED-PROPERTY
-         * Required source account ID for LakeFormation resource link creation enabling cross-account database sharing and access control. Specifies the AWS account that owns the source database being shared through the resource link for cross-account data lake access.
-         *
-         * Use cases: Cross-account sharing; Source account identification; Database sharing; Account-based access control; Resource link source
-         *
-         * AWS: AWS LakeFormation resource link source account for cross-account database sharing and access management
-         *
-         * Validation: Must be valid 12-digit AWS account ID; required for cross-account resource link creation and access control
-         */
         fromAccount: configResourceLink.fromAccount,
       };
 

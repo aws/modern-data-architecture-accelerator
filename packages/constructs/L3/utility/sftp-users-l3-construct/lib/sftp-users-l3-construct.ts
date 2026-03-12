@@ -38,14 +38,7 @@ const s3IamStatement = function (bucketName: string, homeDirectory: string, part
 };
 
 /**
- * Q-ENHANCED-INTERFACE
- * AWS Transfer Family SFTP user configuration for secure file access with S3 home directory mapping. Defines SFTP user properties including SSH key authentication, S3 bucket home directories, and KMS encryption for controlled file transfer access to data lake storage.
- *
- * Use cases: Partner user accounts; Secure file upload access; S3-backed SFTP directories; SSH key-based authentication
- *
- * AWS: AWS Transfer Family SFTP users with S3 home directory mapping and SSH public key authentication
- *
- * Validation: name must be valid SFTP username (3-100 chars, alphanumeric); homeBucketName must be valid S3 bucket; publicKeys must reference valid SSH public key resources
+ * SFTP user properties for Transfer Family user creation.
  */
 export interface UserProps {
   /**
@@ -74,27 +67,9 @@ export interface UserProps {
   readonly accessRoleArn?: string;
 }
 export interface SftpUsersL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of SFTP user definitions for user management and access control enabling secure file transfer operations and user administration. Provides user configurations including authentication, permissions, and access controls for SFTP server user management and secure file transfer workflows.
-   *
-   * Use cases: User management; Access control; Authentication setup; File transfer security
-   *
-   * AWS: SFTP user definitions for Transfer Family server user management and access control
-   *
-   * Validation: Must be array of valid UserProps; required for SFTP user management and access control
-   *   **/
+  /** SFTP user definitions for Transfer Family user provisioning. */
   readonly users: UserProps[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required Transfer Family server ID for user association enabling user management and server integration. Provides the server identifier to which SFTP users will be added for file transfer operations and user access management within the Transfer Family infrastructure.
-   *
-   * Use cases: Server association; User integration; Transfer operations; Server management
-   *
-   * AWS: Transfer Family server ID for SFTP user association and server integration
-   *
-   * Validation: Must be valid Transfer Family server ID; required for user association and server integration
-   **/
+  /** Transfer Family server ID to associate users with. */
   readonly serverId: string;
 }
 

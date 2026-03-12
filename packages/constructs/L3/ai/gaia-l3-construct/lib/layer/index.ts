@@ -3,13 +3,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
-/**
- * Q-ENHANCED-INTERFACE
- * Lambda Layer configuration interface for GAIA GenAI application dependency management with runtime and architecture specification. Defines Lambda layer properties for packaging and deploying shared libraries, dependencies, and custom code for GenAI Lambda functions with support for runtime-specific configurations and automatic upgrades.
- * Use cases: Lambda dependency management; Shared library deployment; GenAI function layers; Runtime-specific packaging; Dependency optimization
- * AWS: AWS Lambda Layer configuration for GAIA GenAI applications with runtime and architecture-specific dependency packaging
- * Validation: runtime must be valid Lambda runtime; architecture must be valid Lambda architecture; assetOverridePath must be valid directory path if specified
- */
+/** Internal props for GAIA Lambda layer construction. */
 interface LayerProps {
   runtime: lambda.Runtime;
   architecture: lambda.Architecture;

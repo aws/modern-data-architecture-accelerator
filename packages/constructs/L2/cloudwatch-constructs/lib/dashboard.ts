@@ -11,20 +11,13 @@ import { createSsmParamWithSuppression } from './ssm-utils';
 import { buildWidgetLayout, createWidget } from './widget-utils';
 
 /**
- * Q-ENHANCED-PROPERTY
  * Properties for a metric in a dashboard widget.
  *
- * Use Cases:
- * - Display CloudWatch metrics on dashboards
- * - Use metric math expressions for calculations (e.g., "m1+m2")
- * - Use direct values or SSM references (resolved by MDAA config parser)
+ * Use cases: CloudWatch metric display; Metric math expressions; SSM-referenced metrics
  *
- * AWS Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_MetricDataQuery.html
+ * AWS: CloudWatch metric data queries for dashboard visualization
  *
- * Validation:
- * - For regular metrics: namespace and metricName are required
- * - For metric math: expression is required, namespace/metricName optional (used as placeholders)
- * - Use {{org}}, {{domain}}, {{env}} placeholders - they will be resolved by config parser
+ * Validation: For regular metrics namespace and metricName are required; for metric math expression is required
  */
 export interface DashboardMetricProps {
   /**
@@ -93,21 +86,13 @@ export interface DashboardMetricProps {
 }
 
 /**
- * Q-ENHANCED-PROPERTY
  * Properties for a dashboard widget.
  *
- * Use Cases:
- * - Text widgets for dashboard headers and descriptions
- * - Metric widgets for displaying time-series data
- * - Log insights widgets for displaying query results
+ * Use cases: Text dashboard headers; Metric time-series display; Log insights query results
  *
- * AWS Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/CloudWatch-Dashboard-Body-Structure.html
+ * AWS: CloudWatch dashboard widget configuration
  *
- * Validation:
- * - type must be 'text', 'metric', or 'log_insights'
- * - Text widgets require markdown property
- * - Metric widgets require metrics array
- * - Log insights widgets require logGroupNames and queryString
+ * Validation: type is required; text widgets require markdown; metric widgets require metrics; log insights require logGroupNames and queryString
  */
 export interface DashboardWidgetProps {
   /**
@@ -165,21 +150,7 @@ export interface DashboardWidgetProps {
   readonly queryString?: string;
 }
 
-/**
- * Q-ENHANCED-PROPERTY
- * Properties for MdaaDashboard construct.
- *
- * Use Cases:
- * - Create unified observability dashboards across multiple Lambda functions
- * - Display metrics using direct namespace/metricName or SSM references
- * - Display log insights queries alongside metrics
- *
- * AWS Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutDashboard.html
- *
- * Validation:
- * - dashboardName must be unique within the account/region
- * - widgets array must not be empty
- */
+/** Properties for MdaaDashboard construct */
 export interface MdaaDashboardProps extends MdaaConstructProps {
   /**
    * The name of the dashboard

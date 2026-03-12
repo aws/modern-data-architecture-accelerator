@@ -18,92 +18,89 @@ import * as configSchema from './config-schema.json';
 
 export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of admin role references for Bedrock resource access control enabling role-based administration and security management. Provides IAM roles that will be granted administrative access to Bedrock agent resources including KMS keys, S3 buckets, and other infrastructure components.
+   * Admin roles granted access to Bedrock agent resources including KMS keys and S3 buckets.
    *
-   * Use cases: Administrative access; Role-based security; Resource access control; Bedrock administration
+   * Use cases: Administrative access, role-based security, Bedrock resource management
    *
-   * AWS: IAM role references for Bedrock resource administrative access and security management
+   * AWS: IAM roles for Bedrock resource administration
    *
-   * Validation: Must be array of valid MdaaRoleRef objects; required for Bedrock resource access control and administration
+   * Validation: Required; MdaaRoleRef[]
    **/
   readonly dataAdminRoles: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of Bedrock agent configurations for AI agent deployment enabling conversational AI and task automation capabilities. Provides agent configuration including foundation models, action groups, and knowledge base integration for intelligent automation and user interaction.
+   * Bedrock agent configurations with foundation models, action groups, knowledge base integration, and guardrails.
    *
-   * Use cases: AI agent deployment; Conversational AI; Task automation; Intelligent user interaction
+   * Use cases: AI agent deployment, conversational AI, task automation, intelligent workflows
    *
-   * AWS: Bedrock agents for AI-powered conversational interfaces and intelligent task automation
+   * AWS: Amazon Bedrock Agents
    *
-   * Validation: Must be valid NamedAgentProps if provided; enables AI agent deployment and conversational capabilities
-   *   **/
+   * Validation: Optional; NamedAgentProps (map of agent name to config)
+   **/
   readonly agents?: NamedAgentProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional KMS key ARN for Bedrock resource encryption enabling customer-controlled encryption and enhanced security compliance. When provided, uses existing KMS key for encrypting agent resources; otherwise creates customer-managed key for data protection and security compliance.
+   * Existing KMS key ARN for encrypting Bedrock agent resources.
+   * If omitted, a customer-managed key is created automatically.
    *
-   * Use cases: Resource encryption; Customer-controlled keys; Security compliance; Data protection
+   * Use cases: Customer-controlled encryption, security compliance, key reuse
    *
-   * AWS: KMS key ARN for Bedrock resource encryption and customer-controlled data protection
+   * AWS: KMS key for Bedrock resource encryption
    *
-   * Validation: Must be valid KMS key ARN if provided; enables customer-controlled encryption for Bedrock resources
+   * Validation: Optional; String; must be valid KMS key ARN
    **/
   readonly kmsKeyArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional S3 bucket ARN for Bedrock agent storage enabling agent artifact management and data storage capabilities. When provided, uses existing S3 bucket for agent resources; otherwise creates dedicated bucket for agent data, models, and artifacts.
+   * Existing S3 bucket ARN for agent data storage.
+   * If omitted, a dedicated bucket is created automatically.
    *
-   * Use cases: Agent storage; Artifact management; Data storage; Resource organization
+   * Use cases: Agent artifact storage, data management, bucket reuse
    *
-   * AWS: S3 bucket ARN for Bedrock agent storage and artifact management
+   * AWS: S3 bucket for Bedrock agent storage
    *
-   * Validation: Must be valid S3 bucket ARN if provided; enables agent storage and artifact management capabilities
+   * Validation: Optional; String; must be valid S3 bucket ARN
    **/
   readonly agentBucketArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional Lambda function configurations for Bedrock agent action groups enabling custom business logic and external system integration. Provides Lambda functions and layers for agent action groups enabling custom functionality, API integrations, and business process automation within AI agents.
+   * Lambda functions and layers for Bedrock agent action groups.
+   * Enables custom business logic, API integrations, and business process automation within agents.
    *
-   * Use cases: Custom business logic; API integrations; Action group implementation; External system connectivity
+   * Use cases: Custom action group logic, external API integration, business process automation
    *
-   * AWS: Lambda functions for Bedrock agent action groups and custom business logic implementation
+   * AWS: Lambda functions/layers for Bedrock agent action groups
    *
-   * Validation: Must be valid LambdaFunctionProps if provided; enables custom action group functionality and integrations
+   * Validation: Optional; LambdaFunctionProps
    **/
   readonly lambdaFunctions?: LambdaFunctionProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional vector store configurations for knowledge base deployment enabling semantic search and retrieval-augmented generation capabilities. Provides vector database configuration for knowledge bases supporting similarity search, document retrieval, and RAG-based AI applications.
+   * Vector store configurations for knowledge bases (OpenSearch Serverless or Aurora).
+   * Provides vector database storage for semantic search and retrieval-augmented generation.
    *
-   * Use cases: Vector storage; Semantic search; Knowledge retrieval; RAG applications
+   * Use cases: Semantic search, RAG applications, knowledge retrieval, embedding storage
    *
-   * AWS: Vector stores for Bedrock knowledge bases and semantic search capabilities
+   * AWS: OpenSearch Serverless or Aurora vector stores for Bedrock knowledge bases
    *
-   * Validation: Must be valid NamedVectorStoreProps if provided; enables vector storage and semantic search functionality
-   *   **/
+   * Validation: Optional; NamedVectorStoreProps (map of store name to config)
+   **/
   readonly vectorStores?: NamedVectorStoreProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional knowledge base configurations for document-based AI capabilities enabling intelligent document processing and question-answering systems. Provides knowledge base setup with document ingestion, embedding generation, and retrieval capabilities for AI-powered information systems.
+   * Knowledge base configurations with S3/SharePoint data sources and custom parsing strategies.
+   * Enables document ingestion, embedding generation, and retrieval for RAG applications.
    *
-   * Use cases: Knowledge management; Document processing; Question-answering systems; Information retrieval
+   * Use cases: Knowledge management, document processing, question-answering, information retrieval
    *
-   * AWS: Bedrock knowledge bases for document-based AI capabilities and intelligent information systems
+   * AWS: Bedrock Knowledge Bases
    *
-   * Validation: Must be valid NamedKnowledgeBaseProps if provided; enables knowledge base deployment and document AI
-   *   **/
+   * Validation: Optional; NamedKnowledgeBaseProps (map of KB name to config)
+   **/
   readonly knowledgeBases?: NamedKnowledgeBaseProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional guardrail configurations for AI safety and content filtering enabling responsible AI deployment and content moderation. Provides guardrail setup for content filtering, safety controls, and responsible AI practices ensuring appropriate AI behavior and content generation.
+   * Guardrail configurations for AI safety, content filtering, and responsible AI deployment.
    *
-   * Use cases: AI safety; Content filtering; Responsible AI; Content moderation
+   * Use cases: AI safety controls, content filtering, responsible AI, content moderation
    *
-   * AWS: Bedrock guardrails for AI safety controls and responsible AI deployment
+   * AWS: Bedrock Guardrails
    *
-   * Validation: Must be valid NamedGuardrailProps if provided; enables AI safety controls and content filtering
-   *   **/
+   * Validation: Optional; NamedGuardrailProps (map of guardrail name to config)
+   **/
   readonly guardrails?: NamedGuardrailProps;
 }
 

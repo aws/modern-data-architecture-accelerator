@@ -13,27 +13,25 @@ import { NifiProps } from '@aws-mdaa/dataops-nifi-l3-construct';
 
 export interface NifiConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for Nifi cluster association enabling project-based organization and resource management. Links the Nifi deployment to a specific DataOps project for organized data flow management and governance within the data operations framework.
+   * DataOps project name for NiFi cluster association and resource management.
    *
-   * Use cases: Project-based organization; Resource management; DataOps project association for governance
+   * Use cases: Project integration; Resource organization
    *
-   * AWS: DataOps project association for Nifi cluster organization and resource management
+   * AWS: DataOps project reference
    *
-   * Validation: Must be non-empty string; required; links Nifi deployment to specific DataOps project
-   **/
+   * Validation: Optional; string
+   */
   readonly projectName?: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required Apache Nifi cluster configuration defining data flow orchestration and processing capabilities including cluster setup, security, networking, and data flow management. Provides complete Nifi deployment with event-driven processing and real-time data integration.
+   * Apache NiFi cluster configuration for data flow orchestration and processing.
    *
-   * Use cases: Data flow orchestration; Real-time processing; Event-driven data integration and flow management
+   * Use cases: Data flow orchestration; Real-time processing; Event-driven integration
    *
-   * AWS: Apache Nifi cluster deployment for data flow orchestration and real-time processing capabilities
+   * AWS: NiFi on EKS
    *
-   * Validation: Must be valid NifiProps; required; defines all Nifi cluster characteristics and processing capabilities
-   **/
+   * Validation: Required; valid NifiProps
+   */
   readonly nifi: NifiProps;
 }
 

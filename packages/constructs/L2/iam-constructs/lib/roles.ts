@@ -16,42 +16,15 @@ export interface MdaaRoleProps extends MdaaConstructProps {
     /** @jsii ignore */
     [name: string]: PolicyDocument;
   };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional IAM path for the role providing hierarchical organization and namespace management. Enables structured role organization within IAM for better management and policy targeting in large-scale deployments.
-   *
-   * Use cases: Hierarchical role organization; Namespace management; Policy targeting by path
-   *
-   * AWS: AWS IAM role path for organizational structure and policy targeting
-   *
-   * Validation: Must be valid IAM path format if provided (starts and ends with /); defaults to / if not specified
-   **/
+  /** IAM path for the role providing hierarchical organization and namespace management */
   readonly path?: string;
   readonly permissionsBoundary?: IManagedPolicy;
   readonly roleName?: string;
   readonly maxSessionDuration?: Duration;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional human-readable description of the IAM role explaining its purpose and intended usage. Provides documentation for role management and helps administrators understand role capabilities and intended use cases for operational clarity.
-   *
-   * Use cases: Role documentation; Administrative clarity; Operational understanding; Compliance documentation
-   *
-   * AWS: AWS IAM role description for management and operational documentation
-   *
-   * Validation: Must be 1000 characters or less if provided; descriptive text for role purpose and usage
-   **/
+  /** Human-readable description of the IAM role explaining its purpose and intended usage */
   readonly description?: string;
 
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag to use the exact role name as specified without MDAA naming convention processing. When enabled, bypasses standard naming conventions for services that require specific role names while maintaining other MDAA compliance features.
-   *
-   * Use cases: Service-specific role name requirements; External system integration; Legacy system compatibility
-   *
-   * AWS: AWS IAM role name used exactly as specified without naming convention processing
-   *
-   * Validation: Boolean value; when true, uses roleName exactly as provided; requires careful name management
-   **/
+  /** Flag to use the exact role name as specified without MDAA naming convention processing */
   readonly verbatimRoleName?: boolean;
 }
 

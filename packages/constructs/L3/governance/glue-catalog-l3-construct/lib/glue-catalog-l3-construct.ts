@@ -30,88 +30,58 @@ const GLUE_WRITE_ACTIONS: string[] = [...GLUE_READ_ACTIONS];
 const GLUE_SHARE_RESOURCE_ACTIONS: string[] = ['glue:ShareResource'];
 
 /**
- * Q-ENHANCED-INTERFACE
- * CatalogAccessPolicyProps configuration interface for ETL operations and data catalog management.
+ * Defines a Glue Catalog access policy scoped to specific catalog resources.
+ * Principals receive Glue API permissions (Get*, List* for read; same for write)
+ * on the specified resource ARNs via catalog resource policy.
  *
- * Use cases: ETL operations; Data catalog management; Schema discovery; Data transformation
+ * Use cases: Resource-scoped read/write permissions; Cross-account catalog access; Fine-grained data governance
  *
- * AWS: AWS Glue configuration for ETL operations and data catalog management
+ * AWS: Glue Catalog resource policy statements with IAM principal-based access
  *
- * Validation: Configuration must be valid for deployment; properties must conform to AWS Glue and MDAA requirements
+ * Validation: resources required; readPrincipalArns and writePrincipalArns optional
  */
 export interface CatalogAccessPolicyProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of principal ARNs granted read access to Glue catalog resources enabling cross-account and cross-service data catalog access. Specifies IAM principals (users, roles, accounts) that can read catalog metadata, schemas, and table definitions for data discovery and query operations.
+   * IAM principal ARNs granted read-only access (glue:Get*, glue:List*) to the specified catalog resources.
    *
-   * Use cases: Cross-account data access; Data discovery permissions; Read-only catalog access; Metadata sharing; Query permissions
-   * AWS: AWS Glue catalog resource policy read permissions for cross-account and service access control
-   * Validation: Must be array of valid IAM principal ARNs if provided; optional for read access control
-   *   */
+   * Use cases: Cross-account data discovery; Read-only catalog access; Query permissions
+   *
+   * AWS: Glue Catalog resource policy read permissions
+   *
+   * Validation: Optional; array of valid IAM principal ARNs
+   */
   readonly readPrincipalArns?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of principal ARNs granted read/write access to Glue catalog resources enabling cross-account and cross-service data catalog management. Specifies IAM principals (users, roles, accounts) that can modify catalog metadata, create/update tables, and manage schema definitions for data operations.
+   * IAM principal ARNs granted read/write access to the specified catalog resources.
+   * Write principals receive the same Glue API permissions as read principals.
    *
-   * Use cases: Cross-account data management; Catalog administration; Schema management; Data operations; ETL permissions
-   * AWS: AWS Glue catalog resource policy write permissions for cross-account and service management access
-   * Validation: Must be array of valid IAM principal ARNs if provided; optional for write access control
-   *   */
+   * Use cases: Cross-account catalog management; Schema administration; ETL pipeline permissions
+   *
+   * AWS: Glue Catalog resource policy write permissions
+   *
+   * Validation: Optional; array of valid IAM principal ARNs
+   */
   readonly writePrincipalArns?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of Glue catalog resource ARNs defining the scope of access policy permissions. Specifies the exact catalog resources (databases, tables, partitions) to which the access policy applies, enabling fine-grained resource-level access control for data governance.
+   * Glue Catalog resource ARNs defining the scope of this access policy.
+   * Supports database, table, and partition ARNs for fine-grained resource-level control.
    *
-   * Use cases: Resource-level access control; Fine-grained permissions; Data governance; Catalog security; Resource scoping
-   * AWS: AWS Glue catalog resource ARNs for resource-level access policy scope definition
-   * Validation: Must be array of valid Glue catalog resource ARNs; required for access policy scope definition
-   *   */
+   * Use cases: Database-scoped policies; Table-level access control; Partition-level governance
+   *
+   * AWS: Glue Catalog resource ARNs (arn:aws:glue:region:account:catalog/database/table)
+   *
+   * Validation: Required; array of valid Glue catalog resource ARNs
+   */
   readonly resources: string[];
 }
 export interface GlueCatalogL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of access policy names to access policy definitions for Glue catalog resource access control enabling fine-grained permissions and cross-account data sharing. Provides access policy configurations for controlling catalog resource access with specific permissions and principal-based access control.
-   *
-   * Use cases: Access control; Fine-grained permissions; Cross-account sharing; Resource policies
-   *
-   * AWS: Glue catalog access policies for resource-based access control and cross-account data sharing
-   *
-   * Validation: Must be valid access policy name to CatalogAccessPolicyProps mapping if provided; enables catalog access control
-   *   **/
+  // Named access policies for fine-grained catalog resource access control
   readonly accessPolicies?: { [key: string]: CatalogAccessPolicyProps };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of consumer account names to account IDs for catalog read access enabling cross-account data consumption and data mesh architecture. Provides consumer account configurations for granting read access to the Glue catalog for cross-account data sharing and consumption scenarios.
-   *
-   * Use cases: Cross-account consumption; Data mesh architecture; Consumer access; Data sharing
-   *
-   * AWS: Consumer account IDs for Glue catalog cross-account read access and data consumption
-   *
-   * Validation: Must be valid account name to account ID mapping if provided; enables cross-account catalog consumption
-   *   **/
+  // Consumer accounts granted catalog read access and KMS key usage
   readonly consumerAccounts?: { [key: string]: string };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of producer account names to account IDs for Athena catalog creation enabling cross-account data production and federated queries. Provides producer account configurations for creating additional Athena catalogs pointing to producer account Glue catalogs for federated query capabilities.
-   *
-   * Use cases: Cross-account production; Federated queries; Producer access; Data federation
-   *
-   * AWS: Producer account IDs for Athena catalog creation and cross-account data federation
-   *
-   * Validation: Must be valid account name to account ID mapping if provided; enables cross-account catalog federation
-   *   **/
+  // Producer accounts for which Athena data source catalogs are created
   readonly producerAccounts?: { [key: string]: string };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of KMS key consumer account names to account IDs for catalog encryption key access enabling secure cross-account data access with customer-controlled encryption. Provides KMS key access for consumer accounts to decrypt catalog data while maintaining encryption security and compliance.
-   *
-   * Use cases: Secure cross-account access; Encryption key sharing; Customer-controlled encryption; Secure data sharing
-   *
-   * AWS: Consumer account IDs for Glue catalog KMS key access and secure cross-account data sharing
-   *
-   * Validation: Must be valid account name to account ID mapping if provided; enables secure cross-account encryption key access
-   *   **/
+  // Accounts granted KMS key access only (no catalog read access)
   readonly kmsKeyConsumerAccounts?: { [key: string]: string };
 }
 

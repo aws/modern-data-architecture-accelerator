@@ -13,107 +13,82 @@ import { MdaaDDBTable } from '@aws-mdaa/ddb-constructs';
 export type TableDefinitionMap = { [key: string]: DynamodbProps };
 
 /**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for DynamoDB table properties providing NoSQL database configuration and performance tuning capabilities. Defines table schema, capacity settings, billing modes, and TTL configuration for DataOps NoSQL database operations and data storage patterns.
+ * Configuration for a DynamoDB table including schema, capacity, and TTL settings.
  *
- * Use cases: NoSQL table configuration; Database schema definition; Capacity planning; TTL management
+ * Use cases: NoSQL table configuration, database schema definition, capacity planning, TTL management
  *
- * AWS: DynamoDB table configuration for NoSQL database deployment and performance optimization
+ * AWS: Amazon DynamoDB table configuration for NoSQL database deployment
  *
- * Validation: partitionKey is required; all other properties are optional with specific constraints and defaults
+ * Validation: partitionKey is required; sortKey, readCapacity, writeCapacity, billingMode, and timeToLiveAttribute are optional
  */
 export interface DynamodbProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required partition key attribute definition for DynamoDB table primary key enabling data distribution and access patterns. Defines the primary key attribute that determines how data is distributed across partitions for optimal performance and access patterns.
+   * Partition key attribute for the table primary key.
    *
-   * Use cases: Primary key definition; Data distribution; Access patterns; Query optimization
+   * Use cases: Primary key definition, data distribution, access pattern design
    *
-   * AWS: DynamoDB partition key for table primary key and data distribution
+   * AWS: DynamoDB partition key attribute
    *
-   * Validation: Must be valid Attribute with name and type; required for table creation and data distribution
+   * Validation: Must be a valid Attribute with name and type; required
    **/
   readonly partitionKey: Attribute;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional sort key attribute definition for DynamoDB table composite primary key enabling range queries and data organization. When specified, creates composite primary key allowing range queries and hierarchical data organization within partitions.
+   * Optional sort key attribute for composite primary key enabling range queries.
    *
-   * Use cases: Composite keys; Range queries; Data organization; Hierarchical data
+   * Use cases: Composite keys, range queries, hierarchical data organization
    *
-   * AWS: DynamoDB sort key for composite primary key and range query capabilities
+   * AWS: DynamoDB sort key attribute
    *
-   * Validation: Must be valid Attribute if provided; enables composite primary key and range queries
+   * Validation: Must be a valid Attribute if provided
    **/
   readonly sortKey?: Attribute;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional read capacity units for DynamoDB table provisioned throughput controlling read performance and cost management. Defines the number of strongly consistent reads per second (or twice as many eventually consistent reads) for items up to 4 KB.
+   * Provisioned read capacity units (reads per second for items up to 4 KB).
    *
-   * Use cases: Read performance tuning; Cost management; Capacity planning; Performance optimization
+   * Use cases: Read performance tuning, cost management, capacity planning
    *
-   * AWS: DynamoDB read capacity units for provisioned throughput and read performance
+   * AWS: DynamoDB provisioned read capacity units
    *
-   * Validation: Must be positive integer if provided; represents reads per second for 4KB items
+   * Validation: Must be a positive integer if provided; only applies when billingMode is PROVISIONED
    **/
   readonly readCapacity?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional write capacity units for DynamoDB table provisioned throughput controlling write performance and cost management. Defines the number of writes per second for items up to 1 KB enabling predictable performance and cost control.
+   * Provisioned write capacity units (writes per second for items up to 1 KB).
    *
-   * Use cases: Write performance tuning; Cost management; Capacity planning; Performance optimization
+   * Use cases: Write performance tuning, cost management, capacity planning
    *
-   * AWS: DynamoDB write capacity units for provisioned throughput and write performance
+   * AWS: DynamoDB provisioned write capacity units
    *
-   * Validation: Must be positive integer if provided; represents writes per second for 1KB items
+   * Validation: Must be a positive integer if provided; only applies when billingMode is PROVISIONED
    **/
   readonly writeCapacity?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional billing mode specification for DynamoDB table cost optimization controlling pricing model and capacity management. Defines whether to use provisioned capacity with predictable costs or pay-per-request for variable workloads.
+   * Billing mode controlling the pricing model (PROVISIONED or PAY_PER_REQUEST).
    *
-   * Use cases: Cost optimization; Billing model selection; Capacity management; Workload adaptation
+   * Use cases: Cost optimization, billing model selection, workload adaptation
    *
-   * AWS: DynamoDB billing mode for cost optimization and capacity management
+   * AWS: DynamoDB billing mode
    *
-   * Validation: Must be PROVISIONED or PAY_PER_REQUEST if provided; controls pricing and capacity model
+   * Validation: Must be PROVISIONED or PAY_PER_REQUEST if provided
    **/
   readonly billingMode?: BillingMode;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional TTL attribute name for DynamoDB automatic item expiration enabling data lifecycle management and storage cost optimization. When specified, enables automatic deletion of expired items based on the timestamp value in the specified attribute.
+   * TTL attribute name for automatic item expiration based on a timestamp value.
    *
-   * Use cases: Data lifecycle management; Automatic cleanup; Storage cost optimization; Data retention policies
+   * Use cases: Data lifecycle management, automatic cleanup, storage cost optimization
    *
-   * AWS: DynamoDB TTL attribute for automatic item expiration and data lifecycle management
+   * AWS: DynamoDB TTL attribute for automatic item expiration
    *
-   * Validation: Must be valid attribute name if provided; enables automatic item expiration based on timestamp
+   * Validation: Must be a valid attribute name if provided; attribute value must be a Unix epoch timestamp
    **/
   readonly timeToLiveAttribute?: string;
 }
 
 export interface DynamodbL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for DynamoDB integration and resource coordination enabling project-based resource organization and management. Provides the project identifier that coordinates DynamoDB resources with other DataOps infrastructure and workflows.
-   *
-   * Use cases: Project coordination; Resource organization; DataOps integration; Project management
-   *
-   * AWS: DataOps project name for DynamoDB resource coordination and project-based organization
-   *
-   * Validation: Must be valid project name; required for project coordination and resource organization
-   **/
+  // DataOps project name for DynamoDB resource coordination and SSM parameters
   readonly projectName?: string;
   readonly kmsArn?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of DynamoDB table definitions for NoSQL database deployment enabling table configuration and management. Provides table specifications including schema, capacity, billing, and TTL settings for DataOps NoSQL database operations and data storage.
-   *
-   * Use cases: Table configuration; NoSQL schema definition; Database deployment; Data storage patterns
-   *
-   * AWS: DynamoDB table definitions for NoSQL database deployment and configuration
-   *
-   * Validation: Must be valid TableDefinitionMap; required for DynamoDB table deployment and configuration
-   *   **/
+  // Map of table names to DynamoDB table definitions to deploy
   readonly tableDefinitions: TableDefinitionMap;
 }
 

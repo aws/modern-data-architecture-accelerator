@@ -4,26 +4,26 @@
     "definitions": {
         "AgentProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nDataSync agent configuration interface for on-premises to AWS data transfer operations. Defines agent deployment parameters including activation, networking, and security configuration enabling secure, efficient data synchronization between on-premises storage systems and AWS services.\n\nUse cases: On-premises data migration; Hybrid cloud data sync; Agent-based data transfer; Secure data movement\n\nAWS: DataSync agent configuration for on-premises to AWS data transfer and synchronization operations\n\nValidation: agentIpAddress is required; activation key or VPC configuration required for agent registration",
+            "description": "DataSync agent configuration for on-premises to AWS data transfer.\nAgents must be deployed externally (EC2 with DataSync AMI or hypervisor) before activation.\nTwo-stage deployment: omit activationKey on first pass to create VPC endpoint and security group,\nthen add activationKey on second pass to register the agent. Activation keys expire in 30 minutes.\n\nUse cases: On-premises storage migration; Hybrid cloud data sync; Multi-AZ agent resiliency\n\nAWS: DataSync agent registration with VPC endpoint and security group configuration\n\nValidation: agentIpAddress and subnetId required; activationKey required for agent registration (second pass)",
             "properties": {
                 "activationKey": {
-                    "description": "Q-ENHANCED-PROPERTY\nYour agent activation key. You can get the activation key either by sending an HTTP GET request with redirects that enable you to get the agent IP address (port 80). Alternatively, you can get it from the DataSync console. The redirect URL returned in the response provides you the activation key for your agent in the query string parameter `activationKey`. It might also include other activation-related parameters; however, these are merely defaults. The arguments you pass to this API call determine the actual configuration of your agent. For more information, see [Creating and activating an agent](https://docs.aws.amazon.com/datasync/latest/userguide/activating-agent.html) in the *AWS DataSync User Guide.* If this parameter is not provided, and the VPC ID is specified in vpcEndpoint configuration, MDAA will assume this is the first pass and will create VPC endpoint and security group.\n\nUse cases: Agent activation; Initial agent setup; Agent registration; First-time deployment\n\nAWS: DataSync agent activation key for agent registration and initial configuration\n\nValidation: Optional string; if not provided, VPC configuration must be specified for automatic setup",
+                    "description": "Agent activation key retrieved via HTTP GET to the agent IP (port 80) or from the\nDataSync console. Keys expire in 30 minutes. If omitted and VPC config is provided,\nMDAA treats this as a first-pass deployment (creates VPC endpoint and security group only).\n\nUse cases: Agent registration; Two-stage deployment (omit for first pass, provide for second)\n\nAWS: DataSync agent activation key for ActivateAgent API call\n\nValidation: Optional; format XXXXX-XXXXX-XXXXX-XXXXX-XXXXX; expires 30 minutes after generation",
                     "type": "string"
                 },
                 "agentIpAddress": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe IP address of the agent host. The values will be used to create an ingress rule for the task security group enabling secure communication between the DataSync service and the on-premises agent for data transfer operations.\n\nUse cases: Agent connectivity; Security group rules; On-premises integration; Network access control\n\nAWS: IP address for DataSync agent security group ingress rules and network connectivity\n\nValidation: Must be valid IPv4 address; required for agent connectivity and security group configuration",
+                    "description": "IP address of the DataSync agent host. Used to create security group ingress rules\nallowing agent control traffic (TCP 1024-1064) and data transfer (TCP 443) to the\nVPC endpoint.\n\nUse cases: Security group rule automation; Agent-to-VPC endpoint connectivity\n\nAWS: Agent IP for security group ingress rules on the DataSync VPC endpoint\n\nValidation: Required; must be valid IPv4 address",
                     "type": "string"
                 },
                 "securityGroupId": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe ID of the security group to be used to protect your data transfer task subnets, if created outside MDAA. Otherwise, if not provided and the VPC ID is specified in vpcEndpoint configuration, MDAA will create VPC endpoint and security group and the security group will be used for this agent registration.\n\nUse cases: Network security; Task protection; Custom security groups; Network access control\n\nAWS: EC2 security group ID for DataSync agent network security and access control\n\nValidation: Optional security group ID; if not provided, MDAA will create security group when VPC configuration specified",
+                    "description": "Security group ID for protecting data transfer task subnets.\nIf omitted and VPC config is provided, MDAA creates a security group with required\ningress rules (TCP 443 and TCP 1024-1064 from agent IPs).\n\nUse cases: Externally managed security groups; Custom network security policies\n\nAWS: EC2 security group for DataSync agent and task ENI protection\n\nValidation: Optional; if omitted, MDAA creates security group when VPC config is specified",
                     "type": "string"
                 },
                 "subnetId": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe identifiers of the subnets in which DataSync will create elastic network interfaces for each data transfer task. The agent that runs a task must be private. When you start a task that is associated with an agent created in a VPC, or one that has access to an IP address in a VPC, then the task is also private. In this case, DataSync creates four network interfaces for each task in your subnet. For a data transfer to work, the agent must be able to route to all these four network interfaces.\n\nUse cases: Private network deployment; ENI creation; Task networking; VPC-based data transfer\n\nAWS: EC2 subnet ID for DataSync agent ENI creation and private network deployment\n\nValidation: Must be existing subnet ID within the specified VPC; required for private agent deployment",
+                    "description": "Subnet ID where DataSync creates elastic network interfaces (ENIs) for data transfer tasks.\nDeploy agents in different subnets/AZs for resiliency. The agent must be able to route\nto all four ENIs created per task in this subnet.\n\nUse cases: Private network deployment; Multi-AZ resiliency; ENI placement for data transfer\n\nAWS: EC2 subnet for DataSync agent ENIs and VPC endpoint placement\n\nValidation: Required; must be existing subnet ID within the specified VPC",
                     "type": "string"
                 },
                 "vpcEndpointId": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe ID of the virtual private cloud (VPC) endpoint that the agent has access to. This is the client-side VPC endpoint, powered by AWS PrivateLink. If you don't have an AWS PrivateLink VPC endpoint, see [AWS PrivateLink and VPC endpoints](https://docs.aws.amazon.com//vpc/latest/userguide/endpoint-services-overview.html) in the *Amazon VPC User Guide*. For more information about activating your agent in a private network based on a VPC, see [Using AWS DataSync in a Virtual Private Cloud](https://docs.aws.amazon.com/datasync/latest/userguide/datasync-in-vpc.html) in the *AWS DataSync User Guide.* A VPC endpoint ID looks like this: `vpce-01234d5aff67890e1`. If the parameter is not provided and the VPC ID is specified in vpcEndpoint configuration, MDAA will create VPC endpoint and security group for agent registration.\n\nUse cases: Private network connectivity; VPC endpoint access; PrivateLink integration; Secure agent communication\n\nAWS: VPC endpoint ID for DataSync agent private network connectivity and PrivateLink access\n\nValidation: Optional VPC endpoint ID; if not provided, MDAA will create VPC endpoint when VPC configuration specified",
+                    "description": "VPC endpoint ID for private agent-to-service communication via AWS PrivateLink.\nIf omitted and VPC config is provided, MDAA creates a VPC endpoint automatically.\nUse this when the VPC endpoint is managed outside MDAA.\n\nUse cases: Pre-existing VPC endpoint reuse; Externally managed PrivateLink endpoints\n\nAWS: VPC endpoint ID for DataSync PrivateLink connectivity (e.g. vpce-01234d5aff67890e1)\n\nValidation: Optional; if omitted, MDAA creates VPC endpoint when VPC config is specified",
                     "type": "string"
                 }
             },
@@ -669,7 +669,6 @@
         },
         "DomainConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA-compliant DataZone domain configuration providing domain management and integration capabilities. Extends standard CDK properties with MDAA naming conventions and enhanced security features for secure domain governance and catalog integration.\n\nUse cases: DataZone domain configuration; Domain governance setup; Catalog integration; Multi-domain management\n\nAWS: Creates Amazon DataZone domain configuration with KMS integration and Glue catalog connectivity\n\nValidation: All properties except ssmParamBase and domainUnits are required for complete domain configuration",
             "properties": {
                 "blueprintIds": {
                     "additionalProperties": {
@@ -681,63 +680,63 @@
                     "type": "boolean"
                 },
                 "createOutputs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.\n\nUse cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references\n\nAWS: CloudFormation outputs and exports for MDAA construct resource references and external integration\n\nValidation: Boolean value; defaults to true; enables CloudFormation output and export creation",
+                    "description": "Flag controlling CloudFormation output and stack export creation for construct resources",
                     "type": "boolean"
                 },
                 "createParams": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.\n\nUse cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management\n\nAWS: SSM parameter creation for MDAA construct resource references and infrastructure integration\n\nValidation: Boolean value; defaults to true; enables SSM parameter creation for resource references",
+                    "description": "Flag controlling SSM parameter creation for construct resource references enabling",
                     "type": "boolean"
                 },
                 "customResourceRoleName": {
                     "type": "string"
                 },
                 "domainArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ARN for AWS resource identification and IAM policy integration enabling secure domain access control. Provides the complete AWS resource identifier for the domain for IAM policies and cross-service access control.\n\nUse cases: AWS resource identification; IAM policy integration; Cross-service access; Resource-based policies\n\nAWS: Amazon DataZone domain ARN for AWS resource identification and IAM integration\n\nValidation: Must be valid DataZone domain ARN; required; follows AWS ARN pattern for DataZone domains",
+                    "description": "DataZone domain ARN for AWS resource identification and IAM policy integration enabling",
                     "type": "string"
                 },
                 "domainBucketArn": {
                     "type": "string"
                 },
                 "domainBucketUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain Bucket usage policy name. Provides IAM policy name for managing Bucket access and usage permissions for domain operations and data protection.\n\nUse cases: Bucket access management;\n\nAWS: IAM policy name for DataZone domain Bucket usage and access management\n\nValidation: Must be valid IAM policy name; required; defines Bucket access and usage permissions for domain",
+                    "description": "Domain Bucket usage policy name",
                     "type": "string"
                 },
                 "domainId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ID for unique domain identification within AWS enabling cross-service integration and reference. Provides the unique identifier assigned by DataZone service for domain operations and cross-service integration.\n\nUse cases: Unique domain identification; Cross-service integration; Domain operations; Service references\n\nAWS: Amazon DataZone domain ID for unique identification and cross-service integration\n\nValidation: Must be valid DataZone domain ID; required; assigned by DataZone service for unique identification",
+                    "description": "DataZone domain ID for unique domain identification within AWS enabling cross-service",
                     "type": "string"
                 },
                 "domainKmsKeyArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations. Provides encryption at rest for domain data and metadata with customer-controlled key management for enhanced security and compliance.\n\nUse cases: Domain encryption; Data protection compliance; Customer-controlled encryption; Secure domain operations\n\nAWS: AWS KMS key ARN for DataZone domain encryption and secure data protection\n\nValidation: Must be valid KMS key ARN; required; enables customer-managed encryption for domain data",
+                    "description": "KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations",
                     "type": "string"
                 },
                 "domainKmsUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain KMS usage policy name for key access management enabling controlled encryption key usage within the domain. Provides IAM policy name for managing KMS key access and usage permissions for domain operations and data protection.\n\nUse cases: KMS key access management; Encryption policy control; Key usage permissions; Domain security governance\n\nAWS: IAM policy name for DataZone domain KMS key usage and access management\n\nValidation: Must be valid IAM policy name; required; defines KMS key access and usage permissions for domain",
+                    "description": "Domain KMS usage policy name for key access management enabling controlled encryption key",
                     "type": "string"
                 },
                 "domainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain name for domain identification and management enabling unique domain naming within the DataZone service. Provides the primary identifier for the DataZone domain for governance and operational management.\n\nUse cases: Domain identification; Unique naming; Domain management; Service organization\n\nAWS: Amazon DataZone domain name for identification and management within the DataZone service\n\nValidation: Must be unique domain name string; required; used for domain identification and service management",
+                    "description": "DataZone domain name for domain identification and management enabling unique domain naming",
                     "type": "string"
                 },
                 "domainUnitIds": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of domain unit names to identifiers for hierarchical domain organization enabling structured domain management. Provides organizational structure within the domain for improved governance, access control, and operational management.\n\nUse cases: Hierarchical organization; Domain structure; Organizational governance; Structured management\n\nAWS: DataZone domain units for hierarchical organization and structured domain management\n\nValidation: Must be object with string keys and values if provided; enables hierarchical domain organization\n  *",
+                    "description": "Map of domain unit names to identifiers for hierarchical domain organization enabling",
                     "type": "object"
                 },
                 "domainVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain version for domain lifecycle management and versioning control enabling domain evolution tracking. Provides version control for domain configuration changes and lifecycle management for governance and compliance.\n\nUse cases: Version control; Domain lifecycle management; Configuration tracking; Governance compliance\n\nAWS: DataZone domain version for lifecycle management and configuration version control\n\nValidation: Must be valid version string; required; enables domain version control and lifecycle management",
+                    "description": "Domain version for domain lifecycle management and versioning control enabling domain evolution tracking",
                     "type": "string"
                 },
                 "glueCatalogArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone. Provides the Glue catalog resources that will be integrated with the DataZone domain for data discovery and governance.\n\nUse cases: Catalog integration; Data discovery; governance; Cross-service connectivity\n\nAWS: AWS Glue catalog ARNs for DataZone integration and data catalog connectivity\n\nValidation: Must be array of valid Glue catalog ARNs; required; enables catalog integration with DataZone domain",
+                    "description": "Array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "glueCatalogKmsKeyArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone. Provides encryption keys for Glue catalog data accessed through DataZone for data protection and governance.\n\nUse cases: Catalog encryption; Secure catalog integration; Data protection; governance\n\nAWS: AWS KMS key ARNs for Glue catalog encryption in DataZone integration\n\nValidation: Must be array of valid KMS key ARNs; required; enables secure catalog integration with DataZone",
+                    "description": "Array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone",
                     "items": {
                         "type": "string"
                     },
@@ -745,7 +744,7 @@
                 },
                 "naming": {
                     "$ref": "#/definitions/IMdaaResourceNaming",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.\n\nUse cases: Consistent naming; Resource identification; Naming conventions; Operational consistency\n\nAWS: MDAA resource naming for consistent resource identification and naming convention compliance\n\nValidation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming\n  *"
+                    "description": "MDAA naming implementation for consistent resource naming across all MDAA constructs"
                 },
                 "projectIds": {
                     "additionalProperties": {
@@ -757,7 +756,7 @@
                     "type": "boolean"
                 },
                 "ssmParamBase": {
-                    "description": "Q-ENHANCED-PROPERTY\nSSM parameter base path for domain configuration storage enabling centralized configuration management. Provides the base path for storing domain configuration parameters in SSM Parameter Store for centralized management and retrieval.\n\nUse cases: Centralized configuration; SSM integration; Configuration management; Parameter organization\n\nAWS: AWS Systems Manager parameter base path for domain configuration storage and management\n\nValidation: Must be valid SSM parameter path if provided; enables centralized domain configuration management",
+                    "description": "SSM parameter base path for domain configuration storage enabling centralized configuration management",
                     "type": "string"
                 }
             },
@@ -1089,11 +1088,10 @@
         },
         "IMdaaResourceNaming": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nInterface specification for MDAA resource naming implementations that generate consistent, unique, and compliant AWS resource names. Implementations must support multi-tenant deployments by ensuring naming semantics prevent collisions across domains, environments, and modules within the same AWS account.\n\nUse cases: Custom naming for regulatory compliance; Integration with enterprise naming standards; Multi-tenant resource isolation\n\nAWS: Generates names for all AWS resources including S3 buckets, IAM roles, Glue databases, CloudFormation stacks, SSM parameters, and CloudFormation exports\n\nValidation: All generated names must comply with AWS service-specific naming requirements and be unique within account scope",
             "properties": {
                 "props": {
                     "$ref": "#/definitions/MdaaResourceNamingConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nConfiguration properties containing organizational context and CDK node access for the naming implementation. Provides the foundational data required to generate consistent resource names across all MDAA modules.\n\nUse cases: Access to org/env/domain/module context; CDK context retrieval for custom naming; Immutable naming configuration\n\nAWS: Source data for all AWS resource name generation\n\nValidation: Must contain valid MdaaResourceNamingConfig with all required properties"
+                    "description": "Configuration properties containing organizational context and CDK node access for the naming implementation"
                 }
             },
             "required": [
@@ -1553,32 +1551,33 @@
         },
         "LocationNfsProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nNFS file system location configuration for AWS DataSync transfers from on-premises NFS servers to AWS storage services. Defines NFS protocol connection parameters including server details, mount options, and version specifications for automated data migration from Linux/Unix file systems.\n\nUse cases: Migrating Linux NFS exports to S3; Unix file system data transfer; NFS protocol file system synchronization\n\nAWS: AWS DataSync LocationNFS resource for NFS file system connectivity and data transfer operations\n\nValidation: agentName must reference valid DataSync agent; serverHostname must be resolvable NFS server; subdirectory must be valid NFS export path",
+            "description": "NFS file system location configuration for DataSync transfers from on-premises\nUnix/Linux NFS servers. Agents connect to the NFS export and transfer data to AWS.\nNFS exports should be configured with no_root_squash or appropriate read permissions\nfor all files and execute access on directories.\n\nUse cases: Linux NFS export migration to S3; Unix file system data transfer; NFS protocol synchronization\n\nAWS: DataSync LocationNFS resource (CfnLocationNFS)\n\nValidation: serverHostname and subdirectory required; one of agentNames or agentArns required (mutually exclusive)",
             "properties": {
                 "agentArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nMDAA custom parameter that refers to the generated agent name. The value will be used constructed as onPremConfig object. Only either agentNames or agentArns can be specified, not both, enabling direct agent ARN specification for NFS file system connectivity.\n\nUse cases: Direct agent specification; NFS connectivity; Agent ARN configuration; OnPrem configuration\n\nAWS: DataSync agent ARNs for NFS location configuration and onPremConfig object construction\n\nValidation: Must be valid DataSync agent ARNs; mutually exclusive with agentNames",
+                    "description": "ARNs of DataSync agents for NFS connectivity. Used to construct the onPremConfig object.\nUse when agents are registered outside MDAA. Mutually exclusive with agentNames.\n\nUse cases: Externally managed agent references; Pre-existing agent reuse\n\nAWS: DataSync agent ARNs for NFS location onPremConfig\n\nValidation: Optional; mutually exclusive with agentNames; must be valid DataSync agent ARNs",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "agentNames": {
-                    "description": "Q-ENHANCED-PROPERTY\nMDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents) and be constructed as onPremConfig object. Only either agentNames or agentArns can be specified, not both, enabling simplified agent reference and automatic ARN resolution for NFS location configuration.\n\nUse cases: Agent reference; Automatic ARN resolution; Simplified configuration; NFS agent management\n\nAWS: DataSync agent ARN resolution for NFS location agent configuration and onPremConfig construction\n\nValidation: Must reference valid generated agent names; mutually exclusive with agentArns",
+                    "description": "Names of MDAA-generated DataSync agents from the agents config section.\nResolved to agent ARNs and constructed as the onPremConfig object.\nMutually exclusive with agentArns.\n\nUse cases: Referencing MDAA-managed agents by name; Multi-agent NFS connectivity\n\nAWS: Resolved to DataSync agent ARNs for NFS location onPremConfig\n\nValidation: Optional; mutually exclusive with agentArns; must reference valid generated agent names",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "nfsVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nMDAA custom parameter to simplify configuration. The value will be used to construct MountOptions object. Valid values: \"AUTOMATIC\" | \"NFS3\" | \"NFSv4_0\" | \"NFSv4_1\". The NFS mount options that DataSync can use to mount your NFS share enabling NFS protocol version specification and compatibility control.\n\nUse cases: NFS protocol version; Compatibility control; Mount options; Protocol specification\n\nAWS: NFS mount options for DataSync NFS server connectivity and protocol configuration\n\nValidation: Must be valid NFS version string if specified; enables NFS protocol version control and compatibility",
+                    "default": "AUTOMATIC",
+                    "description": "NFS protocol version for mount options. MDAA custom parameter — the value\nis used to construct the MountOptions object.\n\nUse cases: NFS protocol version control; Compatibility with specific NFS server versions\n\nAWS: NFS mount options version for DataSync location\n\nValidation: Optional; valid values: AUTOMATIC | NFS3 | NFSv4_0 | NFSv4_1",
                     "type": "string"
                 },
                 "serverHostname": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe name of the NFS server. This value is the IP address or Domain Name Service (DNS) name of the NFS server. An agent that is installed on-premises uses this hostname to mount the NFS server in a network. If you are copying data to or from your AWS Snowcone device, see [NFS Server on AWS Snowcone](https://docs.aws.amazon.com/datasync/latest/userguide/create-nfs-location.html#nfs-on-snowcone) for more information.\n\nUse cases: NFS server identification; Network connectivity; Server mounting; DNS resolution; Snowcone integration\n\nAWS: NFS server hostname for DataSync agent connectivity and file system mounting\n\nValidation: Must be valid DNS name or IPv4 address; required for NFS server connectivity",
+                    "description": "Hostname or IP address of the NFS server. The on-premises DataSync agent\nuses this to mount the NFS export. Must be DNS-compliant or a valid IPv4 address.\n\nUse cases: NFS server identification; On-premises file server connectivity\n\nAWS: NFS server hostname for DataSync agent mounting\n\nValidation: Required; must be valid DNS name or IPv4 address",
                     "type": "string"
                 },
                 "subdirectory": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe subdirectory in the NFS file system that is used to read data from the NFS source location or write data to the NFS destination. The NFS path should be a path that's exported by the NFS server, or a subdirectory of that path. The path should be such that it can be mounted by other NFS clients in your network. To see all the paths exported by your NFS server, run \"showmount -e nfs-server-name\" from an NFS client that has access to your server. You can specify any directory that appears in the results, and any subdirectory of that directory. Ensure that the NFS export is accessible without Kerberos authentication. To transfer all the data in the folder you specified, DataSync needs to have permissions to read all the data. To ensure this, either configure the NFS export with no_root_squash, or ensure that the permissions for all of the files that you want DataSync allow read access for all users. Doing either enables the agent to read the files. For the agent to access directories, you must additionally enable all execute access. If you are copying data to or from your AWS Snowcone device, see [NFS Server on AWS Snowcone](https://docs.aws.amazon.com/datasync/latest/userguide/create-nfs-location.html#nfs-on-snowcone) for more information.\n\nUse cases: NFS path specification; Data access control; Export mounting; Permission management; Snowcone integration\n\nAWS: NFS subdirectory path for DataSync data access and file system operations\n\nValidation: Must be valid NFS export path; required for NFS data access and transfer operations",
+                    "description": "NFS export path or subdirectory for data access. Must use forward slashes.\nUse `showmount -e nfs-server-name` to list available exports.\nDataSync needs read access to all files and execute access on directories.\n\nUse cases: Scoped NFS export access; Subdirectory-level data transfer\n\nAWS: NFS subdirectory path for DataSync location\n\nValidation: Required; must be valid NFS export path with forward slashes",
                     "type": "string"
                 }
             },
@@ -1590,44 +1589,46 @@
         },
         "LocationObjectStorageProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nObject storage location configuration for AWS DataSync transfers from cloud-based object storage systems to AWS services. Defines S3-compatible object storage connection parameters including bucket details, access credentials, and server specifications for automated data migration from third-party cloud storage.\n\nUse cases: Migrating from Google Cloud Storage to S3; Azure Blob to S3 transfers; Third-party object storage synchronization\n\nAWS: AWS DataSync LocationObjectStorage resource for S3-compatible object storage connectivity and data transfer operations\n\nValidation: agentName must reference valid DataSync agent; bucketName must be valid object storage bucket; serverHostname must be accessible object storage endpoint",
+            "description": "S3-compatible object storage location configuration for DataSync transfers from\nthird-party cloud storage (e.g. Google Cloud Storage, Azure Blob).\nCredentials (accessKey/secretKey) must be pre-stored in a Secrets Manager secret\nin the format: {\"accessKey\":\"<access_key>\",\"secretKey\":\"<secret_key>\"}.\nIf secretName is omitted, MDAA creates an empty secret to populate after deployment.\n\nUse cases: Google Cloud Storage to S3 migration; Third-party object storage synchronization; Multi-cloud data transfer\n\nAWS: DataSync LocationObjectStorage resource (CfnLocationObjectStorage)\n\nValidation: bucketName, serverHostname, and secretName required; one of agentNames or agentArns required (mutually exclusive)",
             "properties": {
                 "agentArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nSpecifies the Amazon Resource Names (ARNs) of the DataSync agents that can securely connect with your location. Only either agentNames or agentArns can be specified, not both, enabling direct agent ARN specification for object storage connectivity.\n\nUse cases: Direct agent specification; Object storage connectivity; Agent ARN configuration; Secure connection\n\nAWS: DataSync agent ARNs for object storage location configuration and secure connectivity\n\nValidation: Must be valid DataSync agent ARNs; mutually exclusive with agentNames",
+                    "description": "ARNs of DataSync agents for object storage connectivity.\nUse when agents are registered outside MDAA. Mutually exclusive with agentNames.\n\nUse cases: Externally managed agent references; Pre-existing agent reuse\n\nAWS: DataSync agent ARNs for object storage location configuration\n\nValidation: Optional; mutually exclusive with agentNames; must be valid DataSync agent ARNs",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "agentNames": {
-                    "description": "Q-ENHANCED-PROPERTY\nMDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents). Only either agentNames or agentArns can be specified, not both, enabling simplified agent reference and automatic ARN resolution for object storage location configuration.\n\nUse cases: Agent reference; Automatic ARN resolution; Simplified configuration; Object storage agent management\n\nAWS: DataSync agent ARN resolution for object storage location agent configuration\n\nValidation: Must reference valid generated agent names; mutually exclusive with agentArns",
+                    "description": "Names of MDAA-generated DataSync agents from the agents config section.\nResolved to agent ARNs automatically. Mutually exclusive with agentArns.\n\nUse cases: Referencing MDAA-managed agents by name; Simplified agent configuration\n\nAWS: Resolved to DataSync agent ARNs for object storage location\n\nValidation: Optional; mutually exclusive with agentArns; must reference valid generated agent names",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "bucketName": {
-                    "description": "Q-ENHANCED-PROPERTY\nSpecifies the name of the object storage bucket involved in the transfer enabling bucket identification and data transfer target specification for S3-compatible object storage systems.\n\nUse cases: Bucket identification; Data transfer target; Object storage specification; Transfer destination\n\nAWS: Object storage bucket name for DataSync transfer operations and data destination\n\nValidation: Must be valid object storage bucket name; required for object storage transfer operations",
+                    "description": "Name of the object storage bucket (e.g. GCS bucket name).\n\nUse cases: Third-party cloud storage bucket identification\n\nAWS: Object storage bucket name for DataSync LocationObjectStorage\n\nValidation: Required; must be valid object storage bucket name",
                     "type": "string"
                 },
                 "secretName": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe name of the secret in Secrets Manager that stores the credential (accessKey/user name and secretKey) of the object storage server. The secret must have \"accessKey\" and \"secretKey\" fields. For example (in JSON format): {\"accessKey\":\"<access_key>\",\"secretKey\":\"<secret_key>\"} enabling secure credential management for object storage authentication.\n\nUse cases: Object storage authentication; Secure credential storage; Access key management; Server authentication\n\nAWS: Secrets Manager secret name for object storage authentication and credential management\n\nValidation: Must be valid Secrets Manager secret name; secret must contain required accessKey and secretKey fields",
+                    "description": "Secrets Manager secret name storing object storage credentials.\nSecret must contain \"accessKey\" and \"secretKey\" fields.\nIf omitted, MDAA creates an empty secret to populate after deployment.\n\nUse cases: Object storage authentication; Secure credential management for third-party storage\n\nAWS: Secrets Manager secret for object storage authentication\n\nValidation: Required; secret must contain accessKey and secretKey fields",
                     "type": "string"
                 },
                 "serverHostname": {
-                    "description": "Q-ENHANCED-PROPERTY\nSpecifies the domain name or IP address of the object storage server. A DataSync agent uses this hostname to mount the object storage server in a network enabling network connectivity and server identification for object storage access.\n\nUse cases: Server identification; Network connectivity; Object storage mounting; Server access\n\nAWS: Object storage server hostname for DataSync agent connectivity and server mounting\n\nValidation: Must be valid domain name or IP address; required for object storage server connectivity",
+                    "description": "Domain name or IP address of the object storage server endpoint.\nThe DataSync agent uses this to connect to the storage service.\n\nUse cases: Third-party storage endpoint connectivity; Custom object storage servers\n\nAWS: Object storage server hostname for DataSync agent connectivity\n\nValidation: Required; must be valid domain name or IP address",
                     "type": "string"
                 },
                 "serverPort": {
-                    "description": "Q-ENHANCED-PROPERTY\nSpecifies the port that your object storage server accepts inbound network traffic on. Set to port 80 (HTTP), 443 (HTTPS), or a custom port if needed, enabling network connectivity configuration and protocol specification for object storage access.\n\nUse cases: Network port configuration; Protocol specification; Custom port access; Connectivity control\n\nAWS: Object storage server port for DataSync network connectivity and protocol configuration\n\nValidation: Must be valid port number if specified; typically 80 for HTTP or 443 for HTTPS",
+                    "default": 443,
+                    "description": "Port number for the object storage server (e.g. 443 for HTTPS, 80 for HTTP).\n\nUse cases: Custom port configuration; Non-standard object storage endpoints\n\nAWS: Object storage server port for DataSync connectivity\n\nValidation: Optional; must be valid port number",
                     "type": "number"
                 },
                 "serverProtocol": {
-                    "description": "Q-ENHANCED-PROPERTY\nSpecifies the protocol that your object storage server uses to communicate enabling protocol specification and secure communication configuration for object storage connectivity and data transfer operations.\n\nUse cases: Protocol specification; Secure communication; Object storage connectivity; Transfer protocol\n\nAWS: Object storage server protocol for DataSync communication and data transfer operations\n\nValidation: Must be valid protocol specification if provided; typically HTTP or HTTPS for object storage",
+                    "default": "HTTPS",
+                    "description": "Protocol for object storage server communication (e.g. HTTPS, HTTP).\n\nUse cases: Protocol selection for object storage endpoints; Secure vs. non-secure transfers\n\nAWS: Object storage server protocol for DataSync communication\n\nValidation: Optional; typically HTTPS or HTTP",
                     "type": "string"
                 },
                 "subdirectory": {
-                    "description": "Q-ENHANCED-PROPERTY\nSpecifies the object prefix that DataSync reads from or writes to enabling organized data placement and hierarchical object storage structure for systematic data management and transfer operations.\n\nUse cases: Object prefix specification; Organized data placement; Hierarchical storage; Data organization\n\nAWS: Object storage prefix for DataSync data placement and organized storage structure\n\nValidation: Must be valid object prefix if specified; enables organized data placement and hierarchical storage",
+                    "description": "Object prefix (subdirectory) within the bucket for scoped data access.\nMust use forward slashes (e.g. /some/prefix).\n\nUse cases: Scoped transfers to a specific object prefix; Organized data placement\n\nAWS: Object storage prefix for DataSync location\n\nValidation: Optional; must use forward slash format if specified",
                     "type": "string"
                 }
             },
@@ -1640,18 +1641,19 @@
         },
         "LocationS3Props": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nS3 location configuration interface for DataSync transfers to Amazon S3 storage. Defines S3 destination parameters including bucket specification, access roles, storage classes, and subdirectory configuration enabling automated data transfer to S3 with proper access control and storage optimization.\n\nUse cases: Data migration to S3; S3 storage class optimization; Automated S3 transfers; S3 destination configuration\n\nAWS: DataSync LocationS3 resource for S3 destination configuration and data transfer operations\n\nValidation: s3BucketArn and bucketAccessRoleArn are required; storage class must be valid S3 storage class",
+            "description": "S3 location configuration for DataSync transfers to/from Amazon S3.\nDefines the S3 bucket, IAM access role, optional storage class, and subdirectory prefix.\n\nUse cases: S3-to-S3 data migration; Cloud storage as transfer source or destination; Storage class optimization\n\nAWS: DataSync LocationS3 resource (CfnLocationS3)\n\nValidation: s3BucketArn and bucketAccessRoleArn required; s3StorageClass must be valid S3 storage class if provided",
             "properties": {
                 "bucketAccessRoleArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nMDAA custom parameter to simplify the configuration. This value will be used to construct S3Config. The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that is used to access an Amazon S3 bucket enabling secure S3 access with proper permissions and access control.\n\nUse cases: S3 access permissions; IAM role configuration; Secure S3 access; Access control management\n\nAWS: IAM role ARN for DataSync S3 access permissions and secure bucket operations\n\nValidation: Must be valid IAM role ARN; required for S3 access permissions and secure data transfer operations",
+                    "description": "ARN of the IAM role DataSync assumes to read/write objects in the S3 location.\nMDAA custom parameter — the value is used to construct the S3Config object.\nAccepts a role ARN or dynamic reference.\n\nUse cases: S3 access permissions; Cross-account bucket access\n\nAWS: IAM role ARN for DataSync S3 access (maps to S3Config.bucketAccessRoleArn)\n\nValidation: Required; must be valid IAM role ARN or dynamic reference",
                     "type": "string"
                 },
                 "s3BucketArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe ARN of the Amazon S3 bucket for DataSync destination configuration enabling S3 bucket identification and access control. Specifies the target S3 bucket where DataSync will transfer data, providing the foundation for S3-based data storage and management.\n\nUse cases: S3 bucket identification; Data transfer destination; S3 access control; Bucket specification\n\nAWS: S3 bucket ARN for DataSync LocationS3 configuration and data transfer destination\n\nValidation: Must be valid S3 bucket ARN; required for S3 location configuration and data transfer operations",
+                    "description": "ARN of the S3 bucket for this DataSync location. Can be a static ARN or a\ndynamic reference (e.g. SSM parameter).\n\nUse cases: S3 bucket identification as transfer source or destination\n\nAWS: S3 bucket ARN for DataSync LocationS3 configuration\n\nValidation: Required; must be valid S3 bucket ARN",
                     "type": "string"
                 },
                 "s3StorageClass": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe Amazon S3 storage class that you want to store your files in when this location is used as a task destination enabling S3 storage cost optimization and lifecycle management. Specifies the S3 storage class for transferred data supporting cost optimization and data lifecycle strategies.\n\nUse cases: Storage cost optimization; S3 lifecycle management; Storage class selection; Cost-effective storage\n\nAWS: S3 storage class specification for DataSync transferred data and storage optimization\n\nValidation: Must be valid S3StorageClassType if specified; enables storage cost optimization and lifecycle management\n  *",
+                    "default": "STANDARD (S3 default)",
+                    "description": "S3 storage class for transferred files when this location is a task destination.\nEnables cost optimization by directing data to the appropriate storage tier.\n\nUse cases: Storage cost optimization; Lifecycle-aware data placement\n\nAWS: S3 storage class (STANDARD, INTELLIGENT_TIERING, GLACIER, etc.)\n\nValidation: Optional; must be valid S3StorageClassType",
                     "enum": [
                         "DEEP_ARCHIVE",
                         "GLACIER",
@@ -1664,7 +1666,7 @@
                     "type": "string"
                 },
                 "subdirectory": {
-                    "description": "Q-ENHANCED-PROPERTY\nA subdirectory in the Amazon S3 bucket enabling organized data placement and hierarchical storage structure. `Subdirectory` must be specified with forward slashes. For example, `/path/to/folder`. Provides organized data placement within the S3 bucket for systematic data management.\n\nUse cases: Organized data placement; Hierarchical storage; Data organization; Systematic file management\n\nAWS: S3 object key prefix for DataSync data placement and organized storage structure\n\nValidation: Must use forward slash format if specified; enables organized data placement and hierarchical storage",
+                    "description": "Subdirectory (object key prefix) within the S3 bucket.\nMust use forward slashes (e.g. /path/to/folder).\n\nUse cases: Scoped transfers to a specific S3 prefix; Organized data placement\n\nAWS: S3 object key prefix for DataSync location\n\nValidation: Optional; must use forward slash format if specified",
                     "type": "string"
                 }
             },
@@ -1676,36 +1678,37 @@
         },
         "LocationSmbProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nSMB file share location configuration for AWS DataSync transfers from on-premises SMB servers to AWS storage services. Defines SMB protocol connection parameters including server details, authentication, and mount options for automated data migration from Windows file shares and NAS devices.\n\nUse cases: Migrating Windows file shares to S3; NAS device data transfer; SMB protocol file system synchronization\n\nAWS: AWS DataSync LocationSMB resource for SMB file share connectivity and data transfer operations\n\nValidation: agentName must reference valid DataSync agent; serverHostname must be resolvable SMB server; subdirectory must be valid SMB path format",
+            "description": "SMB file share location configuration for DataSync transfers from on-premises Windows\nfile servers or NAS devices. Credentials (user/password) must be pre-stored in a\nSecrets Manager secret in the format: {\"user\":\"<username>\",\"password\":\"<password>\"}.\nIf secretName is omitted, MDAA creates an empty secret to populate after deployment.\n\nUse cases: Windows file share migration to S3; On-premises NAS data transfer; SMB protocol synchronization\n\nAWS: DataSync LocationSMB resource (CfnLocationSMB)\n\nValidation: serverHostname, subdirectory, and secretName required; one of agentNames or agentArns required (mutually exclusive)",
             "properties": {
                 "agentArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe Amazon Resource Names (ARNs) of agents to use for a Server Message Block (SMB) location enabling direct agent ARN specification for SMB file share connectivity and data transfer operations.\n\nUse cases: Direct agent specification; SMB connectivity; Agent ARN configuration; File share access\n\nAWS: DataSync agent ARNs for SMB location configuration and file share connectivity\n\nValidation: Must be valid DataSync agent ARNs; mutually exclusive with agentNames",
+                    "description": "ARNs of DataSync agents for SMB connectivity. Use when agents are registered\noutside MDAA. Mutually exclusive with agentNames.\n\nUse cases: Externally managed agent references; Pre-existing agent reuse\n\nAWS: DataSync agent ARNs for SMB location configuration\n\nValidation: Optional; mutually exclusive with agentNames; must be valid DataSync agent ARNs",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "agentNames": {
-                    "description": "Q-ENHANCED-PROPERTY\nMDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents) enabling simplified agent reference and automatic ARN resolution for SMB location configuration.\n\nUse cases: Agent reference; Automatic ARN resolution; Simplified configuration; Agent management\n\nAWS: DataSync agent ARN resolution for SMB location agent configuration\n\nValidation: Must reference valid generated agent names; mutually exclusive with agentArns",
+                    "description": "Names of MDAA-generated DataSync agents from the agents config section.\nResolved to agent ARNs automatically. Only one agent is accepted for SMB locations.\nMutually exclusive with agentArns.\n\nUse cases: Referencing MDAA-managed agents by name; Simplified agent configuration\n\nAWS: Resolved to DataSync agent ARNs for SMB location onPremConfig\n\nValidation: Optional; mutually exclusive with agentArns; list accepts one member for SMB",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "domain": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe name of the Windows domain that the SMB server belongs to enabling domain-based authentication and access control for SMB file share connectivity and domain user credential validation.\n\nUse cases: Domain authentication; Windows domain integration; Domain user access; Enterprise authentication\n\nAWS: Windows domain name for SMB server domain authentication and access control\n\nValidation: Must be valid Windows domain name if specified; enables domain-based SMB authentication",
+                    "description": "Windows Active Directory domain name for domain-based SMB authentication.\n\nUse cases: Domain-joined SMB server authentication; Enterprise AD integration\n\nAWS: Windows domain for SMB server authentication\n\nValidation: Optional; must be valid Windows domain name if specified",
                     "type": "string"
                 },
                 "secretName": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe name of the secret in Secrets Manager that stores the credential (domain, user and password) of the user in SMB File Server that can mount the share and has the permissions to access files and folders in the SMB share. The secret must have \"user\" and \"password\" fields. For example (in JSON format): {\"user\":\"<username>\",\"password\":\"<password>\"} enabling secure credential management for SMB authentication.\n\nUse cases: SMB authentication; Secure credential storage; File share access; Domain user credentials\n\nAWS: Secrets Manager secret name for SMB file share authentication and credential management\n\nValidation: Must be valid Secrets Manager secret name; secret must contain required user and password fields",
+                    "description": "Secrets Manager secret name storing SMB credentials.\nSecret must contain \"user\" and \"password\" fields: {\"user\":\"<username>\",\"password\":\"<password>\"}.\nIf omitted, MDAA creates an empty secret to populate after deployment.\n\nUse cases: SMB authentication; Secure credential management for Windows file shares\n\nAWS: Secrets Manager secret for SMB file share authentication\n\nValidation: Required; secret must contain user and password fields",
                     "type": "string"
                 },
                 "serverHostname": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe name of the SMB server. This value is the IP address or Domain Name Service (DNS) name of the SMB server. An agent that is installed on-premises uses this hostname to mount the SMB server in a network. This name must either be DNS-compliant or must be an IP version 4 (IPv4) address.\n\nUse cases: SMB server identification; Network connectivity; Server mounting; DNS resolution\n\nAWS: SMB server hostname for DataSync agent connectivity and file share mounting\n\nValidation: Must be valid DNS name or IPv4 address; required for SMB server connectivity",
+                    "description": "Hostname or IP address of the SMB server. The on-premises DataSync agent\nuses this to mount the SMB share.\n\nUse cases: SMB server identification; On-premises file server connectivity\n\nAWS: SMB server hostname for DataSync agent mounting\n\nValidation: Required; must be valid DNS name or IPv4 address",
                     "type": "string"
                 },
                 "smbVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nMDAA custom parameter to simplify configuration. The value will be used to construct MountOptions object. Valid values: \"AUTOMATIC\" | \"SMB2\" | \"SMB3\". The mount options used by DataSync to access the SMB server enabling SMB protocol version specification and compatibility control.\n\nUse cases: SMB protocol version; Compatibility control; Mount options; Protocol specification\n\nAWS: SMB mount options for DataSync SMB server connectivity and protocol configuration\n\nValidation: Must be valid SmbVersion if specified; enables SMB protocol version control and compatibility\n  *",
+                    "default": "AUTOMATIC",
+                    "description": "SMB protocol version for mount options. MDAA custom parameter — the value\nis used to construct the MountOptions object.\n\nUse cases: SMB protocol version control; Compatibility with older SMB servers\n\nAWS: SMB mount options version for DataSync location\n\nValidation: Optional; valid values: AUTOMATIC | SMB2 | SMB3",
                     "enum": [
                         "AUTOMATIC",
                         "SMB2",
@@ -1714,7 +1717,7 @@
                     "type": "string"
                 },
                 "subdirectory": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe subdirectory in the SMB file system that is used to read data from the SMB source location or write data to the SMB destination. The SMB path should be a path that's exported by the SMB server, or a subdirectory of that path. The path should be such that it can be mounted by other SMB clients in your network. `Subdirectory` must be specified with forward slashes. For example, `/path/to/folder`. To transfer all the data in the folder you specified, DataSync must have permissions to mount the SMB share, as well as to access all the data in that share. To ensure this, either make sure that the user name and password specified belongs to the user who can mount the share, and who has the appropriate permissions for all of the files and directories that you want DataSync to access, or use credentials of a member of the Backup Operators group to mount the share. Doing either one enables the agent to access the data. For the agent to access directories, you must additionally enable all execute access.\n\nUse cases: SMB path specification; Data access control; File system navigation; Permission management\n\nAWS: SMB subdirectory path for DataSync data access and file system operations\n\nValidation: Must be valid SMB path with forward slashes; required for SMB data access and transfer operations",
+                    "description": "SMB share subdirectory path for data access. Must use forward slashes\n(e.g. /path/to/folder). The user specified in credentials must have\nread/write permissions and execute access on directories.\n\nUse cases: Scoped SMB share access; Subdirectory-level data transfer\n\nAWS: SMB subdirectory path for DataSync location\n\nValidation: Required; must use forward slash format",
                     "type": "string"
                 }
             },
@@ -1727,34 +1730,34 @@
         },
         "LocationsByTypeConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for DataSync location management organized by storage type enabling data source and destination configuration. Provides type-specific location configuration for different storage systems including S3, SMB, NFS, and object storage for flexible data movement operations.\n\nUse cases: Multi-protocol data source configuration; Storage type organization; location management\n\nAWS: Configures AWS DataSync locations for different storage types and protocols for data movement operations\n\nValidation: All properties are optional; each must be valid location configuration map if provided",
+            "description": "DataSync location configuration organized by storage protocol type.\nEach property maps location names to protocol-specific location settings.\n\nUse cases: Multi-protocol data source/destination setup; Organizing locations by S3, SMB, NFS, or object storage type\n\nAWS: AWS DataSync locations grouped by storage protocol\n\nValidation: All properties optional; each must be a valid map of location names to LocationProps",
             "properties": {
                 "nfs": {
                     "additionalProperties": {
                         "$ref": "#/definitions/LocationNfsProps"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of NFS location names to NFS mount configurations enabling Unix/Linux file system integration. Provides NFS protocol support for Unix-based file systems and network file system connectivity.\n\nUse cases: Unix/Linux file system integration; NFS protocol support; Network file system connectivity\n\nAWS: AWS DataSync NFS locations for Unix file system integration and NFS protocol support\n\nValidation: Must be object with string keys and valid LocationNfsProps values if provided; defines NFS mount locations\n  *",
+                    "description": "Map of NFS location names to NFS mount configurations.\nEach entry creates a DataSync NFS location for Unix/Linux file system transfers.\n\nUse cases: Linux NFS export migration; Unix file system data transfer to AWS\n\nAWS: DataSync LocationNFS resources\n\nValidation: Optional; keys are location names, values must be valid LocationNfsProps",
                     "type": "object"
                 },
                 "objectStorage": {
                     "additionalProperties": {
                         "$ref": "#/definitions/LocationObjectStorageProps"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of object storage location names to object storage configurations enabling S3-compatible storage integration. Provides support for S3-compatible object storage systems and third-party cloud storage services.\n\nUse cases: S3-compatible storage integration; Third-party cloud storage; Object storage protocol support\n\nAWS: AWS DataSync object storage locations for S3-compatible storage integration and connectivity\n\nValidation: Must be object with string keys and valid LocationObjectStorageProps values if provided; defines object storage locations\n  *",
+                    "description": "Map of object storage location names to S3-compatible object storage configurations.\nEach entry creates a DataSync object storage location for third-party cloud storage transfers.\nCredentials must be pre-stored in Secrets Manager.\n\nUse cases: Google Cloud Storage to S3 migration; Third-party object storage synchronization\n\nAWS: DataSync LocationObjectStorage resources\n\nValidation: Optional; keys are location names, values must be valid LocationObjectStorageProps",
                     "type": "object"
                 },
                 "s3": {
                     "additionalProperties": {
                         "$ref": "#/definitions/LocationS3Props"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of S3 location names to S3 location configurations enabling cloud-native data storage integration. Provides S3 bucket and prefix configuration for cloud data movement operations with encryption and access control capabilities.\n\nUse cases: S3 data integration; Cloud storage operations; Encrypted data movement; Cloud-to-cloud data synchronization\n\nAWS: AWS DataSync S3 locations for cloud storage integration and data movement\n\nValidation: Must be object with string keys and valid LocationS3Props values if provided; defines S3 storage locations\n  *",
+                    "description": "Map of S3 location names to S3 location configurations.\nEach entry creates a DataSync S3 location for cloud-native data transfers.\n\nUse cases: S3-to-S3 data migration; Cloud storage as transfer source or destination\n\nAWS: DataSync LocationS3 resources\n\nValidation: Optional; keys are location names, values must be valid LocationS3Props",
                     "type": "object"
                 },
                 "smb": {
                     "additionalProperties": {
                         "$ref": "#/definitions/LocationSmbProps"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of SMB location names to SMB share configurations enabling Windows file share integration. Provides SMB/CIFS protocol support for Windows-based file systems and network attached storage integration.\n\nUse cases: Windows file share integration; SMB/CIFS protocol support; Network attached storage connectivity\n\nAWS: AWS DataSync SMB locations for Windows file share integration and SMB protocol support\n\nValidation: Must be object with string keys and valid LocationSmbProps values if provided; defines SMB share locations\n  *",
+                    "description": "Map of SMB location names to SMB share configurations.\nEach entry creates a DataSync SMB location for Windows file share transfers.\nCredentials must be pre-stored in Secrets Manager.\n\nUse cases: Windows file share migration; On-premises NAS data transfer via SMB protocol\n\nAWS: DataSync LocationSMB resources\n\nValidation: Optional; keys are location names, values must be valid LocationSmbProps",
                     "type": "object"
                 }
             },
@@ -2061,14 +2064,13 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
+                    "description": "CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed",
                     "type": "string"
                 },
                 "suppressions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
+                    "description": "Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -2096,10 +2098,9 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
+                    "description": "Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -2113,26 +2114,25 @@
         },
         "MdaaResourceNamingConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA resource naming implementations that standardize AWS resource naming across domains, environments, and modules. This interface enables consistent, collision-free resource naming in multi-tenant MDAA deployments by providing organizational context and CDK node access for custom naming strategies.\n\nUse cases: Multi-domain data lake deployments requiring unique resource names; Cross-account data mesh architectures with consistent naming; Custom naming implementations for compliance requirements\n\nAWS: Configures naming patterns for all AWS resources deployed by MDAA modules including S3 buckets, IAM roles, Glue databases, and CloudFormation stacks\n\nValidation: All properties required; org/env/domain/moduleName must be valid AWS resource name components (alphanumeric, hyphens, underscores)",
             "properties": {
                 "cdkNode": {
                     "$ref": "#/definitions/Node",
-                    "description": "Q-ENHANCED-PROPERTY\nCDK construct node providing access to context values for custom naming implementations. Enables retrieval of additional configuration through tryGetContext() for advanced naming strategies beyond the standard org/env/domain/module pattern.\n\nUse cases: Custom naming with environment-specific prefixes; Integration with external naming services; Context-driven naming for compliance requirements\n\nAWS: CDK context system for CloudFormation template generation\n\nValidation: Must be valid CDK Node instance with accessible context\n  *"
+                    "description": "CDK construct node providing access to context values for custom naming implementations"
                 },
                 "domain": {
-                    "description": "Q-ENHANCED-PROPERTY\nDomain identifier from MDAA configuration representing logical business or organizational boundaries within the data architecture. Forms the third component of the default naming pattern and enables data mesh architectures with domain-specific resource isolation.\n\nUse cases: Data mesh domain separation; Line-of-business resource isolation; Cross-domain data sharing with clear ownership\n\nAWS: Domain component in all AWS resource names, SSM parameter paths, and CloudFormation export names\n\nValidation: Must be valid AWS resource name component (typically business domain names like 'finance', 'marketing', 'shared')",
+                    "description": "Domain identifier from MDAA configuration representing logical business or organizational boundaries",
                     "type": "string"
                 },
                 "env": {
-                    "description": "Q-ENHANCED-PROPERTY\nEnvironment identifier from MDAA configuration that distinguishes deployment stages within the same domain. Forms the second component of the default naming pattern enabling parallel dev/test/prod deployments without resource conflicts.\n\nUse cases: Multi-stage deployments in same account; Environment-specific resource isolation; Progressive deployment strategies\n\nAWS: Environment component in all AWS resource names and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically 'dev', 'test', 'prod', 'staging')",
+                    "description": "Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain",
                     "type": "string"
                 },
                 "moduleName": {
-                    "description": "Q-ENHANCED-PROPERTY\nModule name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment. Forms the final component of the default naming pattern and enables multiple instances of the same module type within the same scope.\n\nUse cases: Multiple data lake instances per domain; Separate analytics workloads; Module-specific resource grouping\n\nAWS: Module component in all AWS resource names, SSM parameter paths, and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically module function like 'datalake', 'warehouse', 'analytics')",
+                    "description": "Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment",
                     "type": "string"
                 },
                 "org": {
-                    "description": "Q-ENHANCED-PROPERTY\nOrganization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names. Forms the first component of the default naming pattern and ensures global uniqueness across multiple MDAA deployments.\n\nUse cases: Multi-organization AWS accounts; Shared service accounts with multiple tenants; Resource name collision prevention\n\nAWS: Prefix for all AWS resource names including S3 buckets, IAM roles, and CloudFormation stacks\n\nValidation: Must be valid AWS resource name component (3-63 characters, alphanumeric and hyphens only, no consecutive hyphens)",
+                    "description": "Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names",
                     "type": "string"
                 }
             },
@@ -2238,17 +2238,16 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
+                    "description": "Human-readable description explaining the purpose and scope of the Service Catalog constraint",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
+                    "description": "Object containing named constraint rules that define the validation logic for Service Catalog product parameters",
                     "type": "object"
                 }
             },
@@ -2260,14 +2259,13 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
-                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
+                    "description": "Constraint assertion expression that defines the validation logic for Service Catalog product parameters",
                     "type": "string"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
+                    "description": "Human-readable description explaining the purpose and requirements of the constraint assertion",
                     "type": "string"
                 }
             },
@@ -2283,10 +2281,9 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
+                    "description": "Array of constraint assertions that define the validation logic to be applied when the condition is met",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
@@ -2294,7 +2291,7 @@
                 },
                 "condition": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
+                    "description": "Condition configuration that determines when the constraint rule assertions should be evaluated"
                 }
             },
             "required": [
@@ -2305,15 +2302,14 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
+                    "description": "Constraint configuration that defines additional validation rules for the Service Catalog product parameter"
                 },
                 "props": {
                     "$ref": "#/definitions/CfnParameterProps",
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
+                    "description": "CloudFormation parameter properties that define the parameter characteristics including type,"
                 }
             },
             "required": [
@@ -2323,29 +2319,28 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
+                    "description": "IAM role name that will be used to launch the Service Catalog product",
                     "type": "string"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
+                    "description": "Display name for the Service Catalog product that will be visible to end users in the Service Catalog console",
                     "type": "string"
                 },
                 "owner": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
+                    "description": "Owner identifier for the Service Catalog product, typically representing the team or organization",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "description": "Object containing named parameter configurations for the Service Catalog product",
                     "type": "object"
                 },
                 "portfolio_arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
+                    "description": "ARN of the AWS Service Catalog portfolio where the product will be associated",
                     "type": "string"
                 },
                 "portfolio_bucket_name": {
@@ -2864,32 +2859,32 @@
         },
         "TaskProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nDataSync task configuration for automated data transfer operations between source and destination locations. Defines task execution parameters including location references, transfer options, scheduling, and data verification settings for systematic data migration and synchronization workflows.\n\nUse cases: One-time data migration tasks; Scheduled data synchronization; Incremental backup operations\n\nAWS: AWS DataSync Task resource for automated data transfer with configurable verification, filtering, and scheduling options\n\nValidation: sourceLocationName and destinationLocationName must reference valid DataSync locations; schedule must be valid cron expression if specified",
+            "description": "DataSync task configuration for automated data transfer between source and destination locations.\nTasks can reference MDAA-generated locations by name or external locations by ARN.\nSupports scheduling via cron expressions, include/exclude file filtering, and transfer options\n(e.g. preserveDeletedFiles, transferMode, verifyMode). MDAA automatically creates a\nCloudWatch log group with KMS encryption for task logging.\n\nUse cases: Scheduled data synchronization; One-time data migration; Incremental transfers with filtering\n\nAWS: DataSync Task resource (CfnTask) with CloudWatch logging\n\nValidation: One of sourceLocationName/sourceLocationArn required; one of destinationLocationName/destinationLocationArn required",
             "properties": {
                 "destinationLocationArn": {
-                    "description": "The Amazon Resource Name (ARN) of an AWS storage resource's location.",
+                    "description": "ARN of an existing DataSync destination location created outside MDAA.\nAccepts static ARNs or dynamic references (e.g. SSM parameters).\nMutually exclusive with destinationLocationName.\n\nUse cases: Externally managed destination locations; Pre-existing DataSync locations\n\nAWS: DataSync destination location ARN for task configuration\n\nValidation: Optional; mutually exclusive with destinationLocationName; must be valid location ARN or dynamic reference",
                     "type": "string"
                 },
                 "destinationLocationName": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional MDAA-managed destination location name reference for DataSync task destination configuration enabling location name-based referencing. Refers to a generated destination location name that will be resolved to the actual location ARN from the generatedLocations registry, providing simplified location referencing within MDAA configurations.\n\nUse cases: MDAA location referencing; Simplified location configuration; Generated location usage; Location name resolution; MDAA-managed locations\n\nAWS: AWS DataSync task destination location reference resolved from MDAA-generated location registry\n\nValidation: Must reference valid generated location name if provided; mutually exclusive with destinationLocationArn; optional for destination location specification",
+                    "description": "Name of an MDAA-generated destination location from the locations config section.\nResolved to the location ARN automatically. Mutually exclusive with destinationLocationArn.\n\nUse cases: Referencing MDAA-managed locations by name; Simplified task configuration\n\nAWS: Resolved to DataSync location ARN for task destination\n\nValidation: Optional; mutually exclusive with destinationLocationArn; must reference valid generated location name",
                     "type": "string"
                 },
                 "excludes": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of filter rules to exclude specific data during DataSync transfer operations enabling selective data transfer and filtering. Defines patterns and rules that specify which files and directories should be excluded from the transfer, providing fine-grained control over data migration scope and reducing transfer time and costs.\n\nUse cases: Selective data transfer; File filtering; Transfer optimization; Data exclusion patterns; Cost optimization; Transfer scope control\n\nAWS: AWS DataSync task exclude filter rules for selective data transfer and file filtering\n\nValidation: Must be array of valid CfnTask.FilterRuleProperty if provided; filter patterns must follow DataSync filtering syntax; optional for transfer filtering",
+                    "description": "Filter rules to exclude specific files/directories from the transfer.\nUses SIMPLE_PATTERN filterType with pipe-delimited values (e.g. \"*.tmp|*.temp\").\nCloudFormation accepts only one member in the excludes list.\n\nUse cases: Excluding temporary files; Skipping specific directories; Transfer scope reduction\n\nAWS: DataSync task exclude filter rules (CfnTask.FilterRuleProperty)\n\nValidation: Optional; must follow DataSync SIMPLE_PATTERN filtering syntax",
                     "items": {
                         "$ref": "#/definitions/CfnTask.FilterRuleProperty"
                     },
                     "type": "array"
                 },
                 "includes": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of filter rules to include specific data during DataSync transfer operations enabling selective data transfer and inclusion patterns. Defines patterns and rules that specify which files and directories should be included in the transfer, providing fine-grained control over data migration scope and ensuring only required data is transferred.\n\nUse cases: Selective data transfer; File inclusion patterns; Transfer optimization; Data inclusion filtering; Targeted data migration; Transfer scope control\n\nAWS: AWS DataSync task include filter rules for selective data transfer and file inclusion\n\nValidation: Must be array of valid CfnTask.FilterRuleProperty if provided; filter patterns must follow DataSync filtering syntax; optional for transfer filtering",
+                    "description": "Filter rules to include specific files/directories in the transfer.\nUses SIMPLE_PATTERN filterType with pipe-delimited values (e.g. \"/data*|/ingestion*\").\nValues must begin with / and only accept asterisk at the rightmost position.\nCloudFormation accepts only one member in the includes list.\n\nUse cases: Targeted data migration; Selective directory transfer; Transfer scope control\n\nAWS: DataSync task include filter rules (CfnTask.FilterRuleProperty)\n\nValidation: Optional; must follow DataSync SIMPLE_PATTERN filtering syntax; values begin with /",
                     "items": {
                         "$ref": "#/definitions/CfnTask.FilterRuleProperty"
                     },
                     "type": "array"
                 },
                 "logGroupEncryptionKeyArn": {
-                    "description": "MDAA custom parameter. The ARN of the KMS key that will be used to encrypt the Task logging.\nIf this parameter is not specified, MDAA will create a new KMS key.",
+                    "description": "ARN of a KMS key for encrypting the task's CloudWatch log group.\nIf omitted, MDAA creates a new KMS key automatically.\n\nUse cases: Custom encryption key management; Shared KMS key across resources\n\nAWS: KMS key ARN for CloudWatch log group encryption\n\nValidation: Optional; must be valid KMS key ARN if provided",
                     "type": "string"
                 },
                 "options": {
@@ -2915,11 +2910,11 @@
                     "description": "Specifies a schedule used to periodically transfer files from a source to a destination location. The schedule should be specified in UTC time.\nFor more information, see [Scheduling your task](https://docs.aws.amazon.com/datasync/latest/userguide/task-scheduling.html)."
                 },
                 "sourceLocationArn": {
-                    "description": "The Amazon Resource Name (ARN) of the source location for the task.",
+                    "description": "ARN of an existing DataSync source location created outside MDAA.\nAccepts static ARNs or dynamic references (e.g. SSM parameters).\nMutually exclusive with sourceLocationName.\n\nUse cases: Externally managed source locations; Pre-existing DataSync locations\n\nAWS: DataSync source location ARN for task configuration\n\nValidation: Optional; mutually exclusive with sourceLocationName; must be valid location ARN or dynamic reference",
                     "type": "string"
                 },
                 "sourceLocationName": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional MDAA-managed source location name reference for DataSync task source configuration enabling location name-based referencing. Refers to a generated source location name that will be resolved to the actual location ARN from the generatedLocations registry, providing simplified location referencing within MDAA configurations.\n\nUse cases: MDAA location referencing; Simplified location configuration; Generated location usage; Location name resolution; MDAA-managed locations\n\nAWS: AWS DataSync task source location reference resolved from MDAA-generated location registry\n\nValidation: Must reference valid generated location name if provided; mutually exclusive with sourceLocationArn; optional for source location specification",
+                    "description": "Name of an MDAA-generated source location from the locations config section.\nResolved to the location ARN automatically. Mutually exclusive with sourceLocationArn.\n\nUse cases: Referencing MDAA-managed locations by name; Simplified task configuration\n\nAWS: Resolved to DataSync location ARN for task source\n\nValidation: Optional; mutually exclusive with sourceLocationArn; must reference valid generated location name",
                     "type": "string"
                 }
             },
@@ -3119,14 +3114,14 @@
         },
         "VpcProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nVPC configuration interface for DataSync deployment with VPC endpoint creation and network isolation. Defines VPC parameters for DataSync service deployment including VPC identification and CIDR block specification enabling secure, private network communication for data transfer operations.\n\nUse cases: Private network data transfers; VPC endpoint creation; Network isolation; Secure data synchronization\n\nAWS: VPC configuration for DataSync service with VPC endpoint and private network communication\n\nValidation: vpcId must be existing VPC; vpcCidrBlock must be valid CIDR notation matching the VPC",
+            "description": "VPC configuration for DataSync deployment enabling private agent-to-service communication.\nMDAA uses these values to create a VPC endpoint for the DataSync service and a security group\nwith ingress rules for agent control traffic (TCP 1024-1064) and data transfer (TCP 443).\n\nUse cases: Private network data transfers; VPC endpoint creation for DataSync; Agent network isolation\n\nAWS: VPC, VPC endpoints, security groups for DataSync service\n\nValidation: Both properties required; vpcId must be existing VPC; vpcCidrBlock must be valid CIDR matching the VPC",
             "properties": {
                 "vpcCidrBlock": {
-                    "description": "Q-ENHANCED-PROPERTY\nCIDR block specification for the DataSync VPC enabling network range definition and security group configuration. Defines the IP address range of the VPC for proper security group rule creation and network access control for DataSync operations.\n\nUse cases: Network range specification; Security group configuration; IP address management; Network access control\n\nAWS: VPC CIDR block for DataSync security group rules and network access configuration\n\nValidation: Must be valid CIDR notation; should match the actual VPC CIDR block for proper network configuration",
+                    "description": "CIDR block of the VPC, used for security group rule creation.\nMDAA configures ingress rules on the DataSync VPC endpoint security group\nbased on this CIDR range.\n\nUse cases: Security group rule configuration; Network access control for DataSync agents\n\nAWS: VPC CIDR block for security group ingress rules\n\nValidation: Required; must be valid CIDR notation matching the actual VPC (e.g. 10.0.0.0/8)",
                     "type": "string"
                 },
                 "vpcId": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe ID of the VPC for the DataSync deployment. MDAA will create a VPC Endpoint for DataSync service for this VPC ID that will be used for communication between the agent and task enabling private network data transfer without internet gateway dependency.\n\nUse cases: VPC identification; Private network deployment; VPC endpoint creation; Network isolation\n\nAWS: VPC ID for DataSync VPC endpoint creation and private network communication\n\nValidation: Must be existing VPC ID; required for DataSync VPC endpoint and private network deployment",
+                    "description": "The ID of the VPC for DataSync deployment. MDAA creates a VPC endpoint for the\nDataSync service in this VPC, enabling private communication between agents and tasks\nwithout internet gateway dependency.\n\nUse cases: VPC endpoint creation; Private agent connectivity; Network isolation for data transfers\n\nAWS: VPC ID used to create an InterfaceVpcEndpoint for the DataSync service\n\nValidation: Required; must be an existing VPC ID (e.g. vpc-009ce5ec1cff75fx6)",
                     "type": "string"
                 }
             },
@@ -3142,12 +3137,12 @@
             "additionalProperties": {
                 "$ref": "#/definitions/AgentProps"
             },
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of agent names to DataSync agent configurations enabling on-premises and hybrid connectivity. Provides agent deployment for connecting on-premises storage systems to AWS for data movement and synchronization operations.\n\nUse cases: On-premises connectivity; Hybrid data movement; Agent-based data transfer for local storage systems\n\nAWS: AWS DataSync agents for on-premises and hybrid storage connectivity and data movement\n\nValidation: Must be object with string keys and valid AgentProps values if provided; defines agent deployment configuration\n  *",
+            "description": "Map of agent names to DataSync agent configurations.\nAgents must be deployed (e.g. EC2 with DataSync AMI) before activation.\nOmit activationKey on first pass to create networking; add it on second pass to register.\n\nUse cases: On-premises storage connectivity; Multi-AZ agent resiliency; Two-stage agent activation\n\nAWS: DataSync agents for on-premises and hybrid data transfer\n\nValidation: Optional; keys are agent names, values must be valid AgentProps",
             "type": "object"
         },
         "locations": {
             "$ref": "#/definitions/LocationsByTypeConfig",
-            "description": "Q-ENHANCED-PROPERTY\nOptional location configuration organized by storage type enabling data source and destination management. Provides structured location configuration for different storage protocols and systems for flexible data movement operations.\n\nUse cases: Multi-protocol location management; Storage system integration; data source configuration\n\nAWS: AWS DataSync locations for various storage types and protocols for data movement operations\n\nValidation: Must be valid LocationsByTypeConfig if provided; defines all storage location configurations by type\n  *"
+            "description": "DataSync locations organized by storage protocol type (S3, SMB, NFS, object storage).\nLocations serve as source or destination endpoints for DataSync tasks.\n\nUse cases: Multi-protocol location setup; Source/destination endpoint configuration\n\nAWS: DataSync locations (S3, SMB, NFS, ObjectStorage)\n\nValidation: Optional; must be valid LocationsByTypeConfig"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
@@ -3165,12 +3160,12 @@
             "additionalProperties": {
                 "$ref": "#/definitions/TaskProps"
             },
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of task names to DataSync task configurations enabling automated data transfer and synchronization workflows. Provides task configuration for scheduled and on-demand data movement between configured locations with filtering and scheduling capabilities.\n\nUse cases: Automated data transfer; Scheduled synchronization; Data movement workflow management\n\nAWS: AWS DataSync tasks for automated data transfer and synchronization between storage locations\n\nValidation: Must be object with string keys and valid TaskProps values if provided; defines data transfer task configuration\n  *",
+            "description": "Map of task names to DataSync task configurations.\nTasks define data transfer operations between source and destination locations\nwith optional scheduling, filtering, and transfer options.\n\nUse cases: Scheduled data synchronization; One-time migration; Incremental transfers with filtering\n\nAWS: DataSync tasks with CloudWatch logging\n\nValidation: Optional; keys are task names, values must be valid TaskProps",
             "type": "object"
         },
         "vpc": {
             "$ref": "#/definitions/VpcProps",
-            "description": "Q-ENHANCED-PROPERTY\nOptional VPC configuration for DataSync agent deployment enabling secure network connectivity and private data transfer operations. Provides VPC networking setup for agents requiring private network access to on-premises or VPC-based storage systems.\n\nUse cases: Private network connectivity; Secure data transfer; VPC-based agent deployment for on-premises integration\n\nAWS: Amazon VPC configuration for DataSync agent networking and private connectivity\n\nValidation: Must be valid VpcProps if provided; enables VPC networking for DataSync agents and secure connectivity"
+            "description": "VPC for DataSync agent deployment. MDAA creates a security group with required\ningress rules and a VPC endpoint for the DataSync service.\nTwo-stage deployment: first pass creates networking, second pass registers agents.\n\nUse cases: Private agent-to-service communication; VPC endpoint automation; Security group creation\n\nAWS: VPC, VPC endpoints, security groups for DataSync service\n\nValidation: Optional; requires vpcId and vpcCidrBlock"
         }
     },
     "type": "object"

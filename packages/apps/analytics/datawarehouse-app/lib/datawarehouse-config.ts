@@ -18,279 +18,274 @@ import { ConfigurationElement } from '@aws-mdaa/config';
 
 export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required admin username for the Redshift cluster providing administrative access to the data warehouse. Defines the master user account for cluster administration, database management, and initial user provisioning.
+   * Admin username for the Redshift cluster. A secret is automatically generated for the password.
    *
    * Use cases: Cluster administration; Database management; Initial user provisioning
    *
-   * AWS: Amazon Redshift cluster master username for administrative access and database management
+   * AWS: Redshift cluster master username
    *
-   * Validation: Must be valid Redshift username; required; used for cluster administrative access
-   **/
+   * Validation: Required; valid Redshift username
+   */
   readonly adminUsername: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required number of days between automatic admin password rotations for enhanced security compliance. Enables automated credential management and compliance with password rotation policies for improved cluster security posture.
+   * Days between automatic admin password rotations via Secrets Manager.
    *
-   * Use cases: Automated credential rotation; Security policy compliance; Password management automation
+   * Use cases: Automated credential rotation; Security compliance; Password policy enforcement
    *
-   * AWS: Amazon Redshift automatic password rotation configuration for security management
+   * AWS: Redshift admin password rotation via Secrets Manager
    *
-   * Validation: Must be positive integer; required; defines password rotation frequency for security compliance
-   **/
+   * Validation: Required; positive integer
+   */
   readonly adminPasswordRotationDays: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of federation configurations for SAML or OIDC identity provider integration with the data warehouse. Enables federated access to Redshift through external identity providers for centralized identity management and SSO capabilities.
+   * SAML or OIDC federation configurations for federated Redshift access.
+   * Each federation creates an IAM role with SAML trust for dynamic credential generation
+   * and group-based cluster access.
    *
-   * Use cases: SAML federation setup; OIDC provider integration; Centralized identity management for data warehouse access
+   * Use cases: SAML federation setup; SSO integration; Federated cluster access
    *
-   * AWS: AWS IAM identity provider configuration for federated Redshift access and SSO integration
+   * AWS: IAM SAML identity provider roles for Redshift federated access
    *
-   * Validation: Must be array of valid FederationProps if provided; enables federated authentication when specified
-   **/
+   * Validation: Optional; array of valid FederationProps
+   */
   readonly federations?: FederationProps[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of admin role references with full access to cluster resources including KMS keys and S3 buckets. Provides administrative permissions for data warehouse management, security administration, and resource access control.
+   * Admin roles granted full access to cluster resources including KMS keys and S3 buckets.
    *
    * Use cases: Administrative access control; Security management; Resource administration
    *
-   * AWS: AWS IAM roles with full Redshift cluster and resource access permissions
+   * AWS: IAM roles with full Redshift cluster and resource access
    *
-   * Validation: Must be array of valid MdaaRoleRef objects; required; roles receive full cluster access
-   **/
+   * Validation: Required; array of valid MdaaRoleRef
+   */
   readonly dataAdminRoles: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of user role references with access to data warehouse S3 buckets for data loading and unloading operations. Enables controlled access to warehouse storage resources for ETL operations and data management workflows.
+   * Roles granted read/write access to the data warehouse S3 bucket for data loading/unloading.
    *
-   * Use cases: Data loading operations; ETL workflow access; Controlled storage access
+   * Use cases: ETL data loading; Data unloading operations; Bucket access for analytics
    *
-   * AWS: AWS IAM roles with S3 bucket access for Redshift data operations
+   * AWS: IAM roles with S3 bucket access for Redshift data operations
    *
-   * Validation: Must be array of valid MdaaRoleRef objects if provided; roles receive bucket access permissions
-   **/
+   * Validation: Optional; array of valid MdaaRoleRef
+   */
   readonly warehouseBucketUserRoles?: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of external execution role references for Redshift cluster operations and integrations. Enables cluster to assume external roles for cross-service operations, data access, and integration with other AWS services.
+   * External execution roles associated with the Redshift cluster for cross-service operations.
+   * If a role also needs warehouse bucket access, add it to warehouseBucketUserRoles explicitly.
    *
-   * Use cases: Cross-service operations; External data access; Service integration workflows
+   * Use cases: Cross-service integrations; External data access; Glue/Lambda integration
    *
-   * AWS: AWS IAM roles for Redshift cluster cross-service operations and integrations
+   * AWS: IAM execution roles associated with the Redshift cluster
    *
-   * Validation: Must be array of valid MdaaRoleRef objects if provided; roles must be assumable by Redshift service
-   **/
+   * Validation: Optional; array of valid MdaaRoleRef; roles must be assumable by Redshift
+   */
   readonly executionRoles?: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required VPC ID for Redshift cluster deployment providing network isolation and security controls. Ensures cluster operates within the specified VPC for secure networking and integration with other VPC resources.
+   * VPC ID for Redshift cluster deployment. The cluster is deployed within this VPC
+   * with network access controlled by security groups.
    *
-   * Use cases: VPC network isolation; Secure networking; VPC resource integration
+   * Use cases: Network isolation; VPC-based deployment; Secure networking
    *
-   * AWS: Amazon VPC for Redshift cluster network isolation and security controls
+   * AWS: VPC for Redshift cluster network configuration
    *
-   * Validation: Must be valid VPC ID; required; VPC must exist and be accessible
-   **/
+   * Validation: Required; valid VPC ID
+   */
   readonly vpcId: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of subnet IDs for Redshift cluster node placement within the VPC. Defines the network subnets where cluster nodes will be deployed for secure VPC connectivity and availability zone distribution.
+   * Subnet IDs for Redshift cluster node placement. For automatic cluster relocation,
+   * specify at least one subnet per AZ.
    *
-   * Use cases: VPC network placement; Subnet-specific deployment; Multi-AZ cluster distribution
+   * Use cases: Multi-AZ placement; Subnet-specific deployment; Cluster relocation support
    *
-   * AWS: Amazon VPC subnets for Redshift cluster node placement and network configuration
+   * AWS: VPC subnets for Redshift subnet group
    *
-   * Validation: Must be array of valid subnet IDs; required; subnets must exist in specified VPC
-   **/
+   * Validation: Required; array of valid subnet IDs in the specified VPC
+   */
   readonly subnetIds: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required security group ingress configuration defining allowed inbound connections to the cluster. Specifies IPv4 CIDR blocks and security group IDs that can connect to the cluster port for controlled network access.
+   * Security group ingress rules defining allowed inbound connections to the cluster port.
+   * Supports IPv4 CIDR blocks and security group references. All other traffic is blocked.
    *
    * Use cases: Network access control; Client connectivity; Security group management
    *
-   * AWS: Amazon VPC security group ingress rules for Redshift cluster access control
+   * AWS: VPC security group ingress rules for Redshift cluster
    *
-   * Validation: Must be object with ipv4 and/or sg arrays; required; defines allowed inbound connections
-   *   **/
+   * Validation: Required; object with optional ipv4 and/or sg arrays
+   */
   readonly securityGroupIngress: { ipv4?: string[]; sg?: string[] };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required node type specification determining compute and storage capacity for cluster nodes. Controls the underlying EC2 instance type and affects performance, storage, and cost characteristics of the data warehouse.
+   * Redshift node type determining compute and storage capacity (e.g., RA3_4XLARGE).
    *
-   * Use cases: Performance optimization; Cost management; Workload-specific sizing
+   * Use cases: Performance sizing; Cost optimization; Workload-specific capacity
    *
-   * AWS: Amazon Redshift node type for compute and storage capacity configuration
+   * AWS: Redshift node type (instance type)
    *
-   * Validation: Must be valid Redshift node type; required; determines cluster compute and storage capacity
-   **/
+   * Validation: Required; valid Redshift node type string
+   */
   readonly nodeType: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required number of nodes for the Redshift cluster determining total compute capacity and parallel processing capability. Controls cluster size and affects performance, cost, and data distribution characteristics.
+   * Number of nodes in the Redshift cluster.
    *
-   * Use cases: Cluster sizing; Performance scaling; Cost optimization
+   * Use cases: Cluster sizing; Performance scaling; Cost management
    *
-   * AWS: Amazon Redshift cluster node count for compute capacity and parallel processing
+   * AWS: Redshift cluster node count
    *
-   * Validation: Must be positive integer; required; determines cluster size and processing capacity
-   **/
+   * Validation: Required; positive integer
+   */
   readonly numberOfNodes: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required flag enabling audit logging to S3 for compliance and security monitoring. When enabled, creates dedicated S3 bucket for Redshift audit logs with SSE-S3 encryption as required by Redshift audit logging constraints.
+   * Enable audit logging to a dedicated S3 bucket. The audit bucket uses SSE-S3 encryption
+   * (not KMS) due to Redshift audit logging requirements.
    *
-   * Use cases: Compliance auditing; Security monitoring; Audit trail management
+   * Use cases: Compliance auditing; Security monitoring; User activity tracking
    *
-   * AWS: Amazon Redshift audit logging to S3 for compliance and security monitoring
+   * AWS: Redshift audit logging to S3 with SSE-S3 encryption
    *
-   * Validation: Boolean value; required; creates SSE-S3 encrypted audit bucket when enabled
-   **/
+   * Validation: Required; boolean
+   */
   readonly enableAuditLoggingToS3: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional cluster port number for client connections enabling custom port configuration and network security. Defines the TCP port on which the Redshift cluster accepts client connections, supporting custom networking requirements and security configurations.
+   * TCP port for client connections to the cluster.
    *
-   * Use cases: Custom port configuration; Network security; Client connection management; Port standardization
+   * Use cases: Custom port configuration; Network security; Port standardization
    *
-   * AWS: Amazon Redshift cluster port configuration for client connection management
+   * AWS: Redshift cluster listening port
    *
-   * Validation: Must be valid port number if specified; defaults to 5440; must be accessible through security groups
-   **/
+   * Validation: Optional; valid port number
+   * @default 5440
+   */
   readonly clusterPort?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag controlling cluster node configuration for single-node or multi-node deployment. When true, creates multi-node cluster for distributed processing; when false, creates single-node cluster for development or small workloads.
+   * Multi-node cluster flag. When true, creates a multi-node cluster for distributed processing;
+   * when false, creates a single-node cluster for development or small workloads.
    *
-   * Use cases: Cluster architecture selection; Development vs production deployment; Cost optimization; Performance scaling
+   * Use cases: Cluster architecture selection; Dev vs production deployment; Cost optimization
    *
-   * AWS: Amazon Redshift cluster type configuration for single-node or multi-node deployment
+   * AWS: Redshift cluster type (single-node or multi-node)
    *
-   * Validation: Boolean value; determines cluster architecture and node distribution; affects performance and cost
-   **/
+   * Validation: Optional; boolean
+   */
   readonly multiNode?: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required preferred maintenance window for automated cluster maintenance operations. Specifies the weekly time range during which system maintenance can occur, minimizing impact on business operations and ensuring predictable maintenance scheduling.
+   * Weekly maintenance window in ddd:hh24:mi-ddd:hh24:mi format (UTC).
+   * Example: 'Sun:23:45-Mon:00:15'.
    *
-   * Use cases: Maintenance scheduling; Business continuity; Operational planning; Downtime management
+   * Use cases: Maintenance scheduling; Business continuity; Downtime management
    *
-   * AWS: Amazon Redshift preferred maintenance window for automated system maintenance
+   * AWS: Redshift preferred maintenance window
    *
-   * Validation: Must be valid time window format (e.g., 'Sun:23:45-Mon:00:15'); required; defines maintenance scheduling
-   **/
+   * Validation: Required; valid time window format
+   */
   readonly preferredMaintenanceWindow: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional parameter group parameters for cluster configuration customization enabling performance tuning and operational optimization. Provides additional cluster parameters while security-sensitive values are automatically overridden for compliance and security.
+   * Additional cluster parameter group parameters for performance tuning.
+   * Security-sensitive values are automatically overridden for compliance (e.g., SSL enforcement).
    *
-   * Use cases: Performance tuning; Operational optimization; Custom cluster configuration; Workload-specific settings
+   * Use cases: Performance tuning; Custom cluster configuration; Workload optimization
    *
-   * AWS: Amazon Redshift parameter group configuration for cluster customization and optimization
+   * AWS: Redshift parameter group parameters
    *
-   * Validation: Must be object with string key-value pairs if provided; security-sensitive values will be overridden
-   *   **/
+   * Validation: Optional; string key-value pairs
+   */
   readonly parameterGroupParams?: Record<string, string>;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional workload management configuration for query performance optimization and resource allocation. Defines WLM configuration elements for managing query queues, memory allocation, and concurrency for optimal cluster performance.
+   * Workload management (WLM) configuration for query queue management and resource allocation.
    *
-   * Use cases: Query performance optimization; Resource allocation; Workload management; Concurrency control
+   * Use cases: Query performance optimization; Concurrency control; Resource allocation
    *
-   * AWS: Amazon Redshift workload management configuration for query optimization and resource control
+   * AWS: Redshift WLM configuration
    *
-   * Validation: Must be array of valid ConfigurationElement objects if provided; defines WLM configuration
-   **/
+   * Validation: Optional; array of valid ConfigurationElement
+   */
   readonly workloadManagement?: ConfigurationElement[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional additional KMS key ARNs for cluster bucket encryption enabling multi-key encryption scenarios and cross-account access. Provides additional KMS keys that can be used for writing to the cluster bucket beyond the default cluster encryption key.
+   * Additional KMS key ARNs allowed to write to the cluster bucket.
+   * Useful for allowing Glue jobs or other services to write encrypted data to the warehouse bucket.
    *
-   * Use cases: Multi-key encryption; Cross-account access; Additional encryption keys; Flexible key management
+   * Use cases: Cross-service encryption; Glue job integration; Multi-key bucket access
    *
-   * AWS: AWS KMS key ARNs for additional cluster bucket encryption and access control
+   * AWS: KMS key ARNs for warehouse bucket encryption
    *
-   * Validation: Must be array of valid KMS key ARNs if provided; keys must be accessible for bucket operations
-   **/
+   * Validation: Optional; array of valid KMS key ARNs
+   */
   readonly additionalBucketKmsKeyArns?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional scheduled actions for automated cluster pause and resume operations enabling cost optimization and operational automation. Defines scheduled pause and resume actions for the cluster to optimize costs during non-business hours.
+   * Scheduled actions for automated cluster pause/resume operations.
+   * Each action specifies a target action (pauseCluster/resumeCluster), cron schedule,
+   * and active time window.
    *
-   * Use cases: Cost optimization; Automated operations; Scheduled maintenance; Resource management
+   * Use cases: Cost optimization via scheduled pause; Automated operations; Business-hours scheduling
    *
-   * AWS: Amazon Redshift scheduled actions for automated cluster pause and resume operations
+   * AWS: Redshift scheduled actions for cluster lifecycle management
    *
-   * Validation: Must be array of valid ScheduledActionProps if provided; defines automated cluster operations
-   **/
+   * Validation: Optional; array of valid ScheduledActionProps
+   */
   readonly scheduledActions?: ScheduledActionProps[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional database users for automated user creation and credential management enabling secure user provisioning and rotation. Creates database users in Redshift with automated credential storage and rotation through Secrets Manager and SSM.
+   * Database users created in Redshift with credentials stored in Secrets Manager.
+   * Supports automated secret rotation on a configurable cycle.
    *
-   * Use cases: Automated user provisioning; Credential management; Security automation; User lifecycle management
+   * Use cases: Automated user provisioning; Credential management; Secret rotation
    *
-   * AWS: Amazon Redshift database users with Secrets Manager and SSM integration for credential management
+   * AWS: Redshift database users with Secrets Manager credential storage and rotation
    *
-   * Validation: Must be array of valid DatabaseUsersProps if provided; enables automated user and credential management
-   *   **/
+   * Validation: Optional; array of valid DatabaseUsersProps
+   */
   readonly databaseUsers?: DatabaseUsersProps[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag controlling data warehouse bucket creation for cluster storage operations. When enabled (default), creates dedicated S3 bucket for data warehouse operations including data loading, unloading, and backup storage.
+   * Control whether a dedicated S3 bucket is created for warehouse data operations
+   * (loading, unloading, backup).
    *
-   * Use cases: Storage resource management; Data operations; Backup storage; ETL operations
+   * Use cases: Storage resource management; Data operations; Bucket lifecycle control
    *
-   * AWS: Amazon S3 bucket creation for Redshift data warehouse storage operations
+   * AWS: S3 bucket for Redshift data warehouse operations
    *
-   * Validation: Boolean value; defaults to true; creates dedicated warehouse bucket when enabled
-   **/
+   * Validation: Optional; boolean
+   * @default true
+   */
   readonly createWarehouseBucket?: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional retention period for automated snapshots enabling backup management and data protection. Specifies the number of days automated snapshots are retained for point-in-time recovery and data protection requirements.
+   * Number of days automated snapshots are retained (1-35). Set to 0 to disable.
    *
-   * Use cases: Backup management; Data protection; Point-in-time recovery; Compliance requirements
+   * Use cases: Backup management; Point-in-time recovery; Data protection compliance
    *
-   * AWS: Amazon Redshift automated snapshot retention for backup management and data protection
+   * AWS: Redshift automated snapshot retention
    *
-   * Validation: Must be positive integer if specified; defines snapshot retention period for backup management
-   **/
+   * Validation: Optional; integer 0-35
+   * @default 1
+   */
   readonly automatedSnapshotRetentionDays?: number;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional event notification configuration for cluster and scheduled action monitoring enabling operational awareness and alerting. Configures SNS notifications for cluster events and scheduled action status for operational monitoring.
+   * Event notification configuration for cluster and scheduled action monitoring.
+   * Configures SNS notifications with email delivery, severity filtering, and event category selection.
    *
-   * Use cases: Operational monitoring; Event alerting; Cluster status tracking; Automated notifications
+   * Use cases: Operational monitoring; Event alerting; Cluster status tracking
    *
-   * AWS: Amazon SNS notifications for Redshift cluster events and operational monitoring
+   * AWS: SNS notifications for Redshift cluster events
    *
-   * Validation: Must be valid EventNotificationsProps if provided; enables cluster event monitoring and alerting
-   **/
+   * Validation: Optional; valid EventNotificationsProps
+   */
   readonly eventNotifications?: EventNotificationsProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional database name for initial database creation enabling custom database naming and organization. Specifies the name of the initial database created in the cluster, supporting custom naming conventions and database organization.
+   * Initial database name created in the cluster.
    *
-   * Use cases: Custom database naming; Database organization; Initial database setup; Naming conventions
+   * Use cases: Custom database naming; Initial database setup
    *
-   * AWS: Amazon Redshift initial database name for cluster database creation and organization
+   * AWS: Redshift initial database
    *
-   * Validation: Must be valid database name if specified; defaults to "default_db"; used for initial database creation
-   **/
+   * Validation: Optional; valid database name
+   * @default "default_db"
+   */
   readonly dbName?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional snapshot identifier for cluster restoration from existing snapshot enabling disaster recovery and data migration. Specifies the snapshot ID to restore the cluster from, supporting disaster recovery scenarios and data migration operations.
+   * Snapshot identifier for cluster restoration. Only provide when restoring from an existing snapshot.
    *
-   * Use cases: Disaster recovery; Data migration; Cluster restoration; Backup recovery
+   * Use cases: Disaster recovery; Data migration; Cluster restoration
    *
-   * AWS: Amazon Redshift snapshot identifier for cluster restoration and disaster recovery
+   * AWS: Redshift snapshot for cluster restoration
    *
-   * Validation: Must be valid snapshot identifier if specified; only provide when restoring from snapshot
-   **/
+   * Validation: Optional; valid snapshot identifier
+   */
   readonly snapshotIdentifier?: string;
   /**
    * ownerAccount Refers to snapshot owner account. Applicable if restoring the cluster from snapshot and snapshot belongs to another account

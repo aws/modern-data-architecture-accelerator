@@ -14,40 +14,13 @@ export interface MdaaReplicationInstanceProps extends MdaaConstructProps {
   readonly allocatedStorage?: number;
   readonly allowMajorVersionUpgrade?: boolean | IResolvable;
   readonly autoMinorVersionUpgrade?: boolean | IResolvable;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional availability zone specification for replication instance placement controlling geographic distribution and latency optimization. Defines the specific availability zone for replication instance deployment for network proximity and disaster recovery planning.
-   *
-   * Use cases: Geographic placement; Latency optimization; Disaster recovery; Network proximity
-   *
-   * AWS: DMS replication instance availability zone for geographic placement and network optimization
-   *
-   * Validation: Must be valid availability zone name if provided; controls instance placement and network proximity
-   **/
+  /** Availability zone specification for replication instance placement controlling geographic */
   readonly availabilityZone?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional DMS engine version specification for feature access and compatibility control enabling version management and capability selection. Provides control over DMS engine version for feature access, compatibility, and performance characteristics.
-   *
-   * Use cases: Version management; Feature access; Compatibility control; Performance optimization
-   *
-   * AWS: DMS replication instance engine version for feature access and compatibility management
-   *
-   * Validation: Must be valid DMS engine version if provided; defaults to latest available version
-   **/
+  /** DMS engine version specification for feature access and compatibility control enabling */
   readonly engineVersion?: string;
   readonly kmsKey: IKey;
   readonly multiAz?: boolean | IResolvable;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional maintenance window specification for system updates and maintenance operations controlling operational timing and impact. Defines the weekly time range for system maintenance activities with minimal impact on migration operations.
-   *
-   * Use cases: Maintenance scheduling; Operational timing; Impact control; System updates
-   *
-   * AWS: DMS replication instance maintenance window for system updates and operational scheduling
-   *
-   * Validation: Must be valid time range format (ddd:hh24:mi-ddd:hh24:mi) if provided; minimum 30-minute window
-   **/
+  /** Maintenance window specification for system updates and maintenance operations controlling */
   readonly preferredMaintenanceWindow?: string;
   readonly replicationInstanceClass: string;
   readonly replicationInstanceIdentifier?: string;

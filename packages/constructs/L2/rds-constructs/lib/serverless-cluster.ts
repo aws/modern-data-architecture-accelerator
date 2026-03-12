@@ -26,16 +26,7 @@ import { getSanitizeClusterIdentifier } from './utils';
 
 export interface MdaaRdsServerlessClusterProps extends MdaaConstructProps {
   readonly engine: 'aurora-mysql' | 'aurora-postgresql';
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required engine version specification controlling Aurora database version and feature availability for compatibility and security. Defines the specific Aurora engine version for feature access, security updates, and application compatibility requirements.
-   *
-   * Use cases: Version management; Feature access; Security updates; Application compatibility
-   *
-   * AWS: Aurora Serverless engine version for feature access and compatibility management
-   *
-   * Validation: Must be valid AuroraPostgresEngineVersion or AuroraMysqlEngineVersion; required for version specification
-   *   **/
+  /** Engine version specification controlling Aurora database version and feature availability */
   readonly engineVersion: AuroraPostgresEngineVersion | AuroraMysqlEngineVersion;
   readonly monitoringRole: IRole;
   readonly backupRetention?: number;
@@ -47,30 +38,10 @@ export interface MdaaRdsServerlessClusterProps extends MdaaConstructProps {
   readonly enableDataApi?: boolean;
   readonly parameterGroup?: IParameterGroup;
   readonly scaling?: ServerlessScalingOptions;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of security groups for Aurora cluster network access control defining inbound and outbound traffic rules for database security. Provides network-level security controls for Aurora cluster ensuring secure database communication.
-   *
-   * Use cases: Network security; Database access control; Traffic filtering; Security group management
-   *
-   * AWS: VPC security groups for Aurora Serverless cluster network security and access control
-   *
-   * Validation: Must be array of valid ISecurityGroup interfaces if provided; enables network security control
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.ISecurityGroup.html
-   **/
+  /** Array of security groups for Aurora cluster network access control defining inbound and */
   readonly securityGroups?: ISecurityGroup[];
   readonly encryptionKey: IMdaaKmsKey;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required VPC for Aurora cluster deployment providing network isolation and security controls for serverless database operations. Defines the network environment where the Aurora Serverless cluster will be deployed for secure networking.
-   *
-   * Use cases: Network isolation; VPC integration; Secure networking; Database connectivity
-   *
-   * AWS: Amazon VPC for Aurora Serverless cluster network isolation and secure database deployment
-   *
-   * Validation: Must be valid IVpc interface; required for Aurora cluster network deployment and security
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.IVpc.html
-   **/
+  /** VPC for Aurora cluster deployment providing network isolation and security controls for */
   readonly vpc: IVpc;
   readonly vpcSubnets: SubnetSelection;
 

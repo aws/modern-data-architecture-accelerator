@@ -12,68 +12,60 @@ import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 /**
- * Q-ENHANCED-PROPERTY
- * Properties for a dashboard configuration.
+ * CloudWatch dashboard configuration with name and widget definitions.
  *
- * Use Cases:
- * - Create unified observability dashboards across multiple Lambda functions
- * - Aggregate metrics from different modules using SSM references
- * - Display log insights queries alongside metrics
+ * Use cases: Unified observability; Cross-module metric aggregation; Log insights visualization
  *
- * AWS Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutDashboard.html
+ * AWS: CloudWatch dashboard
  *
- * Validation:
- * - dashboardName must be unique within the account/region
- * - widgets array must not be empty
+ * Validation: dashboardName and widgets required
  */
 export interface DashboardProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required name of the CloudWatch dashboard. Must be unique within the account and region. Used to identify and access the dashboard in the CloudWatch console.
+   * Unique name for the CloudWatch dashboard within the account/region.
    *
-   * Use cases: Dashboard identification; Console navigation; Resource management
+   * Use cases: Dashboard identification; Console navigation
    *
-   * AWS: CloudWatch dashboard name for unique identification within account/region
+   * AWS: CloudWatch dashboard name
    *
-   * Validation: Must be valid dashboard name; required; unique within account/region
+   * Validation: Required; unique within account/region
    */
   readonly dashboardName: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of widget definitions for the dashboard. Each widget displays metrics, logs, or text content. Widgets are automatically laid out with wrapping at 24-unit width.
+   * Widget definitions for metrics, logs, or text content.
+   * Widgets auto-layout with wrapping at 24-unit width.
    *
-   * Use cases: Metric visualization; Log query results; Dashboard organization with text headers
+   * Use cases: Metric visualization; Log query results; Dashboard organization
    *
-   * AWS: CloudWatch dashboard widgets for displaying metrics, logs, and text content
+   * AWS: CloudWatch dashboard widgets
    *
-   * Validation: Must be non-empty array of valid DashboardWidgetProps objects; required
+   * Validation: Required; non-empty array of DashboardWidgetProps
    */
   readonly widgets: DashboardWidgetProps[];
 }
 
 export interface DashboardConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required name of the DataOps project that will contain and manage the dashboards. Provides organizational context and enables resource sharing, permissions management, and operational coordination within the DataOps framework.
+   * DataOps project name for dashboard resource organization.
    *
-   * Use cases: DataOps project organization; Resource sharing and permissions; Operational coordination and monitoring
+   * Use cases: Project integration; Resource coordination
    *
-   * AWS: DataOps project reference for dashboard organization and resource management
+   * AWS: DataOps project reference
    *
-   * Validation: Must be valid DataOps project name; required; project must exist or be created in the same deployment
+   * Validation: Optional; must match an existing deployed project
    */
   readonly projectName?: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of CloudWatch dashboard definitions for observability and monitoring. Each dashboard can display metrics, logs, and text widgets from multiple Lambda functions and modules using SSM references for cross-module integration.
+   * CloudWatch dashboard definitions for observability and monitoring.
+   * Dashboards can reference metrics from other modules via SSM parameters.
    *
-   * Use cases: Unified observability dashboards; Cross-module metric aggregation; Log insights visualization
+   * Use cases: Unified observability; Cross-module metric aggregation
    *
-   * AWS: CloudWatch dashboard creation with SSM-based metric references and widget layout
+   * AWS: CloudWatch dashboards
    *
-   * Validation: Must be array of valid DashboardProps objects if provided; dashboards inherit project context
+   * Validation: Optional; array of DashboardProps
    */
   readonly dashboards?: DashboardProps[];
 }

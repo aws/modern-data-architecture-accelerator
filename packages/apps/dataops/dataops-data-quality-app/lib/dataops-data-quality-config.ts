@@ -12,27 +12,25 @@ import * as configSchema from './config-schema.json';
 
 export interface DataQualityConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for data quality ruleset integration and resource coordination. Links data quality rulesets to the DataOps project infrastructure for naming and resource management.
+   * DataOps project name for data quality ruleset integration and naming.
    *
-   * Use cases: Project integration; Resource coordination; Naming conventions
+   * Use cases: Project integration; Resource coordination
    *
-   * AWS: DataOps project name for data quality ruleset organization
+   * AWS: DataOps project reference
    *
-   * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
-   **/
+   * Validation: Optional; must match an existing deployed project
+   */
   readonly projectName?: string;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of data quality ruleset definitions for automated table validation. Defines all data quality rulesets to be created for monitoring Glue Catalog tables.
+   * Map of ruleset names to Glue Data Quality ruleset definitions for automated table validation.
    *
-   * Use cases: Data quality monitoring; Table validation; Quality assurance; Data governance
+   * Use cases: Data quality monitoring; Table validation; Quality governance
    *
-   * AWS: AWS Glue Data Quality ruleset definitions for automated validation
+   * AWS: AWS Glue Data Quality rulesets
    *
-   * Validation: Must be object with string keys and valid DataQualityRulesetDefinition values; required
-   **/
+   * Validation: Required; map of string to DataQualityRulesetDefinition
+   */
   readonly rulesets: { [key: string]: DataQualityRulesetDefinition };
 }
 

@@ -30,95 +30,90 @@ import { Construct } from 'constructs';
 export const CENTRAL_SM_REPO_ACCT = '341280168497';
 
 /**
- * Q-ENHANCED-INTERFACE
- * Data Science Team configuration interface for ML team infrastructure deployment with SageMaker Studio, team data lake, Athena workgroup, and collaborative ML development resources. Defines complete data science team setup including shared resources, user profiles, execution roles, and team-specific data storage for collaborative ML experimentation and model development.
+ * Data science team configuration for ML infrastructure deployment.
+ * Defines SageMaker Studio domain, S3 mini data lake, Athena workgroup, execution roles, user profiles, and team access controls.
  *
- * Use cases: Data science team collaboration; ML team infrastructure; Shared ML resources; Team-based ML development; Collaborative data science environments
+ * Use cases: Team ML environment setup, shared data lake access, collaborative notebook development, SageMaker Studio provisioning
  *
- * AWS: SageMaker Studio Domain with user profiles, S3 team data lake, Athena workgroup, and IAM roles for data science team infrastructure
+ * AWS: SageMaker Studio Domain, S3, Athena, IAM
  *
- * Validation: Admin roles must have appropriate permissions; team configuration must include valid SageMaker and data lake settings; user profiles must be properly configured
+ * Validation: Requires dataAdminRoles and teamExecutionRole; studioDomainConfig optional
  */
 export interface DataScienceTeamProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Administrative roles for data science team resource access control providing permissions for team infrastructure management. Provides administrative access to team resources including KMS keys, S3 buckets, and SageMaker resources, enabling team administration and resource management for data science operations.
+   * Admin roles granted access to team resources including KMS keys, S3 buckets, and SageMaker resources.
    *
-   * Use cases: Team administration; Resource management; Administrative access control; Infrastructure governance
+   * Use cases: Team administration, resource management, infrastructure governance
    *
-   * AWS: IAM roles with administrative permissions for data science team resource access and management
+   * AWS: IAM roles for team resource administration
    *
-   * Validation: Must be valid MdaaRoleRef array; roles must exist and have appropriate permissions for team resource administration
+   * Validation: Required; MdaaRoleRef[]
    **/
   readonly dataAdminRoles: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Team user roles for data science team member access control with appropriate permissions for ML development activities. Provides team member access to shared resources including data lake, SageMaker Studio, and collaborative development tools, enabling productive data science workflows while maintaining security boundaries.
+   * Team member roles for accessing shared resources like data lake, SageMaker Studio, and collaborative tools.
    *
-   * Use cases: Team member access; ML development; Collaborative workflows; User permission management
+   * Use cases: Team member access, ML development, collaborative workflows
    *
-   * AWS: IAM roles with team member permissions for data science development and collaboration
+   * AWS: IAM roles for team member permissions
    *
-   * Validation: Must be valid MdaaRoleRef array if specified; roles must exist and have appropriate permissions for team member activities
+   * Validation: Optional; MdaaRoleRef[]
    **/
   readonly teamUserRoles?: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * SageMaker execution role reference for team ML workload execution with service trust and resource access permissions. Defines the IAM role used for executing SageMaker resources including training jobs, endpoints, and notebooks, requiring SageMaker service trust and appropriate resource access permissions.
+   * Execution role for SageMaker workloads including training jobs, endpoints, and notebooks.
+   * Must have sagemaker.amazonaws.com service trust.
    *
-   * Use cases: SageMaker execution; ML workload running; Service role assignment; Resource access control
+   * Use cases: SageMaker job execution, model training, notebook execution
    *
-   * AWS: IAM role with SageMaker service trust for ML workload execution and resource access
+   * AWS: IAM role with SageMaker service trust
    *
-   * Validation: Must be valid MdaaRoleRef; role must have assume role trust with sagemaker.amazonaws.com; additional managed policies may be attached
+   * Validation: Required; MdaaRoleRef; must trust sagemaker.amazonaws.com
    **/
   readonly teamExecutionRole: MdaaRoleRef;
   /**
-   * Q-ENHANCED-PROPERTY
-   * S3 inventory configurations for team data lake bucket content analysis and governance with automated reporting capabilities. Defines inventory configurations for team S3 buckets, enabling automated content analysis, cost optimization, and data governance through scheduled inventory reports.
+   * S3 inventory configurations for team data lake bucket content analysis and governance.
    *
-   * Use cases: Data governance; Cost analysis; Content reporting; Bucket management
+   * Use cases: Data governance, cost analysis, content reporting, bucket management
    *
-   * AWS: S3 inventory configurations for automated bucket content analysis and reporting
+   * AWS: S3 inventory configurations
    *
-   * Validation: Must be valid InventoryDefinition objects mapped by unique keys; inventory configurations must be properly formatted
-   *   **/
+   * Validation: Optional; Map of string keys to InventoryDefinition
+   **/
   readonly inventories?: { [key: string]: InventoryDefinition };
   /**
-   * Q-ENHANCED-PROPERTY
-   * SageMaker Studio domain configuration for team collaborative ML development environment with shared resources and user management. When defined, creates a dedicated SageMaker Studio domain for the team with appropriate configuration for collaborative ML development, shared file systems, and integrated data lake access.
+   * SageMaker Studio domain configuration for the team's collaborative ML development environment.
+   * Supports IAM and SSO auth modes, VPC config, lifecycle configs, custom images, and notebook sharing.
    *
-   * Use cases: Collaborative ML development; Team Studio environment; Shared ML resources; Integrated development
+   * Use cases: Collaborative ML development, team Studio environment, shared ML resources
    *
-   * AWS: SageMaker Studio Domain with team-specific configuration for collaborative ML development
+   * AWS: SageMaker Studio Domain
    *
-   * Validation: Must be valid DomainProps configuration if specified; domain configuration must be compatible with team setup
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_opensearch.DomainProps.html
+   * Validation: Optional; DomainProps
    **/
   readonly studioDomainConfig?: DomainProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Verbatim policy name prefix for portable policy naming across accounts with SSO integration support. When specified, creates policy names using the provided prefix instead of the naming module, enabling portable policy names for integration with SSO permission sets and cross-account scenarios.
+   * Custom policy name prefix for portable naming across accounts with SSO integration.
+   * When set, uses this prefix instead of the naming module for policy names.
    *
-   * Use cases: SSO integration; Cross-account portability; Policy name standardization; Permission set integration
+   * Use cases: SSO integration, cross-account portability, permission set integration
    *
-   * AWS: IAM policy naming with custom prefix for portable policy management and SSO integration
+   * AWS: IAM policy naming prefix
    *
-   * Validation: Must be valid policy name prefix; useful for SSO permission set integration and cross-account policy portability
+   * Validation: Optional; String
    **/
   readonly verbatimPolicyNamePrefix?: string;
 }
 
 export interface DataScienceTeamL3ConstructProps extends MdaaL3ConstructProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required data science team configuration defining ML development infrastructure including team resources, access controls, and SageMaker Studio integration. Provides complete team setup with data lake connectivity, shared resources, and collaborative ML development environment for data science workflows.
+   * Complete data science team configuration for ML infrastructure deployment.
    *
-   * Use cases: Team infrastructure setup; ML development environment; Data lake integration; Collaborative development
+   * Use cases: Team infrastructure setup, ML development environment, data lake integration
    *
-   * AWS: Data science team configuration for SageMaker Studio and data lake integration
+   * AWS: SageMaker Studio, S3, Athena, IAM
    *
-   * Validation: Must be valid DataScienceTeamProps; required for data science team deployment and ML infrastructure
+   * Validation: Required; DataScienceTeamProps
    **/
   readonly team: DataScienceTeamProps;
 }

@@ -17,71 +17,68 @@ import { ConfigurationElement } from '@aws-mdaa/config';
 export type FolderActions = 'READER_FOLDER' | 'AUTHOR_FOLDER';
 
 /**
- * Q-ENHANCED-INTERFACE
- * QuickSight shared folder permissions configuration interface for controlling user access to shared BI folders with role-based permissions. Defines principal-specific folder access permissions enabling collaborative BI development with controlled access to shared dashboards, analyses, and datasets within QuickSight projects.
+ * Permission entry for a QuickSight shared folder, mapping a principal to a folder action.
  *
- * Use cases: Collaborative BI development; Shared folder access control; Team-based dashboard sharing; Role-based BI permissions; Project folder organization
+ * Use cases: Folder read access for consumers; Author access for BI developers
  *
- * AWS: Amazon QuickSight shared folder permissions with principal-based access control for collaborative BI project management
+ * AWS: QuickSight shared folder permissions
  *
- * Validation: principal must be valid QuickSight user or group ARN; actions must be 'READER_FOLDER' or 'AUTHOR_FOLDER'
+ * Validation: Both principal and actions are required
  */
 export interface SharedFoldersPermissionsProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required principal identifier for QuickSight shared folder access control enabling user or group-based permissions. Defines the specific QuickSight user or group that will be granted access to the shared folder, providing identity-based access control for collaborative BI development and dashboard sharing.
+   * Principal name referencing a QuickSight user or group from the project's principals map.
    *
-   * Use cases: User-based access control; Group permissions; Identity management; Collaborative BI access; Principal-based security
+   * Use cases: Group-based folder access; User-specific permissions
    *
-   * AWS: Amazon QuickSight principal identifier for shared folder access control and identity-based permissions
+   * AWS: QuickSight principal (user or group)
    *
-   * Validation: Must be valid QuickSight user or group identifier; required for principal-based access control
-   **/
+   * Validation: Required; must match a key in the project principals configuration
+   */
   readonly principal: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required folder action permissions for QuickSight shared folder access control enabling role-based folder operations. Defines the specific actions that the principal can perform on the shared folder, controlling whether users have read-only access or full authoring capabilities for collaborative BI development.
+   * Folder permission level granted to the principal.
    *
-   * Use cases: Role-based permissions; Folder operation control; Access level management; Collaborative BI security; Action-based access control
+   * Use cases: Read-only dashboard consumers; Full authoring access for BI developers
    *
-   * AWS: Amazon QuickSight folder actions for shared folder operation control and role-based access management
+   * AWS: QuickSight folder actions (DescribeFolder for READER, full CRUD for AUTHOR)
    *
-   * Validation: Must be valid FolderActions enum value (READER_FOLDER or AUTHOR_FOLDER); required for folder permission specification
-   **/
+   * Validation: Required; 'READER_FOLDER' | 'AUTHOR_FOLDER'
+   */
   readonly actions: FolderActions;
 }
 /**
- * Q-ENHANCED-INTERFACE
- * QuickSight shared folder configuration interface for creating collaborative BI workspaces with hierarchical folder organization and permission management. Defines shared folder properties including folder hierarchy, permissions, and organizational structure for team-based BI development and dashboard sharing within QuickSight projects.
+ * Shared folder configuration with permissions and optional nested sub-folders.
+ * Folders organize QuickSight assets (dashboards, analyses, datasets) with
+ * hierarchical structure and per-folder access control.
  *
- * Use cases: BI workspace organization; Hierarchical folder structure; Team collaboration spaces; Dashboard organization; Project-based BI management
+ * Use cases: Environment-based folder hierarchy (dev/test/prod); Team workspace isolation; Asset organization
  *
- * AWS: Amazon QuickSight shared folder creation with hierarchical organization and permission management for collaborative BI development
+ * AWS: QuickSight shared folders via custom resource
  *
- * Validation: folderName must be unique within parent folder; folderPermissions must contain valid permission configurations; parentFolderArn must reference existing folder if specified
+ * Validation: permissions required; folders optional for nesting
  */
 export interface SharedFoldersProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of permission configurations for QuickSight shared folder access control enabling role-based folder security and collaboration management. Defines the specific permissions that will be applied to the shared folder including user access rights, group permissions, and action-based security for collaborative BI development.
+   * Permission entries controlling who can access this folder and at what level.
    *
-   * Use cases: Folder access control; Role-based permissions; Collaboration security; User access management; BI workspace security
+   * Use cases: Multi-group access control; Reader/Author separation per folder
    *
-   * AWS: Amazon QuickSight shared folder permissions for access control and collaborative BI security management
+   * AWS: QuickSight folder permissions
    *
-   * Validation: Must be array of valid SharedFoldersPermissionsProps; required for folder permission configuration
-   **/
+   * Validation: Required; array of SharedFoldersPermissionsProps
+   */
   readonly permissions: SharedFoldersPermissionsProps[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional nested folder structure for QuickSight shared folder hierarchy enabling organized BI workspace management and hierarchical content organization. Defines sub-folders within the current folder providing multi-level organization for dashboards, analyses, and BI assets.
+   * Nested child folders inheriting the parent's organizational context.
+   * Each child folder has its own permissions and can contain further sub-folders.
    *
-   * Use cases: Hierarchical folder organization; Nested BI workspaces; Multi-level content organization; Structured BI asset management; Project organization
+   * Use cases: Working/publishing sub-folder separation; Hierarchical asset organization
    *
-   * AWS: Amazon QuickSight nested shared folder structure for hierarchical BI workspace organization and content management
+   * AWS: QuickSight nested shared folders
    *
-   * Validation: Must be object with string keys and valid SharedFoldersProps values if provided; optional for nested folder structure
-   **/
+   * Validation: Optional; map of folder name to SharedFoldersProps
+   */
   readonly folders?: { [key: string]: SharedFoldersProps };
 }
 interface FolderDetailPermissionsProps {
@@ -97,14 +94,13 @@ interface FolderDetailProps {
 //Interfaces for DataSource
 export type DataSourceActions = 'READER_DATA_SOURCE' | 'AUTHOR_DATA_SOURCE';
 /**
- * Q-ENHANCED-INTERFACE
- * QuickSight data source permissions configuration interface for controlling user access to BI data sources with role-based data access management. Defines principal-specific data source permissions enabling secure data access control for QuickSight users with reader or author permissions on underlying data connections.
+ * Permission entry for a QuickSight data source, mapping a principal to a data source action.
  *
- * Use cases: Data source access control; Role-based data permissions; Secure BI data access; User data authorization; Data source security management
+ * Use cases: Read-only data source access; Full author access for data source management
  *
- * AWS: Amazon QuickSight data source permissions with principal-based access control for secure BI data connectivity
+ * AWS: QuickSight data source permissions
  *
- * Validation: principal must be valid QuickSight user or group ARN; actions must be 'READER_DATA_SOURCE' or 'AUTHOR_DATA_SOURCE'
+ * Validation: Both actions and principal are required
  */
 export interface DataSourcePermissionsProps {
   /**
@@ -127,14 +123,13 @@ export interface DataSourcePermissions2Props {
   readonly principal: string;
 }
 /**
- * Q-ENHANCED-INTERFACE
- * QuickSight data source error information configuration interface for capturing and managing data connection error details with diagnostic information. Defines error properties for troubleshooting data source connectivity issues including error messages, types, and diagnostic information for QuickSight data source management.
+ * Error information for a QuickSight data source connection failure.
  *
- * Use cases: Data source troubleshooting; Connection error diagnosis; Data connectivity monitoring; Error reporting; Data source health management
+ * Use cases: Data source troubleshooting; Connection error diagnosis
  *
- * AWS: Amazon QuickSight data source error information for connection troubleshooting and diagnostic reporting
+ * AWS: QuickSight data source error info
  *
- * Validation: type must be valid error type (ACCESS_DENIED, CONFLICT, COPY_SOURCE_NOT_FOUND, etc.); message should be descriptive error text
+ * Validation: Both fields optional
  */
 export interface DataSourceErrorInfoProps {
   /**
@@ -148,51 +143,45 @@ export interface DataSourceErrorInfoProps {
   readonly type?: string;
 }
 /**
- * Q-ENHANCED-INTERFACE
- * QuickSight data source credential pair configuration interface for secure database authentication with username and password credentials. Defines credential properties for authenticating to external data sources including databases, data warehouses, and other data systems requiring username/password authentication in QuickSight data connections.
+ * Username/password credential pair for QuickSight data source authentication.
  *
- * Use cases: Database authentication; Secure data source connections; Credential management; Data warehouse access; External system authentication
+ * Use cases: Database authentication; Redshift/RDS credential-based connections
  *
- * AWS: Amazon QuickSight data source credentials for secure authentication to external databases and data systems
+ * AWS: QuickSight data source credential pair
  *
- * Validation: username and password must be non-empty strings; credentials must be valid for target data source; password should be stored securely
+ * Validation: password and username required; alternateDataSourceParameters optional
  */
 export interface DataSourceCredentialPairProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required password for QuickSight data source authentication enabling secure access to external databases and data systems. Provides the password credential for username/password authentication to data sources requiring secure database connectivity.
+   * Password for data source authentication. Can use dynamic references
+   * (e.g., resolve:secretsmanager) for secure credential retrieval.
    *
-   * Use cases: Database authentication; Secure data access; Credential-based connections; Data source security
+   * Use cases: Database password; Secret manager dynamic reference
    *
-   * AWS: Amazon QuickSight data source password for secure authentication to external databases
+   * AWS: QuickSight data source credential
    *
-   * Validation: Must be non-empty string; required for credential-based authentication; should be stored securely
-   **/
+   * Validation: Required; non-empty string
+   */
   readonly password: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required username for QuickSight data source authentication enabling secure access to external databases and data systems. Provides the username credential for username/password authentication to data sources requiring secure database connectivity.
+   * Username for data source authentication.
    *
-   * Use cases: Database authentication; User identification; Credential-based connections; Data source access
+   * Use cases: Database user identity; Service account access
    *
-   * AWS: Amazon QuickSight data source username for secure authentication to external databases
+   * AWS: QuickSight data source credential
    *
-   * Validation: Must be non-empty string; required for credential-based authentication
-   **/
+   * Validation: Required; non-empty string
+   */
   readonly username: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional alternate data source parameters for credential sharing and flexible authentication configuration. Provides additional authentication parameters that can be shared across multiple data sources for consistent credential management and flexible authentication scenarios.
+   * Alternate data source parameters for credential sharing across multiple data sources.
    *
-   * Use cases: Credential sharing; Flexible authentication; Multi-source credentials; Parameter customization
+   * Use cases: Multi-source credential reuse; Alternate host configuration
    *
-   * AWS: Amazon QuickSight alternate data source parameters for flexible credential configuration
+   * AWS: QuickSight alternate data source parameters
    *
-   * Validation: Must be valid parameter object array if provided; optional for advanced credential configuration
-   *   *   alternateDataSourceParameters:
-   *     - host: "alternate-host.example.com"
-   *       port: 5432
-   **/
+   * Validation: Optional; array of parameter objects
+   */
   /** @jsii ignore */
   readonly alternateDataSourceParameters?: [
     {
@@ -202,14 +191,14 @@ export interface DataSourceCredentialPairProps {
   ];
 }
 /**
- * Q-ENHANCED-INTERFACE
- * DataSourceCredentialsProps configuration interface for business intelligence and data visualization.
+ * Credentials for a QuickSight data source. Supports secret ARN (recommended for rotation),
+ * credential pair, or copying credentials from another data source.
  *
- * Use cases: Business intelligence; Data visualization; Interactive dashboards; BI reporting
+ * Use cases: Secret-based authentication; Direct credential pair; Cross-source credential sharing
  *
- * AWS: Amazon QuickSight configuration for business intelligence and data visualization
+ * AWS: QuickSight CfnDataSource.DataSourceCredentialsProperty
  *
- * Validation: Configuration must be valid for deployment; properties must conform to Amazon QuickSight and MDAA requirements
+ * Validation: Provide one of secretArn, credentialPair, or copySourceArn
  */
 export interface DataSourceCredentialsProps {
   /**
@@ -253,14 +242,13 @@ export type DataSourceTypeProps =
   | 'TIMESTREAM'
   | 'TWITTER';
 /**
- * Q-ENHANCED-INTERFACE
- * QuickSight data source SSL configuration interface for secure data connections with SSL/TLS encryption control. Defines SSL properties for enabling or disabling encrypted connections to external data sources, ensuring secure data transmission between QuickSight and underlying data systems with configurable encryption settings.
+ * SSL configuration for a QuickSight data source connection.
  *
- * Use cases: Secure data connections; SSL/TLS encryption control; Data transmission security; Compliance requirements; Network security configuration
+ * Use cases: Disabling SSL for internal/test data sources; Enforcing encrypted connections
  *
- * AWS: Amazon QuickSight data source SSL configuration for encrypted connections to external data systems
+ * AWS: QuickSight CfnDataSource.SslProperties
  *
- * Validation: disableSsl must be boolean value; SSL should be enabled (false) for production data sources containing sensitive data
+ * Validation: disableSsl required; boolean
  */
 export interface DataSourceSSLProps {
   /**
@@ -269,14 +257,13 @@ export interface DataSourceSSLProps {
   readonly disableSsl: boolean;
 }
 /**
- * Q-ENHANCED-INTERFACE
- * DataSourceVPCProps configuration interface for business intelligence and data visualization.
+ * VPC connection properties for a QuickSight data source requiring private network access.
  *
- * Use cases: Business intelligence; Data visualization; Interactive dashboards; BI reporting
+ * Use cases: Redshift in VPC; RDS private connectivity
  *
- * AWS: Amazon QuickSight configuration for business intelligence and data visualization
+ * AWS: QuickSight CfnDataSource.VpcConnectionProperties
  *
- * Validation: Configuration must be valid for deployment; properties must conform to Amazon QuickSight and MDAA requirements
+ * Validation: vpcConnectionArn required; must reference existing QuickSight VPC connection
  */
 export interface DataSourceVPCProps {
   /**
@@ -285,14 +272,14 @@ export interface DataSourceVPCProps {
   readonly vpcConnectionArn: string;
 }
 /**
- * Q-ENHANCED-INTERFACE
- * DataSourceProps configuration interface for business intelligence and data visualization.
+ * Core data source configuration for QuickSight, defining connection parameters,
+ * credentials, permissions, and optional SSL/VPC settings.
  *
- * Use cases: Business intelligence; Data visualization; Interactive dashboards; BI reporting
+ * Use cases: Redshift data source; Athena data source; S3/RDS connectivity
  *
- * AWS: Amazon QuickSight configuration for business intelligence and data visualization
+ * AWS: QuickSight CfnDataSource
  *
- * Validation: Configuration must be valid for deployment; properties must conform to Amazon QuickSight and MDAA requirements
+ * Validation: dataSourceSpecificParameters, displayName, and permissions required
  */
 export interface DataSourceProps {
   readonly dataSourceSpecificParameters: ConfigurationElement;
@@ -345,38 +332,11 @@ export interface DataSourceWithIdAndTypeProps extends DataSourceProps {
   readonly dataSourceId: string;
 }
 export interface QuickSightProjectL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of data source configurations for QuickSight project data connectivity enabling data integration and analytics capabilities. Provides data source setup with connection parameters, credentials, and access controls for connecting to various data systems and enabling BI analytics operations.
-   *
-   * Use cases: Data source integration; Analytics connectivity; Data integration; BI data access
-   *
-   * AWS: QuickSight data sources for project data connectivity and analytics integration
-   *
-   * Validation: Must be array of valid DataSourceWithIdAndTypeProps if provided; enables data source integration and analytics connectivity
-   **/
+  /** Data source configurations for the QuickSight project. */
   readonly dataSources?: DataSourceWithIdAndTypeProps[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of principal names to principal identifiers for QuickSight project access control enabling user and group management for BI collaboration. Provides principal configurations for controlling access to project resources including data sources, folders, and analytics assets for secure collaboration.
-   *
-   * Use cases: Access control; User management; Principal configuration; Collaboration security
-   *
-   * AWS: QuickSight principals for project access control and user management
-   *
-   * Validation: Must be valid principal name to identifier mapping; required for project access control and user management
-   *   **/
+  /** Map of principal names to QuickSight user/group ARNs for permissions. */
   readonly principals: { [key: string]: string };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of folder names to shared folder configurations for QuickSight project organization enabling collaborative asset management and structured content organization. Provides shared folder setup with permissions and access controls for organizing dashboards, analyses, and datasets within project structure.
-   *
-   * Use cases: Asset organization; Collaborative management; Content structure; Folder permissions
-   *
-   * AWS: QuickSight shared folders for project asset organization and collaborative management
-   *
-   * Validation: Must be valid folder name to SharedFoldersProps mapping if provided; enables project asset organization and collaboration
-   *   **/
+  /** Map of folder names to shared folder configurations. */
   readonly sharedFolders?: { [key: string]: SharedFoldersProps };
 }
 

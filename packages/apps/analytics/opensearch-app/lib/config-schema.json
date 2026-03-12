@@ -473,22 +473,22 @@
         },
         "CustomEndpointConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nCustomEndpointConfig configuration interface for search analytics and log analysis.\n\nUse cases: Search analytics; Log analysis; Full-text search; Data indexing\n\nAWS: Amazon OpenSearch configuration for search analytics and log analysis\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon OpenSearch and MDAA requirements",
+            "description": "Custom endpoint configuration for branded OpenSearch domain access.\nConfigures custom domain name, SSL certificate, and optional Route53 DNS integration.\nIf acmCertificateArn is omitted, a new ACM certificate is created automatically.\n\nUse cases: Branded domain access; Custom SSL certificates; Automated DNS record creation\n\nAWS: OpenSearch custom endpoint with ACM certificate and optional Route53 CNAME\n\nValidation: domainName required; route53HostedZoneDomainName required when route53HostedZoneEnabled is true",
             "properties": {
                 "acmCertificateArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nACM certificate ARN for custom endpoint SSL/TLS encryption enabling secure custom domain access. When specified, uses existing ACM certificate for SSL/TLS encryption; otherwise, a new certificate will be automatically created for the custom domain.\n\nUse cases: Custom SSL certificates; Existing certificate reuse; SSL/TLS encryption; Secure domain access\n\nAWS: AWS Certificate Manager certificate for OpenSearch custom endpoint SSL/TLS encryption\n\nValidation: Must be valid ACM certificate ARN if specified; certificate must be valid for the specified domain name",
+                    "description": "Existing ACM certificate ARN for SSL/TLS. If omitted, a new certificate is created.\n\nUse cases: Existing certificate reuse; Custom SSL management\n\nAWS: ACM certificate for OpenSearch custom endpoint\n\nValidation: Optional; valid ACM certificate ARN matching the domain name",
                     "type": "string"
                 },
                 "domainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nFully qualified domain name for OpenSearch custom endpoint enabling branded domain access and SSL certificate management. Specifies the custom domain name for accessing the OpenSearch domain, supporting branded access patterns and custom SSL certificate configuration.\n\nUse cases: Branded domain access; Custom SSL certificates; Domain-specific access; Professional endpoint naming\n\nAWS: Amazon OpenSearch domain custom endpoint configuration for branded domain access\n\nValidation: Must be valid FQDN format; required when customEndpoint section is specified; domain must be resolvable",
+                    "description": "Fully qualified domain name for the custom endpoint (e.g., search.example.com).\n\nUse cases: Branded domain access; Professional endpoint naming\n\nAWS: OpenSearch custom endpoint domain name\n\nValidation: Required; valid FQDN",
                     "type": "string"
                 },
                 "route53HostedZoneDomainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRoute53 hosted zone domain name for DNS management enabling domain-specific DNS configuration. Specifies the domain name used in the hosted zone for DNS record creation, supporting domain-specific DNS management and resolution.\n\nUse cases: Domain-specific DNS; Hosted zone configuration; DNS management; Domain resolution\n\nAWS: Amazon Route53 hosted zone domain name for OpenSearch custom endpoint DNS management\n\nValidation: Must be valid domain name if specified; domain must exist in Route53 hosted zone",
+                    "description": "Route53 hosted zone domain name for DNS record creation (e.g., example.com).\nRequired when route53HostedZoneEnabled is true.\n\nUse cases: Hosted zone selection; Domain-specific DNS configuration\n\nAWS: Route53 hosted zone for CNAME record creation\n\nValidation: Optional; valid domain name matching an existing Route53 hosted zone",
                     "type": "string"
                 },
                 "route53HostedZoneEnabled": {
-                    "description": "Q-ENHANCED-PROPERTY\nRoute53 hosted zone enablement for custom endpoint DNS management enabling automated DNS record creation. When enabled, automatically creates DNS records in Route53 for the custom endpoint; when disabled, DNS management must be handled externally.\n\nUse cases: Automated DNS management; Route53 integration; DNS record automation; Domain resolution setup\n\nAWS: Amazon Route53 hosted zone integration for OpenSearch custom endpoint DNS management\n\nValidation: Boolean value; when true, enables automatic DNS record creation in Route53 hosted zone",
+                    "description": "Enable automatic Route53 CNAME record creation for the custom endpoint.\n\nUse cases: Automated DNS management; Route53 integration\n\nAWS: Route53 CNAME record for OpenSearch custom endpoint\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 }
             },
@@ -617,7 +617,6 @@
         },
         "DomainConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA-compliant DataZone domain configuration providing domain management and integration capabilities. Extends standard CDK properties with MDAA naming conventions and enhanced security features for secure domain governance and catalog integration.\n\nUse cases: DataZone domain configuration; Domain governance setup; Catalog integration; Multi-domain management\n\nAWS: Creates Amazon DataZone domain configuration with KMS integration and Glue catalog connectivity\n\nValidation: All properties except ssmParamBase and domainUnits are required for complete domain configuration",
             "properties": {
                 "blueprintIds": {
                     "additionalProperties": {
@@ -629,63 +628,63 @@
                     "type": "boolean"
                 },
                 "createOutputs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.\n\nUse cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references\n\nAWS: CloudFormation outputs and exports for MDAA construct resource references and external integration\n\nValidation: Boolean value; defaults to true; enables CloudFormation output and export creation",
+                    "description": "Flag controlling CloudFormation output and stack export creation for construct resources",
                     "type": "boolean"
                 },
                 "createParams": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.\n\nUse cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management\n\nAWS: SSM parameter creation for MDAA construct resource references and infrastructure integration\n\nValidation: Boolean value; defaults to true; enables SSM parameter creation for resource references",
+                    "description": "Flag controlling SSM parameter creation for construct resource references enabling",
                     "type": "boolean"
                 },
                 "customResourceRoleName": {
                     "type": "string"
                 },
                 "domainArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ARN for AWS resource identification and IAM policy integration enabling secure domain access control. Provides the complete AWS resource identifier for the domain for IAM policies and cross-service access control.\n\nUse cases: AWS resource identification; IAM policy integration; Cross-service access; Resource-based policies\n\nAWS: Amazon DataZone domain ARN for AWS resource identification and IAM integration\n\nValidation: Must be valid DataZone domain ARN; required; follows AWS ARN pattern for DataZone domains",
+                    "description": "DataZone domain ARN for AWS resource identification and IAM policy integration enabling",
                     "type": "string"
                 },
                 "domainBucketArn": {
                     "type": "string"
                 },
                 "domainBucketUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain Bucket usage policy name. Provides IAM policy name for managing Bucket access and usage permissions for domain operations and data protection.\n\nUse cases: Bucket access management;\n\nAWS: IAM policy name for DataZone domain Bucket usage and access management\n\nValidation: Must be valid IAM policy name; required; defines Bucket access and usage permissions for domain",
+                    "description": "Domain Bucket usage policy name",
                     "type": "string"
                 },
                 "domainId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ID for unique domain identification within AWS enabling cross-service integration and reference. Provides the unique identifier assigned by DataZone service for domain operations and cross-service integration.\n\nUse cases: Unique domain identification; Cross-service integration; Domain operations; Service references\n\nAWS: Amazon DataZone domain ID for unique identification and cross-service integration\n\nValidation: Must be valid DataZone domain ID; required; assigned by DataZone service for unique identification",
+                    "description": "DataZone domain ID for unique domain identification within AWS enabling cross-service",
                     "type": "string"
                 },
                 "domainKmsKeyArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations. Provides encryption at rest for domain data and metadata with customer-controlled key management for enhanced security and compliance.\n\nUse cases: Domain encryption; Data protection compliance; Customer-controlled encryption; Secure domain operations\n\nAWS: AWS KMS key ARN for DataZone domain encryption and secure data protection\n\nValidation: Must be valid KMS key ARN; required; enables customer-managed encryption for domain data",
+                    "description": "KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations",
                     "type": "string"
                 },
                 "domainKmsUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain KMS usage policy name for key access management enabling controlled encryption key usage within the domain. Provides IAM policy name for managing KMS key access and usage permissions for domain operations and data protection.\n\nUse cases: KMS key access management; Encryption policy control; Key usage permissions; Domain security governance\n\nAWS: IAM policy name for DataZone domain KMS key usage and access management\n\nValidation: Must be valid IAM policy name; required; defines KMS key access and usage permissions for domain",
+                    "description": "Domain KMS usage policy name for key access management enabling controlled encryption key",
                     "type": "string"
                 },
                 "domainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain name for domain identification and management enabling unique domain naming within the DataZone service. Provides the primary identifier for the DataZone domain for governance and operational management.\n\nUse cases: Domain identification; Unique naming; Domain management; Service organization\n\nAWS: Amazon DataZone domain name for identification and management within the DataZone service\n\nValidation: Must be unique domain name string; required; used for domain identification and service management",
+                    "description": "DataZone domain name for domain identification and management enabling unique domain naming",
                     "type": "string"
                 },
                 "domainUnitIds": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of domain unit names to identifiers for hierarchical domain organization enabling structured domain management. Provides organizational structure within the domain for improved governance, access control, and operational management.\n\nUse cases: Hierarchical organization; Domain structure; Organizational governance; Structured management\n\nAWS: DataZone domain units for hierarchical organization and structured domain management\n\nValidation: Must be object with string keys and values if provided; enables hierarchical domain organization\n  *",
+                    "description": "Map of domain unit names to identifiers for hierarchical domain organization enabling",
                     "type": "object"
                 },
                 "domainVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain version for domain lifecycle management and versioning control enabling domain evolution tracking. Provides version control for domain configuration changes and lifecycle management for governance and compliance.\n\nUse cases: Version control; Domain lifecycle management; Configuration tracking; Governance compliance\n\nAWS: DataZone domain version for lifecycle management and configuration version control\n\nValidation: Must be valid version string; required; enables domain version control and lifecycle management",
+                    "description": "Domain version for domain lifecycle management and versioning control enabling domain evolution tracking",
                     "type": "string"
                 },
                 "glueCatalogArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone. Provides the Glue catalog resources that will be integrated with the DataZone domain for data discovery and governance.\n\nUse cases: Catalog integration; Data discovery; governance; Cross-service connectivity\n\nAWS: AWS Glue catalog ARNs for DataZone integration and data catalog connectivity\n\nValidation: Must be array of valid Glue catalog ARNs; required; enables catalog integration with DataZone domain",
+                    "description": "Array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "glueCatalogKmsKeyArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone. Provides encryption keys for Glue catalog data accessed through DataZone for data protection and governance.\n\nUse cases: Catalog encryption; Secure catalog integration; Data protection; governance\n\nAWS: AWS KMS key ARNs for Glue catalog encryption in DataZone integration\n\nValidation: Must be array of valid KMS key ARNs; required; enables secure catalog integration with DataZone",
+                    "description": "Array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone",
                     "items": {
                         "type": "string"
                     },
@@ -693,7 +692,7 @@
                 },
                 "naming": {
                     "$ref": "#/definitions/IMdaaResourceNaming",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.\n\nUse cases: Consistent naming; Resource identification; Naming conventions; Operational consistency\n\nAWS: MDAA resource naming for consistent resource identification and naming convention compliance\n\nValidation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming\n  *"
+                    "description": "MDAA naming implementation for consistent resource naming across all MDAA constructs"
                 },
                 "projectIds": {
                     "additionalProperties": {
@@ -705,7 +704,7 @@
                     "type": "boolean"
                 },
                 "ssmParamBase": {
-                    "description": "Q-ENHANCED-PROPERTY\nSSM parameter base path for domain configuration storage enabling centralized configuration management. Provides the base path for storing domain configuration parameters in SSM Parameter Store for centralized management and retrieval.\n\nUse cases: Centralized configuration; SSM integration; Configuration management; Parameter organization\n\nAWS: AWS Systems Manager parameter base path for domain configuration storage and management\n\nValidation: Must be valid SSM parameter path if provided; enables centralized domain configuration management",
+                    "description": "SSM parameter base path for domain configuration storage enabling centralized configuration management",
                     "type": "string"
                 }
             },
@@ -775,10 +774,10 @@
         },
         "EventNotificationsProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nEventNotificationsProps configuration interface for search analytics and log analysis.\n\nUse cases: Search analytics; Log analysis; Full-text search; Data indexing\n\nAWS: Amazon OpenSearch configuration for search analytics and log analysis\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon OpenSearch and MDAA requirements",
+            "description": "Email notification configuration for OpenSearch domain events.\n\nUse cases: Operational alerting; Domain health monitoring; Event notification\n\nAWS: SNS email subscriptions for OpenSearch domain events\n\nValidation: email array optional",
             "properties": {
                 "email": {
-                    "description": "Q-ENHANCED-PROPERTY\nEmail addresses for OpenSearch domain event notifications enabling operational alerting and monitoring. Specifies the email addresses that will receive notifications for domain events, cluster status changes, and operational alerts for proactive domain management.\n\nUse cases: Operational alerting; Email notifications; Domain monitoring; Proactive management; Event tracking\n\nAWS: Amazon SNS email subscriptions for OpenSearch domain event notifications and monitoring\n\nValidation: Must be array of valid email addresses if specified; enables email-based domain event notifications",
+                    "description": "Email addresses to receive OpenSearch domain event notifications.\nAn SNS topic is created regardless; if no emails specified, other subscription types can be added directly.\n\nUse cases: Operational alerting; Team notification; Domain monitoring\n\nAWS: SNS email subscriptions\n\nValidation: Optional; array of valid email addresses",
                     "items": {
                         "type": "string"
                     },
@@ -1092,11 +1091,10 @@
         },
         "IMdaaResourceNaming": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nInterface specification for MDAA resource naming implementations that generate consistent, unique, and compliant AWS resource names. Implementations must support multi-tenant deployments by ensuring naming semantics prevent collisions across domains, environments, and modules within the same AWS account.\n\nUse cases: Custom naming for regulatory compliance; Integration with enterprise naming standards; Multi-tenant resource isolation\n\nAWS: Generates names for all AWS resources including S3 buckets, IAM roles, Glue databases, CloudFormation stacks, SSM parameters, and CloudFormation exports\n\nValidation: All generated names must comply with AWS service-specific naming requirements and be unique within account scope",
             "properties": {
                 "props": {
                     "$ref": "#/definitions/MdaaResourceNamingConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nConfiguration properties containing organizational context and CDK node access for the naming implementation. Provides the foundational data required to generate consistent resource names across all MDAA modules.\n\nUse cases: Access to org/env/domain/module context; CDK context retrieval for custom naming; Immutable naming configuration\n\nAWS: Source data for all AWS resource name generation\n\nValidation: Must contain valid MdaaResourceNamingConfig with all required properties"
+                    "description": "Configuration properties containing organizational context and CDK node access for the naming implementation"
                 }
             },
             "required": [
@@ -1855,14 +1853,13 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
+                    "description": "CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed",
                     "type": "string"
                 },
                 "suppressions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
+                    "description": "Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -1890,10 +1887,9 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
+                    "description": "Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -1907,26 +1903,25 @@
         },
         "MdaaResourceNamingConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA resource naming implementations that standardize AWS resource naming across domains, environments, and modules. This interface enables consistent, collision-free resource naming in multi-tenant MDAA deployments by providing organizational context and CDK node access for custom naming strategies.\n\nUse cases: Multi-domain data lake deployments requiring unique resource names; Cross-account data mesh architectures with consistent naming; Custom naming implementations for compliance requirements\n\nAWS: Configures naming patterns for all AWS resources deployed by MDAA modules including S3 buckets, IAM roles, Glue databases, and CloudFormation stacks\n\nValidation: All properties required; org/env/domain/moduleName must be valid AWS resource name components (alphanumeric, hyphens, underscores)",
             "properties": {
                 "cdkNode": {
                     "$ref": "#/definitions/Node",
-                    "description": "Q-ENHANCED-PROPERTY\nCDK construct node providing access to context values for custom naming implementations. Enables retrieval of additional configuration through tryGetContext() for advanced naming strategies beyond the standard org/env/domain/module pattern.\n\nUse cases: Custom naming with environment-specific prefixes; Integration with external naming services; Context-driven naming for compliance requirements\n\nAWS: CDK context system for CloudFormation template generation\n\nValidation: Must be valid CDK Node instance with accessible context\n  *"
+                    "description": "CDK construct node providing access to context values for custom naming implementations"
                 },
                 "domain": {
-                    "description": "Q-ENHANCED-PROPERTY\nDomain identifier from MDAA configuration representing logical business or organizational boundaries within the data architecture. Forms the third component of the default naming pattern and enables data mesh architectures with domain-specific resource isolation.\n\nUse cases: Data mesh domain separation; Line-of-business resource isolation; Cross-domain data sharing with clear ownership\n\nAWS: Domain component in all AWS resource names, SSM parameter paths, and CloudFormation export names\n\nValidation: Must be valid AWS resource name component (typically business domain names like 'finance', 'marketing', 'shared')",
+                    "description": "Domain identifier from MDAA configuration representing logical business or organizational boundaries",
                     "type": "string"
                 },
                 "env": {
-                    "description": "Q-ENHANCED-PROPERTY\nEnvironment identifier from MDAA configuration that distinguishes deployment stages within the same domain. Forms the second component of the default naming pattern enabling parallel dev/test/prod deployments without resource conflicts.\n\nUse cases: Multi-stage deployments in same account; Environment-specific resource isolation; Progressive deployment strategies\n\nAWS: Environment component in all AWS resource names and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically 'dev', 'test', 'prod', 'staging')",
+                    "description": "Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain",
                     "type": "string"
                 },
                 "moduleName": {
-                    "description": "Q-ENHANCED-PROPERTY\nModule name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment. Forms the final component of the default naming pattern and enables multiple instances of the same module type within the same scope.\n\nUse cases: Multiple data lake instances per domain; Separate analytics workloads; Module-specific resource grouping\n\nAWS: Module component in all AWS resource names, SSM parameter paths, and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically module function like 'datalake', 'warehouse', 'analytics')",
+                    "description": "Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment",
                     "type": "string"
                 },
                 "org": {
-                    "description": "Q-ENHANCED-PROPERTY\nOrganization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names. Forms the first component of the default naming pattern and ensures global uniqueness across multiple MDAA deployments.\n\nUse cases: Multi-organization AWS accounts; Shared service accounts with multiple tenants; Resource name collision prevention\n\nAWS: Prefix for all AWS resource names including S3 buckets, IAM roles, and CloudFormation stacks\n\nValidation: Must be valid AWS resource name component (3-63 characters, alphanumeric and hyphens only, no consecutive hyphens)",
+                    "description": "Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names",
                     "type": "string"
                 }
             },
@@ -1941,30 +1936,29 @@
         },
         "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for referencing IAM roles across MDAA modules using multiple identification methods. Enables flexible role resolution for cross-module dependencies, external role integration, and SSO-managed roles while supporting both mutable and immutable role references.\n\nUse cases: Cross-module IAM role sharing; External role integration from Landing Zone Accelerator; SSO-managed role references for federated access\n\nAWS: References AWS IAM roles for service permissions, cross-account access, and federated identity integration\n\nValidation: At least one of name, arn, or id must be provided; arn must be valid IAM role ARN format; name must be valid IAM role name",
             "properties": {
                 "arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nFull IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.\n\nUse cases: Cross-account role references; External role integration; Precise role identification with account/region context\n\nAWS: AWS IAM role ARN for cross-account permissions and explicit role targeting\n\nValidation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)",
+                    "description": "Full IAM role ARN for cross-account role references and explicit role identification.\n\nUse cases: Cross-account role references; Explicit role binding; Multi-account deployments\n\nAWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)\n\nValidation: Optional; must be a valid IAM role ARN if provided",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.\n\nUse cases: Stable role references across name changes; Precise role identification; Role references in automated systems\n\nAWS: AWS IAM role unique ID for stable role identification\n\nValidation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)",
+                    "description": "IAM role unique identifier for role resolution using the role's AWS-generated ID.\n\nUse cases: Stable role references; Role resolution by unique ID; Immutable role binding\n\nAWS: IAM role unique ID (e.g., AROA...)\n\nValidation: Optional; must be a valid IAM role unique ID if provided",
                     "type": "string"
                 },
                 "immutable": {
-                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.\n\nUse cases: External role protection; System role preservation; Landing Zone Accelerator role integration\n\nAWS: Role modification protection flag for IAM role management\n\nValidation: Boolean value, defaults to false if not specified",
+                    "description": "Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.\n\nUse cases: Pre-existing role protection; Externally managed roles; Read-only role references\n\nAWS: Controls whether MDAA attaches policies or modifies the referenced IAM role\n\nValidation: Optional boolean; defaults to false",
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.\n\nUse cases: Same-account role references; MDAA-generated role references; Simple role configuration\n\nAWS: AWS IAM role name for role lookup and permission assignment\n\nValidation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)",
+                    "description": "IAM role name for role resolution within the same AWS account.\n\nUse cases: Same-account role references; Role name-based resolution; Local IAM role binding\n\nAWS: IAM role name resolved via GetRole within the deployment account\n\nValidation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution",
                     "type": "string"
                 },
                 "refId": {
-                    "description": "Q-ENHANCED-PROPERTY\nUnique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.\n\nUse cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging\n\nAWS: Logical identifier for IAM role references in MDAA configurations\n\nValidation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended",
+                    "description": "Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.\n\nUse cases: Role reference identification; Configuration deduplication; Role lookup key\n\nAWS: Logical identifier for IAM role references within MDAA configuration\n\nValidation: Optional; must be unique within the configuration scope if provided",
                     "type": "string"
                 },
                 "sso": {
-                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.\n\nUse cases: AWS Identity Center integration; Federated user access; SSO-managed role references\n\nAWS: AWS Identity Center (SSO) role resolution for federated access\n\nValidation: Boolean value, implies immutable=true when set to true",
+                    "description": "Flag indicating the role should be resolved as an AWS SSO auto-generated role.\n\nUse cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access\n\nAWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention\n\nValidation: Optional boolean; defaults to false",
                     "type": "boolean"
                 }
             },
@@ -2063,17 +2057,16 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
+                    "description": "Human-readable description explaining the purpose and scope of the Service Catalog constraint",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
+                    "description": "Object containing named constraint rules that define the validation logic for Service Catalog product parameters",
                     "type": "object"
                 }
             },
@@ -2085,14 +2078,13 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
-                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
+                    "description": "Constraint assertion expression that defines the validation logic for Service Catalog product parameters",
                     "type": "string"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
+                    "description": "Human-readable description explaining the purpose and requirements of the constraint assertion",
                     "type": "string"
                 }
             },
@@ -2108,10 +2100,9 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
+                    "description": "Array of constraint assertions that define the validation logic to be applied when the condition is met",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
@@ -2119,7 +2110,7 @@
                 },
                 "condition": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
+                    "description": "Condition configuration that determines when the constraint rule assertions should be evaluated"
                 }
             },
             "required": [
@@ -2130,15 +2121,14 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
+                    "description": "Constraint configuration that defines additional validation rules for the Service Catalog product parameter"
                 },
                 "props": {
                     "$ref": "#/definitions/CfnParameterProps",
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
+                    "description": "CloudFormation parameter properties that define the parameter characteristics including type,"
                 }
             },
             "required": [
@@ -2148,29 +2138,28 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
+                    "description": "IAM role name that will be used to launch the Service Catalog product",
                     "type": "string"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
+                    "description": "Display name for the Service Catalog product that will be visible to end users in the Service Catalog console",
                     "type": "string"
                 },
                 "owner": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
+                    "description": "Owner identifier for the Service Catalog product, typically representing the team or organization",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "description": "Object containing named parameter configurations for the Service Catalog product",
                     "type": "object"
                 },
                 "portfolio_arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
+                    "description": "ARN of the AWS Service Catalog portfolio where the product will be associated",
                     "type": "string"
                 },
                 "portfolio_bucket_name": {
@@ -2350,10 +2339,10 @@
         },
         "OpensearchDomainConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for OpenSearch domain deployment extending base OpenSearch domain properties with configuration-driven access policies. Enables flexible access policy configuration through external configuration elements for dynamic policy management.\n\nUse cases: Dynamic access policy configuration; External policy management; Flexible domain access control\n\nAWS: Extends Amazon OpenSearch domain configuration with configurable access policies for flexible security management\n\nValidation: Inherits OpensearchDomainProps validation except accessPolicies; accessPolicies must be array of ConfigurationElement",
+            "description": "Extends OpensearchDomainProps with config-driven access policies using ConfigurationElement\ninstead of PolicyStatementProps. Access policies are converted to PolicyStatement objects\nat parse time via PolicyStatement.fromJson().\n\nUse cases: YAML-driven access policy configuration; Dynamic policy management\n\nAWS: OpenSearch domain access policies defined as JSON configuration elements\n\nValidation: Inherits OpensearchDomainProps validation; accessPolicies must be valid ConfigurationElement array",
             "properties": {
                 "accessPolicies": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of configuration elements defining access policies for the OpenSearch domain enabling dynamic policy management. Provides flexible access control configuration through external policy definitions for adaptable security management.\n\nUse cases: Dynamic access policy configuration; External policy management; Flexible security configuration\n\nAWS: Amazon OpenSearch domain access policies for IAM-based access control and security\n\nValidation: Must be array of valid ConfigurationElement objects; required; defines domain access control policies",
+                    "description": "Access policy definitions as configuration elements (JSON objects).\nConverted to IAM PolicyStatement objects at parse time via PolicyStatement.fromJson().\n\nUse cases: YAML-driven access policies; Dynamic policy configuration\n\nAWS: OpenSearch domain access policies (IAM policy statement JSON)\n\nValidation: Required; array of valid IAM policy statement JSON objects as ConfigurationElement",
                     "items": {
                         "additionalProperties": {},
                         "type": "object"
@@ -2361,63 +2350,63 @@
                     "type": "array"
                 },
                 "automatedSnapshotStartHour": {
-                    "description": "Q-ENHANCED-PROPERTY\nAutomated snapshot start hour for OpenSearch domain backup scheduling enabling data protection and recovery capabilities. Specifies the hour of day when automated snapshot creation will begin, supporting data backup and disaster recovery requirements.\n\nUse cases: Data backup; Disaster recovery; Automated snapshots; Data protection; Recovery point management\n\nAWS: Amazon OpenSearch domain automated snapshot configuration for data backup and recovery\n\nValidation: Must be integer between 0-23; required; defines the hour when automated snapshots begin",
+                    "description": "Hour of day (0-23 UTC) when automated snapshot creation begins.\n\nUse cases: Backup scheduling; Data protection; Recovery point management\n\nAWS: OpenSearch automated snapshot configuration\n\nValidation: Required; integer 0-23",
                     "type": "number"
                 },
                 "capacity": {
                     "$ref": "#/definitions/CapacityConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nCluster capacity configuration for OpenSearch domain node sizing enabling performance optimization and cost management. Defines the node types, counts, and capacity settings for the OpenSearch cluster to match workload requirements and performance needs.\n\nUse cases: Performance optimization; Cost management; Workload sizing; Cluster scaling; Resource allocation\n\nAWS: Amazon OpenSearch domain capacity configuration for cluster node sizing and performance\n\nValidation: Must be valid CapacityConfig; required; defines cluster node configuration and capacity settings"
+                    "description": "Cluster capacity configuration defining master nodes, data nodes, and warm nodes.\n\nUse cases: Performance sizing; Cost management; Workload-specific capacity\n\nAWS: OpenSearch cluster node types and counts\n\nValidation: Required; valid CapacityConfig"
                 },
                 "customEndpoint": {
                     "$ref": "#/definitions/CustomEndpointConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nCustom endpoint configuration for branded domain access enabling professional endpoint naming and SSL certificate management. When specified, configures custom domain name, SSL certificates, and DNS management for branded access to the OpenSearch domain.\n\nUse cases: Branded domain access; Custom SSL certificates; Professional endpoint naming; DNS management\n\nAWS: Amazon OpenSearch domain custom endpoint configuration for branded access and SSL management\n\nValidation: Must be valid CustomEndpointConfig if specified; enables custom domain access when provided"
+                    "description": "Custom endpoint configuration for branded domain access with SSL and optional Route53 DNS.\n\nUse cases: Branded domain access; Custom SSL certificates; Automated DNS management\n\nAWS: OpenSearch custom endpoint with ACM and Route53\n\nValidation: Optional; valid CustomEndpointConfig"
                 },
                 "dataAdminRole": {
                     "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "Q-ENHANCED-PROPERTY\nData admin role reference for OpenSearch domain administration enabling domain management and dashboard access. Specifies the IAM role that will be granted administrative access to OpenSearch Dashboard for SAML configuration and domain management through the web interface.\n\nUse cases: Domain administration; Dashboard access; SAML configuration; Administrative management; Security configuration\n\nAWS: Amazon OpenSearch domain admin role for dashboard access and domain administration\n\nValidation: Must be valid MdaaRoleRef; required; role must have appropriate permissions for OpenSearch administration"
+                    "description": "IAM role granted admin access to OpenSearch Dashboard for SAML configuration and domain management.\n\nUse cases: Domain administration; Dashboard SAML setup; Security configuration\n\nAWS: IAM role with OpenSearch admin permissions\n\nValidation: Required; valid MdaaRoleRef"
                 },
                 "ebs": {
                     "$ref": "#/definitions/EbsOptions",
-                    "description": "Q-ENHANCED-PROPERTY\nEBS storage configuration for OpenSearch cluster nodes enabling persistent storage and performance optimization. Defines the EBS volume settings for cluster nodes including volume type, size, and performance characteristics for data storage.\n\nUse cases: Persistent storage; Performance optimization; Storage sizing; Data retention; I/O performance tuning\n\nAWS: Amazon OpenSearch domain EBS storage configuration for cluster node persistent storage\n\nValidation: Must be valid EbsOptions; required; defines EBS volume configuration for cluster nodes\n  *"
+                    "description": "EBS storage configuration for cluster data nodes (volume type, size, IOPS).\n\nUse cases: Storage sizing; I/O performance tuning; Data retention capacity\n\nAWS: EBS volumes attached to OpenSearch data nodes\n\nValidation: Required; valid EbsOptions"
                 },
                 "enableVersionUpgrade": {
-                    "description": "Q-ENHANCED-PROPERTY\nAutomatic version upgrade enablement for OpenSearch domain maintenance enabling automated engine updates and security patches. When enabled, allows AWS to automatically upgrade the OpenSearch engine version for security and feature updates; when disabled, requires manual version management.\n\nUse cases: Automated maintenance; Security updates; Version management; Feature updates; Maintenance automation\n\nAWS: Amazon OpenSearch domain automatic version upgrade configuration for maintenance and security\n\nValidation: Must be boolean; required; controls automatic version upgrade behavior for domain maintenance",
+                    "description": "Allow automatic OpenSearch engine version upgrades for security patches and features.\n\nUse cases: Automated maintenance; Security patching; Version management\n\nAWS: OpenSearch automatic version upgrade setting\n\nValidation: Required; boolean",
                     "type": "boolean"
                 },
                 "eventNotifications": {
                     "$ref": "#/definitions/EventNotificationsProps",
-                    "description": "Q-ENHANCED-PROPERTY\nEvent notification configuration for OpenSearch domain monitoring enabling operational awareness and alerting. Configures email notifications for domain events, cluster status changes, and operational alerts for proactive monitoring and management.\n\nUse cases: Operational monitoring; Event alerting; Domain status tracking; Proactive management; Notification automation\n\nAWS: Amazon SNS notifications for OpenSearch domain events and operational monitoring\n\nValidation: Must be valid EventNotificationsProps if specified; enables domain event monitoring and alerting"
+                    "description": "Event notification configuration for domain monitoring via SNS email subscriptions.\n\nUse cases: Operational alerting; Domain health monitoring; Event tracking\n\nAWS: SNS topic with email subscriptions for OpenSearch domain events\n\nValidation: Optional; valid EventNotificationsProps"
                 },
                 "opensearchDomainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nFunctional name for OpenSearch domain enabling organized domain identification and MDAA naming convention application. Provides the base name for the OpenSearch domain which will be processed through MDAA naming conventions, with automatic ID suffixing if the resultant name exceeds 28 characters.\n\nUse cases: Domain identification; Naming convention application; Organized domain management; Resource naming\n\nAWS: Amazon OpenSearch domain name with MDAA naming convention processing\n\nValidation: Must be valid domain name; required; processed through MDAA naming conventions with automatic truncation and ID suffixing",
+                    "description": "Functional name for the OpenSearch domain. Processed through MDAA naming conventions;\nif the resulting name exceeds 28 characters, a random ID suffix is appended to a truncated name.\n\nUse cases: Domain identification; MDAA naming convention compliance\n\nAWS: OpenSearch domain name\n\nValidation: Required; string",
                     "type": "string"
                 },
                 "opensearchEngineVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nOpenSearch engine version for domain deployment enabling version-specific features and compatibility. Specifies the OpenSearch engine version in x.y format where x is major version and y is minor version, controlling available features and compatibility.\n\nUse cases: Version-specific features; Compatibility control; Feature availability; Engine capabilities; Version management\n\nAWS: Amazon OpenSearch domain engine version for feature availability and compatibility\n\nValidation: Must be valid OpenSearch version in x.y format; required; version must be supported by AWS OpenSearch service",
+                    "description": "OpenSearch engine version in x.y format (e.g., '2.3').\n\nUse cases: Version-specific features; Compatibility control; Engine selection\n\nAWS: OpenSearch engine version\n\nValidation: Required; supported OpenSearch version string",
                     "type": "string"
                 },
                 "samlAuthentication": {
                     "$ref": "#/definitions/SamlAuthenticationConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nSAML authentication configuration for SSO integration enabling centralized identity management and corporate authentication. When specified, configures SAML-based authentication for OpenSearch Dashboard access through corporate identity providers like Okta, Azure AD, or AWS IAM Identity Center.\n\nUse cases: Single Sign-On; Centralized user management; Corporate identity integration; SAML 2.0 authentication; Multi-factor authentication\n\nAWS: Amazon OpenSearch domain SAML authentication for SSO integration and centralized identity management\n\nValidation: Must be valid SamlAuthenticationConfig if specified; requires idpEntityId and idpMetadataContent for SAML integration"
+                    "description": "SAML authentication configuration for SSO integration with corporate identity providers\n(e.g., Okta, Azure AD, AWS IAM Identity Center).\n\nUse cases: Single Sign-On; Corporate identity integration; Centralized authentication\n\nAWS: OpenSearch SAML authentication for Dashboard SSO\n\nValidation: Optional; valid SamlAuthenticationConfig with idpEntityId and idpMetadataXml"
                 },
                 "securityGroupIngress": {
                     "$ref": "#/definitions/SecurityGroupIngressProps",
-                    "description": "Q-ENHANCED-PROPERTY\nSecurity group ingress configuration for OpenSearch domain access control enabling network-based access restrictions. Defines the network access rules for the OpenSearch domain, supporting IP-based and security group-based access control patterns.\n\nUse cases: Network access control; Security group-based access; IP-based restrictions; Client connectivity control\n\nAWS: Amazon OpenSearch domain security group ingress rules for network access control\n\nValidation: Must be valid SecurityGroupIngressProps; required; defines network access patterns for domain security\n  *"
+                    "description": "Security group ingress rules controlling network access to the domain.\nAll egress is permitted by default; no ingress is permitted by default.\n\nUse cases: Network access control; IP and security group-based restrictions\n\nAWS: VPC security group for OpenSearch domain\n\nValidation: Required; valid SecurityGroupIngressProps"
                 },
                 "subnets": {
-                    "description": "Q-ENHANCED-PROPERTY\nSubnet configurations for OpenSearch domain node placement enabling multi-AZ deployment and high availability. Specifies the subnets where domain nodes will be deployed, supporting availability zone distribution and fault tolerance for search analytics workloads.\n\nUse cases: Multi-AZ deployment; High availability; Fault tolerance; Network placement control; Availability zone distribution\n\nAWS: Amazon OpenSearch domain subnet configuration for multi-AZ deployment and high availability\n\nValidation: Must be array of valid SubnetConfig objects; required; number of subnets must match or exceed zone awareness configuration",
+                    "description": "Subnet configurations for domain node placement. Number of subnets must match or exceed\nthe zoneAwareness availabilityZoneCount.\n\nUse cases: Multi-AZ deployment; High availability; Fault tolerance\n\nAWS: VPC subnets for OpenSearch domain nodes\n\nValidation: Required; array of SubnetConfig with matching AZs",
                     "items": {
                         "$ref": "#/definitions/SubnetConfig"
                     },
                     "type": "array"
                 },
                 "vpcId": {
-                    "description": "Q-ENHANCED-PROPERTY\nVPC identifier for OpenSearch domain deployment enabling network isolation and security controls. Specifies the VPC where the OpenSearch domain will be created, providing network-level isolation and security for search analytics workloads.\n\nUse cases: Network isolation; VPC security; Private domain deployment; Network access control\n\nAWS: Amazon OpenSearch domain VPC configuration for network isolation and security\n\nValidation: Must be valid VPC ID; required; VPC must exist and be accessible for domain deployment",
+                    "description": "VPC ID for OpenSearch domain deployment. The domain is VPC-bound without public addresses.\n\nUse cases: Network isolation; Private domain deployment; VPC security\n\nAWS: VPC for OpenSearch domain network configuration\n\nValidation: Required; valid VPC ID",
                     "type": "string"
                 },
                 "zoneAwareness": {
                     "$ref": "#/definitions/ZoneAwarenessConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nZone awareness configuration for OpenSearch cluster shard distribution enabling multi-AZ fault tolerance and performance optimization. When specified, enables shard distribution across 2 or 3 availability zones for improved fault tolerance and search performance.\n\nUse cases: Multi-AZ fault tolerance; Shard distribution; Performance optimization; High availability; Disaster recovery\n\nAWS: Amazon OpenSearch domain zone awareness configuration for multi-AZ shard distribution\n\nValidation: Must be valid ZoneAwarenessConfig if specified; enables shard distribution across specified availability zones"
+                    "description": "Zone awareness configuration for shard distribution across 2 or 3 availability zones.\n\nUse cases: Multi-AZ fault tolerance; Shard distribution; High availability\n\nAWS: OpenSearch zone awareness for cross-AZ shard replication\n\nValidation: Optional; valid ZoneAwarenessConfig"
                 }
             },
             "required": [
@@ -2571,7 +2560,7 @@
         },
         "SamlAuthenticationConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nSAML authentication configuration for OpenSearch domain SSO integration\n\nUse cases: Single Sign-On; Centralized user management; Corporate identity integration\n\nAWS: Amazon OpenSearch domain SAML authentication configuration",
+            "description": "SAML authentication configuration for OpenSearch Dashboard SSO integration.\nRequires the IdP entity ID and metadata XML content for SAML 2.0 setup.",
             "properties": {
                 "idpEntityId": {
                     "description": "The unique entity ID of the SAML identity provider",
@@ -2590,17 +2579,17 @@
         },
         "SecurityGroupIngressProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nSecurityGroupIngressProps configuration interface for search analytics and log analysis.\n\nUse cases: Search analytics; Log analysis; Full-text search; Data indexing\n\nAWS: Amazon OpenSearch configuration for search analytics and log analysis\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon OpenSearch and MDAA requirements",
+            "description": "Ingress rules for the OpenSearch domain security group.\nSupports both IPv4 CIDR blocks and security group references.\n\nUse cases: IP-based access control; Security group-based service connectivity\n\nAWS: VPC security group ingress rules for OpenSearch domain\n\nValidation: At least one of ipv4 or sg should be specified",
             "properties": {
                 "ipv4": {
-                    "description": "Q-ENHANCED-PROPERTY\nIPv4 CIDR blocks for OpenSearch domain ingress access control enabling network-based access restrictions. Specifies the IPv4 address ranges that are allowed to access the OpenSearch domain, supporting network-level security and access control for search analytics workloads.\n\nUse cases: Network access control; IP-based restrictions; VPC security; Client connectivity control\n\nAWS: Amazon OpenSearch domain security group ingress rules for IPv4 network access control\n\nValidation: Must be array of valid IPv4 CIDR blocks if specified; CIDR blocks must be properly formatted (e.g., '10.0.0.0/16')",
+                    "description": "IPv4 CIDR blocks allowed to access the OpenSearch domain.\n\nUse cases: Network-based access control; VPC CIDR allowlisting; Client IP restrictions\n\nAWS: Security group ingress rules with IPv4 CIDR sources\n\nValidation: Optional; array of valid IPv4 CIDR blocks (e.g., '10.0.0.0/16')",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "sg": {
-                    "description": "Q-ENHANCED-PROPERTY\nSecurity group IDs for OpenSearch domain ingress access control enabling security group-based access restrictions. Specifies the security groups that are allowed to access the OpenSearch domain, supporting fine-grained network security and access control patterns.\n\nUse cases: Security group-based access; Fine-grained network control; Service-to-service communication; Application tier access\n\nAWS: Amazon OpenSearch domain security group ingress rules for security group-based access control\n\nValidation: Must be array of valid security group IDs if specified; security groups must exist in the same VPC",
+                    "description": "Security group IDs allowed to access the OpenSearch domain.\n\nUse cases: Service-to-service access; Application tier connectivity; Security group chaining\n\nAWS: Security group ingress rules with security group sources\n\nValidation: Optional; array of valid security group IDs in the same VPC",
                     "items": {
                         "type": "string"
                     },
@@ -2818,14 +2807,14 @@
         },
         "SubnetConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nSubnetConfig configuration interface for search analytics and log analysis.\n\nUse cases: Search analytics; Log analysis; Full-text search; Data indexing\n\nAWS: Amazon OpenSearch configuration for search analytics and log analysis\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon OpenSearch and MDAA requirements",
+            "description": "Subnet placement configuration for OpenSearch domain nodes.\nNumber of subnets must match or exceed the zone awareness availability zone count.\n\nUse cases: Multi-AZ node placement; VPC subnet selection; Availability zone distribution\n\nAWS: OpenSearch domain VPC subnet configuration\n\nValidation: subnetId and availabilityZone required; must match actual subnet AZ",
             "properties": {
                 "availabilityZone": {
-                    "description": "Q-ENHANCED-PROPERTY\nAvailability zone for OpenSearch domain node placement enabling geographic distribution and fault tolerance. Specifies the availability zone where the subnet is located, supporting multi-AZ deployment patterns and high availability configurations.\n\nUse cases: Multi-AZ deployment; Fault tolerance; Geographic distribution; High availability; Disaster recovery\n\nAWS: Amazon OpenSearch domain availability zone configuration for high availability and fault tolerance\n\nValidation: Must be valid availability zone name; required; must match the availability zone of the specified subnet",
+                    "description": "Availability zone of the subnet (e.g., us-east-1a).\nMust match the actual AZ of the specified subnet.\n\nUse cases: Multi-AZ distribution; Fault tolerance; Geographic placement\n\nAWS: Availability zone for OpenSearch node placement\n\nValidation: Required; valid AZ name matching the subnet's AZ",
                     "type": "string"
                 },
                 "subnetId": {
-                    "description": "Q-ENHANCED-PROPERTY\nSubnet identifier for OpenSearch domain placement enabling VPC network isolation and availability zone distribution. Specifies the subnet where OpenSearch domain nodes will be deployed, supporting network isolation and multi-AZ deployment patterns for high availability.\n\nUse cases: VPC network isolation; Multi-AZ deployment; Network placement control; High availability configuration\n\nAWS: Amazon OpenSearch domain subnet configuration for VPC deployment and network isolation\n\nValidation: Must be valid subnet ID; required; subnet must exist in the specified VPC and availability zone",
+                    "description": "VPC subnet ID for OpenSearch node placement.\n\nUse cases: VPC network isolation; Subnet-specific deployment\n\nAWS: VPC subnet for OpenSearch domain nodes\n\nValidation: Required; valid subnet ID in the specified VPC",
                     "type": "string"
                 }
             },
@@ -3088,7 +3077,7 @@
     "properties": {
         "domain": {
             "$ref": "#/definitions/OpensearchDomainConfig",
-            "description": "Q-ENHANCED-PROPERTY\nRequired OpenSearch domain configuration defining all aspects of the domain deployment including security, networking, and access controls. Provides domain setup with VPC security, encryption, and configurable access policies.\n\nUse cases: Complete domain configuration; Security and networking setup; Access control and policy management; Search and analytics deployment\n\nAWS: Amazon OpenSearch domain configuration for complete deployment and security setup\n\nValidation: Must be valid OpensearchDomainConfig; required; defines all domain deployment characteristics\n  *"
+            "description": "Complete OpenSearch domain configuration including cluster settings, networking, security,\nand access controls. The module deploys a KMS-encrypted, VPC-bound OpenSearch domain with\nsecurity group controls, CloudWatch logging, and optional SAML SSO integration.\n\nUse cases: Search and analytics domain deployment; Log analysis infrastructure; Full-text search\n\nAWS: OpenSearch domain with KMS encryption, VPC networking, CloudWatch logs, and optional SAML SSO\n\nValidation: Required; valid OpensearchDomainConfig"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",

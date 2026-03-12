@@ -11,48 +11,52 @@ import * as configSchema from './config-schema.json';
 
 export interface GlueCatalogConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of named catalog access policies enabling fine-grained access control for specific databases, tables, and resources. Provides access policy configuration for granular permissions management and resource-specific access controls within the catalog.
+   * Named catalog access policies for fine-grained resource-level access control.
+   * Each policy defines read/write principal ARNs scoped to specific catalog resource ARNs
+   * (databases, tables, partitions). The Glue Catalog module deploys a KMS-encrypted catalog
+   * with resource policies for cross-account data mesh architectures.
    *
-   * Use cases: Fine-grained access control; Resource-specific permissions; Granular catalog access management
+   * Use cases: Resource-scoped read/write permissions; Cross-account catalog access; Fine-grained data governance
    *
-   * AWS: AWS Glue Catalog resource policies for fine-grained access control and permissions management
+   * AWS: Glue Catalog resource policies with IAM principal-based access control
    *
-   * Validation: Must be object with string keys and valid CatalogAccessPolicyProps values if provided; defines granular access controls
-   *   **/
+   * Validation: Optional; map of string keys to CatalogAccessPolicyProps
+   */
   readonly accessPolicies?: { [key: string]: CatalogAccessPolicyProps };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of consumer account names to account IDs enabling cross-account read access to the entire Glue Catalog. Provides catalog sharing for data mesh architectures and cross-account data discovery and analytics operations.
+   * Consumer accounts granted read access to the entire Glue Catalog via catalog resource policy.
+   * Each entry maps a friendly account name to an AWS account ID. Consumer accounts also receive
+   * KMS key usage permissions for decrypting catalog metadata.
    *
-   * Use cases: Cross-account catalog sharing; Data mesh architecture; Cross-account data discovery and analytics
+   * Use cases: Data mesh consumer nodes; Hub/spoke catalog sharing; Cross-account data discovery
    *
-   * AWS: AWS Glue Catalog cross-account permissions for catalog access and data sharing
+   * AWS: Glue Catalog resource policy and KMS key policy grants per consumer account
    *
-   * Validation: Must be object with string keys and valid AWS account ID values if provided; enables cross-account catalog access
-   *   **/
+   * Validation: Optional; map of string keys to 12-digit AWS account IDs
+   */
   readonly consumerAccounts?: { [key: string]: string };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of KMS key consumer account names to account IDs enabling cross-account access to catalog encryption keys only. Provides selective KMS key access for accounts that need encryption key permissions without full catalog access.
+   * Accounts granted access to the catalog KMS encryption key only, without catalog read access.
+   * Useful when accounts need to decrypt catalog-encrypted data but should not browse the catalog directly.
    *
-   * Use cases: Selective KMS key access; Encryption key sharing; Limited cross-account key permissions
+   * Use cases: Selective encryption key sharing; Decrypt-only cross-account access; Limited key permissions
    *
-   * AWS: AWS KMS key policies for Glue Catalog encryption key cross-account access and permissions
+   * AWS: KMS key policy grants for Glue Catalog encryption key
    *
-   * Validation: Must be object with string keys and valid AWS account ID values if provided; enables cross-account key access
-   *   **/
+   * Validation: Optional; map of string keys to 12-digit AWS account IDs
+   */
   readonly kmsKeyConsumerAccounts?: { [key: string]: string };
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of producer account names to catalog account IDs enabling integration with external catalogs as additional Athena data sources. Provides multi-catalog integration for federated queries and cross-catalog data access patterns.
+   * Producer accounts for which additional Athena data source catalogs are created in the deployment account.
+   * Each entry maps a friendly account name to the producer's AWS account ID. Does not grant access
+   * to the producer catalog unless separately configured on the producer side.
    *
-   * Use cases: Multi-catalog integration; Federated query access; Cross-catalog data source integration
+   * Use cases: Data mesh producer nodes; Federated Athena queries across accounts; Multi-catalog analytics
    *
-   * AWS: Amazon Athena catalog configuration for multi-catalog integration and federated query capabilities
+   * AWS: Athena CfnDataCatalog resources pointing to producer account Glue Catalogs
    *
-   * Validation: Must be object with string keys and valid AWS account ID values if provided; defines external catalog integration
-   *   **/
+   * Validation: Optional; map of string keys to 12-digit AWS account IDs
+   */
   readonly producerAccounts?: { [key: string]: string };
 }
 

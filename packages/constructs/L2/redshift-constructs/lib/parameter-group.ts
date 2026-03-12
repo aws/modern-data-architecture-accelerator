@@ -9,27 +9,9 @@ import { Construct } from 'constructs';
 
 /** Props for the creation of a compliant Redshift Cluster Paramater group */
 export interface MdaaRedshiftClusterParameterGroupProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional human-readable description of the parameter group explaining its purpose and configuration. Provides documentation for parameter group management and helps identify configuration intent for operational clarity.
-   *
-   * Use cases: Configuration documentation; Management clarity; Operational understanding; Parameter group identification
-   *
-   * AWS: Amazon Redshift parameter group description for management and identification
-   *
-   * Validation: Must be descriptive text if provided; defaults to CDK-generated description; recommended for clarity
-   **/
+  /** Human-readable description of the parameter group explaining its purpose and configuration */
   readonly description?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of Redshift configuration parameter names to values enabling cluster customization. Defines specific Redshift database parameters for performance tuning, security configuration, and operational behavior optimization.
-   *
-   * Use cases: Performance tuning; Security configuration; Memory management; Query optimization; Connection settings
-   *
-   * AWS: Amazon Redshift cluster parameter configuration for database behavior and performance optimization
-   *
-   * Validation: Must be object with valid Redshift parameter names as keys and valid parameter values; required for configuration
-   *   **/
+  /** Map of Redshift configuration parameter names to values enabling cluster customization */
   readonly parameters: {
     [name: string]: string;
   };

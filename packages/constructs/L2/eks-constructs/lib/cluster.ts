@@ -61,109 +61,25 @@ import * as k8s from '../imports/k8s';
 import { CompliantKubectlProvider } from './mdaa-kubectl-provider';
 import { MdaaManagedPolicy, MdaaRole, MdaaRoleProps } from '@aws-mdaa/iam-constructs';
 
-/**
- * Q-ENHANCED-INTERFACE
- * Configuration interface for EKS cluster management instance providing tooling and connectivity for Kubernetes cluster administration. Defines EC2 instance properties for EKS cluster management including networking, permissions, and administrative tooling setup.
- *
- * Use cases: Cluster management; Administrative access; Kubernetes tooling; Operational management
- *
- * AWS: EC2 management instance for EKS cluster administration and Kubernetes operations
- *
- * Validation: subnetId and availabilityZone are required; various management configuration options available
- */
 export interface MgmtInstanceProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional EC2 instance type for management instance sizing controlling compute resources and performance characteristics. Defines the instance size for EKS cluster management operations and administrative tooling with appropriate resource allocation.
-   *
-   * Use cases: Instance sizing; Performance requirements; Cost optimization; Resource allocation
-   *
-   * AWS: EC2 instance type for EKS management instance compute resources and performance
-   *
-   * Validation: Must be valid InstanceType if provided; controls management instance compute capacity
-   **/
+  /** EC2 instance type for management instance sizing controlling compute resources and performance characteristics */
   readonly instanceType?: InstanceType;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required subnet ID for management instance network placement enabling VPC connectivity and network isolation. Defines the specific subnet where the management instance will be deployed for proper network connectivity and security.
-   *
-   * Use cases: Network placement; VPC connectivity; Subnet specification; Network isolation
-   *
-   * AWS: VPC subnet ID for EKS management instance network placement and connectivity
-   *
-   * Validation: Must be valid subnet ID string; required for management instance network placement
-   **/
+  /** Subnet ID for management instance network placement enabling VPC connectivity and network isolation */
   readonly subnetId: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required availability zone specification for management instance placement controlling geographic distribution and network proximity. Defines the specific availability zone for management instance deployment ensuring proper placement and connectivity.
-   *
-   * Use cases: Geographic placement; Availability zone specification; Network proximity; Instance placement
-   *
-   * AWS: Availability zone for EKS management instance geographic placement and network optimization
-   *
-   * Validation: Must be valid availability zone string; required for management instance placement
-   **/
+  /** Availability zone specification for management instance placement controlling geographic */
   readonly availabilityZone: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional EC2 key pair name for SSH access to management instance enabling secure administrative access and troubleshooting. Provides SSH key pair for secure access to the management instance for administrative operations and troubleshooting.
-   *
-   * Use cases: SSH access; Administrative access; Secure connectivity; Troubleshooting support
-   *
-   * AWS: EC2 key pair for SSH access to EKS management instance and administrative operations
-   *
-   * Validation: Must be valid key pair name if provided; enables SSH access to management instance
-   **/
+  /** EC2 key pair name for SSH access to management instance enabling secure administrative */
   readonly keyPairName?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional user data commands array for management instance initialization enabling custom setup and tooling installation. Provides custom initialization commands for management instance setup including EKS tooling and administrative utilities.
-   *
-   * Use cases: Instance initialization; Custom setup; Tooling installation; Administrative configuration
-   *
-   * AWS: EC2 user data commands for EKS management instance initialization and tooling setup
-   *
-   * Validation: Must be array of valid command strings if provided; enables custom instance initialization
-   **/
+  /** User data commands array for management instance initialization enabling custom setup and tooling installation */
   readonly userDataCommands?: string[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional IAM policy statements array for management instance permissions enabling EKS cluster administration and AWS service access. Provides additional IAM permissions for management instance operations and EKS cluster administration tasks.
-   *
-   * Use cases: IAM permissions; Cluster administration; AWS service access; Administrative operations
-   *
-   * AWS: IAM policy statements for EKS management instance permissions and cluster administration
-   *
-   * Validation: Must be array of valid PolicyStatement objects if provided; enables administrative permissions
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_iam.PolicyStatement.html
-   **/
+  /** IAM policy statements array for management instance permissions enabling EKS cluster */
   readonly mgmtPolicyStatements?: PolicyStatement[];
 }
 
 export interface MdaaEKSClusterProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional management instance configuration for EKS cluster administration enabling dedicated administrative access and tooling. Provides EC2 instance with EKS connectivity, permissions, and tooling for cluster management and administrative operations.
-   *
-   * Use cases: Cluster administration; Administrative access; Management tooling; Operational control
-   *
-   * AWS: EC2 management instance for EKS cluster administration and Kubernetes operations
-   *
-   * Validation: Must be valid MgmtInstanceProps if provided; enables dedicated cluster management capabilities
-   **/
+  /** Management instance configuration for EKS cluster administration enabling dedicated */
   readonly mgmtInstance?: MgmtInstanceProps;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of IAM roles for EKS cluster administrative access enabling RBAC-based cluster administration and security controls. Provides IAM roles that will be granted administrative access to the EKS cluster through Kubernetes RBAC integration.
-   *
-   * Use cases: Administrative access; RBAC configuration; Security controls; Cluster administration
-   *
-   * AWS: IAM roles for EKS cluster administrative access and Kubernetes RBAC integration
-   *
-   * Validation: Must be array of valid IRole interfaces; required for cluster administrative access and RBAC
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_iam.IRole.html
-   **/
+  /** Array of IAM roles for EKS cluster administrative access enabling RBAC-based cluster */
   readonly adminRoles: IRole[];
   readonly kubectlLambdaRole?: IRole;
   readonly tags?: {
@@ -187,65 +103,16 @@ export interface MdaaEKSClusterProps extends MdaaConstructProps {
   readonly ipFamily?: IpFamily;
   readonly serviceIpv4Cidr?: string;
   readonly albController?: AlbControllerOptions;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required VPC in which to create the Cluster enabling network isolation and security controls. Defines the Virtual Private Cloud where the EKS cluster will be deployed for network security and resource isolation.
-   *
-   * Use cases: Network isolation; VPC deployment; Security controls; Resource isolation
-   *
-   * AWS: VPC for EKS cluster deployment and network isolation
-   *
-   * Validation: Must be valid IVpc interface; required for cluster network deployment and security
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.IVpc.html
-   **/
+  /** VPC in which to create the Cluster enabling network isolation and security controls */
   readonly vpc: IVpc;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array to explicitly select individual subnets for EKS cluster deployment enabling precise network placement and availability zone control. Defines specific subnets for cluster deployment with control over network placement and availability zones.
-   *
-   * Use cases: Subnet selection; Network placement; Availability zone control; Precise deployment
-   *
-   * AWS: VPC subnets for EKS cluster deployment and network placement
-   *
-   * Validation: Must be array of valid ISubnet interfaces; required for cluster subnet placement
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.ISubnet.html
-   **/
+  /** Array to explicitly select individual subnets for EKS cluster deployment enabling precise */
   readonly subnets: ISubnet[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional role that provides permissions for the Kubernetes control plane to make calls to AWS API operations on your behalf. Defines IAM role for EKS service to manage cluster resources and AWS service integration.
-   *
-   * Use cases: Service permissions; AWS API access; Control plane operations; Service integration
-   *
-   * AWS: IAM role for EKS service permissions and AWS API operations
-   *
-   * Validation: Must be valid IRole interface if provided; automatically created if not specified
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_iam.IRole.html
-   **/
+  /** Role that provides permissions for the Kubernetes control plane to make calls to AWS API */
   readonly role?: IRole;
   readonly clusterName?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional security Group to use for Control Plane ENIs enabling custom network security controls. Provides custom security group for EKS control plane network interfaces with automatic creation if not specified.
-   *
-   * Use cases: Network security; Custom security groups; Control plane security; Network controls
-   *
-   * AWS: Security group for EKS control plane ENIs and network security
-   *
-   * Validation: Must be valid ISecurityGroup if provided; automatically created if not specified
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.ISecurityGroup.html
-   **/
+  /** Security Group to use for Control Plane ENIs enabling custom network security controls */
   readonly securityGroup?: ISecurityGroup;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required Kubernetes version to run in the cluster controlling platform capabilities and feature availability. Defines the specific Kubernetes version for the cluster ensuring compatibility and feature support.
-   *
-   * Use cases: Version control; Platform capabilities; Feature availability; Compatibility management
-   *
-   * AWS: EKS cluster Kubernetes version for platform capabilities and features
-   *
-   * Validation: Must be valid KubernetesVersion enum; required for cluster version specification
-   *   **/
+  /** Kubernetes version to run in the cluster controlling platform capabilities and feature availability */
   readonly version: KubernetesVersion;
   readonly outputClusterName?: boolean;
   readonly outputConfigCommand?: boolean;

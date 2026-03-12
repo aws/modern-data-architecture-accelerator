@@ -11,15 +11,15 @@ import * as configSchema from './config-schema.json';
 
 export interface AuditTrailConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required CloudTrail configuration defining audit logging including S3 data events and management events. Provides complete audit trail setup with event logging, encryption, and delivery configuration for compliance and security monitoring.
+   * CloudTrail audit trail configuration defining S3 destination, KMS encryption,
+   * and event scope for compliance monitoring.
    *
-   * Use cases: Comprehensive audit trail configuration; S3 data event logging; Management event monitoring
+   * Use cases: S3 data event auditing; Compliance logging; Security monitoring
    *
-   * AWS: AWS CloudTrail configuration for complete audit logging and compliance monitoring
+   * AWS: CloudTrail trail with S3 data events and KMS encryption
    *
-   * Validation: Must be valid AuditTrailProps; required; defines all audit trail logging and delivery characteristics
-   **/
+   * Validation: Required; must be valid AuditTrailProps
+   */
   readonly trail: AuditTrailProps;
 }
 

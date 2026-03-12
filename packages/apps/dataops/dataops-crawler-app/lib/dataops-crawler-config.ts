@@ -12,26 +12,24 @@ import * as configSchema from './config-schema.json';
 
 export interface GlueCrawlerConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required DataOps project name for crawler integration and resource autowiring with existing project infrastructure. Enables seamless integration with deployed project resources including databases, IAM roles, and security configurations for coordinated data operations.
+   * DataOps project name for crawler resource autowiring (databases, roles, security).
    *
-   * Use cases: Project resource integration; Coordinated data operations; Infrastructure autowiring and resource sharing
+   * Use cases: Project integration; Shared infrastructure reuse
    *
-   * AWS: AWS Glue crawler project integration for resource coordination and shared infrastructure
+   * AWS: DataOps project reference
    *
-   * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
-   **/
+   * Validation: Optional; must match an existing deployed project
+   */
   readonly projectName?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of crawler names to crawler definitions enabling multiple data source discovery and cataloging operations. Provides crawler configuration for different data sources, formats, and discovery patterns within the data lake architecture.
+   * Map of crawler names to Glue crawler definitions for data source discovery and cataloging.
    *
-   * Use cases: Multi-source data discovery; cataloging; Data source-specific crawler configuration
+   * Use cases: Multi-source data discovery; Catalog population; Schema detection
    *
-   * AWS: AWS Glue crawler definitions for data source discovery and catalog population
+   * AWS: AWS Glue crawlers
    *
-   * Validation: Must be object with string keys and valid CrawlerDefinition values; required; defines all crawler operations
-   *   **/
+   * Validation: Required; map of string to CrawlerDefinition
+   */
   readonly crawlers: { [key: string]: CrawlerDefinition };
 }
 

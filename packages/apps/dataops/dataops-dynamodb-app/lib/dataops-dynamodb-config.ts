@@ -12,15 +12,14 @@ import * as configSchema from './config-schema.json';
 
 export interface DynamodbConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of DynamoDB table definitions for NoSQL database deployment enabling table configuration and management. Provides table specifications including schema, capacity, encryption, and access patterns for DataOps NoSQL database operations and data storage.
+   * Map of table names to DynamoDB table definitions.
    *
-   * Use cases: DynamoDB table configuration; NoSQL schema definition; Table management; Data storage patterns
+   * Use cases: NoSQL table provisioning; Schema and capacity configuration
    *
-   * AWS: DynamoDB table definitions for NoSQL database deployment and data operations
+   * AWS: DynamoDB tables
    *
-   * Validation: Must be valid TableDefinitionMap; required for DynamoDB table deployment and configuration
-   *   **/
+   * Validation: Required; valid TableDefinitionMap
+   */
   readonly tableDefinitions: TableDefinitionMap;
 }
 

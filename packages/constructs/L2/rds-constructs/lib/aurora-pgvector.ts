@@ -14,65 +14,18 @@ import { MdaaRdsServerlessCluster, MdaaRdsServerlessClusterProps } from './serve
 import { ISecret } from 'aws-cdk-lib/aws-secretsmanager';
 
 export interface MdaaAuroraPgVectorProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required VPC for Aurora cluster deployment providing network isolation and security controls for vector database operations. Defines the network environment where the Aurora PostgreSQL cluster will be deployed for secure database networking and connectivity.
-   *
-   * Use cases: Network isolation; VPC integration; Secure networking; Database connectivity
-   *
-   * AWS: Amazon VPC for Aurora PostgreSQL cluster network isolation and secure database deployment
-   *
-   * Validation: Must be valid IVpc interface; required for Aurora cluster network deployment and security
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.IVpc.html
-   **/
+  /** VPC for Aurora cluster deployment providing network isolation and security controls for */
   readonly vpc: IVpc;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required subnet selection for Aurora cluster placement controlling availability zone distribution and network segmentation. Defines the specific subnets within the VPC where Aurora instances will be deployed for high availability and network organization.
-   *
-   * Use cases: Subnet placement; Availability zone distribution; Network segmentation; High availability
-   *
-   * AWS: VPC subnet selection for Aurora PostgreSQL cluster placement and availability zone distribution
-   *
-   * Validation: Must be valid SubnetSelection; required for Aurora cluster subnet placement and availability
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.SubnetSelection.html
-   **/
+  /** Subnet selection for Aurora cluster placement controlling availability zone distribution */
   readonly subnets: SubnetSelection;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required AWS region specification for Aurora cluster deployment controlling geographic placement and service availability. Defines the AWS region where the Aurora PostgreSQL cluster will be deployed for regional compliance and latency optimization.
-   *
-   * Use cases: Regional deployment; Geographic placement; Compliance requirements; Latency optimization
-   *
-   * AWS: AWS region for Aurora PostgreSQL cluster deployment and geographic placement
-   *
-   * Validation: Must be valid AWS region string; required for Aurora cluster regional deployment
-   **/
+  /** AWS region specification for Aurora cluster deployment controlling geographic placement and */
   readonly region: string;
   readonly partition: string;
   readonly dbSecurityGroup: ISecurityGroup;
   readonly encryptionKey: IKey;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional minimum Aurora capacity units for serverless scaling controlling minimum compute resources and cost management. Defines the minimum compute capacity for Aurora Serverless scaling ensuring adequate performance while managing costs.
-   *
-   * Use cases: Minimum capacity; Cost management; Performance baseline; Serverless scaling
-   *
-   * AWS: Aurora Serverless minimum capacity units for compute scaling and cost management
-   *
-   * Validation: Must be valid AuroraCapacityUnit if provided; controls minimum compute capacity for scaling
-   *   **/
+  /** Minimum Aurora capacity units for serverless scaling controlling minimum compute resources and cost management */
   readonly minCapacity?: rds.AuroraCapacityUnit;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional maximum Aurora capacity units for serverless scaling controlling maximum compute resources and cost limits. Defines the maximum compute capacity for Aurora Serverless scaling ensuring performance limits and cost control.
-   *
-   * Use cases: Maximum capacity; Cost control; Performance limits; Serverless scaling
-   *
-   * AWS: Aurora Serverless maximum capacity units for compute scaling and cost control
-   *
-   * Validation: Must be valid AuroraCapacityUnit if provided; controls maximum compute capacity for scaling
-   *   **/
+  /** Maximum Aurora capacity units for serverless scaling controlling maximum compute resources and cost limits */
   readonly maxCapacity?: rds.AuroraCapacityUnit;
   readonly defaultDatabaseName?: string;
   readonly parentClusterScope?: boolean;

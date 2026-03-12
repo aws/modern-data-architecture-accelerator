@@ -23,14 +23,13 @@
         },
         "BlockDeviceProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nBlockDeviceProps configuration interface for compute infrastructure and instance management.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "deviceName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired device name for block device mapping following AWS EC2 device naming conventions. Specifies the device identifier for storage attachment with platform-specific naming patterns for Linux and Windows instances.\n\nUse cases: Device identification; Storage mapping; Platform-specific device naming; Storage organization\n\nAWS: Amazon EC2 block device mapping device name for storage attachment and identification\n\nValidation: Must follow AWS EC2 device naming conventions; required; platform-specific format (Linux: /dev/sd*, Windows: xvd*)",
+                    "description": "Device name for block device mapping following AWS EC2 device naming conventions",
                     "type": "string"
                 },
                 "ebsType": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional EBS volume type determining performance characteristics and cost structure for the storage device. Specifies the underlying EBS volume technology with different IOPS, throughput, and cost profiles for workload optimization.\n\nUse cases: Performance optimization; Cost management; Workload-specific storage; IOPS requirements\n\nAWS: Amazon EBS volume type for performance and cost optimization (gp3, io1, io2, st1, sc1)\n\nValidation: Must be valid EbsDeviceVolumeType if provided; defaults to gp3; affects performance and cost\n  *",
+                    "description": "EBS volume type determining performance characteristics and cost structure for the storage device",
                     "enum": [
                         "gp2",
                         "gp3",
@@ -43,11 +42,11 @@
                     "type": "string"
                 },
                 "iops": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional IOPS (Input/Output Operations Per Second) specification for high-performance EBS volumes requiring specific performance guarantees. Required for io1 and io2 volume types to define the provisioned IOPS performance level for demanding workloads requiring consistent storage performance.\n\nUse cases: High-performance storage; Database workloads; IOPS-intensive applications; Performance guarantees; Storage optimization\n\nAWS: Amazon EBS provisioned IOPS configuration for io1 and io2 volume types with guaranteed performance levels\n\nValidation: Must be positive integer if provided; required for io1/io2 volumes; must be within volume type IOPS limits",
+                    "description": "IOPS (Input/Output Operations Per Second) specification for high-performance EBS volumes",
                     "type": "number"
                 },
                 "volumeSizeInGb": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired EBS volume size in gigabytes determining storage capacity for the block device. Controls the amount of storage available for the device with direct impact on storage costs and performance characteristics.\n\nUse cases: Storage capacity planning; Cost optimization; Performance configuration; Data storage requirements\n\nAWS: Amazon EBS volume size configuration for storage capacity and performance\n\nValidation: Must be positive integer in GB; required; minimum and maximum values depend on EBS volume type",
+                    "description": "EBS volume size in gigabytes determining storage capacity for the block device",
                     "type": "number"
                 }
             },
@@ -413,10 +412,10 @@
         },
         "CommandProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nCommand configuration interface for CloudFormation Init providing command execution and process management capabilities. Defines command properties for EC2 instance initialization including shell commands, arguments, environment variables, working directories, and execution control for automated system configuration.\n\nUse cases: Command execution; Process management; Environment configuration; Working directory control; Test commands; Infrastructure automation\n\nAWS: CloudFormation Init command configuration for automated command execution with environment variables and process control\n\nValidation: Configuration must be valid for EC2 deployment; properties must conform to AWS EC2 requirements and MDAA standards",
+            "description": "Command execution configuration for CloudFormation Init.\nProvide either shellCommand or argvs. Commands run in lexicographical order of their key.",
             "properties": {
                 "argvs": {
-                    "description": "list of args that needs to be run as argvs, either shell command or argvs should be provided.",
+                    "description": "Command as an argument vector. Provide either argvs or shellCommand, not both.\n\nUse cases: Commands with complex quoting; Explicit argument passing\n\nAWS: CloudFormation::Init commands (argv form)\n\nValidation: Optional; array of strings; mutually exclusive with shellCommand",
                     "items": {
                         "type": "string"
                     },
@@ -424,38 +423,41 @@
                 },
                 "env": {
                     "$ref": "#/definitions/NamedEnvProps",
-                    "description": "Sets environment variables for the command.\nThis property overwrites, rather than appends, the existing environment."
+                    "description": "Environment variables for the command. Overwrites (not appends) the existing environment.\n\nUse cases: Injecting config values; Isolated command environments\n\nAWS: CloudFormation::Init command env\n\nValidation: Optional; map of variable name to value"
                 },
                 "ignoreErrors": {
-                    "description": "Continue running if this command fails. default is false",
+                    "default": false,
+                    "description": "Continue running subsequent commands if this one fails.\n\nUse cases: Non-critical setup steps; Best-effort commands\n\nAWS: CloudFormation::Init command ignoreErrors\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "restartRequired": {
-                    "description": "Restart the given service(s) after this command has run, default: Do not restart any service",
+                    "default": false,
+                    "description": "When true, restarts associated services after this command runs.\n\nUse cases: Config changes requiring service reload\n\nAWS: CloudFormation::Init restart handle\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "shellCommand": {
-                    "description": "Shell command that needs to be run, either shell command or argvs should be provided.",
+                    "description": "Shell command string to execute. Provide either shellCommand or argvs, not both.\n\nUse cases: Inline shell scripts; One-liner setup commands\n\nAWS: CloudFormation::Init commands (shell form)\n\nValidation: Optional; string; mutually exclusive with argvs",
                     "type": "string"
                 },
                 "testCommand": {
-                    "description": "Command to determine whether this command should be run.\nIf the test passes (exits with error code of 0), the command is run.",
+                    "description": "Test command run before the main command. If the test exits with code 0,\nthe main command is skipped (test success = already done).\n\nUse cases: Idempotent commands; Conditional execution\n\nAWS: CloudFormation::Init command test\n\nValidation: Optional; shell command string",
                     "type": "string"
                 },
                 "waitAfterCompletion": {
-                    "description": "The duration in minutes to wait after a command has finished in case the command causes a reboot.\nSet this value to InitCommandWaitDuration.none() if you do not want to wait for every command; InitCommandWaitDuration.forever() directs cfn-init to exit and resume only after the reboot is complete.\nFor Windows systems only.\nDefault is 1 minute",
+                    "default": 1,
+                    "description": "Minutes to wait after command completion (Windows only).\nUse waitForever or waitNone for reboot-aware alternatives.\n\nUse cases: Post-reboot wait on Windows; Timed command completion\n\nAWS: CloudFormation::Init command waitAfterCompletion\n\nValidation: Optional; number (minutes)",
                     "type": "number"
                 },
                 "waitForever": {
-                    "description": "cfn-init will exit and resume only after a reboot.\nChoose either waitAfterCompletion waitForever or waitNone, If choose none of these >> default wait time will be 1 minute",
+                    "description": "Wait indefinitely for the instance to reboot and resume cfn-init.\nMutually exclusive with waitAfterCompletion and waitNone.\n\nUse cases: Commands that trigger a reboot (e.g. Windows updates)\n\nAWS: CloudFormation::Init command waitAfterCompletion=forever\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "waitNone": {
-                    "description": "Do not wait for this command.\nChoose either waitAfterCompletion waitForever or waitNone, If choose none of these >> default wait time will be 1 minute",
+                    "description": "Do not wait after this command completes.\nMutually exclusive with waitAfterCompletion and waitForever.\n\nUse cases: Fire-and-forget commands; Fast sequential execution\n\nAWS: CloudFormation::Init command waitAfterCompletion=none\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "workingDir": {
-                    "description": "dir where command needs to be run.",
+                    "description": "Working directory for command execution.\n\nUse cases: Running commands in application directories\n\nAWS: CloudFormation::Init command cwd\n\nValidation: Optional; valid directory path",
                     "type": "string"
                 }
             },
@@ -468,45 +470,45 @@
         },
         "ConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CloudFormation Init providing package, service, file, and command management capabilities. Defines configuration properties for EC2 instance initialization including software packages, system services, file deployments, and command execution for automated infrastructure setup.\n\nUse cases: Package installation; Service configuration; File deployment; Command execution; System setup; Infrastructure automation\n\nAWS: CloudFormation Init configuration for EC2 instance initialization with packages, services, files, and commands\n\nValidation: Configuration must be valid CloudFormation Init format; properties must conform to EC2 initialization requirements",
+            "description": "A single CloudFormation Init config containing packages, groups, users,\nsources, files, commands, and services to apply during bootstrap.",
             "properties": {
                 "commands": {
                     "$ref": "#/definitions/NamedCommandProps",
-                    "description": "You can use the commands key to run commands on the EC2 instance.\nThe commands are processed in alphabetical order by name."
+                    "description": "Commands to execute on the instance, processed in alphabetical order of their key names.\n\nUse cases: Post-install configuration; Custom setup scripts\n\nAWS: CloudFormation::Init commands\n\nValidation: Optional; map of command identifier to CommandProps"
                 },
                 "files": {
                     "$ref": "#/definitions/NamedFileProps",
-                    "description": "You can use the files key to create files on the EC2 instance.\nContent is pulled from a given file"
+                    "description": "Files to create on the instance. Content is pulled from a local source file.\n\nUse cases: Configuration file deployment; Script placement\n\nAWS: CloudFormation::Init files\n\nValidation: Optional; map of filename to FileProps"
                 },
                 "groups": {
                     "$ref": "#/definitions/NamedGroupProps",
-                    "description": "You can use the groups key to create Linux/UNIX groups and to assign group IDs. The groups key isn't supported for Windows systems."
+                    "description": "Linux/UNIX groups to create. Not supported on Windows.\n\nUse cases: Application-specific group creation; GID management\n\nAWS: CloudFormation::Init groups\n\nValidation: Optional; map of group name to GroupProps"
                 },
                 "packages": {
                     "$ref": "#/definitions/NamedPackageProps",
-                    "description": "You can use the packages key to download and install pre-packaged applications and components. On Windows systems, the packages key supports only the MSI installer.\nThe cfn-init script currently supports the following package formats: apt, msi, python, rpm, rubygems, yum, and Zypper."
+                    "description": "Software packages to install. Supports apt, msi, python, rpm, rubygems, yum, and Zypper.\nOn Windows, only the MSI installer is supported.\n\nUse cases: Automated software installation; OS-level dependency management\n\nAWS: CloudFormation::Init packages\n\nValidation: Optional; map of package identifier to PackageProps"
                 },
                 "services": {
                     "$ref": "#/definitions/NamedServiceProps",
-                    "description": "You can use the services key to define which services should be enabled or disabled when the instance is launched.\nOn Linux systems, this key is supported by using sysvinit or systemd.\nOn Windows systems, it's supported by using the Windows service manager."
+                    "description": "System services to enable, disable, or restart.\nUses sysvinit/systemd on Linux, Windows Service Manager on Windows.\n\nUse cases: Service lifecycle management; Boot-time service configuration\n\nAWS: CloudFormation::Init services\n\nValidation: Optional; map of OS service name to ServiceProps"
                 },
                 "sources": {
                     "$ref": "#/definitions/NamedSourceProps",
-                    "description": "You can use the sources key to download an archive file and unpack it in a target directory on the EC2 instance.\nThis key is fully supported for both Linux and Windows systems."
+                    "description": "Archive files to download and extract into target directories.\nSupported on both Linux and Windows.\n\nUse cases: Application artifact extraction; Config archive deployment\n\nAWS: CloudFormation::Init sources\n\nValidation: Optional; map of target directory path to SourceProps"
                 },
                 "users": {
                     "$ref": "#/definitions/NamedUserProps",
-                    "description": "You can use the users key to create Linux/UNIX users on the EC2 instance. The users key isn't supported for Windows systems."
+                    "description": "Linux/UNIX user accounts to create. Not supported on Windows.\n\nUse cases: Application service accounts; User provisioning with group membership\n\nAWS: CloudFormation::Init users\n\nValidation: Optional; map of username to UserProps"
                 }
             },
             "type": "object"
         },
         "ConfigSetsProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration sets interface for CloudFormation Init with ordered configuration execution and dependency management capabilities. Defines configuration set properties for EC2 instance initialization including configuration sequence ordering and execution dependencies for systematic infrastructure setup.\n\nUse cases: Configuration execution order; Initialization sequences; Dependency management; Multi-stage setup; Infrastructure automation\n\nAWS: CloudFormation Init configuration sets for ordered configuration execution and initialization sequence management\n\nValidation: configs must be valid configuration references; execution order must be properly defined for initialization sequence",
+            "description": "A config set defining an ordered list of config names to execute.",
             "properties": {
                 "configs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOrdered list of configuration names for sequential execution during EC2 instance initialization. Defines the execution sequence for CloudFormation Init configurations, ensuring proper dependency order and systematic infrastructure setup during instance bootstrap.\n\nUse cases: Configuration execution order; Initialization sequences; Dependency management; Multi-stage setup; Infrastructure automation\n\nAWS: CloudFormation Init configuration set execution order for systematic instance initialization\n\nValidation: Must be array of valid configuration names; configurations must exist in the configs section; execution order determines initialization sequence",
+                    "description": "Ordered list of config names to execute. Names must match entries in the\nconfigs section. Execution follows the listed order.\n\nUse cases: Multi-stage bootstrap ordering; Dependency-aware initialization\n\nAWS: CloudFormation::Init configSets\n\nValidation: Required; array of config name strings",
                     "items": {
                         "type": "string"
                     },
@@ -679,7 +681,6 @@
         },
         "DomainConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA-compliant DataZone domain configuration providing domain management and integration capabilities. Extends standard CDK properties with MDAA naming conventions and enhanced security features for secure domain governance and catalog integration.\n\nUse cases: DataZone domain configuration; Domain governance setup; Catalog integration; Multi-domain management\n\nAWS: Creates Amazon DataZone domain configuration with KMS integration and Glue catalog connectivity\n\nValidation: All properties except ssmParamBase and domainUnits are required for complete domain configuration",
             "properties": {
                 "blueprintIds": {
                     "additionalProperties": {
@@ -691,63 +692,63 @@
                     "type": "boolean"
                 },
                 "createOutputs": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.\n\nUse cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references\n\nAWS: CloudFormation outputs and exports for MDAA construct resource references and external integration\n\nValidation: Boolean value; defaults to true; enables CloudFormation output and export creation",
+                    "description": "Flag controlling CloudFormation output and stack export creation for construct resources",
                     "type": "boolean"
                 },
                 "createParams": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.\n\nUse cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management\n\nAWS: SSM parameter creation for MDAA construct resource references and infrastructure integration\n\nValidation: Boolean value; defaults to true; enables SSM parameter creation for resource references",
+                    "description": "Flag controlling SSM parameter creation for construct resource references enabling",
                     "type": "boolean"
                 },
                 "customResourceRoleName": {
                     "type": "string"
                 },
                 "domainArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ARN for AWS resource identification and IAM policy integration enabling secure domain access control. Provides the complete AWS resource identifier for the domain for IAM policies and cross-service access control.\n\nUse cases: AWS resource identification; IAM policy integration; Cross-service access; Resource-based policies\n\nAWS: Amazon DataZone domain ARN for AWS resource identification and IAM integration\n\nValidation: Must be valid DataZone domain ARN; required; follows AWS ARN pattern for DataZone domains",
+                    "description": "DataZone domain ARN for AWS resource identification and IAM policy integration enabling",
                     "type": "string"
                 },
                 "domainBucketArn": {
                     "type": "string"
                 },
                 "domainBucketUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain Bucket usage policy name. Provides IAM policy name for managing Bucket access and usage permissions for domain operations and data protection.\n\nUse cases: Bucket access management;\n\nAWS: IAM policy name for DataZone domain Bucket usage and access management\n\nValidation: Must be valid IAM policy name; required; defines Bucket access and usage permissions for domain",
+                    "description": "Domain Bucket usage policy name",
                     "type": "string"
                 },
                 "domainId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain ID for unique domain identification within AWS enabling cross-service integration and reference. Provides the unique identifier assigned by DataZone service for domain operations and cross-service integration.\n\nUse cases: Unique domain identification; Cross-service integration; Domain operations; Service references\n\nAWS: Amazon DataZone domain ID for unique identification and cross-service integration\n\nValidation: Must be valid DataZone domain ID; required; assigned by DataZone service for unique identification",
+                    "description": "DataZone domain ID for unique domain identification within AWS enabling cross-service",
                     "type": "string"
                 },
                 "domainKmsKeyArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations. Provides encryption at rest for domain data and metadata with customer-controlled key management for enhanced security and compliance.\n\nUse cases: Domain encryption; Data protection compliance; Customer-controlled encryption; Secure domain operations\n\nAWS: AWS KMS key ARN for DataZone domain encryption and secure data protection\n\nValidation: Must be valid KMS key ARN; required; enables customer-managed encryption for domain data",
+                    "description": "KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations",
                     "type": "string"
                 },
                 "domainKmsUsagePolicyName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain KMS usage policy name for key access management enabling controlled encryption key usage within the domain. Provides IAM policy name for managing KMS key access and usage permissions for domain operations and data protection.\n\nUse cases: KMS key access management; Encryption policy control; Key usage permissions; Domain security governance\n\nAWS: IAM policy name for DataZone domain KMS key usage and access management\n\nValidation: Must be valid IAM policy name; required; defines KMS key access and usage permissions for domain",
+                    "description": "Domain KMS usage policy name for key access management enabling controlled encryption key",
                     "type": "string"
                 },
                 "domainName": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired DataZone domain name for domain identification and management enabling unique domain naming within the DataZone service. Provides the primary identifier for the DataZone domain for governance and operational management.\n\nUse cases: Domain identification; Unique naming; Domain management; Service organization\n\nAWS: Amazon DataZone domain name for identification and management within the DataZone service\n\nValidation: Must be unique domain name string; required; used for domain identification and service management",
+                    "description": "DataZone domain name for domain identification and management enabling unique domain naming",
                     "type": "string"
                 },
                 "domainUnitIds": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional map of domain unit names to identifiers for hierarchical domain organization enabling structured domain management. Provides organizational structure within the domain for improved governance, access control, and operational management.\n\nUse cases: Hierarchical organization; Domain structure; Organizational governance; Structured management\n\nAWS: DataZone domain units for hierarchical organization and structured domain management\n\nValidation: Must be object with string keys and values if provided; enables hierarchical domain organization\n  *",
+                    "description": "Map of domain unit names to identifiers for hierarchical domain organization enabling",
                     "type": "object"
                 },
                 "domainVersion": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired domain version for domain lifecycle management and versioning control enabling domain evolution tracking. Provides version control for domain configuration changes and lifecycle management for governance and compliance.\n\nUse cases: Version control; Domain lifecycle management; Configuration tracking; Governance compliance\n\nAWS: DataZone domain version for lifecycle management and configuration version control\n\nValidation: Must be valid version string; required; enables domain version control and lifecycle management",
+                    "description": "Domain version for domain lifecycle management and versioning control enabling domain evolution tracking",
                     "type": "string"
                 },
                 "glueCatalogArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone. Provides the Glue catalog resources that will be integrated with the DataZone domain for data discovery and governance.\n\nUse cases: Catalog integration; Data discovery; governance; Cross-service connectivity\n\nAWS: AWS Glue catalog ARNs for DataZone integration and data catalog connectivity\n\nValidation: Must be array of valid Glue catalog ARNs; required; enables catalog integration with DataZone domain",
+                    "description": "Array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "glueCatalogKmsKeyArns": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone. Provides encryption keys for Glue catalog data accessed through DataZone for data protection and governance.\n\nUse cases: Catalog encryption; Secure catalog integration; Data protection; governance\n\nAWS: AWS KMS key ARNs for Glue catalog encryption in DataZone integration\n\nValidation: Must be array of valid KMS key ARNs; required; enables secure catalog integration with DataZone",
+                    "description": "Array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone",
                     "items": {
                         "type": "string"
                     },
@@ -755,7 +756,7 @@
                 },
                 "naming": {
                     "$ref": "#/definitions/IMdaaResourceNaming",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.\n\nUse cases: Consistent naming; Resource identification; Naming conventions; Operational consistency\n\nAWS: MDAA resource naming for consistent resource identification and naming convention compliance\n\nValidation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming\n  *"
+                    "description": "MDAA naming implementation for consistent resource naming across all MDAA constructs"
                 },
                 "projectIds": {
                     "additionalProperties": {
@@ -767,7 +768,7 @@
                     "type": "boolean"
                 },
                 "ssmParamBase": {
-                    "description": "Q-ENHANCED-PROPERTY\nSSM parameter base path for domain configuration storage enabling centralized configuration management. Provides the base path for storing domain configuration parameters in SSM Parameter Store for centralized management and retrieval.\n\nUse cases: Centralized configuration; SSM integration; Configuration management; Parameter organization\n\nAWS: AWS Systems Manager parameter base path for domain configuration storage and management\n\nValidation: Must be valid SSM parameter path if provided; enables centralized domain configuration management",
+                    "description": "SSM parameter base path for domain configuration storage enabling centralized configuration management",
                     "type": "string"
                 }
             },
@@ -796,14 +797,14 @@
         },
         "FileProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nFile configuration interface for CloudFormation Init providing file deployment and management capabilities. Defines file properties for EC2 instance initialization including file paths, content deployment, permissions, and restart requirements for automated file management and system configuration.\n\nUse cases: File deployment; Content management; Permission configuration; File automation; System setup; Infrastructure configuration\n\nAWS: CloudFormation Init file configuration for automated file deployment with path specification and permission management\n\nValidation: Configuration must be valid for EC2 deployment; properties must conform to AWS EC2 requirements and MDAA standards",
+            "description": "File deployment configuration for CloudFormation Init.",
             "properties": {
                 "filePath": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired source file path for CloudFormation Init file deployment enabling file content specification and deployment automation. Specifies the path to the source file that will be deployed to the EC2 instance during initialization for configuration file deployment and content management.\n\nUse cases: File deployment; Configuration files; Content deployment; File automation\n\nAWS: CloudFormation Init file source path for file deployment and content management\n\nValidation: Must be valid file path string; required for file deployment and content specification",
+                    "description": "Path to the local source file whose content will be deployed to the instance.\n\nUse cases: Configuration file deployment; Script deployment\n\nAWS: CloudFormation::Init files\n\nValidation: Required; valid file path relative to the config",
                     "type": "string"
                 },
                 "restartRequired": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional restart requirement flag for service management after file deployment enabling automated service restart and configuration activation. Controls whether services should be restarted after file deployment to ensure configuration changes take effect.\n\nUse cases: Service restart; Configuration activation; Service management; Automated restart\n\nAWS: CloudFormation Init service restart control for configuration activation\n\nValidation: Must be boolean if provided; defaults to false; controls service restart behavior",
+                    "description": "When true, restarts associated services after file deployment.\n\nUse cases: Config file change triggers service reload\n\nAWS: CloudFormation::Init restart handle\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 }
             },
@@ -833,10 +834,10 @@
         },
         "GroupProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nGroup configuration interface for CloudFormation Init with system group creation and management capabilities. Defines group properties for EC2 instance initialization including group ID specification and system group configuration for user management and access control.\n\nUse cases: System group creation; User management; Access control; Group ID management; Security configuration; Infrastructure setup\n\nAWS: CloudFormation Init group configuration for system group creation with group ID management and access control\n\nValidation: Configuration must be valid CloudFormation Init format; properties must conform to EC2 initialization requirements",
+            "description": "Linux/UNIX group configuration for CloudFormation Init.",
             "properties": {
                 "gid": {
-                    "description": "Q-ENHANCED-PROPERTY\nSystem group ID number for group creation enabling specific group ID assignment and system integration. When specified, creates the group with the exact group ID, supporting system integration requirements and group ID management for security and access control.\n\nUse cases: Specific group ID assignment; System integration; Group ID management; Security configuration; Access control\n\nAWS: CloudFormation Init group creation with specific group ID for system group management\n\nValidation: Must be valid group ID string if specified; group creation fails if group exists by name; OS may reject if ID conflicts",
+                    "description": "Specific numeric group ID. If omitted, the OS assigns one automatically.\n\nUse cases: Fixed GID for NFS mounts; System integration with specific GID requirements\n\nAWS: CloudFormation::Init groups\n\nValidation: Optional; numeric string",
                     "type": "string"
                 }
             },
@@ -1128,11 +1129,10 @@
         },
         "IMdaaResourceNaming": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nInterface specification for MDAA resource naming implementations that generate consistent, unique, and compliant AWS resource names. Implementations must support multi-tenant deployments by ensuring naming semantics prevent collisions across domains, environments, and modules within the same AWS account.\n\nUse cases: Custom naming for regulatory compliance; Integration with enterprise naming standards; Multi-tenant resource isolation\n\nAWS: Generates names for all AWS resources including S3 buckets, IAM roles, Glue databases, CloudFormation stacks, SSM parameters, and CloudFormation exports\n\nValidation: All generated names must comply with AWS service-specific naming requirements and be unique within account scope",
             "properties": {
                 "props": {
                     "$ref": "#/definitions/MdaaResourceNamingConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nConfiguration properties containing organizational context and CDK node access for the naming implementation. Provides the foundational data required to generate consistent resource names across all MDAA modules.\n\nUse cases: Access to org/env/domain/module context; CDK context retrieval for custom naming; Immutable naming configuration\n\nAWS: Source data for all AWS resource name generation\n\nValidation: Must contain valid MdaaResourceNamingConfig with all required properties"
+                    "description": "Configuration properties containing organizational context and CDK node access for the naming implementation"
                 }
             },
             "required": [
@@ -1559,37 +1559,40 @@
         },
         "InitOptionsProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nCloudFormation Init options configuration interface providing initialization control and execution management capabilities. Defines Init options for EC2 instance initialization including config sets, execution parameters, timeout control, and initialization behavior for automated infrastructure deployment.\n\nUse cases: Initialization control; Config set execution; Timeout management; Execution parameters; Infrastructure automation; Deployment control\n\nAWS: CloudFormation Init options configuration for initialization control with config set execution and timeout management\n\nValidation: Configuration must be valid for EC2 deployment; properties must conform to AWS EC2 requirements and MDAA standards",
+            "description": "Options controlling CloudFormation Init execution behavior.",
             "properties": {
                 "configSets": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional array of configuration set names for CloudFormation Init execution control enabling selective initialization configuration. Defines which configuration sets will be activated during EC2 instance initialization, providing granular control over which initialization steps are executed.\n\nUse cases: Selective initialization; Config set activation; Initialization control; Deployment customization; Environment-specific setup\n\nAWS: CloudFormation Init configuration sets for selective initialization execution and deployment control\n\nValidation: Must be array of valid configuration set names if provided; defaults to ['default']; optional for config set control",
+                    "description": "Config set names to execute. If omitted, the \"default\" config set runs.\n\nUse cases: Selective bootstrap; Environment-specific init sequences\n\nAWS: CloudFormation::Init ApplyCloudFormationInitOptions configSets\n\nValidation: Optional; array of config set name strings",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "embedFingerprint": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional boolean flag to embed configuration fingerprint in UserData for automatic instance replacement on configuration changes. Controls whether a hash of the CloudFormation Init configuration will be embedded in UserData, enabling automatic instance replacement when configuration changes occur.\n\nUse cases: Automatic configuration updates; Instance replacement control; Configuration change detection; Deployment automation; Infrastructure updates\n\nAWS: CloudFormation Init configuration fingerprint embedding for automatic instance replacement on configuration changes\n\nValidation: Must be boolean value if provided; defaults to true; optional for configuration change handling",
+                    "default": true,
+                    "description": "Embed a config fingerprint in UserData so the instance is replaced when\nthe init configuration changes.\n\nUse cases: Immutable infrastructure; Automatic replacement on config drift\n\nAWS: CloudFormation::Init fingerprint in UserData\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "ignoreFailures": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional boolean flag to prevent CloudFormation rollback on cfn-init failures enabling debugging and troubleshooting. Controls whether instance creation will continue even if CloudFormation Init fails, allowing for debugging and troubleshooting of initialization issues without triggering stack rollback.\n\nUse cases: Debugging initialization issues; Troubleshooting deployment problems; Development testing; Error investigation; Deployment resilience\n\nAWS: CloudFormation Init failure handling for debugging and troubleshooting with rollback prevention\n\nValidation: Must be boolean value if provided; defaults to false; optional for failure handling control",
+                    "default": false,
+                    "description": "When true, instance creation continues even if cfn-init fails.\nUseful for debugging initialization issues without triggering rollback.\n\nUse cases: Init debugging; Development troubleshooting\n\nAWS: CloudFormation::Init ignoreFailures\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "includeRole": {
-                    "description": "Include --role argument when running cfn-init and cfn-signal commands.\nThis will be the IAM instance profile attached to the EC2 instance",
+                    "description": "Include --role argument when running cfn-init and cfn-signal commands,\nusing the IAM instance profile attached to the EC2 instance.\n\nUse cases: Authenticated cfn-init calls; Instance profile credential passing\n\nAWS: cfn-init --role / cfn-signal --role\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "includeUrl": {
-                    "description": "Include --url argument when running cfn-init and cfn-signal commands.\nThis will be the cloudformation endpoint in the deployed region",
+                    "description": "Include --url argument when running cfn-init and cfn-signal commands,\npointing to the CloudFormation endpoint in the deployed region.\n\nUse cases: Custom CloudFormation endpoint; VPC endpoint routing\n\nAWS: cfn-init --url / cfn-signal --url\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "printLog": {
-                    "description": "Print the results of running cfn-init to the Instance System Log.\nBy default, the output of running cfn-init is written to a log file on the instance.\nSet this to true to print it to the System Log (visible from the EC2 Console), false to not print it.\n(Be aware that the system log is refreshed at certain points in time of the instance life cycle, and successful execution may not always show up).",
+                    "description": "Print cfn-init output to the Instance System Log (visible in EC2 Console).\nBy default output goes to a log file on the instance only.\nSystem log refreshes at certain lifecycle points so results may not always appear.\n\nUse cases: Init debugging via EC2 Console; Troubleshooting without SSH\n\nAWS: EC2 System Log\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "timeout": {
-                    "description": "Timeout waiting for the configuration to be applied.\nin minutes\ndefault is 5 mins",
+                    "default": 5,
+                    "description": "Maximum time in minutes to wait for the init configuration to be applied.\n\nUse cases: Long-running init timeout; Fast-fail on stuck init\n\nAWS: CloudFormation CreationPolicy timeout\n\nValidation: Optional; number (minutes)",
                     "type": "number"
                 }
             },
@@ -1597,15 +1600,15 @@
         },
         "InitProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nCloudFormation Init configuration interface for EC2 instance bootstrap providing initialization and configuration management capabilities. Defines Init properties for EC2 instance startup configuration including config sets, configuration definitions, packages, services, files, and commands for automated instance setup.\n\nUse cases: Instance bootstrap configuration; Automated software installation; Service configuration; File deployment; Command execution; Infrastructure automation\n\nAWS: EC2 CloudFormation Init configuration for automated instance initialization with packages, services, files, and commands\n\nValidation: configSets and configs must be properly defined; configuration must be valid CloudFormation Init format",
+            "description": "CloudFormation Init definition containing ordered config sets and config definitions.",
             "properties": {
                 "configSets": {
                     "$ref": "#/definitions/NamedConfigSetsProps",
-                    "description": "Set of configs in order they need to run"
+                    "description": "Named config sets defining ordered execution sequences of configs.\nIf initOptions.configSets is not specified, the \"default\" config set runs.\n\nUse cases: Multi-stage bootstrap ordering; Environment-specific init sequences\n\nAWS: CloudFormation::Init configSets\n\nValidation: Required; map of config set name to ConfigSetsProps"
                 },
                 "configs": {
                     "$ref": "#/definitions/NamedConfigProps",
-                    "description": "list of configs"
+                    "description": "Named config definitions containing packages, files, commands, and services.\nReferenced by name from configSets.\n\nUse cases: Modular bootstrap definitions; Reusable config blocks\n\nAWS: CloudFormation::Init configs\n\nValidation: Required; map of config name to ConfigProps"
                 }
             },
             "required": [
@@ -1616,61 +1619,61 @@
         },
         "InstanceProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nEC2 instance configuration interface providing compute infrastructure deployment and management capabilities. Defines instance properties for EC2 deployment including instance types, AMI selection, VPC configuration, security groups, storage, IAM roles, and initialization for secure compute infrastructure.\n\nUse cases: Instance deployment; Compute infrastructure; Security configuration; Storage management; Network configuration; Infrastructure automation\n\nAWS: EC2 instance configuration for compute infrastructure deployment with security groups, storage, and network configuration\n\nValidation: Configuration must be valid for EC2 deployment; properties must conform to AWS EC2 requirements and MDAA standards",
+            "description": "EC2 instance configuration. Instances have termination protection enabled\nand are retained post stack deletion. EBS volumes are encrypted with the\nmodule KMS CMK unless a custom kmsKeyArn is specified.",
             "properties": {
                 "amiId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired Amazon Machine Image (AMI) ID for EC2 instance operating system and software configuration. Specifies the AMI that defines the instance's operating system, software packages, and initial configuration for consistent infrastructure deployment.\n\nUse cases: Operating system selection; Software configuration; Image standardization; Infrastructure consistency\n\nAWS: AWS AMI ID for EC2 instance operating system and software configuration\n\nValidation: Must be valid AMI ID string; required for instance creation and OS configuration",
+                    "description": "AMI ID for the instance OS and software. AMI root volumes must be listed\nin blockDevices to ensure encryption.\n\nUse cases: OS selection; Golden image deployment\n\nAWS: EC2 ImageId\n\nValidation: Required; valid AMI ID (ami-...)",
                     "type": "string"
                 },
                 "availabilityZone": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired availability zone specification for EC2 instance placement enabling zone-specific deployment and high availability design. Defines the specific AZ within the VPC where the instance will be deployed affecting availability, latency, and disaster recovery planning.\n\nUse cases: Availability zone targeting; High availability design; Disaster recovery; Zone-specific placement\n\nAWS: AWS Availability Zone for EC2 instance placement and availability management\n\nValidation: Must be valid availability zone string; required for instance placement and availability design",
+                    "description": "Availability zone for instance placement (e.g. us-east-1a).\n\nUse cases: AZ-specific placement; HA architecture\n\nAWS: EC2 AvailabilityZone\n\nValidation: Required; valid AZ string",
                     "type": "string"
                 },
                 "blockDevices": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired array of block device configurations for EC2 instance storage management enabling storage configuration. Defines storage devices attached to the instance including EBS volumes, instance store, and storage configuration for data management and performance optimization.\n\nUse cases: Storage configuration; Volume management; Data storage; Performance optimization\n\nAWS: AWS EBS and instance store configuration for EC2 instance storage management\n\nValidation: Must be array of valid BlockDeviceProps objects; required for instance storage configuration",
+                    "description": "EBS block device configurations. Must include the AMI root volume deviceName\nto ensure it is encrypted.\n\nUse cases: Root volume encryption; Additional data volumes\n\nAWS: EC2 BlockDeviceMappings\n\nValidation: Required; array of BlockDeviceProps",
                     "items": {
                         "$ref": "#/definitions/BlockDeviceProps"
                     },
                     "type": "array"
                 },
                 "creationTimeOut": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional creation timeout for CloudFormation creation policy enabling deployment time control and failure management. Defines the maximum time to wait for instance creation signals ensuring timely deployment completion and failure detection.\n\nUse cases: Deployment timeout; Time control; Failure detection; Creation management\n\nAWS: CloudFormation creation policy timeout for deployment time control\n\nValidation: Must be valid timeout string if provided; controls deployment timing when specified",
+                    "description": "Maximum time to wait for creation signals (ISO 8601 duration, e.g. PT25M).\n\nUse cases: Long-running init timeout; Deployment time control\n\nAWS: CloudFormation CreationPolicy ResourceSignal Timeout\n\nValidation: Optional; ISO 8601 duration string",
                     "type": "string"
                 },
                 "existingKeyPairName": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional existing SSH key pair name for EC2 instance access enabling external key pair integration. Specifies an existing key pair for SSH access to the instance enabling integration with external key management and existing access patterns.\n\nUse cases: Existing key pairs; External key integration; SSH access; Key reuse\n\nAWS: Existing SSH key pair name for EC2 instance access and authentication\n\nValidation: Must be valid existing key pair name if provided; key pair must exist in the region",
+                    "description": "Name of a pre-existing EC2 key pair (created outside this config).\n\nUse cases: Reuse existing SSH key pairs; External key management\n\nAWS: EC2 KeyName\n\nValidation: Optional; key pair must exist in the region",
                     "type": "string"
                 },
                 "init": {
                     "$ref": "#/definitions/InitProps",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudFormation Init configuration for EC2 instance bootstrap enabling initialization and configuration management. Provides Init configuration for automated instance setup including packages, services, files, and commands for infrastructure automation.\n\nUse cases: Instance bootstrap; Automated configuration; Infrastructure setup; Initialization management\n\nAWS: CloudFormation Init for EC2 instance bootstrap and configuration management\n\nValidation: Must be valid InitProps object if provided; enables automated initialization when specified"
+                    "description": "Inline CloudFormation Init configuration for this instance.\nAlternative to referencing a named init via initName.\n\nUse cases: Instance-specific bootstrap; One-off init configs\n\nAWS: CloudFormation::Init\n\nValidation: Optional; valid InitProps"
                 },
                 "initName": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional Init configuration name reference for CloudFormation Init enabling named configuration selection and management. Specifies the name of the Init configuration to be applied from the configuration collection for organized initialization management.\n\nUse cases: Named configuration selection; Init management; Configuration organization; Initialization control\n\nAWS: CloudFormation Init configuration name for initialization management\n\nValidation: Must be valid Init configuration name if provided; references named Init configurations",
+                    "description": "Name of a CloudFormation Init configuration from the cfnInit section.\n\nUse cases: Shared init config reuse across instances\n\nAWS: CloudFormation::Init\n\nValidation: Optional; must match a key in the cfnInit config section",
                     "type": "string"
                 },
                 "initOptions": {
                     "$ref": "#/definitions/InitOptionsProps",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudFormation Init options for initialization control enabling Init execution management. Defines Init execution options including config sets, timeout control, and execution parameters for automated infrastructure deployment.\n\nUse cases: Init execution control; Timeout management; Configuration execution; Deployment control\n\nAWS: CloudFormation Init options for execution control and initialization management\n\nValidation: Must be valid InitOptionsProps object if provided; configures Init execution when specified"
+                    "description": "Options controlling CloudFormation Init execution for this instance.\n\nUse cases: Config set selection; Init timeout tuning; Debug mode\n\nAWS: ApplyCloudFormationInitOptions\n\nValidation: Optional; valid InitOptionsProps"
                 },
                 "instanceRole": {
                     "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "Q-ENHANCED-PROPERTY\nRequired IAM role reference for EC2 instance permissions enabling secure access to AWS services and resources. Provides the IAM role that the instance assumes for accessing AWS services, resources, and performing operations with appropriate permissions.\n\nUse cases: Instance permissions; Service access; Security roles; Resource authorization\n\nAWS: AWS IAM role for EC2 instance permissions and service access\n\nValidation: Must be valid MdaaRoleRef object; required for instance permissions and resource access"
+                    "description": "IAM role used as the instance profile. Supports arn, name, or id references.\n\nUse cases: Instance service access; Least-privilege compute permissions\n\nAWS: EC2 IamInstanceProfile\n\nValidation: Required; valid MdaaRoleRef"
                 },
                 "instanceType": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired EC2 instance type specification for compute resource allocation enabling performance and cost optimization. Defines the instance type affecting compute capacity, memory, network performance, and cost for workload-appropriate resource allocation.\n\nUse cases: Compute capacity; Performance optimization; Cost control; Resource allocation\n\nAWS: AWS EC2 instance type for compute resource specification and performance\n\nValidation: Must be valid EC2 instance type string; required for instance creation and resource allocation",
+                    "description": "EC2 instance type (e.g. t3.medium, m5.large).\n\nUse cases: Compute capacity sizing; Cost optimization\n\nAWS: EC2 InstanceType\n\nValidation: Required; valid EC2 instance type string",
                     "type": "string"
                 },
                 "keyPairName": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional SSH key pair name reference for EC2 instance access enabling project-generated key pair integration. Specifies a key pair generated within the project configuration for SSH access to the instance for secure remote access management.\n\nUse cases: Project key pairs; SSH access; Secure access; Key management\n\nAWS: Project-generated SSH key pair name for EC2 instance access\n\nValidation: Must be valid key pair name if provided; references project-generated key pairs",
+                    "description": "Name of a key pair from the keyPairs section of this config for SSH access.\n\nUse cases: Project-managed SSH key pair reference\n\nAWS: EC2 KeyName\n\nValidation: Optional; must match a key in the keyPairs config section",
                     "type": "string"
                 },
                 "kmsKeyArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional KMS key ARN for EC2 instance encryption enabling data protection and compliance. Provides customer-managed encryption key for EBS volumes and instance encryption ensuring data protection and regulatory compliance.\n\nUse cases: Data encryption; Compliance requirements; Security enhancement; Key management\n\nAWS: AWS KMS key ARN for EC2 instance and EBS volume encryption\n\nValidation: Must be valid KMS key ARN if provided; enables encryption when specified",
+                    "description": "KMS key ARN for EBS volume encryption. If omitted, the module's KMS CMK is used.\n\nUse cases: Bring-your-own-key EBS encryption; Compliance-specific key management\n\nAWS: KMS key for EBS encryption\n\nValidation: Optional; valid KMS key ARN",
                     "type": "string"
                 },
                 "osType": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired operating system type specification for EC2 instance configuration enabling OS-specific management and automation. Defines the operating system type affecting instance configuration, user data scripts, and management operations for platform-appropriate deployment.\n\nUse cases: OS-specific configuration; Platform management; Automation targeting; Configuration management\n\nAWS: Operating system type for EC2 instance configuration and management\n\nValidation: Must be 'linux', 'windows', or 'unknown'; required for OS-specific configuration and management\n  *",
+                    "description": "Operating system type. Affects user data script handling and cfn-init behavior.\n\nUse cases: OS-specific bootstrap; Platform-appropriate configuration\n\nAWS: EC2 instance OS type\n\nValidation: Required; \"linux\" | \"windows\" | \"unknown\"",
                     "enum": [
                         "linux",
                         "unknown",
@@ -1679,35 +1682,35 @@
                     "type": "string"
                 },
                 "securityGroup": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional security group name reference for EC2 instance network access control enabling project-generated security group integration. Specifies a security group generated within the project configuration for instance network access control and security management.\n\nUse cases: Project security groups; Network access control; Security integration; Instance security\n\nAWS: Project-generated security group name for EC2 instance network access control\n\nValidation: Must be valid security group name if provided; references project-generated security groups",
+                    "description": "Name of a security group from the securityGroups section of this config.\nMutually exclusive with securityGroupId.\n\nUse cases: Reference project-managed security groups by name\n\nAWS: EC2 instance security group association\n\nValidation: Optional; must match a key in the securityGroups config section",
                     "type": "string"
                 },
                 "securityGroupId": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional security group ID for EC2 instance network access control enabling external security group integration. Specifies an existing security group ID for instance network access control and integration with external VPC security configurations.\n\nUse cases: External security groups; VPC integration; Network access control; Security group reuse\n\nAWS: AWS security group ID for EC2 instance network access control and security\n\nValidation: Must be valid security group ID if provided; must exist in the specified VPC",
+                    "description": "ID of an existing security group created outside this config.\nMutually exclusive with securityGroup.\n\nUse cases: Reuse pre-existing VPC security groups\n\nAWS: EC2 instance security group association\n\nValidation: Optional; valid security group ID (sg-...)",
                     "type": "string"
                 },
                 "signalCount": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional signal count for CloudFormation creation policy enabling deployment validation and success confirmation. Defines the number of successful signals required for instance creation completion ensuring proper initialization and deployment validation.\n\nUse cases: Deployment validation; Success confirmation; Creation policy; Initialization verification\n\nAWS: CloudFormation creation policy signal count for deployment validation\n\nValidation: Must be positive integer if provided; enables deployment validation when specified",
+                    "description": "Number of success signals required before CloudFormation considers\nthe instance creation complete.\n\nUse cases: Multi-step init validation; Deployment gate\n\nAWS: CloudFormation CreationPolicy ResourceSignal Count\n\nValidation: Optional; positive integer",
                     "type": "number"
                 },
                 "sourceDestCheck": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional source/destination check control for EC2 instance NAT functionality enabling network address translation and routing capabilities. Controls whether the instance can perform NAT operations affecting network routing and connectivity for specialized networking scenarios.\n\nUse cases: NAT functionality; Network routing; Connectivity management; Specialized networking\n\nAWS: EC2 source/destination check for NAT functionality and network routing\n\nValidation: Must be boolean if provided; enables NAT functionality when disabled (false)",
+                    "description": "When false, disables source/destination checking to allow NAT or routing.\n\nUse cases: NAT instance; Custom routing; Network appliance\n\nAWS: EC2 SourceDestCheck\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "subnetId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired subnet ID for EC2 instance placement within VPC enabling availability zone targeting and network segmentation. Specifies the subnet where the instance will be deployed affecting availability zone placement and network access patterns.\n\nUse cases: Subnet placement; Availability zone targeting; Network segmentation; Instance placement\n\nAWS: AWS VPC subnet ID for EC2 instance placement and network configuration\n\nValidation: Must be valid subnet ID string; required for instance placement and network configuration",
+                    "description": "Subnet for instance placement within the VPC.\n\nUse cases: AZ targeting; Network segmentation\n\nAWS: EC2 instance SubnetId\n\nValidation: Required; valid subnet ID",
                     "type": "string"
                 },
                 "userDataCausesReplacement": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional user data replacement control for EC2 instance update behavior enabling deployment strategy management. Controls whether changes to user data force instance replacement or restart affecting deployment behavior and instance lifecycle management.\n\nUse cases: Deployment strategy; Update behavior; Instance lifecycle; Change management\n\nAWS: CloudFormation instance replacement behavior for user data changes\n\nValidation: Must be boolean if provided; defaults based on init configuration; affects instance update behavior",
+                    "description": "Whether user data changes force instance replacement.\n\nUse cases: Immutable deployments; In-place update control\n\nAWS: CloudFormation UpdateReplacePolicy behavior\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "userDataScriptPath": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional user data script path for EC2 instance initialization enabling custom bootstrap configuration and automation. Specifies the path to a user data script that will be executed during instance startup for custom configuration and software installation.\n\nUse cases: Custom bootstrap; Instance initialization; Software installation; Configuration automation\n\nAWS: EC2 user data script for instance initialization and bootstrap configuration\n\nValidation: Must be valid file path if provided; enables custom initialization when specified",
+                    "description": "Path to a user data script relative to this config file.\nShell script for Linux (.sh), PowerShell for Windows (.ps1).\n\nUse cases: Custom bootstrap scripts; Instance initialization\n\nAWS: EC2 UserData\n\nValidation: Optional; valid file path",
                     "type": "string"
                 },
                 "vpcId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired VPC ID for EC2 instance network placement enabling VPC-specific deployment and network isolation. Specifies the VPC where the instance will be deployed affecting network boundaries and connectivity for secure infrastructure deployment.\n\nUse cases: VPC deployment; Network isolation; Network boundaries; Secure deployment\n\nAWS: AWS VPC ID for EC2 instance network placement and isolation\n\nValidation: Must be valid VPC ID string; required for instance network placement and security",
+                    "description": "VPC where the instance will be deployed.\n\nUse cases: VPC-scoped instance placement; Network isolation\n\nAWS: EC2 instance VPC\n\nValidation: Required; valid VPC ID",
                     "type": "string"
                 }
             },
@@ -1725,10 +1728,10 @@
         },
         "KeyPairProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nEC2 key pair configuration for SSH access with KMS encryption. Defines key pair properties including optional KMS key ARN for private key encryption, enabling secure SSH access management for EC2 instances.\n\nUse cases: SSH key management; Encrypted key pairs; Secure instance access\n\nAWS: EC2 KeyPair resource with optional KMS encryption for SSH private key protection\n\nValidation: kmsKeyArn must be valid KMS key ARN format if specified",
+            "description": "EC2 key pair configuration with optional KMS encryption for the private key secret.",
             "properties": {
                 "kmsKeyArn": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional KMS key ARN for private key encryption enabling enhanced security for SSH key pairs. When specified, encrypts the private key using the provided KMS key for additional security and compliance with encryption requirements.\n\nUse cases: Enhanced key security; Compliance requirements; Encrypted SSH keys; Key management security\n\nAWS: EC2 KeyPair KMS encryption for SSH private key protection and security compliance\n\nValidation: Must be valid KMS key ARN format if specified; key must exist and be accessible for encryption operations",
+                    "description": "KMS key ARN to encrypt the key pair's private key in Secrets Manager.\nIf omitted, the module's KMS CMK is used.\n\nUse cases: Bring-your-own-key encryption; Compliance-specific key management\n\nAWS: KMS key for Secrets Manager secret encryption\n\nValidation: Optional; valid KMS key ARN",
                     "type": "string"
                 }
             },
@@ -1792,10 +1795,9 @@
         },
         "MdaaCidrPeer": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nMdaaCidrPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "cidr": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired CIDR block specification for network access control in security group rules enabling IP range-based access control. Defines the IP address range that will be allowed or denied access through security group rules for network-level access control and security boundaries.\n\nUse cases: IP range access control; Network security boundaries; CIDR-based filtering; Network access management\n\nAWS: Amazon EC2 security group CIDR block for IP range-based network access control\n\nValidation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-based security group rules",
+                    "description": "CIDR block specification for network access control in security group rules enabling IP",
                     "type": "string"
                 },
                 "description": {
@@ -1814,7 +1816,7 @@
                     "type": "array"
                 },
                 "toPort": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
+                    "description": "The ending port number for the security group rule defining the upper bound of the port range",
                     "type": "number"
                 }
             },
@@ -2102,14 +2104,13 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
+                    "description": "CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed",
                     "type": "string"
                 },
                 "suppressions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
+                    "description": "Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -2137,10 +2138,9 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
+                    "description": "Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -2154,7 +2154,6 @@
         },
         "MdaaPrefixListPeer": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nMdaaPrefixListPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -2163,7 +2162,7 @@
                     "type": "number"
                 },
                 "prefixList": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired prefix list identifier for managed IP range access control in security group rules enabling AWS service and managed IP range-based access control. Defines the prefix list ID that contains managed IP ranges for AWS services or custom IP ranges for streamlined security group rule management.\n\nUse cases: AWS service access; Managed IP ranges; Prefix list-based filtering; Streamlined rule management\n\nAWS: Amazon EC2 prefix list identifier for managed IP range-based network access control\n\nValidation: Must be valid prefix list ID format (pl-xxxxxxxxx); required for prefix list-based security group rules",
+                    "description": "Prefix list identifier for managed IP range access control in security group rules enabling",
                     "type": "string"
                 },
                 "protocol": {
@@ -2176,7 +2175,7 @@
                     "type": "array"
                 },
                 "toPort": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
+                    "description": "The ending port number for the security group rule defining the upper bound of the port range",
                     "type": "number"
                 }
             },
@@ -2188,26 +2187,25 @@
         },
         "MdaaResourceNamingConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for MDAA resource naming implementations that standardize AWS resource naming across domains, environments, and modules. This interface enables consistent, collision-free resource naming in multi-tenant MDAA deployments by providing organizational context and CDK node access for custom naming strategies.\n\nUse cases: Multi-domain data lake deployments requiring unique resource names; Cross-account data mesh architectures with consistent naming; Custom naming implementations for compliance requirements\n\nAWS: Configures naming patterns for all AWS resources deployed by MDAA modules including S3 buckets, IAM roles, Glue databases, and CloudFormation stacks\n\nValidation: All properties required; org/env/domain/moduleName must be valid AWS resource name components (alphanumeric, hyphens, underscores)",
             "properties": {
                 "cdkNode": {
                     "$ref": "#/definitions/Node",
-                    "description": "Q-ENHANCED-PROPERTY\nCDK construct node providing access to context values for custom naming implementations. Enables retrieval of additional configuration through tryGetContext() for advanced naming strategies beyond the standard org/env/domain/module pattern.\n\nUse cases: Custom naming with environment-specific prefixes; Integration with external naming services; Context-driven naming for compliance requirements\n\nAWS: CDK context system for CloudFormation template generation\n\nValidation: Must be valid CDK Node instance with accessible context\n  *"
+                    "description": "CDK construct node providing access to context values for custom naming implementations"
                 },
                 "domain": {
-                    "description": "Q-ENHANCED-PROPERTY\nDomain identifier from MDAA configuration representing logical business or organizational boundaries within the data architecture. Forms the third component of the default naming pattern and enables data mesh architectures with domain-specific resource isolation.\n\nUse cases: Data mesh domain separation; Line-of-business resource isolation; Cross-domain data sharing with clear ownership\n\nAWS: Domain component in all AWS resource names, SSM parameter paths, and CloudFormation export names\n\nValidation: Must be valid AWS resource name component (typically business domain names like 'finance', 'marketing', 'shared')",
+                    "description": "Domain identifier from MDAA configuration representing logical business or organizational boundaries",
                     "type": "string"
                 },
                 "env": {
-                    "description": "Q-ENHANCED-PROPERTY\nEnvironment identifier from MDAA configuration that distinguishes deployment stages within the same domain. Forms the second component of the default naming pattern enabling parallel dev/test/prod deployments without resource conflicts.\n\nUse cases: Multi-stage deployments in same account; Environment-specific resource isolation; Progressive deployment strategies\n\nAWS: Environment component in all AWS resource names and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically 'dev', 'test', 'prod', 'staging')",
+                    "description": "Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain",
                     "type": "string"
                 },
                 "moduleName": {
-                    "description": "Q-ENHANCED-PROPERTY\nModule name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment. Forms the final component of the default naming pattern and enables multiple instances of the same module type within the same scope.\n\nUse cases: Multiple data lake instances per domain; Separate analytics workloads; Module-specific resource grouping\n\nAWS: Module component in all AWS resource names, SSM parameter paths, and CloudFormation stack names\n\nValidation: Must be valid AWS resource name component (typically module function like 'datalake', 'warehouse', 'analytics')",
+                    "description": "Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment",
                     "type": "string"
                 },
                 "org": {
-                    "description": "Q-ENHANCED-PROPERTY\nOrganization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names. Forms the first component of the default naming pattern and ensures global uniqueness across multiple MDAA deployments.\n\nUse cases: Multi-organization AWS accounts; Shared service accounts with multiple tenants; Resource name collision prevention\n\nAWS: Prefix for all AWS resource names including S3 buckets, IAM roles, and CloudFormation stacks\n\nValidation: Must be valid AWS resource name component (3-63 characters, alphanumeric and hyphens only, no consecutive hyphens)",
+                    "description": "Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names",
                     "type": "string"
                 }
             },
@@ -2222,30 +2220,29 @@
         },
         "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for referencing IAM roles across MDAA modules using multiple identification methods. Enables flexible role resolution for cross-module dependencies, external role integration, and SSO-managed roles while supporting both mutable and immutable role references.\n\nUse cases: Cross-module IAM role sharing; External role integration from Landing Zone Accelerator; SSO-managed role references for federated access\n\nAWS: References AWS IAM roles for service permissions, cross-account access, and federated identity integration\n\nValidation: At least one of name, arn, or id must be provided; arn must be valid IAM role ARN format; name must be valid IAM role name",
             "properties": {
                 "arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nFull IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.\n\nUse cases: Cross-account role references; External role integration; Precise role identification with account/region context\n\nAWS: AWS IAM role ARN for cross-account permissions and explicit role targeting\n\nValidation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)",
+                    "description": "Full IAM role ARN for cross-account role references and explicit role identification.\n\nUse cases: Cross-account role references; Explicit role binding; Multi-account deployments\n\nAWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)\n\nValidation: Optional; must be a valid IAM role ARN if provided",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.\n\nUse cases: Stable role references across name changes; Precise role identification; Role references in automated systems\n\nAWS: AWS IAM role unique ID for stable role identification\n\nValidation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)",
+                    "description": "IAM role unique identifier for role resolution using the role's AWS-generated ID.\n\nUse cases: Stable role references; Role resolution by unique ID; Immutable role binding\n\nAWS: IAM role unique ID (e.g., AROA...)\n\nValidation: Optional; must be a valid IAM role unique ID if provided",
                     "type": "string"
                 },
                 "immutable": {
-                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.\n\nUse cases: External role protection; System role preservation; Landing Zone Accelerator role integration\n\nAWS: Role modification protection flag for IAM role management\n\nValidation: Boolean value, defaults to false if not specified",
+                    "description": "Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.\n\nUse cases: Pre-existing role protection; Externally managed roles; Read-only role references\n\nAWS: Controls whether MDAA attaches policies or modifies the referenced IAM role\n\nValidation: Optional boolean; defaults to false",
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nIAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.\n\nUse cases: Same-account role references; MDAA-generated role references; Simple role configuration\n\nAWS: AWS IAM role name for role lookup and permission assignment\n\nValidation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)",
+                    "description": "IAM role name for role resolution within the same AWS account.\n\nUse cases: Same-account role references; Role name-based resolution; Local IAM role binding\n\nAWS: IAM role name resolved via GetRole within the deployment account\n\nValidation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution",
                     "type": "string"
                 },
                 "refId": {
-                    "description": "Q-ENHANCED-PROPERTY\nUnique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.\n\nUse cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging\n\nAWS: Logical identifier for IAM role references in MDAA configurations\n\nValidation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended",
+                    "description": "Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.\n\nUse cases: Role reference identification; Configuration deduplication; Role lookup key\n\nAWS: Logical identifier for IAM role references within MDAA configuration\n\nValidation: Optional; must be unique within the configuration scope if provided",
                     "type": "string"
                 },
                 "sso": {
-                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.\n\nUse cases: AWS Identity Center integration; Federated user access; SSO-managed role references\n\nAWS: AWS Identity Center (SSO) role resolution for federated access\n\nValidation: Boolean value, implies immutable=true when set to true",
+                    "description": "Flag indicating the role should be resolved as an AWS SSO auto-generated role.\n\nUse cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access\n\nAWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention\n\nValidation: Optional boolean; defaults to false",
                     "type": "boolean"
                 }
             },
@@ -2344,7 +2341,6 @@
         },
         "MdaaSecurityGroupPeer": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -2356,7 +2352,7 @@
                     "type": "string"
                 },
                 "sgId": {
-                    "description": "Q-ENHANCED-PROPERTY\nRequired security group identifier for security group-based access control in network rules enabling security group reference-based access control. Defines the security group ID that will be referenced in security group rules for allowing access between security groups and resources.\n\nUse cases: Security group reference; Cross-security group access; Resource-based access control; Security group chaining\n\nAWS: Amazon EC2 security group identifier for security group-based network access control\n\nValidation: Must be valid security group ID format (sg-xxxxxxxxx); required for security group-based rules",
+                    "description": "Security group identifier for security group-based access control in network rules enabling",
                     "type": "string"
                 },
                 "suppressions": {
@@ -2366,7 +2362,7 @@
                     "type": "array"
                 },
                 "toPort": {
-                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
+                    "description": "The ending port number for the security group rule defining the upper bound of the port range",
                     "type": "number"
                 }
             },
@@ -2378,24 +2374,23 @@
         },
         "MdaaSecurityGroupRuleProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupRuleProps configuration interface for compute infrastructure and instance management.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "ipv4": {
-                    "description": "Q-ENHANCED-PROPERTY\nIPv4 CIDR block rules for security group traffic control defining IP address-based access restrictions. Specifies IPv4 CIDR blocks that are allowed or denied access through the security group for network-level access control and IP-based security policies.\n\nUse cases: IP-based access control; Network segmentation; CIDR-based restrictions; Geographic access control; Network security policies\n\nAWS: AWS EC2 SecurityGroup rules with IPv4 CIDR block sources/destinations\n\nValidation: Must be valid MdaaCidrPeer array with valid CIDR notation; optional array for IP-based rules\n  *",
+                    "description": "IPv4 CIDR block rules for security group traffic control defining IP address-based access restrictions",
                     "items": {
                         "$ref": "#/definitions/MdaaCidrPeer"
                     },
                     "type": "array"
                 },
                 "prefixList": {
-                    "description": "Q-ENHANCED-PROPERTY\nPrefix list rules for security group traffic control defining managed prefix list-based access restrictions. Specifies AWS-managed or customer-managed prefix lists for scalable IP address range management and centralized network access control.\n\nUse cases: Managed IP ranges; Scalable access control; Centralized IP management; AWS service access; Regional IP restrictions\n\nAWS: AWS EC2 SecurityGroup rules with prefix list sources/destinations\n\nValidation: Must be valid MdaaPrefixListPeer array with valid prefix list IDs; optional array for prefix list-based rules\n  *",
+                    "description": "Prefix list rules for security group traffic control defining managed prefix list-based access restrictions",
                     "items": {
                         "$ref": "#/definitions/MdaaPrefixListPeer"
                     },
                     "type": "array"
                 },
                 "sg": {
-                    "description": "Q-ENHANCED-PROPERTY\nSecurity group rules for cross-security group traffic control defining security group-based access restrictions. Specifies other security groups that are allowed access through this security group for resource-level access control and security group chaining.\n\nUse cases: Cross-security group access; Resource-based access control; Security group chaining; Service-to-service communication; Layered security\n\nAWS: AWS EC2 SecurityGroup rules with security group sources/destinations\n\nValidation: Must be valid MdaaSecurityGroupPeer array with valid security group IDs; optional array for SG-based rules\n  *",
+                    "description": "Security group rules for cross-security group traffic control defining security group-based access restrictions",
                     "items": {
                         "$ref": "#/definitions/MdaaSecurityGroupPeer"
                     },
@@ -2406,17 +2401,16 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
+                    "description": "Human-readable description explaining the purpose and scope of the Service Catalog constraint",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
+                    "description": "Object containing named constraint rules that define the validation logic for Service Catalog product parameters",
                     "type": "object"
                 }
             },
@@ -2428,14 +2422,13 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
-                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
+                    "description": "Constraint assertion expression that defines the validation logic for Service Catalog product parameters",
                     "type": "string"
                 },
                 "description": {
-                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
+                    "description": "Human-readable description explaining the purpose and requirements of the constraint assertion",
                     "type": "string"
                 }
             },
@@ -2451,10 +2444,9 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
-                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
+                    "description": "Array of constraint assertions that define the validation logic to be applied when the condition is met",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
@@ -2462,7 +2454,7 @@
                 },
                 "condition": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
+                    "description": "Condition configuration that determines when the constraint rule assertions should be evaluated"
                 }
             },
             "required": [
@@ -2473,15 +2465,14 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
                     "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
+                    "description": "Constraint configuration that defines additional validation rules for the Service Catalog product parameter"
                 },
                 "props": {
                     "$ref": "#/definitions/CfnParameterProps",
-                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
+                    "description": "CloudFormation parameter properties that define the parameter characteristics including type,"
                 }
             },
             "required": [
@@ -2491,29 +2482,28 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
+                    "description": "IAM role name that will be used to launch the Service Catalog product",
                     "type": "string"
                 },
                 "name": {
-                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
+                    "description": "Display name for the Service Catalog product that will be visible to end users in the Service Catalog console",
                     "type": "string"
                 },
                 "owner": {
-                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
+                    "description": "Owner identifier for the Service Catalog product, typically representing the team or organization",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
-                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "description": "Object containing named parameter configurations for the Service Catalog product",
                     "type": "object"
                 },
                 "portfolio_arn": {
-                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
+                    "description": "ARN of the AWS Service Catalog portfolio where the product will be associated",
                     "type": "string"
                 },
                 "portfolio_bucket_name": {
@@ -2595,98 +2585,98 @@
             "additionalProperties": {
                 "$ref": "#/definitions/CommandProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed command configuration interface for CloudFormation Init with systematic command execution management capabilities. Defines named command mappings for organized command execution in EC2 instance initialization including shell commands, environment variables, and execution control for infrastructure automation.\n\nUse cases: Named command sets; Command execution organization; Multi-environment commands; Infrastructure automation; System configuration\n\nAWS: CloudFormation Init command configuration with named mappings for systematic command execution and management\n\nValidation: Configuration must be valid for EC2 deployment; properties must conform to AWS EC2 requirements and MDAA standards",
+            "description": "Map of command identifiers to their configurations.\nCommands execute in lexicographical order of their key names.",
             "type": "object"
         },
         "NamedConfigProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/ConfigProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed configuration interface for CloudFormation Init with systematic configuration organization capabilities. Defines named configuration mappings for organized EC2 instance initialization including packages, services, files, and commands for systematic infrastructure deployment.\n\nUse cases: Named configuration sets; Configuration organization; Multi-environment configs; Setup patterns; Infrastructure automation\n\nAWS: CloudFormation Init configuration with named mappings for systematic initialization configuration management and organization\n\nValidation: Configuration must be valid CloudFormation Init format; properties must conform to EC2 initialization requirements",
+            "description": "Map of config names to their definitions.",
             "type": "object"
         },
         "NamedConfigSetsProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/ConfigSetsProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed configuration sets interface for CloudFormation Init with systematic configuration organization capabilities. Defines named configuration set mappings for organized EC2 instance initialization sequences including ordered configuration execution and dependency management for systematic infrastructure deployment.\n\nUse cases: Named configuration sequences; Initialization order management; Configuration organization; Multi-stage setup; Infrastructure automation patterns\n\nAWS: CloudFormation Init configuration sets with named mappings for systematic initialization sequence management and execution order\n\nValidation: Names must be unique identifiers; each entry must map to valid ConfigSetsProps configuration",
+            "description": "Map of config set names to their ordered config lists.",
             "type": "object"
         },
         "NamedEnvProps": {
             "additionalProperties": {
                 "type": "string"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed environment variable configuration interface for CloudFormation Init with systematic environment management capabilities. Defines named environment variable mappings for organized environment configuration in EC2 instance initialization including variable sets and environment management for infrastructure automation.\n\nUse cases: Named environment sets; Environment variable organization; Multi-environment configs; Infrastructure automation; System configuration\n\nAWS: CloudFormation Init environment configuration with named mappings for systematic environment variable management\n\nValidation: Configuration must be valid for EC2 deployment; properties must conform to AWS EC2 requirements and MDAA standards",
+            "description": "Map of environment variable names to values.",
             "type": "object"
         },
         "NamedFileProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/FileProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed file configuration interface for CloudFormation Init with systematic file deployment management capabilities. Defines named file mappings for organized file deployment in EC2 instance initialization including file paths, content, and permissions for infrastructure automation.\n\nUse cases: Named file sets; File deployment organization; Multi-environment files; Infrastructure automation; Configuration management\n\nAWS: CloudFormation Init file configuration with named mappings for systematic file deployment and management\n\nValidation: Configuration must be valid for EC2 deployment; properties must conform to AWS EC2 requirements and MDAA standards",
+            "description": "Map of file names to their deployment configurations.",
             "type": "object"
         },
         "NamedGroupProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/GroupProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed group configuration interface for CloudFormation Init with systematic user group management capabilities. Defines named group mappings for organized system group creation in EC2 instance initialization including group IDs and group management for security and access control.\n\nUse cases: Named group sets; User group organization; System security; Access control; Multi-environment groups; Infrastructure automation\n\nAWS: CloudFormation Init group configuration with named mappings for systematic system group management and access control\n\nValidation: Configuration must be valid CloudFormation Init format; properties must conform to EC2 initialization requirements",
+            "description": "Map of group names to their configurations. Linux/UNIX only.",
             "type": "object"
         },
         "NamedInitProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/InitProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed CloudFormation Init configuration interface for EC2 instance initialization with systematic configuration organization capabilities. Defines named Init configuration mappings for organized EC2 instance bootstrap configuration including packages, services, files, and commands for systematic infrastructure deployment.\n\nUse cases: Named initialization sets; Bootstrap configuration organization; Multi-environment init configs; Instance setup patterns; Infrastructure automation\n\nAWS: EC2 CloudFormation Init configuration with named mappings for systematic instance initialization and bootstrap management\n\nValidation: Names must be unique identifiers; each entry must map to valid InitProps configuration",
+            "description": "Map of CloudFormation Init configuration names to their definitions.",
             "type": "object"
         },
         "NamedInstanceProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/InstanceProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed EC2 instance configuration interface with systematic instance deployment management capabilities. Defines named instance mappings for organized EC2 instance deployment including instance specifications, security configuration, and deployment parameters for infrastructure automation.\n\nUse cases: Named instance sets; Instance deployment organization; Multi-environment instances; Infrastructure automation; Compute management\n\nAWS: EC2 instance configuration with named mappings for systematic instance deployment and management\n\nValidation: Configuration must be valid for EC2 deployment; properties must conform to AWS EC2 requirements and MDAA standards",
+            "description": "Map of instance names to their configurations.",
             "type": "object"
         },
         "NamedKeyPairProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/KeyPairProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed key pair configuration interface for EC2 SSH access management with systematic key pair organization capabilities. Defines named key pair mappings for organized SSH key management in EC2 infrastructure deployments with KMS encryption and access control.\n\nUse cases: Named SSH key sets; Key pair organization; Multi-environment key management; Access control patterns; Infrastructure security\n\nAWS: EC2 key pair configuration with named mappings for systematic SSH key management and access control organization\n\nValidation: Names must be unique identifiers; each entry must map to valid KeyPairProps configuration",
+            "description": "Map of key pair names to their configurations.",
             "type": "object"
         },
         "NamedPackageProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/PackageProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed package configuration interface for CloudFormation Init with systematic package management capabilities. Defines named package mappings for organized software installation in EC2 instance initialization including package managers, versions, and installation options.\n\nUse cases: Named package sets; Software installation organization; Package management; Multi-environment packages; Infrastructure automation\n\nAWS: CloudFormation Init package configuration with named mappings for systematic software installation and package management\n\nValidation: Configuration must be valid CloudFormation Init format; properties must conform to EC2 initialization requirements",
+            "description": "Map of package identifiers to their configurations.",
             "type": "object"
         },
         "NamedSecurityGroupProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/SecurityGroupProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed security group collection for organized EC2 network security management. Maps security group names to their configurations, enabling systematic security group deployment and reference management in multi-tier EC2 architectures.\n\nUse cases: Multi-tier application security groups; Named security group sets; Organized network security patterns\n\nAWS: EC2 security groups with named mappings for systematic network access control and security group management\n\nValidation: Names must be unique identifiers; each SecurityGroupProps must define valid VPC and rule configurations",
+            "description": "Map of security group names to their configurations.",
             "type": "object"
         },
         "NamedServiceProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/ServiceProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed service configuration interface for CloudFormation Init with systematic service management capabilities. Defines named service mappings for organized system service configuration in EC2 instance initialization including service control and management for infrastructure automation.\n\nUse cases: Named service sets; Service management organization; Multi-environment services; Infrastructure automation; System configuration\n\nAWS: CloudFormation Init service configuration with named mappings for systematic system service management and control\n\nValidation: Configuration must be valid for EC2 deployment; properties must conform to AWS EC2 requirements and MDAA standards",
+            "description": "Map of service names to their configurations.\nKey should be the OS service name (e.g. cfn-hup, httpd).",
             "type": "object"
         },
         "NamedSourceProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/SourceProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed source configuration interface for CloudFormation Init with systematic source file management capabilities. Defines named source mappings for organized file source configuration in EC2 instance initialization including remote sources and file deployment for infrastructure automation.\n\nUse cases: Named source sets; File source organization; Remote file management; Multi-environment sources; Infrastructure automation\n\nAWS: CloudFormation Init source configuration with named mappings for systematic file source management and deployment\n\nValidation: Configuration must be valid CloudFormation Init format; properties must conform to EC2 initialization requirements",
+            "description": "Map of target directory paths to source archive configurations.",
             "type": "object"
         },
         "NamedUserProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/UserProps"
             },
-            "description": "Q-ENHANCED-INTERFACE\nNamed user configuration interface for CloudFormation Init with systematic user account management capabilities. Defines named user mappings for organized system user creation in EC2 instance initialization including user accounts, groups, and home directories for security and access control.\n\nUse cases: Named user sets; User account organization; System security; Access control; Multi-environment users; Infrastructure automation\n\nAWS: CloudFormation Init user configuration with named mappings for systematic system user management and access control\n\nValidation: Configuration must be valid CloudFormation Init format; properties must conform to EC2 initialization requirements",
+            "description": "Map of user names to their configurations. Linux/UNIX only.",
             "type": "object"
         },
         "Node": {
@@ -2786,33 +2776,33 @@
         },
         "PackageProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nPackage configuration interface for CloudFormation Init providing software installation and package management capabilities. Defines package properties for EC2 instance initialization including package managers, installation locations, versions, and restart requirements for automated software deployment.\n\nUse cases: Software installation; Package management; Version control; Installation automation; System configuration; Infrastructure setup\n\nAWS: CloudFormation Init package configuration for automated software installation with package managers and version control\n\nValidation: Configuration must be valid CloudFormation Init format; properties must conform to EC2 initialization requirements",
+            "description": "Package installation configuration for CloudFormation Init.\nSupports msi, rpm, gem, yum, python, and apt package managers.",
             "properties": {
                 "key": {
-                    "description": "Q-ENHANCED-PROPERTY\nPackage identifier key for MSI and RPM package installation enabling package identification and management. Provides unique identifier for the package installation, supporting package tracking and management in CloudFormation Init.\n\nUse cases: Package identification; Installation tracking; Package management; MSI/RPM package handling\n\nAWS: CloudFormation Init package key for MSI and RPM package identification and management\n\nValidation: Must be valid identifier string if specified; used for MSI and RPM packages; enables package tracking",
+                    "description": "Identifier key for MSI/RPM packages. Free-form reference string.\n\nUse cases: Package tracking; MSI/RPM package identification\n\nAWS: CloudFormation::Init package key\n\nValidation: Optional; string",
                     "type": "string"
                 },
                 "packageLocation": {
-                    "description": "Q-ENHANCED-PROPERTY\nPackage location URL or path for MSI and RPM package installation enabling direct package file installation. Specifies the location where the package file can be downloaded or accessed for installation on the EC2 instance.\n\nUse cases: Direct package installation; Custom package deployment; MSI/RPM package installation; Package file distribution\n\nAWS: CloudFormation Init package location for MSI and RPM package file installation\n\nValidation: Must be valid URL or file path if specified; required for MSI and RPM packages; must be accessible during installation",
+                    "description": "URL or path for MSI/RPM package file installation.\nRequired for msi and rpm package managers.\n\nUse cases: Direct MSI/RPM installation; Custom package deployment\n\nAWS: CloudFormation::Init package location\n\nValidation: Optional; valid URL or path; required for msi/rpm",
                     "type": "string"
                 },
                 "packageManager": {
-                    "description": "Q-ENHANCED-PROPERTY\nPackage manager type for software installation specifying the installation method and package format. Determines how the package will be installed on the EC2 instance, supporting various package managers for different operating systems and software types.\n\nUse cases: Cross-platform package installation; Package manager selection; Software deployment; Installation automation\n\nAWS: CloudFormation Init package manager specification for automated software installation\n\nValidation: Must be valid package manager value ('msi', 'rpm', 'gem', 'yum', 'python', 'apt'); required; determines installation method",
+                    "description": "Package manager to use for installation.\n\nUse cases: Cross-platform package installation; OS-specific package management\n\nAWS: CloudFormation::Init packages\n\nValidation: Required; msi | rpm | gem | yum | python | apt",
                     "type": "string"
                 },
                 "packageName": {
-                    "description": "Q-ENHANCED-PROPERTY\nPackage name for repository-based installation enabling package manager repository installation. Specifies the package name as it appears in the package manager repository for gem, yum, python, and apt package installations.\n\nUse cases: Repository package installation; Package manager integration; Standard package deployment; Software installation automation\n\nAWS: CloudFormation Init package name for repository-based package installation\n\nValidation: Must be valid package name if specified; required for gem, yum, python, apt packages; must exist in package repository",
+                    "description": "Repository package name for gem, yum, python, and apt managers.\n\nUse cases: Repository-based package installation; Standard package deployment\n\nAWS: CloudFormation::Init package name\n\nValidation: Optional; required for gem/yum/python/apt",
                     "type": "string"
                 },
                 "packageVersions": {
-                    "description": "Q-ENHANCED-PROPERTY\nSpecific package versions for version-controlled installation enabling precise software version management. Specifies exact package versions to install, supporting version pinning and controlled software deployment for consistency and compatibility.\n\nUse cases: Version pinning; Controlled deployment; Software compatibility; Version management; Consistent environments\n\nAWS: CloudFormation Init package version specification for controlled software version installation\n\nValidation: Must be array of valid version strings if specified; empty array installs latest version; versions must be available",
+                    "description": "Specific versions to install. Empty array installs latest.\n\nUse cases: Version pinning; Controlled software deployment\n\nAWS: CloudFormation::Init package versions\n\nValidation: Optional; array of version strings",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "restartRequired": {
-                    "description": "Q-ENHANCED-PROPERTY\nService restart requirement flag for post-installation service management enabling automatic service restart after package installation. When enabled, automatically restarts specified services after package installation to ensure proper service configuration and functionality.\n\nUse cases: Service restart automation; Post-installation configuration; Service management; Installation completion\n\nAWS: CloudFormation Init service restart configuration for post-package installation service management\n\nValidation: Boolean value; when true, restarts services after package installation; ensures proper service configuration",
+                    "description": "When true, restarts associated services after package installation.\n\nUse cases: Post-install service refresh; Configuration activation\n\nAWS: CloudFormation::Init restart handle\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 }
             },
@@ -2971,22 +2961,22 @@
         },
         "SecurityGroupProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nEC2 security group configuration for VPC network access control. Defines security group properties including VPC targeting, ingress/egress rules, and self-reference capabilities for systematic network security in EC2 deployments.\n\nUse cases: Application tier security groups; Database access control; Web server security configuration\n\nAWS: EC2 SecurityGroup resource for VPC network access control with ingress/egress rule management\n\nValidation: vpcId must be valid VPC identifier; ingress/egress arrays must contain valid SecurityGroupRule configurations",
+            "description": "Security group configuration for VPC network access control.",
             "properties": {
                 "addSelfReferenceRule": {
-                    "description": "Q-ENHANCED-PROPERTY\nSelf-reference rule enablement for intra-security-group communication allowing instances within the same security group to communicate. When enabled, automatically creates rules allowing traffic between instances in the same security group for cluster and application tier communication.\n\nUse cases: Cluster communication; Application tier connectivity; Database replication; Load balancer health checks\n\nAWS: EC2 SecurityGroup self-referencing rules for intra-group communication and cluster connectivity\n\nValidation: Boolean value; when true, creates bidirectional self-reference rules for intra-group communication",
+                    "description": "When true, adds bidirectional rules allowing instances in this security group\nto communicate with each other.\n\nUse cases: Cluster node communication; Application tier internal traffic\n\nAWS: EC2 SecurityGroup self-referencing ingress rule\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "egressRules": {
                     "$ref": "#/definitions/MdaaSecurityGroupRuleProps",
-                    "description": "Q-ENHANCED-PROPERTY\nOutbound traffic rules for security group access control enabling controlled egress from EC2 instances. Defines the network traffic patterns allowed from instances associated with this security group, supporting secure outbound connectivity patterns.\n\nUse cases: Outbound access control; Service connectivity; External API access; Egress traffic filtering\n\nAWS: EC2 SecurityGroup egress rules for outbound traffic control and connectivity management\n\nValidation: Must be valid MdaaSecurityGroupRuleProps if specified; rules must define valid protocols, ports, and destinations\n  *"
+                    "description": "Outbound traffic rules. All egress is allowed by default.\nSupports ipv4 CIDR, prefix list, and security group destinations.\n\nUse cases: VPC endpoint access via prefix lists; Restricted outbound connectivity\n\nAWS: EC2 SecurityGroup egress rules\n\nValidation: Optional; valid MdaaSecurityGroupRuleProps"
                 },
                 "ingressRules": {
                     "$ref": "#/definitions/MdaaSecurityGroupRuleProps",
-                    "description": "Q-ENHANCED-PROPERTY\nInbound traffic rules for security group access control enabling controlled ingress to EC2 instances. Defines the network traffic patterns allowed into instances associated with this security group, supporting application-specific access requirements.\n\nUse cases: Application access control; Service port management; Client connectivity rules; Inbound traffic filtering\n\nAWS: EC2 SecurityGroup ingress rules for inbound traffic control and access management\n\nValidation: Must be valid MdaaSecurityGroupRuleProps if specified; rules must define valid protocols, ports, and sources\n  *"
+                    "description": "Inbound traffic rules. Supports ipv4 CIDR, prefix list, and security group sources.\n\nUse cases: Application port access; Client connectivity; Service ingress\n\nAWS: EC2 SecurityGroup ingress rules\n\nValidation: Optional; valid MdaaSecurityGroupRuleProps"
                 },
                 "vpcId": {
-                    "description": "Q-ENHANCED-PROPERTY\nTarget VPC identifier for security group deployment enabling VPC-specific network access control. Specifies the VPC where the security group will be created, establishing the network boundary for security rule application and instance association.\n\nUse cases: VPC network isolation; Security group placement; Network boundary definition; VPC-specific access control\n\nAWS: EC2 SecurityGroup VPC association for network boundary and access control scope\n\nValidation: Must be valid VPC ID; required; VPC must exist and be accessible for security group creation",
+                    "description": "VPC where the security group will be created.\n\nUse cases: VPC-scoped network isolation; Multi-tier application security\n\nAWS: EC2 SecurityGroup VpcId\n\nValidation: Required; valid VPC ID",
                     "type": "string"
                 }
             },
@@ -3011,22 +3001,22 @@
         },
         "ServiceProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nService configuration interface for CloudFormation Init providing system service management and control capabilities. Defines service properties for EC2 instance initialization including service enablement, startup control, restart requirements, and service management for automated system configuration.\n\nUse cases: System service management; Service startup control; Service enablement; Restart management; Infrastructure automation; System configuration\n\nAWS: CloudFormation Init service configuration for automated system service management with startup control and service enablement\n\nValidation: Configuration must be valid for EC2 deployment; properties must conform to AWS EC2 requirements and MDAA standards",
+            "description": "System service configuration for CloudFormation Init.\nSupports sysvinit/systemd on Linux and Windows Service Manager on Windows.",
             "properties": {
                 "disabled": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional boolean flag to disable and stop the specified service enabling service deactivation and shutdown. Provides ability to explicitly disable a service and ensure it is not running, useful for security hardening or resource optimization scenarios.\n\nUse cases: Service deactivation; Security hardening; Resource optimization; Service shutdown; System configuration\n\nAWS: CloudFormation Init service disabling for service deactivation and shutdown control\n\nValidation: Must be boolean value if provided; optional for service disabling control",
+                    "description": "Explicitly disable and stop the service.\n\nUse cases: Security hardening; Disabling unnecessary services\n\nAWS: CloudFormation::Init services disabled\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "enabled": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional boolean flag to control service startup behavior on system boot enabling automatic service initialization. Determines whether the service will be automatically started when the EC2 instance boots up, providing control over service availability and system startup behavior.\n\nUse cases: Automatic service startup; Boot-time service control; Service availability; System initialization; Service management\n\nAWS: CloudFormation Init service enablement for automatic startup control on EC2 instance boot\n\nValidation: Must be boolean value if provided; optional for service startup control",
+                    "description": "Enable the service to start automatically on boot.\n\nUse cases: Persistent service startup; Boot-time service availability\n\nAWS: CloudFormation::Init services enabled\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "ensureRunning": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional boolean flag to ensure the service is running after CloudFormation Init completion enabling service state control. Determines whether the service should be actively running after the initialization process completes, providing control over final service state.\n\nUse cases: Service state control; Post-initialization service management; Service availability; System readiness; Service lifecycle\n\nAWS: CloudFormation Init service running state control for post-initialization service management\n\nValidation: Must be boolean value if provided; optional for service running state control",
+                    "description": "Ensure the service is running after init completes.\n\nUse cases: Service availability verification; Post-init service state\n\nAWS: CloudFormation::Init services ensureRunning\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "restartRequired": {
-                    "description": "Q-ENHANCED-PROPERTY\nOptional boolean flag to restart the service after command execution enabling service refresh and configuration reload. Provides ability to restart services after configuration changes or command execution to ensure new settings take effect.\n\nUse cases: Service restart; Configuration reload; Service refresh; Post-command service management; Configuration application\n\nAWS: CloudFormation Init service restart control for post-command service refresh and configuration reload\n\nValidation: Must be boolean value if provided; optional for service restart control",
+                    "description": "When true, restarts this service after associated commands, files, or packages complete.\nThe service must also have restartRequired: true in the triggering element.\n\nUse cases: Config-driven service reload; Post-deployment service refresh\n\nAWS: CloudFormation::Init restart handle\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 }
             },
@@ -3034,10 +3024,10 @@
         },
         "SourceProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nSource configuration interface for CloudFormation Init with file source specification and deployment capabilities. Defines source properties for EC2 instance initialization including source locations and file deployment configuration for automated file management and infrastructure setup.\n\nUse cases: File source specification; Remote file deployment; Source management; File automation; Infrastructure setup; Configuration deployment\n\nAWS: CloudFormation Init source configuration for file deployment with source location specification and file management\n\nValidation: Configuration must be valid CloudFormation Init format; properties must conform to EC2 initialization requirements",
+            "description": "Source archive configuration for CloudFormation Init file extraction.",
             "properties": {
                 "source": {
-                    "description": "Q-ENHANCED-PROPERTY\nSource location URL for file download and deployment enabling remote file retrieval and automated file management. Specifies the URL from which files will be downloaded and deployed to the EC2 instance during initialization, supporting automated configuration and software deployment.\n\nUse cases: Remote file deployment; Configuration download; Software installation; Automated file retrieval; Infrastructure setup\n\nAWS: CloudFormation Init source location for file download and deployment automation\n\nValidation: Must be valid URL; required; source must be accessible during instance initialization for file download",
+                    "description": "URL of the archive to download and extract into the target directory.\n\nUse cases: Application artifact deployment; Configuration archive extraction\n\nAWS: CloudFormation::Init sources\n\nValidation: Required; valid URL accessible during instance initialization",
                     "type": "string"
                 }
             },
@@ -3281,21 +3271,21 @@
         },
         "UserProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nUser configuration interface for CloudFormation Init providing user account creation and management capabilities. Defines user properties for EC2 instance initialization including user IDs, group memberships, home directories, and user configuration for system security and access control.\n\nUse cases: User account creation; Group membership; Home directory management; User ID specification; System security; Access control\n\nAWS: CloudFormation Init user configuration for system user creation with group membership and home directory management\n\nValidation: Configuration must be valid CloudFormation Init format; properties must conform to EC2 initialization requirements",
+            "description": "Linux/UNIX user account configuration for CloudFormation Init.",
             "properties": {
                 "groups": {
-                    "description": "Q-ENHANCED-PROPERTY\nList of group names for user group membership enabling user access control and permission management. Specifies the groups to which the user will be added, supporting role-based access control and system security through group-based permissions.\n\nUse cases: Group membership; Role-based access; Permission management; Security configuration; Access control\n\nAWS: CloudFormation Init user group membership for access control and permission management\n\nValidation: Must be array of valid group names; required; groups must exist or be created before user creation",
+                    "description": "Groups the user will be added to.\n\nUse cases: Role-based access via group membership; Multi-group user setup\n\nAWS: CloudFormation::Init user groups\n\nValidation: Required; array of group name strings; groups must exist or be created in the groups section",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "homeDir": {
-                    "description": "Q-ENHANCED-PROPERTY\nUser home directory path for user account configuration enabling personalized user environment and file management. Specifies the home directory location for the user account, supporting user environment setup and file organization.\n\nUse cases: User environment setup; Home directory management; File organization; User configuration; Personal workspace\n\nAWS: CloudFormation Init user home directory configuration for user environment and file management\n\nValidation: Must be valid directory path; required; directory will be created if it doesn't exist",
+                    "description": "Home directory path for the user account.\n\nUse cases: Custom home directory location; Application-specific user workspace\n\nAWS: CloudFormation::Init user homeDir\n\nValidation: Required; valid directory path",
                     "type": "string"
                 },
                 "uid": {
-                    "description": "Q-ENHANCED-PROPERTY\nSystem user ID number for user account creation enabling specific user ID assignment and system integration. When specified, creates the user with the exact user ID, supporting system integration requirements and user ID management for security and access control.\n\nUse cases: Specific user ID assignment; System integration; User ID management; Security configuration; Access control\n\nAWS: CloudFormation Init user creation with specific user ID for system user management\n\nValidation: Must be valid user ID string if specified; creation fails if username exists with different ID; OS may reject if ID conflicts",
+                    "description": "Specific numeric user ID. If omitted, the OS assigns one automatically.\n\nUse cases: Fixed UID for file ownership; System integration with specific UID requirements\n\nAWS: CloudFormation::Init users\n\nValidation: Optional; numeric string",
                     "type": "string"
                 }
             },
@@ -3500,7 +3490,7 @@
     },
     "properties": {
         "adminRoles": {
-            "description": "Q-ENHANCED-PROPERTY\nRequired array of admin role references with access to EC2 KMS keys and key pair secrets enabling secure compute resource management. Provides administrative access to encryption keys and SSH key pairs for secure instance management and access control.\n\nUse cases: Secure compute administration; Key management access; SSH key pair administration\n\nAWS: AWS IAM roles with KMS and Secrets Manager access for EC2 key management and administration\n\nValidation: Must be array of valid MdaaRoleRef objects; required; roles receive access to EC2 keys and secrets",
+            "description": "Roles granted admin access to the EC2 KMS key and KeyPair secrets.\nAdmin roles can decrypt EBS volumes and retrieve SSH private keys from Secrets Manager.\n\nUse cases: EC2 key management; SSH key pair secret access; EBS encryption admin\n\nAWS: IAM roles, KMS key policy, Secrets Manager\n\nValidation: Required; array of MdaaRoleRef; supports name, arn, and id references",
             "items": {
                 "$ref": "#/definitions/MdaaRoleRef"
             },
@@ -3508,15 +3498,15 @@
         },
         "cfnInit": {
             "$ref": "#/definitions/NamedInitProps",
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of CloudFormation init object names to initialization configurations enabling automated instance setup and configuration. Provides instance initialization with software installation, configuration management, and automated setup workflows.\n\nUse cases: Automated instance setup; Software installation; Configuration management and initialization\n\nAWS: AWS CloudFormation Init for automated EC2 instance configuration and setup\n\nValidation: Must be valid NamedInitProps if provided; defines instance initialization and configuration scripts"
+            "description": "CloudFormation Init configurations for automated instance bootstrap.\nEach named init contains configSets (ordered execution sequences) and configs\n(packages, commands, files, services). Referenced by instances via initName.\n\nUse cases: Automated software installation; Service configuration; Multi-stage bootstrap\n\nAWS: CloudFormation::Init metadata\n\nValidation: Optional; map of init name to InitProps"
         },
         "instances": {
             "$ref": "#/definitions/NamedInstanceProps",
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of instance names to EC2 instance configurations enabling compute resource deployment. Provides complete instance configuration with AMI selection, instance types, networking, and security settings for diverse compute workloads.\n\nUse cases: Compute resource deployment; Instance configuration; Workload-specific compute setup\n\nAWS: Amazon EC2 instances for compute resource deployment and workload execution\n\nValidation: Must be valid NamedInstanceProps if provided; defines complete EC2 instance configuration"
+            "description": "EC2 instances to deploy. Instances have termination protection enabled and are\nretained post stack deletion. EBS volumes are encrypted with the module KMS CMK\nunless a custom kmsKeyArn is specified. AMI root volumes must be listed in\nblockDevices to ensure encryption.\n\nUse cases: Secure compute deployment; Encrypted instance provisioning\n\nAWS: EC2 Instance, EBS, KMS\n\nValidation: Optional; map of instance name to InstanceProps"
         },
         "keyPairs": {
             "$ref": "#/definitions/NamedKeyPairProps",
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of key pair names to EC2 key pair configurations enabling secure SSH access to instances. Provides SSH key pair management for secure instance access with proper key rotation and access control capabilities.\n\nUse cases: SSH key management; Secure instance access; Key pair rotation and access control\n\nAWS: Amazon EC2 key pairs for secure SSH access and instance connectivity\n\nValidation: Must be valid NamedKeyPairProps if provided; defines SSH key pair configuration and management"
+            "description": "EC2 key pairs for SSH access. Private key material is stored in Secrets Manager,\nencrypted with the module KMS CMK (or a specified KMS key). Key pairs are retained\npost stack deletion.\n\nUse cases: SSH key provisioning; Encrypted key pair management\n\nAWS: EC2 KeyPair, Secrets Manager, KMS\n\nValidation: Optional; map of key pair name to KeyPairProps (can be empty object for defaults)"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
@@ -3528,7 +3518,7 @@
         },
         "securityGroups": {
             "$ref": "#/definitions/NamedSecurityGroupProps",
-            "description": "Q-ENHANCED-PROPERTY\nOptional map of security group names to security group configurations enabling network access control for EC2 instances. Provides network security controls with inbound and outbound traffic rules for secure instance networking.\n\nUse cases: Network access control; Instance security; Traffic filtering and network isolation\n\nAWS: Amazon VPC security groups for EC2 instance network access control and security\n\nValidation: Must be valid NamedSecurityGroupProps if provided; defines network security group configuration\n  *"
+            "description": "VPC security groups for EC2 instances. All egress allowed by default,\nno ingress allowed by default. Supports ipv4, prefix list, and security group rules.\n\nUse cases: Instance network isolation; Application-tier security; VPC endpoint access\n\nAWS: EC2 SecurityGroup with ingress/egress rules\n\nValidation: Optional; map of security group name to SecurityGroupProps"
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",

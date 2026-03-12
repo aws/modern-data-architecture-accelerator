@@ -22,27 +22,9 @@ const _ = require('lodash');
 export interface MdaaCustomResourceProps extends MdaaConstructProps {
   readonly resourceType: string;
   readonly code: Code;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required Lambda runtime environment for custom resource handler execution providing the execution environment for the handler code. Specifies the runtime version and language environment for consistent and secure code execution.
-   *
-   * Use cases: Runtime environment specification; Code execution environment; Language runtime selection; Performance optimization
-   *
-   * AWS: AWS Lambda runtime for custom resource handler execution environment and code execution
-   *
-   * Validation: Must be valid Runtime enum; required; specifies Lambda execution environment
-   **/
+  /** Lambda runtime environment for custom resource handler execution providing the execution */
   readonly runtime: Runtime;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required handler function entry point specification defining the function to invoke for custom resource operations. Specifies the exact function name and module path for CloudFormation to invoke during resource lifecycle events.
-   *
-   * Use cases: Function entry point; Handler specification; Code execution control; Resource operation routing
-   *
-   * AWS: AWS Lambda function handler specification for custom resource operation entry point
-   *
-   * Validation: Must be valid handler string format; required; defines function entry point for resource operations
-   **/
+  /** Handler function entry point specification defining the function to invoke for custom resource operations */
   readonly handler: string;
   readonly handlerRolePolicyStatements?: PolicyStatement[];
   readonly handlerRoleManagedPolicies?: IManagedPolicy[];
@@ -52,41 +34,12 @@ export interface MdaaCustomResourceProps extends MdaaConstructProps {
   readonly handlerLayers?: ILayerVersion[];
   readonly pascalCaseProperties?: boolean;
   readonly handlerTimeout?: Duration;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional VPC configuration for handler function network isolation and secure connectivity enabling VPC-based resource access. Provides network isolation and secure connectivity to VPC resources for enhanced security and integration.
-   *
-   * Use cases: Network isolation; VPC resource access; Secure connectivity; Private network integration; Enhanced security
-   *
-   * AWS: AWS Lambda VPC configuration for network isolation and secure VPC resource access
-   *
-   * Validation: Must be valid IVpc object if provided; enables VPC-based network isolation and resource access
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.IVpc.html
-   **/
+  /** VPC configuration for handler function network isolation and secure connectivity enabling */
   readonly vpc?: IVpc;
   readonly subnet?: SubnetSelection;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional security group for handler function network access control defining inbound and outbound traffic rules. Provides network-level security controls for handler function access and VPC resource connectivity.
-   *
-   * Use cases: Network access control; Security group management; Traffic rule enforcement; VPC security configuration
-   *
-   * AWS: AWS Lambda security group for network access control and VPC security configuration
-   *
-   * Validation: Must be valid ISecurityGroup object if provided; controls handler function network access
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.ISecurityGroup.html
-   **/
+  /** Security group for handler function network access control defining inbound and outbound traffic rules */
   readonly securityGroup?: ISecurityGroup;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional environment variables for handler function runtime configuration enabling dynamic configuration and parameter passing. Provides runtime configuration values and parameters for handler function execution and behavior customization.
-   *
-   * Use cases: Runtime configuration; Environment variables; Dynamic parameters; Handler customization; Configuration management
-   *
-   * AWS: AWS Lambda environment variables for runtime configuration and parameter management
-   *
-   * Validation: Must be object with string keys and values if provided; provides handler runtime configuration
-   *   **/
+  /** Environment variables for handler function runtime configuration enabling dynamic */
   readonly environment?: { [key: string]: string };
 
   readonly handlerRole?: IRole;

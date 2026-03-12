@@ -34,66 +34,20 @@ import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
  * Properties for creating a Compliance EC2 instance
  */
 export interface MdaaEC2InstanceProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required EC2 instance type determining compute capacity, memory, and network performance characteristics. Controls the underlying hardware configuration and affects performance, cost, and capability of the compute instance.
-   *
-   * Use cases: Performance optimization; Cost management; Workload-specific sizing
-   *
-   * AWS: Amazon EC2 instance type for compute capacity and performance configuration
-   *
-   * Validation: Must be valid InstanceType; required; determines compute resources and capabilities
-   **/
+  /** EC2 instance type determining compute capacity, memory, and network performance characteristics */
   readonly instanceType: InstanceType;
   readonly machineImage: IMachineImage;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required VPC for instance deployment providing network isolation and security controls. Enables secure networking, private communication, and integration with other VPC resources for security architecture.
-   *
-   * Use cases: Network isolation; Secure communication; VPC resource integration
-   *
-   * AWS: Amazon VPC for EC2 instance network isolation and security controls
-   *
-   * Validation: Must be valid IVpc instance; required; provides network security and isolation
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.IVpc.html
-   **/
+  /** VPC for instance deployment providing network isolation and security controls */
   readonly vpc: IVpc;
   readonly instanceSubnet: ISubnet;
   readonly blockDeviceProps: BlockDeviceProps[];
   readonly kmsKey: IKey;
   readonly allowAllOutbound?: boolean;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional availability zone specification for precise instance placement within the VPC. Enables control over instance location for proximity to other resources, compliance requirements, or disaster recovery strategies.
-   *
-   * Use cases: Resource proximity; Compliance placement; Disaster recovery planning
-   *
-   * AWS: Amazon EC2 availability zone placement for instance location control
-   *
-   * Validation: Must be valid AZ within the VPC region if provided; controls instance placement
-   **/
+  /** Availability zone specification for precise instance placement within the VPC */
   readonly availabilityZone?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional CloudFormation Init configuration for automated instance setup and software installation. Enables declarative configuration management and automated application deployment during instance launch for consistent environments.
-   *
-   * Use cases: Automated instance setup; Software installation; Configuration management
-   *
-   * AWS: AWS CloudFormation Init for EC2 instance automated configuration and setup
-   *
-   * Validation: Must be valid CloudFormationInit if provided; executed during instance launch
-   *   **/
+  /** CloudFormation Init configuration for automated instance setup and software installation */
   readonly init?: CloudFormationInit;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional configuration options for CloudFormation Init execution controlling timeout, retry behavior, and signal handling. Enables fine-tuned control over automated configuration processes and error handling during instance setup.
-   *
-   * Use cases: Configuration timeout control; Retry behavior management; Error handling customization
-   *
-   * AWS: AWS CloudFormation Init options for configuration execution control
-   *
-   * Validation: Must be valid ApplyCloudFormationInitOptions if provided; controls Init execution behavior
-   *   **/
+  /** Configuration options for CloudFormation Init execution controlling timeout, retry */
   readonly initOptions?: ApplyCloudFormationInitOptions;
   readonly instanceName?: string;
   readonly keyName?: string;
@@ -133,60 +87,14 @@ export interface MdaaEC2InstanceProps extends MdaaConstructProps {
    */
   readonly userDataCausesReplacement?: boolean;
 }
-/**
- * Q-ENHANCED-INTERFACE
- * BlockDeviceProps configuration interface for compute infrastructure and instance management.
- *
- * Use cases: Compute infrastructure; Instance management; Network configuration; Security groups
- *
- * AWS: Amazon EC2 configuration for compute infrastructure and instance management
- *
- * Validation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements
- */
 export interface BlockDeviceProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required device name for block device mapping following AWS EC2 device naming conventions. Specifies the device identifier for storage attachment with platform-specific naming patterns for Linux and Windows instances.
-   *
-   * Use cases: Device identification; Storage mapping; Platform-specific device naming; Storage organization
-   *
-   * AWS: Amazon EC2 block device mapping device name for storage attachment and identification
-   *
-   * Validation: Must follow AWS EC2 device naming conventions; required; platform-specific format (Linux: /dev/sd*, Windows: xvd*)
-   **/
+  /** Device name for block device mapping following AWS EC2 device naming conventions */
   readonly deviceName: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required EBS volume size in gigabytes determining storage capacity for the block device. Controls the amount of storage available for the device with direct impact on storage costs and performance characteristics.
-   *
-   * Use cases: Storage capacity planning; Cost optimization; Performance configuration; Data storage requirements
-   *
-   * AWS: Amazon EBS volume size configuration for storage capacity and performance
-   *
-   * Validation: Must be positive integer in GB; required; minimum and maximum values depend on EBS volume type
-   **/
+  /** EBS volume size in gigabytes determining storage capacity for the block device */
   readonly volumeSizeInGb: number;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional EBS volume type determining performance characteristics and cost structure for the storage device. Specifies the underlying EBS volume technology with different IOPS, throughput, and cost profiles for workload optimization.
-   *
-   * Use cases: Performance optimization; Cost management; Workload-specific storage; IOPS requirements
-   *
-   * AWS: Amazon EBS volume type for performance and cost optimization (gp3, io1, io2, st1, sc1)
-   *
-   * Validation: Must be valid EbsDeviceVolumeType if provided; defaults to gp3; affects performance and cost
-   *   **/
+  /** EBS volume type determining performance characteristics and cost structure for the storage device */
   readonly ebsType?: EbsDeviceVolumeType;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional IOPS (Input/Output Operations Per Second) specification for high-performance EBS volumes requiring specific performance guarantees. Required for io1 and io2 volume types to define the provisioned IOPS performance level for demanding workloads requiring consistent storage performance.
-   *
-   * Use cases: High-performance storage; Database workloads; IOPS-intensive applications; Performance guarantees; Storage optimization
-   *
-   * AWS: Amazon EBS provisioned IOPS configuration for io1 and io2 volume types with guaranteed performance levels
-   *
-   * Validation: Must be positive integer if provided; required for io1/io2 volumes; must be within volume type IOPS limits
-   **/
+  /** IOPS (Input/Output Operations Per Second) specification for high-performance EBS volumes */
   readonly iops?: number;
 }
 
@@ -204,16 +112,7 @@ export class MdaaEC2Instance extends Instance {
           encrypted: true,
           deleteOnTermination: false,
           kmsKey: kmsKey,
-          /**
-           * Q-ENHANCED-PROPERTY
-           * Optional EBS volume type determining performance characteristics and cost structure for the storage device. Specifies the underlying EBS volume technology with different IOPS, throughput, and cost profiles for workload optimization and performance requirements.
-           *
-           * Use cases: Performance optimization; Cost management; Workload-specific storage; IOPS requirements; Storage performance tuning
-           *
-           * AWS: Amazon EBS volume type for performance and cost optimization (gp3, io1, io2, st1, sc1)
-           *
-           * Validation: Must be valid EbsDeviceVolumeType if provided; defaults to gp3; affects performance and cost characteristics
-           */
+          /** EBS volume type for performance and cost optimization */
           volumeType: blockDeviceProps.ebsType,
           iops: blockDeviceProps.iops,
         }),

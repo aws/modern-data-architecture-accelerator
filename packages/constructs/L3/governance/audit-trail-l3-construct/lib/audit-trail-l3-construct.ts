@@ -11,33 +11,38 @@ import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
- * Q-ENHANCED-INTERFACE
- * AWS CloudTrail audit trail configuration interface for logging with S3 data event monitoring and KMS encryption. Defines audit trail properties for compliance monitoring including S3 bucket destination, KMS key encryption, and management event inclusion control for centralized audit logging and security monitoring.
+ * CloudTrail audit trail configuration for S3 data event logging with KMS encryption.
+ * Logs are written to the specified S3 bucket encrypted with the specified KMS key.
+ * Optionally includes management/control plane events.
  *
- * Use cases: Compliance auditing; Security monitoring; Data access logging; Audit trail management; Regulatory compliance; Activity tracking
+ * Use cases: Compliance auditing; S3 data access logging; Security monitoring; Regulatory compliance
  *
- * AWS: AWS CloudTrail with S3 data event logging and KMS encryption for audit trail and compliance monitoring
+ * AWS: CloudTrail trail with S3 data events, KMS encryption, and optional management events
  *
- * Validation: cloudTrailAuditBucketName must be valid S3 bucket name; cloudTrailAuditKmsKeyArn must be valid KMS key ARN; includeManagementEvents controls event scope
+ * Validation: cloudTrailAuditBucketName and cloudTrailAuditKmsKeyArn required
  */
 export interface AuditTrailProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 bucket name for AWS CloudTrail audit log storage enabling centralized audit trail collection and compliance monitoring. Specifies the destination bucket where CloudTrail logs will be stored for security auditing, compliance reporting, and activity analysis.
+   * S3 bucket name where CloudTrail audit logs are stored.
+   * Accepts bucket names or SSM parameter references.
    *
-   * Use cases: Audit log storage; Compliance monitoring; Security analysis; Activity tracking; Regulatory compliance
-   * AWS: AWS CloudTrail S3 bucket destination for audit log storage and compliance monitoring
-   * Validation: Must be valid S3 bucket name; bucket must exist and be accessible for CloudTrail writes
-   *   */
+   * Use cases: Centralized audit log collection; Compliance log storage
+   *
+   * AWS: CloudTrail S3 destination bucket
+   *
+   * Validation: Required; must be existing S3 bucket name or SSM parameter path
+   */
   readonly cloudTrailAuditBucketName: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required KMS key ARN for AWS CloudTrail audit log encryption ensuring secure storage of audit data. Specifies the KMS key used to encrypt CloudTrail logs when written to S3, providing data protection and compliance with encryption requirements.
+   * KMS key ARN for encrypting CloudTrail logs written to S3.
+   * Accepts key ARNs or SSM parameter references.
    *
-   * Use cases: Audit log encryption; Data protection; Compliance security; Encrypted storage; Key management
-   * AWS: AWS CloudTrail KMS encryption key for secure audit log storage and data protection
-   * Validation: Must be valid KMS key ARN; key must exist and allow CloudTrail encryption operations
-   *   */
+   * Use cases: Audit log encryption; Data protection compliance
+   *
+   * AWS: KMS key for CloudTrail log encryption
+   *
+   * Validation: Required; must be valid KMS key ARN or SSM parameter path
+   */
   readonly cloudTrailAuditKmsKeyArn: string;
   /**
    * If true, management/control plane events will be included in trail.
@@ -46,16 +51,7 @@ export interface AuditTrailProps {
   readonly includeManagementEvents?: boolean;
 }
 export interface AuditTrailL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required CloudTrail configuration defining audit trail setup including S3 bucket destination, event types, and logging configuration. Provides complete audit trail configuration for capturing S3 data events and API calls for compliance monitoring and security auditing.
-   *
-   * Use cases: Audit trail configuration; S3 data events; API logging; Compliance monitoring
-   *
-   * AWS: CloudTrail configuration for audit logging and compliance monitoring
-   *
-   * Validation: Must be valid AuditTrailProps; required for CloudTrail deployment and audit logging
-   **/
+  /** CloudTrail audit trail configuration. */
   readonly trail: AuditTrailProps;
 }
 

@@ -17,30 +17,12 @@ export interface MdaaLambdaRoleProps extends MdaaConstructProps {
   readonly inlinePolicies?: {
     [name: string]: PolicyDocument;
   };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional IAM path for Lambda role organization and management enabling hierarchical role structure. Specifies the IAM path for the Lambda execution role providing organizational structure and access control grouping.
-   *
-   * Use cases: Role organization; Hierarchical structure; Access control grouping; IAM management
-   *
-   * AWS: AWS IAM role path for Lambda execution role organization and management
-   *
-   * Validation: Must be valid IAM path string if provided; defaults to root path '/' for role organization
-   **/
+  /** IAM path for Lambda role organization and management enabling hierarchical role structure */
   readonly path?: string;
   readonly permissionsBoundary?: IManagedPolicy;
   readonly roleName: string;
   readonly maxSessionDuration?: Duration;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional description for the Lambda execution role enabling role documentation and management clarity. Provides human-readable description of the Lambda role's purpose and permissions for operational understanding and management.
-   *
-   * Use cases: Role documentation; Management clarity; Operational understanding; Role purpose explanation
-   *
-   * AWS: AWS IAM role description for Lambda execution role documentation
-   *
-   * Validation: Must be descriptive text up to 1000 characters if provided; recommended for role documentation
-   **/
+  /** Description for the Lambda execution role enabling role documentation and management clarity */
   readonly description?: string;
 }
 

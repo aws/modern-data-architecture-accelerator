@@ -9,16 +9,7 @@ import { CfnDataCatalogEncryptionSettings, CfnDataCatalogEncryptionSettingsProps
 import { Construct } from 'constructs';
 
 export interface MdaaCatalogSettingsProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required AWS account ID for the Data Catalog where encryption settings will be applied enabling account-specific catalog configuration. Specifies the target account for Glue Data Catalog encryption settings and metadata protection.
-   *
-   * Use cases: Account-specific configuration; Cross-account catalog management; Catalog identification; Account isolation
-   *
-   * AWS: AWS Glue Data Catalog account identifier for encryption settings and metadata protection
-   *
-   * Validation: Must be valid 12-digit AWS account ID; required; identifies target account for catalog encryption
-   **/
+  /** AWS account ID for the Data Catalog where encryption settings will be applied enabling */
   readonly catalogId: string;
 
   readonly catalogKmsKey: IMdaaKmsKey;

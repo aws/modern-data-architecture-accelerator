@@ -12,27 +12,28 @@ import * as configSchema from './config-schema.json';
 
 export interface QuickSightNamespaceConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of federation names to federation configurations enabling identity provider integration with QuickSight namespaces. Provides identity federation setup for multi-tenant QuickSight environments with external identity system integration.
+   * Named federation configurations for identity provider integration with QuickSight namespaces.
+   * Each federation creates IAM roles for SAML-based access, QuickSight namespace, users, and groups.
+   * Roles are configured with QS user types (READER/AUTHOR) and group memberships.
    *
-   * Use cases: Identity federation; Multi-tenant QuickSight setup; External identity system integration
+   * Use cases: SAML federation setup; Multi-tenant QuickSight namespaces; Group-based QS access
    *
-   * AWS: Amazon QuickSight namespace federation for identity provider integration and multi-tenancy
+   * AWS: QuickSight namespaces with IAM SAML federation roles and automated user/group management
    *
-   * Validation: Must be object with string keys and valid FederationProps values; required; defines all federation configurations
-   *   **/
+   * Validation: Required; map of string keys to FederationProps
+   */
   readonly federations: { [name: string]: FederationProps };
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of Glue resource names for QuickSight namespace access enabling data catalog integration and data source connectivity. Provides access to specific Glue databases and tables for business intelligence and data visualization operations.
+   * Glue resource names (database/table patterns) to which namespace roles are granted IAM read access.
+   * Used for QuickSight data source setup and validation.
    *
-   * Use cases: Data catalog integration; Glue resource access; Data source connectivity for QuickSight analytics
+   * Use cases: Glue catalog data source access; Database/table pattern-based permissions
    *
-   * AWS: AWS Glue resource access permissions for QuickSight namespace data integration
+   * AWS: IAM Glue resource access for QuickSight namespace roles
    *
-   * Validation: Must be array of valid Glue resource names if provided; enables data catalog access for analytics
-   **/
+   * Validation: Optional; array of Glue resource name patterns (e.g., 'database/my-db*')
+   */
   readonly glueResourceAccess?: string[];
 }
 

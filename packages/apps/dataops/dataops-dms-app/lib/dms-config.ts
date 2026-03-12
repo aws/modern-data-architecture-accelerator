@@ -12,15 +12,14 @@ import { DMSProps } from '@aws-mdaa/dataops-dms-l3-construct';
 
 export interface DMSConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required DMS configuration defining database migration and replication capabilities including replication instances, source and target endpoints, migration tasks, and data transformation. Provides complete DMS setup with secure data migration and real-time replication capabilities.
+   * DMS migration and replication configuration including instances, endpoints, and tasks.
    *
-   * Use cases: Database migration; Real-time replication; data movement and transformation between databases
+   * Use cases: Database migration; Real-time replication; Cross-engine data movement
    *
-   * AWS: AWS Database Migration Service for database migration and replication operations
+   * AWS: AWS Database Migration Service
    *
-   * Validation: Must be valid DMSProps; required; defines all DMS migration and replication characteristics
-   **/
+   * Validation: Required; valid DMSProps
+   */
   readonly dms: DMSProps;
 }
 

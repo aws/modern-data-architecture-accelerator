@@ -40,37 +40,37 @@ export interface PersonaConfigProps {
   readonly personas: { [key: string]: Array<string> };
 }
 /**
- * Q-ENHANCED-INTERFACE
- * SAML identity federation configuration interface for IAM identity provider setup with SAML document integration and provider ARN management. Defines federation properties for establishing trust relationships between AWS and external identity providers using SAML 2.0 for federated access to AWS resources.
+ * SAML identity federation configuration for IAM identity provider setup.
+ * Specify either an existing provider ARN or a SAML metadata document path to create a new one.
  *
- * Use cases: SAML identity federation; External identity provider integration; Federated access control; SSO integration; Identity provider trust relationships; Enterprise authentication
+ * Use cases: SAML federation with external IdPs; SSO integration; Enterprise authentication
  *
- * AWS: IAM SAML identity provider configuration with SAML metadata document for federated authentication and access control
+ * AWS: IAM SAML identity provider for federated authentication
  *
- * Validation: providerArn must be valid IAM SAML provider ARN if specified; samlDoc must be valid SAML metadata document; exactly one of providerArn or samlDoc must be provided
+ * Validation: Exactly one of providerArn or samlDoc must be specified
  */
 export interface FederationProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Existing SAML identity provider ARN for federated authentication with pre-configured identity provider integration. References an existing IAM SAML provider for establishing trust relationships with external identity systems, enabling federated access to AWS resources without creating new providers.
+   * ARN of an existing IAM SAML identity provider.
+   * Mutually exclusive with samlDoc.
    *
-   * Use cases: Existing provider integration; Pre-configured SAML federation; Identity provider reuse; Established trust relationships
+   * Use cases: Reusing pre-configured SAML federation
    *
-   * AWS: AWS IAM SAML identity provider ARN reference for federated authentication and access control
+   * AWS: IAM SAML provider ARN reference
    *
-   * Validation: Must be valid IAM SAML provider ARN if specified; provider must exist in the account; mutually exclusive with samlDoc
-   **/
+   * Validation: Optional; must be valid IAM SAML provider ARN; mutually exclusive with samlDoc
+   */
   readonly providerArn?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * SAML metadata document file path for creating new identity provider with custom federation configuration. Specifies the path to a SAML metadata document that will be used to create a new IAM SAML provider, enabling custom federation setup with external identity systems.
+   * File path to a SAML metadata XML document for creating a new IAM SAML provider.
+   * Relative paths should be prefixed with "./". Mutually exclusive with providerArn.
    *
-   * Use cases: New provider creation; Custom federation setup; SAML metadata integration; Identity provider configuration
+   * Use cases: New SAML federation setup; Custom IdP integration
    *
-   * AWS: AWS IAM SAML identity provider creation using SAML metadata document for federated authentication
+   * AWS: IAM SAML provider creation from metadata document
    *
-   * Validation: Must be valid file path to SAML metadata document if specified; document must be valid SAML format; mutually exclusive with providerArn
-   **/
+   * Validation: Optional; must be valid file path to SAML metadata XML; mutually exclusive with providerArn
+   */
   readonly samlDoc?: string;
 }
 
@@ -99,37 +99,34 @@ export interface GenerateManagedPolicyProps {
   readonly statements?: PolicyStatement[];
 }
 /**
- * Q-ENHANCED-INTERFACE
- * SuppressionProps configuration interface for resource configuration and infrastructure management.
+ * CDK Nag suppression configuration for justified security rule exceptions.
  *
- * Use cases: Identity management; Access control; Role-based permissions; Security policies
+ * Use cases: Documented compliance exceptions; CDK Nag rule suppression with audit trail
  *
- * AWS: AWS service configuration and deployment
+ * AWS: CDK Nag suppression for IAM policy and role compliance
  *
- * Validation: Configuration must be valid for deployment; properties must conform to AWS service and MDAA requirements
+ * Validation: id and reason required
  */
 export interface SuppressionProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required suppression rule identifier for CDK Nag rule suppression enabling specific security rule bypassing. Defines the specific CDK Nag rule ID that will be suppressed for this resource, allowing controlled bypassing of security checks when justified by business requirements or architectural constraints.
+   * CDK Nag rule ID to suppress (e.g. "AwsSolutions-IAM5").
    *
-   * Use cases: Security rule suppression; CDK Nag rule bypassing; Compliance exception handling; Justified security exceptions; Rule-specific suppression
+   * Use cases: Specific security rule bypassing with justification
    *
-   * AWS: CDK Nag suppression rule identifier for controlled security rule bypassing and compliance exception management
+   * AWS: CDK Nag rule identifier
    *
-   * Validation: Must be valid CDK Nag rule ID; required for rule suppression identification
-   **/
+   * Validation: Required; must be valid CDK Nag rule ID
+   */
   readonly id: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required justification reason for CDK Nag rule suppression enabling documented security exception rationale. Provides business justification and technical reasoning for why a specific security rule is being suppressed, ensuring proper documentation and audit trail for security exceptions.
+   * Business justification for the suppression.
    *
-   * Use cases: Security exception documentation; Audit trail maintenance; Compliance justification; Business requirement documentation; Technical reasoning
+   * Use cases: Audit trail; Compliance documentation
    *
-   * AWS: CDK Nag suppression justification for documented security exception rationale and audit compliance
+   * AWS: CDK Nag suppression reason for audit compliance
    *
-   * Validation: Must be descriptive string explaining suppression rationale; required for security exception documentation
-   **/
+   * Validation: Required; descriptive string explaining the exception
+   */
   readonly reason: string;
 }
 export interface GenerateRoleWithNameProps extends GenerateRoleProps {
@@ -139,139 +136,136 @@ export interface GenerateRoleWithNameProps extends GenerateRoleProps {
   readonly name: string;
 }
 /**
- * Q-ENHANCED-INTERFACE
- * IAM trusted principal configuration interface for role trust policy management with principal specification and additional action permissions. Defines trusted principal properties for IAM role trust relationships including principal identification and optional additional trusted actions for flexible assume role configurations.
+ * Trusted principal for IAM role trust policy with optional additional actions.
  *
- * Use cases: Trust policy configuration; Principal trust relationships; Assume role permissions; Multi-action trust; Principal-based access; Trust relationship management
+ * Use cases: Multi-service trust; Additional STS actions (e.g. sts:SetSourceIdentity)
  *
- * AWS: IAM role trust policy configuration with trusted principal specification and additional assume role actions
+ * AWS: IAM role trust policy principal with optional additional trusted actions
  *
- * Validation: trustedPrincipal must be valid AWS principal ARN or identifier; additionalTrustedActions must be valid IAM actions if specified
+ * Validation: trustedPrincipal required; additionalTrustedActions optional
  */
 export interface TrustedPrincipalProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Trusted principal identifier for IAM role assume role trust policy configuration enabling secure principal-based access control. Specifies the AWS principal (user, role, service, or account) that is allowed to assume the role, establishing trust relationships for secure access delegation.
+   * AWS principal identifier for trust policy. Supports formats:
+   * "this_account", "service:svc.amazonaws.com", "federation:name", or ARN.
    *
-   * Use cases: Trust relationship establishment; Principal-based access control; Secure access delegation; Cross-account role assumption
+   * Use cases: Service trust; Cross-account trust; Federation trust
    *
-   * AWS: AWS IAM role trust policy principal specification for assume role permissions and access control
+   * AWS: IAM trust policy principal specification
    *
-   * Validation: Must be valid AWS principal ARN or identifier; required; establishes trust relationship for role assumption
-   **/
+   * Validation: Required; must be valid principal identifier
+   */
   readonly trustedPrincipal: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Additional trusted actions beyond standard assume role for extended trust policy capabilities enabling multi-action trust relationships. Provides additional IAM actions that the trusted principal can perform, extending beyond basic assume role functionality for trust management.
+   * Additional STS actions the trusted principal can perform beyond sts:AssumeRole
+   * (e.g. ["sts:SetSourceIdentity"]).
    *
-   * Use cases: Extended trust capabilities; Multi-action trust relationships; Advanced trust policy configuration; principal permissions
+   * Use cases: Extended trust capabilities; Source identity propagation
    *
-   * AWS: AWS IAM role trust policy additional actions for extended principal capabilities and trust management
+   * AWS: IAM trust policy additional actions
    *
-   * Validation: Must be array of valid IAM action strings if specified; actions must be appropriate for trust policy context
-   **/
+   * Validation: Optional; array of valid IAM action strings
+   */
   readonly additionalTrustedActions?: string[];
 }
 
 /**
- * Q-ENHANCED-INTERFACE
- * IAM role generation configuration interface for automated role creation with persona-based permissions and trust policy management. Defines role generation properties including base persona selection, trusted principal configuration, additional trust relationships, and conditional access controls for secure role-based access management.
+ * IAM role generation configuration with persona-based permissions, trust policies,
+ * and managed policy attachments. Supports multiple trust principals, conditional
+ * access, and both AWS and customer managed policies.
  *
- * Use cases: Automated role creation; Persona-based permissions; Trust policy management; Conditional access control; Multi-principal trust; Role template generation
+ * Use cases: Automated role creation; Persona-based permissions; Multi-principal trust; Conditional access
  *
- * AWS: IAM role generation with persona-based policies and configurable trust relationships for automated access management
+ * AWS: IAM role with configurable trust policy, managed policy attachments, and CDK Nag suppressions
  *
- * Validation: trustedPrincipal must be valid AWS principal; basePersona must be valid BasePersona enum if specified; additionalTrustedPrincipals must be valid TrustedPrincipalProps; assumeRoleTrustConditions must be valid IAM conditions
+ * Validation: trustedPrincipal required; all other properties optional
  */
 export interface GenerateRoleProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Base persona template for automated role policy assignment enabling persona-based permission management. Specifies the foundational persona (data-admin, data-engineer, data-scientist) that determines the base set of policies and permissions automatically associated with the generated role.
+   * Base persona determining the default set of MDAA managed policies attached to the role.
+   * Valid values: data-admin, data-engineer, data-scientist.
    *
-   * Use cases: Persona-based permissions; Automated policy assignment; Role template application; Standardized access patterns
+   * Use cases: Standardized permission sets; Role template application
    *
-   * AWS: AWS IAM role with persona-based managed policy attachments for standardized permission sets
+   * AWS: MDAA persona-based managed policy attachments
    *
-   * Validation: Must be valid BasePersona enum value if specified; determines base policy set for role generation
-   *   **/
+   * Validation: Optional; must be valid BasePersona enum value
+   */
   readonly basePersona?: BasePersona;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Primary trusted principal for role assumption enabling secure access delegation and trust relationship establishment. Defines the main AWS principal that can assume this role, establishing the primary trust relationship for secure access control and delegation.
+   * Primary trusted principal for the role's trust policy. Supports formats:
+   * "this_account", "service:svc.amazonaws.com", "federation:name", or ARN.
    *
-   * Use cases: Primary trust relationship; Secure access delegation; Role assumption control; Principal-based access
+   * Use cases: Service trust; Cross-account trust; Federation-based assume role
    *
-   * AWS: AWS IAM role trust policy primary principal for assume role permissions and access control
+   * AWS: IAM role trust policy primary principal
    *
-   * Validation: Must be valid AWS principal ARN or identifier; required; establishes primary trust relationship for role assumption
-   **/
+   * Validation: Required; must be valid principal identifier
+   */
   readonly trustedPrincipal: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Additional trusted principals for multi-principal role assumption enabling complex trust relationships and flexible access patterns. Provides additional principals that can assume the role beyond the primary trusted principal, supporting multi-user and cross-account access scenarios.
+   * Additional principals that can assume this role beyond the primary.
+   * Each can specify additional trusted actions (e.g. sts:SetSourceIdentity).
    *
-   * Use cases: Multi-principal access; Complex trust relationships; Cross-account role sharing; Flexible access patterns
+   * Use cases: Multi-service trust; Cross-account sharing; Complex trust relationships
    *
-   * AWS: AWS IAM role trust policy additional principals for multi-principal assume role capabilities
+   * AWS: IAM role trust policy additional principals
    *
-   * Validation: Must be array of valid TrustedPrincipalProps if specified; enables multiple trust relationships for role assumption
-   **/
+   * Validation: Optional; array of valid TrustedPrincipalProps
+   */
   readonly additionalTrustedPrincipals?: TrustedPrincipalProps[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Conditional access controls for assume role trust policy enabling context-aware access restrictions and enhanced security. Defines IAM conditions that must be met for successful role assumption, providing fine-grained access control based on request context, time, source IP, or other factors.
+   * IAM conditions for the assume role trust policy (e.g. StringEquals on aws:PrincipalArn).
+   * Provides context-aware access restrictions.
    *
-   * Use cases: Context-aware access control; Enhanced security restrictions; Conditional role assumption; Fine-grained access management
+   * Use cases: Conditional role assumption; IP-based restrictions; Principal ARN constraints
    *
-   * AWS: AWS IAM role trust policy conditions for context-aware assume role access control
+   * AWS: IAM trust policy conditions
    *
-   * Validation: Must be object with valid IAM condition keys and Condition values if specified; conditions must be valid IAM policy conditions
-   *   **/
+   * Validation: Optional; must be valid IAM condition key-value pairs
+   */
   readonly assumeRoleTrustConditions?: { [key: string]: Condition };
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Verbatim role naming control bypassing naming convention application for precise role name specification. When enabled, creates the role with the exact specified name without applying organizational naming conventions, supporting legacy integration and specific naming requirements.
+   * When true, uses the exact role name without MDAA naming prefixes.
    *
-   * Use cases: Legacy integration; Exact naming requirements; Naming convention bypass; Specific role naming
+   * Use cases: Legacy integration; Exact role name requirements
    *
-   * AWS: AWS IAM role name without naming convention transformation for precise naming control
+   * AWS: IAM role naming control
    *
-   * Validation: Must be boolean; defaults to false; when true, naming conventions do not apply to role creation
-   **/
+   * Validation: Optional; boolean
+   * @default false
+   */
   readonly verbatimRoleName?: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * AWS managed policy ARNs for standardized permission attachment enabling consistent access patterns and AWS best practices. Provides list of AWS-managed policies to attach to the role, leveraging AWS-maintained policies for common access patterns and security best practices.
+   * AWS managed policy names to attach (e.g. "service-role/AWSGlueServiceRole").
    *
-   * Use cases: Standardized permissions; AWS best practices; Common access patterns; Managed policy leverage
+   * Use cases: Standardized AWS permissions; Common service role policies
    *
-   * AWS: AWS IAM role with AWS managed policy attachments for standardized permission management
+   * AWS: AWS managed policy attachments on IAM role
    *
-   * Validation: Must be array of valid AWS managed policy ARNs if specified; policies must exist and be accessible
-   **/
+   * Validation: Optional; array of valid AWS managed policy names
+   */
   readonly awsManagedPolicies?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Customer managed policy names for custom permission attachment enabling organization-specific access control. Provides list of customer-managed policies to attach to the role, supporting custom permission sets and organization-specific access requirements.
+   * Existing customer managed policy names to attach.
    *
-   * Use cases: Custom permissions; Organization-specific access; Custom policy attachment; Tailored access control
+   * Use cases: Organization-specific permissions; Pre-existing policy reuse
    *
-   * AWS: AWS IAM role with customer managed policy attachments for custom permission management
+   * AWS: Customer managed policy attachments on IAM role
    *
-   * Validation: Must be array of valid customer managed policy names if specified; policies must exist in the account
-   **/
+   * Validation: Optional; array of valid customer managed policy names
+   */
   readonly customerManagedPolicies?: string[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Generated policy names for dynamic permission attachment enabling automated policy creation and management. Provides list of policies that will be generated and attached to the role, supporting dynamic permission creation and automated policy management.
+   * Names of policies from the generatePolicies config section to attach.
    *
-   * Use cases: Dynamic policy creation; Automated permission management; Generated policy attachment; Custom policy automation
+   * Use cases: Dynamic policy attachment; Config-driven permission management
    *
-   * AWS: AWS IAM role with generated policy attachments for automated permission management
+   * AWS: Generated managed policy attachments on IAM role
    *
-   * Validation: Must be array of valid policy names if specified; policies will be generated and attached during role creation
-   **/
+   * Validation: Optional; must reference valid policy names from generatePolicies config
+   */
   readonly generatedPolicies?: string[];
   /**
    * Suppressions if required by the role configuration.
@@ -279,49 +273,13 @@ export interface GenerateRoleProps {
   readonly suppressions?: SuppressionProps[];
 }
 export interface RolesL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of federation names to federation definitions for identity provider integration enabling federated access and SSO capabilities. Provides federation configurations for integrating with external identity providers and enabling federated access to AWS resources.
-   *
-   * Use cases: Identity federation; SSO integration; External identity providers; Federated access
-   *
-   * AWS: IAM identity provider federations for SSO and external identity integration
-   *
-   * Validation: Must be valid federation name to FederationProps mapping if provided; enables identity federation and SSO
-   *   **/
+  /** Federation configurations for SAML identity provider integration. */
   readonly federations?: { [key: string]: FederationProps };
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of managed policy definitions for custom policy creation enabling fine-grained permission management and reusable access controls. Provides managed policy configurations for creating custom policies with specific permissions and access patterns for role assignment and governance.
-   *
-   * Use cases: Custom policy creation; Permission management; Reusable access controls; Policy governance
-   *
-   * AWS: IAM managed policies for custom permission management and reusable access controls
-   *
-   * Validation: Must be array of valid GenerateManagedPolicyWithNameProps if provided; enables custom policy creation and management
-   **/
+  /** Managed policy definitions for custom policy creation. */
   readonly generatePolicies?: GenerateManagedPolicyWithNameProps[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of IAM role definitions for custom role creation enabling role-based access control and identity management. Provides role configurations for creating custom IAM roles with specific trust relationships, permissions, and access patterns for identity governance.
-   *
-   * Use cases: Custom role creation; Role-based access control; Identity management; Access governance
-   *
-   * AWS: IAM roles for custom role-based access control and identity management
-   *
-   * Validation: Must be array of valid GenerateRoleWithNameProps if provided; enables custom role creation and management
-   **/
+  /** IAM role definitions for custom role creation. */
   readonly generateRoles?: GenerateRoleWithNameProps[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag controlling MDAA persona managed policy creation enabling standardized role personas and consistent access patterns. When enabled (default), creates predefined managed policies for common data platform personas providing standardized access patterns and role templates.
-   *
-   * Use cases: Persona-based access; Standardized roles; Consistent access patterns; Role templates
-   *
-   * AWS: MDAA persona managed policies for standardized role-based access and consistent permissions
-   *
-   * Validation: Boolean value; defaults to true; enables standardized persona-based access control and role templates
-   **/
+  /** When true (default), creates MDAA persona-based managed policies. */
   readonly createPersonaManagedPolicies?: boolean;
 }
 

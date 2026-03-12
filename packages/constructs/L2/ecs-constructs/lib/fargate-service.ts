@@ -26,29 +26,9 @@ import { Construct } from 'constructs';
  */
 export interface MdaaECSFargateServiceProps extends MdaaConstructProps {
   readonly taskDefinition: TaskDefinition;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of subnets for Fargate service network placement enabling VPC connectivity and network isolation. Defines the network subnets where Fargate tasks will be deployed for secure networking and connectivity within the VPC environment.
-   *
-   * Use cases: Network placement; VPC connectivity; Subnet distribution; Network isolation
-   *
-   * AWS: VPC subnets for ECS Fargate service network placement and connectivity
-   *
-   * Validation: Must be array of valid ISubnet interfaces; required for Fargate service network placement
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.ISubnet.html
-   **/
+  /** Array of subnets for Fargate service network placement enabling VPC connectivity and network isolation */
   readonly subnets: ISubnet[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of security groups for Fargate service network access control defining inbound and outbound traffic rules. Provides network-level security controls for Fargate tasks ensuring secure communication and access control within the VPC.
-   *
-   * Use cases: Network security; Access control; Traffic filtering; Security group management
-   *
-   * AWS: VPC security groups for ECS Fargate service network security and access control
-   *
-   * Validation: Must be array of valid ISecurityGroup interfaces; required for network security and access control
-   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.ISecurityGroup.html
-   **/
+  /** Array of security groups for Fargate service network access control defining inbound and */
   readonly securityGroups: ISecurityGroup[];
   readonly cluster: ICluster;
   readonly desiredCount?: number;

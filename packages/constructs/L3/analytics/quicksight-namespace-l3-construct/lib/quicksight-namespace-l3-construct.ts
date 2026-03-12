@@ -16,14 +16,15 @@ import { Construct } from 'constructs';
 
 export type QSUserType = 'READER' | 'AUTHOR';
 /**
- * Q-ENHANCED-INTERFACE
- * FederationRoleProps configuration interface for business intelligence and data visualization.
+ * Role configuration mapping QuickSight groups to a user type (READER or AUTHOR)
+ * for federated namespace access. MDAA creates IAM roles for each federation role
+ * and moves federated users into the specified QuickSight groups.
  *
- * Use cases: Business intelligence; Data visualization; Interactive dashboards; BI reporting
+ * Use cases: Group-based access tiers; Reader/Author role separation; Federation role mapping
  *
- * AWS: Amazon QuickSight configuration for business intelligence and data visualization
+ * AWS: QuickSight groups, IAM federation roles
  *
- * Validation: Configuration must be valid for deployment; properties must conform to Amazon QuickSight and MDAA requirements
+ * Validation: qsGroups required; qsUserType must be 'READER' or 'AUTHOR'
  */
 export interface FederationRoleProps {
   /**
@@ -56,27 +57,9 @@ export interface NameAndFederationProps extends FederationProps {
   readonly federationName: string;
 }
 export interface QuickSightNamespaceL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of federation configurations for QuickSight namespace authentication and user management enabling federated access and multi-tenant deployment. Provides federation setup with role mappings, group configurations, and authentication integration for secure multi-tenant BI access and user management.
-   *
-   * Use cases: Federation setup; Multi-tenant authentication; User management; Role mapping
-   *
-   * AWS: QuickSight federation configurations for multi-tenant authentication and user management
-   *
-   * Validation: Must be array of valid NameAndFederationProps; required for namespace federation and multi-tenant authentication
-   **/
+  /** Federation configurations for namespace authentication and user management. */
   readonly federations: NameAndFederationProps[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional array of Glue resource identifiers for namespace data access enabling controlled access to data catalog resources and analytics data sources. Provides Glue resource access configuration for namespace roles to access specific databases and tables for BI analytics and reporting operations.
-   *
-   * Use cases: Data access control; Catalog resource access; Analytics data sources; Resource permissions
-   *
-   * AWS: Glue resource access for QuickSight namespace data connectivity and analytics operations
-   *
-   * Validation: Must be array of valid Glue resource identifiers if provided; enables controlled data access for namespace operations
-   **/
+  /** Glue resource patterns for namespace role data catalog access. */
   readonly glueResourceAccess?: string[];
 }
 

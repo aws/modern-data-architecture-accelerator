@@ -32,27 +32,7 @@ export class MdaaLogGroup extends LogGroup implements IMdaaLogGroup {
         this,
         [
           {
-            /**
-             * Q-ENHANCED-PROPERTY
-             * Required CDK Nag rule identifier for CloudWatch log group retention period compliance suppression. Specifies the exact NIST 800-53 R5 security rule being suppressed for log retention configuration enabling compliance exception management and audit documentation.
-             *
-             * Use cases: Compliance exception management; Security rule suppression; Audit documentation; Log retention policy exceptions
-             *
-             * AWS: CDK Nag NIST 800-53 R5 rule identifier for CloudWatch log group retention compliance validation
-             *
-             * Validation: Must be valid CDK Nag rule ID; required for specific security rule suppression targeting
-             */
             id: 'NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod',
-            /**
-             * Q-ENHANCED-PROPERTY
-             * Required justification for suppressing CloudWatch log group retention period security rule providing audit trail and compliance documentation. Documents the business reason for using infinite retention enabling compliance review and security audit processes.
-             *
-             * Use cases: Compliance documentation; Audit justification; Security review; Exception reasoning for infinite retention
-             *
-             * AWS: CDK Nag suppression reason for CloudWatch log group retention compliance exception documentation
-             *
-             * Validation: Must be descriptive justification text; required for audit trail and compliance documentation
-             */
             reason: 'LogGroup retention is set to RetentionDays.INFINITE.',
           },
           {

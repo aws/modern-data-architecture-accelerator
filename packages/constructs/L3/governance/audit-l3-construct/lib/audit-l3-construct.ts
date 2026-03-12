@@ -16,75 +16,43 @@ import { Construct } from 'constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 
 /**
- * Q-ENHANCED-INTERFACE
- * S3 bucket inventory configuration interface for automated bucket content reporting with inventory name specification and bucket targeting. Defines inventory properties for audit infrastructure including source bucket identification and inventory configuration naming for automated S3 object metadata collection and compliance reporting.
- *
- * Use cases: S3 inventory management; Bucket content auditing; Automated reporting; Compliance monitoring; Object metadata collection; Storage analytics
- *
- * AWS: S3 bucket inventory configuration for automated bucket content reporting and audit data collection
- *
- * Validation: bucketName must be valid S3 bucket name; inventoryName must be valid inventory configuration identifier; inventory configuration must be unique per bucket
+ * Identifies a single S3 bucket inventory to be queryable via the Glue/Athena inventory table.
+ * In YAML config, entries use "<bucketName>/<inventoryName>" format which is parsed into this shape.
  */
 export interface BucketInventoryProps {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Target S3 bucket name for inventory data collection enabling automated bucket content reporting and audit data generation. Specifies the source bucket for which inventory data will be collected, supporting audit infrastructure and compliance monitoring through automated S3 object metadata collection.
+   * Source S3 bucket name whose inventory data will be collected into the audit bucket
+   * and made queryable through the Glue inventory table.
    *
-   * Use cases: Bucket content auditing; Inventory data collection; Audit infrastructure; Compliance monitoring
+   * Use cases: Cross-bucket inventory aggregation; Audit-scoped bucket targeting
    *
-   * AWS: AWS S3 bucket identification for inventory configuration and automated content reporting
+   * AWS: S3 bucket inventory source configuration
    *
-   * Validation: Must be valid S3 bucket name; required; bucket must exist and be accessible for inventory collection
-   **/
+   * Validation: Required; valid S3 bucket name; bucket must exist
+   */
   readonly bucketName: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Unique inventory configuration identifier for inventory management and reporting organization enabling systematic inventory tracking. Provides a unique name for the inventory configuration to distinguish between multiple inventory setups and enable organized inventory data management.
+   * Inventory configuration ID on the source bucket, used to scope which inventory
+   * report is ingested into the Glue table.
    *
-   * Use cases: Inventory configuration management; Systematic tracking; Inventory organization; Configuration identification
+   * Use cases: Multi-inventory disambiguation; Selective inventory ingestion
    *
-   * AWS: AWS S3 inventory configuration name for inventory management and reporting organization
+   * AWS: S3 inventory configuration identifier
    *
-   * Validation: Must be valid inventory configuration identifier; required; must be unique per bucket for proper inventory management
-   **/
+   * Validation: Required; must match an existing inventory configuration on the source bucket
+   */
   readonly inventoryName: string;
 }
 
+/** Internal props for the Audit L3 construct. */
 export interface AuditL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of source account IDs for audit data collection enabling cross-account audit logging and centralized compliance monitoring. Provides the AWS account IDs from which audit data is expected for centralized audit collection and compliance reporting across multiple accounts.
-   *
-   * Use cases: Cross-account auditing; Centralized logging; Multi-account compliance; Audit data collection
-   *
-   * AWS: AWS account IDs for cross-account audit data collection and centralized compliance monitoring
-   *
-   * Validation: Must be array of valid AWS account IDs; required for cross-account audit data collection and compliance
-   **/
+  /** Source account IDs for cross-account audit log acceptance. */
   readonly sourceAccounts: string[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of source regions for audit data collection enabling multi-region audit logging and compliance coverage. Provides the AWS regions from which audit data is expected for audit collection and compliance monitoring across multiple regions.
-   *
-   * Use cases: Multi-region auditing; Regional compliance; coverage; Audit data collection
-   *
-   * AWS: AWS regions for multi-region audit data collection and compliance monitoring
-   *
-   * Validation: Must be array of valid AWS region names; required for multi-region audit data collection and compliance
-   **/
+  /** Source regions for multi-region audit log acceptance. */
   readonly sourceRegions: string[];
   readonly readRoleRefs: MdaaRoleRef[];
   readonly bucketInventories?: BucketInventoryProps[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required S3 prefix for inventory data organization enabling structured inventory storage and access control. Defines the S3 prefix under which inventory writing is allowed for organized inventory data storage and controlled access to inventory information.
-   *
-   * Use cases: Inventory organization; Data structure; Access control; Storage management
-   *
-   * AWS: S3 prefix for inventory data organization and controlled access to inventory information
-   *
-   * Validation: Must be valid S3 prefix string; required for inventory data organization and access control
-   **/
+  /** S3 prefix under which inventory writing is permitted. */
   readonly inventoryPrefix: string;
 }
 

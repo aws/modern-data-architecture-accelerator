@@ -17,59 +17,63 @@ import * as configSchema from './config-schema.json';
 
 export interface InstanceConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of admin role references with access to EC2 KMS keys and key pair secrets enabling secure compute resource management. Provides administrative access to encryption keys and SSH key pairs for secure instance management and access control.
+   * Roles granted admin access to the EC2 KMS key and KeyPair secrets.
+   * Admin roles can decrypt EBS volumes and retrieve SSH private keys from Secrets Manager.
    *
-   * Use cases: Secure compute administration; Key management access; SSH key pair administration
+   * Use cases: EC2 key management; SSH key pair secret access; EBS encryption admin
    *
-   * AWS: AWS IAM roles with KMS and Secrets Manager access for EC2 key management and administration
+   * AWS: IAM roles, KMS key policy, Secrets Manager
    *
-   * Validation: Must be array of valid MdaaRoleRef objects; required; roles receive access to EC2 keys and secrets
-   **/
+   * Validation: Required; array of MdaaRoleRef; supports name, arn, and id references
+   */
   readonly adminRoles: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of key pair names to EC2 key pair configurations enabling secure SSH access to instances. Provides SSH key pair management for secure instance access with proper key rotation and access control capabilities.
+   * EC2 key pairs for SSH access. Private key material is stored in Secrets Manager,
+   * encrypted with the module KMS CMK (or a specified KMS key). Key pairs are retained
+   * post stack deletion.
    *
-   * Use cases: SSH key management; Secure instance access; Key pair rotation and access control
+   * Use cases: SSH key provisioning; Encrypted key pair management
    *
-   * AWS: Amazon EC2 key pairs for secure SSH access and instance connectivity
+   * AWS: EC2 KeyPair, Secrets Manager, KMS
    *
-   * Validation: Must be valid NamedKeyPairProps if provided; defines SSH key pair configuration and management
-   **/
+   * Validation: Optional; map of key pair name to KeyPairProps (can be empty object for defaults)
+   */
   readonly keyPairs?: NamedKeyPairProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of security group names to security group configurations enabling network access control for EC2 instances. Provides network security controls with inbound and outbound traffic rules for secure instance networking.
+   * VPC security groups for EC2 instances. All egress allowed by default,
+   * no ingress allowed by default. Supports ipv4, prefix list, and security group rules.
    *
-   * Use cases: Network access control; Instance security; Traffic filtering and network isolation
+   * Use cases: Instance network isolation; Application-tier security; VPC endpoint access
    *
-   * AWS: Amazon VPC security groups for EC2 instance network access control and security
+   * AWS: EC2 SecurityGroup with ingress/egress rules
    *
-   * Validation: Must be valid NamedSecurityGroupProps if provided; defines network security group configuration
-   *   **/
+   * Validation: Optional; map of security group name to SecurityGroupProps
+   */
   readonly securityGroups?: NamedSecurityGroupProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of CloudFormation init object names to initialization configurations enabling automated instance setup and configuration. Provides instance initialization with software installation, configuration management, and automated setup workflows.
+   * CloudFormation Init configurations for automated instance bootstrap.
+   * Each named init contains configSets (ordered execution sequences) and configs
+   * (packages, commands, files, services). Referenced by instances via initName.
    *
-   * Use cases: Automated instance setup; Software installation; Configuration management and initialization
+   * Use cases: Automated software installation; Service configuration; Multi-stage bootstrap
    *
-   * AWS: AWS CloudFormation Init for automated EC2 instance configuration and setup
+   * AWS: CloudFormation::Init metadata
    *
-   * Validation: Must be valid NamedInitProps if provided; defines instance initialization and configuration scripts
-   **/
+   * Validation: Optional; map of init name to InitProps
+   */
   readonly cfnInit?: NamedInitProps;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional map of instance names to EC2 instance configurations enabling compute resource deployment. Provides complete instance configuration with AMI selection, instance types, networking, and security settings for diverse compute workloads.
+   * EC2 instances to deploy. Instances have termination protection enabled and are
+   * retained post stack deletion. EBS volumes are encrypted with the module KMS CMK
+   * unless a custom kmsKeyArn is specified. AMI root volumes must be listed in
+   * blockDevices to ensure encryption.
    *
-   * Use cases: Compute resource deployment; Instance configuration; Workload-specific compute setup
+   * Use cases: Secure compute deployment; Encrypted instance provisioning
    *
-   * AWS: Amazon EC2 instances for compute resource deployment and workload execution
+   * AWS: EC2 Instance, EBS, KMS
    *
-   * Validation: Must be valid NamedInstanceProps if provided; defines complete EC2 instance configuration
-   **/
+   * Validation: Optional; map of instance name to InstanceProps
+   */
   readonly instances?: NamedInstanceProps;
 }
 

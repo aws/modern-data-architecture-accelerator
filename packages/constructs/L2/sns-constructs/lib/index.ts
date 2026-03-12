@@ -16,16 +16,7 @@ export interface MdaaSnsTopicProps extends MdaaConstructProps {
 
   readonly contentBasedDeduplication?: boolean;
 
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional human-readable display name for the SNS topic providing user-friendly identification in management interfaces. Enables clear topic identification in AWS console and monitoring tools for improved operational visibility.
-   *
-   * Use cases: User-friendly identification; Management interface clarity; Operational visibility
-   *
-   * AWS: AWS SNS topic display name for user interface and management tool identification
-   *
-   * Validation: Must be descriptive text if provided; used for display purposes in AWS console
-   **/
+  /** Human-readable display name for the SNS topic providing user-friendly identification in management interfaces */
   readonly displayName?: string;
 
   readonly fifo?: boolean;

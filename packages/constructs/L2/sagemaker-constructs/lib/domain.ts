@@ -17,72 +17,18 @@ import { Construct } from 'constructs';
 const _ = require('lodash');
 
 export interface MdaaStudioDomainProps extends MdaaConstructProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required primary security group ID for all Studio app network interfaces providing baseline network access control. Defines the primary network security rules for all SageMaker Studio applications and notebooks within the VPC environment.
-   *
-   * Use cases: Primary network security; Studio app access control; VPC network isolation
-   *
-   * AWS: Amazon SageMaker Studio domain security group for network access control
-   *
-   * Validation: Must be valid security group ID; required; applied to all Studio app interfaces
-   **/
+  /** Primary security group ID for all Studio app network interfaces providing baseline network access control */
   readonly securityGroupId: string;
   readonly securityGroupIds?: string[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required authentication mode controlling how users access the SageMaker Studio domain. Determines whether users authenticate through AWS SSO or IAM for centralized identity management and access control.
-   *
-   * Use cases: User authentication control; Identity management integration; Access method specification
-   *
-   * AWS: Amazon SageMaker Studio domain authentication mode for user access control
-   *
-   * Validation: Must be 'SSO' or 'IAM'; required; determines user authentication method
-   **/
+  /** Authentication mode controlling how users access the SageMaker Studio domain */
   readonly authMode: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required default user settings configuration defining permissions, execution roles, and environment settings for all domain users. Provides baseline configuration for user workspaces including compute resources, security settings, and access permissions.
-   *
-   * Use cases: User workspace configuration; Default permissions; Environment standardization
-   *
-   * AWS: Amazon SageMaker Studio domain default user settings for workspace configuration
-   *
-   * Validation: Must be valid CfnDomain.UserSettingsProperty; required; defines default user environment
-   *   **/
+  /** Default user settings configuration defining permissions, execution roles, and environment */
   readonly defaultUserSettings: CfnDomain.UserSettingsProperty;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional name for the SageMaker Studio domain that will be processed through MDAA naming conventions. If not specified, a name will be generated automatically following organizational naming standards.
-   *
-   * Use cases: Predictable domain naming; Cross-service integration; Operational management
-   *
-   * AWS: Amazon SageMaker Studio domain name for resource identification and management
-   *
-   * Validation: Must be valid SageMaker domain name if provided; processed through MDAA naming conventions
-   **/
+  /** Name for the SageMaker Studio domain that will be processed through MDAA naming conventions */
   readonly domainName?: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of VPC subnet IDs for Studio communication and resource placement. Defines the network subnets where SageMaker Studio applications and notebooks will be deployed for secure VPC connectivity.
-   *
-   * Use cases: VPC network placement; Subnet-specific deployment; Network isolation control
-   *
-   * AWS: Amazon SageMaker Studio domain subnet configuration for VPC resource placement
-   *
-   * Validation: Must be array of 1-16 valid subnet IDs; required; subnets must exist in specified VPC
-   **/
+  /** Array of VPC subnet IDs for Studio communication and resource placement */
   readonly subnetIds: string[];
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required VPC ID for SageMaker Studio domain deployment providing network isolation and security controls. Ensures Studio domain operates within the specified VPC for secure networking and integration with other VPC resources.
-   *
-   * Use cases: VPC network isolation; Secure networking; VPC resource integration
-   *
-   * AWS: Amazon VPC for SageMaker Studio domain network isolation and security
-   *
-   * Validation: Must be valid VPC ID; required; VPC must exist and be accessible
-   **/
+  /** VPC ID for SageMaker Studio domain deployment providing network isolation and security controls */
   readonly vpcId: string;
   readonly kmsKeyId: string;
 }

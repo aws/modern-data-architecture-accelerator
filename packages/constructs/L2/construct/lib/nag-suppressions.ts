@@ -8,27 +8,9 @@ import { NagPackSuppression, NagSuppressions } from 'cdk-nag';
 import { IConstruct } from 'constructs';
 
 export interface NagSuppressionConfig {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required CDK Nag rule identifier for specific security rule suppression targeting. Identifies the exact security validation rule to suppress, enabling precise exception management and targeted suppression application.
-   *
-   * Use cases: Specific rule targeting; Security exception management; Precise suppression control; Rule identification
-   *
-   * AWS: CDK Nag rule identifier for CloudFormation security validation suppression
-   *
-   * Validation: Must be valid CDK Nag rule ID; required; identifies specific security rule for suppression
-   **/
+  /** CDK Nag rule identifier for specific security rule suppression targeting */
   readonly id: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Required justification for security rule suppression providing detailed explanation for compliance and audit purposes. Documents the business or technical reason for suppressing the security rule, enabling compliance review and audit trail maintenance.
-   *
-   * Use cases: Compliance documentation; Audit justification; Security review; Exception reasoning
-   *
-   * AWS: CDK Nag suppression reason for security compliance documentation and audit trails
-   *
-   * Validation: Must be descriptive justification text; required; provides audit trail for security exceptions
-   **/
+  /** Justification for security rule suppression providing detailed explanation for compliance and audit purposes */
   readonly reason: string;
 }
 

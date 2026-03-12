@@ -12,74 +12,89 @@ import { IdentityCenterConfig } from '@aws-mdaa/lakeformation-settings-l3-constr
 
 export interface LakeFormationSettingsConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional cross-account sharing version specification controlling Lake Formation cross-account data sharing capabilities. Determines the version of cross-account sharing features available for data mesh and multi-account data lake architectures.
+   * Lake Formation cross-account sharing version. Controls which cross-account
+   * sharing features are available for data mesh and multi-account architectures.
    *
-   * Use cases: Cross-account data sharing; Data mesh architecture; Multi-account Lake Formation governance
+   * Use cases: Cross-account data sharing version pinning; Data mesh compatibility
    *
-   * AWS: AWS Lake Formation cross-account sharing version configuration for data sharing capabilities
+   * AWS: Lake Formation cross-account sharing version setting
    *
-   * Validation: Must be valid Lake Formation sharing version if provided; defaults to latest version
-   **/
+   * Validation: Optional; string; defaults to latest version if omitted
+   */
   readonly crossAccountVersion?: string;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required array of Lake Formation admin role references with full administrative access to data lake governance and permissions management. Provides administrative control over Lake Formation permissions, data access policies, and governance configurations.
+   * Roles granted full Lake Formation administrator access including permission
+   * management, data access policies, and governance configuration.
+   * Deploy this module once per account.
    *
-   * Use cases: Data lake governance administration; Permission management; Lake Formation administrative control
+   * Use cases: Data lake admin delegation; Lake Formation permission management
    *
-   * AWS: AWS Lake Formation admin roles for data lake governance and permission management
+   * AWS: Lake Formation DataLakeSettings admin roles
    *
-   * Validation: Must be array of valid MdaaRoleRef objects; required; roles receive full Lake Formation administrative access
-   **/
+   * Validation: Required; array of MdaaRoleRef; supports name, arn, and id references
+   */
   readonly lakeFormationAdminRoles: MdaaRoleRef[];
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag enabling automatic addition of CDK execution role as Lake Formation admin for deployment and management operations. Enables seamless CDK-based Lake Formation resource management and deployment automation.
+   * When true, adds the CDK execution role as a Lake Formation admin so CDK
+   * deployments can manage Lake Formation resources without manual setup.
    *
-   * Use cases: CDK deployment automation; Lake Formation resource management; Automated deployment permissions
+   * Use cases: CDK deployment automation; CI/CD Lake Formation management
    *
-   * AWS: AWS Lake Formation admin role configuration for CDK execution and deployment automation
+   * AWS: Lake Formation DataLakeSettings admin role (CDK deploy role)
    *
-   * Validation: Boolean value; defaults to false; enables CDK execution role as Lake Formation admin when true
-   **/
+   * Validation: Optional; boolean
+   * @default false
+   */
   readonly createCdkLFAdmin?: boolean;
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required flag controlling default IAM principal access behavior for new databases and tables in Lake Formation. When enabled, sets IAM_ALLOW_PRINCIPALS as default permission mode for backward compatibility with IAM-based access patterns.
+   * Controls whether IAM_ALLOWED_PRINCIPALS is added by default to new databases
+   * and tables. When true, Lake Formation defers to IAM policies on Glue catalog
+   * resources. When false, all permissions must be managed exclusively in Lake Formation.
    *
-   * Use cases: IAM compatibility mode; Default permission behavior; Backward compatibility with existing IAM patterns
+   * Use cases: IAM-based access backward compatibility; Strict Lake Formation governance
    *
-   * AWS: AWS Lake Formation default permission mode for IAM principal access and compatibility
+   * AWS: Lake Formation DataLakeSettings default permissions
    *
-   * Validation: Boolean value; required; controls default permission behavior for new Lake Formation resources
-   **/
+   * Validation: Required; boolean
+   */
   readonly iamAllowedPrincipalsDefault: boolean;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional IAM Identity Center integration configuration enabling centralized identity management and SSO integration with Lake Formation. Provides seamless integration between Lake Formation permissions and organizational identity systems.
+   * IAM Identity Center integration for Lake Formation, enabling SSO-based
+   * data lake access and optional cross-account/org sharing via RAM.
    *
-   * Use cases: Centralized identity management; SSO integration; Organizational identity system integration
+   * Use cases: SSO-based Lake Formation access; Cross-account data sharing via Identity Center
    *
-   * AWS: AWS IAM Identity Center integration with Lake Formation for centralized identity and SSO
+   * AWS: IAM Identity Center, Lake Formation, RAM resource shares
    *
-   * Validation: Must be valid IdentityCenterConfig if provided; enables Identity Center integration and SSO
-   **/
+   * Validation: Optional; valid IdentityCenterConfig with required instanceId
+   */
   readonly iamIdentityCenter?: IdentityCenterConfig;
 
   /**
-   * Q-ENHANCED-PROPERTY
-   * Optional flag enabling creation of dedicated Lake Formation admin role for DataZone integration and cross-service governance coordination. Enables DataZone to manage Lake Formation permissions and coordinate data governance across services.
+   * When true, creates a dedicated Lake Formation admin role for DataZone
+   * so DataZone can manage Lake Formation permissions in this account.
    *
-   * Use cases: DataZone integration; Cross-service governance; Automated permission management between DataZone and Lake Formation
+   * Use cases: DataZone-managed Lake Formation governance; Cross-service permission coordination
    *
-   * AWS: AWS Lake Formation admin role for DataZone integration and cross-service governance coordination
+   * AWS: IAM role registered as Lake Formation admin for DataZone
    *
-   * Validation: Boolean value; creates dedicated DataZone admin role when enabled; enables cross-service governance
-   **/
+   * Validation: Optional; boolean
+   * @default false
+   */
   readonly createDataZoneAdminRole?: boolean;
 
+  /**
+   * Additional account IDs added to the DataZone admin role's trust policy,
+   * allowing DataZone in those accounts to manage Lake Formation in this account.
+   * Useful when this account is associated to a DataZone/SageMaker domain in another account.
+   *
+   * Use cases: Cross-account DataZone governance; Multi-account SageMaker domain integration
+   *
+   * AWS: IAM role trust policy, DataZone cross-account access
+   *
+   * Validation: Optional; array of AWS account ID strings; requires createDataZoneAdminRole
+   */
   readonly dataZoneAdminTrustAccounts?: string[];
 }
 

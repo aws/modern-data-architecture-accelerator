@@ -12,15 +12,16 @@ import * as configSchema from './config-schema.json';
 
 export interface EventBridgeConfigContents extends MdaaBaseConfigContents {
   /**
-   * Q-ENHANCED-PROPERTY
-   * Required map of event bus names to EventBridge event bus configurations enabling custom event routing and decoupled messaging. Provides event bus setup with custom routing rules, event patterns, and target configurations for event-driven architectures.
+   * Map of event bus names to EventBridge event bus configurations.
+   * Each bus can have optional principals for cross-account/service PutEvent access
+   * and an archive with configurable retention.
    *
-   * Use cases: Custom event routing; Decoupled application messaging; Event-driven architecture implementation
+   * Use cases: Custom event routing; Cross-account event publishing; Event archival with replay
    *
-   * AWS: Amazon EventBridge custom event buses for event routing and decoupled messaging capabilities
+   * AWS: EventBridge custom event buses with resource policies and archives
    *
-   * Validation: Must be valid NamedEventBusProps; required; defines all custom event bus configurations and routing
-   **/
+   * Validation: Required; keys are unique event bus names, values must be valid EventBusProps
+   */
   readonly eventBuses: NamedEventBusProps;
 }
 

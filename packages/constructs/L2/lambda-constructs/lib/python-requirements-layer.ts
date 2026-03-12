@@ -11,16 +11,7 @@ import { MdaaPythonCodeAsset, PythonVersion } from './code-asset';
 export interface MdaaPythonRequirementsLayerVersionProps extends MdaaConstructProps {
   readonly pythonRequirementsPath: string;
   readonly layerVersionName: string;
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional Python version specification for dependency compatibility and runtime alignment. Determines the Python runtime version for package compilation and ensures compatibility with target Lambda function runtimes.
-   *
-   * Use cases: Runtime compatibility; Python version alignment; Package compilation; Dependency compatibility
-   *
-   * AWS: Python runtime version for Lambda layer package compilation and compatibility
-   *
-   * Validation: Must be valid PythonVersion enum if provided; defaults to compatible Python version
-   *   **/
+  /** Python version specification for dependency compatibility and runtime alignment */
   readonly pythonVersion?: PythonVersion;
 }
 
