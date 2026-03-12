@@ -16,11 +16,12 @@ import {
   MdaaLambdaFunctionProps,
   MdaaLambdaRole,
 } from '@aws-mdaa/lambda-constructs';
-import { MdaaAlarm, MdaaLogInsightsQuery, MdaaMetricFilter } from '@aws-mdaa/cloudwatch-constructs';
+import { MdaaAlarm, MdaaLogGroup, MdaaLogInsightsQuery, MdaaMetricFilter } from '@aws-mdaa/cloudwatch-constructs';
 import { aws_events_targets, Duration, Size } from 'aws-cdk-lib';
 import { SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { RuleTargetInput } from 'aws-cdk-lib/aws-events';
 import { IKey } from 'aws-cdk-lib/aws-kms';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import {
   Code,
   DockerImageCode,
@@ -533,7 +534,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
    * Create observability resources (metric filters, alarms, log insights queries)
    */
   private createObservabilityResources(functionProps: FunctionProps, lambdaFunction: LambdaFunction): void {
-    const createdMetrics = this.createMetricFilters(functionProps, lambdaFunction);
+    const createdMetrics = this.createMetricFilters(functionProps);
     this.createAlarms(functionProps, lambdaFunction, createdMetrics);
     this.createLogInsightsQueries(functionProps, lambdaFunction);
   }
@@ -541,20 +542,27 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
   /**
    * Create CloudWatch metric filters and track created metrics
    */
-  private createMetricFilters(
-    functionProps: FunctionProps,
-    lambdaFunction: LambdaFunction,
-  ): Map<string, { namespace: string; metricName: string }> {
+  private createMetricFilters(functionProps: FunctionProps): Map<string, { namespace: string; metricName: string }> {
     const createdMetrics = new Map<string, { namespace: string; metricName: string }>();
 
     if (!functionProps.metricFilters) {
       return createdMetrics;
     }
 
+    const logGroup = new MdaaLogGroup(this, `log-group-${functionProps.functionName}`, {
+      logGroupNamePathPrefix: '/aws/lambda',
+      logGroupName: functionProps.functionName,
+      encryptionKey: this.kmsKey,
+      retention: RetentionDays.INFINITE,
+      naming: this.props.naming,
+      createParams: false,
+      createOutputs: false,
+    });
+
     for (const [index, filterProps] of functionProps.metricFilters.entries()) {
       new MdaaMetricFilter(this, `metric-filter-${functionProps.functionName}-${index}`, {
         filterName: filterProps.filterName,
-        logGroup: lambdaFunction.logGroup,
+        logGroup,
         filterPattern: filterProps.filterPattern,
         metricTransformations: filterProps.metricTransformations,
         functionName: functionProps.functionName,
@@ -630,7 +638,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     }
 
     for (const [index, queryProps] of functionProps.logInsightsQueries.entries()) {
-      const logGroupNames = queryProps.logGroupNames ?? [lambdaFunction.logGroup.logGroupName];
+      const logGroupNames = queryProps.logGroupNames ?? [`/aws/lambda/${lambdaFunction.functionName}`];
 
       new MdaaLogInsightsQuery(this, `query-${functionProps.functionName}-${index}`, {
         queryName: queryProps.queryName,

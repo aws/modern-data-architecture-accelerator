@@ -4,7 +4,7 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTest, snapShotTestApp, Create, isS3BucketWithSuffix } from '@aws-mdaa/testing';
 import { SagemakerCDKApp } from '../lib/sagemaker';
 import * as path from 'path';
 import { TestRegionFact } from '@aws-mdaa/testing';
@@ -21,6 +21,10 @@ describe('sagemaker Snapshot Tests', () => {
         const stringVal = val as string;
         return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
       },
+    });
+    expect.addSnapshotSerializer({
+      test: isS3BucketWithSuffix,
+      print: (): string => '"REPLACED-S3-BUCKET-NAME"',
     });
   });
   snapShotTest(

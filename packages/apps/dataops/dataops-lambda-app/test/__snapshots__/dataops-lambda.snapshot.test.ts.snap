@@ -4,148 +4,6 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-lambda-main": {
     "Description": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.4.0",
-    "Mappings": {
-      "LatestNodeRuntimeMap": {
-        "af-south-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-east-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-east-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-northeast-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-northeast-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-northeast-3": {
-          "value": "nodejs22.x",
-        },
-        "ap-south-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-south-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-3": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-4": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-5": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-6": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-7": {
-          "value": "nodejs22.x",
-        },
-        "ca-central-1": {
-          "value": "nodejs22.x",
-        },
-        "ca-west-1": {
-          "value": "nodejs22.x",
-        },
-        "cn-north-1": {
-          "value": "nodejs22.x",
-        },
-        "cn-northwest-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-central-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-central-2": {
-          "value": "nodejs22.x",
-        },
-        "eu-isoe-west-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-north-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-south-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-south-2": {
-          "value": "nodejs22.x",
-        },
-        "eu-west-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-west-2": {
-          "value": "nodejs22.x",
-        },
-        "eu-west-3": {
-          "value": "nodejs22.x",
-        },
-        "eusc-de-east-1": {
-          "value": "nodejs22.x",
-        },
-        "il-central-1": {
-          "value": "nodejs22.x",
-        },
-        "me-central-1": {
-          "value": "nodejs22.x",
-        },
-        "me-south-1": {
-          "value": "nodejs22.x",
-        },
-        "mx-central-1": {
-          "value": "nodejs22.x",
-        },
-        "sa-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-east-2": {
-          "value": "nodejs22.x",
-        },
-        "us-gov-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-gov-west-1": {
-          "value": "nodejs22.x",
-        },
-        "us-iso-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-iso-west-1": {
-          "value": "nodejs22.x",
-        },
-        "us-isob-east-1": {
-          "value": "nodejs18.x",
-        },
-        "us-isob-west-1": {
-          "value": "nodejs18.x",
-        },
-        "us-isof-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-isof-south-1": {
-          "value": "nodejs22.x",
-        },
-        "us-west-1": {
-          "value": "nodejs22.x",
-        },
-        "us-west-2": {
-          "value": "nodejs22.x",
-        },
-      },
-    },
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -620,215 +478,6 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
     },
     "Resources": {
       "REPLACED-CFN-LOGICAL-ID": {
-        "DependsOn": [
-          "REPLACED-CFN-LOGICAL-ID",
-          "REPLACED-CFN-LOGICAL-ID",
-        ],
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-              },
-              {
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "Code": {
-            "S3Bucket": {
-              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-            },
-            "S3Key": "REPLACED-GENERATED-NAME.zip",
-          },
-          "Handler": "index.handler",
-          "Role": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
-            ],
-          },
-          "Runtime": {
-            "Fn::FindInMap": [
-              "LatestNodeRuntimeMap",
-              {
-                "Ref": "AWS::Region",
-              },
-              "value",
-            ],
-          },
-          "Tags": [
-            {
-              "Key": "mdaa_cdk_app",
-              "Value": "dataops-lambda",
-            },
-            {
-              "Key": "mdaa_domain",
-              "Value": "test-domain",
-            },
-            {
-              "Key": "mdaa_env",
-              "Value": "test-env",
-            },
-            {
-              "Key": "mdaa_module_name",
-              "Value": "test-lambda-main",
-            },
-            {
-              "Key": "mdaa_org",
-              "Value": "test-org",
-            },
-          ],
-          "Timeout": 900,
-        },
-        "Type": "AWS::Lambda::Function",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-              },
-              {
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "AssumeRolePolicyDocument": {
-            "Statement": [
-              {
-                "Action": "sts:AssumeRole",
-                "Effect": "Allow",
-                "Principal": {
-                  "Service": "lambda.amazonaws.com",
-                },
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "ManagedPolicyArns": [
-            {
-              "Fn::Join": [
-                "",
-                [
-                  "arn:",
-                  {
-                    "Ref": "AWS::Partition",
-                  },
-                  ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-                ],
-              ],
-            },
-          ],
-          "Tags": [
-            {
-              "Key": "mdaa_cdk_app",
-              "Value": "dataops-lambda",
-            },
-            {
-              "Key": "mdaa_domain",
-              "Value": "test-domain",
-            },
-            {
-              "Key": "mdaa_env",
-              "Value": "test-env",
-            },
-            {
-              "Key": "mdaa_module_name",
-              "Value": "test-lambda-main",
-            },
-            {
-              "Key": "mdaa_org",
-              "Value": "test-org",
-            },
-          ],
-        },
-        "Type": "AWS::IAM::Role",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-              },
-              {
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "PolicyDocument": {
-            "Statement": [
-              {
-                "Action": [
-                  "logs:PutRetentionPolicy",
-                  "logs:DeleteRetentionPolicy",
-                ],
-                "Effect": "Allow",
-                "Resource": "*",
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-          "Roles": [
-            {
-              "Ref": "REPLACED-CFN-LOGICAL-ID",
-            },
-          ],
-        },
-        "Type": "AWS::IAM::Policy",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "Description": "Stack description parameter to update on version changes",
           "Name": "/test-org/test-domain/test-lambda-main/aws-solution",
@@ -1284,14 +933,62 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
         "Type": "AWS::EC2::SecurityGroupEgress",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Retain",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+              {
+                "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+              {
+                "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "KmsKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "LogGroupName": "/aws/lambda/test-org-test-env-test-domain-test-lambda-main-testobservabilityfunction",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::Logs::LogGroup",
+        "UpdateReplacePolicy": "Retain",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "FilterName": "error-count",
           "FilterPattern": "{ $.level = "error" }",
           "LogGroupName": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "MetricTransformations": [
             {
@@ -1326,10 +1023,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           },
           "Type": "String",
           "Value": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
         },
         "Type": "AWS::SSM::Parameter",
@@ -1464,10 +1158,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           "FilterName": "processing-metrics-0",
           "FilterPattern": "[timestamp, request_id, level, msg, duration_ms, memory_mb]",
           "LogGroupName": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "MetricTransformations": [
             {
@@ -1485,10 +1176,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           "FilterName": "processing-metrics-1",
           "FilterPattern": "[timestamp, request_id, level, msg, duration_ms, memory_mb]",
           "LogGroupName": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "MetricTransformations": [
             {
@@ -1523,10 +1211,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           },
           "Type": "String",
           "Value": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
         },
         "Type": "AWS::SSM::Parameter",
@@ -1578,10 +1263,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           },
           "Type": "String",
           "Value": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
         },
         "Type": "AWS::SSM::Parameter",
@@ -1816,10 +1498,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           "FilterName": "error-count-with-dimensions",
           "FilterPattern": "{ $.level = "error" }",
           "LogGroupName": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "MetricTransformations": [
             {
@@ -1864,10 +1543,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           },
           "Type": "String",
           "Value": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
         },
         "Type": "AWS::SSM::Parameter",
@@ -2001,9 +1677,14 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
         "Properties": {
           "LogGroupNames": [
             {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "LogGroupName",
+              "Fn::Join": [
+                "",
+                [
+                  "/aws/lambda/",
+                  {
+                    "Ref": "REPLACED-CFN-LOGICAL-ID",
+                  },
+                ],
               ],
             },
           ],
@@ -2142,9 +1823,14 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
         "Properties": {
           "LogGroupNames": [
             {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "LogGroupName",
+              "Fn::Join": [
+                "",
+                [
+                  "/aws/lambda/",
+                  {
+                    "Ref": "REPLACED-CFN-LOGICAL-ID",
+                  },
+                ],
               ],
             },
           ],
@@ -5142,28 +4828,6 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
         "Type": "AWS::Lambda::Function",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Properties": {
-          "LogGroupName": {
-            "Fn::Join": [
-              "",
-              [
-                "/aws/lambda/",
-                {
-                  "Ref": "REPLACED-CFN-LOGICAL-ID",
-                },
-              ],
-            ],
-          },
-          "ServiceToken": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
-            ],
-          },
-        },
-        "Type": "Custom::LogRetention",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
         "Metadata": {
           "cdk_nag": {
             "rules_to_suppress": [
@@ -5350,148 +5014,6 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
 exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
 {
   "Description": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.4.0",
-  "Mappings": {
-    "LatestNodeRuntimeMap": {
-      "af-south-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-east-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs22.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-4": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-5": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-6": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-7": {
-        "value": "nodejs22.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs22.x",
-      },
-      "ca-west-1": {
-        "value": "nodejs22.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs22.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs22.x",
-      },
-      "eu-isoe-west-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs22.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs22.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs22.x",
-      },
-      "eusc-de-east-1": {
-        "value": "nodejs22.x",
-      },
-      "il-central-1": {
-        "value": "nodejs22.x",
-      },
-      "me-central-1": {
-        "value": "nodejs22.x",
-      },
-      "me-south-1": {
-        "value": "nodejs22.x",
-      },
-      "mx-central-1": {
-        "value": "nodejs22.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-east-2": {
-        "value": "nodejs22.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs22.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs22.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isof-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-isof-south-1": {
-        "value": "nodejs22.x",
-      },
-      "us-west-1": {
-        "value": "nodejs22.x",
-      },
-      "us-west-2": {
-        "value": "nodejs22.x",
-      },
-    },
-  },
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -5966,215 +5488,6 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
   },
   "Resources": {
     "REPLACED-CFN-LOGICAL-ID": {
-      "DependsOn": [
-        "REPLACED-CFN-LOGICAL-ID",
-        "REPLACED-CFN-LOGICAL-ID",
-      ],
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-            },
-            {
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-          },
-          "S3Key": "REPLACED-GENERATED-NAME.zip",
-        },
-        "Handler": "index.handler",
-        "Role": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "dataops-lambda",
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain",
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env",
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-lambda-main",
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-            },
-            {
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "dataops-lambda",
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain",
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env",
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-lambda-main",
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-            },
-            {
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda is CDK internal construct for log management.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:packages/apps/dataops/dataops-lambda-app/lib/dataops-lambda.ts:LINE:COL] LogRetention Lambda policy managed by CDK for log management.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "logs:PutRetentionPolicy",
-                "logs:DeleteRetentionPolicy",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-        "Roles": [
-          {
-            "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "Description": "Stack description parameter to update on version changes",
         "Name": "/test-org/test-domain/test-lambda-main/aws-solution",
@@ -6630,14 +5943,62 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
     "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+            {
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+            {
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "KmsKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "LogGroupName": "/aws/lambda/test-org-test-env-test-domain-test-lambda-main-testobservabilityfunction",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "FilterName": "error-count",
         "FilterPattern": "{ $.level = "error" }",
         "LogGroupName": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "MetricTransformations": [
           {
@@ -6672,10 +6033,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
       },
       "Type": "AWS::SSM::Parameter",
@@ -6810,10 +6168,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         "FilterName": "processing-metrics-0",
         "FilterPattern": "[timestamp, request_id, level, msg, duration_ms, memory_mb]",
         "LogGroupName": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "MetricTransformations": [
           {
@@ -6831,10 +6186,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         "FilterName": "processing-metrics-1",
         "FilterPattern": "[timestamp, request_id, level, msg, duration_ms, memory_mb]",
         "LogGroupName": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "MetricTransformations": [
           {
@@ -6869,10 +6221,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
       },
       "Type": "AWS::SSM::Parameter",
@@ -6924,10 +6273,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
       },
       "Type": "AWS::SSM::Parameter",
@@ -7162,10 +6508,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         "FilterName": "error-count-with-dimensions",
         "FilterPattern": "{ $.level = "error" }",
         "LogGroupName": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "MetricTransformations": [
           {
@@ -7210,10 +6553,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "LogGroupName",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
       },
       "Type": "AWS::SSM::Parameter",
@@ -7347,9 +6687,14 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
       "Properties": {
         "LogGroupNames": [
           {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
             ],
           },
         ],
@@ -7488,9 +6833,14 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
       "Properties": {
         "LogGroupNames": [
           {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "LogGroupName",
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
             ],
           },
         ],
@@ -10486,28 +9836,6 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         ],
       },
       "Type": "AWS::Lambda::Function",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "REPLACED-CFN-LOGICAL-ID",
-              },
-            ],
-          ],
-        },
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Metadata": {

@@ -152,7 +152,7 @@ const isAssetHash = (val: unknown): boolean => {
 };
 
 const s3BucketRegex = /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]--?[0-9a-f]{8}$/;
-const isS3BucketWithSuffix = (val: unknown): boolean => {
+export const isS3BucketWithSuffix = (val: unknown): boolean => {
   return typeof val === 'string' && val.length >= 12 && val.length <= 63 && safeRegexTest(s3BucketRegex, val);
 };
 
