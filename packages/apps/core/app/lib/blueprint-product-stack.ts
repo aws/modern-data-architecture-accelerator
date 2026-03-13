@@ -21,34 +21,33 @@ class BlueprintRoleHelper extends MdaaRoleHelper {
     super({} as Construct, {} as IMdaaResourceNaming);
   }
 
-  // NOSONAR
   public override resolveRoleRefsWithOrdinals(): never {
     throw new Error(
-      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
+      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference. (resolveRoleRefsWithOrdinals)',
     );
   }
-  // NOSONAR
+
   public override resolveRoleRefs(): never {
     throw new Error(
-      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
+      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference. (resolveRoleRefs)',
     );
   }
-  // NOSONAR
+
   public override resolveRoleRefWithRefId(): never {
     throw new Error(
-      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
+      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference. (resolveRoleRefWithRefId)',
     );
   }
-  // NOSONAR
+
   public override resolveRoleRef(): never {
     throw new Error(
-      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
+      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference. (resolveRoleRef)',
     );
   }
-  // NOSONAR
+
   public override createProviderServiceToken(): never {
     throw new Error(
-      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference.',
+      'Role references cannot be resolved in a Blueprint. Instead, directly provide the required arn/name/id fields on the reference. (createProviderServiceToken)',
     );
   }
 }
