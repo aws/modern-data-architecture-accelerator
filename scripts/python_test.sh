@@ -28,6 +28,29 @@ if ! command -v uv >/dev/null 2>&1; then
     exit 1
 fi
 
+# Run tests for tools (uv projects with pyproject.toml at the tool root)
+TOOL_PROJECTS=$(find tools -name "pyproject.toml" -maxdepth 2 -type f | sed 's|/pyproject.toml||')
+
+for tool in $TOOL_PROJECTS; do
+    TOTAL_PACKAGES=$((TOTAL_PACKAGES + 1))
+
+    echo ""
+    echo "========================================="
+    echo "Running Python tests for tool: $tool"
+    echo "========================================="
+
+    cd "$PROJECT_ROOT/$tool"
+
+    if uv run pytest --cov --cov-report=xml --cov-report=html --cov-report=term; then
+        echo "✅ Python tests passed for $tool"
+    else
+        echo "❌ Python tests failed for $tool"
+        FAILED_PACKAGES+=("$tool")
+    fi
+
+    cd "$PROJECT_ROOT"
+done
+
 for package in $PYTHON_TEST_PACKAGES; do
     TOTAL_PACKAGES=$((TOTAL_PACKAGES + 1))
     

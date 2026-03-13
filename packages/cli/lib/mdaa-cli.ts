@@ -774,14 +774,24 @@ export class MdaaDeploy {
 
     const { stdout, exitCode } = executeCommandWithCapture(cmd);
 
-    // Write diff output to file
+    // Write diff output to file (always, so output is preserved for debugging)
     const diffOutPath = `${this.diffOutDir}/${this.config.contents.organization}/${this.modulePrefix(moduleDeploymentConfig)}`;
     this.execCmd(`mkdir -p '${diffOutPath}'`);
     fs.writeFileSync(`${diffOutPath}/diff.txt`, stdout);
 
-    // Print summary to console
-    const hasChanges = exitCode !== 0 || !stdout.includes('There were no differences');
     const modulePrefix = this.modulePrefix(moduleDeploymentConfig);
+
+    // cdk diff exits 1 when differences exist (normal) and >= 2 on actual errors.
+    // Fail fast on real errors, consistent with how deploy/synth behave.
+    if (exitCode >= 2) {
+      console.error(
+        `Module ${modulePrefix}: Diff command failed (exit code ${exitCode}) - see ${diffOutPath}/diff.txt`,
+      );
+      throw new Error(`Diff failed for module ${modulePrefix} with exit code ${exitCode}`);
+    }
+
+    // Print summary to console
+    const hasChanges = exitCode === 1 || !stdout.includes('There were no differences');
     if (hasChanges) {
       console.log(`Module ${modulePrefix}: Changes detected - see ${diffOutPath}/diff.txt`);
     } else {
@@ -921,7 +931,10 @@ export class MdaaDeploy {
     if (templateFile) {
       cdkCmd.push(`--template '${templateFile}'`);
     } else {
-      console.warn(`Warning: No template file found in ${baselineTemplatePath}`);
+      throw new Error(
+        `No baseline template found for module ${moduleEffectiveConfig.domainName}/${moduleEffectiveConfig.envName}/${moduleEffectiveConfig.moduleName} at ${baselineTemplatePath}. ` +
+          `Ensure baselines have been generated for this module.`,
+      );
     }
   }
 

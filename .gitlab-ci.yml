@@ -119,6 +119,17 @@ feature_merge_lint:
     - echo "Executing lint.sh script"
     - ./scripts/lint.sh
 
+feature_merge_lint_python:
+  tags:
+    - arch:amd64
+    - size:medium
+  only:
+    - merge_requests
+  stage: prebuild
+  allow_failure: false
+  script:
+    - ./scripts/lint_python.sh
+
 feature_merge_main:
   tags:
     - arch:amd64
@@ -258,6 +269,37 @@ feature_merge_smoke_test:
   ## optionally state which mdaa-testing branch
   variables:
     CAEF_TESTING_BRANCH: main
+
+
+feature_merge_risk_assessment:
+  tags:
+    - arch:amd64
+    - size:large
+  only:
+    - merge_requests
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+  cache:
+    key: feature-merge-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  allow_failure: true
+  variables:
+    DIFF_OUTPUT_PATH: "./diff-output"
+    ASSESSMENT_TIMEOUT: "300"
+    BASELINE_BUCKET_REGION: "us-east-1"
+    AWS_CREDS_TARGET_ROLE: "${TESTING_ROLE_ARN}"
+  script:
+    - ./scripts/risk_assessment.sh
+  artifacts:
+    paths:
+      - diff-output/
+    when: always
 
 .integ_test_template: &integ_test_template
   tags:

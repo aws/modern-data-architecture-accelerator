@@ -1134,4 +1134,35 @@ describe('MdaaDeploy.execCmdWithDiffCapture', () => {
     expect(mockSpawnSync).not.toHaveBeenCalled();
     consoleSpy.mockRestore();
   });
+
+  it('should throw on exit code >= 2 (real diff failure)', () => {
+    mockSpawnSync.mockReturnValue({
+      stdout: 'Error: some CDK error',
+      stderr: '',
+      status: 2,
+    });
+
+    const mdaaDeploy = new MdaaDeploy({ action: 'diff', 'diff-out': '/diff/output' }, [], {
+      organization: 'test-org',
+      domains: {},
+    });
+    jest.spyOn(mdaaDeploy, 'execCmd').mockImplementation(jest.fn());
+
+    const moduleConfig = {
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+    };
+
+    // Should still write the diff.txt for debugging, but then throw
+    expect(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (mdaaDeploy as any).execCmdWithDiffCapture('cdk diff', moduleConfig);
+    }).toThrow(/Diff failed for module.*exit code 2/);
+
+    // Verify output was still written before the throw
+    expect(mockWriteFileSync).toHaveBeenCalled();
+    const writeCall = mockWriteFileSync.mock.calls[0];
+    expect(writeCall[0]).toContain('diff.txt');
+  });
 });
