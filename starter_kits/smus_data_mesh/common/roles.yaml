@@ -25,16 +25,18 @@ generatePolicies:
             - s3:GetBucketAcl # View bucket access control lists
             - s3:ListAccessPoints # List S3 access points
             - s3:GetBucketLocation # Get the region where bucket is located
-          Resource: "*"
-    suppressions:
-      - id: "AwsSolutions-IAM5"
-        reason: "These actions do not accept a resource or resource name not known at deployment time."
+          Resource: '*'
+
+    # TODO: Review and uncomment below suppression(s).
+    # suppressions:
+    #   - id: 'AwsSolutions-IAM5'
+    #     reason: 'These actions do not accept a resource or resource name not known at deployment time.'
 
   # Policy for managing DynamoDB tables in DataZone blueprint provisioning
   ddb-bp-provisioning:
     policyDocument:
       Statement:
-        # Allows full lifecycle management of DynamoDB tables
+        # Allows full lifecycle management of DynamoDB tables scoped to *ddb-table-t1
         - Sid: DynamoDBTableOperations
           Effect: Allow
           Action:
@@ -42,7 +44,6 @@ generatePolicies:
             - dynamodb:UpdateTable # Modify existing table settings (capacity, indexes, etc.)
             - dynamodb:DeleteTable # Remove DynamoDB tables
             - dynamodb:DescribeTable # Get table metadata and status
-            - dynamodb:ListTables # List all tables in the account
             - dynamodb:TagResource # Add tags to tables for organization
             - dynamodb:UntagResource # Remove tags from tables
             - dynamodb:ListTagsOfResource # List tags on tables
@@ -50,12 +51,18 @@ generatePolicies:
             - dynamodb:DescribeContinuousBackups # View backup configuration
             - dynamodb:DescribeTimeToLive # View TTL configuration
             - dynamodb:UpdateTimeToLive # Configure TTL on table
-          Resource: "*"
-    suppressions:
-      - id: "AwsSolutions-IAM5"
-        reason: "DynamoDB table operations, KMS keys, and SSM parameters require wildcard resource as names are not known at deployment time."
+          Resource: 'arn:{{partition}}:dynamodb:{{region}}:{{account}}:table/{{org}}-*-*-ddb-table-t1' # Wild cards for SMUS Project and Env Ids
+        # ListTables does not support resource-level permissions
+        - Sid: DynamoDBListTables
+          Effect: Allow
+          Action:
+            - dynamodb:ListTables # List all tables in the account
+          Resource: '*'
 
-
+    # TODO: Review and uncomment below suppression(s).
+    # suppressions:
+    #   - id: 'AwsSolutions-IAM5'
+    #     reason: 'DynamoDB table operations require wildcard in resource as full table names (SMUS Project and Env Ids) are not known at deployment time.'
 
 # IAM roles that will be created for various data platform personas and services
 generateRoles:
@@ -64,9 +71,11 @@ generateRoles:
     trustedPrincipal: service:glue.amazonaws.com # Only Glue service can assume this role
     awsManagedPolicies:
       - service-role/AWSGlueServiceRole # Provides Glue with access to S3, CloudWatch, and other required services
-    suppressions:
-      - id: "AwsSolutions-IAM4"
-        reason: "AWSGlueServiceRole approved for usage"
+
+    # TODO: Review and uncomment below suppression(s).
+    # suppressions:
+    #   - id: 'AwsSolutions-IAM4'
+    #     reason: 'AWSGlueServiceRole approved for usage'
 
   # Administrative role for managing the entire data platform
   data-admin:
@@ -78,9 +87,11 @@ generateRoles:
       - AWSLakeFormationCrossAccountManager # Manage cross-account data sharing in Lake Formation
     generatedPolicies:
       - BasicDataPolicy # Add S3 discovery capabilities
-    suppressions:
-      - id: "AwsSolutions-IAM4"
-        reason: "AWSGlueConsoleFullAccess, AmazonDataZoneFullAccess, AWSLakeFormationDataAdmin, AWSLakeFormationCrossAccountManager approved for usage"
+
+    # TODO: Review and uncomment below suppression(s).
+    # suppressions:
+    #   - id: 'AwsSolutions-IAM4'
+    #     reason: 'AWSGlueConsoleFullAccess, AmazonDataZoneFullAccess, AWSLakeFormationDataAdmin, AWSLakeFormationCrossAccountManager approved for usage'
 
   # Role for data engineers to build and manage data pipelines
   data-engineer:
@@ -89,9 +100,11 @@ generateRoles:
       - AWSGlueConsoleFullAccess # Full access to create and manage Glue jobs, crawlers, and catalogs
     generatedPolicies:
       - BasicDataPolicy # Add S3 discovery capabilities
-    suppressions:
-      - id: "AwsSolutions-IAM4"
-        reason: "AWSGlueConsoleFullAccess, AmazonDataZoneFullUserAccessapproved for usage"
+
+    # TODO: Review and uncomment below suppression(s).
+    # suppressions:
+    #   - id: 'AwsSolutions-IAM4'
+    #     reason: 'AWSGlueConsoleFullAccess, AmazonDataZoneFullUserAccessapproved for usage'
 
   # Role for DataZone blueprint provisioning to create DynamoDB resources
   # This role is assumed by DataZone when provisioning the custom DDB blueprint

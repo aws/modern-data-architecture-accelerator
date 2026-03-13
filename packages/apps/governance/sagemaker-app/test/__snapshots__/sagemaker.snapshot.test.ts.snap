@@ -270,6 +270,42 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-sagemaker-main:role:testorgtestenvtestdomaintestsagemakermaintest512c84cd:arn",
         },
         "Value": {
@@ -3493,23 +3529,118 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Datazone actions do not take a resource",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] datazone:Get*/List* do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). iam:GetRole does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) and is further scoped via aws:ViaAWSService condition.",
               },
             ],
           },
         },
+        "Properties": {
+          "Description": "",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--60b85edf",
+          "Path": "/",
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "datazone:GetDomain",
+                  "datazone:ListEnvironments",
+                  "datazone:GetEnvironment",
+                  "datazone:ListConnections",
+                  "datazone:GetUserProfile",
+                ],
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+              {
+                "Action": "iam:GetRole",
+                "Condition": {
+                  "Bool": {
+                    "aws:ViaAWSService": "true",
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+              {
+                "Action": "iam:AttachRolePolicy",
+                "Condition": {
+                  "ArnLike": {
+                    "iam:PolicyARN": [
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": "arn:test-partition:iam::test-account:role/datazone_usr_role_*",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/name",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "AssumeRolePolicyDocument": {
             "Statement": [
@@ -3523,42 +3654,6 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             ],
             "Version": "2012-10-17",
           },
-          "Policies": [
-            {
-              "PolicyDocument": {
-                "Statement": [
-                  {
-                    "Action": [
-                      "datazone:GetDomain",
-                      "datazone:ListEnvironments",
-                      "datazone:GetEnvironment",
-                      "datazone:ListConnections",
-                      "datazone:GetUserProfile",
-                    ],
-                    "Effect": "Allow",
-                    "Resource": "*",
-                  },
-                  {
-                    "Action": "iam:GetRole",
-                    "Condition": {
-                      "Bool": {
-                        "aws:ViaAWSService": "true",
-                      },
-                    },
-                    "Effect": "Allow",
-                    "Resource": "*",
-                  },
-                  {
-                    "Action": "iam:AttachRolePolicy",
-                    "Effect": "Allow",
-                    "Resource": "arn:test-partition:iam::test-account:role/datazone_usr_role_*",
-                  },
-                ],
-                "Version": "2012-10-17",
-              },
-              "PolicyName": "custom-resource-policy",
-            },
-          ],
           "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-test--512c84cd",
           "Tags": [
             {
@@ -6017,6 +6112,42 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-sagemaker-main:role:testorgtestenvtestdomaintestsagemakermaintest512c84cd:arn",
         },
         "Value": {
@@ -7162,23 +7293,118 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Datazone actions do not take a resource",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] datazone:Get*/List* do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). iam:GetRole does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) and is further scoped via aws:ViaAWSService condition.",
               },
             ],
           },
         },
+        "Properties": {
+          "Description": "",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--60b85edf",
+          "Path": "/",
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "datazone:GetDomain",
+                  "datazone:ListEnvironments",
+                  "datazone:GetEnvironment",
+                  "datazone:ListConnections",
+                  "datazone:GetUserProfile",
+                ],
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+              {
+                "Action": "iam:GetRole",
+                "Condition": {
+                  "Bool": {
+                    "aws:ViaAWSService": "true",
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+              {
+                "Action": "iam:AttachRolePolicy",
+                "Condition": {
+                  "ArnLike": {
+                    "iam:PolicyARN": [
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": "arn:test-partition:iam::1234567890:role/datazone_usr_role_*",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/name",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "AssumeRolePolicyDocument": {
             "Statement": [
@@ -7192,42 +7418,6 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             ],
             "Version": "2012-10-17",
           },
-          "Policies": [
-            {
-              "PolicyDocument": {
-                "Statement": [
-                  {
-                    "Action": [
-                      "datazone:GetDomain",
-                      "datazone:ListEnvironments",
-                      "datazone:GetEnvironment",
-                      "datazone:ListConnections",
-                      "datazone:GetUserProfile",
-                    ],
-                    "Effect": "Allow",
-                    "Resource": "*",
-                  },
-                  {
-                    "Action": "iam:GetRole",
-                    "Condition": {
-                      "Bool": {
-                        "aws:ViaAWSService": "true",
-                      },
-                    },
-                    "Effect": "Allow",
-                    "Resource": "*",
-                  },
-                  {
-                    "Action": "iam:AttachRolePolicy",
-                    "Effect": "Allow",
-                    "Resource": "arn:test-partition:iam::1234567890:role/datazone_usr_role_*",
-                  },
-                ],
-                "Version": "2012-10-17",
-              },
-              "PolicyName": "custom-resource-policy",
-            },
-          ],
           "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-test--512c84cd",
           "Tags": [
             {
@@ -8738,6 +8928,42 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-sagemaker-main:role:testorgtestenvtestdomaintestsagemakermaintest512c84cd:arn",
         },
         "Value": {
@@ -9720,23 +9946,118 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Datazone actions do not take a resource",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] datazone:Get*/List* do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). iam:GetRole does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) and is further scoped via aws:ViaAWSService condition.",
               },
             ],
           },
         },
+        "Properties": {
+          "Description": "",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--60b85edf",
+          "Path": "/",
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "datazone:GetDomain",
+                  "datazone:ListEnvironments",
+                  "datazone:GetEnvironment",
+                  "datazone:ListConnections",
+                  "datazone:GetUserProfile",
+                ],
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+              {
+                "Action": "iam:GetRole",
+                "Condition": {
+                  "Bool": {
+                    "aws:ViaAWSService": "true",
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+              {
+                "Action": "iam:AttachRolePolicy",
+                "Condition": {
+                  "ArnLike": {
+                    "iam:PolicyARN": [
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": "arn:test-partition:iam::2234567890:role/datazone_usr_role_*",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/name",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "AssumeRolePolicyDocument": {
             "Statement": [
@@ -9750,42 +10071,6 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             ],
             "Version": "2012-10-17",
           },
-          "Policies": [
-            {
-              "PolicyDocument": {
-                "Statement": [
-                  {
-                    "Action": [
-                      "datazone:GetDomain",
-                      "datazone:ListEnvironments",
-                      "datazone:GetEnvironment",
-                      "datazone:ListConnections",
-                      "datazone:GetUserProfile",
-                    ],
-                    "Effect": "Allow",
-                    "Resource": "*",
-                  },
-                  {
-                    "Action": "iam:GetRole",
-                    "Condition": {
-                      "Bool": {
-                        "aws:ViaAWSService": "true",
-                      },
-                    },
-                    "Effect": "Allow",
-                    "Resource": "*",
-                  },
-                  {
-                    "Action": "iam:AttachRolePolicy",
-                    "Effect": "Allow",
-                    "Resource": "arn:test-partition:iam::2234567890:role/datazone_usr_role_*",
-                  },
-                ],
-                "Version": "2012-10-17",
-              },
-              "PolicyName": "custom-resource-policy",
-            },
-          ],
           "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-test--512c84cd",
           "Tags": [
             {
@@ -12436,6 +12721,42 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
         "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:bpprovisioning:name",
+      },
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:arn",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:name",
       },
       "Value": {
         "Fn::Select": [
@@ -15686,23 +16007,118 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Datazone actions do not take a resource",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] Role used for project deployment only. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts:LINE:COL] datazone:Get*/List* do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). iam:GetRole does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) and is further scoped via aws:ViaAWSService condition.",
             },
           ],
         },
       },
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--60b85edf",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "datazone:GetDomain",
+                "datazone:ListEnvironments",
+                "datazone:GetEnvironment",
+                "datazone:ListConnections",
+                "datazone:GetUserProfile",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": "iam:GetRole",
+              "Condition": {
+                "Bool": {
+                  "aws:ViaAWSService": "true",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": "iam:AttachRolePolicy",
+              "Condition": {
+                "ArnLike": {
+                  "iam:PolicyARN": [
+                    {
+                      "Ref": "REPLACED-CFN-LOGICAL-ID",
+                    },
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:iam::test-account:role/datazone_usr_role_*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -15716,42 +16132,6 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           ],
           "Version": "2012-10-17",
         },
-        "Policies": [
-          {
-            "PolicyDocument": {
-              "Statement": [
-                {
-                  "Action": [
-                    "datazone:GetDomain",
-                    "datazone:ListEnvironments",
-                    "datazone:GetEnvironment",
-                    "datazone:ListConnections",
-                    "datazone:GetUserProfile",
-                  ],
-                  "Effect": "Allow",
-                  "Resource": "*",
-                },
-                {
-                  "Action": "iam:GetRole",
-                  "Condition": {
-                    "Bool": {
-                      "aws:ViaAWSService": "true",
-                    },
-                  },
-                  "Effect": "Allow",
-                  "Resource": "*",
-                },
-                {
-                  "Action": "iam:AttachRolePolicy",
-                  "Effect": "Allow",
-                  "Resource": "arn:test-partition:iam::test-account:role/datazone_usr_role_*",
-                },
-              ],
-              "Version": "2012-10-17",
-            },
-            "PolicyName": "custom-resource-policy",
-          },
-        ],
         "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-test--512c84cd",
         "Tags": [
           {

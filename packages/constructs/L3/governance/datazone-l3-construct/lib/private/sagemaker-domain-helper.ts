@@ -848,6 +848,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       crossAccountStack,
       resourceConfig.domainConfig.customResourceRoleName,
       accountProps.account,
+      [domainKmsUsagePolicy.managedPolicyArn],
     );
 
     domainKmsUsagePolicy.attachToRole(customResourceRole);

@@ -3,6 +3,8 @@
 region: default
 
 ## Pre-Deployment Instructions
+# 1. Address all TODOs below to set appropriate context values
+# 2. Address TODOs to review/uncomment suppressions in ./shared/roles.yaml
 
 # TODO: Set an appropriate, unique organization name
 # Failure to do so may result in global naming conflicts.

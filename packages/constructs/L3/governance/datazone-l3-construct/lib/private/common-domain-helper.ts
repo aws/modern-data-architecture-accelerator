@@ -36,16 +36,7 @@ import {
   CfnUserProfile,
   CfnUserProfileProps,
 } from 'aws-cdk-lib/aws-datazone';
-import {
-  Conditions,
-  Effect,
-  IRole,
-  ManagedPolicy,
-  PolicyDocument,
-  PolicyStatement,
-  Role,
-  ServicePrincipal,
-} from 'aws-cdk-lib/aws-iam';
+import { Conditions, Effect, IRole, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { CfnResourceShare, CfnResourceShareProps } from 'aws-cdk-lib/aws-ram';
@@ -536,63 +527,71 @@ export class CommonDomainHelper {
   }
 
   // Creates Lambda execution role for custom resources with DataZone and KMS permissions
-  public createCustomResourceRole(scope: Construct, roleName: string, account: string) {
+  public createCustomResourceRole(scope: Construct, roleName: string, account: string, allowedPolicyArns: string[]) {
     const customResourceRole = new MdaaRole(scope, 'custom-resource-role', {
       naming: this.props.naming,
       roleName: roleName,
       verbatimRoleName: true,
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
-      inlinePolicies: {
-        'custom-resource-policy': new PolicyDocument({
-          statements: [
-            // DataZone read permissions
-            new PolicyStatement({
-              resources: ['*'],
-              actions: [
-                'datazone:GetDomain',
-                'datazone:ListEnvironments',
-                'datazone:GetEnvironment',
-                'datazone:ListConnections',
-                'datazone:GetUserProfile',
-              ],
-            }),
-            // iam:GetRole needed by DataZone API calls (aws:ViaAWSService used instead of
-            // aws:CalledVia as IAM global endpoint calls don't reliably propagate CalledVia)
-            new PolicyStatement({
-              resources: ['*'],
-              actions: ['iam:GetRole'],
-              conditions: {
-                Bool: {
-                  'aws:ViaAWSService': 'true',
-                },
-              },
-            }),
-            // IAM permissions for DataZone user roles
-            new PolicyStatement({
-              resources: [`arn:${this.props.partition}:iam::${account}:role/datazone_usr_role_*`],
-              actions: ['iam:AttachRolePolicy'],
-            }),
-          ],
-        }),
-      },
     });
 
-    MdaaNagSuppressions.addCodeResourceSuppressions(customResourceRole, [
+    const statements: PolicyStatement[] = [
+      // DataZone read permissions
+      new PolicyStatement({
+        resources: ['*'],
+        actions: [
+          'datazone:GetDomain',
+          'datazone:ListEnvironments',
+          'datazone:GetEnvironment',
+          'datazone:ListConnections',
+          'datazone:GetUserProfile',
+        ],
+      }),
+      // iam:GetRole needed by DataZone API calls (aws:ViaAWSService used instead of
+      // aws:CalledVia as IAM global endpoint calls don't reliably propagate CalledVia)
+      new PolicyStatement({
+        resources: ['*'],
+        actions: ['iam:GetRole'],
+        conditions: {
+          Bool: {
+            'aws:ViaAWSService': 'true',
+          },
+        },
+      }),
+    ];
+
+    // Only add iam:AttachRolePolicy when there are authorized policy ARNs
+    if (allowedPolicyArns.length > 0) {
+      statements.push(
+        new PolicyStatement({
+          resources: [`arn:${this.props.partition}:iam::${account}:role/datazone_usr_role_*`],
+          actions: ['iam:AttachRolePolicy'],
+          conditions: {
+            ArnLike: {
+              'iam:PolicyARN': allowedPolicyArns,
+            },
+          },
+        }),
+      );
+    }
+
+    const customResourcePolicy = new MdaaManagedPolicy(scope, 'custom-resource-policy', {
+      naming: this.props.naming,
+      managedPolicyName: 'custom-resource',
+      statements: statements,
+    });
+
+    customResourcePolicy.attachToRole(customResourceRole);
+
+    MdaaNagSuppressions.addCodeResourceSuppressions(customResourcePolicy, [
       {
         id: 'AwsSolutions-IAM5',
-        reason: 'Datazone actions do not take a resource',
-      },
-      {
-        id: 'NIST.800.53.R5-IAMNoInlinePolicy',
-        reason: 'Role used for project deployment only. Inline policy is appropriate.',
-      },
-      {
-        id: 'HIPAA.Security-IAMNoInlinePolicy',
-        reason: 'Role used for project deployment only. Inline policy is appropriate.',
-      },
-      {
-        id: 'PCI.DSS.321-IAMNoInlinePolicy',
-        reason: 'Role used for project deployment only. Inline policy is appropriate.',
+        reason:
+          'datazone:Get*/List* do not support resource-level permissions ' +
+          '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). ' +
+          'iam:GetRole does not support resource-level permissions ' +
+          '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) ' +
+          'and is further scoped via aws:ViaAWSService condition.',
       },
     ]);
     return customResourceRole;
@@ -1247,7 +1246,9 @@ export class CommonDomainHelper {
     domainProps: BaseDomainProps,
   ): { roleName: string; role: IRole } {
     const customResourceRoleName = this.props.naming.resourceName(`${domainName}-custom-resource`, 64);
-    const customResourceRole = this.createCustomResourceRole(scope, customResourceRoleName, this.props.account);
+    const customResourceRole = this.createCustomResourceRole(scope, customResourceRoleName, this.props.account, [
+      domainKmsUsagePolicy.managedPolicyArn,
+    ]);
 
     domainKmsUsagePolicy.attachToRole(customResourceRole);
     const customResourceUserProfile = new CfnUserProfile(scope, 'custom-resource-user-profile', {

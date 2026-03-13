@@ -23,6 +23,10 @@
 #   - ssm-domain:/module/... references within same domain
 #   - {{ref:/ConstructPath:Attribute}} references within same CloudFormation stack
 
+# Pre-deployment Steps:
+# 1. Address all TODOs below to set appropriate context values
+# 2. Address TODOs to review/uncomment suppressions in ./common/roles.yaml
+
 # All resources will be deployed to the default region specified in the environment or AWS configurations.
 # Can optional specify a specific AWS Region Name.
 region: default
