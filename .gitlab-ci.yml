@@ -330,7 +330,7 @@ feature_merge_integ_split_0:
     # - ./scripts/bootstrap-integ.sh --teardown
   resource_group: integ-us-east-2
   variables:
-    AWS_CREDS_TARGET_ROLE: "${TESTING_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: "${INTEG_TESTING_ROLE_ARN}"
     AWS_REGION: us-east-2
 
 feature_merge_integ_split_1:
@@ -341,7 +341,7 @@ feature_merge_integ_split_1:
     # - ./scripts/bootstrap-integ.sh --teardown
   resource_group: integ-us-west-1
   variables:
-    AWS_CREDS_TARGET_ROLE: "${TESTING_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: "${INTEG_TESTING_ROLE_ARN}"
     AWS_REGION: us-west-1
 
 feature_merge_integ_split_2:
@@ -352,7 +352,7 @@ feature_merge_integ_split_2:
     # - ./scripts/bootstrap-integ.sh --teardown
   resource_group: integ-us-west-2
   variables:
-    AWS_CREDS_TARGET_ROLE: "${TESTING_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: "${INTEG_TESTING_ROLE_ARN}"
     AWS_REGION: us-west-2
 
 feature_version:
