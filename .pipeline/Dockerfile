@@ -69,10 +69,10 @@ RUN pip3 install --no-cache-dir --upgrade pip --break-system-packages && \
     json-schema-for-humans
 
 # Install SonarQube scanner
-RUN wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip && \
-    unzip -q sonar-scanner-cli-5.0.1.3006-linux.zip && \
-    mv sonar-scanner-5.0.1.3006-linux /opt/sonar-scanner && \
-    rm -f sonar-scanner-cli-5.0.1.3006-linux.zip
+RUN wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-8.0.1.6346-linux-x64.zip && \
+    unzip -q sonar-scanner-cli-8.0.1.6346-linux-x64.zip && \
+    mv sonar-scanner-8.0.1.6346-linux-x64 /opt/sonar-scanner && \
+    rm -f sonar-scanner-cli-8.0.1.6346-linux-x64.zip
 
 # Install Terraform
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg && \
