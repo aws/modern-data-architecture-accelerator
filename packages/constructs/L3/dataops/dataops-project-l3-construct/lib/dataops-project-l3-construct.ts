@@ -44,7 +44,7 @@ import {
 } from '@aws-mdaa/sagemaker-project-l3-construct';
 import { MdaaSnsTopic, MdaaSnsTopicProps } from '@aws-mdaa/sns-constructs';
 import { Arn, ArnComponents, ArnFormat, Tags } from 'aws-cdk-lib';
-import { CfnDataSource, CfnDataSourceProps, CfnEnvironment } from 'aws-cdk-lib/aws-datazone';
+import { CfnDataSource, CfnDataSourceProps } from 'aws-cdk-lib/aws-datazone';
 import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { CfnClassifier, CfnConnection, CfnCrawler, CfnDatabase } from 'aws-cdk-lib/aws-glue';
 import {
@@ -576,6 +576,13 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
 
     const datazoneResources = this.createDataZoneSageMakerResources(projectBucket, datazoneUserRole);
 
+    this.createAthenaWorkgroup(
+      datazoneUserRole,
+      projectBucket,
+      datazoneResources?.datazoneProject,
+      datazoneResources?.datazoneEnvId,
+    );
+
     // Create project-level Lake Formation tags BEFORE databases
     // This ensures tags exist at account level before any database associations
     this.projectLevelLFTagsConstruct = createLakeFormationTags(this, this.props);
@@ -807,12 +814,15 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     const lf = new LakeFormationAccessControlL3Construct(this, `lf-grants-datazone-sub`, lakeFormationProps);
     lf.node.addDependency(env.subDatabase);
 
-    this.createAthenaWorkgroup(envUserRole, envBucket, env.env);
-
     return env;
   }
 
-  private createAthenaWorkgroup(datazoneUserRole: Role, projectBucket: IBucket, env: CfnEnvironment) {
+  private createAthenaWorkgroup(
+    datazoneUserRole: Role,
+    projectBucket: IBucket,
+    datazoneProject?: MdaaDatazoneProject,
+    datazoneEnvId?: string,
+  ) {
     const athenaWgProps: AthenaWorkgroupL3ConstructProps = {
       dataAdminRoles: this.props.dataAdminRoleRefs,
       athenaUserRoles: [
@@ -829,11 +839,13 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       ...this.props,
     };
     const athenaWg = new AthenaWorkgroupL3Construct(this, 'datazone-env-athena-wg', athenaWgProps);
-
-    Tags.of(athenaWg.workgroup).add('AmazonDataZoneEnvironment', env.attrId);
-    Tags.of(athenaWg.workgroup).add('AmazonDataZoneProject', env.projectIdentifier);
-    Tags.of(athenaWg.workgroup).add('AmazonDataZoneDomain', env.domainIdentifier);
+    if (datazoneEnvId && datazoneProject) {
+      Tags.of(athenaWg.workgroup).add('AmazonDataZoneEnvironment', datazoneEnvId);
+      Tags.of(athenaWg.workgroup).add('AmazonDataZoneProject', datazoneProject?.project.attrId);
+      Tags.of(athenaWg.workgroup).add('AmazonDataZoneDomain', datazoneProject?.project.domainIdentifier);
+    }
   }
+
   private createProjectSecurityGroup(
     sgName: string,
     vpcId: string,

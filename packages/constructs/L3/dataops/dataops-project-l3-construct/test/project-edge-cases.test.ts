@@ -251,4 +251,71 @@ describe('DataOps Project Edge Cases', () => {
     const construct = new DataOpsProjectL3Construct(stack, 'test-construct', props);
     expect(construct).toBeDefined();
   });
+
+  test('should tag Athena workgroup with DataZone tags when datazoneResources is defined', () => {
+    const app = new MdaaTestApp();
+    const stack = new Stack(app, 'test-athena-dz-tags-stack');
+    const roleHelper = new MdaaRoleHelper(
+      stack,
+      app.naming,
+      path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
+    );
+
+    const props: DataOpsProjectL3ConstructProps = {
+      naming: app.naming,
+      roleHelper,
+      projectExecutionRoleRefs: [testGlueRoleRef],
+      dataEngineerRoleRefs: [],
+      dataAdminRoleRefs: [],
+      datazone: {
+        project: {
+          domainConfigSSMParam: '/test/datazone/config',
+          domainUnit: '/test-unit',
+        },
+      },
+    };
+
+    new DataOpsProjectL3Construct(stack, 'test-construct', props);
+    const template = Template.fromStack(stack);
+
+    // When datazoneResources is defined, the Athena workgroup should have DataZone tags
+    const workgroups = template.findResources('AWS::Athena::WorkGroup');
+    const workgroupKeys = Object.keys(workgroups);
+    expect(workgroupKeys.length).toBeGreaterThan(0);
+
+    const workgroup = workgroups[workgroupKeys[0]];
+    const tags: { Key: string }[] = workgroup.Properties?.Tags ?? [];
+    const dzTagKeys = tags.map(t => t.Key).filter(k => typeof k === 'string' && k.startsWith('AmazonDataZone'));
+    expect(dzTagKeys).toEqual(
+      expect.arrayContaining(['AmazonDataZoneEnvironment', 'AmazonDataZoneProject', 'AmazonDataZoneDomain']),
+    );
+  });
+
+  test('should not tag Athena workgroup with DataZone tags when datazoneResources is undefined', () => {
+    const app = new MdaaTestApp();
+    const stack = new Stack(app, 'test-athena-no-dz-tags-stack');
+    const roleHelper = new MdaaRoleHelper(
+      stack,
+      app.naming,
+      path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
+    );
+
+    const props: DataOpsProjectL3ConstructProps = {
+      naming: app.naming,
+      roleHelper,
+      projectExecutionRoleRefs: [testGlueRoleRef],
+      dataEngineerRoleRefs: [],
+      dataAdminRoleRefs: [],
+    };
+
+    new DataOpsProjectL3Construct(stack, 'test-construct', props);
+    const template = Template.fromStack(stack);
+
+    const workgroups = template.findResources('AWS::Athena::WorkGroup');
+    for (const [, resource] of Object.entries(workgroups)) {
+      const tags: { Key: string }[] = resource.Properties?.Tags ?? [];
+      const dzTagKeys = tags.map(t => t.Key).filter(k => k.startsWith('AmazonDataZone'));
+      expect(dzTagKeys).toHaveLength(0);
+    }
+  });
 });

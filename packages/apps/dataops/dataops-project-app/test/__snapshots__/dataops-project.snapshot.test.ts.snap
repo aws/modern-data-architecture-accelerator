@@ -187,6 +187,12 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-dataops-project-main:workgroup:name",
+        },
+        "Value": "test-org-test-env-test-domain-test-dataops-project-main",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-dataops-project-main:security-group:testsecuritygroup:id",
         },
         "Value": {
@@ -213,6 +219,42 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           "Name": "test-org:test-domain:test-dataops-project-main:project:dataops:dataops",
         },
         "Value": "test-org-test-env-test-domain-test-dataops-project-main-dataops",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:wgusage:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:wgusage:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -2133,6 +2175,76 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           },
         },
         "Type": "AWS::Glue::Connection",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "test-org-test-env-test-domain-test-dataops-project-main",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-project",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-dataops-project-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "WorkGroupConfiguration": {
+            "EnforceWorkGroupConfiguration": true,
+            "PublishCloudWatchMetricsEnabled": true,
+            "ResultConfiguration": {
+              "EncryptionConfiguration": {
+                "EncryptionOption": "SSE_KMS",
+                "KmsKey": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+              "OutputLocation": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "s3://",
+                    {
+                      "Ref": "REPLACED-CFN-LOGICAL-ID",
+                    },
+                    "/athena-results/",
+                  ],
+                ],
+              },
+            },
+          },
+        },
+        "Type": "AWS::Athena::WorkGroup",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dataops-project-main/workgroup/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-project",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dataops-project-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "test-org-test-env-test-domain-test-dataops-project-main",
+        },
+        "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
@@ -5032,6 +5144,149 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           "Type": "glue",
         },
         "Type": "AWS::DataZone::DataSource",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-main-50ebfe89",
+          "Path": "/",
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "athena:BatchGetQueryExecution",
+                  "athena:ListDataCatalogs",
+                  "athena:ListDatabases",
+                  "athena:ListEngineVersions",
+                  "athena:ListNamedQueries",
+                  "athena:ListPreparedStatements",
+                  "athena:ListQueryExecutions",
+                  "athena:ListTableMetadata",
+                  "athena:ListTagsForResource",
+                  "athena:ListWorkGroups",
+                  "athena:GetDataCatalog",
+                  "athena:GetDatabase",
+                  "athena:GetNamedQuery",
+                  "athena:GetPreparedStatement",
+                  "athena:GetQueryExecution",
+                  "athena:GetQueryResults",
+                  "athena:GetQueryResultsStream",
+                  "athena:GetTableMetadata",
+                  "athena:GetWorkGroup",
+                  "athena:BatchGetNamedQuery",
+                  "athena:StartQueryExecution",
+                  "athena:StopQueryExecution",
+                ],
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":athena:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":workgroup/test-org-test-env-test-domain-test-dataops-project-main",
+                    ],
+                  ],
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Roles": [
+            {
+              "Fn::Select": [
+                1,
+                {
+                  "Fn::Split": [
+                    "/",
+                    {
+                      "Fn::Select": [
+                        5,
+                        {
+                          "Fn::Split": [
+                            ":",
+                            {
+                              "Fn::GetAtt": [
+                                "REPLACED-CFN-LOGICAL-ID",
+                                "Arn",
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            "sample-org-dev-instance1-roles-data-engineer",
+          ],
+        },
+        "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/wg-usage/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-project",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dataops-project-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/wg-usage/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-project",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dataops-project-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "DependsOn": [
@@ -8238,6 +8493,12 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-main:workgroup:name",
+      },
+      "Value": "test-org-test-env-test-domain-test-dataops-project-main",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-dataops-project-main:security-group:testsecuritygroup:id",
       },
       "Value": {
@@ -8264,6 +8525,42 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         "Name": "test-org:test-domain:test-dataops-project-main:project:dataops:dataops",
       },
       "Value": "test-org-test-env-test-domain-test-dataops-project-main-dataops",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:wgusage:arn",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:wgusage:name",
+      },
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -10184,6 +10481,76 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         },
       },
       "Type": "AWS::Glue::Connection",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "test-org-test-env-test-domain-test-dataops-project-main",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "WorkGroupConfiguration": {
+          "EnforceWorkGroupConfiguration": true,
+          "PublishCloudWatchMetricsEnabled": true,
+          "ResultConfiguration": {
+            "EncryptionConfiguration": {
+              "EncryptionOption": "SSE_KMS",
+              "KmsKey": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+            "OutputLocation": {
+              "Fn::Join": [
+                "",
+                [
+                  "s3://",
+                  {
+                    "Ref": "REPLACED-CFN-LOGICAL-ID",
+                  },
+                  "/athena-results/",
+                ],
+              ],
+            },
+          },
+        },
+      },
+      "Type": "AWS::Athena::WorkGroup",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-main/workgroup/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-dataops-project-main",
+      },
+      "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
@@ -13083,6 +13450,149 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         "Type": "glue",
       },
       "Type": "AWS::DataZone::DataSource",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-main-50ebfe89",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "athena:BatchGetQueryExecution",
+                "athena:ListDataCatalogs",
+                "athena:ListDatabases",
+                "athena:ListEngineVersions",
+                "athena:ListNamedQueries",
+                "athena:ListPreparedStatements",
+                "athena:ListQueryExecutions",
+                "athena:ListTableMetadata",
+                "athena:ListTagsForResource",
+                "athena:ListWorkGroups",
+                "athena:GetDataCatalog",
+                "athena:GetDatabase",
+                "athena:GetNamedQuery",
+                "athena:GetPreparedStatement",
+                "athena:GetQueryExecution",
+                "athena:GetQueryResults",
+                "athena:GetQueryResultsStream",
+                "athena:GetTableMetadata",
+                "athena:GetWorkGroup",
+                "athena:BatchGetNamedQuery",
+                "athena:StartQueryExecution",
+                "athena:StopQueryExecution",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":athena:",
+                    {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":workgroup/test-org-test-env-test-domain-test-dataops-project-main",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "REPLACED-CFN-LOGICAL-ID",
+                              "Arn",
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          "sample-org-dev-instance1-roles-data-engineer",
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/wg-usage/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/wg-usage/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "DependsOn": [
