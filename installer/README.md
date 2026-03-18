@@ -1,5 +1,12 @@
 # MDAA Installer
 
+> **Note:** This folder is used internally to generate the CloudFormation template published on the
+> [AWS Solutions page](https://aws.amazon.com/solutions/implementations/modern-data-architecture-accelerator/).
+> If you are looking to deploy MDAA, please follow the instructions in the
+> [main README](../README.md) at the root of this repository. MDAA can be integrated into any CI/CD
+> pipeline of your choice (Jenkins, GitLab CI, GitHub Actions, etc.). The use of CodeBuild here is
+> just one example of how to run MDAA from a CI/CD tool.
+
 This README describes the MDAA Installer and provides instructions for deployment using AWS CDK or CloudFormation.
 
 ## Overview
@@ -14,8 +21,8 @@ The MDAA Installer creates a CodeBuild project that clones the MDAA repository f
 | SampleName | Sample configuration to deploy | `basic_datalake` |
 | OrgName | Organization name for MDAA deployment (required) | - |
 | MdaaVersion | Version of MDAA modules to deploy (e.g., `latest`, `1.3.0`) | `latest` |
-| VpcId | VPC ID (required for `basic_datascience_platform`) | - |
-| SubnetId | Subnet ID (required for `basic_datascience_platform`) | - |
+| VpcId | VPC ID (required by CloudFormation; only used by `basic_datascience_platform`) | - |
+| SubnetId | Subnet ID (required by CloudFormation; only used by `basic_datascience_platform`) | - |
 
 ## Deployment Instructions
 
@@ -94,9 +101,27 @@ The CodeBuild project uses these environment variables:
 
 ## Uninstall
 
-1. Delete all CloudFormation stacks that start with the organization name
-2. Delete the installer stack
-3. Delete all S3 buckets with the organization name as prefix
+1. Delete all CloudFormation stacks that start with the organization name, in reverse chronological order
+2. Clean up any protected resources (S3 buckets, KMS keys, etc.) that CloudFormation cannot delete automatically
+3. Delete the installer stack
+
+## End-to-End Testing
+
+An automated test script validates the full installer flow: synth, lint, unit tests, deploy, CodeBuild run, and stack verification.
+
+```bash
+cd installer
+./test-installer.sh --region <region> [--sample-config-folder sample_configs] [--skip-cleanup]
+```
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--region` | AWS region to deploy into (required) | - |
+| `--org-name` | Organization name for the test deployment | `mdaa-inst-test` |
+| `--sample-config-folder` | Override the sample config folder name at synth time | `starter_kits` |
+| `--skip-cleanup` | Leave the installer stack in place after the test | `false` |
+
+The script auto-discovers a VPC and subnet in the target region for CloudFormation parameter validation. MDAA stacks deployed by CodeBuild are not automatically deleted; see the Uninstall section above.
 
 ## Additional Notes
 

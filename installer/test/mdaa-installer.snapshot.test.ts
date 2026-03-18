@@ -2,6 +2,12 @@ import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import * as MdaaInstaller from '../lib/mdaa-installer-stack';
 
+interface CfnResource {
+  Type: string;
+  Properties?: Record<string, unknown>;
+  DependsOn?: string[];
+}
+
 describe('MdaaInstallerStack Snapshots', () => {
   let app: cdk.App;
   let stack: MdaaInstaller.MdaaInstallerStack;
@@ -66,22 +72,20 @@ describe('MdaaInstallerStack Snapshots', () => {
 
   test('Environment variables snapshot', () => {
     const templateJson = template.toJSON();
-    const codeBuildProject = Object.values(templateJson.Resources).find(
-      (resource: any) => resource.Type === 'AWS::CodeBuild::Project',
-    ) as any;
+    const resources = templateJson.Resources as Record<string, CfnResource>;
+    const codeBuildProject = Object.values(resources).find(resource => resource.Type === 'AWS::CodeBuild::Project');
+    const properties = codeBuildProject?.Properties as Record<string, Record<string, unknown>> | undefined;
 
-    expect(codeBuildProject?.Properties?.Environment?.EnvironmentVariables).toMatchSnapshot(
-      'environment-variables.json',
-    );
+    expect(properties?.Environment?.EnvironmentVariables).toMatchSnapshot('environment-variables.json');
   });
 
   test('BuildSpec snapshot', () => {
     const templateJson = template.toJSON();
-    const codeBuildProject = Object.values(templateJson.Resources).find(
-      (resource: any) => resource.Type === 'AWS::CodeBuild::Project',
-    ) as any;
+    const resources = templateJson.Resources as Record<string, CfnResource>;
+    const codeBuildProject = Object.values(resources).find(resource => resource.Type === 'AWS::CodeBuild::Project');
+    const properties = codeBuildProject?.Properties as Record<string, Record<string, unknown>> | undefined;
 
-    expect(codeBuildProject?.Properties?.Source?.BuildSpec).toMatchSnapshot('buildspec.json');
+    expect(properties?.Source?.BuildSpec).toMatchSnapshot('buildspec.json');
   });
 
   test('Parameter groups and labels snapshot', () => {
@@ -96,31 +100,31 @@ describe('MdaaInstallerStack Snapshots', () => {
 
   test('Security configurations snapshot', () => {
     const templateJson = template.toJSON();
+    const resources = templateJson.Resources as Record<string, CfnResource>;
 
-    const securityConfigs = {
-      kmsKeyRotation: [],
-    } as any;
-
-    Object.values(templateJson.Resources).forEach((resource: any) => {
+    const kmsKeyRotation: unknown[] = [];
+    for (const resource of Object.values(resources)) {
       if (resource.Type === 'AWS::KMS::Key') {
-        if (resource.Properties.EnableKeyRotation) {
-          securityConfigs.kmsKeyRotation.push(resource.Properties.EnableKeyRotation);
+        const props = resource.Properties as Record<string, unknown> | undefined;
+        if (props?.EnableKeyRotation) {
+          kmsKeyRotation.push(props.EnableKeyRotation);
         }
       }
-    });
+    }
 
-    expect(securityConfigs).toMatchSnapshot('security-configurations.json');
+    expect({ kmsKeyRotation }).toMatchSnapshot('security-configurations.json');
   });
 
   test('Resource dependencies snapshot', () => {
     const templateJson = template.toJSON();
+    const resources = templateJson.Resources as Record<string, CfnResource>;
 
-    const dependencies = {} as any;
-    Object.entries(templateJson.Resources).forEach(([resourceId, resource]: [string, any]) => {
+    const dependencies: Record<string, string[]> = {};
+    for (const [resourceId, resource] of Object.entries(resources)) {
       if (resource.DependsOn) {
         dependencies[resourceId] = resource.DependsOn;
       }
-    });
+    }
 
     expect(dependencies).toMatchSnapshot('resource-dependencies.json');
   });

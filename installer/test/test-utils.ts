@@ -2,6 +2,18 @@ import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import * as MdaaInstaller from '../lib/mdaa-installer-stack';
 
+interface CfnResource {
+  Type: string;
+  Properties?: Record<string, unknown>;
+  Condition?: string;
+  DependsOn?: string[];
+}
+
+interface CfnParameter {
+  Type: string;
+  Default?: unknown;
+}
+
 /**
  * Test utilities for MDAA Installer Stack testing
  */
@@ -55,8 +67,8 @@ export function createTestStackWithEnv(
 /**
  * Extracts resources of a specific type from a template
  */
-export function getResourcesByType(template: Template, resourceType: string): Record<string, any> {
-  return template.findResources(resourceType);
+export function getResourcesByType(template: Template, resourceType: string): Record<string, CfnResource> {
+  return template.findResources(resourceType) as Record<string, CfnResource>;
 }
 
 /**
@@ -65,10 +77,11 @@ export function getResourcesByType(template: Template, resourceType: string): Re
 export function getResourceTypes(template: Template): string[] {
   const templateJson = template.toJSON();
   const resourceTypes = new Set<string>();
+  const resources = templateJson.Resources as Record<string, CfnResource> | undefined;
 
-  Object.values(templateJson.Resources || {}).forEach((resource: any) => {
+  for (const resource of Object.values(resources || {})) {
     resourceTypes.add(resource.Type);
-  });
+  }
 
   return Array.from(resourceTypes).sort();
 }
@@ -77,35 +90,42 @@ export function getResourceTypes(template: Template): string[] {
  * Extracts security-related configurations from the template
  */
 export function extractSecurityConfigurations(template: Template): {
-  s3Encryption: any[];
-  kmsKeyRotation: any[];
-  publicAccessBlocks: any[];
-  sslPolicies: any[];
+  s3Encryption: unknown[];
+  kmsKeyRotation: unknown[];
+  publicAccessBlocks: unknown[];
+  sslPolicies: unknown[];
 } {
   const templateJson = template.toJSON();
-  const securityConfigs = {
+  const resources = templateJson.Resources as Record<string, CfnResource>;
+  const securityConfigs: {
+    s3Encryption: unknown[];
+    kmsKeyRotation: unknown[];
+    publicAccessBlocks: unknown[];
+    sslPolicies: unknown[];
+  } = {
     s3Encryption: [],
     kmsKeyRotation: [],
     publicAccessBlocks: [],
     sslPolicies: [],
-  } as any;
+  };
 
-  Object.values(templateJson.Resources).forEach((resource: any) => {
+  for (const resource of Object.values(resources)) {
+    const props = resource.Properties as Record<string, unknown> | undefined;
     if (resource.Type === 'AWS::S3::Bucket') {
-      if (resource.Properties.BucketEncryption) {
-        securityConfigs.s3Encryption.push(resource.Properties.BucketEncryption);
+      if (props?.BucketEncryption) {
+        securityConfigs.s3Encryption.push(props.BucketEncryption);
       }
-      if (resource.Properties.PublicAccessBlockConfiguration) {
-        securityConfigs.publicAccessBlocks.push(resource.Properties.PublicAccessBlockConfiguration);
+      if (props?.PublicAccessBlockConfiguration) {
+        securityConfigs.publicAccessBlocks.push(props.PublicAccessBlockConfiguration);
       }
     }
-    if (resource.Type === 'AWS::KMS::Key' && resource.Properties.EnableKeyRotation) {
-      securityConfigs.kmsKeyRotation.push(resource.Properties.EnableKeyRotation);
+    if (resource.Type === 'AWS::KMS::Key' && props?.EnableKeyRotation) {
+      securityConfigs.kmsKeyRotation.push(props.EnableKeyRotation);
     }
     if (resource.Type === 'AWS::S3::BucketPolicy') {
-      securityConfigs.sslPolicies.push(resource.Properties.PolicyDocument);
+      securityConfigs.sslPolicies.push(props?.PolicyDocument);
     }
-  });
+  }
 
   return securityConfigs;
 }
@@ -127,10 +147,11 @@ export function extractParameterInfo(template: Template): {
   const parametersWithDefaults: string[] = [];
   const parameterTypes: Record<string, string> = {};
 
-  Object.entries(parameters).forEach(([name, param]: [string, any]) => {
-    parameterTypes[name] = param.Type;
+  Object.entries(parameters).forEach(([name, param]: [string, unknown]) => {
+    const typedParam = param as CfnParameter;
+    parameterTypes[name] = typedParam.Type;
 
-    if (param.Default !== undefined) {
+    if (typedParam.Default !== undefined) {
       parametersWithDefaults.push(name);
     } else {
       requiredParameters.push(name);
@@ -158,11 +179,12 @@ export function extractConditionalResources(template: Template): Record<
   const templateJson = template.toJSON();
   const conditionalResources: Record<string, { type: string; condition: string }> = {};
 
-  Object.entries(templateJson.Resources || {}).forEach(([resourceId, resource]: [string, any]) => {
-    if (resource.Condition) {
+  Object.entries(templateJson.Resources || {}).forEach(([resourceId, resource]: [string, unknown]) => {
+    const typedResource = resource as CfnResource;
+    if (typedResource.Condition) {
       conditionalResources[resourceId] = {
-        type: resource.Type,
-        condition: resource.Condition,
+        type: typedResource.Type,
+        condition: typedResource.Condition,
       };
     }
   });
@@ -186,11 +208,12 @@ export function validateS3Security(template: Template): {
   let hasEncryption = true;
   let hasPublicAccessBlock = true;
 
-  Object.values(s3Buckets).forEach((bucket: any) => {
-    if (!bucket.Properties.BucketEncryption) {
+  Object.values(s3Buckets).forEach((bucket: unknown) => {
+    const props = (bucket as CfnResource).Properties as Record<string, unknown> | undefined;
+    if (!props?.BucketEncryption) {
       hasEncryption = false;
     }
-    if (!bucket.Properties.PublicAccessBlockConfiguration) {
+    if (!props?.PublicAccessBlockConfiguration) {
       hasPublicAccessBlock = false;
     }
   });
