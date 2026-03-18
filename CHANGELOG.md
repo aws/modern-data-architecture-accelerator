@@ -2,89 +2,92 @@
 
 ## [1.5.0] - 2026-03-13
 
-### General Changes
+### New Features
 
-- Fixed deployment failures in accounts with SCPs that deny `logs:DeleteRetentionPolicy` by preventing CDK's `LogRetention` custom resource from being created in stacks that use `MdaaLambdaFunction`
-- Added 'useStaging' parameter to MDAA CLI which if set will force modules to be deployed precisely in the order they appear in the MDAA config, instead of using staging values from module packages
-- SSM parameters can now be referenced using simplified scope prefixes:
-  - `ssm-org:<path>` resolves to `ssm:/{{org}}/<path>`
-  - `ssm-domain:<path>` resolves to `ssm:/{{org}}/{{domain}}/<path>`
-  - `ssm-env:<path>` resolves to `ssm:/{{org}}/{{domain}}/{{env}}/<path>`
-- SSM parameters created by SageMaker Unified Studio blueprints can be referenced using `blueprint:` prefix in configuration values
-- sample configurations that help users to quickly get started are in [starter_kits](starter_kits) while the examples are now on [AWS Samples](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator)
-- Users can now provide variables placeholders in the predeploy and postdeploy hook commands
-- CLI now validates `-d`, `-e`, and `-m` filter values upfront and errors if they don't match any configured domains, environments, or modules
-- CLI now supports !include tag to reference external files in YAML configurations
-- Simplified installer stack: removed user requirements for CodePipeline/S3 source and CodeStar ARN, and replaced `npm install` with running `mdaa` from npmjs.org.
-- Added baseline diff support: new `--cdk-out`, `--baseline`, and `--diff-out` CLI flags enable comparing CloudFormation templates against stored baselines without requiring AWS deployment
-- Improved config schema documentation
-- BedrockKnowledgeBaseL3Construct creates fewer policies for corresponding MdaaRdsDataResources; it used to attach overly permissive policy with 11 statements to them, but now MdaaRdsDataResource manages its own policy statements internally -- only 3 required, as a result it also becomes self-sufficent and can be deployed independently;
+#### SageMaker Unified Studio Domain and Blueprints Module
 
-### Governance Module Changes
+- Added support for enabling and configuring managed blueprints
+  - Added standard Tooling and LakeHouse (Glue Database) blueprint configurations, including creation of all required Tooling resources
+  - Compliance-related Tooling parameter overrides (VPC connectivity, KMS encryption, role permissions) are automatically applied
+- Any MDAA module can also be deployed as a custom SageMaker Unified Studio blueprint
+  - Can be created from local CloudFormation templates or URLs
+- Added granular authorization policies for domain units
+- Streamlined domain configurations, using standard module SSM parameter lookups by default
+  - Glue Catalog KMS key ARN is now optional for associated accounts; RAM-shared SSM parameter used by default
+
+#### SageMaker Unified Studio Project Profiles and Projects Module
+
+- Project profiles support target accounts, deployable environments, reusable environment templates, and parameter overrides
+- Projects can be assigned to domain units with configurable ownership and membership
+- Existing Glue databases can be imported as data sources
+- Projects can be deployed in the domain account or in associated accounts
 
 #### Glue Catalog Settings Module
 
 - Glue Catalog KMS key SSM parameters are now automatically shared to consumer accounts via AWS Resource Access Manager (RAM)
-  - Useful for sharing KMS Key details with DataZone/SageMaker domain associated accounts
 
 #### Lake Formation Settings Module
 
-- Trusted accounts can now be specified for cross-account DataZone/SageMaker Unified Studio integration
-  - Enables multi-account DataZone/SageMaker Unified Studio deployments with centralized Lake Formation management
+- Added trusted account configuration for cross-account DataZone/SageMaker Unified Studio integration
+
+### Governance Module Changes
 
 #### DataZone Domain Module
 
-- Glue Catalog KMS key ARN is now optional for associated account configuration
-  - RAM Shared SSM param will be used by default
-- Granular authorization policies can be defined for domain units
-
-#### SageMaker Unified Studio Domain and Blueprints Module
-
-- Glue Catalog KMS key ARN is now optional for associated accounts with automatic SSM parameter lookup
-  - RAM Shared SSM param will be used by default
-- Standard Tooling and LakeHouse (Glue Database) blueprints can be configured
-  - Tooling blueprint configuration including VPC and subnet settings must be provided for the domain account and any associated accounts
-  - Compliance-related paramaters overrides (VPC connectivity, KMS Encryption, role permissions) are automatically set within code
-- Additional managed blueprints can be enabled
-- Any MDAA Module can be configured to deploy as a custom SageMaker Unified Studio blueprint instead of directly deploying as a Stack
-- Custom SageMaker Unified Studio blueprints can also be created from local CloudFormation templates or URLs
-- Granular authorization policies can be defined for domain units
-
-#### SageMaker Unified Studio Project Profiles and Projects Module
-
-- New module enables creation of SageMaker Unified Studio projects and project profiles
-- Project profiles define target accounts, deployable environments, and parameter values/overrides
-  - Reusable environment templates can be defined for use by multiple project profiles
-- Projects can be created and assigned to domain units
-  - Project ownership and membership can be defined for users and groups
-  - Existing Glue databases can be imported as data sources into SageMaker Unified Studio projects
-  - Projects can be deployed either in the domain account, or in associated accounts using appropriate project profiles
+- Streamlined domain configurations, using standard module SSM parameter lookups by default
+  - Glue Catalog KMS key ARN is now optional for associated accounts
+  - RAM-shared SSM parameter used by default
+- Added granular authorization policies for domain units
 
 ### DataOps Module Changes
 
-#### DataOps Project Module
+- All DataOps modules can now be deployed independently without a DataOps Project
+  - `projectName` config parameter is now optional
+  - Project resources can be directly specified in module configs when not using a DataOps Project
 
-- Glue Catalog KMS key configuration now automatically uses standard SSM parameter when not explicitly specified
-- SageMaker Unified Studio projects can now be created integrated with DataOps projects
-  - External Glue databases (not created by DataOps Project) can be imported as data sources into SageMaker Unified Studio projects
-  - Glue Databases created by dataops project can be automatically created as SMUS/DataZone Data Sources
-  - Project admin, data engineer, and execution roles can be added as members to the SMUS/DataZone project
+#### DataOps Project Module Changes
 
-### Opensearch Module Changes
+- Glue Catalog KMS key configuration now defaults to standard SSM parameter when not explicitly specified
+- Glue Crawlers can be automatically created for project-created Glue Databases
+- SageMaker Unified Studio projects can be created with DataOps projects
+  - SMUS/DataZone data sources can be automatically created for project-created Glue Databases
+  - Project admin, data engineer, and execution roles can be added as SMUS/DataZone project members
 
-- Users can now use SAML-based authentication system to enable enterprise-grade identity federation to Opensearch domain
+### OpenSearch Module Changes
 
-### DataOps Modules
+- Added SAML-based authentication for enterprise identity federation
 
-- All DataOps Modules can now be deployed independently without a DataOps Project
-  - `projectName` config parameter has been made optional
-  - Where project resources were automatically used when deployed with a DataOps Project, these resources can now be directly specified in module configs
+### Data Science/AI/ML Changes
+
+- `BedrockKnowledgeBaseL3Construct` now creates fewer policies for `MdaaRdsDataResource`; resource manages its own policy statements internally and can be deployed independently
+- Bedrock Builder data sources now publish SSM parameters identifying their IDs
 
 ### Utility Module Changes
 
 #### SFTP Server Module
 
-- Added optional `securityPolicyName` configuration for Transfer Family SFTP server, enabling deployment in regions that do not support FIPS security policies (e.g. eu-west-1). Defaults to `TransferSecurityPolicy-FIPS-2020-06` for backwards compatibility.
+- Added optional `securityPolicyName` configuration for Transfer Family SFTP server, enabling deployment in regions that do not support FIPS security policies (e.g., eu-west-1)
+
+### General Changes
+
+- Added `useStaging` CLI parameter to force modules to deploy in config-defined order instead of using staging values from module packages
+- Added `--cdk-out`, `--baseline`, and `--diff-out` CLI flags for comparing CloudFormation templates against stored baselines without requiring AWS deployment
+- Added `!include` tag support for referencing external files in YAML configurations
+- Added simplified SSM parameter scope prefixes: `ssm-org:`, `ssm-domain:`, and `ssm-env:`
+- Added `blueprint:` prefix for referencing SSM parameters created by SageMaker Unified Studio blueprints
+- Added variable placeholders support in predeploy and postdeploy hook commands
+- CLI now validates `-d`, `-e`, and `-m` filter values upfront, including environment templates, and errors if they don't match any configured domains, environments, or modules
+- Simplified installer stack by removing CodePipeline/S3 source and CodeStar ARN requirements, running `mdaa` directly from npmjs.org
+- Starter kit configurations moved to [starter_kits](starter_kits); examples now on [AWS Samples](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator)
+- Improved config schema documentation
+- Improved README content and sample module configs
+- Renamed remaining `@aws-caef` references to `@aws-mdaa`
+
+### Bug Fixes
+
+- Fixed deployment failures in accounts with SCPs that deny `logs:DeleteRetentionPolicy` by preventing CDK's `LogRetention` custom resource from being created in stacks that use `MdaaLambdaFunction`
+- Fixed `LogRetention` custom resource interfering with metric filters and log insights queries
+- Tightened IAM permissions and added pre-deployment suppression review TODOs in starter kits
 
 ## [1.4.0] - 2026-01-30
 
