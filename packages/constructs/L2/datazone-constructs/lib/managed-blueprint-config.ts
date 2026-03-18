@@ -11,10 +11,10 @@ import {
 import { IRole } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { DataZoneAuthorizationConstruct, EntityType, NamedAuthorizationPolicies } from './authorization';
-import { LEGACY_DATAZONE_SCOPE_CONTEXT_KEY } from '.';
 
 export interface DataZoneManagedBlueprintConfigConstructProps extends MdaaConstructProps {
   readonly domainName: string;
+  readonly domainVersion: 'V1' | 'V2';
   readonly blueprintName: string;
   readonly enabledRegions: string[];
   readonly manageAccessRole?: IRole;
@@ -33,10 +33,9 @@ export class DataZoneManagedBlueprintConfigConstruct extends Construct {
     super(scope, id);
 
     //Maintains backwards compat for before domains were their own L2 construct
-    const resolvedScope = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? scope : this;
-    const resolvedId = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY)
-      ? `env-blueprint-config-${props.domainName}-${props.blueprintName}`
-      : 'config';
+    const resolvedScope = props.domainVersion == 'V1' ? scope : this;
+    const resolvedId =
+      props.domainVersion == 'V1' ? `env-blueprint-config-${props.domainName}-${props.blueprintName}` : 'config';
 
     const configProps: CfnEnvironmentBlueprintConfigurationProps = {
       domainIdentifier: props.domainId,

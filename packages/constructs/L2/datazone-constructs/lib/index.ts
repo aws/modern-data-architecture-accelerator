@@ -13,5 +13,3 @@ export * from './managed-blueprint-config';
 export * from './domain';
 export * from './domain-unit';
 export * from './profile-management';
-
-export const LEGACY_DATAZONE_SCOPE_CONTEXT_KEY = '@aws-mdaa/datazoneLegacyScope';

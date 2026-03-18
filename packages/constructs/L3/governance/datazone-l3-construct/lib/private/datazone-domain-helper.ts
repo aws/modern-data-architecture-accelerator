@@ -3,11 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  DataZoneDomainConstruct,
-  DomainConfig,
-  LEGACY_DATAZONE_SCOPE_CONTEXT_KEY,
-} from '@aws-mdaa/datazone-constructs';
+import { DataZoneDomainConstruct, DomainConfig } from '@aws-mdaa/datazone-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 
 import { MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
@@ -36,8 +32,7 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
     const executionRole = this.createExecutionRole(scope, domainName, kmsKey, 'V1');
 
     // Create DataZone domain construct with V1 settings
-    const idPrefix = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? `parent-` : '';
-    const domainConstruct = new DataZoneDomainConstruct(scope, `${idPrefix}${domainName}-domain`, {
+    const domainConstruct = new DataZoneDomainConstruct(scope, `parent-${domainName}-domain`, {
       naming: this.props.naming,
       domainName: domainName,
       domainExecutionRole: executionRole,
@@ -84,6 +79,7 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
       domainName,
       domainProps,
       domain,
+      'V1',
       dataAdminUserProfile,
       associatedAccountCdkUserProfiles,
     );
@@ -153,6 +149,7 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
       domainId: domainResources.domain.attrId,
       blueprintName: 'CustomAwsService',
       lakeformationManageAccessRole: domainResources.lakeformationManageAccessRole,
+      domainVersion: 'V1',
     });
 
     // Create custom resource role and user profile
@@ -237,6 +234,7 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
       account: associatedAccountProps.account,
       region: associatedAccountProps.region ?? this.props.region,
       domainName,
+      domainVersion: 'V1',
       domainId: crossAccountDomainConfig.domainId,
       blueprintName: 'CustomAwsService',
       lakeformationManageAccessRole,

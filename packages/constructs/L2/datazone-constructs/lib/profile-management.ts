@@ -6,7 +6,6 @@
 import { MdaaConstructProps } from '@aws-mdaa/construct';
 import { CfnUserProfile, CfnUserProfileProps, CfnGroupProfile, CfnGroupProfileProps } from 'aws-cdk-lib/aws-datazone';
 import { Construct } from 'constructs';
-import { LEGACY_DATAZONE_SCOPE_CONTEXT_KEY } from '.';
 
 export interface UserConfig {
   readonly identifier: string;
@@ -22,6 +21,7 @@ export interface ProfileManagementConstructProps extends MdaaConstructProps {
   readonly domainName: string;
   readonly users?: { [name: string]: UserConfig };
   readonly groups?: { [name: string]: GroupConfig };
+  readonly domainVersion: 'V1' | 'V2';
 }
 
 export class ProfileManagementConstruct extends Construct {
@@ -31,8 +31,9 @@ export class ProfileManagementConstruct extends Construct {
   constructor(scope: Construct, id: string, props: ProfileManagementConstructProps) {
     super(scope, id);
     //Maintains backwards compat for before domains were their own L2 construct
-    const resolvedScope = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? scope : this;
-    const idPrefix = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? `${props.domainName}-` : '';
+
+    const resolvedScope = props.domainVersion == 'V1' ? scope : this;
+    const idPrefix = props.domainVersion == 'V1' ? `${props.domainName}-` : '';
 
     // Create user profiles
     if (props.users) {

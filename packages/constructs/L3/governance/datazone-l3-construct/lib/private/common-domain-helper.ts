@@ -13,7 +13,6 @@ import {
   DomainConfig,
   DomainConfigProps,
   EntityType,
-  LEGACY_DATAZONE_SCOPE_CONTEXT_KEY,
   NamedAuthorizationPolicies,
   PolicyPrincipal,
   ProfileManagementConstruct,
@@ -227,6 +226,7 @@ export class CommonDomainHelper {
     domainName: string,
     domainProps: BaseDomainProps,
     domain: CfnDomain,
+    domainVersion: 'V1' | 'V2',
   ): ProfileManagementConstruct {
     // Map users to their identifiers (IAM role ARN or SSO ID)
     const users = Object.fromEntries(
@@ -259,6 +259,7 @@ export class CommonDomainHelper {
       domainName: domainName,
       users: users,
       groups: groups,
+      domainVersion: domainVersion,
     });
 
     // Assign user owners to root domain unit
@@ -332,6 +333,7 @@ export class CommonDomainHelper {
     scope: Construct,
     domainId: string,
     parentDomainId: string,
+    domainVersion: 'V1' | 'V2',
     userProfiles: {
       domainUsers: { [name: string]: CfnUserProfile };
       domainGroups: { [name: string]: CfnGroupProfile };
@@ -344,7 +346,7 @@ export class CommonDomainHelper {
     return Object.fromEntries(
       Object.entries(domainUnits ?? {}).map(([domainUnitName, domainUnitProps]) => {
         // Create domain unit with ownership configuration
-        const idPrefix = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? `parent-` : '';
+        const idPrefix = domainVersion == 'V1' ? `parent-` : '';
         const domainUnitConstruct = new DataZoneDomainUnitConstruct(
           scope,
           `${idPrefix}domain-unit-${domainUnitName}`,
@@ -363,6 +365,7 @@ export class CommonDomainHelper {
             userProfiles: userProfiles.domainUsers,
             groupProfiles: userProfiles.domainGroups,
             associatedAccountUserProfiles: userProfiles.associatedAccountCdkUserProfiles,
+            domainVersion: domainVersion,
           },
           ownersCollector || [],
         );
@@ -372,6 +375,7 @@ export class CommonDomainHelper {
           domainUnitConstruct.domainUnit,
           domainId,
           domainUnitConstruct.domainUnitId,
+          domainVersion,
           {
             domainUsers: userProfiles.domainUsers,
             domainGroups: userProfiles.domainGroups,
@@ -527,7 +531,13 @@ export class CommonDomainHelper {
   }
 
   // Creates Lambda execution role for custom resources with DataZone and KMS permissions
-  public createCustomResourceRole(scope: Construct, roleName: string, account: string, allowedPolicyArns: string[]) {
+  public createCustomResourceRole(
+    scope: Construct,
+    domainName: string,
+    roleName: string,
+    account: string,
+    allowedPolicyArns: string[],
+  ) {
     const customResourceRole = new MdaaRole(scope, 'custom-resource-role', {
       naming: this.props.naming,
       roleName: roleName,
@@ -575,9 +585,9 @@ export class CommonDomainHelper {
       );
     }
 
-    const customResourcePolicy = new MdaaManagedPolicy(scope, 'custom-resource-policy', {
+    const customResourcePolicy = new MdaaManagedPolicy(scope, `custom-resource-policy-${domainName}`, {
       naming: this.props.naming,
-      managedPolicyName: 'custom-resource',
+      managedPolicyName: `custom-resource-${domainName}`,
       statements: statements,
     });
 
@@ -605,6 +615,7 @@ export class CommonDomainHelper {
       region: string;
       domainName: string;
       domainId: string;
+      domainVersion: 'V1' | 'V2';
       blueprintName: string;
       lakeformationManageAccessRole?: IRole;
       regionalParameters?: CfnEnvironmentBlueprintConfiguration.RegionalParameterProperty[];
@@ -612,7 +623,7 @@ export class CommonDomainHelper {
       provisioningRole?: IRole;
     },
   ) {
-    const idPrefix = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? `parent-` : '';
+    const idPrefix = blueprintConfig.domainVersion == 'V1' ? `parent-` : '';
     return new DataZoneManagedBlueprintConfigConstruct(
       scope,
       `${idPrefix}env-blueprint-config-${blueprintConfig.domainName}-${blueprintConfig.blueprintName}`,
@@ -627,6 +638,7 @@ export class CommonDomainHelper {
         authorizedDomainUnits: blueprintConfig.authorizedDomainUnits,
         account: blueprintConfig.account,
         domainId: blueprintConfig.domainId,
+        domainVersion: blueprintConfig.domainVersion,
       },
     );
   }
@@ -1010,17 +1022,19 @@ export class CommonDomainHelper {
     domainName: string,
     domainProps: BaseDomainProps,
     domain: CfnDomain,
+    domainVersion: 'V1' | 'V2',
     dataAdminUserProfile: CfnUserProfile,
     associatedAccountCdkUserProfiles: { [name: string]: CfnUserProfile },
   ) {
     // Create user and group profiles with ownership
-    const profileManagement = this.createDomainUsersGroupsOwners(scope, domainName, domainProps, domain);
+    const profileManagement = this.createDomainUsersGroupsOwners(scope, domainName, domainProps, domain, domainVersion);
 
     // Create domain units hierarchy
     const createdDomainUnits = this.createDomainUnits(
       domain,
       domain.attrId,
       domain.attrRootDomainUnitId,
+      domainVersion,
       {
         domainUsers: profileManagement.userProfiles,
         domainGroups: profileManagement.groupProfiles,
@@ -1246,9 +1260,13 @@ export class CommonDomainHelper {
     domainProps: BaseDomainProps,
   ): { roleName: string; role: IRole } {
     const customResourceRoleName = this.props.naming.resourceName(`${domainName}-custom-resource`, 64);
-    const customResourceRole = this.createCustomResourceRole(scope, customResourceRoleName, this.props.account, [
-      domainKmsUsagePolicy.managedPolicyArn,
-    ]);
+    const customResourceRole = this.createCustomResourceRole(
+      scope,
+      domainName,
+      customResourceRoleName,
+      this.props.account,
+      [domainKmsUsagePolicy.managedPolicyArn],
+    );
 
     domainKmsUsagePolicy.attachToRole(customResourceRole);
     const customResourceUserProfile = new CfnUserProfile(scope, 'custom-resource-user-profile', {

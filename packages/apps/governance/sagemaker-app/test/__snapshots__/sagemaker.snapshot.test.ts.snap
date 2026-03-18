@@ -270,7 +270,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:arn",
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresourcetestdomain:arn",
         },
         "Value": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -278,7 +278,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:name",
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresourcetestdomain:name",
         },
         "Value": {
           "Fn::Select": [
@@ -3536,7 +3536,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
         },
         "Properties": {
           "Description": "",
-          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--60b85edf",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--1036e44d",
           "Path": "/",
           "PolicyDocument": {
             "Statement": [
@@ -3588,7 +3588,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
-          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/arn",
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource-test-domain/arn",
           "Tags": {
             "mdaa_cdk_app": "sagemaker",
             "mdaa_domain": "test-domain",
@@ -3605,7 +3605,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
-          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/name",
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource-test-domain/name",
           "Tags": {
             "mdaa_cdk_app": "sagemaker",
             "mdaa_domain": "test-domain",
@@ -6112,7 +6112,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:arn",
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresourcetestdomain:arn",
         },
         "Value": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -6120,7 +6120,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:name",
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresourcetestdomain:name",
         },
         "Value": {
           "Fn::Select": [
@@ -7300,7 +7300,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
         },
         "Properties": {
           "Description": "",
-          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--60b85edf",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--1036e44d",
           "Path": "/",
           "PolicyDocument": {
             "Statement": [
@@ -7352,7 +7352,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
-          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/arn",
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource-test-domain/arn",
           "Tags": {
             "mdaa_cdk_app": "sagemaker",
             "mdaa_domain": "test-domain",
@@ -7369,7 +7369,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
-          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/name",
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource-test-domain/name",
           "Tags": {
             "mdaa_cdk_app": "sagemaker",
             "mdaa_domain": "test-domain",
@@ -8928,7 +8928,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:arn",
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresourcetestdomain:arn",
         },
         "Value": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -8936,7 +8936,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:name",
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresourcetestdomain:name",
         },
         "Value": {
           "Fn::Select": [
@@ -9953,7 +9953,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
         },
         "Properties": {
           "Description": "",
-          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--60b85edf",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--1036e44d",
           "Path": "/",
           "PolicyDocument": {
             "Statement": [
@@ -10005,7 +10005,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
-          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/arn",
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource-test-domain/arn",
           "Tags": {
             "mdaa_cdk_app": "sagemaker",
             "mdaa_domain": "test-domain",
@@ -10022,7 +10022,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
-          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/name",
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource-test-domain/name",
           "Tags": {
             "mdaa_cdk_app": "sagemaker",
             "mdaa_domain": "test-domain",
@@ -12748,7 +12748,7 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
-        "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:arn",
+        "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresourcetestdomain:arn",
       },
       "Value": {
         "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -12756,7 +12756,7 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
-        "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresource:name",
+        "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:customresourcetestdomain:name",
       },
       "Value": {
         "Fn::Select": [
@@ -16014,7 +16014,7 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
       },
       "Properties": {
         "Description": "",
-        "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--60b85edf",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-cust--1036e44d",
         "Path": "/",
         "PolicyDocument": {
           "Statement": [
@@ -16066,7 +16066,7 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
-        "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/arn",
+        "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource-test-domain/arn",
         "Tags": {
           "mdaa_cdk_app": "sagemaker",
           "mdaa_domain": "test-domain",
@@ -16083,7 +16083,7 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
-        "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource/name",
+        "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/custom-resource-test-domain/name",
         "Tags": {
           "mdaa_cdk_app": "sagemaker",
           "mdaa_domain": "test-domain",

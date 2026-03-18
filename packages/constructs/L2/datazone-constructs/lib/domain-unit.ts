@@ -13,7 +13,6 @@ import {
   CfnUserProfile,
 } from 'aws-cdk-lib/aws-datazone';
 import { Construct } from 'constructs';
-import { LEGACY_DATAZONE_SCOPE_CONTEXT_KEY } from '.';
 
 export interface DomainUnitOwnership {
   readonly ownerAccounts?: string[];
@@ -23,6 +22,7 @@ export interface DomainUnitOwnership {
 
 export interface DataZoneDomainUnitConstructProps extends MdaaConstructProps {
   readonly domainId: string;
+  readonly domainVersion: 'V1' | 'V2';
   readonly parentDomainUnitId: string;
   readonly name: string;
   readonly description?: string;
@@ -41,8 +41,8 @@ export class DataZoneDomainUnitConstruct extends Construct {
   constructor(scope: Construct, id: string, props: DataZoneDomainUnitConstructProps, ownersCollector: CfnOwner[]) {
     super(scope, id);
     //Maintains backwards compat for before domains were their own L2 construct
-    const resolvedScope = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? scope : this;
-    const idSuffix = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? `-${props.name}` : '';
+    const resolvedScope = props.domainVersion == 'V1' ? scope : this;
+    const idSuffix = props.domainVersion == 'V1' ? `-${props.name}` : '';
     this.props = props;
     const cfnDomainUnitProps: CfnDomainUnitProps = {
       domainIdentifier: props.domainId,

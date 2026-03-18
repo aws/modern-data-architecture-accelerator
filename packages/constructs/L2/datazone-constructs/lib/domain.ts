@@ -15,7 +15,6 @@ import {
 import { IRole } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Construct } from 'constructs';
-import { LEGACY_DATAZONE_SCOPE_CONTEXT_KEY } from '.';
 
 export interface DataZoneDomainConstructProps extends MdaaConstructProps {
   readonly domainName: string;
@@ -24,7 +23,7 @@ export interface DataZoneDomainConstructProps extends MdaaConstructProps {
   readonly description?: string;
   readonly singleSignOnType?: 'DISABLED' | 'IAM_IDC';
   readonly userAssignment?: 'MANUAL' | 'AUTOMATIC';
-  readonly domainVersion?: 'V1' | 'V2';
+  readonly domainVersion: 'V1' | 'V2';
   readonly serviceRole?: IRole;
   readonly dataAdminRole: IRole;
 }
@@ -38,8 +37,8 @@ export class DataZoneDomainConstruct extends Construct {
   constructor(scope: Construct, id: string, props: DataZoneDomainConstructProps) {
     super(scope, id);
     //Maintains backwards compat for before domains were their own L2 construct
-    const resolvedScope = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? scope : this;
-    const idPrefix = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? `${props.domainName}-` : '';
+    const resolvedScope = props.domainVersion == 'V1' ? scope : this;
+    const idPrefix = props.domainVersion == 'V1' ? `${props.domainName}-` : '';
     const singleSignOn: CfnDomain.SingleSignOnProperty = {
       type: props.singleSignOnType ?? 'DISABLED',
       userAssignment: props.userAssignment ?? 'MANUAL',

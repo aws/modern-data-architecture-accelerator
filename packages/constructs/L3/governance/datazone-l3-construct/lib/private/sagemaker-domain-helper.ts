@@ -8,7 +8,6 @@ import {
   AuthorizationPolicy,
   DataZoneDomainConstruct,
   DomainConfig,
-  LEGACY_DATAZONE_SCOPE_CONTEXT_KEY,
   MdaaSageMakerCustomBlueprintConfigConstruct,
   MdaaSageMakerCustomBlueprintConfigConstructProps,
   MdaaSageMakerCustomBlueprintConstruct,
@@ -90,8 +89,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     const serviceRole = this.createSageMakerServiceRole(scope, `service-${domainName}`);
 
     // Create DataZone domain construct with V2 settings
-    const idPrefix = scope.node.tryGetContext(LEGACY_DATAZONE_SCOPE_CONTEXT_KEY) ? `parent-` : '';
-    const domainConstruct = new DataZoneDomainConstruct(scope, `${idPrefix}${domainName}-domain`, {
+    const domainConstruct = new DataZoneDomainConstruct(scope, `${domainName}-domain`, {
       naming: this.props.naming,
       domainName: domainName,
       domainExecutionRole: executionRole,
@@ -180,6 +178,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       domainName,
       domainProps,
       domain,
+      'V2',
       dataAdminUserProfile,
       associatedAccountCdkUserProfiles,
     );
@@ -430,6 +429,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       regionalParameters: this.createBlueprintRegionalParams({ parameterValues: toolingParams }, this.props.region),
       authorizedDomainUnits: toolingAuthorizedDomainUnitIds,
       provisioningRole: toolingProvisioningRole,
+      domainVersion: 'V2',
     });
 
     this.createManagedBlueprintConfiguration(domainResources.domain, {
@@ -441,6 +441,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       lakeformationManageAccessRole: domainResources.lakeformationManageAccessRole,
       authorizedDomainUnits: toolingAuthorizedDomainUnitIds,
       provisioningRole: toolingProvisioningRole,
+      domainVersion: 'V2',
     });
 
     // Create custom resource role and user profile
@@ -846,6 +847,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     // Create custom resource role and user profile in cross-account
     const customResourceRole = this.createCustomResourceRole(
       crossAccountStack,
+      domainName,
       resourceConfig.domainConfig.customResourceRoleName,
       accountProps.account,
       [domainKmsUsagePolicy.managedPolicyArn],
@@ -909,6 +911,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       ),
       authorizedDomainUnits: toolingAuthorizedDomainUnitIds,
       provisioningRole: toolingProvisioningRole,
+      domainVersion: 'V2',
     });
 
     // Enable DataLake blueprint in cross-account
@@ -921,6 +924,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       lakeformationManageAccessRole,
       authorizedDomainUnits: toolingAuthorizedDomainUnitIds,
       provisioningRole: toolingProvisioningRole,
+      domainVersion: 'V2',
     });
 
     if (accountProps.enabledManagedBlueprints) {
@@ -995,6 +999,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
         regionalParameters: this.createBlueprintRegionalParams(blueprintProps, targetEnv.region ?? this.props.region),
         authorizedDomainUnits,
         provisioningRole,
+        domainVersion: 'V2',
       });
     });
   }

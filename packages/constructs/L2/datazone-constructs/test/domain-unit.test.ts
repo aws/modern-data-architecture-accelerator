@@ -28,6 +28,7 @@ describe('DataZoneDomainUnitConstruct', () => {
       {
         naming: testApp.naming,
         domainId: 'test-domain-id',
+        domainVersion: 'V2',
         parentDomainUnitId: 'parent-unit-id',
         name: 'test-unit',
         dataAdminUserProfile,
@@ -50,6 +51,7 @@ describe('DataZoneDomainUnitConstruct', () => {
       {
         naming: testApp.naming,
         domainId: 'test-domain-id',
+        domainVersion: 'V2',
         parentDomainUnitId: 'parent-unit-id',
         name: 'test-unit',
         description: 'Test unit description',
@@ -71,6 +73,7 @@ describe('DataZoneDomainUnitConstruct', () => {
       {
         naming: testApp.naming,
         domainId: 'test-domain-id',
+        domainVersion: 'V2',
         parentDomainUnitId: 'parent-unit-id',
         name: 'test-unit',
         dataAdminUserProfile,
@@ -97,6 +100,7 @@ describe('DataZoneDomainUnitConstruct', () => {
       {
         naming: testApp.naming,
         domainId: 'test-domain-id',
+        domainVersion: 'V2',
         parentDomainUnitId: 'parent-unit-id',
         name: 'test-unit',
         dataAdminUserProfile,
@@ -126,6 +130,7 @@ describe('DataZoneDomainUnitConstruct', () => {
       {
         naming: testApp.naming,
         domainId: 'test-domain-id',
+        domainVersion: 'V2',
         parentDomainUnitId: 'parent-unit-id',
         name: 'test-unit',
         dataAdminUserProfile,
@@ -156,6 +161,7 @@ describe('DataZoneDomainUnitConstruct', () => {
       {
         naming: testApp.naming,
         domainId: 'test-domain-id',
+        domainVersion: 'V2',
         parentDomainUnitId: 'parent-unit-id',
         name: 'test-unit',
         dataAdminUserProfile,
@@ -181,6 +187,7 @@ describe('DataZoneDomainUnitConstruct', () => {
         {
           naming: testApp.naming,
           domainId: 'test-domain-id',
+          domainVersion: 'V2',
           parentDomainUnitId: 'parent-unit-id',
           name: 'test-unit',
           dataAdminUserProfile,
@@ -201,6 +208,7 @@ describe('DataZoneDomainUnitConstruct', () => {
         {
           naming: testApp.naming,
           domainId: 'test-domain-id',
+          domainVersion: 'V2',
           parentDomainUnitId: 'parent-unit-id',
           name: 'test-unit',
           dataAdminUserProfile,
@@ -221,6 +229,7 @@ describe('DataZoneDomainUnitConstruct', () => {
         {
           naming: testApp.naming,
           domainId: 'test-domain-id',
+          domainVersion: 'V2',
           parentDomainUnitId: 'parent-unit-id',
           name: 'test-unit',
           dataAdminUserProfile,
@@ -240,6 +249,7 @@ describe('DataZoneDomainUnitConstruct', () => {
       {
         naming: testApp.naming,
         domainId: 'test-domain-id',
+        domainVersion: 'V2',
         parentDomainUnitId: 'parent-unit-id',
         name: 'test-unit',
         dataAdminUserProfile,
@@ -248,5 +258,29 @@ describe('DataZoneDomainUnitConstruct', () => {
     );
 
     expect(construct.domainUnitId).toBeDefined();
+  });
+
+  it('should use parent scope and suffix ids when domainVersion is V1', () => {
+    new DataZoneDomainUnitConstruct(
+      testApp.testStack,
+      'test-unit',
+      {
+        naming: testApp.naming,
+        domainId: 'test-domain-id',
+        domainVersion: 'V1',
+        parentDomainUnitId: 'parent-unit-id',
+        name: 'test-unit',
+        dataAdminUserProfile,
+      },
+      [],
+    );
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::DomainUnit', {
+      DomainIdentifier: 'test-domain-id',
+      ParentDomainUnitIdentifier: 'parent-unit-id',
+      Name: 'test-unit',
+    });
+    template.resourceCountIs('AWS::DataZone::Owner', 1);
   });
 });

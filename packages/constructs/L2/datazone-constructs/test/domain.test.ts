@@ -33,6 +33,7 @@ describe('DataZoneDomainConstruct', () => {
       domainExecutionRole: executionRole,
       kmsKey,
       dataAdminRole,
+      domainVersion: 'V2',
     });
 
     const template = Template.fromStack(testApp.testStack);
@@ -46,6 +47,7 @@ describe('DataZoneDomainConstruct', () => {
       domainExecutionRole: executionRole,
       kmsKey,
       dataAdminRole,
+      domainVersion: 'V2',
       description: 'Test domain description',
     });
 
@@ -62,6 +64,7 @@ describe('DataZoneDomainConstruct', () => {
       domainExecutionRole: executionRole,
       kmsKey,
       dataAdminRole,
+      domainVersion: 'V2',
       singleSignOnType: 'IAM_IDC',
       userAssignment: 'AUTOMATIC',
     });
@@ -103,6 +106,7 @@ describe('DataZoneDomainConstruct', () => {
       domainExecutionRole: executionRole,
       kmsKey,
       dataAdminRole,
+      domainVersion: 'V2',
     });
 
     const template = Template.fromStack(testApp.testStack);
@@ -119,6 +123,7 @@ describe('DataZoneDomainConstruct', () => {
       domainExecutionRole: executionRole,
       kmsKey,
       dataAdminRole,
+      domainVersion: 'V2',
     });
 
     const template = Template.fromStack(testApp.testStack);
@@ -134,10 +139,46 @@ describe('DataZoneDomainConstruct', () => {
       domainExecutionRole: executionRole,
       kmsKey,
       dataAdminRole,
+      domainVersion: 'V2',
     });
 
     expect(construct.domainId).toBeDefined();
     expect(construct.rootDomainUnitId).toBeDefined();
     expect(construct.dataAdminUserProfile).toBeDefined();
+  });
+
+  it('should use parent scope and prefix ids when domainVersion is V1', () => {
+    new DataZoneDomainConstruct(testApp.testStack, 'test-domain', {
+      naming: testApp.naming,
+      domainName: 'test-domain',
+      domainExecutionRole: executionRole,
+      kmsKey,
+      dataAdminRole,
+      domainVersion: 'V1',
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.resourceCountIs('AWS::DataZone::Domain', 1);
+    template.resourceCountIs('AWS::DataZone::UserProfile', 1);
+    template.resourceCountIs('AWS::DataZone::Owner', 1);
+  });
+
+  it('should not set DomainVersion in CFN when domainVersion is V1', () => {
+    new DataZoneDomainConstruct(testApp.testStack, 'test-domain', {
+      naming: testApp.naming,
+      domainName: 'test-domain',
+      domainExecutionRole: executionRole,
+      kmsKey,
+      dataAdminRole,
+      domainVersion: 'V1',
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::Domain', {
+      SingleSignOn: {
+        Type: 'DISABLED',
+        UserAssignment: 'MANUAL',
+      },
+    });
   });
 });

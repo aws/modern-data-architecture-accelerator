@@ -19,6 +19,7 @@ describe('ProfileManagementConstruct', () => {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
+      domainVersion: 'V2',
       users: {
         user1: {
           identifier: 'arn:aws:iam::123456789012:role/user1',
@@ -45,6 +46,7 @@ describe('ProfileManagementConstruct', () => {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
+      domainVersion: 'V2',
       groups: {
         group1: {
           identifier: 'group-123',
@@ -68,6 +70,7 @@ describe('ProfileManagementConstruct', () => {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
+      domainVersion: 'V2',
       users: {
         user1: {
           identifier: 'arn:aws:iam::123456789012:role/user1',
@@ -91,6 +94,7 @@ describe('ProfileManagementConstruct', () => {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
+      domainVersion: 'V2',
       users: {
         user1: {
           identifier: 'arn:aws:iam::123456789012:role/user1',
@@ -107,6 +111,7 @@ describe('ProfileManagementConstruct', () => {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
+      domainVersion: 'V2',
       groups: {
         group1: {
           identifier: 'group-123',
@@ -122,10 +127,35 @@ describe('ProfileManagementConstruct', () => {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       domainName: 'test-domain',
+      domainVersion: 'V2',
     });
 
     const template = Template.fromStack(testApp.testStack);
     template.resourceCountIs('AWS::DataZone::UserProfile', 0);
     template.resourceCountIs('AWS::DataZone::GroupProfile', 0);
+  });
+
+  it('should use parent scope and prefix ids when domainVersion is V1', () => {
+    new ProfileManagementConstruct(testApp.testStack, 'test-profiles', {
+      naming: testApp.naming,
+      domainId: 'test-domain-id',
+      domainName: 'test-domain',
+      domainVersion: 'V1',
+      users: {
+        user1: {
+          identifier: 'arn:aws:iam::123456789012:role/user1',
+          userType: 'IAM_ROLE',
+        },
+      },
+      groups: {
+        group1: {
+          identifier: 'group-123',
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.resourceCountIs('AWS::DataZone::UserProfile', 1);
+    template.resourceCountIs('AWS::DataZone::GroupProfile', 1);
   });
 });
