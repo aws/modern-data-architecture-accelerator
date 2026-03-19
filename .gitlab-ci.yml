@@ -85,7 +85,11 @@ feature_validate_dependencies:
     - size:medium
   only:
     - merge_requests
-  stage: prebuild
+  stage: build
+  dependencies:
+    - feature_merge_main
+  needs:
+    - feature_merge_main
   script:
     - ./scripts/validate_dependencies.sh
 
