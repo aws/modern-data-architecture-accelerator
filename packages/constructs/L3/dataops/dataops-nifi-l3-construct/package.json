@@ -55,7 +55,6 @@
   },
   "bundledDependencies": [
     "fast-xml-parser",
-    "strnum",
     "lodash"
   ],
   "dependencies": {
@@ -76,8 +75,7 @@
     "cdk8s": "2.69.42",
     "constructs": "10.0.96",
     "fast-xml-parser": "5.3.6",
-    "lodash": "4.17.23",
-    "strnum": "1.0.5"
+    "lodash": "4.17.23"
   },
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
   "stability": "experimental",

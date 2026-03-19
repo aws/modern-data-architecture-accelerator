@@ -214,8 +214,34 @@ download_packages() {
         fi
     done <<< "$expected_packages"
     
+    validate_tarball_paths
     extract_packages
     validate_package_integrity
+}
+
+# Validate tarball paths for path traversal
+validate_tarball_paths() {
+    echo "Validating tarball paths..."
+    local failed=false
+
+    for tarball in *.tgz; do
+        if [ -f "$tarball" ]; then
+            local bad_paths
+            bad_paths=$(tar -tzf "$tarball" 2>/dev/null | grep '\.\.' || true)
+            if [ -n "$bad_paths" ]; then
+                echo "❌ $tarball contains path traversal entries:"
+                echo "$bad_paths"
+                failed=true
+            else
+                echo "✅ $tarball: no path traversal"
+            fi
+        fi
+    done
+
+    if [ "$failed" = true ]; then
+        echo "ERROR: One or more tarballs contain '..' path traversal. This usually indicates a bundledDependencies version conflict."
+        return 1
+    fi
 }
 
 # Extract downloaded packages

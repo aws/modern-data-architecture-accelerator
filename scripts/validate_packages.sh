@@ -15,6 +15,10 @@
 #       - Original file must NOT define coverageThreshold (should come from base)
 #       - Effective (merged) config must have coverageThreshold with branches + statements
 #     - Standalone configs must have coverageThreshold with branches + statements
+#   Property 8: bundledDependencies consistency
+#     - Every entry in bundledDependencies must exist in dependencies
+#     - Bundled deps that are also transitive deps of other bundled deps must not
+#       have major version conflicts (prevents npm pack path traversal issues)
 #
 # Usage: ./scripts/validate_packages.sh
 # Exit code: 0 if all packages pass, 1 if any deviations found
@@ -151,6 +155,49 @@ for pkg_dir in $(discover_packages); do
     elif [ "$package_val" != "$CANONICAL_JSII_PACKAGE" ]; then
       fail "$pkg_dir" "Property 6 - JSII package script is not canonical. Got: '$package_val'"
     fi
+  fi
+
+  # Property 8: bundledDependencies entries must exist in dependencies and
+  # bundled transitive deps must not conflict with direct bundled dep versions.
+  # This prevents npm pack from generating tarballs with path traversal.
+  bundled_check=$(node -e "
+    const pkg = require('./${pkg_json}');
+    const bundled = pkg.bundledDependencies || pkg.bundleDependencies || [];
+    const deps = pkg.dependencies || {};
+    const errors = [];
+    for (const b of bundled) {
+      if (!deps[b]) {
+        errors.push(b + ' is in bundledDependencies but not in dependencies');
+      }
+    }
+    // Check for bundled deps that are also transitive deps of other bundled deps
+    // by looking for duplicate entries at different major versions
+    for (const b of bundled) {
+      if (!deps[b]) continue;
+      try {
+        const bPkgPath = require.resolve(b + '/package.json', { paths: ['.'] });
+        const bPkg = require(bPkgPath);
+        const bDeps = bPkg.dependencies || {};
+        for (const transitive of Object.keys(bDeps)) {
+          if (bundled.includes(transitive) && deps[transitive]) {
+            const directRange = deps[transitive];
+            const transitiveRange = bDeps[transitive];
+            // Extract major versions for comparison
+            const directMajor = directRange.replace(/[^0-9.]/g, '').split('.')[0];
+            const transitiveMajor = transitiveRange.replace(/[^0-9.]/g, '').split('.')[0];
+            if (directMajor !== transitiveMajor) {
+              errors.push(transitive + ' is bundled at v' + directRange + ' but ' + b + ' requires ' + transitiveRange + ' (major version conflict)');
+            }
+          }
+        }
+      } catch(e) { /* dep not installed yet, skip transitive check */ }
+    }
+    if (errors.length > 0) { console.log(errors.join('\\n')); }
+  " 2>/dev/null) || true
+  if [ -n "$bundled_check" ]; then
+    while IFS= read -r line; do
+      fail "$pkg_dir" "Property 8 - bundledDependencies: $line"
+    done <<< "$bundled_check"
   fi
 
   # Property 7: Coverage threshold in jest.config.js
