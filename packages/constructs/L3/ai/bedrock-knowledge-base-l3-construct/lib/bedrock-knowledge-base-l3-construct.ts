@@ -12,6 +12,7 @@ import {
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { FunctionProps, LambdaFunctionL3Construct } from '@aws-mdaa/dataops-lambda-l3-construct';
 import { MdaaSecurityGroup } from '@aws-mdaa/ec2-constructs';
+import { MdaaSqsQueue, MdaaSqsDeadLetterQueue } from '@aws-mdaa/sqs-constructs';
 import { MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { USER_ACTIONS } from '@aws-mdaa/kms-constructs';
@@ -24,7 +25,6 @@ import {
 import {
   aws_bedrock as bedrock,
   aws_s3 as s3,
-  aws_sqs as sqs,
   aws_s3_notifications as s3n,
   CfnResource,
   Duration,
@@ -606,7 +606,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     const input = strings.join('');
 
     for (let i = 0; i < input.length; i++) {
-      const char = input.charCodeAt(i);
+      const char = input.codePointAt(i)!;
       hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
@@ -957,15 +957,15 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     const shortDsName = dsName.substring(0, 5);
     const uniqueSuffix = this.node.addr.substring(0, 8);
 
-    const dlq = new sqs.Queue(this, `${kbName}-${dsName}-sync-dlq`, {
-      queueName: this.props.naming.resourceName(`${shortKbName}-${shortDsName}-sync-dlq-${uniqueSuffix}`, 80),
+    const dlq = new MdaaSqsDeadLetterQueue(this, `${kbName}-${dsName}-sync-dlq`, {
+      queueName: `${shortKbName}-${shortDsName}-sync-dlq-${uniqueSuffix}`,
       encryptionMasterKey: kmsKey,
       retentionPeriod: Duration.days(14),
-      enforceSSL: true,
+      naming: this.props.naming,
     });
 
-    const syncQueue = new sqs.Queue(this, `${kbName}-${dsName}-sync-queue`, {
-      queueName: this.props.naming.resourceName(`${shortKbName}-${shortDsName}-sync-queue-${uniqueSuffix}`, 80),
+    const syncQueue = new MdaaSqsQueue(this, `${kbName}-${dsName}-sync-queue`, {
+      queueName: `${shortKbName}-${shortDsName}-sync-queue-${uniqueSuffix}`,
       encryptionMasterKey: kmsKey,
       visibilityTimeout: Duration.minutes(15),
       receiveMessageWaitTime: Duration.seconds(20),
@@ -973,7 +973,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
         queue: dlq,
         maxReceiveCount: 3,
       },
-      enforceSSL: true,
+      naming: this.props.naming,
     });
     // Create Lambda function
     const syncFunctionProps: FunctionProps = {

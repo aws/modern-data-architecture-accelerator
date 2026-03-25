@@ -29,7 +29,7 @@ export function snapShotTest(testNamePrefix: string, stackProvider: () => cdk.St
   }
 
   if (typeof stackProvider !== 'function') {
-    throw new Error('stackProvider must be a function');
+    throw new TypeError('stackProvider must be a function');
   }
 
   test(`${testNamePrefix} Snapshot Test`, () => {
@@ -59,7 +59,7 @@ export function snapShotTestApp(testNamePrefix: string, appProvider: () => cdk.A
   }
 
   if (typeof appProvider !== 'function') {
-    throw new Error('appProvider must be a function');
+    throw new TypeError('appProvider must be a function');
   }
 
   test(`${testNamePrefix} App Snapshot Test`, () => {

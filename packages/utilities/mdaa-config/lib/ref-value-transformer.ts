@@ -197,7 +197,7 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
   }
 
   private extractSsmValue(refInner: string, prefix: string): string {
-    const extracted = refInner.replace(new RegExp(`^${prefix}:\\s*`), '');
+    const extracted = refInner.replace(new RegExp(String.raw`^${prefix}:\s*`), '');
     // Remove leading slash to prevent double slashes in the path
     return extracted.startsWith('/') ? extracted.slice(1) : extracted;
   }

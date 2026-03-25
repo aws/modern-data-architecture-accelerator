@@ -132,7 +132,7 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
     };
     return { ...props, ...overrideProps };
   }
-  private props: MdaaRdsServerlessClusterProps;
+  private readonly props: MdaaRdsServerlessClusterProps;
   constructor(scope: Construct, id: string, props: MdaaRdsServerlessClusterProps) {
     super(scope, id, MdaaRdsServerlessCluster.setProps(props));
     this.props = props;
@@ -157,12 +157,10 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
       new MdaaParamAndOutput(
         this,
         {
-          ...{
-            resourceType: 'cluster-secret',
-            resourceId: props.clusterIdentifier,
-            name: 'name',
-            value: this.secret.secretName,
-          },
+          resourceType: 'cluster-secret',
+          resourceId: props.clusterIdentifier,
+          name: 'name',
+          value: this.secret.secretName,
           ...props,
         },
         scope,
@@ -216,12 +214,10 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
     new MdaaParamAndOutput(
       this,
       {
-        ...{
-          resourceType: 'cluster',
-          resourceId: props.clusterIdentifier,
-          name: 'endpoint',
-          value: this.clusterEndpoint.socketAddress,
-        },
+        resourceType: 'cluster',
+        resourceId: props.clusterIdentifier,
+        name: 'endpoint',
+        value: this.clusterEndpoint.socketAddress,
         ...props,
       },
       scope,
@@ -229,8 +225,7 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
   }
 
   private addOverrides(cfnDbCluster: CfnDBCluster, suppressions: NagPackSuppression[]) {
-    const _enableCloudwatchLogsExports: boolean =
-      this.props.enableCloudwatchLogsExports != undefined ? this.props.enableCloudwatchLogsExports : true;
+    const _enableCloudwatchLogsExports: boolean = this.props.enableCloudwatchLogsExports ?? true;
 
     // EnableCloudwatchLogsExports Override
     if (_enableCloudwatchLogsExports) {
@@ -256,8 +251,7 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
         });
       }
     }
-    const _enableIamDatabaseAuthentication: boolean =
-      this.props.enableIamDatabaseAuthentication != undefined ? this.props.enableIamDatabaseAuthentication : true;
+    const _enableIamDatabaseAuthentication: boolean = this.props.enableIamDatabaseAuthentication ?? true;
 
     // EnableIAMDatabaseAuthentication Override
     if (_enableIamDatabaseAuthentication) {
@@ -266,8 +260,7 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
     }
     // Override Aurora MySql
     if (this.props.engine == 'aurora-mysql') {
-      const _backtrackWindowInSeconds: number =
-        this.props.backtrackWindowInSeconds != undefined ? this.props.backtrackWindowInSeconds : 86400;
+      const _backtrackWindowInSeconds: number = this.props.backtrackWindowInSeconds ?? 86400;
       // BacktrackWindow Override
       if (_backtrackWindowInSeconds) {
         cfnDbCluster.addPropertyOverride('BacktrackWindow', _backtrackWindowInSeconds);

@@ -71,9 +71,8 @@ export class MdaaConfigBlueprintRefValueTransformer implements IMdaaConfigValueT
       const existingDzProjectParam = this.props.scope?.node.tryFindChild(
         'datazoneEnvironmentProjectId',
       ) as CfnParameter;
-      const dzProjectParam = existingDzProjectParam
-        ? existingDzProjectParam
-        : new CfnParameter(this.props.scope, 'datazoneEnvironmentProjectId');
+      const dzProjectParam =
+        existingDzProjectParam ?? new CfnParameter(this.props.scope, 'datazoneEnvironmentProjectId');
       const ssmPath = `{{resolve:ssm:${ssmOrgPath}${dzProjectParam.valueAsString}${blueprintPath}}}`;
       console.log(`Resolving blueprint path: ${ssmPath}`);
       return ssmPath;

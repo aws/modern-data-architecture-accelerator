@@ -36,14 +36,11 @@ export class MdaaConfigTransformer implements IMdaaConfigTransformer {
       const transformedKey = this.keyTransformer
         ? this.keyTransformer.transformValue(key, contextPath + '/' + key)
         : key;
-      if (typeof value === 'string' || value instanceof String)
-        transformedConfig[transformedKey] = this.valueTransformer.transformValue(
-          value.toString(),
-          contextPath + '/' + key,
-        );
-      else if (value instanceof Array)
+      if (typeof value === 'string')
+        transformedConfig[transformedKey] = this.valueTransformer.transformValue(value, contextPath + '/' + key);
+      else if (Array.isArray(value))
         transformedConfig[transformedKey] = this.transformConfigArray(contextPath + '/' + key, value);
-      else if (value instanceof Object) {
+      else if (typeof value === 'object' && value !== null) {
         transformedConfig[transformedKey] = this.transformConfigObject(
           contextPath + '/' + key,
           value as ConfigurationElement,
@@ -61,11 +58,9 @@ export class MdaaConfigTransformer implements IMdaaConfigTransformer {
   public transformConfigArray(contextPath: string, resolvedConfig: unknown[]): unknown[] {
     const transformedConfig: ConfigurationElement | unknown[] = [];
     resolvedConfig.forEach(value => {
-      if (typeof value === 'string' || value instanceof String)
-        transformedConfig.push(this.valueTransformer.transformValue(value.toString(), contextPath));
-      else if (value instanceof Array)
-        transformedConfig.push(this.transformConfigArray(contextPath, value as unknown[]));
-      else if (value instanceof Object)
+      if (typeof value === 'string') transformedConfig.push(this.valueTransformer.transformValue(value, contextPath));
+      else if (Array.isArray(value)) transformedConfig.push(this.transformConfigArray(contextPath, value as unknown[]));
+      else if (typeof value === 'object' && value !== null)
         transformedConfig.push(this.transformConfigObject(contextPath, value as ConfigurationElement));
       else transformedConfig.push(value);
     });

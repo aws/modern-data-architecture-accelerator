@@ -5,7 +5,7 @@ export interface MdaaConfigParamRefValueTransformerProps extends MdaaConfigRefVa
   readonly paramProps: { [name: string]: CfnParameterProps };
 }
 export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransformer {
-  private paramProps: { [name: string]: CfnParameterProps };
+  private readonly paramProps: { [name: string]: CfnParameterProps };
   constructor(props: MdaaConfigParamRefValueTransformerProps) {
     super(props);
     this.paramProps = props.paramProps;
@@ -129,7 +129,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
    * Follows conventions of CfnParameter internal functions
    */
   private isListType(type: string) {
-    return type.indexOf('List<') >= 0 || type.indexOf('CommaDelimitedList') >= 0;
+    return type.includes('List<') || type.includes('CommaDelimitedList');
   }
   /**
    * Whether the given parameter type is a number type
