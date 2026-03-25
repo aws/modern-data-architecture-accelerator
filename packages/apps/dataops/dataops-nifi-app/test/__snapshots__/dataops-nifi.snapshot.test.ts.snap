@@ -13,7 +13,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
         ],
       },
     },
-    "Description": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.4.0",
+    "Description": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.5.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -728,7 +728,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.4.0",
+          "Value": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.5.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -13035,7 +13035,7 @@ openssl pkcs12 -export -in /root/mgmt-instance.cert.pem -inkey /root/mgmt-instan
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-nificluster-main-ec--3e8248bf",
@@ -13807,7 +13807,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
       ],
     },
   },
-  "Description": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.4.0",
+  "Description": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.5.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -14522,7 +14522,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.4.0",
+        "Value": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.5.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -26829,7 +26829,7 @@ openssl pkcs12 -export -in /root/mgmt-instance.cert.pem -inkey /root/mgmt-instan
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-nificluster-main-ec--3e8248bf",

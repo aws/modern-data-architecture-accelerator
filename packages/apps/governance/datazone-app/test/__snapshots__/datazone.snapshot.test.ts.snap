@@ -3,7 +3,7 @@
 exports[`datazone Snapshot Tests DataZone App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-datazone-main": {
-    "Description": "(SO0320-datazone) Modern Data Architecture Accelerator. Version 1.4.0",
+    "Description": "(SO0320-datazone) Modern Data Architecture Accelerator. Version 1.5.0",
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -360,7 +360,7 @@ exports[`datazone Snapshot Tests DataZone App App Snapshot Test 1`] = `
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-datazone) Modern Data Architecture Accelerator. Version 1.4.0",
+          "Value": "(SO0320-datazone) Modern Data Architecture Accelerator. Version 1.5.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -420,7 +420,7 @@ exports[`datazone Snapshot Tests DataZone App App Snapshot Test 1`] = `
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-datazone-main-domain-52f6a916",
@@ -1172,7 +1172,7 @@ exports[`datazone Snapshot Tests DataZone App App Snapshot Test 1`] = `
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-datazone-main-ramas--3ab52c5f",
@@ -4630,7 +4630,7 @@ exports[`datazone Snapshot Tests DataZone App App Snapshot Test 1`] = `
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-datazone-main-domain-52f6a916",
@@ -5925,7 +5925,7 @@ exports[`datazone Snapshot Tests DataZone App App Snapshot Test 1`] = `
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-datazone-main-domain-52f6a916",
@@ -6979,7 +6979,7 @@ exports[`datazone Snapshot Tests DataZone App App Snapshot Test 1`] = `
 
 exports[`datazone Snapshot Tests DataZone Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-datazone) Modern Data Architecture Accelerator. Version 1.4.0",
+  "Description": "(SO0320-datazone) Modern Data Architecture Accelerator. Version 1.5.0",
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -7336,7 +7336,7 @@ exports[`datazone Snapshot Tests DataZone Stack Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-datazone) Modern Data Architecture Accelerator. Version 1.4.0",
+        "Value": "(SO0320-datazone) Modern Data Architecture Accelerator. Version 1.5.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -7396,7 +7396,7 @@ exports[`datazone Snapshot Tests DataZone Stack Snapshot Test 1`] = `
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-datazone-main-domain-52f6a916",
@@ -8148,7 +8148,7 @@ exports[`datazone Snapshot Tests DataZone Stack Snapshot Test 1`] = `
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-datazone-main-ramas--3ab52c5f",

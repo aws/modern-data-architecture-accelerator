@@ -49,9 +49,6 @@
       "path": "../glue-catalog-l3-construct"
     },
     {
-      "path": "../lakeformation-access-control-l3-construct"
-    },
-    {
       "path": "../../../L2/iam-constructs"
     },
     {
@@ -62,6 +59,9 @@
     },
     {
       "path": "../../core/l3-construct"
+    },
+    {
+      "path": "../lakeformation-access-control-l3-construct"
     },
     {
       "path": "../lakeformation-settings-l3-construct"

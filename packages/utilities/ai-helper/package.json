@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/ai-helper",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "MDAA AI Utilities",
   "license": "Apache-2.0",
   "author": {
@@ -24,8 +24,8 @@
     "test:snapshots:update": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts' --updateSnapshot"
   },
   "devDependencies": {
-    "@aws-mdaa/naming": "1.4.0",
-    "@aws-mdaa/testing": "1.4.0",
+    "@aws-mdaa/naming": "1.5.0",
+    "@aws-mdaa/testing": "1.5.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -38,7 +38,7 @@
     "typescript-json-schema": "0.67.1"
   },
   "peerDependencies": {
-    "@aws-mdaa/naming": "1.4.0",
+    "@aws-mdaa/naming": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "10.0.96"
   },

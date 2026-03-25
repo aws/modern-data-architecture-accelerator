@@ -3,7 +3,7 @@
 exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-main": {
-    "Description": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.4.0",
+    "Description": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.5.0",
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -110,7 +110,7 @@ exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime App 
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.4.0",
+          "Value": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.5.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -778,7 +778,7 @@ exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime App 
 
 exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.4.0",
+  "Description": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.5.0",
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -885,7 +885,7 @@ exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime Stac
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.4.0",
+        "Value": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.5.0",
       },
       "Type": "AWS::SSM::Parameter",
     },

@@ -41,10 +41,10 @@
       "path": "../custom-constructs"
     },
     {
-      "path": "../kms-constructs"
+      "path": "../../../utilities/iam-role-helper"
     },
     {
-      "path": "../../../utilities/iam-role-helper"
+      "path": "../kms-constructs"
     },
     {
       "path": "../../../utilities/mdaa-naming"

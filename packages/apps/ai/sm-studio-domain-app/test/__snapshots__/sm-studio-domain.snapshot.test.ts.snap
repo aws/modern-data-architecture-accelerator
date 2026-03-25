@@ -3,7 +3,7 @@
 exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-sagemaker-studio-domain-main": {
-    "Description": "(SO0320-sm-studio-domain) Modern Data Architecture Accelerator. Version 1.4.0",
+    "Description": "(SO0320-sm-studio-domain) Modern Data Architecture Accelerator. Version 1.5.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -1102,7 +1102,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-sm-studio-domain) Modern Data Architecture Accelerator. Version 1.4.0",
+          "Value": "(SO0320-sm-studio-domain) Modern Data Architecture Accelerator. Version 1.5.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -1596,7 +1596,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-dom-2a52ca57",
@@ -2415,7 +2415,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-do--388f3fc4",
@@ -4645,7 +4645,7 @@ sh $ASSETS_DIR/testing/test.sh",
 
 exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-sm-studio-domain) Modern Data Architecture Accelerator. Version 1.4.0",
+  "Description": "(SO0320-sm-studio-domain) Modern Data Architecture Accelerator. Version 1.5.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -5744,7 +5744,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-sm-studio-domain) Modern Data Architecture Accelerator. Version 1.4.0",
+        "Value": "(SO0320-sm-studio-domain) Modern Data Architecture Accelerator. Version 1.5.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -6238,7 +6238,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-dom-2a52ca57",
@@ -7057,7 +7057,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-do--388f3fc4",

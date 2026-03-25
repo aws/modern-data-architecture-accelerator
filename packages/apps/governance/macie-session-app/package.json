@@ -8,7 +8,7 @@
   "bin": {
     "macie-cdk": "bin/macie-session.js"
   },
-  "version": "1.4.0",
+  "version": "1.5.0",
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc && typescript-json-schema --required --noExtraProps tsconfig.json MacieSessionConfigContents --include 'lib/*.ts' --include '../../../../node_modules/@types/**/*.ts' --include 'lib/config-schema.json' > lib/config-schema.json  && cp lib/config-schema.json ../../../../schemas/${npm_package_name}.json",
@@ -23,7 +23,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/testing": "1.4.0",
+    "@aws-mdaa/testing": "1.5.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -34,10 +34,10 @@
     "typescript-json-schema": "0.67.1"
   },
   "dependencies": {
-    "@aws-mdaa/app": "1.4.0",
-    "@aws-mdaa/iam-role-helper": "1.4.0",
-    "@aws-mdaa/l3-construct": "1.4.0",
-    "@aws-mdaa/macie-session-l3-construct": "1.4.0",
+    "@aws-mdaa/app": "1.5.0",
+    "@aws-mdaa/iam-role-helper": "1.5.0",
+    "@aws-mdaa/l3-construct": "1.5.0",
+    "@aws-mdaa/macie-session-l3-construct": "1.5.0",
     "ajv": "8.17.1",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",

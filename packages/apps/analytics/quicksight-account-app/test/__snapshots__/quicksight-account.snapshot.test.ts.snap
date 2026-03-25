@@ -3,7 +3,7 @@
 exports[`quicksight-account Snapshot Tests Quicksight Account App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-quicksight-account-main": {
-    "Description": "(SO0320-quicksight-account) Modern Data Architecture Accelerator. Version 1.4.0",
+    "Description": "(SO0320-quicksight-account) Modern Data Architecture Accelerator. Version 1.5.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -291,7 +291,7 @@ exports[`quicksight-account Snapshot Tests Quicksight Account App App Snapshot T
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-quicksight-account) Modern Data Architecture Accelerator. Version 1.4.0",
+          "Value": "(SO0320-quicksight-account) Modern Data Architecture Accelerator. Version 1.5.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -413,7 +413,7 @@ exports[`quicksight-account Snapshot Tests Quicksight Account App App Snapshot T
                 "Ref": "AWS::AccountId",
               },
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-quicksight-account---21cc27ed",
@@ -1730,7 +1730,7 @@ exports[`quicksight-account Snapshot Tests Quicksight Account App App Snapshot T
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-quicksight-account---18d3c703",
@@ -2497,7 +2497,7 @@ exports[`quicksight-account Snapshot Tests Quicksight Account App App Snapshot T
 
 exports[`quicksight-account Snapshot Tests Quicksight Account Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-quicksight-account) Modern Data Architecture Accelerator. Version 1.4.0",
+  "Description": "(SO0320-quicksight-account) Modern Data Architecture Accelerator. Version 1.5.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -2785,7 +2785,7 @@ exports[`quicksight-account Snapshot Tests Quicksight Account Stack Snapshot Tes
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-quicksight-account) Modern Data Architecture Accelerator. Version 1.4.0",
+        "Value": "(SO0320-quicksight-account) Modern Data Architecture Accelerator. Version 1.5.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -2907,7 +2907,7 @@ exports[`quicksight-account Snapshot Tests Quicksight Account Stack Snapshot Tes
               "Ref": "AWS::AccountId",
             },
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-account---21cc27ed",
@@ -4224,7 +4224,7 @@ exports[`quicksight-account Snapshot Tests Quicksight Account Stack Snapshot Tes
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-account---18d3c703",

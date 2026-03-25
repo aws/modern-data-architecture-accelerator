@@ -1,3 +1,8 @@
+/*!
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { IMdaaConfigValueTransformer } from '@aws-mdaa/config';
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
 

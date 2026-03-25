@@ -3,7 +3,7 @@
 exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-bedrock-builder-app": {
-    "Description": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version 1.4.0",
+    "Description": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version 1.5.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -1130,7 +1130,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version 1.4.0",
+          "Value": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version 1.5.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -2296,7 +2296,7 @@ Provide responses in markdown format with source citations
           "Description": "This is lambda function for Bedrock Agent Action group: test-agent/test-action-group",
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-app--4b6fd078",
@@ -2535,7 +2535,7 @@ Provide responses in markdown format with source citations
           "Description": "For custom chat routing logic",
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-app--652c0f0c",
@@ -2817,7 +2817,7 @@ Provide responses in markdown format with source citations
           "Description": "For custom chat routing logic",
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-app--652c0f0d",
@@ -3185,7 +3185,7 @@ Provide responses in markdown format with source citations
           "Description": "For custom parsing and chunking logic",
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-app--670817e3",
@@ -4915,7 +4915,7 @@ Provide responses in markdown format with source citations
                   "KnowledgeBaseId",
                 ],
               },
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-app--62dc203e",
@@ -7744,7 +7744,7 @@ Provide responses in markdown format with source citations
                   "KnowledgeBaseId",
                 ],
               },
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-app--56e1558c",
@@ -8852,7 +8852,7 @@ Provide responses in markdown format with source citations
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-app---26c38b2",
@@ -9679,7 +9679,7 @@ Provide responses in markdown format with source citations
               "REGION_NAME": {
                 "Ref": "AWS::Region",
               },
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
               "VECTOR_DIMENSION": "1024",
               "VECTOR_FIELD_NAME": "embedding",
               "VECTOR_INDEX_NAME": "embeddings_2dcaaa33_1024",
@@ -10509,7 +10509,7 @@ Provide responses in markdown format with source citations
 
 exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version 1.4.0",
+  "Description": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version 1.5.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -11636,7 +11636,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version 1.4.0",
+        "Value": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version 1.5.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -12802,7 +12802,7 @@ Provide responses in markdown format with source citations
         "Description": "This is lambda function for Bedrock Agent Action group: test-agent/test-action-group",
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-mai--711a1222",
@@ -13041,7 +13041,7 @@ Provide responses in markdown format with source citations
         "Description": "For custom chat routing logic",
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-main--10b8fe2",
@@ -13323,7 +13323,7 @@ Provide responses in markdown format with source citations
         "Description": "For custom chat routing logic",
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-main--10b8fe3",
@@ -13691,7 +13691,7 @@ Provide responses in markdown format with source citations
         "Description": "For custom parsing and chunking logic",
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-main-44df0df3",
@@ -15421,7 +15421,7 @@ Provide responses in markdown format with source citations
                 "KnowledgeBaseId",
               ],
             },
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-main-477ac618",
@@ -18250,7 +18250,7 @@ Provide responses in markdown format with source citations
                 "KnowledgeBaseId",
               ],
             },
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-main-53c6a15e",
@@ -19358,7 +19358,7 @@ Provide responses in markdown format with source citations
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-mai--6efe19c8",
@@ -20185,7 +20185,7 @@ Provide responses in markdown format with source citations
             "REGION_NAME": {
               "Ref": "AWS::Region",
             },
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             "VECTOR_DIMENSION": "1024",
             "VECTOR_FIELD_NAME": "embedding",
             "VECTOR_INDEX_NAME": "embeddings_2dcaaa33_1024",

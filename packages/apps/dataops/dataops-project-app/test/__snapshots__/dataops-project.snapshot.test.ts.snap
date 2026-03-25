@@ -3,7 +3,7 @@
 exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-dataops-project-main": {
-    "Description": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version 1.4.0",
+    "Description": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version 1.5.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -1955,7 +1955,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version 1.4.0",
+          "Value": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version 1.5.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -5346,7 +5346,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-dataops-project-main-71963428",
@@ -6143,7 +6143,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-dataops-project-main-65ce61ca",
@@ -6747,7 +6747,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-dataops-project-mai--7990572f",
@@ -8309,7 +8309,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
 
 exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version 1.4.0",
+  "Description": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version 1.5.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -10261,7 +10261,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version 1.4.0",
+        "Value": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version 1.5.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -13652,7 +13652,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-dataops-project-main-71963428",
@@ -14449,7 +14449,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-dataops-project-main-65ce61ca",
@@ -15053,7 +15053,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-dataops-project-mai--7990572f",

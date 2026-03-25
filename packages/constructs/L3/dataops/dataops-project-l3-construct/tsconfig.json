@@ -38,9 +38,6 @@
       "path": "../../datalake/athena-workgroup-l3-construct"
     },
     {
-      "path": "../../governance/sagemaker-project-l3-construct"
-    },
-    {
       "path": "../../../L2/construct"
     },
     {
@@ -80,10 +77,10 @@
       "path": "../../governance/lakeformation-settings-l3-construct"
     },
     {
-      "path": "../../governance/lakeformation-tags-l3-construct"
+      "path": "../../governance/lakeformation-tagbased-permissions-l3-construct"
     },
     {
-      "path": "../../governance/lakeformation-tagbased-permissions-l3-construct"
+      "path": "../../governance/lakeformation-tags-l3-construct"
     },
     {
       "path": "../../../L2/lambda-constructs"
@@ -99,6 +96,9 @@
     },
     {
       "path": "../../../../utilities/s3-inventory-helper"
+    },
+    {
+      "path": "../../governance/sagemaker-project-l3-construct"
     },
     {
       "path": "../../../L2/sns-constructs"

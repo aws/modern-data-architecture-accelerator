@@ -29,3 +29,14 @@ if [ -f "solution-manifest.yaml" ]; then
   echo "Updating solution-manifest.yaml version from v$CURRENT_VERSION to v$NEW_VERSION"
   sed -i "s/version: v${CURRENT_VERSION}/version: v${NEW_VERSION}/" solution-manifest.yaml
 fi
+
+# Update internal @aws-mdaa dependency versions in package-lock.json
+if [ -f "package-lock.json" ]; then
+  echo "Updating package-lock.json internal dependency versions from $CURRENT_VERSION to $NEW_VERSION"
+  # Update @aws-mdaa dependency references (already scoped by the @aws-mdaa prefix)
+  sed -i "s/@aws-mdaa\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-mdaa\1\"\2$NEW_VERSION\"/" package-lock.json
+  # Update version fields only for @aws-mdaa packages (lines preceded by @aws-mdaa name)
+  sed -i "/@aws-mdaa/{n;s/\"version\": \"${CURRENT_VERSION}\"/\"version\": \"${NEW_VERSION}\"/;}" package-lock.json
+  # Update the root-level version field (line 3 of package-lock.json)
+  sed -i "3s/\"version\": \"${CURRENT_VERSION}\"/\"version\": \"${NEW_VERSION}\"/" package-lock.json
+fi

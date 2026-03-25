@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/audit-l3-construct",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "MDAA Audit L3 Construct",
   "license": "Apache-2.0",
   "author": {
@@ -24,10 +24,10 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/construct": "1.4.0",
-    "@aws-mdaa/iam-role-helper": "1.4.0",
-    "@aws-mdaa/l3-construct": "1.4.0",
-    "@aws-mdaa/testing": "1.4.0",
+    "@aws-mdaa/construct": "1.5.0",
+    "@aws-mdaa/iam-role-helper": "1.5.0",
+    "@aws-mdaa/l3-construct": "1.5.0",
+    "@aws-mdaa/testing": "1.5.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -46,23 +46,23 @@
     "@aws-mdaa/s3-inventory-helper"
   ],
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.4.0",
-    "@aws-mdaa/iam-role-helper": "1.4.0",
-    "@aws-mdaa/l3-construct": "1.4.0",
+    "@aws-mdaa/construct": "1.5.0",
+    "@aws-mdaa/iam-role-helper": "1.5.0",
+    "@aws-mdaa/l3-construct": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "10.0.96"
   },
   "dependencies": {
     "@aws-cdk/aws-glue-alpha": "2.220.0-alpha.0",
-    "@aws-mdaa/construct": "1.4.0",
-    "@aws-mdaa/iam-role-helper": "1.4.0",
-    "@aws-mdaa/kms-constructs": "1.4.0",
-    "@aws-mdaa/l3-construct": "1.4.0",
-    "@aws-mdaa/naming": "1.4.0",
-    "@aws-mdaa/s3-audit-helper": "1.4.0",
-    "@aws-mdaa/s3-bucketpolicy-helper": "1.4.0",
-    "@aws-mdaa/s3-constructs": "1.4.0",
-    "@aws-mdaa/s3-inventory-helper": "1.4.0",
+    "@aws-mdaa/construct": "1.5.0",
+    "@aws-mdaa/iam-role-helper": "1.5.0",
+    "@aws-mdaa/kms-constructs": "1.5.0",
+    "@aws-mdaa/l3-construct": "1.5.0",
+    "@aws-mdaa/naming": "1.5.0",
+    "@aws-mdaa/s3-audit-helper": "1.5.0",
+    "@aws-mdaa/s3-bucketpolicy-helper": "1.5.0",
+    "@aws-mdaa/s3-constructs": "1.5.0",
+    "@aws-mdaa/s3-inventory-helper": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96"

@@ -5,7 +5,7 @@
     "name": "Amazon Web Services",
     "url": "https://aws.amazon.com/solutions"
   },
-  "version": "1.4.0",
+  "version": "1.5.0",
   "license": "Apache-2.0",
   "bin": {
     "dms": "bin/dms.js"
@@ -23,7 +23,7 @@
     "test:snapshots:update": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts' --updateSnapshot"
   },
   "devDependencies": {
-    "@aws-mdaa/testing": "1.4.0",
+    "@aws-mdaa/testing": "1.5.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -34,11 +34,11 @@
     "typescript-json-schema": "0.67.1"
   },
   "dependencies": {
-    "@aws-mdaa/app": "1.4.0",
-    "@aws-mdaa/config": "1.4.0",
-    "@aws-mdaa/dataops-dms-l3-construct": "1.4.0",
-    "@aws-mdaa/dataops-shared": "1.4.0",
-    "@aws-mdaa/l3-construct": "1.4.0",
+    "@aws-mdaa/app": "1.5.0",
+    "@aws-mdaa/config": "1.5.0",
+    "@aws-mdaa/dataops-dms-l3-construct": "1.5.0",
+    "@aws-mdaa/dataops-shared": "1.5.0",
+    "@aws-mdaa/l3-construct": "1.5.0",
     "ajv": "8.17.1",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",

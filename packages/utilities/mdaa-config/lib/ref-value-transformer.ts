@@ -1,3 +1,8 @@
+/*!
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { MdaaStringParameter } from '@aws-mdaa/construct';
 import { Fn, Names, Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';

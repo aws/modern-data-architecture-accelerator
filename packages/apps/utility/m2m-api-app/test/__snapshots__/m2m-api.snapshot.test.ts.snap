@@ -3,7 +3,7 @@
 exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-m2m-main": {
-    "Description": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.4.0",
+    "Description": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.5.0",
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -248,7 +248,7 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.4.0",
+          "Value": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.5.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -1238,7 +1238,7 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-m2m-main-log-auth-event",
@@ -1944,7 +1944,7 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
               "METADATA_TARGET_PREFIX": "metadata-testing",
               "TARGET_BUCKET": "landing-bucket-name",
               "TARGET_PREFIX": "testing",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-m2m-main-signed-s3-url-gen",
@@ -2340,7 +2340,7 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
 
 exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.4.0",
+  "Description": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.5.0",
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -2585,7 +2585,7 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.4.0",
+        "Value": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.5.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -3575,7 +3575,7 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-m2m-main-log-auth-event",
@@ -4281,7 +4281,7 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
             "METADATA_TARGET_PREFIX": "metadata-testing",
             "TARGET_BUCKET": "landing-bucket-name",
             "TARGET_PREFIX": "testing",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-m2m-main-signed-s3-url-gen",

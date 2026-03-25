@@ -8,7 +8,7 @@
   "bin": {
     "quicksight-namespace-cdk": "bin/quicksight-namespace.js"
   },
-  "version": "1.4.0",
+  "version": "1.5.0",
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc && typescript-json-schema --required --noExtraProps tsconfig.json QuickSightNamespaceConfigContents --include 'lib/*.ts' --include '../../../../node_modules/@types/**/*.ts' --include 'lib/config-schema.json' > lib/config-schema.json  && cp lib/config-schema.json ../../../../schemas/${npm_package_name}.json",
@@ -32,10 +32,10 @@
     "typescript-json-schema": "0.67.1"
   },
   "dependencies": {
-    "@aws-mdaa/app": "1.4.0",
-    "@aws-mdaa/config": "1.4.0",
-    "@aws-mdaa/l3-construct": "1.4.0",
-    "@aws-mdaa/quicksight-namespace-l3-construct": "1.4.0",
+    "@aws-mdaa/app": "1.5.0",
+    "@aws-mdaa/config": "1.5.0",
+    "@aws-mdaa/l3-construct": "1.5.0",
+    "@aws-mdaa/quicksight-namespace-l3-construct": "1.5.0",
     "ajv": "8.17.1",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",

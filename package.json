@@ -2,7 +2,7 @@
   "name": "@aws-mdaa/mdaa",
   "private": true,
   "bin": "./packages/cli/bin/mdaa",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "license": "Apache-2.0",
   "scripts": {
     "git-clean": "git clean -Xfd -e !development -e !development/** -e !.vscode -e !.vscode/** -e !.idea -e !.idea/**",
@@ -14,7 +14,8 @@
     "test:python": "lerna run test:python --stream",
     "test:python:install": "lerna run test:python:install --stream",
     "test:python:all": "./scripts/python_test.sh",
-    "delete:snapshots": "find . -path '*/__snapshots__/*.snap' -type f -delete"
+    "delete:snapshots": "find . -path '*/__snapshots__/*.snap' -type f -delete",
+    "postinstall": "sed -i 's/\"inBundle\": true,//g' package-lock.json 2>/dev/null || sed -i '' 's/\"inBundle\": true,//g' package-lock.json 2>/dev/null || true"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --max-warnings 0"

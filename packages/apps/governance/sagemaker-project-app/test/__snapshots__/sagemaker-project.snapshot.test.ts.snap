@@ -3,7 +3,7 @@
 exports[`sagemaker-project Snapshot Tests SagemakerProject App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-sagemaker-project-main": {
-    "Description": "(SO0320-sagemaker-project) Modern Data Architecture Accelerator. Version 1.4.0",
+    "Description": "(SO0320-sagemaker-project) Modern Data Architecture Accelerator. Version 1.5.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -323,7 +323,7 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject App App Snapshot Test
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-sagemaker-project) Modern Data Architecture Accelerator. Version 1.4.0",
+          "Value": "(SO0320-sagemaker-project) Modern Data Architecture Accelerator. Version 1.5.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -385,7 +385,7 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject App App Snapshot Test
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-ma-4feba2f8",
@@ -1182,7 +1182,7 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject App App Snapshot Test
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-ma--18fff66",
@@ -1786,7 +1786,7 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject App App Snapshot Test
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-ma-798abba1",
@@ -2716,7 +2716,7 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject App App Snapshot Test
 
 exports[`sagemaker-project Snapshot Tests SagemakerProject Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-sagemaker-project) Modern Data Architecture Accelerator. Version 1.4.0",
+  "Description": "(SO0320-sagemaker-project) Modern Data Architecture Accelerator. Version 1.5.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -3036,7 +3036,7 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject Stack Snapshot Test 1
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-sagemaker-project) Modern Data Architecture Accelerator. Version 1.4.0",
+        "Value": "(SO0320-sagemaker-project) Modern Data Architecture Accelerator. Version 1.5.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -3098,7 +3098,7 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject Stack Snapshot Test 1
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-ma-4feba2f8",
@@ -3895,7 +3895,7 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject Stack Snapshot Test 1
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-ma--18fff66",
@@ -4499,7 +4499,7 @@ exports[`sagemaker-project Snapshot Tests SagemakerProject Stack Snapshot Test 1
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.4.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.5.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-ma-798abba1",
