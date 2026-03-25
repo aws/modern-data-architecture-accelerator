@@ -268,7 +268,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:security-group:id",
+          "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:security-group:testorgtestenvtestdomaintestsagemakerstudiodomainmain:id",
         },
         "Value": {
           "Fn::GetAtt": [
@@ -3165,7 +3165,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "GroupDescription": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main/security-group",
-          "GroupName": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main",
+          "GroupName": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main-test-org-test-env-test-domain-test-sagemaker-studio-domain-main",
           "SecurityGroupEgress": [
             {
               "CidrIp": "255.255.255.255/32",
@@ -3285,7 +3285,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
-          "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/security-group/id",
+          "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/security-group/test-org-test-env-test-domain-test-sagemaker-studio-domain-main/id",
           "Tags": {
             "mdaa_cdk_app": "sm-studio-domain",
             "mdaa_domain": "test-domain",
@@ -4910,7 +4910,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
-        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:security-group:id",
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:security-group:testorgtestenvtestdomaintestsagemakerstudiodomainmain:id",
       },
       "Value": {
         "Fn::GetAtt": [
@@ -7807,7 +7807,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "GroupDescription": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main/security-group",
-        "GroupName": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main",
+        "GroupName": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main-test-org-test-env-test-domain-test-sagemaker-studio-domain-main",
         "SecurityGroupEgress": [
           {
             "CidrIp": "255.255.255.255/32",
@@ -7927,7 +7927,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
-        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/security-group/id",
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/security-group/test-org-test-env-test-domain-test-sagemaker-studio-domain-main/id",
         "Tags": {
           "mdaa_cdk_app": "sm-studio-domain",
           "mdaa_domain": "test-domain",

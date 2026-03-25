@@ -536,6 +536,7 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
       false;
 
     const securityGroupProps: MdaaSecurityGroupProps = {
+      securityGroupName: this.props.naming.resourceName(),
       vpc: vpc,
       allowAllOutbound: !customEgress,
       naming: this.props.naming,
@@ -544,7 +545,6 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
       addSelfReferenceRule: true, // Required for intercontainer traffic and EFS
     };
 
-    // Create security group
     return new MdaaSecurityGroup(this.scope, `security-group`, securityGroupProps);
   }
 
