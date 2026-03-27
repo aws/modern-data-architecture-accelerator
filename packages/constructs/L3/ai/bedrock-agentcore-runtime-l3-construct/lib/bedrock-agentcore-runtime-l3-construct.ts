@@ -708,25 +708,6 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
       platform: platformEnum,
     });
 
-    // Grant Bedrock AgentCore service permission to pull from the ECR repository
-    dockerImage.repository.addToResourcePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        principals: [new ServicePrincipal('bedrock-agentcore.amazonaws.com')],
-        actions: [
-          'ecr:GetAuthorizationToken',
-          'ecr:BatchCheckLayerAvailability',
-          'ecr:GetDownloadUrlForLayer',
-          'ecr:BatchGetImage',
-        ],
-        conditions: {
-          StringEquals: {
-            'aws:SourceAccount': Stack.of(this).account,
-          },
-        },
-      }),
-    );
-
     return {
       containerUri: dockerImage.imageUri,
       dockerImage,
