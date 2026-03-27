@@ -276,11 +276,13 @@ feature_merge_smoke_test:
 
 
 feature_merge_risk_assessment:
+  rules:
+    - when: never
   tags:
     - arch:amd64
     - size:large
-  only:
-    - merge_requests
+  # only:
+  #   - merge_requests
   stage: analyze
   dependencies:
     - feature_merge_build_test
