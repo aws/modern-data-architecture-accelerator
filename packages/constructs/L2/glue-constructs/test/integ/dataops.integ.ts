@@ -53,7 +53,7 @@ const glueRole = new MdaaRole(stack, 'GlueRole', {
 // S3 bucket as crawler target
 const targetBucket = new MdaaBucket(stack, 'TargetBucket', {
   naming,
-  bucketName: 'glue-target',
+  bucketName: 'target',
   encryptionKey: kmsKey,
 });
 

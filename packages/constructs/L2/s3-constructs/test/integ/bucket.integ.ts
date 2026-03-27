@@ -34,14 +34,14 @@ const naming = getIntegNaming(app, 's3');
 // Bucket with default enforceExclusiveKmsKeys (DenyAES + ForceKMS policies)
 new MdaaBucket(stack, 'DefaultBucket', {
   naming,
-  bucketName: 'integ-default',
+  bucketName: 'default',
   encryptionKey: kmsKey,
 });
 
 // Bucket with enforceExclusiveKmsKeys=false (no DenyAES/ForceKMS policies)
 new MdaaBucket(stack, 'NoExclusiveBucket', {
   naming,
-  bucketName: 'integ-noexcl',
+  bucketName: 'noexcl',
   encryptionKey: kmsKey,
   enforceExclusiveKmsKeys: false,
 });

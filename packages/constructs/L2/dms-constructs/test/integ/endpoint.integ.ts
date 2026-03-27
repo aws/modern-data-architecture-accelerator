@@ -35,7 +35,7 @@ const naming = getIntegNaming(app, 'dms');
 // S3 bucket as DMS target
 const targetBucket = new MdaaBucket(stack, 'TargetBucket', {
   naming,
-  bucketName: 'dms-target',
+  bucketName: 'target',
   encryptionKey: kmsKey,
 });
 

@@ -110,51 +110,66 @@ describe('mdaa-integ-helpers module exports', () => {
     });
 
     test('returns IMdaaResourceNaming instance with default module name', () => {
+      process.env.CI_PIPELINE_ID = '12345';
       const app = new App();
       const naming = getIntegNaming(app);
 
       expect(naming).toBeDefined();
       expect(naming.props).toBeDefined();
       expect(naming.props.org).toBe('mdaa');
-      expect(naming.props.domain).toBe('fast');
+      expect(naming.props.domain).toBe('12345'); // domain is now the run ID
       expect(naming.props.moduleName).toBe('fixture');
+      delete process.env.CI_PIPELINE_ID;
     });
 
     test('returns IMdaaResourceNaming instance with custom module name', () => {
+      process.env.CI_PIPELINE_ID = '12345';
       const app = new App();
       const naming = getIntegNaming(app, 's3-test');
 
       expect(naming).toBeDefined();
       expect(naming.props.moduleName).toBe('s3-test');
+      delete process.env.CI_PIPELINE_ID;
     });
 
     test('resourceName method is available and returns valid name', () => {
+      process.env.CI_PIPELINE_ID = '12345';
       const app = new App();
       const naming = getIntegNaming(app);
 
       expect(typeof naming.resourceName).toBe('function');
       const name = naming.resourceName('bucket');
       expect(name).toContain('mdaa');
-      expect(name).toContain('fast');
+      expect(name).toContain('12345'); // domain is now the run ID
       expect(name).toContain('bucket');
+      delete process.env.CI_PIPELINE_ID;
     });
 
-    test('env is derived from region (short region format)', () => {
+    test('env is derived from account and region, domain is run ID', () => {
       process.env.CDK_DEFAULT_REGION = 'us-west-2';
+      process.env.CDK_DEFAULT_ACCOUNT = '123456789012';
+      process.env.CI_PIPELINE_ID = '12345';
       const app = new App();
       const naming = getIntegNaming(app);
 
-      // us-west-2 should become 'usw2'
-      expect(naming.props.env).toBe('usw2');
+      // env: account 123456789012 + us-west-2 should become '123456789012-usw2'
+      expect(naming.props.env).toBe('123456789012-usw2');
+      // domain: pipeline 12345
+      expect(naming.props.domain).toBe('12345');
+      delete process.env.CI_PIPELINE_ID;
     });
 
-    test('defaults to us-east-1 when region not set', () => {
+    test('defaults to us-east-1 when region not set, domain is timestamp run ID', () => {
       delete process.env.CDK_DEFAULT_REGION;
+      process.env.CDK_DEFAULT_ACCOUNT = '987654321098';
+      delete process.env.CI_PIPELINE_ID;
       const app = new App();
       const naming = getIntegNaming(app);
 
-      // us-east-1 should become 'use1'
-      expect(naming.props.env).toBe('use1');
+      // env: account 987654321098 + us-east-1 should become '987654321098-use1'
+      expect(naming.props.env).toBe('987654321098-use1');
+      // domain: timestamp (6 digits)
+      expect(naming.props.domain).toMatch(/^\d{6}$/);
     });
   });
 

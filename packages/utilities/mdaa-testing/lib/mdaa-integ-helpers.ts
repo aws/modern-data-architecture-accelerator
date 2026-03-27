@@ -50,13 +50,45 @@ function shortRegion(): string {
 }
 
 /**
+ * Get a unique identifier for this test run.
+ * Uses CI_PIPELINE_ID in CI environments, or a timestamp for local runs.
+ * This prevents S3 bucket name conflicts when multiple pipelines run sequentially
+ * in the same region (S3 delete is asynchronous, causing 409 conflicts).
+ */
+function getRunId(): string {
+  // In GitLab CI, use the pipeline ID (unique per pipeline)
+  if (process.env.CI_PIPELINE_ID) {
+    return process.env.CI_PIPELINE_ID;
+  }
+  // For local runs, use a short timestamp (last 6 digits of epoch seconds)
+  return Math.floor(Date.now() / 1000)
+    .toString()
+    .slice(-6);
+}
+
+/**
+ * Get the AWS account ID.
+ * This provides additional uniqueness when tests run in different accounts.
+ */
+function getAccountId(): string {
+  const account = process.env.CDK_DEFAULT_ACCOUNT;
+  if (account) {
+    return account;
+  }
+  return '000000000000'; // Fallback if account not available
+}
+
+/**
  * Get MDAA resource naming for integration tests.
  */
 export function getIntegNaming(app: App, moduleName = 'fixture'): IMdaaResourceNaming {
+  const accountId = getAccountId();
+  const region = shortRegion();
+  const runId = getRunId();
   return new MdaaDefaultResourceNaming({
     org: 'mdaa',
-    env: shortRegion(),
-    domain: 'fast',
+    env: `${accountId}-${region}`,
+    domain: runId,
     moduleName,
     cdkNode: app.node,
   });

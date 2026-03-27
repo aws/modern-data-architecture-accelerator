@@ -35,7 +35,7 @@ const naming = getIntegNaming(app, 'athena');
 // S3 bucket for Athena query results (created in-test)
 const resultsBucket = new MdaaBucket(stack, 'ResultsBucket', {
   naming,
-  bucketName: 'athena-results',
+  bucketName: 'results',
   encryptionKey: kmsKey,
 });
 
