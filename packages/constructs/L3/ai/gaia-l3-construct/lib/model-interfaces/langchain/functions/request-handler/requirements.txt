@@ -22,7 +22,7 @@ langchain-community==0.3.29
 langchain-aws==0.2.7
 openai==0.28.1
 
-langchain-core==0.3.81
+langchain-core==1.2.11
 langchain-text-splitters==0.3.9
 
 # AWS Lambda Powertools (needed for the function)
