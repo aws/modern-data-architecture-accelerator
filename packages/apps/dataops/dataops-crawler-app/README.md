@@ -1,17 +1,44 @@
 # Crawlers
 
-The Data Ops Crawler CDK application is used to deploy the resources required to support and perform data operations on top of a Data Lake, primarily using Glue Crawlers and Glue Jobs.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/dataops/dataops-crawler-app/index.html).
+
+Deploys Glue Crawlers with automatic project security configuration wiring, optional VPC binding via Glue connections, and EventBridge-based failure notifications. Use this module when you need to automatically discover and catalog data schemas from S3, JDBC, DynamoDB, or Glue Catalog sources into your data lake.
 
 ---
 
-## Deployed Resources and Compliance Details
+## Deployed Resources
 
-![dataops-crawler](../../../constructs/L3/dataops/dataops-crawler-l3-construct/docs/dataops-crawler.png)
+This module deploys and integrates the following resources:
 
 **Glue Crawlers** - Glue Crawlers will be created for each crawler specification in the configs
 
 - Automatically configured to use project security config
 - Can optionally be VPC bound (via Glue connection)
+
+![dataops-crawler](../../../constructs/L3/dataops/dataops-crawler-l3-construct/docs/dataops-crawler.png)
+
+---
+
+## Related Modules
+
+- [DataOps Project](../dataops-project-app/README.md) — Deploy the shared project infrastructure (KMS keys, databases, connections) that crawlers reference. Note: the DataOps Project module can also create crawlers directly for databases it manages — use this standalone crawler module when you need crawlers with custom targets, schedules, or configurations beyond what the project provides
+- [ETL Jobs](../dataops-job-app/README.md) — Deploy Glue ETL jobs to transform data discovered by crawlers
+- [Workflows](../dataops-workflow-app/README.md) — Orchestrate crawlers and jobs together in Glue Workflows
+- [Data Quality](../dataops-data-quality-app/README.md) — Deploy data quality rulesets on tables created by crawlers
+
+---
+
+## Security/Compliance Details
+
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
+
+- **Encryption at Rest**:
+  - Crawlers use project Glue security configuration for encrypting output data, logs, and bookmarks with the project KMS key
+- **Least Privilege**:
+  - Execution role specified per crawler
+  - Project resources referenced via `project:` prefix for consistent access control
+- **Network Isolation**:
+  - Optional VPC binding via Glue connections for accessing data sources in private networks
 
 ---
 
@@ -22,50 +49,46 @@ The Data Ops Crawler CDK application is used to deploy the resources required to
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          dataops-crawler: # Module Name can be customized
-            module_path: "@aws-mdaa/dataops-crawler" # Must match module NPM package name
-            module_configs:
-              - ./dataops-crawler.yaml # Filename/path can be customized
+dataops-crawler: # Module Name can be customized
+  module_path: '@aws-mdaa/dataops-crawler' # Must match module NPM package name
+  module_configs:
+    - ./dataops-crawler.yaml # Filename/path can be customized
 ```
 
-### Module Config (./dataops-crawler.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./dataops-crawler.yaml` file referenced in the MDAA config snippet above.
 
-### Sample Crawler Config
+#### Minimal Configuration
+
+Only required properties are included, with projectName to auto-wire security configuration. Start here for a quick single-crawler deployment within an existing DataOps project.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-# (Optional) Name of the Data Ops Project this Crawler will run within.
-# Resources provided by the Project, such as security configuration, encryption keys, and execution roles
-# will automatically be wired into the Crawler config. Other resources provided by the project can
-# be optionally referenced by the Crawler config using a "project:" prefix on the config value.
-projectName: dataops-project-test
-
-# Alternatively, if projectName is not provided, you can supply parameters directly:
-# securityConfigurationName: my-security-config  # Glue security configuration for crawler encryption
-# notificationTopicArn: arn:aws:sns:region:account:topic-name  # SNS topic for crawler status notifications
-crawlers:
-  test-crawler:
-    # (required) the role used to execute the crawler
-    executionRoleArn: ssm:/sample-org/instance1/generated-role/glue-role/arn
-    # (required) Reference back to the database name in the 'databases:' section of the crawler.yaml
-    databaseName: project:databaseName/example-database
-    # (required) Description of the crawler
-    description: Example for a Crawler
-    # (required) At least one target definition.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-targets.html
-    targets:
-      # (at least one).  S3 Target.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-s3target.html
-      s3Targets:
-        - path: s3://some-s3-bucket/path/to/crawler/target
-    classifiers:
-      - project:classifiers/classifierCsv
-    # Optional. Recrawl behaviour: CRAWL_NEW_FOLDERS_ONLY or CRAWL_EVERYTHING or CRAWL_EVENT_MODE
-    # Default: CRAWL_EVERYTHING
-    recrawlBehavior: CRAWL_EVERYTHING
-    # Extra crawler configuration options
-    extraConfiguration:
-      Version: 1
-      CrawlerOutput:
-        Partitions:
-          AddOrUpdateBehavior: InheritFromTable
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+When projectName is set, infrastructure resources (KMS key, S3 bucket, IAM roles, SNS topic, security configuration) are automatically resolved from the referenced DataOps project. Configures crawlers for S3, JDBC, Glue Catalog, and DynamoDB data sources with scheduling and schema change policies. Start here when evaluating all available options for crawler data sources, scheduling, and schema change behavior.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+#### Standalone Configuration (No Project)
+
+Deploys crawlers independently of a DataOps project. Infrastructure resources (KMS key, S3 bucket, IAM roles, SNS topic, security configuration) must be provided directly rather than autowired from a project. Use this when deploying outside of a DataOps project, providing infrastructure references directly.
+
+[sample-config-noproject.yaml](sample_configs/sample-config-noproject.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-noproject.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

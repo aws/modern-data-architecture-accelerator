@@ -1,0 +1,13 @@
+# Minimal Athena Workgroup module configuration.
+# Contains only the required admin and user role references. All
+# other properties (workgroup configuration, verbatim policy name
+# prefix) are optional.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Admin roles granted full access to Athena workgroup resources
+dataAdminRoles:
+  - name: Admin
+
+# User roles granted query execution access to the workgroup
+athenaUserRoles:
+  - arn: arn:{{partition}}:iam::{{account}}:role/sample-org-dev-instance1-roles-data-scientist

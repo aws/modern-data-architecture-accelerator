@@ -4,7 +4,7 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create, isS3BucketWithSuffix } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create, isS3BucketWithSuffix } from '@aws-mdaa/testing';
 import { SagemakerCDKApp } from '../lib/sagemaker';
 import * as path from 'path';
 import { TestRegionFact } from '@aws-mdaa/testing';
@@ -17,33 +17,26 @@ beforeEach(() => {
 describe('sagemaker Snapshot Tests', () => {
   beforeAll(() => {
     expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-    expect.addSnapshotSerializer({
       test: isS3BucketWithSuffix,
       print: (): string => '"REPLACED-S3-BUCKET-NAME"',
     });
   });
-  snapShotTest(
-    'Sagemaker Stack',
-    Create.stackProvider(
-      'SagemakerStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Sagemaker App',
+    Create.appProvider(
+      context => {
         const moduleApp = new SagemakerCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '../sample_configs/sample-config-comprehensive.yaml'),
             additional_stacks: JSON.stringify([
-              { account: '1234567890', region: 'test-region' },
-              { account: '2234567890', region: 'test-region' },
+              { account: '222222222222', region: 'test-region' },
+              { account: '333333333333', region: 'test-region' },
             ]),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-sagemaker-main',
@@ -55,16 +48,16 @@ describe('sagemaker Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Sagemaker App',
+    'Sagemaker App Minimal',
     Create.appProvider(
       context => {
         const moduleApp = new SagemakerCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '../sample_configs/sample-config-minimal.yaml'),
             additional_stacks: JSON.stringify([
-              { account: '1234567890', region: 'test-region' },
-              { account: '2234567890', region: 'test-region' },
+              { account: '222222222222', region: 'test-region' },
+              { account: '333333333333', region: 'test-region' },
             ]),
           },
         });
@@ -72,7 +65,7 @@ describe('sagemaker Snapshot Tests', () => {
         return moduleApp;
       },
       {
-        module_name: 'test-sagemaker-main',
+        module_name: 'test-sagemaker-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

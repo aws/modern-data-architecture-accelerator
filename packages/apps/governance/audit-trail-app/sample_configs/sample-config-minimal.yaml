@@ -1,0 +1,8 @@
+# Minimal Audit Trail module configuration.
+# Contains only required properties for a CloudTrail trail.
+
+trail:
+  # S3 bucket name where CloudTrail audit logs are stored
+  cloudTrailAuditBucketName: ssm:/sample-org/shared/audit/bucket/name
+  # KMS key ARN for encrypting CloudTrail logs written to S3
+  cloudTrailAuditKmsKeyArn: ssm:/sample-org/shared/audit/kms/cmk/arn

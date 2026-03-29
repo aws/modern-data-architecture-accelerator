@@ -1,0 +1,588 @@
+# Comprehensive sample config for the DataOps DMS module.
+# Exercises ALL non-excluded schema properties at full depth.
+# Uses projectName for auto-wiring shared resources.
+
+# DataOps project name enabling auto-wiring of shared resources
+# (bucket, KMS key, SNS topic, deployment role, security configuration)
+# via SSM parameters.
+projectName: test-project
+
+# SNS topic ARN for job notifications and workflow alerts.
+# Auto-resolved from project when projectName is set.
+notificationTopicArn: arn:test-partition:sns:test-region:test-acct:test-topic
+
+# DMS migration and replication configuration including instances,
+# endpoints, and tasks.
+dms:
+  # Whether to create the DMS VPC service role.
+  createDmsVpcRole: true
+  # Whether to create the DMS CloudWatch Logs service role.
+  createDmsLogRole: true
+  # Custom IAM role ARN for DMS operations.
+  dmsRoleArn: arn:{{partition}}:iam::{{account}}:role/test-dms-role
+
+  # Named replication instance configurations.
+  replicationInstances:
+    test-instance:
+      # DMS replication instance class.
+      instanceClass: dms.t3.micro
+      # VPC ID for replication instance deployment.
+      # Often created by your VPC/networking stack.
+      # Example SSM: ssm:/path/to/vpc/id
+      vpcId: test_vpc_id
+      # Subnet IDs spanning at least two AZs.
+      # Often created by your VPC/networking stack.
+      # Example SSM: ssm:/path/to/subnet/id
+      subnetIds:
+        - test_subnet_id1
+        - test_subnet_id2
+      # If true, the SG will allow traffic to and from itself.
+      addSelfReferenceRule: true
+      # Ingress rules to be added to the replication instance SG.
+      ingressRules:
+        # IPv4 CIDR block rules.
+        ipv4:
+          - cidr: 10.0.0.0/16
+            protocol: tcp
+            port: 3306
+            # Ending port for port range rules.
+            toPort: 3306
+            description: Allow MySQL from VPC
+        # Prefix list rules.
+        prefixList:
+          - prefixList: pl-12345678
+            protocol: tcp
+            port: 5432
+            toPort: 5432
+            description: Allow PostgreSQL via prefix list
+        # Security group peer rules.
+        sg:
+          - sgId: sg-12345678
+            protocol: tcp
+            port: 1521
+            toPort: 1521
+            description: Allow Oracle from app SG
+      # Egress rules to be added to the replication instance SG.
+      egressRules:
+        ipv4:
+          - cidr: 0.0.0.0/0
+            protocol: tcp
+            port: 443
+            toPort: 443
+            description: Allow HTTPS egress
+
+  # Named endpoint configurations for source and target databases.
+  endpoints:
+    # SQL Server source endpoint.
+    test-source-sqlserver:
+      # The type of endpoint. (enum: source, target)
+      endpointType: source
+      # The endpoint engine name.
+      engineName: sqlserver
+      # Optional database name for the endpoint.
+      databaseName: test-database
+      # Microsoft SQL Server settings.
+      microsoftSqlServerSettings:
+        # Database name for SQL Server endpoint connectivity.
+        databaseName: test-database
+        # Secrets Manager secret ARN containing credentials.
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-sqlserver-secret
+        # KMS key ARN for the secret.
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-sqlserver-key
+        # IAM role ARN for Secrets Manager access.
+        secretsManagerAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-sm-access-role
+        # BCP packet size in bytes.
+        bcpPacketSize: 4096
+        controlTablesFileGroup: dms_control
+        forceLobLookup: false
+        # TCP port number.
+        port: 1433
+        querySingleAlwaysOnNode: false
+        # Read changes only from transaction log backups.
+        readBackupOnly: false
+        safeguardPolicy: rely-on-sql-server-replication-agent
+        serverName: test-sqlserver.example.com
+        # Transaction log access mode.
+        tlogAccessMode: BackupOnly
+        trimSpaceInChar: false
+        # Use BCP for full-load operations.
+        useBcpFullLoad: true
+        useThirdPartyBackupDevice: false
+
+    # S3 target endpoint.
+    test-target-s3:
+      endpointType: target
+      engineName: s3
+      # Amazon S3 settings.
+      s3Settings:
+        # S3 bucket name for data migration destination.
+        bucketName: test-target-bucket
+        # KMS key ID for server-side encryption.
+        serverSideEncryptionKmsKeyId: test-target-kms-key-id
+        # IAM role ARN for DMS service access to S3.
+        serviceAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-s3-access-role
+        # S3 bucket folder for organizing migrated data.
+        bucketFolder: dms-output
+        # Add column name information to CSV output.
+        addColumnName: true
+        # Predefined ACL for S3 objects.
+        cannedAclForObjects: bucket-owner-full-control
+        # Enable CDC INSERT and UPDATE capture.
+        cdcInsertsAndUpdates: true
+        # CDC INSERT-only capture.
+        cdcInsertsOnly: false
+        # Maximum batch interval in seconds for CDC.
+        cdcMaxBatchInterval: 60
+        # Minimum file size in KB for CDC.
+        cdcMinFileSize: 32000
+        # CDC folder path.
+        cdcPath: cdc-data
+        # Compression type for S3 target files.
+        compressionType: gzip
+        # Column delimiter for CSV.
+        csvDelimiter: ','
+        # String value for columns not in supplemental log.
+        csvNoSupValue: ''
+        # Null value representation for CSV.
+        csvNullValue: 'NULL'
+        # Row delimiter for CSV.
+        csvRowDelimiter: '\n'
+        # Data format for S3 output files.
+        dataFormat: parquet
+        # Data page size in bytes for Parquet.
+        dataPageSize: 1048576
+        # Date partition delimiter.
+        datePartitionDelimiter: SLASH
+        # Enable date-based folder partitioning.
+        datePartitionEnabled: true
+        # Date format sequence for partitioning.
+        datePartitionSequence: YYYYMMDD
+        # Time zone for date partition folders.
+        datePartitionTimezone: UTC
+        # Maximum dictionary page size for Parquet.
+        dictPageSizeLimit: 1048576
+        # Enable statistics for Parquet pages.
+        enableStatistics: true
+        # Encoding type for Parquet.
+        encodingType: rle-dictionary
+        # External table definition for S3 source.
+        externalTableDefinition: ''
+        # Number of header rows to ignore in CSV.
+        ignoreHeaderRows: 1
+        # Include INSERT operation indicators in full load CSV.
+        includeOpForFullLoad: true
+        # Maximum CSV file size in KB.
+        maxFileSize: 1048576
+        # TIMESTAMP column precision to milliseconds in Parquet.
+        parquetTimestampInMillisecond: true
+        # Apache Parquet format version.
+        parquetVersion: parquet-2-0
+        # Preserve transaction order for CDC loads.
+        preserveTransactions: true
+        # Enable RFC 4180 compliance for CSV.
+        rfc4180: true
+        # Number of rows in Parquet row group.
+        rowGroupLength: 10000
+        # Timestamp column name for migration timing.
+        timestampColumnName: _dms_timestamp
+        # Use CsvNoSupValue for columns not in supplemental log.
+        useCsvNoSupValue: false
+        # Use task start time for full load timestamp.
+        useTaskStartTimeForFullLoadTimestamp: true
+
+    # MySQL source endpoint.
+    test-source-mysql:
+      endpointType: source
+      engineName: mysql
+      databaseName: test-mysql-db
+      # MySQL settings.
+      mySqlSettings:
+        # Secrets Manager secret ARN containing MySQL credentials.
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-mysql-secret
+        # KMS key ARN for the MySQL secret.
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-mysql-key
+        # IAM role ARN for Secrets Manager access.
+        secretsManagerAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-sm-access-role
+        # SQL script to execute after connecting.
+        afterConnectScript: SET SESSION wait_timeout=28800
+        # Clean and recreate table metadata on mismatch.
+        cleanSourceMetadataOnMismatch: true
+        # Polling interval in seconds for binary log changes.
+        eventsPollInterval: 5
+        # Maximum CSV file size in KB.
+        maxFileSize: 65536
+        # Number of parallel threads for loading data.
+        parallelLoadThreads: 1
+        # Time zone for MySQL source database.
+        serverTimezone: UTC
+        # Target database type.
+        targetDbType: specific-database
+
+    # PostgreSQL source endpoint.
+    test-source-postgres:
+      endpointType: source
+      engineName: postgres
+      databaseName: test-postgres-db
+      # PostgreSQL settings.
+      postgreSqlSettings:
+        # Secrets Manager secret ARN containing PostgreSQL credentials.
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-pg-secret
+        # KMS key ARN for the PostgreSQL secret.
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-pg-key
+        # IAM role ARN for Secrets Manager access.
+        secretsManagerAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-sm-access-role
+        # SQL script executed after connecting for CDC.
+        afterConnectScript: SET search_path TO public
+        # Babelfish for Aurora PostgreSQL database name.
+        babelfishDatabaseName: test-babelfish-db
+        # Enable DDL event capture.
+        captureDdls: true
+        # Database mode specification.
+        databaseMode: default
+        # Schema for operational DDL artifacts.
+        ddlArtifactsSchema: cdc_ddl_schema
+        # Client statement timeout in seconds.
+        executeTimeout: 60
+        # Fail task if LOB column exceeds LobMaxSize.
+        failTasksOnLobTruncation: false
+        # Enable WAL heartbeat.
+        heartbeatEnable: true
+        # WAL heartbeat frequency in minutes.
+        heartbeatFrequency: 5
+        # Schema for heartbeat artifacts.
+        heartbeatSchema: public
+        # Migrate boolean as boolean.
+        mapBooleanAsBoolean: true
+        # Maximum CSV file size in KB.
+        maxFileSize: 32000
+        # Plugin for replication slot.
+        pluginName: pglogical
+        # Logical replication slot name.
+        slotName: test_slot
+
+    # Oracle source endpoint.
+    test-source-oracle:
+      endpointType: source
+      engineName: oracle
+      databaseName: test-oracle-db
+      # Oracle settings.
+      oracleSettings:
+        # Secrets Manager secret ARN containing Oracle credentials.
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-oracle-secret
+        # KMS key ARN for the Oracle secret.
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-oracle-key
+        # IAM role ARN for Secrets Manager access.
+        secretsManagerAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-sm-access-role
+        # Disable Binary Reader direct file access.
+        accessAlternateDirectly: false
+        # Enable table-level supplemental logging.
+        addSupplementalLogging: true
+        # Additional archived log destination ID.
+        additionalArchivedLogDestId: 1
+        # Enable replication of nested tables.
+        allowSelectNestedTables: true
+        # Archived redo log destination ID.
+        archivedLogDestId: 1
+        # Restrict to archived redo logs only.
+        archivedLogsOnly: false
+        # ASM server address.
+        asmServer: test-asm-server
+        # Character length semantics.
+        charLengthSemantics: byte
+        # Enable direct path loading without logging.
+        directPathNoLog: false
+        # Enable parallel loading with direct path.
+        directPathParallelLoad: false
+        # Enable homogeneous tablespace replication.
+        enableHomogenousTablespace: false
+        # Additional archived log destination IDs.
+        extraArchivedLogDestIds:
+          - 2
+          - 3
+        # Fail task when LOB exceeds LobMaxSize.
+        failTasksOnLobTruncation: false
+        # Number data type scale.
+        numberDatatypeScale: -1
+        # Oracle path prefix for Binary Reader.
+        oraclePathPrefix: /rdsdbdata/db/
+        # Parallel ASM read threads.
+        parallelAsmReadThreads: 2
+        # Read-ahead blocks for ASM.
+        readAheadBlocks: 1000
+        # Enable tablespace name reading.
+        readTableSpaceName: false
+        # Enable path prefix replacement.
+        replacePathPrefix: false
+        # Retry interval in seconds.
+        retryInterval: 5
+        # Secrets Manager ARN for Oracle ASM access role.
+        secretsManagerOracleAsmAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-asm-role
+        # Secrets Manager ARN for Oracle ASM secret.
+        secretsManagerOracleAsmSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-asm-secret
+        # Custom function for SDO_GEOMETRY to GEOJSON.
+        spatialDataOptionToGeoJsonFunctionName: test_sdo_to_geojson
+        # Standby delay time in minutes.
+        standbyDelayTime: 0
+        # Enable alternate folder for online redo logs.
+        useAlternateFolderForOnline: false
+        # Enable Binary Reader utility.
+        useBFile: false
+        # Enable direct path full load.
+        useDirectPathFullLoad: true
+        # Enable Oracle LogMiner.
+        useLogminerReader: true
+        # Path prefix for Binary Reader replacement.
+        usePathPrefix: /rdsdbdata/log/
+
+    # MongoDB source endpoint.
+    test-source-mongodb:
+      endpointType: source
+      engineName: mongodb
+      databaseName: test-mongo-db
+      # MongoDB settings.
+      mongoDbSettings:
+        # Secrets Manager secret ARN containing MongoDB credentials.
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-mongo-secret
+        # KMS key ARN for the MongoDB secret.
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-mongo-key
+        # IAM role ARN for Secrets Manager access.
+        secretsManagerAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-sm-access-role
+        # Authentication mechanism.
+        authMechanism: scram-sha-1
+        # MongoDB database for authentication.
+        authSource: admin
+        # Authentication type.
+        authType: password
+        # Database name on MongoDB source.
+        databaseName: test-mongo-db
+        # Number of documents to preview.
+        docsToInvestigate: '1000'
+        # Document ID extraction flag.
+        extractDocId: 'true'
+        # Nesting level (document or table mode).
+        nestingLevel: one
+        # Port value for MongoDB source.
+        port: 27017
+        # Server name.
+        serverName: test-mongo-server.example.com
+
+    # DocumentDB source endpoint.
+    test-source-docdb:
+      endpointType: source
+      engineName: docdb
+      databaseName: test-docdb-db
+      # DocumentDB settings.
+      docDbSettings:
+        # Secrets Manager secret ARN containing DocumentDB credentials.
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-docdb-secret
+        # KMS key ARN for the DocumentDB secret.
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-docdb-key
+        secretsManagerAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-sm-access-role
+        # Number of documents to preview.
+        docsToInvestigate: 1000
+        extractDocId: true
+        # Nesting level for migration mode.
+        nestingLevel: one
+
+    # IBM DB2 source endpoint.
+    test-source-db2:
+      endpointType: source
+      engineName: db2
+      databaseName: test-db2-db
+      # IBM DB2 settings.
+      ibmDb2Settings:
+        # Secrets Manager secret ARN containing DB2 credentials.
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-db2-secret
+        # KMS key ARN for the DB2 secret.
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-db2-key
+        # IAM role ARN for Secrets Manager access.
+        secretsManagerAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-sm-access-role
+        # Log sequence number for CDC starting point.
+        currentLsn: '00000000:00000000:0000'
+        # Maximum bytes per read operation.
+        maxKBytesPerRead: 64
+        # Enable ongoing replication (CDC).
+        setDataCaptureChanges: true
+
+    # DynamoDB target endpoint.
+    test-target-dynamodb:
+      endpointType: target
+      engineName: dynamodb
+      # DynamoDB settings.
+      dynamoDbSettings:
+        # IAM service role ARN for DynamoDB endpoint access.
+        serviceAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-dynamodb-access-role
+
+    # OpenSearch/Elasticsearch target endpoint.
+    test-target-elasticsearch:
+      endpointType: target
+      engineName: elasticsearch
+      # OpenSearch/Elasticsearch settings.
+      elasticsearchSettings:
+        # OpenSearch cluster endpoint URI.
+        endpointUri: https://test-es-domain.{{region}}.es.amazonaws.com
+        # Retry duration in seconds.
+        errorRetryDuration: 300
+        # Maximum percentage of failed records before stopping.
+        fullLoadErrorPercentage: 10
+        # IAM role ARN for service access.
+        serviceAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-es-access-role
+
+    # Kinesis target endpoint.
+    test-target-kinesis:
+      endpointType: target
+      engineName: kinesis
+      # Kinesis settings.
+      kinesisSettings:
+        # Kinesis data stream ARN.
+        streamArn: arn:{{partition}}:kinesis:{{region}}:{{account}}:stream/test-stream
+        # IAM role ARN for Kinesis access.
+        serviceAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-kinesis-access-role
+        # Show detailed control information.
+        includeControlDetails: true
+        # Include NULL and empty columns.
+        includeNullAndEmpty: true
+        # Show partition value in output.
+        includePartitionValue: true
+        # Include DDL operations.
+        includeTableAlterOperations: true
+        # Provide detailed transaction information.
+        includeTransactionDetails: true
+        # Output format for records.
+        messageFormat: json
+        # Avoid adding '0x' prefix to hex data.
+        noHexPrefix: false
+        # Prefix schema and table names to partition values.
+        partitionIncludeSchemaTable: true
+
+    # Neptune target endpoint.
+    test-target-neptune:
+      endpointType: target
+      engineName: neptune
+      # Neptune settings.
+      neptuneSettings:
+        # S3 bucket name for temporary graph data storage.
+        s3BucketName: test-neptune-staging-bucket
+        # S3 bucket folder for staging.
+        s3BucketFolder: neptune-staging
+        # IAM role ARN for service access.
+        serviceAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-neptune-access-role
+        # Retry duration in milliseconds.
+        errorRetryDuration: 300
+        maxFileSize: 1048576
+        # Maximum retry count.
+        maxRetryCount: 3
+
+    # Redshift target endpoint.
+    test-target-redshift:
+      endpointType: target
+      engineName: redshift
+      databaseName: test-redshift-db
+      # Redshift settings.
+      redshiftSettings:
+        # S3 bucket name for intermediate CSV storage.
+        bucketName: test-redshift-staging-bucket
+        # Secrets Manager secret ARN containing Redshift credentials.
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-redshift-secret
+        # KMS key ID for server-side encryption.
+        serverSideEncryptionKmsKeyId: test-redshift-kms-key-id
+        # KMS key ARN for the Redshift secret.
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-redshift-key
+        # IAM role ARN for Secrets Manager access.
+        secretsManagerAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-sm-access-role
+        # IAM role ARN for DMS service access.
+        serviceAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-redshift-access-role
+        # Allow any date format.
+        acceptAnyDate: true
+        # SQL script after connecting.
+        afterConnectScript: SET search_path TO public
+        # S3 folder for CSV staging.
+        bucketFolder: redshift-staging
+        # Enable case-sensitive schema names.
+        caseSensitiveNames: false
+        # Enable automatic compression.
+        compUpdate: true
+        # Connection timeout in milliseconds.
+        connectionTimeout: 10000
+        # Date format specification.
+        dateFormat: auto
+        # Migrate empty fields as NULL.
+        emptyAsNull: true
+        # Override auto-generated IDENTITY values.
+        explicitIds: false
+        # Parallel threads for file upload.
+        fileTransferUploadStreams: 3
+        # Timeout in milliseconds for cluster operations.
+        loadTimeout: 600000
+        # Migrate boolean as native boolean.
+        mapBooleanAsBoolean: true
+        # Maximum CSV file size in KB.
+        maxFileSize: 1048576
+        # Remove surrounding quotation marks.
+        removeQuotes: true
+        # Replacement character for invalid characters.
+        replaceChars: '?'
+        # Characters to replace during migration.
+        replaceInvalidChars: ''
+        # Time format specification.
+        timeFormat: auto
+        # Remove trailing white space from VARCHAR.
+        trimBlanks: true
+        # Truncate data to fit column size.
+        truncateColumns: true
+        # In-memory write buffer size in KB.
+        writeBufferSize: 512
+
+    # Sybase (SAP ASE) source endpoint.
+    test-source-sybase:
+      endpointType: source
+      engineName: sybase
+      databaseName: test-sybase-db
+      # SAP ASE (Sybase) settings.
+      sybaseSettings:
+        # Secrets Manager secret ARN containing Sybase credentials.
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-sybase-secret
+        # KMS key ARN for the Sybase secret.
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-sybase-key
+        # IAM role ARN for Secrets Manager access.
+        secretsManagerAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/test-sm-access-role
+
+  # Named replication task configurations.
+  replicationTasks:
+    # Full-load migration task.
+    test-task-full-load:
+      # Replication instance name from replicationInstances section.
+      replicationInstance: test-instance
+      # Source endpoint name from endpoints section.
+      sourceEndpoint: test-source-sqlserver
+      # Target endpoint name from endpoints section.
+      targetEndpoint: test-target-s3
+      # Migration type. (enum: full-load, cdc, full-load-and-cdc)
+      migrationType: full-load
+      # Overall settings for the task in JSON format.
+      replicationTaskSettings:
+        TargetMetadata:
+          TargetSchema: ''
+          SupportLobs: true
+        FullLoadSettings:
+          TargetTablePrepMode: DROP_AND_CREATE
+      # Table mappings for the task.
+      tableMappings:
+        rules:
+          - rule-type: selection
+            rule-id: '1'
+            rule-name: '1'
+            object-locator:
+              schema-name: Test
+              table-name: '%'
+            rule-action: include
+          - rule-type: selection
+            rule-id: '2'
+            rule-name: '2'
+            object-locator:
+              schema-name: Test
+              table-name: DMS%
+            rule-action: exclude
+      # Supplemental information for certain source/target endpoints.
+      taskData:
+        supplementalKey: supplementalValue

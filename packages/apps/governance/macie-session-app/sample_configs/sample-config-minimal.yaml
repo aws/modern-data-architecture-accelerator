@@ -1,0 +1,7 @@
+# Minimal Macie Session module configuration.
+# Contains only required properties for a Macie session.
+
+session:
+  # Frequency at which Macie publishes finding updates
+  # (enum: FIFTEEN_MINUTES, ONE_HOUR, SIX_HOURS)
+  findingPublishingFrequency: SIX_HOURS

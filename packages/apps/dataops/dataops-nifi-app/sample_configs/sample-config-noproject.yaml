@@ -1,0 +1,76 @@
+# Sample config for the DataOps NiFi module - no-project variant.
+# Demonstrates standalone NiFi EKS cluster with explicit KMS,
+# bucket, deployment role, and security configuration.
+
+# KMS key ARN for encrypting DataOps resources and data
+kmsArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id
+# S3 bucket name for project storage (scripts, artifacts, temp files)
+bucketName: test-nifi-bucket
+# IAM role ARN for deployment operations and resource management
+deploymentRoleArn: arn:{{partition}}:iam::{{account}}:role/test-deploy-role
+# Glue security configuration name for job encryption
+securityConfigurationName: test-security-config
+# SNS topic ARN for job notifications and workflow alerts
+notificationTopicArn: arn:{{partition}}:sns:{{region}}:{{account}}:test-topic
+
+nifi:
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # Admin roles with access to EKS cluster resources
+  adminRoles:
+    - name: Admin
+    - name: eks-admin
+
+  # EC2 management instance for EKS cluster administration
+  mgmtInstance:
+    # Subnet ID for management instance network placement
+    subnetId: test-subnet-id
+    # Availability zone for management instance placement
+    availabilityZone: test-az
+    # EC2 key pair name for SSH access
+    keyPairName: test-key-pair
+
+  # VPC ID for EKS and NiFi cluster deployment
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: test-vpc-id
+
+  # Named subnet ID mappings for cluster deployment
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnetIds:
+    subnet1: test-subnet-id-1
+    subnet2: test-subnet-id-2
+
+  # Existing ACM Private CA ARN for signing the internal CA
+  existingPrivateCaArn: arn:{{partition}}:acm-pca:test-region:test-account:certificate-authority/test-acm-pca-id
+
+  # Ingress rules for the EKS control plane security group
+  eksSecurityGroupIngressRules:
+    sg:
+      - sgId: sg-kubectlclientid
+        protocol: tcp
+        port: 443
+
+  # Named NiFi cluster configurations
+  clusters:
+    test1:
+      # Number of nodes in the NiFi cluster
+      nodeCount: 2
+      # Node compute size
+      nodeSize: SMALL
+      # Admin identities for NiFi cluster management
+      adminIdentities:
+        - 'some-admin-identity'
+      # SAML IdP configuration for authentication
+      saml:
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'
+
+    test2:
+      nodeCount: 2
+      nodeSize: SMALL
+      saml:
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'
+      adminIdentities:
+        - 'example_admin_identity'
+      peerClusters:
+        - test1

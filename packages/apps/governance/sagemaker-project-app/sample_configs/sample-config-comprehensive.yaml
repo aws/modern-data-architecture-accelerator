@@ -1,0 +1,120 @@
+# Comprehensive sample config for the SageMaker Project module.
+# Exercises ALL compatible non-excluded properties at full depth.
+# Covers both deploymentMode enum variants, environment templates,
+# project profiles with all options, and projects with full membership.
+#
+# Mutually exclusive: domainConfigSSMParam vs domainConfig.
+# domainConfig is a runtime-resolved CDK construct (not user-configurable YAML).
+# Use domainConfigSSMParam for SSM-based domain config resolution.
+
+# (Optional) SSM parameter base name for the SageMaker Domain config.
+# Resolves domain ID, blueprint IDs, domain unit IDs from SSM and APIs.
+# Mutually exclusive with domainConfig.
+# Often created by the SageMaker module.
+# Example SSM: ssm:/{{org}}/{{domain}}/<sagemaker_module_name>/domain/<domain_name>/config
+domainConfigSSMParam: /test-org/test-domain/test-module/domain/test-sus-domain/config
+
+# (Optional) Reusable environment templates referenced by project profiles
+# via the environmentsTemplate property. Template environments are merged
+# with profile-specific environments.
+projectProfileEnvironmentsTemplates:
+  # Template with ON_CREATE deployment and parameter overrides
+  test-template-on-create:
+    # Environment name → ProfileEnvironmentConfig
+    test-env-blueprint:
+      # (Optional) Deployment mode enum: ON_CREATE | ON_DEMAND
+      deploymentMode: ON_CREATE
+      # (Optional) Numeric deployment order; lower deploys first
+      deploymentOrder: 1
+      # (Optional) Blueprint parameter overrides
+      parameters:
+        overrides:
+          param-one:
+            # (Optional) Override value for this blueprint parameter
+            value: override-value-one
+            # (Optional) Whether project creators can edit this parameter
+            isEditable: true
+          param-two:
+            value: locked-value
+            isEditable: false
+
+  # Template with ON_DEMAND deployment (second enum variant)
+  test-template-on-demand:
+    test-env-blueprint-demand:
+      deploymentMode: ON_DEMAND
+      deploymentOrder: 2
+      parameters:
+        overrides:
+          demand-param:
+            value: demand-override
+            isEditable: false
+
+# (Optional) Project profiles defining environment blueprints and
+# deployment configurations. Profiles are reusable templates that
+# determine which environments are provisioned when a project is created.
+projectProfiles:
+  # Profile using an environment template with all optional properties
+  test-profile-full:
+    # (Optional) Target AWS account ID for the profile's environments
+    account: '{{account}}'
+    # (Optional) Target AWS region for the profile's environments
+    region: '{{region}}'
+    # (Optional) Domain unit path for profile scoping
+    domainUnit: /root/team-a
+    # (Optional) Reference to a template in projectProfileEnvironmentsTemplates
+    environmentsTemplate: test-template-on-create
+    # (Optional) Profile-specific environments merged with template environments
+    environments:
+      profile-specific-env:
+        deploymentMode: ON_CREATE
+        deploymentOrder: 3
+        parameters:
+          overrides:
+            profile-param:
+              value: profile-value
+              isEditable: true
+
+  # Minimal profile with only environments (no template, no account/region)
+  test-profile-minimal:
+    environments:
+      minimal-env:
+        deploymentMode: ON_DEMAND
+
+# (Optional) SageMaker projects to create in the domain. Each project
+# references a project profile and can include data sources and membership.
+projects:
+  # Project with all optional properties exercised
+  test-project-full:
+    # (Required) Name of the project profile to use
+    profileName: test-profile-full
+    # (Optional) Domain unit path where the project will be created
+    domainUnit: /some/domain/unit
+    # (Optional) Per-environment configuration overrides
+    environmentConfigs:
+      test-env-blueprint:
+        # (Optional) Map of parameter name to value
+        parameters:
+          env-param-key: env-param-value
+    # (Optional) Data sources to import into the project
+    dataSources:
+      test-source:
+        # (Required) Glue database name for the data source
+        databaseName: test-database-name
+      second-source:
+        databaseName: another-database
+    # (Optional) Owner users with PROJECT_OWNER designation
+    ownerUsers:
+      owner1: test-owner-user
+    # (Optional) Owner groups with PROJECT_OWNER designation
+    ownerGroups:
+      ownergrp1: test-owner-group
+    # (Optional) Contributor users with PROJECT_CONTRIBUTOR designation
+    users:
+      user1: test-contributor-user
+    # (Optional) Contributor groups with PROJECT_CONTRIBUTOR designation
+    groups:
+      grp1: test-contributor-group
+
+  # Minimal project with only required profileName
+  test-project-minimal:
+    profileName: test-profile-minimal

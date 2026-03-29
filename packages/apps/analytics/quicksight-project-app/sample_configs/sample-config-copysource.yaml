@@ -1,0 +1,34 @@
+# QuickSight Project configuration using copied credentials from another
+# data source. Use this variant when you want to share credentials across
+# multiple data sources without duplicating secret references.
+
+# Named QuickSight principals (users or groups) referenced in folder and
+# data source permissions. Each key is a logical name, value is the
+# QuickSight principal ARN.
+principals:
+  Lob1_AUTHORS_GROUP: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:group/lob1-qs-ns/lob1-qs-ns-AUTHORS'
+
+# (Optional) Nested map of data source type to data source configurations
+# for QuickSight project data connectivity. Outer key is the data source
+# type (e.g., REDSHIFT, ATHENA), inner key is a unique data source ID.
+dataSources:
+  REDSHIFT:
+    datasource-copysource:
+      # Type-specific connection parameters
+      dataSourceSpecificParameters:
+        redshiftParameters:
+          database: 'default_db'
+          clusterId: 'sample-datawarehouse'
+      # A display name for the data source
+      displayName: 'sampleRedshiftCopySource'
+      # (Optional) Credentials used to connect to the data source.
+      # Uses copySourceArn to share credentials from another data source.
+      credentials:
+        # (Optional) The ARN of a data source that has the credential
+        # pair that you want to use
+        copySourceArn: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:datasource/existing-datasource-id'
+      # A list of resource permissions on the data source
+      permissions:
+        - actions: 'AUTHOR_DATA_SOURCE'
+          # The Amazon Resource Name (ARN) of the principal
+          principal: 'Lob1_AUTHORS_GROUP'

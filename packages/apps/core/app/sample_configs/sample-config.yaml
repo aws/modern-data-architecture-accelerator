@@ -1,0 +1,23 @@
+# Sample config for the Core App module — direct deployment mode.
+# Exercises nag_suppressions (the only root property compatible with
+# direct deployment). sagemakerBlueprint and service_catalog_product_config
+# are mutually exclusive deployment modes covered in separate sample configs.
+
+# CDK Nag suppression configurations for compliance rule management
+nag_suppressions:
+  # Array of CDK Nag suppressions organized by CloudFormation resource path
+  by_path:
+    - # CloudFormation resource path identifying the specific resource
+      path: /test-org-test-env-test-domain-test-module/TestResource/Resource
+      # Array of specific CDK Nag rule suppressions with rule IDs and justifications
+      suppressions:
+        - # CDK Nag rule ID to suppress
+          id: AwsSolutions-S1
+          # Mandatory justification for audit compliance
+          reason: Access logging not required for test bucket
+        - id: AwsSolutions-S10
+          reason: SSL not required for internal test bucket
+    - path: /test-org-test-env-test-domain-test-module/AnotherResource/Resource
+      suppressions:
+        - id: HIPAA.Security-S3BucketLoggingEnabled
+          reason: Logging handled by centralized audit infrastructure

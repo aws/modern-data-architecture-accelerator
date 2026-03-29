@@ -1,0 +1,19 @@
+# Minimal Bedrock Builder module configuration.
+# Deploys a single Bedrock Agent with a foundation model.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Admin roles granted access to Bedrock agent resources
+dataAdminRoles:
+  - name: 'Admin'
+
+# (Optional) Bedrock agent with a foundation model
+agents:
+  test-agent:
+    # Reference to role used as execution role on the agent.
+    # Must have assume-role trust with bedrock.amazonaws.com.
+    role:
+      name: agent-execution-role
+    # Foundation model identifier for agent reasoning
+    foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0'
+    # Agent instructions defining behavior
+    instruction: 'You are a helpful assistant.'

@@ -1,0 +1,45 @@
+# Minimal Redshift Data Warehouse module configuration.
+# Contains only the required properties for a basic Redshift cluster
+# deployment with VPC networking, security group, and audit logging.
+
+# Admin username for the Redshift cluster. A secret is
+# automatically generated for the password.
+adminUsername: admin
+
+# Number of days between admin password rotation
+adminPasswordRotationDays: 30
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Admin roles granted full access to cluster resources including
+# KMS keys and S3 buckets
+dataAdminRoles:
+  - arn: arn:{{partition}}:iam::{{account}}:role/Admin
+
+# Enable audit logging to a dedicated S3 bucket
+enableAuditLoggingToS3: true
+
+# Redshift node type determining compute and storage capacity
+nodeType: RA3_4XLARGE
+# Number of nodes in the Redshift cluster
+numberOfNodes: 2
+
+# Weekly maintenance window in ddd:hh24:mi-ddd:hh24:mi format (UTC)
+preferredMaintenanceWindow: Sun:23:45-Mon:00:15
+
+# Security group ingress rules defining allowed inbound
+# connections to the cluster port
+securityGroupIngress:
+  ipv4:
+    - 172.31.0.0/16
+
+# Subnet IDs for Redshift cluster node placement
+# Often created by your VPC/networking stack.
+# Example SSM: ssm:/path/to/subnet/id
+subnetIds:
+  - subnet-12312312421
+  - subnet-12312321412
+
+# VPC ID for Redshift cluster deployment
+# Often created by your VPC/networking stack.
+# Example SSM: ssm:/path/to/vpc/id
+vpcId: vpc-12321421412

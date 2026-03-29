@@ -1,0 +1,26 @@
+# Minimal DataOps Step Function module configuration.
+# Deploys a single Step Functions state machine with a basic
+# pass-through definition, wired to a DataOps project.
+
+# (Optional) DataOps project name for resource autowiring.
+projectName: dataops-project-sample
+
+# List of step function definitions
+stepfunctionDefinitions:
+  - stateMachineName: my-state-machine
+    # State machine type (STANDARD or EXPRESS)
+    stateMachineType: STANDARD
+    # ARN of role used to execute the step function
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    stateMachineExecutionRole: 'arn:{{partition}}:iam::{{account}}:role/service-role/StepFunctions-role'
+    # Enable or disable logging execution data
+    logExecutionData: false
+    # Amazon States Language (ASL) definition
+    rawStepFunctionDef:
+      Comment: Minimal state machine
+      StartAt: PassState
+      States:
+        PassState:
+          Type: Pass
+          End: true

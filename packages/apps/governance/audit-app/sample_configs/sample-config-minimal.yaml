@@ -1,0 +1,9 @@
+# Minimal Audit module configuration.
+# Deploys an S3 audit bucket with read access for a single role.
+# All properties are optional but at least one readRole or
+# sourceAccount is recommended for a useful deployment.
+
+# (Optional) Roles granted read access to audit logs via bucket
+# policy.
+readRoles:
+  - arn: arn:{{partition}}:iam::{{account}}:role/Admin

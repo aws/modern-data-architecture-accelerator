@@ -5,13 +5,13 @@
 
 import { StepFunctionCDKApp } from '../lib/dataops-stepfunction';
 
-test('SynthTest', () => {
+test('SynthTest without projectName', () => {
   const context = {
     org: 'test-org',
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/test-config.yaml',
+    module_configs: './sample_configs/sample-config-noproject.yaml',
   };
   const app = new StepFunctionCDKApp({ context: context });
   app.generateStack();
@@ -23,13 +23,49 @@ test('SynthTest', () => {
   ).not.toThrow();
 });
 
-test('SynthTest without projectName', () => {
+test('SynthTest - minimal config', () => {
   const context = {
     org: 'test-org',
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/test-config-noproject.yaml',
+    module_configs: './sample_configs/sample-config-minimal.yaml',
+  };
+  const app = new StepFunctionCDKApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - comprehensive config', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-comprehensive.yaml',
+  };
+  const app = new StepFunctionCDKApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - express config', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-express.yaml',
   };
   const app = new StepFunctionCDKApp({ context: context });
   app.generateStack();

@@ -1,0 +1,191 @@
+# Comprehensive sample config for the DataZone module.
+# Exercises ALL compatible non-excluded properties at full depth.
+# Covers both enum variants, all PolicyType values, nested domain units,
+# cross-account associations, and all principal types.
+
+# (Optional) KMS key ARN for Glue catalog encryption in this account.
+# If omitted, looked up from the standard LF Settings SSM parameter.
+glueCatalogKmsKeyArn: test-glue-catalog-key-arn
+
+# (Optional) IAM role for Lake Formation permission management across
+# all domains. If omitted, looked up from the standard LF Settings SSM param.
+lakeformationManageAccessRole:
+  arn: 'arn:{{partition}}:iam::{{account}}:role/test-lf-admin-role'
+
+# Map of domain names to DataZone domain configurations (required)
+domains:
+  # First domain: SSO disabled, manual user assignment
+  test-domain:
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    # (Required) IAM role with administrative privileges over the domain
+    dataAdminRole:
+      name: Admin
+
+    # (Optional) Human-readable description of the domain
+    description: DataZone Domain Description
+
+    # (Optional) SSO integration type (enum: DISABLED | IAM_IDC)
+    singleSignOnType: IAM_IDC
+
+    # (Optional) User assignment mode (enum: MANUAL | AUTOMATIC)
+    userAssignment: AUTOMATIC
+
+    # (Optional) Users to be added to the domain (IAM or SSO)
+    users:
+      # IAM-based user (mutually exclusive with ssoId)
+      iam-user-name:
+        iamRole:
+          arn: role-arn
+      # SSO-based user (mutually exclusive with iamRole)
+      sso-user-name:
+        ssoId: sso-user-id
+
+    # (Optional) Groups to be added to the domain (SSO only)
+    groups:
+      test-sso-group1:
+        ssoId: test
+      test-sso-group2:
+        ssoId: test2
+
+    # (Optional) Users granted ownership of the root domain unit
+    ownerUsers:
+      - sso-user-name
+    # (Optional) Groups granted ownership of the root domain unit
+    ownerGroups:
+      - test-sso-group1
+    # (Optional) Associated accounts granted ownership of the root domain unit
+    ownerAccounts:
+      - associated-account-name1
+
+    # (Optional) Hierarchical domain units for organizing projects
+    domainUnits:
+      test-unit1:
+        ownerUsers:
+          - sso-user-name
+        ownerAccounts:
+          - associated-account-name2
+        description: testing
+        # (Optional) When true, all domain users are allowed access
+        allowAllUsers: true
+        # (Optional) Fine-grained authorization policies
+        authorizationPolicies:
+          # PolicyType: CREATE_DOMAIN_UNIT
+          create-domain-unit-policy:
+            policyType: 'CREATE_DOMAIN_UNIT'
+            principals:
+              - userName: sso-user-name
+              - accountName: associated-account-name1
+            includeChildDomainUnits: true
+            description: Allow creating child domain units
+          # PolicyType: CREATE_PROJECT
+          create-project-policy:
+            policyType: 'CREATE_PROJECT'
+            principals:
+              - userName: iam-user-name
+              - groupName: test-sso-group1
+              - allUsersGrantFilter: true
+            # (Optional) Blueprint authorization configuration
+            blueprintConfig:
+              includeChildDomainUnits: true
+              # projectDesignation (enum: CONTRIBUTOR | OWNER)
+              projectDesignation: OWNER
+          # PolicyType: CREATE_GLOSSARY
+          create-glossary-policy:
+            policyType: 'CREATE_GLOSSARY'
+            principals:
+              # userIdentifier with name and identifier
+              - userIdentifier:
+                  name: sso-user-name
+                  identifier: sso-user-id
+              # groupIdentifier with name and identifier
+              - groupIdentifier:
+                  name: test-sso-group1
+                  identifier: test-group-id
+            # (Optional) Specific domain unit ID to scope the policy
+            domainUnitId: test-domain-unit-id
+          # PolicyType: CREATE_ASSET_TYPE
+          create-asset-type-policy:
+            policyType: 'CREATE_ASSET_TYPE'
+            principals:
+              - userName: sso-user-name
+          # PolicyType: CREATE_ENVIRONMENT
+          create-environment-policy:
+            policyType: 'CREATE_ENVIRONMENT'
+            principals:
+              - groupName: test-sso-group1
+          # PolicyType: CREATE_ENVIRONMENT_FROM_BLUEPRINT
+          create-env-from-blueprint-policy:
+            policyType: 'CREATE_ENVIRONMENT_FROM_BLUEPRINT'
+            principals:
+              - userName: iam-user-name
+          # PolicyType: CREATE_ENVIRONMENT_PROFILE
+          create-env-profile-policy:
+            policyType: 'CREATE_ENVIRONMENT_PROFILE'
+            principals:
+              - userName: sso-user-name
+          # PolicyType: CREATE_FORM_TYPE
+          create-form-type-policy:
+            policyType: 'CREATE_FORM_TYPE'
+            principals:
+              - groupName: test-sso-group2
+          # PolicyType: ADD_TO_PROJECT_MEMBER_POOL
+          add-to-project-member-pool-policy:
+            policyType: 'ADD_TO_PROJECT_MEMBER_POOL'
+            principals:
+              - userName: sso-user-name
+          # PolicyType: CREATE_PROJECT_FROM_PROJECT_PROFILE
+          create-project-from-profile-policy:
+            policyType: 'CREATE_PROJECT_FROM_PROJECT_PROFILE'
+            principals:
+              - allUsersGrantFilter: true
+          # PolicyType: DELEGATE_CREATE_ENVIRONMENT_PROFILE
+          delegate-create-env-profile-policy:
+            policyType: 'DELEGATE_CREATE_ENVIRONMENT_PROFILE'
+            principals:
+              - accountName: associated-account-name1
+          # PolicyType: OVERRIDE_DOMAIN_UNIT_OWNERS
+          override-domain-unit-owners-policy:
+            policyType: 'OVERRIDE_DOMAIN_UNIT_OWNERS'
+            principals:
+              - userName: sso-user-name
+          # PolicyType: OVERRIDE_PROJECT_OWNERS
+          override-project-owners-policy:
+            policyType: 'OVERRIDE_PROJECT_OWNERS'
+            principals:
+              - groupName: test-sso-group1
+            # blueprintConfig with CONTRIBUTOR variant
+            blueprintConfig:
+              includeChildDomainUnits: false
+              projectDesignation: CONTRIBUTOR
+        # (Optional) Nested child domain units
+        domainUnits:
+          test-unit2:
+            description: testing
+            ownerGroups:
+              - test-sso-group2
+            # (Optional) Specific user names allowed access
+            allowedUsers:
+              - sso-user-name
+            # (Optional) Specific group names allowed access
+            allowedGroups:
+              - test-sso-group1
+
+    # (Optional) Cross-account associations
+    associatedAccounts:
+      associated-account-name1:
+        # (Required) AWS account ID
+        account: '222222222222'
+        # (Optional) KMS key ARN for Glue catalog encryption
+        glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
+        # (Optional) Create a DataZone domain user for CDK deployments
+        createCdkUser: true
+        # (Optional) IAM role ARN for Lake Formation access management
+        lakeformationManageAccessRoleArn: 'arn:{{partition}}:iam::{{account}}:role/test-role'
+        # (Optional) CDK deployment role ARN for cross-account provisioning
+        cdkRoleArn: 'arn:{{partition}}:iam::222222222222:role/test-cdk-role'
+        # (Optional) AWS region for the associated account resources
+        region: test-region
+      associated-account-name2:
+        account: '333333333333'
+        createCdkUser: true
+        lakeformationManageAccessRoleArn: 'arn:{{partition}}:iam::{{account}}:role/test-role'

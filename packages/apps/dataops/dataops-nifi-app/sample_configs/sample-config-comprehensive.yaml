@@ -1,0 +1,342 @@
+# Comprehensive sample config for the DataOps NiFi module.
+# Exercises every compatible, non-excluded property at full depth.
+# Wired to a DataOps project for auto-resolution of shared resources.
+
+# DataOps project name for NiFi resource autowiring
+projectName: dataops-project-test
+
+# SNS topic ARN for job notifications and workflow alerts
+notificationTopicArn: arn:{{partition}}:sns:{{region}}:{{account}}:test-topic
+
+nifi:
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # Admin roles with access to EKS cluster resources.
+  # Roles can be referenced by name (auto-expanded to ARN) or by explicit ARN.
+  adminRoles:
+    # Role by name (auto-expanded to ARN at deploy time)
+    - name: Admin
+    # Role by ARN
+    - arn: arn:{{partition}}:iam::{{account}}:role/eks-admin
+    # Role by name (auto-expanded to ARN at deploy time)
+    - name: NifiAdmin
+
+  # EC2 management instance for EKS cluster administration with kubectl access
+  mgmtInstance:
+    # Subnet ID for management instance network placement
+    subnetId: test-subnet-id
+    # Availability zone for management instance placement
+    availabilityZone: test-az
+    # EC2 key pair name for SSH access
+    keyPairName: test-key-pair
+    # User data commands for management instance initialization
+    userDataCommands:
+      - echo "Installing kubectl"
+      - curl -LO https://dl.k8s.io/release/stable.txt
+
+  # VPC ID for EKS and NiFi cluster deployment
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: test-vpc-id
+
+  # Named subnet ID mappings for cluster deployment
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnetIds:
+    subnet1: test-subnet-id-1
+    subnet2: test-subnet-id-2
+
+  # Existing ACM Private CA ARN for signing the internal CA
+  existingPrivateCaArn: arn:{{partition}}:acm-pca:test-region:test-account:certificate-authority/test-acm-pca-id
+
+  # CA certificate validity period (must be <7 days for ACM Private CA short-term certs)
+  caCertDuration: 144h0m0s
+  # Time before CA cert expiration to trigger renewal
+  caCertRenewBefore: 12h0m0s
+
+  # Node certificate validity period (must be <6 days for ACM Private CA short-term certs)
+  nodeCertDuration: 140h0m0s
+  # Time before node cert expiration to trigger renewal
+  nodeCertRenewBefore: 6h0m0s
+
+  # Certificate key algorithm (e.g., RSA, ECDSA)
+  certKeyAlg: RSA
+  # Certificate key size in bits
+  certKeySize: 4096
+
+  # Ingress rules for the EKS control plane security group
+  eksSecurityGroupIngressRules:
+    # Security group-based ingress rules
+    sg:
+      - sgId: sg-kubectlclientid
+        protocol: tcp
+        port: 443
+        # Ending port for port range rules
+        toPort: 443
+        # Human-readable description of the rule
+        description: Allow kubectl access from bastion
+    # IPv4 CIDR-based ingress rules
+    ipv4:
+      - cidr: 10.0.0.0/16
+        protocol: tcp
+        port: 443
+        toPort: 443
+        description: Allow kubectl from corporate network
+    # Prefix list-based ingress rules
+    prefixList:
+      - prefixList: pl-12345678
+        protocol: tcp
+        port: 443
+        toPort: 443
+        description: Allow kubectl from managed prefix list
+
+  # Security groups granted ingress to all NiFi cluster EFS security groups
+  additionalEfsIngressSecurityGroupIds:
+    - sg-glefsclientid
+
+  # Security groups granted ingress to all NiFi cluster security groups
+  securityGroupIngressSGs:
+    - sg-glnificlientid
+
+  # IPv4 CIDRs granted ingress to all NiFi cluster security groups
+  securityGroupIngressIPv4s:
+    - 10.10.10.10/24
+
+  # Global egress rules for all NiFi cluster security groups
+  securityGroupEgressRules:
+    sg:
+      - sgId: sg-egressdest
+        protocol: tcp
+        port: 443
+    ipv4:
+      - cidr: 0.0.0.0/0
+        protocol: tcp
+        port: 443
+        description: Allow HTTPS egress
+    prefixList:
+      - prefixList: pl-egress123
+        protocol: tcp
+        port: 443
+
+  # Named NiFi cluster configurations
+  clusters:
+    # First cluster: exercises all cluster-level properties
+    test1:
+      # Number of nodes in the NiFi cluster
+      nodeCount: 2
+      # Node compute size (enum: SMALL, MEDIUM, LARGE, XLARGE, 2XLARGE)
+      nodeSize: SMALL
+      # Docker image tag for NiFi
+      nifiImageTag: '1.25.0'
+      # Admin identities for NiFi cluster management
+      adminIdentities:
+        - 'some-admin-identity'
+        - 'some-other-admin-identity'
+      # Peer cluster names for cross-cluster communication
+      peerClusters:
+        - test2
+      # Named NiFi Registry client configurations
+      registryClients:
+        example-extra-client:
+          # NiFi Registry URL for flow versioning
+          url: https://some-external-registry-url:8443
+      # External node identities authorized to join the cluster
+      externalNodeIdentities:
+        - CN=test-external-node1
+        - CN=test-external-node2
+      # User identities authorized to access the cluster
+      identities:
+        - test-identity-1
+        - test-identity-2
+        - test-identity-3
+      # User groups for group-based access control
+      groups:
+        test_group:
+          - test-identity-1
+          - test-identity-2
+      # NiFi access policies for resource-level permissions
+      policies:
+        - resource: /data/ROOT_ID
+          # Policy action (enum: READ, WRITE, DELETE)
+          action: READ
+        - resource: /data/ROOT_ID
+          action: WRITE
+        - resource: /system
+          action: DELETE
+      # Authorization rules with pattern-based resource matching
+      authorizations:
+        - policyResourcePattern: /data/ROOT_ID
+          # Policy actions granted for matched resources
+          actions:
+            - READ
+          # User groups the authorization applies to
+          groups:
+            - test_group
+          # User identities the authorization applies to
+          identities:
+            - 'test-identity-1'
+        - policyResourcePattern: /data/.*
+          actions:
+            - READ
+            - WRITE
+          groups:
+            - test_group
+          identities:
+            - 'test-identity-1'
+      # SAML IdP configuration for authentication
+      saml:
+        # SAML Identity Provider metadata URL
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'
+      # Per-cluster EFS ingress security groups
+      additionalEfsIngressSecurityGroupIds:
+        - sg-efsclientid
+      # Per-cluster security group ingress SGs
+      securityGroupIngressSGs:
+        - sg-nificlientid
+      # Per-cluster security group ingress IPv4 CIDRs
+      securityGroupIngressIPv4s:
+        - 10.10.10.10/24
+      # Per-cluster egress rules
+      securityGroupEgressRules:
+        sg:
+          - sgId: sg-clusteregressdest
+            protocol: tcp
+            port: 443
+      # AWS managed policies for the NiFi cluster role
+      clusterRoleAwsManagedPolicies:
+        - policyName: AmazonS3ReadOnlyAccess
+          suppressionReason: 'AmazonS3ReadOnlyAccess authorized for use'
+      # Customer managed policy ARNs for the NiFi cluster role
+      clusterRoleManagedPolicies:
+        - 'customer-managed-policy-1'
+
+    # Second cluster: exercises remaining enum values and port overrides
+    test2:
+      nodeCount: 3
+      # Exercise MEDIUM nodeSize enum value
+      nodeSize: MEDIUM
+      saml:
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'
+      adminIdentities:
+        - 'example_admin_identity'
+      # HTTPS port override (default 8443)
+      httpsPort: 8444
+      # Remote port override (default 10000)
+      remotePort: 10001
+      # Cluster protocol port override (default 14443)
+      clusterPort: 14444
+      peerClusters:
+        - test1
+
+    # Third cluster: exercises LARGE nodeSize
+    test3:
+      nodeCount: 1
+      nodeSize: LARGE
+      saml:
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'
+      adminIdentities:
+        - 'large-cluster-admin'
+
+    # Fourth cluster: exercises XLARGE nodeSize
+    test4:
+      nodeCount: 1
+      nodeSize: XLARGE
+      saml:
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'
+      adminIdentities:
+        - 'xlarge-cluster-admin'
+
+    # Fifth cluster: exercises 2XLARGE nodeSize
+    test5:
+      nodeCount: 1
+      nodeSize: 2XLARGE
+      saml:
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'
+      adminIdentities:
+        - '2xlarge-cluster-admin'
+
+  # NiFi Registry configuration for flow versioning and template management
+  registry:
+    # Admin identities for Registry management
+    adminIdentities:
+      - 'CN=some-admin-identity'
+      - 'CN=some-other-admin-identity'
+    # Docker image tag for NiFi Registry
+    registryImageTag: '1.25.0'
+    # HTTPS port for Registry web interface
+    httpsPort: 18443
+    # External node identities for Registry access
+    externalNodeIdentities:
+      - CN=test-external-node1
+      - CN=test-external-node2
+    # User identities for Registry access
+    identities:
+      - test-identity-1
+      - test-identity-2
+      - test-identity-3
+    # User groups for Registry access control
+    groups:
+      test_group:
+        - test-identity-1
+        - test-identity-2
+    # Registry bucket configurations with full policy coverage
+    buckets:
+      example-extra-bucket:
+        # READ policy with groups and identities
+        READ:
+          groups:
+            - test_group
+          identities:
+            - test-identity-1
+        # WRITE policy with groups and identities
+        WRITE:
+          groups:
+            - test_group
+          identities:
+            - test-identity-2
+        # DELETE policy with groups and identities
+        DELETE:
+          groups:
+            - test_group
+          identities:
+            - test-identity-3
+    # Registry access policies
+    policies:
+      - resource: /buckets
+        action: READ
+      - resource: /buckets
+        action: WRITE
+      - resource: /buckets
+        action: DELETE
+    # Registry authorization rules
+    authorizations:
+      - policyResourcePattern: /data/
+        actions:
+          - READ
+        groups:
+          - test_group
+        identities:
+          - 'test-identity-1'
+      - policyResourcePattern: /data/.*
+        actions:
+          - READ
+          - WRITE
+        groups:
+          - test_group
+        identities:
+          - 'test-identity-1'
+    # AWS managed policies for the Registry cluster role
+    registryRoleAwsManagedPolicies:
+      - policyName: AmazonS3ReadOnlyAccess
+        suppressionReason: 'AmazonS3ReadOnlyAccess authorized for Registry use'
+    # Customer managed policy ARNs for the Registry cluster role
+    registryRoleManagedPolicies:
+      - 'registry-customer-managed-policy-1'
+    # Registry-level security group ingress SGs
+    securityGroupIngressSGs:
+      - sg-registryclientid
+    # Registry-level security group ingress IPv4 CIDRs
+    securityGroupIngressIPv4s:
+      - 10.20.20.0/24
+    # Registry-level EFS ingress security groups
+    additionalEfsIngressSecurityGroupIds:
+      - sg-registryefsclientid

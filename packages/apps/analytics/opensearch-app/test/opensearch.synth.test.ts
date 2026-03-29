@@ -11,7 +11,45 @@ test('SynthTest', () => {
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/test-config.yaml',
+    module_configs: './sample_configs/sample-config-comprehensive.yaml',
+  };
+  const app = new OpensearchCDKApp({ context: context });
+  app.generateStack();
+
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - SAML variant', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-saml.yaml',
+  };
+  const app = new OpensearchCDKApp({ context: context });
+  app.generateStack();
+
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - Minimal config', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-minimal.yaml',
   };
   const app = new OpensearchCDKApp({ context: context });
   app.generateStack();

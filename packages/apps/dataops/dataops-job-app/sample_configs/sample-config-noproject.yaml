@@ -1,0 +1,128 @@
+# Sample config for the DataOps Job module - no-project variant.
+# Demonstrates standalone Glue jobs with explicit KMS, bucket,
+# deployment role, and security configuration.
+
+# (Optional) KMS key ARN for encrypting DataOps resources and data.
+# Auto-resolved from project when projectName is set.
+kmsArn: arn:test-partition:kms:test-region:test-acct:key/test-key-id
+# (Optional) Glue security configuration name for job encryption
+# (at rest, in transit, CloudWatch logs). Auto-resolved from project
+# when projectName is set.
+securityConfigurationName: test-security-config
+# (Optional) IAM role ARN for deployment operations and resource
+# management. Auto-resolved from project when projectName is set.
+deploymentRoleArn: arn:test-partition:iam::test-account:role/test-deployment-role
+# (Optional) S3 bucket name for project storage (scripts, artifacts,
+# temp files). Auto-resolved from project when projectName is set.
+bucketName: test-bucket-name
+# (Optional) SNS topic ARN for job notifications and workflow alerts.
+# Auto-resolved from project when projectName is set.
+notificationTopicArn: arn:test-partition:sns:test-region:test-acct:test-topic
+
+# (Optional) Reusable job templates that can be inherited by job
+# definitions via the template field. Template properties are
+# deep-merged with job-specific overrides.
+templates:
+  ExamplePythonTemplate:
+    # IAM role ARN for Glue job execution permissions.
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    executionRoleArn: some-arn
+    # Job command configuration defining script and runtime
+    # environment.
+    command:
+      # Job type. (enum: glueetl, pythonshell)
+      name: 'glueetl'
+      # (Optional) Python version for job runtime. (enum: 2, 3)
+      pythonVersion: '3'
+      # Relative path to the Glue script for job execution.
+      scriptLocation: ./src/glue/python/job.py
+    # Job description for documentation and management.
+    description: Example of a Glue Job using an inline script
+    # (Optional) Connection names for database and external system
+    # access.
+    connections:
+      - project:connections/connectionVpc
+    # (Optional) Default arguments passed to the job at runtime.
+    defaultArguments:
+      --job-bookmark-option: job-bookmark-enable
+    # (Optional) Execution properties including maximum concurrent
+    # runs.
+    executionProperty:
+      maxConcurrentRuns: 1
+    # (Optional) Glue runtime version for the job.
+    glueVersion: '2.0'
+    # (Optional) Maximum DPU capacity for the job.
+    # Note: Use maxCapacity OR workerType+numberOfWorkers, not both.
+    maxCapacity: 1
+    # (Optional) Maximum retry count before job failure.
+    maxRetries: 3
+    # (Optional) Notification settings for job monitoring and
+    # alerting.
+    notificationProperty:
+      # After a job run starts, minutes to wait before sending a
+      # delay notification.
+      notifyDelayAfter: 1
+    # (Optional) Job timeout in minutes.
+    timeout: 60
+
+  ExampleScalaTemplate:
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    executionRoleArn: some-arn
+    # (Optional) Default arguments passed to the job at runtime.
+    defaultArguments:
+      --job-language: scala
+    # (Optional) Glue runtime version for the job.
+    glueVersion: '5.0'
+
+# Map of job names to Glue job definitions for ETL processing and
+# data transformation.
+jobs:
+  PythonJobOne:
+    # (Optional) Template name for configuration inheritance.
+    template: 'ExamplePythonTemplate'
+    defaultArguments:
+      --Input: s3://some-bucket/some-location1
+    # (Optional) Number of capacity units allocated to the job.
+    allocatedCapacity: 2
+    # (Optional) Continuous logging configuration for real-time
+    # monitoring.
+    continuousLogging:
+      # CloudWatch log group retention in days. Allowed:
+      # 1,3,5,7,14,30,60,90,120,150,180,365,400,545,731,1827,3653,0.
+      logGroupRetentionDays: 3
+
+  PythonJobTwo:
+    template: 'ExamplePythonTemplate'
+    defaultArguments:
+      --Input: s3://some-bucket/some-location2
+      --enable-spark-ui: 'true'
+      --spark-event-logs-path: s3://some-bucket/spark-event-logs-path/JobTwo/
+    allocatedCapacity: 20
+    # (Optional) Relative paths to additional Python scripts for
+    # the job.
+    additionalScripts:
+      - ./src/glue/python/helper_etl.py
+      - ./src/glue/python/utils/core.py
+    # (Optional) Relative paths to additional files for the job.
+    additionalFiles:
+      - ./src/glue/scala/extra_file.txt
+
+  ScalaJobOne:
+    template: 'ExampleScalaTemplate'
+    description: testing
+    defaultArguments:
+      --class: some.java.package.App
+    allocatedCapacity: 2
+    command:
+      # Job type. (enum: glueetl, pythonshell)
+      name: 'glueetl'
+      # Relative path to the Glue script for job execution.
+      scriptLocation: ./src/glue/scala/App.scala
+    # (Optional) Relative paths to additional files for the job.
+    additionalFiles:
+      - ./src/glue/scala/extra_file.txt
+    # (Optional) Relative paths to additional JAR files for the job.
+    additionalJars:
+      - ./src/glue/scala/lib/extra.jar

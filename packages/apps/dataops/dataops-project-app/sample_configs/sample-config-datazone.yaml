@@ -1,0 +1,53 @@
+# DataZone variant sample config for the DataOps Project module.
+# Exercises the DataZone integration path (mutually exclusive with sagemaker).
+
+# Data engineer roles with operational access to project resources
+dataEngineerRoles:
+  - name: data-engineer
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Data admin roles with full administrative access to all project resources
+dataAdminRoles:
+  - name: Admin
+
+# Pre-defined execution roles for project resource operations
+projectExecutionRoles:
+  - name: glue-role
+
+# DataZone configuration for data governance and catalog integration.
+# Mutually exclusive with sagemaker.
+datazone:
+  # SSM parameter name containing domain configuration
+  domainConfigSSMParam: /test-org/test-domain/test-datazone/domain/test-domain/config
+  # DataZone project configuration
+  project:
+    # Domain unit identifier for organizational hierarchy
+    domainUnit: test-domain-unit
+    # DataZone environment configuration for Lake Formation integration
+    environment:
+      # Lake Formation manage access role reference
+      lakeformationManageAccessRole:
+        name: lf-manage-access-role
+    # MDAA module group config names with PROJECT_CONTRIBUTOR designation
+    groups:
+      contributor-group: group-config-name
+    # MDAA module group config names with PROJECT_OWNER designation
+    ownerGroups:
+      owner-group: owner-group-config-name
+    # MDAA module user config names with PROJECT_OWNER designation
+    ownerUsers:
+      owner-user: owner-user-config-name
+    # MDAA module user config names with PROJECT_CONTRIBUTOR designation
+    users:
+      contributor-user: user-config-name
+
+databases:
+  # DataZone Project Data Source
+  test-database-datazone:
+    description: Test DataZone Database
+    # Auto-create DataZone data sources for this database
+    createDatazoneDatasource: true
+    # Often created by the Data Lake module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<datalake_module_name>/bucket/<zone_name>/name
+    locationBucketName: some-bucket-name
+    locationPrefix: data/test-sus

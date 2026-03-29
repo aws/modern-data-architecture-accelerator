@@ -1,0 +1,16 @@
+# Minimal LakeFormation Access Control module configuration.
+# Contains only required properties for a basic grant.
+
+# Principals referenced by grants
+principals:
+  principalA:
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    role:
+      name: Admin
+
+# Lake Formation grants
+grants:
+  example_grant:
+    database: example_database
+    principals:
+      - principalA

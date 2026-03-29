@@ -1,29 +1,53 @@
 # IAM Roles and Policies
 
-The Roles CDK application is used to deploy IAM roles which can be used within a broader data environment.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/governance/roles-app/index.html).
 
-## Deployed Resources and Compliance Details
+Deploys IAM roles, customer-managed policies, and SAML federation providers for a governed data environment. Supports persona-based policy assignment (data-admin, data-engineer, data-scientist, data-steward), multiple trust principal types, and CDK Nag suppression management. Use this module when you need to create IAM roles for your data teams that can be referenced across other MDAA modules for consistent, persona-based access control.
+
+---
+
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+**IAM Managed Policies** - Customer-managed policies created from config-defined policy documents. MDAA persona-based managed policies optionally created for attachment to roles. Policies violating CDK Nag rules require explicit suppressions.
+
+**IAM Roles** - Roles with configurable trust policies supporting account root, service principals, SAML federation, cross-account role ARNs, and assume role conditions. Roles can specify a base persona for automatic policy attachment.
+
+**IAM Identity (Federation) Providers** - SAML identity providers for establishing federated assume-role trust into generated roles. New providers created from SAML metadata XML documents.
+
+**SSM Parameters** - Role ARN and Role ID stored in Parameter Store for each generated role, enabling cross-module reference via `generated-role-id:` shorthand.
 
 ![Roles](../../../constructs/L3/governance/roles-l3-construct/docs/Roles.png)
 
-**IAM Managed Policies** -
-  * An IAM 'Customer' Managed Policy will be created for each policy specified in the config.
-  
-    *Policies which violate CDK Nag rule sets will require explicit suppressions*
+---
 
-  * MDAA Managed Policies will be created, which can be attached to the IAM Roles specified in the config.
+## Related Modules
 
+- [Data Lake](../../datalake/datalake-app/README.md) — Roles created here can be referenced as data admin, read, write, or super roles on data lake buckets
+- [Athena Workgroup](../../datalake/athena-workgroup-app/README.md) — Roles can be referenced as data admin or user roles for workgroup access
+- [DataOps Project](../../dataops/dataops-project-app/README.md) — Roles can be referenced as data engineer, execution, or data admin roles for project resources
+- [Data Warehouse](../../analytics/datawarehouse-app/README.md) — Roles can be used as execution roles or federation roles for Redshift access
+- [Data Science Team](../../ai/data-science-team-app/README.md) — Roles can be referenced as team user or data admin roles for SageMaker and Athena access
+- [Lake Formation Access Control](../lakeformation-access-control-app/README.md) — Roles can be used as principals for Lake Formation fine-grained access grants
+- [SageMaker Studio](../../ai/sm-studio-domain-app/README.md) — Roles can be referenced as data admin roles or custom execution roles for Studio domains
+- [QuickSight Namespace](../../analytics/quicksight-namespace-app/README.md) — Roles can be used for SAML federation into QuickSight namespaces
 
-**IAM Roles** - An IAM role will be created for each role specified in the config.
+---
 
-* Roles can have one or more assume role trust policy statements
-* Roles can specify usage persona ( data-admin, data-engineer, data-scientist, data-steward ) to attach relevant policies
+## Security/Compliance Details
 
-**IAM Identity (Federation) Providers** - IAM identity providers which can be used to establish SAML federation (via assume role trust) into generated roles
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
 
-* New federation providers can be created by providing the SAML metadata XML document
+- **Least Privilege**:
+  - Roles follow least-privilege principles with explicit trust policies
+  - Persona-based managed policies provide standardized permission sets
+  - CDK Nag integration validates security best practices with required suppressions for exceptions
+- **Separation of Duties**:
+  - Permission boundaries and CDK Nag rules help guide roles toward organizational security standards
+  - SAML federation enables SSO integration with existing identity providers
 
-***
+---
 
 ## Configuration
 
@@ -32,123 +56,36 @@ The Roles CDK application is used to deploy IAM roles which can be used within a
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          roles: # Module Name can be customized
-            module_path: "@aws-mdaa/roles" # Must match module NPM package name
-            module_configs:
-              - ./roles.yaml # Filename/path can be customized
+roles: # Module Name can be customized
+  module_path: '@aws-mdaa/roles' # Must match module NPM package name
+  module_configs:
+    - ./roles.yaml # Filename/path can be customized
 ```
 
-### Module Config (./roles.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./roles.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Creates a single IAM role with account-level trust. All properties are optional, but at least one role is recommended for a useful deployment. Start here for a basic role that other MDAA modules can reference.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-# Optional - If true (default), a set of MDAA managed policies will be created for use in predefined personas.
-createPersonaManagedPolicies: true
-
-# Used to configure SAML federations
-federations:
-  existing-federation: # Should be descriptive and unique
-    # This is the arn of an existing IAM Identity Provider
-    providerArn: arn:{{partition}}:iam::{{account}}:saml-provider/ExampleIdentityProvider
-  new-federation: # Should be descriptive and unique
-    # Path to a Saml Metadata Doc, which will be used to create
-    # a SAML Identity Provider in IAM. Relative paths should be prefixed with a "./"
-    samlDoc: ./path/to/samlMetaDoc.xml
-
-# Generate Managed Policies. These Managed Policies can be 
-generatePolicies:
-  TestPolicy:
-    policyDocument:
-      Statement:
-        - SID: testing
-          Effect: Allow
-          Resource: 
-            - "arn:{{partition}}:s3:::*"
-          Action:
-            - s3:List*
-            - s3:GetBucket*
-    suppressions:
-      - id: "AwsSolutions-IAM5"
-        reason: "Wildcard testing ok!"
-  VerbatimPolicy:
-    # If specified, the policy name will be created verbatim (Ie "VerbatimPolicy" )
-    # Otherwise the policy name will be generated using the naming module and above policy object name ("VerbatimPolicy")
-    verbatimPolicyName: true
-    policyDocument:
-      Statement:
-        - SID: testing
-          Effect: Allow
-          Resource: 
-            - "arn:{{partition}}:s3:::*"
-          Action:
-            - s3:List*
-            - s3:GetBucket*
-    suppressions:
-      - id: "AwsSolutions-IAM5"
-        reason: "Wildcard testing ok!"
-# The list of roles which will be generated
-generateRoles:
-  my-data-admin:
-    trustedPrincipal: this_account
-    # basePersona(optional) - Specify a persona which can be applied to the role.
-    # Allowed values: "data-admin"| "data-engineer" | "data-scientist"
-    basePersona: data-admin
-    generatedPolicies:
-      - TestPolicy
-  test-role:
-    # By trusting 'this_account', AssumeRoleTrust will be established with IAM root of this account
-    trustedPrincipal: this_account
-    # List of AWS managed policies (by policy name)
-    awsManagedPolicies:
-      - service-role/AWSLambdaBasicExecutionRole
-    # List of existing customer managed policies (by policy name)
-    customerManagedPolicies:
-      - SomeExistingPolicyName
-    # List of policies generated in the generatePolicies section of the config (by config name)
-    generatedPolicies:
-      - TestPolicy
-    suppressions:
-      - id: "AwsSolutions-IAM4"
-        reason: "AWSLambdaBasicExecutionRole approved for use"
-  glue-role:
-    trustedPrincipal: service:glue.amazonaws.com
-    awsManagedPolicies:
-      - service-role/AWSGlueServiceRole
-    suppressions:
-      - id: "AwsSolutions-IAM4"
-        reason: "AWSGlueServiceRole approved for use"
-  # An example role which uses SAML federation
-  data-scientist:
-    trustedPrincipal: federation:example-federation
-    generatedPolicies:
-      - TestPolicy
-
-  # An example role which will be assumable by another role, such as
-  # the role being used by an application.
-  application_data_role1:
-    trustedPrincipal: arn:{{partition}}:iam::{{account}}:role/test-application-role
-    generatedPolicies:
-      - TestPolicy
-
-  # An example role which will be assumable by another role, such as
-  # the role being used by an application.
-  application_data_role2:
-    trustedPrincipal: this_account
-    assumeRoleTrustConditions:
-      StringEquals:
-        aws:PrincipalArn: arn:{{partition}}:iam::{{account}}:role/test-application-role
-    generatedPolicies:
-      - TestPolicy
-
-  # An example role which will be assumable by multple services
-  multiple_service_role:
-    trustedPrincipal: service:sagemaker.amazonaws.com
-    additionalTrustedPrincipals:
-      - trustedPrincipal: service:sagemaker.amazonaws.com
-        additionalTrustedActions: ["sts:SetSourceIdentity"]
-      - trustedPrincipal: service:elasticmapreduce.amazonaws.com
-        additionalTrustedActions: ["sts:SetSourceIdentity"]
-    generatedPolicies:
-      - TestPolicy
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+Generates IAM roles, customer-managed policies, and SAML federation providers with persona-based policy assignment (data-admin, data-engineer, data-scientist), multiple trust principal types, and CDK Nag suppression management. Start here when evaluating all available options for personas, trust policies, SAML federation, and custom managed policies.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

@@ -1,0 +1,50 @@
+# Sample config for the DataOps Data Quality module.
+# Demonstrates standalone data quality rulesets with explicit KMS,
+# bucket, deployment role, and security configuration (no projectName).
+
+# KMS key ARN for encrypting DataOps resources and data.
+kmsArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id
+# S3 bucket name for project storage (scripts, artifacts, temp files).
+bucketName: test-dq-bucket
+# IAM role ARN for deployment operations and resource management.
+deploymentRoleArn: arn:{{partition}}:iam::{{account}}:role/test-deploy-role
+# Glue security configuration name for job encryption.
+securityConfigurationName: test-security-config
+# SNS topic ARN for job notifications and workflow alerts.
+notificationTopicArn: arn:{{partition}}:sns:{{region}}:{{account}}:test-topic
+
+# Map of ruleset names to Glue Data Quality ruleset definitions for automated table validation.
+rulesets:
+  customer-data-quality:
+    # Description explaining the purpose and scope of the ruleset.
+    description: Validate customer data completeness and uniqueness
+    # Target table specifying which Glue Catalog table to validate.
+    targetTable:
+      # Glue database name containing the target table.
+      databaseName: project:databaseName/customer-data
+      # Glue table name to validate with data quality rules.
+      tableName: customers
+    # Ruleset as an array of structured rule objects.
+    ruleset:
+      - ruleType: IsComplete
+        column: customer_id
+      - ruleType: Uniqueness
+        column: email
+        comparisonOperator: '>'
+        threshold: 0.95
+      - ruleType: RowCount
+        comparisonOperator: '>'
+        value: 100
+
+  order-data-quality:
+    description: Validate order data freshness and values
+    targetTable:
+      databaseName: project:databaseName/order-data
+      tableName: orders
+    # Ruleset as a raw DQDL string.
+    ruleset: |
+      Rules = [
+        IsComplete "order_id",
+        ColumnValues "status" in ["pending", "completed", "cancelled"],
+        RowCount > 0
+      ]

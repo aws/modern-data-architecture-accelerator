@@ -1,0 +1,24 @@
+# Minimal config for the QuickSight Namespace module.
+# Deploys a single SAML-federated QuickSight namespace with one
+# federation provider and one role mapping.
+
+# Named federation configurations for identity provider integration
+# with QuickSight namespaces. Each federation creates IAM roles for
+# SAML-based access, a QuickSight namespace, users, and groups.
+federations:
+  test-federation:
+    # URL used by the connecting driver (redirect target after SAML
+    # tokens are obtained)
+    url: https://ca-central-1.quicksight.aws.amazon.com/sn/auth/signin?enable-sso=1
+    # ARN or SSM import (prefix with ssm:) of the federation provider
+    providerArn: arn:{{partition}}:iam::{{account}}:saml-provider/test-provider
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    # QS groups and role info for creating IAM roles, QS groups, and
+    # registering users with a QS role
+    roles:
+      testReaders:
+        # QS groups this role will be part of
+        qsGroups: ['READERS']
+        # QS role (Reader|Author) info for creating IAM roles
+        # (enum: READER, AUTHOR)
+        qsUserType: 'READER'

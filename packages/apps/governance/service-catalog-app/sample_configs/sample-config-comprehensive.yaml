@@ -1,0 +1,20 @@
+# Sample config for the Service Catalog module.
+# Provisions Service Catalog portfolios with provider details,
+# access controls, and tag options for governed self-service
+# infrastructure deployment. This comprehensive config exercises
+# every compatible property at full depth.
+
+portfolios:
+  TestPortfolio:
+    # Provider name displayed in the Service Catalog console
+    providerName: 'test-provider'
+    # (Optional) Portfolio description for users to understand contents and purpose
+    description: 'testing description'
+    # (Optional) Roles granted access to this portfolio for product provisioning
+    access:
+      # Role by name (auto-expanded to ARN at deploy time)
+      - name: Admin
+      # Role by ARN
+      - arn: arn:{{partition}}:iam::{{account}}:role/TestRole
+      # Role by name (auto-expanded to ARN at deploy time)
+      - name: ServiceCatalogUser

@@ -1,0 +1,9 @@
+# Minimal Glue Catalog module configuration.
+# Deploys the Glue Catalog KMS key and encryption settings.
+# All properties are optional — this config demonstrates a single
+# consumer account for cross-account catalog access.
+
+# (Optional) Consumer accounts granted read access to the Glue
+# Catalog via catalog resource policy.
+consumerAccounts:
+  consumer-team: '222222222222'

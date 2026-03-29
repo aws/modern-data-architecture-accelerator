@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { DMSCDKApp } from '../lib/dms';
 import * as path from 'path';
 
 describe('dataops-dms Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'DMS Stack',
-    Create.stackProvider(
-      'DMSStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'DMS App',
+    Create.appProvider(
+      context => {
         const moduleApp = new DMSCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-dms-main',
@@ -41,20 +32,64 @@ describe('dataops-dms Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'DMS App',
+    'DMS App CDC',
     Create.appProvider(
       context => {
         const moduleApp = new DMSCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-cdc.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-dms-main',
+        module_name: 'test-dms-cdc',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'DMS App Minimal',
+    Create.appProvider(
+      context => {
+        const moduleApp = new DMSCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-dms-minimal',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'DMS App Noproject',
+    Create.appProvider(
+      context => {
+        const moduleApp = new DMSCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-noproject.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-dms-noproject',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

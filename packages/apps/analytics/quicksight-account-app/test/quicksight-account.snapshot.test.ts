@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { QuickSightAccountCDKApp } from '../lib/quicksight-account';
 import * as path from 'path';
 
 describe('quicksight-account Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Quicksight Account Stack',
-    Create.stackProvider(
-      'QuicksightAccountStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Quicksight Account App',
+    Create.appProvider(
+      context => {
         const moduleApp = new QuickSightAccountCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-quicksight-account-main',
@@ -41,20 +32,42 @@ describe('quicksight-account Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Quicksight Account App',
+    'Quicksight Account App Enterprise Q',
     Create.appProvider(
       context => {
         const moduleApp = new QuickSightAccountCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-enterprise-q.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-quicksight-account-main',
+        module_name: 'test-quicksight-account-enterprise-q',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'Quicksight Account App Minimal',
+    Create.appProvider(
+      context => {
+        const moduleApp = new QuickSightAccountCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-quicksight-account-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

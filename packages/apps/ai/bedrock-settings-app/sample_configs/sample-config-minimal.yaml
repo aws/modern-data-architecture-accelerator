@@ -1,0 +1,7 @@
+# Minimal Bedrock Settings module configuration.
+# Enables audit logging to both CloudWatch and S3 with default settings.
+
+# Whether to enable Bedrock audit logging to CloudWatch
+enableAuditLoggingToCloudwatch: true
+# Whether to enable Bedrock audit logging to S3
+enableAuditLoggingToS3: true

@@ -1,0 +1,77 @@
+# Sample config for the DataOps Job module - workerType variant.
+# Exercises the workerType + numberOfWorkers path which is mutually
+# exclusive with maxCapacity. Covers all three workerType enum values.
+
+# (Optional) DataOps project name for job resource autowiring
+# (databases, roles, security).
+projectName: dataops-project-test
+
+# Map of job names to Glue job definitions for ETL processing and
+# data transformation.
+jobs:
+  # Job using Standard worker type.
+  StandardWorkerJob:
+    # IAM role ARN for Glue job execution permissions.
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    executionRoleArn: some-arn
+    # Job description for documentation and management.
+    description: Glue ETL job with Standard worker type
+    command:
+      # Job type. (enum: glueetl, pythonshell)
+      name: 'glueetl'
+      # (Optional) Python version for job runtime. (enum: 2, 3)
+      pythonVersion: '3'
+      # Relative path to the Glue script for job execution.
+      scriptLocation: ./src/glue/python/job.py
+    # (Optional) Glue runtime version for the job.
+    glueVersion: '2.0'
+    # (Optional) Worker type. (enum: Standard, G.1X, G.2X)
+    # Note: Use workerType+numberOfWorkers OR maxCapacity, not both.
+    workerType: Standard
+    # (Optional) Number of workers for parallel processing.
+    numberOfWorkers: 2
+
+  # Job using G.1X worker type.
+  G1XWorkerJob:
+    # IAM role ARN for Glue job execution permissions.
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    executionRoleArn: some-arn
+    # Job description for documentation and management.
+    description: Glue ETL job with G.1X worker type
+    command:
+      # Job type. (enum: glueetl, pythonshell)
+      name: 'glueetl'
+      # (Optional) Python version for job runtime. (enum: 2, 3)
+      pythonVersion: '3'
+      # Relative path to the Glue script for job execution.
+      scriptLocation: ./src/glue/python/job.py
+    # (Optional) Glue runtime version for the job.
+    glueVersion: '3.0'
+    # (Optional) Worker type. (enum: Standard, G.1X, G.2X)
+    workerType: G.1X
+    # (Optional) Number of workers for parallel processing.
+    numberOfWorkers: 4
+
+  # Job using G.2X worker type.
+  G2XWorkerJob:
+    # IAM role ARN for Glue job execution permissions.
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    executionRoleArn: some-arn
+    # Job description for documentation and management.
+    description: Glue ETL job with G.2X worker type
+    command:
+      # Job type. (enum: glueetl, pythonshell)
+      name: 'glueetl'
+      # (Optional) Python version for job runtime. (enum: 2, 3)
+      pythonVersion: '3'
+      # Relative path to the Glue script for job execution.
+      scriptLocation: ./src/glue/python/job.py
+    # (Optional) Glue runtime version for the job.
+    glueVersion: '4.0'
+    # (Optional) Worker type. (enum: Standard, G.1X, G.2X)
+    workerType: G.2X
+    # (Optional) Number of workers for parallel processing.
+    numberOfWorkers: 8

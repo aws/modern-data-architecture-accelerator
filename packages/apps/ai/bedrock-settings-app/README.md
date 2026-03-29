@@ -1,30 +1,55 @@
 # Bedrock Settings
 
-The Bedrock Settings CDK application is used to configure and deploy Amazon Bedrock model invocation audit logging to S3 and/or CloudWatch, providing comprehensive monitoring and compliance capabilities for Bedrock model usage.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/ai/bedrock-settings-app/index.html).
 
-***
+Configures Amazon Bedrock model invocation audit logging to S3 and/or CloudWatch, providing monitoring and compliance capabilities for Bedrock model usage. Use this module when you need to track and audit all Bedrock model invocations for compliance, cost monitoring, or operational visibility.
 
-## Deployed Resources and Compliance Details
+---
+
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+- **KMS Encryption Key**: Custom KMS key for encrypting Bedrock audit logs
+- **S3 Bucket** (Optional): S3 bucket for storing Bedrock model invocation audit logs
+- **CloudWatch Log Group** (Optional): CloudWatch Log Group for real-time monitoring of Bedrock model invocations with configurable retention policies
+- **IAM Service Role**: Dedicated service role for Bedrock logging operations
+- **IAM Managed Policy**: Custom policy granting permissions for Bedrock to write audit logs to the configured destinations
+- **Custom Resource Lambda**: Lambda function that configures Bedrock's global model invocation logging settings through AWS APIs
+- **Bucket Policy**: Resource-based policy allowing Bedrock service to write audit logs to the S3 bucket
+- **KMS Key Policy**: Key policy allowing Bedrock, CloudWatch Logs, and S3 services to use the encryption key
 
 ![bedrock-settings](../../../constructs/L3/ai/bedrock-settings-l3-construct/docs/bedrock-settings.png)
 
-* **KMS Encryption Key**: Custom KMS key created to encrypt all Bedrock audit logs, ensuring data security and compliance with encryption requirements
-* **S3 Bucket** (Optional): Secure S3 bucket for storing Bedrock model invocation audit logs with server-side encryption using the custom KMS key
-* **CloudWatch Log Group** (Optional): CloudWatch Log Group for real-time monitoring of Bedrock model invocations with configurable retention policies
-* **IAM Service Role**: Dedicated service role for Bedrock logging with least-privilege permissions to access logging destinations
-* **IAM Managed Policy**: Custom policy granting necessary permissions for Bedrock to write audit logs to the configured destinations
-* **Custom Resource Lambda**: Lambda function that configures Bedrock's global model invocation logging settings through AWS APIs
-* **Bucket Policy**: Resource-based policy allowing Bedrock service to write audit logs to the S3 bucket
-* **KMS Key Policy**: Comprehensive key policy allowing Bedrock, CloudWatch Logs, and S3 services to use the encryption key
+---
 
-**Compliance Features:**
-* End-to-end encryption of audit logs using customer-managed KMS keys
-* Configurable log retention policies for compliance requirements
-* Cross-service IAM policies following least-privilege principles
-* Support for both real-time (CloudWatch) and long-term (S3) audit log storage
-* Proper service principal restrictions and condition-based access controls
+## Related Modules
 
-***
+- [Bedrock Builder](../bedrock-builder-app/README.md) — Deploy Bedrock Agents, Knowledge Bases, and Guardrails whose invocations will be captured by the audit logging configured here
+- [Bedrock AgentCore Runtime](../bedrock-agentcore-runtime-app/README.md) — Deploy custom agent runtimes whose Bedrock model invocations will be captured by audit logging
+- [GAIA](../gaia-app/README.md) — Deploy a GenAI application backend whose Bedrock model invocations will be captured by audit logging
+
+---
+
+## Security/Compliance Details
+
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
+
+- **Encryption at Rest**:
+  - All audit logs encrypted using a customer-managed KMS key
+  - KMS key policy restricts access to the account root, Bedrock service, and logging services
+- **Encryption in Transit**:
+  - All log delivery uses TLS-encrypted connections
+- **Least Privilege**:
+  - Dedicated IAM service role scoped to logging destinations only
+  - S3 bucket policy uses condition-based access controls with source account and ARN restrictions
+  - Cross-service access uses proper service principals and condition keys
+- **Logging & Audit**:
+  - Supports real-time monitoring via CloudWatch for Bedrock model invocation audit logs
+  - Supports long-term storage via S3 for Bedrock model invocation audit logs
+  - Configurable log retention policies for compliance requirements
+
+---
 
 ## Configuration
 
@@ -33,52 +58,36 @@ The Bedrock Settings CDK application is used to configure and deploy Amazon Bedr
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          bedrock-settings: # Module Name can be customized
-            module_path: "@aws-mdaa/bedrock-settings" # Must match module NPM package name
-            module_configs:
-              - ./bedrock-settings.yaml # Filename/path can be customized
+bedrock-settings: # Module Name can be customized
+  module_path: '@aws-mdaa/bedrock-settings' # Must match module NPM package name
+  module_configs:
+    - ./bedrock-settings.yaml # Filename/path can be customized
 ```
 
-### Module Config (./bedrock-settings.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./bedrock-settings.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Enables audit logging to both CloudWatch and S3 with default settings. Start here when you need basic Bedrock invocation auditing with sensible defaults and plan to tune retention or destinations later.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-# Controls whether or not Bedrock logs model invocation activity
-
-# Enabling this will result in a new S3 bucket being created
-# specifically for model invocation audit logs.
-# S3 provides long-term storage and is ideal for compliance and archival purposes.
-enableAuditLoggingToS3: true
-
-# Enabling this will result in a new CloudWatch Log Group being created
-# specifically for model invocation audit logs.
-# CloudWatch provides real-time monitoring capabilities and integration with other AWS services.
-enableAuditLoggingToCloudwatch: true
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
 
-**Configuration Requirements:**
-* At least one of `enableAuditLoggingToS3` or `enableAuditLoggingToCloudwatch` must be set to `true`
-* Both options can be enabled simultaneously for comprehensive logging coverage
+#### Comprehensive Configuration
 
-**Resource Naming:**
-* S3 Bucket: `logs-model-invocation-{account}-{region}`
-* CloudWatch Log Group: `/aws/bedrock/model-invocation-logs/bedrock-model-invocation-{region}`
-* KMS Key Alias: `bedrock-kms-key-{region}`
+Configures audit logging for Bedrock model invocations to both S3 (long-term retention) and CloudWatch (real-time monitoring). Use this as a reference when you need full control over log retention, encryption, and dual-destination audit configuration.
 
-**Log Structure:**
-* S3 logs are stored with prefix: `bedrock-model-invocation-logs/bedrock-model-invocation-{region}`
-* CloudWatch logs include large data delivery to S3 for oversized log entries
-* All logs are encrypted at rest using the dedicated KMS key
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
-**Security Considerations:**
-* The KMS key policy restricts access to the account root, Bedrock service, and logging services
-* S3 bucket policy uses condition-based access controls with source account and ARN restrictions
-* IAM service role follows least-privilege principles with resource-specific permissions
-* All cross-service access uses proper service principals and condition keys
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
 
-**Monitoring and Observability:**
-* CloudWatch logs enable real-time monitoring and alerting on Bedrock usage
-* S3 storage provides long-term audit trails for compliance and analysis
-* Large log entries are automatically delivered to S3 even when using CloudWatch as primary destination
-* Logs capture comprehensive model invocation metadata including timestamps, model details, and usage patterns
+---
+
+[Config Schema Docs](SCHEMA.md)

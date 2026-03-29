@@ -1,208 +1,118 @@
-# Bedrock AgentCore Runtime App
+# Bedrock AgentCore Runtime
 
-MDAA application for deploying Amazon Bedrock AgentCore Runtimes with custom Docker containers.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/ai/bedrock-agentcore-runtime-app/index.html).
 
-## Overview
+Deploys Amazon Bedrock AgentCore Runtimes with custom Docker containers, VPC networking, JWT authentication, and lifecycle management. Supports both pre-built ECR images and building from local source code. Use this module when you need to run custom AI agent logic in your own containers with full control over the runtime environment and authentication.
 
-This app enables deployment of custom agent runtimes using Docker containers in Amazon Bedrock AgentCore. It provides configuration-driven deployment with support for:
+---
 
-- Docker image building and deployment
-- IAM role management
-- VPC network configuration (required for security)
-- JWT authorization
-- Lifecycle management
-- Runtime endpoints
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+<!-- TODO: Add architecture diagram -->
+
+- **Bedrock AgentCore Runtime** — Custom agent runtime deployed in VPC mode. Supports Docker containers from ECR or built from source at deploy time.
+- **Bedrock AgentCore Runtime Endpoint** (Optional) — API endpoint for invoking the agent runtime via Bedrock AgentCore APIs.
+- **ECR Docker Image Asset** — Container image built and pushed to ECR at deploy time (when using `codePath`).
+- **IAM Execution Role + Managed Policy** — Runtime execution role with permissions for ECR image access, CloudWatch Logs, X-Ray tracing, CloudWatch Metrics, Bedrock AgentCore workload identity tokens, and Bedrock model invocation. Can use an existing role via `roleArn` or auto-create one.
+- **CloudWatch Log Group** — Log group for runtime execution logs.
+- **SSM Parameters** — Runtime ARN, Runtime ID, Runtime Name, and optionally Endpoint ARN/ID stored in Parameter Store for cross-module reference.
+
+---
+
+## Related Modules
+
+- [Bedrock Builder](../bedrock-builder-app/README.md) — Deploy managed Bedrock Agents as an alternative to custom AgentCore runtimes
+- [Bedrock Settings](../bedrock-settings-app/README.md) — Configure Bedrock model invocation audit logging for runtime model calls
+- [Roles](../../governance/roles-app/README.md) — Create IAM execution roles for AgentCore runtimes
+
+---
+
+## Security/Compliance Details
+
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
+
+- **Encryption at Rest**:
+  - CloudWatch log groups encrypted per account settings
+  - Container images stored in ECR with default encryption
+- **Encryption in Transit**:
+  - All runtime API communications use TLS
+  - X-Ray tracing data transmitted securely
+- **Least Privilege**:
+  - Execution role scoped to specific permissions for ECR access, CloudWatch Logs, X-Ray, and Bedrock model invocation
+  - Supports using an existing role or auto-creating one with minimal required permissions
+- **Network Isolation**:
+  - Runtimes deployed in VPC mode with no public internet access unless explicitly configured via VPC routing
+  - JWT authentication (custom or standard) controls runtime endpoint access
+
+---
+
+## AWS Service Endpoints
+
+The following VPC endpoints may be required if public AWS service endpoint connectivity is unavailable (e.g., private subnets without NAT gateway, firewalled environments, or PrivateLink-only architectures):
+
+| AWS Service         | Endpoint Service Name                          | Type      |
+| ------------------- | ---------------------------------------------- | --------- |
+| Bedrock AgentCore   | `com.amazonaws.{region}.bedrock-agent-runtime` | Interface |
+| Bedrock Runtime     | `com.amazonaws.{region}.bedrock-runtime`       | Interface |
+| ECR API             | `com.amazonaws.{region}.ecr.api`               | Interface |
+| ECR Docker          | `com.amazonaws.{region}.ecr.dkr`               | Interface |
+| CloudWatch Logs     | `com.amazonaws.{region}.logs`                  | Interface |
+| SSM Parameter Store | `com.amazonaws.{region}.ssm`                   | Interface |
+| STS                 | `com.amazonaws.{region}.sts`                   | Interface |
+| S3                  | `com.amazonaws.{region}.s3`                    | Gateway   |
+| X-Ray               | `com.amazonaws.{region}.xray`                  | Interface |
+
+---
 
 ## Configuration
 
-### Basic Configuration
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-- type: bedrock_agentcore_runtime
-  agentRuntimeName: myAgentRuntime
-  description: "Custom agent runtime for development"
-  agentRuntimeArtifact:
-    containerConfiguration:
-      codePath: ./agent-code
-      platform: linux/arm64
-  networkConfiguration:
-    securityGroups:
-      - sg-12345678
-    subnets:
-      - subnet-12345678
-      - subnet-87654321
-  environmentVariables:
-    ENVIRONMENT: dev
-    LOG_LEVEL: INFO
+bedrock-agentcore-runtime: # Module Name can be customized
+  module_path: '@aws-mdaa/bedrock-agentcore-runtime' # Must match module NPM package name
+  module_configs:
+    - ./bedrock-agentcore-runtime.yaml # Filename/path can be customized
 ```
 
-### With Pre-built Container Image
+### Module Config Samples and Variants
+
+Copy the contents of the relevant sample config below into the `./bedrock-agentcore-runtime.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Contains only required properties for deploying an agent runtime with a pre-built container image and VPC networking. Start here for a quick proof-of-concept runtime using an existing ECR image.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-- type: bedrock_agentcore_runtime
-  agentRuntimeName: myAgentRuntime
-  agentRuntimeArtifact:
-    containerConfiguration:
-      containerUri: "123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest"
-  networkConfiguration:
-    securityGroups:
-      - sg-12345678
-    subnets:
-      - subnet-12345678
-      - subnet-87654321
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
 
+#### Comprehensive Configuration (Pre-built Container Image)
 
+Deploys an agent runtime using a pre-built ECR container image with VPC networking, JWT authentication, IAM policies, header forwarding, and lifecycle management. Start here when evaluating all available options for securing and managing a production AgentCore runtime.
 
-### With JWT Authorization
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
-- type: bedrock_agentcore_runtime
-  agentRuntimeName: mySecureRuntime
-  agentRuntimeArtifact:
-    containerConfiguration:
-      codePath: ./agent-code
-  networkConfiguration:
-    securityGroups:
-      - sg-12345678
-    subnets:
-      - subnet-12345678
-      - subnet-87654321
-  authorizerConfiguration:
-    customJwtAuthorizer:
-      discoveryUrl: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_ABC123/.well-known/openid-configuration"
-      allowedAudience:
-        - "client-id-1"
-      allowedClients:
-        - "client-id-1"
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
 ```
 
-### With Lifecycle Configuration
+#### Local Code Path Variant
+
+Builds the container image from a local Dockerfile instead of referencing a pre-built ECR image. Choose this variant when developing custom agent runtimes from source code and you want CDK to build and push the image at deploy time. Also demonstrates the alternative `jwtAuthorizer` (vs `customJwtAuthorizer` in the comprehensive config).
+
+[sample-config-codepath.yaml](sample_configs/sample-config-codepath.yaml)
 
 ```yaml
-- type: bedrock_agentcore_runtime
-  agentRuntimeName: myManagedRuntime
-  agentRuntimeArtifact:
-    containerConfiguration:
-      codePath: ./agent-code
-  networkConfiguration:
-    securityGroups:
-      - sg-12345678
-    subnets:
-      - subnet-12345678
-      - subnet-87654321
-  lifecycleConfiguration:
-    idleRuntimeSessionTimeout: 3600
-    maxLifetime: 7200
+--8<-- "sample_configs/sample-config-codepath.yaml"
 ```
 
-### With Runtime Endpoint
+---
 
-```yaml
-- type: bedrock_agentcore_runtime
-  agentRuntimeName: myRuntime
-  agentRuntimeArtifact:
-    containerConfiguration:
-      codePath: ./agent-code
-  networkConfiguration:
-    securityGroups:
-      - sg-12345678
-    subnets:
-      - subnet-12345678
-      - subnet-87654321
-  runtimeEndpoint:
-    name: my_runtime_endpoint
-    description: "Endpoint for runtime invocation"
-```
-
-### With Custom IAM Policies
-
-```yaml
-- type: bedrock_agentcore_runtime
-  agentRuntimeName: myRuntime
-  agentRuntimeArtifact:
-    containerConfiguration:
-      codePath: ./agent-code
-  networkConfiguration:
-    securityGroups:
-      - sg-12345678
-    subnets:
-      - subnet-12345678
-      - subnet-87654321
-  policies:
-    - policyArn: arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
-```
-
-## Configuration Properties
-
-### Required Properties
-
-- `agentRuntimeName`: Name of the runtime
-- `agentRuntimeArtifact`: Container configuration
-  - `containerConfiguration`: Container image configuration
-    - `containerUri`: Pre-built ECR image URI (mutually exclusive with codePath)
-    - `codePath`: Local directory path for building Docker image (mutually exclusive with containerUri)
-    - `platform`: Target platform (linux/arm64 or linux/amd64, defaults to linux/arm64)
-- `networkConfiguration`: VPC network configuration (required for security)
-  - `securityGroups`: Array of security group IDs (1-16 items)
-  - `subnets`: Array of subnet IDs (1-16 items)
-  
-  Note: All runtimes are deployed in VPC mode for security.
-
-### Optional Properties
-
-- `description`: Runtime description
-- `environmentVariables`: Environment variables for the container
-- `lifecycleConfiguration`: Session management configuration
-  - `idleRuntimeSessionTimeout`: Idle timeout in seconds (60-28800)
-  - `maxLifetime`: Maximum lifetime in seconds (60-28800)
-- `authorizerConfiguration`: Access control configuration
-  - `customJwtAuthorizer`: JWT authorizer configuration
-    - `discoveryUrl`: OIDC discovery URL (required, must end with /.well-known/openid-configuration)
-    - `allowedAudience`: Array of allowed audience values
-    - `allowedClients`: Array of allowed client IDs
-- `requestHeaderConfiguration`: HTTP header forwarding configuration
-  - `requestHeaderAllowlist`: Array of header names to forward (1-20 items)
-- `protocolConfiguration`: Protocol-specific configuration
-- `roleArn`: Existing IAM role ARN (if not provided, role will be created)
-- `policies`: Array of IAM policies to attach to the runtime role
-  - `policyArn`: Managed policy ARN
-  - `policyDocument`: Inline policy document
-- `runtimeEndpoint`: Endpoint configuration
-  - `name`: Endpoint name (alphanumeric and underscores only)
-  - `description`: Endpoint description
-  - `agentRuntimeVersion`: Specific runtime version
-
-## Docker Container Requirements
-
-Your Docker container must:
-- Expose the required ports for Bedrock AgentCore
-- Implement the Bedrock AgentCore Runtime API
-- Be compatible with the specified platform (ARM64 or AMD64)
-
-## IAM Permissions
-
-The app automatically creates IAM roles with permissions for:
-- ECR image access
-- CloudWatch Logs
-- X-Ray tracing
-- CloudWatch Metrics (bedrock-agentcore namespace)
-- Bedrock AgentCore workload identity tokens
-- Bedrock model invocation
-
-## SSM Parameters
-
-The app stores runtime information in SSM Parameter Store:
-- Runtime ARN
-- Runtime ID
-- Runtime Name
-- Endpoint ARN (if configured)
-- Endpoint ID (if configured)
-
-## Dependencies
-
-- `@aws-mdaa/app`
-- `@aws-mdaa/bedrock-agentcore-runtime-l3-construct`
-- `@aws-mdaa/config`
-- `@aws-mdaa/iam-role-helper`
-- `@aws-mdaa/l3-construct`
+[Config Schema Docs](SCHEMA.md)

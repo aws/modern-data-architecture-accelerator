@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { AuditTrailCDKApp } from '../lib/audit-trail';
 import * as path from 'path';
 
 describe('audit-trail Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Audit Trail Stack',
-    Create.stackProvider(
-      'AuditTrailStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Audit Trail App',
+    Create.appProvider(
+      context => {
         const moduleApp = new AuditTrailCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-audit-trail-main',
@@ -41,20 +32,20 @@ describe('audit-trail Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Audit Trail App',
+    'Audit Trail App Minimal',
     Create.appProvider(
       context => {
         const moduleApp = new AuditTrailCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-audit-trail-main',
+        module_name: 'test-audit-trail-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

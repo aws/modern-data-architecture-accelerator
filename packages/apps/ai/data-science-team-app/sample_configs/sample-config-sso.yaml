@@ -1,0 +1,68 @@
+# Sample config for the Data Science Team module with SSO authentication.
+# Demonstrates SSO auth mode with an existing security group and existing
+# domain bucket. Use this approach when integrating with AWS IAM Identity
+# Center (SSO) for federated user access to SageMaker Studio.
+#
+# For IAM auth mode with full property coverage, see sample-config-comprehensive.yaml.
+
+# Complete data science team infrastructure configuration with SSO auth.
+team:
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # Admin roles granted access to team resources including KMS keys,
+  # S3 buckets, and SageMaker resources.
+  dataAdminRoles:
+    - arn: 'arn:{{partition}}:iam::{{account}}:role/Admin'
+
+  # (Optional) Team member roles for accessing shared resources.
+  teamUserRoles:
+    - name: AWSReservedSSO_datascientist_abcdefg
+      # (Optional) Flag indicating the role should be resolved as
+      # an AWS SSO auto-generated role
+      sso: true
+
+  # Execution role for SageMaker workloads including training jobs,
+  # endpoints, and notebooks.
+  teamExecutionRole:
+    name: team-execution-role
+
+  # (Optional) SageMaker Studio domain configuration with SSO auth
+  # and existing security group / domain bucket.
+  studioDomainConfig:
+    # Authentication mode (enum: IAM, SSO)
+    authMode: SSO
+    # VPC ID for Studio domain deployment
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-id
+    # Subnet IDs for Studio user applications
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetIds:
+      - subnet-id
+    # (Optional) Existing security group ID. Use this instead of
+    # securityGroupIngress/securityGroupEgress when you have a
+    # pre-existing security group to attach to the Studio domain.
+    securityGroupId: sg-existing-sg-id
+    # (Optional) Domain bucket configuration for shared storage.
+    # Use this when you have a pre-existing S3 bucket for the
+    # domain instead of letting the module create one.
+    domainBucket:
+      # S3 bucket name to use as the domain bucket
+      domainBucketName: 'existing-domain-bucket'
+      # Role used to deploy lifecycle assets. Must be assumable by
+      # Lambda with write access to the domain bucket.
+      assetDeploymentRole:
+        name: asset-deployment-role
+    # (Optional) Named user profiles for Studio domain. Key is the
+    # user identifier: SSO User ID (SSO mode).
+    userProfiles:
+      sso-user-id:
+        # (Optional) The role from which the user will launch the
+        # user profile in Studio.
+        userRole:
+          name: AWSReservedSSO_datascientist_abcdefg
+          sso: true
+    # (Optional) Default user settings for Studio applications
+    defaultUserSettings:
+      # (Optional) Studio web portal state (enum: ENABLED, DISABLED)
+      studioWebPortal: DISABLED

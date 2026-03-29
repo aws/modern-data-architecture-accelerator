@@ -1,12 +1,14 @@
 # Lambda Functions
 
-The Data Ops Lambda CDK application is used to deploy the resources required to orchestrate data operations on the data lake using Lambda functions. The Lambda functions can currently be triggered by S3 EventBridge notifications (Required to be enabled on the source buckets) and EventBridge Rules.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/dataops/dataops-lambda-app/index.html).
+
+Deploys Lambda functions for data operations with VPC binding, EventBridge triggers (S3 notifications and scheduled rules), encrypted DLQ, Lambda layers, and Docker build support for complex dependencies. Common scenarios include running lightweight data transformations, responding to S3 upload events, executing scheduled data processing tasks, or integrating with external APIs as part of a data pipeline.
 
 ---
 
-## Deployed Resources and Compliance Details
+## Deployed Resources
 
-![dataops-lambda](../../../constructs/L3/dataops/dataops-lambda-l3-construct/docs/dataops-lambda.png)
+This module deploys and integrates the following resources:
 
 **Lambda Layers** - Lambda layers which can be used in Lambda functions (inside or outside of this config)
 
@@ -14,15 +16,59 @@ The Data Ops Lambda CDK application is used to deploy the resources required to 
 
 - May be optionally VPC bound with configurable VPC, Subnet, and Security Group Parameters
   - Can use an existing security group (from Project, for instance), or create a new security group per function
-  - If creating a per-function security group:
-    - All egress allowed by default (configurable)
-    - No ingress allowed (not configurable)
-- Function environment encrypted using project KMS Key
-- Encrypted DLQ automatically added for each Lambda with configurable retry/retention parameters
+- DLQ automatically added for each Lambda with configurable retry/retention parameters
 
 **EventBridge Rules** - EventBridge rules for triggering Lambda functions with events such as S3 Object Created Events
 
 - EventBridge Notifications must be enabled on any bucket for which a rule is specified
+
+![dataops-lambda](../../../constructs/L3/dataops/dataops-lambda-l3-construct/docs/dataops-lambda.png)
+
+---
+
+## Related Modules
+
+- [DataOps Project](../dataops-project-app/README.md) — Deploy the shared project infrastructure (KMS keys, security groups) that Lambda functions reference
+- [Step Functions](../dataops-stepfunction-app/README.md) — Orchestrate Lambda functions with Step Functions state machines
+- [Dashboard](../dataops-dashboard-app/README.md) — Visualize Lambda function metrics and logs in CloudWatch dashboards
+- [EventBridge](../../utility/eventbridge-app/README.md) — Deploy custom event buses that Lambda functions can publish to or be triggered by
+- [Data Lake](../../datalake/datalake-app/README.md) — Lambda functions can process data in data lake S3 buckets via EventBridge S3 notifications
+
+---
+
+## Security/Compliance Details
+
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, to assist in meeting organization-specific compliance requirements.
+
+- **Encryption at Rest**:
+  - Function environment variables encrypted with project KMS key
+  - DLQ messages encrypted with project KMS key
+- **Least Privilege**:
+  - Execution roles specified per function
+  - Configurable reserved concurrency to prevent resource exhaustion
+- **Network Isolation**:
+  - Optional VPC binding with configurable egress rules (CIDR, security group, prefix list)
+  - Per-function security groups deny all ingress by default
+  - All egress allowed by default (configurable)
+
+---
+
+## AWS Service Endpoints
+
+The following VPC endpoints may be required for VPC-bound Lambda functions if public AWS service endpoint connectivity is unavailable (e.g., private subnets without NAT gateway, firewalled environments, or PrivateLink-only architectures):
+
+| AWS Service         | Endpoint Service Name           | Type      |
+| ------------------- | ------------------------------- | --------- |
+| Lambda              | `com.amazonaws.{region}.lambda` | Interface |
+| KMS                 | `com.amazonaws.{region}.kms`    | Interface |
+| S3                  | `com.amazonaws.{region}.s3`     | Gateway   |
+| SQS                 | `com.amazonaws.{region}.sqs`    | Interface |
+| CloudWatch Logs     | `com.amazonaws.{region}.logs`   | Interface |
+| STS                 | `com.amazonaws.{region}.sts`    | Interface |
+| SSM Parameter Store | `com.amazonaws.{region}.ssm`    | Interface |
+| EventBridge         | `com.amazonaws.{region}.events` | Interface |
+
+Additional VPC endpoints may be required depending on the AWS services accessed by your custom Lambda function code.
 
 ---
 
@@ -33,260 +79,46 @@ The Data Ops Lambda CDK application is used to deploy the resources required to 
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          dataops-lambda: # Module Name can be customized
-            module_path: "@aws-mdaa/dataops-lambda" # Must match module NPM package name
-            module_configs:
-              - ./dataops-lambda.yaml # Filename/path can be customized
+dataops-lambda: # Module Name can be customized
+  module_path: '@aws-mdaa/dataops-lambda' # Must match module NPM package name
+  module_configs:
+    - ./dataops-lambda.yaml # Filename/path can be customized
 ```
 
-### Module Config (./dataops-lambda.yaml)
+### Module Config Samples and Variants
+
+Copy the contents of the relevant sample config below into the `./dataops-lambda.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Deploys a single Lambda function with project autowiring. Start here for a basic data operations function within an existing DataOps project.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-minimal.yaml"
+```
+
+#### Comprehensive Configuration
+
+Demonstrates Lambda functions and layers with VPC connectivity, environment variables, event schedules, and SQS triggers, all wired to a DataOps project. Start here when evaluating all available options for VPC binding, event triggers, layers, and concurrency settings.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+#### Standalone Configuration (No Project)
+
+Demonstrates standalone Lambda functions and layers with explicit KMS, bucket, deployment role, and security configuration. Use this when deploying outside of a DataOps project, providing infrastructure references directly.
+
+[sample-config-noproject.yaml](sample_configs/sample-config-noproject.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-noproject.yaml"
+```
+
+---
 
 [Config Schema Docs](SCHEMA.md)
-
-### Sample Lambda Config
-
-```yaml
-# (Optional) Name of the Data Ops Project
-# Name the project the resources of which will be used by these functions.
-# Other resources within the project can be referenced in the functions config using
-# the "project:" prefix on the config value.
-projectName: dataops-project-test
-
-# Alternatively, if projectName is not provided, you can supply the parameter directly:
-# kmsArn: arn:aws:kms:region:account:key/key-id  # KMS key for encrypting Lambda environment variables
-
-# List of Lambda layers to create
-layers:
-  - layerName: test-layer
-    src: ./src/lambda/test-layer.zip
-    description: 'test layer'
-
-# List of functions definitions
-functions:
-  # Required function parameters
-  - functionName: testfun # Function name. Must be unique within the config.
-
-    # (Optional) Function Description
-    description: Function descriptions
-
-    # Function source code directory
-    srcDir: ./src/lambda/test
-
-    # Code path to the Lambda handler function.
-    handler: test.lambda_handler
-
-    # The runtime for the function source code.
-    runtime: python3.8
-
-    # The role with which the Lambda function will be executed
-    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
-
-    # Number of times Lambda (0-2) will retry before the invocation event
-    # is sent to DLQ.
-    retryAttempts: 2
-    # The max age of an invocation event before it is sent to DLQ, either due to
-    # failure, or insufficient Lambda capacity.
-    maxEventAgeSeconds: 3600
-
-    # (Optional) Number of seconds after which the function will time out.
-    # Default is 3 seconds
-    timeoutSeconds: 10
-
-    # (Optional) Set of environment variables and values to be passed to function
-    environment:
-      env-var-name: value
-
-    # (Optional) Number of reserved concurrent instances to be configured on the function.
-    # Ensures function always has this amount of concurrency available, but
-    # is subtracted from the overall account-wide concurrency limits.
-    # Default is to not reserve concurrency, and use the account-wide pool.
-    reservedConcurrentExecutions: 100
-
-    # (Optional) Size of function execution memory in MB
-    # Default is 128MB
-    memorySizeMB: 512
-
-    # (Optional) Size of function ephemeral storage in MB
-    # Default is 1024MB
-    ephemeralStorageSizeMB: 1024
-
-    # Integration with Event Bridge for the purpose
-    # of triggering this function with Event Bridge rules
-    eventBridge:
-      # Number of times Event Bridge will attempt to trigger this function
-      # before sending event to DLQ. Note that Event Bridge Lambda invocation
-      # is async, so Lambda Function execution errors will generally be handled
-      # on the Lambda side itself.
-      retryAttempts: 10
-      # The max age of an event before Event Bridges sends it to DLQ.
-      maxEventAgeSeconds: 3600
-      # List of s3 buckets and prefixes which will be monitored via EventBridge in order to trigger this function
-      # Note that the S3 Bucket must have Event Bridge Notifications enabled.
-      s3EventBridgeRules:
-        testing-event-bridge-s3:
-          # The bucket producing event notifications
-          buckets: [sample-org-dev-instance1-datalake-raw]
-          # Optional - The S3 prefix to match events on
-          prefixes: [data/test-lambda/]
-          # Optional - Can specify a custom event bus for S3 rules, but note that S3 EventBridge notifications
-          # are initially sent only to the default bus in the account, and would need to be
-          # forwarded to the custom bus before this rule would match.
-          eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name'
-      # List of generic Event Bridge rules which will trigger this function
-      eventBridgeRules:
-        testing-event-bridge:
-          description: 'testing'
-          eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name'
-          eventPattern:
-            source:
-              - 'glue.amazonaws.com'
-            detail:
-              some_event_key: some_event_value
-        testing-event-bridge-schedule:
-          description: 'testing'
-          # (Optional) - Rules can be scheduled using a crontab expression
-          scheduleExpression: 'cron(0 20 * * ? *)'
-          # (Optional) - If specified, this input will be passed as the event payload to the function.
-          # If not specified, the matched event payload will be passed as input.
-          input:
-            some-test-input-obj:
-              some-test-input-key: test-value
-
-  # Example of a function which is VPC bound using a custom security group for this function
-  - functionName: testfunvpc
-    srcDir: ./src/lambda/test
-    handler: test.lambda_handler
-    runtime: python3.9
-    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
-    # If vpcConfig is specified, Lambda will be VPC bound
-    vpcConfig:
-      # Required - The VPC on which the lambda will be bound
-      vpcId: 'some-vpc-id'
-      # Required - the list of subnet ids on which ENIs will be created for the Lambda
-      subnetIds:
-        - 'some-subnet-id'
-
-      # Optional - If specified, custom security group egress rules will be generated, and
-      # outgoing traffic from the function will be limited to these rules.
-      # If not specified, all outgoing traffic from the function will be permitted.
-      securityGroupEgressRules:
-        # Allow egress to a CIDR range
-        ipv4:
-          - cidr: 10.0.0.0/8
-            port: 443
-            protocol: tcp
-        # Allow egress to another Security Group
-        sg:
-          - sgId: sg-12312412412
-            port: 443
-            protocol: tcp
-        # Allow egress to a prefixlist
-        prefixList:
-          - prefixList: some-prefixlist-id
-            port: 443
-            protocol: tcp
-
-  # Example of a function which is VPC bound using an existing security group
-  - functionName: testfunvpcexistingsg
-    srcDir: ./src/lambda/test
-    handler: test.lambda_handler
-    runtime: python3.9
-    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
-    # If vpcConfig is specified, Lambda will be VPC bound
-    vpcConfig:
-      # Required - The VPC on which the lambda will be bound
-      vpcId: 'some-vpc-id'
-      # Required - the list of subnet ids on which ENIs will be created for the Lambda
-      subnetIds:
-        - 'some-subnet-id'
-      # Optional - If specified, this security group will be bound to the Lambda function vpc interfaces
-      # In this example, we are using a security group generated by the DataOps Project module
-      securityGroupId: project:securityGroupId/test-security-group
-
-  # Example of a function which uses Lambda layers
-  - functionName: testlayerfunction
-    srcDir: ./src/lambda/test
-    handler: test.lambda_handler
-    runtime: python3.9
-    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
-    layerArns:
-      some-existing-layer: some-existing-layer-arn
-    generatedLayerNames:
-      - 'test-layer'
-
-  # Example of a function which uses a DockerBuild
-  - functionName: testdockerfunction
-    srcDir: ./src/lambda/docker
-    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
-    # If true, lambda function will be built and deployed using Docker
-    # In this case, the srcDir is expected to container a Dockerfile
-    dockerBuild: true
-```
-
-## Docker Build Support
-
-The `dockerBuild` feature enables building Lambda functions and layers using Docker containers for complex dependencies and custom runtime environments.
-
-### Lambda Layers with Docker Build
-
-```yaml
-lambdaFunctions:
-  layers:
-    - layerName: my-custom-layer
-      src: ./lambda/layer
-      description: 'Layer with complex dependencies'
-      dockerBuild: true
-```
-
-**Directory Structure:**
-
-```
-lambda/layer/
-├── Dockerfile
-├── requirements.txt
-└── (other files)
-```
-
-**Example Dockerfile for Layer:**
-
-```dockerfile
-FROM public.ecr.aws/lambda/python:3.13
-
-COPY requirements.txt .
-RUN pip install -r requirements.txt -t /asset/python
-
-CMD ["echo", "Layer built successfully"]
-```
-
-### Lambda Functions with Docker Build
-
-```yaml
-lambdaFunctions:
-  functions:
-    - functionName: my-docker-function
-      srcDir: ./lambda/docker-function
-      dockerBuild: true
-      description: 'Function built with Docker'
-```
-
-**Example Dockerfile for Function:**
-
-```dockerfile
-FROM public.ecr.aws/lambda/python:3.13
-
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY app.py ${LAMBDA_TASK_ROOT}
-
-CMD ["app.lambda_handler"]
-```
-
-### Use Cases
-
-Use Docker build when your Lambda requires:
-
-- Native libraries (e.g., NumPy, Pandas with C extensions)
-- System-level dependencies
-- Custom compiled modules
-- Large dependency sets that exceed Lambda layer size limits

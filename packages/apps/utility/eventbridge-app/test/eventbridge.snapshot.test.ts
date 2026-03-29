@@ -4,35 +4,26 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { EventBridgeCDKApp } from '../lib/eventbridge';
 import * as path from 'path';
 
 describe('eventbridge Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Eventbridge Stack',
-    Create.stackProvider(
-      'EventbridgeStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Eventbridge App Comprehensive',
+    Create.appProvider(
+      context => {
         const moduleApp = new EventBridgeCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
-        module_name: 'test-eventbridge-main',
+        module_name: 'test-eventbridge-comprehensive',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',
@@ -41,20 +32,20 @@ describe('eventbridge Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Eventbridge App',
+    'Eventbridge App Minimal',
     Create.appProvider(
       context => {
         const moduleApp = new EventBridgeCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-eventbridge-main',
+        module_name: 'test-eventbridge-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

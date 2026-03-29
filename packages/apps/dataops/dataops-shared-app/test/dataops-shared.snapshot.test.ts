@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { MdaaDataOpsConfigParser, MdaaDataOpsConfigContents } from '../lib/dataops-shared-config';
 import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
 import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
@@ -90,27 +90,6 @@ class TestDataOpsSharedApp extends MdaaCdkApp {
     return [stack];
   }
 }
-snapShotTest(
-  'DataOps Shared Config',
-  Create.stackProvider(
-    'DataOpsSharedStackProject',
-    (_, context) => {
-      const moduleApp = new TestDataOpsSharedApp({
-        context: {
-          ...context,
-          module_configs: path.join(__dirname, 'test-config.yaml'),
-        },
-      });
-      return moduleApp.generateStack();
-    },
-    {
-      module_name: 'test-dataops-shared-project',
-      org: 'analytics-org',
-      env: 'prod',
-      domain: 'data-platform',
-    },
-  ),
-);
 
 snapShotTestApp(
   'DataOps Shared App',
@@ -119,7 +98,7 @@ snapShotTestApp(
       const moduleApp = new TestDataOpsSharedApp({
         context: {
           ...context,
-          module_configs: path.join(__dirname, 'test-config.yaml'),
+          module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
         },
       });
       moduleApp.generateStack();
@@ -127,6 +106,28 @@ snapShotTestApp(
     },
     {
       module_name: 'test-dataops-shared-app',
+      org: 'test-org',
+      env: 'test-env',
+      domain: 'test-domain',
+    },
+  ),
+);
+
+snapShotTestApp(
+  'DataOps Shared App NoProject',
+  Create.appProvider(
+    context => {
+      const moduleApp = new TestDataOpsSharedApp({
+        context: {
+          ...context,
+          module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-noproject.yaml'),
+        },
+      });
+      moduleApp.generateStack();
+      return moduleApp;
+    },
+    {
+      module_name: 'test-dataops-shared-noproject',
       org: 'test-org',
       env: 'test-env',
       domain: 'test-domain',

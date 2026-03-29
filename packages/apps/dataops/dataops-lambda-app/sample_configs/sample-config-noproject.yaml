@@ -1,0 +1,333 @@
+# Sample config for the DataOps Lambda module - no-project variant.
+# Demonstrates standalone Lambda functions and layers with explicit
+# KMS, bucket, deployment role, and security configuration.
+
+# (Optional) KMS key ARN for encrypting DataOps resources and data.
+# Auto-resolved from project when projectName is set.
+kmsArn: arn:test-partition:kms:test-region:test-acct:key/test-key-id
+# (Optional) S3 bucket name for project storage (scripts, artifacts,
+# temp files). Auto-resolved from project when projectName is set.
+bucketName: test-lambda-bucket
+# (Optional) IAM role ARN for deployment operations and resource
+# management. Auto-resolved from project when projectName is set.
+deploymentRoleArn: arn:test-partition:iam::test-acct:role/test-deploy-role
+# (Optional) Glue security configuration name for job encryption
+# (at rest, in transit, CloudWatch logs). Auto-resolved from project
+# when projectName is set.
+securityConfigurationName: test-security-config
+# (Optional) SNS topic ARN for job notifications and workflow alerts.
+# Auto-resolved from project when projectName is set.
+notificationTopicArn: arn:test-partition:sns:test-region:test-acct:test-topic
+
+# (Optional) Lambda layer definitions for shared code and
+# dependencies across functions.
+layers:
+  - layerName: test-layer
+    src: ./src/lambda/test
+    description: 'test layer'
+
+# (Optional) Lambda function definitions for serverless data
+# processing within the project.
+functions:
+  # Required function parameters
+  - functionName: testfun # Function name. Must be unique within the config.
+
+    # (Optional) Function Description
+    description: Function descriptions
+
+    # Function source code directory
+    srcDir: ./src/lambda/test
+
+    # Code path to the Lambda handler function.
+    handler: test.lambda_handler
+
+    # The runtime for the function source code.
+    runtime: python3.8
+
+    # The role with which the Lambda function will be executed
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+
+    # Number of times Lambda (0-2) will retry before the invocation event
+    # is sent to DLQ.
+    retryAttempts: 2
+    # The max age of an invocation event before it is sent to DLQ, either due to
+    # failure, or insufficient Lambda capacity.
+    maxEventAgeSeconds: 3600
+
+    # (Optional) Number of seconds after which the function will timeout.
+    # Default is 3 seconds
+    timeoutSeconds: 10
+
+    # (Optional) Set of environment variables and values to be passed to function
+    environment:
+      env-var-name: value
+
+    # (Optional) Number of reserved concurrent instances to be configured on the function.
+    # Ensures function always has this amount of concurrency available, but
+    # is subtracted from the overall account-wide concurrency limits.
+    # Default is to not reserve concurrency, and use the account-wide pool.
+    reservedConcurrentExecutions: 100
+
+    # (Optional) Size of function execution memory in MB
+    # Default is 128MB
+    memorySizeMB: 512
+
+    # (Optional) Size of function ephemeral storage in MB
+    # Default is 1024MB
+    ephemeralStorageSizeMB: 1024
+
+    # (Optional) Principal ARN granted Lambda invoke permissions.
+    grantInvoke: 'arn:{{partition}}:iam::{{account}}:role/invoker-role'
+
+    # (Optional) Additional resource permissions mapped by SID.
+    additionalResourcePermissions:
+      AllowS3Invoke:
+        # Lambda action (e.g., lambda:InvokeFunction).
+        action: 'lambda:InvokeFunction'
+        # AWS principal ARN for Lambda function access.
+        principal: 's3.amazonaws.com'
+        # Optional source account restriction for cross-account security.
+        sourceAccount: '{{account}}'
+        # Optional source resource ARN restriction for fine-grained access control.
+        sourceArn: 'arn:{{partition}}:s3:::my-trigger-bucket'
+
+    # Integration with Event Bridge for the purpose
+    # of triggering this function with Event Bridge rules
+    eventBridge:
+      # Number of times Event Bridge will attempt to trigger this function
+      # before sending event to DLQ. Note that Event Bridge Lambda invocation
+      # is async, so Lambda Function execution errors will generally be handled
+      # on the Lambda side itself.
+      retryAttempts: 10
+      # The max age of an event before Event Bridges sends it to DLQ.
+      maxEventAgeSeconds: 3600
+      # List of s3 buckets and prefixes which will be monitored via EventBridge in order to trigger this function
+      # Note that the S3 Bucket must have Event Bridge Notifications enabled.
+      s3EventBridgeRules:
+        testing-event-bridge-s3:
+          # The bucket producing event notifications
+          buckets: [sample-org-dev-instance1-datalake-raw]
+          # Optional - The S3 prefix to match events on
+          prefixes: [data/test-lambda/]
+          # Optional - Can specify a custom event bus for S3 rules, but note that S3 EventBridge notifications
+          # are initially sent only to the default bus in the account, and would need to be
+          # forwarded to the custom bus before this rule would match.
+          eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name'
+      # List of generic Event Bridge rules which will trigger this function
+      eventBridgeRules:
+        testing-event-bridge:
+          description: 'testing'
+          eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name'
+          eventPattern:
+            source:
+              - 'glue.amazonaws.com'
+            detail:
+              some_event_key: some_event_value
+        testing-event-bridge-schedule:
+          description: 'testing'
+          # (Optional) - Rules can be scheduled using a crontab expression
+          scheduleExpression: 'cron(0 20 * * ? *)'
+          # (Optional) - If specified, this input will be passed as the event payload to the function.
+          # If not specified, the matched event payload will be passed as input.
+          input:
+            some-test-input-obj:
+              some-test-input-key: test-value
+
+  # Example of a function which is VPC bound using a custom security group for this function
+  - functionName: testfunvpc
+    srcDir: ./src/lambda/test
+    handler: test.lambda_handler
+    runtime: python3.9
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+    # If vpcConfig is specified, Lambda will be VPC bound
+    vpcConfig:
+      # Required - The VPC on which the lambda will be bound
+      vpcId: 'some-vpc-id'
+      # Required - the list of subnet ids on which ENIs will be created for the Lambda
+      subnetIds:
+        - 'some-subnet-id'
+
+      # Optional - If specified, custom security group egress rules will be generated, and
+      # outgoing traffic from the function will be limited to these rules.
+      # If not specified, all outgoing traffic from the function will be permitted.
+      securityGroupEgressRules:
+        # Allow egress to a CIDR range
+        ipv4:
+          - cidr: 10.0.0.0/8
+            port: 443
+            protocol: tcp
+        # Allow egress to another Security Group
+        sg:
+          - sgId: sg-12312412412
+            port: 443
+            protocol: tcp
+        # Allow egress to a prefixlist
+        prefixList:
+          - prefixList: some-prefixlist-id
+            port: 443
+            protocol: tcp
+
+  # Example of a function which is VPC bound using an existing security group
+  - functionName: testfunvpcexistingsg
+    srcDir: ./src/lambda/test
+    handler: test.lambda_handler
+    runtime: python3.9
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+    # If vpcConfig is specified, Lambda will be VPC bound
+    vpcConfig:
+      # Required - The VPC on which the lambda will be bound
+      vpcId: 'some-vpc-id'
+      # Required - the list of subnet ids on which ENIs will be created for the Lambda
+      subnetIds:
+        - 'some-subnet-id'
+      # Optional - If specified, this security group will be bound to the Lambda function vpc interfaces
+      # In this example, we are using a security group generated by the DataOps Project module
+      securityGroupId: test-security-group-id
+
+  # Example of a function which uses Lambda layers
+  - functionName: testlayerfunction
+    srcDir: ./src/lambda/test
+    handler: test.lambda_handler
+    runtime: python3.9
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+    layerArns:
+      some-existing-layer: some-existing-layer-arn
+    generatedLayerNames:
+      - 'test-layer'
+
+  # Example of a function which uses a DockerBuild
+  - functionName: testdockerfunction
+    srcDir: ./src/lambda/docker
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+    # If true, lambda function will be built and deployed using Docker
+    # In this case, the srcDir is expected to container a Dockerfile
+    dockerBuild: true
+
+  # Example of a function with CloudWatch Logs Insights queries
+  - functionName: testobservabilityfunction
+    srcDir: ./src/lambda/test
+    handler: test.lambda_handler
+    runtime: python3.9
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+    description: Function with CloudWatch observability features
+
+    # CloudWatch Logs Insights queries for analyzing function logs
+    logInsightsQueries:
+      # Query without explicit log groups (will use function's log group)
+      - queryName: testobservabilityfunction/errors
+        queryString: |
+          fields @timestamp, @message
+          | filter @message like /ERROR/
+          | sort @timestamp desc
+
+      # Query with explicit log groups for cross-function analysis
+      - queryName: testobservabilityfunction/performance
+        queryString: |
+          fields @timestamp, @duration, @billedDuration, @memorySize, @maxMemoryUsed
+          | stats avg(@duration), max(@duration), min(@duration), avg(@maxMemoryUsed)
+        logGroupNames:
+          - /aws/lambda/testobservabilityfunction
+          - /aws/lambda/testfun
+
+      # Query without limit clause (will be auto-added)
+      - queryName: testobservabilityfunction/recent-invocations
+        queryString: |
+          fields @timestamp, @requestId, @message
+          | sort @timestamp desc
+
+    # CloudWatch metric filters for extracting custom metrics from logs
+    metricFilters:
+      # Filter with single transformation
+      - filterName: error-count
+        filterPattern: '{ $.level = "error" }'
+        metricTransformations:
+          - metricName: error-count
+            metricNamespace: TestObservability/Errors
+            metricValue: '1'
+            unit: Count
+
+      # Filter with multiple transformations
+      - filterName: processing-metrics
+        filterPattern: '[timestamp, request_id, level, msg, duration_ms, memory_mb]'
+        metricTransformations:
+          - metricName: processing-duration-ms
+            metricNamespace: TestObservability/Performance
+            metricValue: '$duration_ms'
+            unit: Milliseconds
+          - metricName: memory-usage-mb
+            metricNamespace: TestObservability/Performance
+            metricValue: '$memory_mb'
+            unit: Megabytes
+
+      # Filter with dimensions
+      - filterName: error-count-with-dimensions
+        filterPattern: '{ $.level = "error" }'
+        metricTransformations:
+          - metricName: error-count-by-type
+            metricNamespace: TestObservability/Errors
+            metricValue: '1'
+            unit: Count
+            dimensions:
+              Environment: test
+              Service: observability
+
+    # CloudWatch alarms for monitoring metrics
+    alarms:
+      # Simple single metric alarm referencing custom metric
+      - alarmName: high-error-rate
+        metricName: error-count
+        namespace: TestObservability/Errors
+        statistic: Sum
+        period: 300
+        evaluationPeriods: 1
+        threshold: 5
+        comparisonOperator: GreaterThanOrEqualToThreshold
+        treatMissingData: notBreaching
+        alarmDescription: Alert when error count exceeds threshold
+        actionsEnabled: true
+        alarmActions:
+          - arn:test-partition:sns:test-region:test-account:topic/test-topic
+
+      # AWS Lambda metric alarm with {{functionName}} placeholder
+      - alarmName: lambda-errors
+        metricName: Errors
+        namespace: AWS/Lambda
+        statistic: Sum
+        period: 60
+        evaluationPeriods: 1
+        threshold: 1
+        comparisonOperator: GreaterThanOrEqualToThreshold
+        alarmDescription: Alert on Lambda function errors
+        dimensions:
+          FunctionName: '{{functionName}}'
+        alarmActions:
+          - 'arn:{{partition}}:sns:{{region}}:{{account}}:test-alerts'
+        okActions:
+          - 'arn:{{partition}}:sns:{{region}}:{{account}}:test-alerts'
+
+      # Metric math alarm (advanced)
+      - alarmName: total-errors-across-metrics
+        evaluationPeriods: 1
+        threshold: 10
+        comparisonOperator: GreaterThanOrEqualToThreshold
+        treatMissingData: notBreaching
+        alarmDescription: Alert when total errors across all metrics exceed threshold
+        metrics:
+          - id: total
+            expression: 'm1+m2'
+            label: 'Total Errors'
+            returnData: true
+          - id: m1
+            metricName: error-count
+            namespace: TestObservability/Errors
+            statistic: Sum
+            period: 300
+          - id: m2
+            metricName: error-count-by-type
+            namespace: TestObservability/Errors
+            statistic: Sum
+            period: 300
+        alarmActions:
+          - 'arn:{{partition}}:sns:{{region}}:{{account}}:test-alerts'
+        insufficientDataActions:
+          - 'arn:{{partition}}:sns:{{region}}:{{account}}:test-alerts'

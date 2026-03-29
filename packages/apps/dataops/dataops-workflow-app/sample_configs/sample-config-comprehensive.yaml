@@ -1,0 +1,193 @@
+# Comprehensive config for the DataOps Workflow module.
+# Exercises every non-excluded property at full depth.
+
+# DataOps project name for workflow resource autowiring.
+projectName: dataops-project-test
+
+# S3 bucket name for project storage (scripts, artifacts, temp files).
+bucketName: test-workflow-bucket
+
+# IAM role ARN for deployment operations and resource management.
+deploymentRoleArn: arn:{{partition}}:iam::{{account}}:role/test-deploy-role
+
+# KMS key ARN for encrypting DataOps resources and data.
+kmsArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id
+
+# Glue security configuration name for job encryption
+# (at rest, in transit, CloudWatch logs).
+securityConfigurationName: test-security-config
+
+# SNS topic ARN for job notifications and workflow alerts.
+notificationTopicArn: arn:{{partition}}:sns:{{region}}:{{account}}:test-topic
+
+# Glue workflow definitions for ETL pipeline orchestration.
+workflowDefinitions:
+  # Workflow 1: Event-driven with full EventBridge configuration
+  - eventBridge:
+      # Maximum number of retry attempts EventBridge will make on error.
+      retryAttempts: 10
+      # Maximum age in seconds before EventBridge discards the event.
+      maxEventAgeSeconds: 3600
+
+      # S3 EventBridge rules that trigger workflows on S3 object events.
+      s3EventBridgeRules:
+        testing-event-bridge-s3:
+          # S3 bucket names that trigger the rule.
+          buckets: [sample-org-dev-instance1-datalake-raw]
+          # S3 object key prefixes to filter events.
+          prefixes: [data/test-lambda/]
+          # Custom EventBridge event bus ARN for rule placement.
+          eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name'
+
+      # General EventBridge rules with custom event patterns or schedules.
+      eventBridgeRules:
+        # Rule with full eventPattern coverage
+        testing-event-bridge:
+          # Human-readable description of the rule.
+          description: 'testing full event pattern'
+          # Custom event bus ARN for rule placement.
+          eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name'
+          # EventBridge event pattern for matching and filtering.
+          eventPattern:
+            # The 12-digit number identifying an AWS account.
+            account:
+              - '{{account}}'
+            # JSON object at the discretion of the originating service.
+            detail:
+              some_event_key: some_event_value
+            # Identifies, in combination with source, the detail fields.
+            detailType:
+              - 'Glue Job State Change'
+            # A unique value generated for every event.
+            id:
+              - 'example-event-id'
+            # AWS region where the event originated.
+            region:
+              - '{{region}}'
+            # ARNs identifying resources involved in the event.
+            resources:
+              - 'arn:{{partition}}:glue:{{region}}:{{account}}:job/my-job'
+            # Service that sourced the event.
+            source:
+              - 'glue.amazonaws.com'
+            # Event timestamp.
+            time:
+              - '2024-01-01T00:00:00Z'
+            # Event version (default 0).
+            version:
+              - '0'
+        # Rule with schedule expression and custom input
+        testing-event-bridge-schedule:
+          description: 'testing schedule'
+          # Schedule expression using cron or rate syntax.
+          scheduleExpression: 'cron(0 20 * * ? *)'
+          # Custom input payload provided to the target.
+          input:
+            some-test-input-obj:
+              some-test-input-key: test-value
+
+    # Raw Glue workflow definition object (as exported from AWS CLI get-workflow).
+    rawWorkflowDef:
+      Workflow:
+        Name: event-based-wf
+        DefaultRunProperties: {}
+        Graph:
+          Nodes:
+            - Type: TRIGGER
+              Name: Start_wf
+              TriggerDetails:
+                Trigger:
+                  Name: Start_wf
+                  WorkflowName: event-based-wf
+                  Type: EVENT
+                  State: CREATED
+                  Actions:
+                    - CrawlerName: project:crawler/name/test-crawler
+                  EventBatchingCondition:
+                    BatchSize: 1
+                    BatchWindow: 10
+            - Type: TRIGGER
+              Name: if_crawler_successed
+              TriggerDetails:
+                Trigger:
+                  Name: if_crawler_successed
+                  WorkflowName: event-based-wf
+                  Type: CONDITIONAL
+                  State: ACTIVATED
+                  Actions:
+                    - JobName: project:job/name/JobOne
+                  Predicate:
+                    Logical: ANY
+                    Conditions:
+                      - LogicalOperator: EQUALS
+                        CrawlerName: project:crawler/name/test-crawler
+                        CrawlState: SUCCEEDED
+            - Type: TRIGGER
+              Name: if_csv_to_parquet_job_successed
+              TriggerDetails:
+                Trigger:
+                  Name: if_csv_to_parquet_job_successed
+                  WorkflowName: event-based-wf
+                  Type: CONDITIONAL
+                  State: ACTIVATED
+                  Actions:
+                    - JobName: project:job/name/JobTwo
+                  Predicate:
+                    Logical: ANY
+                    Conditions:
+                      - LogicalOperator: EQUALS
+                        JobName: project:job/name/JobOne
+                        State: SUCCEEDED
+  # Workflow 2: Schedule-based (no EventBridge)
+  - rawWorkflowDef:
+      Workflow:
+        Name: schedule-based-wf
+        DefaultRunProperties: {}
+        Graph:
+          Nodes:
+            - Type: TRIGGER
+              Name: Start_wf-with-schedule
+              TriggerDetails:
+                Trigger:
+                  Name: Start_wf-with-schedule
+                  WorkflowName: schedule-based-wf
+                  Type: SCHEDULED
+                  Schedule: 'cron(5 12 * * ? *)'
+                  State: CREATED
+                  Actions:
+                    - CrawlerName: project:crawler/name/test-crawler
+
+  # Workflow 3: JSON-style inline definition.
+  # You can paste the output of `aws glue get-workflow --name <name>`
+  # directly as the rawWorkflowDef value. YAML accepts JSON syntax
+  # inline, so no conversion is needed.
+  - rawWorkflowDef:
+      {
+        'Workflow':
+          {
+            'Name': 'json-inline-wf',
+            'DefaultRunProperties': {},
+            'Graph':
+              {
+                'Nodes':
+                  [
+                    {
+                      'Type': 'TRIGGER',
+                      'Name': 'Start_json_wf',
+                      'TriggerDetails':
+                        {
+                          'Trigger':
+                            {
+                              'Name': 'Start_json_wf',
+                              'WorkflowName': 'json-inline-wf',
+                              'Type': 'SCHEDULED',
+                              'Schedule': 'cron(0 6 * * ? *)',
+                              'State': 'CREATED',
+                              'Actions': [{ 'JobName': 'project:job/name/JobOne' }],
+                            },
+                        },
+                    },
+                  ],
+              },
+          },
+      }

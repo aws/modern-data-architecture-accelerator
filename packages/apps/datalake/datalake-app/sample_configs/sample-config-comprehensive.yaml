@@ -1,0 +1,228 @@
+# Comprehensive config for the Data Lake module.
+# Exercises all schema properties including optional features.
+# Deploys a three-zone data lake (raw, standardized, curated) with
+# role-based access policies (admin/user/engineer), lifecycle
+# configurations with tiered storage transitions, S3 inventories,
+# LakeFormation locations, and EventBridge notifications.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Logical role mappings. Each key is a logical role name used
+# throughout the config. Values are lists of physical role references.
+# Roles can be referenced by name (auto-expanded to ARN), by explicit ARN,
+# by unique ID, by SSM parameter, or as SSO-managed roles.
+roles:
+  DataAdmin:
+    # Role by ARN
+    - arn: arn:{{partition}}:iam::{{account}}:role/Admin
+    # Role by name (auto-expanded to ARN at deploy time)
+    - name: Admin
+    # Role by unique ID (use when stable references are a security
+    # requirement — IDs don't change when roles are recreated)
+    - id: AROA1234567890
+  DataUser:
+    # Role by unique ID via SSM parameter
+    - id: ssm:/sample-org/instance1/generated-role/test-role/id
+    # Role by ARN via SSM parameter
+    - arn: ssm:/sample-org/instance1/generated-role/data-scientist/arn
+    # Role by MDAA-generated role ID
+    - id: generated-role-id:test-role
+    # Role by MDAA-generated role ID
+    - id: generated-role-id:data-scientist
+    # SSO-managed role (resolved from IAM Identity Center)
+    - name: data_scientist
+      sso: true
+  DataEngineer:
+    # Role by ARN
+    - arn: arn:{{partition}}:iam::{{account}}:role/DataEngineer
+
+# Named access policies defining role-based permissions per S3
+# prefix. Policies are referenced by name in bucket configurations.
+accessPolicies:
+  Root: # A friendly name for the access policy
+    rule:
+      # S3 prefix path where this access rule applies (e.g., '/data', '/').
+      prefix: /
+      # (Optional) Role names granted superuser access including permanent version deletion.
+      ReadWriteSuperRoles:
+        - DataAdmin
+  Data: # A friendly name for the access policy
+    rule:
+      prefix: /data
+      # (Optional) Role names granted read-only access to this prefix.
+      ReadRoles:
+        - DataUser
+      # (Optional) Role names granted read-write access to this prefix.
+      # Write access creates delete markers but cannot permanently delete versions.
+      ReadWriteRoles:
+        - DataEngineer
+
+# (Optional) Named lifecycle configurations containing sets of
+# lifecycle rules. Referenced by name in bucket configurations.
+lifecycleConfigurations:
+  SampleConfiguration1: # A friendly name for life cycle transition rules configuration.
+    SampleRule1:
+      # Whether this lifecycle rule is active.
+      Status: Enabled
+      # (Optional) S3 prefix filter restricting which objects this rule applies to.
+      Prefix: test_prefix
+      # (Optional) Minimum object size (bytes) for rule application.
+      ObjectSizeGreaterThan: 500
+      # (Optional) Maximum object size (bytes) for rule application.
+      ObjectSizeLessThan: 10000
+      # (Optional) Days after which incomplete multipart uploads are automatically aborted.
+      AbortIncompleteMultipartUploadAfter: 2
+      # (Optional) Storage class transitions for current object versions.
+      Transitions:
+        # Number of days after object creation (or becoming noncurrent) to trigger the transition.
+        - Days: 30
+          # Target S3 storage class for the transition.
+          StorageClass: STANDARD_IA
+        - Days: 60
+          StorageClass: GLACIER_IR
+        - Days: 150
+          StorageClass: GLACIER
+        - Days: 240
+          StorageClass: DEEP_ARCHIVE
+      # (Optional) Days after creation when current object versions expire (are deleted). Cannot be
+      # set together with ExpiredObjectDeleteMarker.
+      ExpirationDays: 270
+      # ExpiredObjectDeleteMarker: True # Permanently delete expired objects. Cannot be set if ExpirationDays is set
+      # (Optional) Storage class transitions for noncurrent (previous) object versions.
+      NoncurrentVersionTransitions:
+        - Days: 30
+          StorageClass: STANDARD_IA
+          # (Optional) Number of newer noncurrent versions to retain before applying this
+          # transition.
+          NewerNoncurrentVersions: 1
+        - Days: 60
+          StorageClass: GLACIER_IR
+          NewerNoncurrentVersions: 2
+        - Days: 150
+          StorageClass: GLACIER
+          NewerNoncurrentVersions: 3
+        - Days: 240
+          StorageClass: DEEP_ARCHIVE
+          NewerNoncurrentVersions: 4
+      # (Optional) Days after which noncurrent versions expire (are permanently deleted).
+      NoncurrentVersionExpirationDays: 270
+      # (Optional) Number of noncurrent versions to retain before applying expiration.
+      NoncurrentVersionsToRetain: 5
+    SampleRule2:
+      Status: Enabled
+      Prefix: test_prefix
+      ObjectSizeGreaterThan: 500
+      ObjectSizeLessThan: 10000
+      AbortIncompleteMultipartUploadAfter: 2
+      Transitions:
+        - Days: 30
+          StorageClass: STANDARD_IA
+        - Days: 60
+          StorageClass: GLACIER_IR
+        - Days: 150
+          StorageClass: GLACIER
+        - Days: 240
+          StorageClass: DEEP_ARCHIVE
+      # (Optional) Permanently remove expired object delete markers to reduce storage overhead.
+      # Cannot be set together with ExpirationDays.
+      ExpiredObjectDeleteMarker: True
+      NoncurrentVersionTransitions:
+        - Days: 30
+          StorageClass: STANDARD_IA
+          NewerNoncurrentVersions: 1
+        - Days: 60
+          StorageClass: GLACIER_IR
+          NewerNoncurrentVersions: 2
+        - Days: 150
+          StorageClass: GLACIER
+          NewerNoncurrentVersions: 3
+        - Days: 240
+          StorageClass: DEEP_ARCHIVE
+          NewerNoncurrentVersions: 4
+      NoncurrentVersionExpirationDays: 270
+      NoncurrentVersionsToRetain: 5
+  SampleConfiguration2: # A friendly name for life cycle transition rules configuration.
+    SampleRule1:
+      Status: Enabled
+      Prefix: test_prefix
+      Transitions:
+        - Days: 30
+          StorageClass: STANDARD_IA
+    SampleRule2:
+      Status: Enabled
+      Prefix: test_prefix
+      NoncurrentVersionTransitions:
+        - Days: 30
+          StorageClass: STANDARD_IA
+          NewerNoncurrentVersions: 1
+
+# Data lake bucket definitions keyed by zone name (e.g., 'raw',
+# 'transformed', 'curated'). Each bucket gets its own S3 bucket
+# with the specified access policies and features.
+buckets:
+  raw:
+    # (Optional) Deny access to any role not explicitly listed in access policies.
+    # (default: true)
+    defaultDeny: false
+    #enableEventBridgeNotifications: true
+    # (Optional) Create folder placeholder objects for each access policy prefix.
+    # (default: true)
+    createFolderSkeleton: false
+    # (Optional) S3 inventory configurations for automated bucket content reporting. Each entry
+    # generates inventory data for the specified prefix.
+    #Inventory data will be written for each listed name/prefix under /inventory/<name>
+    inventories:
+      all-data:
+        # S3 prefix to include in the inventory report.
+        prefix: data
+      # Inventory with cross-account destination fields
+      cross-account-inventory:
+        # S3 prefix to include in the inventory report.
+        prefix: data/reports
+        # (Optional) AWS account ID owning the destination bucket for cross-account inventory delivery.
+        destinationAccount: '222222222222'
+        # (Optional) Destination bucket for inventory reports. Defaults to the source bucket
+        # under the /inventory prefix if not specified.
+        destinationBucket: central-inventory-bucket
+        # (Optional) S3 prefix within the destination bucket for inventory report storage.
+        destinationPrefix: datalake/raw
+    # Access policy names to apply to this bucket. Each name must reference a policy defined in the
+    # top-level accessPolicies configuration.
+    accessPolicies:
+      - Root
+      - Data
+    # (Optional) Name of a lifecycle configuration from the top-level lifecycleConfigurations to
+    # apply to this bucket.
+    lifecycleConfiguration: SampleConfiguration1
+
+  standardized:
+    # (Optional) Create folder placeholder objects for each access policy prefix.
+    createFolderSkeleton: true
+    # (Optional) Enable EventBridge notifications for S3 data events on this bucket.
+    enableEventBridgeNotifications: true
+    # (Optional) LakeFormation location registrations for governed access.
+    lakeFormationLocations:
+      standardized-data:
+        prefix: data
+    accessPolicies:
+      - Root
+      - Data
+    lifecycleConfiguration: SampleConfiguration2
+
+  curated:
+    createFolderSkeleton: true
+    # (Optional) Enable EventBridge notifications for S3 data events on this bucket.
+    enableEventBridgeNotifications: true
+    # (Optional) LakeFormation location registrations for fine-grained access control at specific
+    # S3 prefixes within this bucket.
+    lakeFormationLocations:
+      read-data:
+        # S3 prefix within the bucket to register with LakeFormation.
+        prefix: data
+      read-write-data:
+        prefix: data
+        # (Optional) Grant write access to the LakeFormation role for this location. (default: false)
+        write: true
+    accessPolicies:
+      - Root
+      - Data
+    lifecycleConfiguration: SampleConfiguration2

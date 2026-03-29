@@ -1,0 +1,7 @@
+# EventBridge module — minimal configuration.
+# Deploys a single custom event bus with no optional properties.
+# This is the simplest valid deployment of the EventBridge module.
+
+# Map of event bus names to EventBridge event bus configurations.
+eventBuses:
+  minimal-event-bus: {}

@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Test custom blueprint CloudFormation template
+Parameters:
+  pathParam:
+    Type: Number
+    Default: 42
+    Description: A numeric parameter
+Resources:
+  DummyResource:
+    Type: AWS::CloudFormation::WaitConditionHandle

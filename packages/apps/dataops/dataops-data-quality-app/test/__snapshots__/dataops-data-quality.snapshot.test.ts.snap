@@ -34,10 +34,6 @@ exports[`dataops-data-quality Snapshot Tests Data Quality App App Snapshot Test 
         "Default": "/test-org/test-domain/test-dataops-project/projectBucket/default",
         "Type": "AWS::SSM::Parameter::Value<String>",
       },
-      "SsmParameterValuetestorgtestdomaintestdataopsprojectprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
-        "Default": "/test-org/test-domain/test-dataops-project/projectTopicArn/default",
-        "Type": "AWS::SSM::Parameter::Value<String>",
-      },
       "SsmParameterValuetestorgtestdomaintestdataopsprojectsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
         "Default": "/test-org/test-domain/test-dataops-project/securityConfiguration/default",
         "Type": "AWS::SSM::Parameter::Value<String>",
@@ -93,7 +89,12 @@ exports[`dataops-data-quality Snapshot Tests Data Quality App App Snapshot Test 
           "Ruleset": "Rules = [
     IsComplete "customer_id",
     Uniqueness "email" > 0.95,
-    RowCount > 100
+    RowCount > 100,
+    ColumnValues "status" in ["active","inactive","pending"],
+    ColumnDataType "created_at" = "DATE",
+    DataFreshness "updated_at" <= 24 hours,
+    CustomSql "SELECT COUNT(*) FROM customers WHERE customer_id IS NULL" = 0,
+    IsComplete "phone_number" where "country = 'US'"
 ]",
           "Tags": {
             "mdaa_cdk_app": "dataops-data-quality",
@@ -103,6 +104,9 @@ exports[`dataops-data-quality Snapshot Tests Data Quality App App Snapshot Test 
             "mdaa_org": "test-org",
           },
           "TargetTable": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
             "DatabaseName": {
               "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNamecustomerdataC96584B6F00A464EAD1953AFF4B05118Parameter",
             },
@@ -267,266 +271,197 @@ exports[`dataops-data-quality Snapshot Tests Data Quality App App Snapshot Test 
 }
 `;
 
-exports[`dataops-data-quality Snapshot Tests Data Quality Stack Snapshot Test 1`] = `
+exports[`dataops-data-quality Snapshot Tests Data Quality App Minimal App Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.5.0",
-  "Parameters": {
-    "BootstrapVersion": {
-      "Default": "/cdk-bootstrap/hnb659fds/version",
-      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
-      "Type": "AWS::SSM::Parameter::Value<String>",
+  "test-org-test-env-test-domain-test-data-quality-minimal": {
+    "Description": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.5.0",
+    "Parameters": {
+      "BootstrapVersion": {
+        "Default": "/cdk-bootstrap/hnb659fds/version",
+        "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
     },
-    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
-      "Type": "AWS::SSM::Parameter::Value<String>",
+    "Resources": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Stack description parameter to update on version changes",
+          "Name": "/test-org/test-domain/test-data-quality-minimal/aws-solution",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-data-quality",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-data-quality-minimal",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.5.0",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "",
+          "Name": "customer-data-quality",
+          "Ruleset": "Rules = [
+    IsComplete "customer_id"
+]",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-data-quality",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-data-quality-minimal",
+            "mdaa_org": "test-org",
+          },
+          "TargetTable": {
+            "DatabaseName": "project:databaseName/customer-data",
+            "TableName": "customers",
+          },
+        },
+        "Type": "AWS::Glue::DataQualityRuleset",
+      },
     },
-    "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNamecustomerdataC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/test-org/test-domain/test-dataops-project/databaseName/customer-data",
-      "Type": "AWS::SSM::Parameter::Value<String>",
-    },
-    "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNameorderdataC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/test-org/test-domain/test-dataops-project/databaseName/order-data",
-      "Type": "AWS::SSM::Parameter::Value<String>",
-    },
-    "SsmParameterValuetestorgtestdomaintestdataopsprojectdeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/test-org/test-domain/test-dataops-project/deploymentRole/default",
-      "Type": "AWS::SSM::Parameter::Value<String>",
-    },
-    "SsmParameterValuetestorgtestdomaintestdataopsprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/test-org/test-domain/test-dataops-project/kmsArn/default",
-      "Type": "AWS::SSM::Parameter::Value<String>",
-    },
-    "SsmParameterValuetestorgtestdomaintestdataopsprojectprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/test-org/test-domain/test-dataops-project/projectBucket/default",
-      "Type": "AWS::SSM::Parameter::Value<String>",
-    },
-    "SsmParameterValuetestorgtestdomaintestdataopsprojectprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/test-org/test-domain/test-dataops-project/projectTopicArn/default",
-      "Type": "AWS::SSM::Parameter::Value<String>",
-    },
-    "SsmParameterValuetestorgtestdomaintestdataopsprojectsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/test-org/test-domain/test-dataops-project/securityConfiguration/default",
-      "Type": "AWS::SSM::Parameter::Value<String>",
+    "Rules": {
+      "CheckBootstrapVersion": {
+        "Assertions": [
+          {
+            "Assert": {
+              "Fn::Not": [
+                {
+                  "Fn::Contains": [
+                    [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                    ],
+                    {
+                      "Ref": "BootstrapVersion",
+                    },
+                  ],
+                },
+              ],
+            },
+            "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+          },
+        ],
+      },
     },
   },
-  "Resources": {
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "Description": "Stack description parameter to update on version changes",
-        "Name": "/test-org/test-domain/test-data-quality-main/aws-solution",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-data-quality",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-data-quality-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.5.0",
+}
+`;
+
+exports[`dataops-data-quality Snapshot Tests Data Quality App Noproject App Snapshot Test 1`] = `
+{
+  "test-org-test-env-test-domain-test-data-quality-noproject": {
+    "Description": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.5.0",
+    "Parameters": {
+      "BootstrapVersion": {
+        "Default": "/cdk-bootstrap/hnb659fds/version",
+        "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+        "Type": "AWS::SSM::Parameter::Value<String>",
       },
-      "Type": "AWS::SSM::Parameter",
+      "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
     },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-SSM4",
-              "reason": "Parameter stores non-sensitive configuration metadata.",
-            },
-          ],
+    "Resources": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Stack description parameter to update on version changes",
+          "Name": "/test-org/test-domain/test-data-quality-noproject/aws-solution",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-data-quality",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-data-quality-noproject",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.5.0",
         },
+        "Type": "AWS::SSM::Parameter",
       },
-      "Properties": {
-        "Description": "Glue Data Quality Ruleset name for customer-data-quality",
-        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/customer-data-quality",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-data-quality",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-data-quality-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": "customer-data-quality",
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "Description": "Validate customer data completeness and uniqueness",
-        "Name": "customer-data-quality",
-        "Ruleset": "Rules = [
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Validate customer data completeness and uniqueness",
+          "Name": "customer-data-quality",
+          "Ruleset": "Rules = [
     IsComplete "customer_id",
     Uniqueness "email" > 0.95,
     RowCount > 100
 ]",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-data-quality",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-data-quality-main",
-          "mdaa_org": "test-org",
-        },
-        "TargetTable": {
-          "DatabaseName": {
-            "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNamecustomerdataC96584B6F00A464EAD1953AFF4B05118Parameter",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-data-quality",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-data-quality-noproject",
+            "mdaa_org": "test-org",
           },
-          "TableName": "customers",
+          "TargetTable": {
+            "DatabaseName": "project:databaseName/customer-data",
+            "TableName": "customers",
+          },
         },
+        "Type": "AWS::Glue::DataQualityRuleset",
       },
-      "Type": "AWS::Glue::DataQualityRuleset",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-SSM4",
-              "reason": "Parameter stores non-sensitive configuration metadata.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "Description": "Target table for ruleset customer-data-quality",
-        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/customer-data-quality-target",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-data-quality",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-data-quality-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNamecustomerdataC96584B6F00A464EAD1953AFF4B05118Parameter",
-              },
-              ".customers",
-            ],
-          ],
-        },
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-SSM4",
-              "reason": "Parameter stores non-sensitive configuration metadata.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "Description": "Glue Data Quality Ruleset name for order-data-quality",
-        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/order-data-quality",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-data-quality",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-data-quality-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": "order-data-quality",
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "Description": "Validate order data freshness and values",
-        "Name": "order-data-quality",
-        "Ruleset": "Rules = [
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Validate order data freshness and values",
+          "Name": "order-data-quality",
+          "Ruleset": "Rules = [
   IsComplete "order_id",
   ColumnValues "status" in ["pending", "completed", "cancelled"],
   RowCount > 0
 ]
 ",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-data-quality",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-data-quality-main",
-          "mdaa_org": "test-org",
-        },
-        "TargetTable": {
-          "DatabaseName": {
-            "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNameorderdataC96584B6F00A464EAD1953AFF4B05118Parameter",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-data-quality",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-data-quality-noproject",
+            "mdaa_org": "test-org",
           },
-          "TableName": "orders",
+          "TargetTable": {
+            "DatabaseName": "project:databaseName/order-data",
+            "TableName": "orders",
+          },
         },
+        "Type": "AWS::Glue::DataQualityRuleset",
       },
-      "Type": "AWS::Glue::DataQualityRuleset",
     },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-SSM4",
-              "reason": "Parameter stores non-sensitive configuration metadata.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "Description": "Target table for ruleset order-data-quality",
-        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/order-data-quality-target",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-data-quality",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-data-quality-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNameorderdataC96584B6F00A464EAD1953AFF4B05118Parameter",
-              },
-              ".orders",
-            ],
-          ],
-        },
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-  },
-  "Rules": {
-    "CheckBootstrapVersion": {
-      "Assertions": [
-        {
-          "Assert": {
-            "Fn::Not": [
-              {
-                "Fn::Contains": [
-                  [
-                    "1",
-                    "2",
-                    "3",
-                    "4",
-                    "5",
+    "Rules": {
+      "CheckBootstrapVersion": {
+        "Assertions": [
+          {
+            "Assert": {
+              "Fn::Not": [
+                {
+                  "Fn::Contains": [
+                    [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                    ],
+                    {
+                      "Ref": "BootstrapVersion",
+                    },
                   ],
-                  {
-                    "Ref": "BootstrapVersion",
-                  },
-                ],
-              },
-            ],
+                },
+              ],
+            },
+            "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
           },
-          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
-        },
-      ],
+        ],
+      },
     },
   },
 }

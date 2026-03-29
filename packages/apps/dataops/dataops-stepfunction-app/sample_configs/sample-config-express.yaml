@@ -1,0 +1,29 @@
+# DataOps Step Function module configuration - EXPRESS variant.
+# Demonstrates an EXPRESS state machine type for high-volume,
+# short-duration workflows.
+
+# DataOps project name for Step Functions resource autowiring.
+projectName: dataops-project-sample
+
+# Step Functions state machine definitions.
+stepfunctionDefinitions:
+  - # Name for the Step Functions state machine.
+    stateMachineName: sample-express-machine
+    # State machine type: EXPRESS for high-volume short-duration workflows.
+    stateMachineType: EXPRESS
+    # IAM role ARN the state machine assumes for executing workflow steps.
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    stateMachineExecutionRole: 'arn:{{partition}}:iam::{{account}}:role/service-role/StepFunctions-express-role'
+    # Whether to log parameter values and execution data during execution.
+    logExecutionData: true
+    # CloudWatch log group retention in days.
+    logGroupRetentionDays: 30
+    # State machine definition as a JSON object (ASL).
+    rawStepFunctionDef:
+      Comment: Express state machine for high-volume processing
+      StartAt: ProcessEvent
+      States:
+        ProcessEvent:
+          Type: Pass
+          End: true

@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { AthenaWorkgroupCDKApp } from '../lib/athena-workgroup';
 import * as path from 'path';
 
 describe('athena-workgroup Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Athena Workgroup Stack',
-    Create.stackProvider(
-      'AthenaWorkgroupStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Athena Workgroup App',
+    Create.appProvider(
+      context => {
         const moduleApp = new AthenaWorkgroupCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-athena-workgroup-main',
@@ -41,20 +32,20 @@ describe('athena-workgroup Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Athena Workgroup App',
+    'Athena Workgroup App Minimal',
     Create.appProvider(
       context => {
         const moduleApp = new AthenaWorkgroupCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-athena-workgroup-main',
+        module_name: 'test-athena-workgroup-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

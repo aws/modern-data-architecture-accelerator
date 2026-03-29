@@ -1,5 +1,7 @@
 # Modern Data Architecture Accelerator (MDAA)
 
+**Note:** All documentation in this repo is available as rendered/searchable HTML [here](https://aws.github.io/modern-data-architecture-accelerator/).
+
 The Modern Data Architecture Accelerator (MDAA) helps organizations deploy secure, compliant data analytics and AI environments on Amazon Web Services (AWS) through simple YAML configuration files. Whether you need a basic data lake, a full data science platform, Sagemaker unified studio or a generative AI solution, MDAA provides prepackaged starter kits and reusable infrastructure components that handle security compliance out of the box. It supports teams of all sizes, from small organizations looking for code-free deployment to large enterprises building complex Lake House or Data Mesh architectures.
 
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
@@ -96,13 +98,13 @@ Looking for a different starting point? See [Starter Kits](#starter-kits) for ot
 
 MDAA follows a five-phase deployment lifecycle: Architecture (define your target platform design), Configuration (author YAML config files for each module), Customization (optionally extend via code-based escape hatches), Predeployment (bootstrap AWS accounts), and Deployment (deploy via the MDAA CLI). Each phase builds on the previous one, and starter kits can accelerate the first two phases significantly.
 
-| Phase | Description | Time Estimate |
-|---|---|---|
-| Architecture | Define your target platform design and select modules | 1–2 days |
-| Configuration | Author YAML config files for each module | 1–3 days |
-| Customization | Optionally extend via code-based escape hatches | 0–2 days |
-| Predeployment | Bootstrap AWS accounts with CDK | 2 - 10 mins|
-| Deployment | Deploy via the MDAA CLI | 15 min – 1 hour |
+| Phase         | Description                                           | Time Estimate   |
+| ------------- | ----------------------------------------------------- | --------------- |
+| Architecture  | Define your target platform design and select modules | 1–2 days        |
+| Configuration | Author YAML config files for each module              | 1–3 days        |
+| Customization | Optionally extend via code-based escape hatches       | 0–2 days        |
+| Predeployment | Bootstrap AWS accounts with CDK                       | 2 - 10 mins     |
+| Deployment    | Deploy via the MDAA CLI                               | 15 min – 1 hour |
 
 For the full step-by-step guide, see the [MDAA Implementation Guide](https://docs.aws.amazon.com/solutions/latest/modern-data-architecture-accelerator/solution-overview.html). Starter kits and [sample configurations](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator) provide ready-made configurations that can accelerate the early phases significantly.
 
@@ -131,14 +133,14 @@ Browse the full documentation, module references, and configuration schemas at [
 
 Starter kits provide secure, prepackaged foundations for common use cases:
 
-| Starter Kit | Description | Est. Deploy Time |
-|---|---|---|
-| [Basic DataLake](starter_kits/basic_datalake/README.md) | A secure S3 data lake with Glue databases and crawlers | ~15–20 min |
-| [Basic DataScience Platform](starter_kits/basic_datascience_platform/README.md) | A standalone SageMaker AI Studio data science environment | ~20–30 min |
-| [GenAI Accelerator](starter_kits/genai_accelerator/README.md) | Enterprise-ready generative AI platform with Amazon Bedrock | ~10–15 min |
-| [Governed Lakehouse](starter_kits/governed_lakehouse/README.md) | DataZone-governed lakehouse with fine-grained access control | ~20–25 min |
-| [Health Data Accelerator](starter_kits/health_data_accelerator/README.md) | Healthcare data lake with DMS (Database Migration Service) integration | ~30–45 min |
-| [SMUS Research Environment](starter_kits/smus_research_environment/README.md) | A SageMaker Unified Studio-enabled architecture suitable for facilitating team-based research activities | ~20–25 min | 
+| Starter Kit                                                                     | Description                                                                                              | Est. Deploy Time |
+| ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------- |
+| [Basic DataLake](starter_kits/basic_datalake/README.md)                         | A secure S3 data lake with Glue databases and crawlers                                                   | ~15–20 min       |
+| [Basic DataScience Platform](starter_kits/basic_datascience_platform/README.md) | A standalone SageMaker AI Studio data science environment                                                | ~20–30 min       |
+| [GenAI Accelerator](starter_kits/genai_accelerator/README.md)                   | Enterprise-ready generative AI platform with Amazon Bedrock                                              | ~10–15 min       |
+| [Governed Lakehouse](starter_kits/governed_lakehouse/README.md)                 | DataZone-governed lakehouse with fine-grained access control                                             | ~20–25 min       |
+| [Health Data Accelerator](starter_kits/health_data_accelerator/README.md)       | Healthcare data lake with DMS (Database Migration Service) integration                                   | ~30–45 min       |
+| [SMUS Research Environment](starter_kits/smus_research_environment/README.md)   | A SageMaker Unified Studio-enabled architecture suitable for facilitating team-based research activities | ~20–25 min       |
 
 ## Sample Configurations
 

@@ -1,0 +1,97 @@
+# Sample config for the DataOps DMS module - CDC migration variant.
+# Demonstrates CDC and full-load-and-cdc migration types with
+# CDC-specific task properties (cdcStartPosition, cdcStartTime,
+# cdcStopPosition).
+
+# DataOps project name for auto-wiring shared resources.
+projectName: test-project
+
+# DMS migration and replication configuration.
+dms:
+  # Named replication instance configurations.
+  replicationInstances:
+    test-instance:
+      # DMS replication instance class.
+      instanceClass: dms.t3.micro
+      # VPC ID for replication instance deployment.
+      # Often created by your VPC/networking stack.
+      # Example SSM: ssm:/path/to/vpc/id
+      vpcId: test_vpc_id
+      # Subnet IDs spanning at least two AZs.
+      # Often created by your VPC/networking stack.
+      # Example SSM: ssm:/path/to/subnet/id
+      subnetIds:
+        - test_subnet_id1
+        - test_subnet_id2
+
+  # Named endpoint configurations.
+  endpoints:
+    test-source:
+      # The type of endpoint. (enum: source, target)
+      endpointType: source
+      # The endpoint engine name.
+      engineName: postgres
+      databaseName: test-cdc-db
+      # PostgreSQL settings.
+      postgreSqlSettings:
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-pg-secret
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-pg-key
+        captureDdls: true
+        pluginName: pglogical
+        slotName: test_cdc_slot
+    test-target:
+      endpointType: target
+      engineName: s3
+      # S3 settings.
+      s3Settings:
+        bucketName: test-cdc-target-bucket
+        serverSideEncryptionKmsKeyId: test-cdc-kms-key-id
+
+  # Named replication task configurations.
+  replicationTasks:
+    # CDC-only migration task.
+    test-task-cdc:
+      replicationInstance: test-instance
+      sourceEndpoint: test-source
+      targetEndpoint: test-target
+      # Migration type: cdc (change data capture only).
+      migrationType: cdc
+      # CDC start position (date, checkpoint, LSN, or SCN format).
+      cdcStartPosition: '2024-01-01T00:00:00'
+      # CDC stop position (server_time or commit_time format).
+      cdcStopPosition: 'server_time:2024-12-31T23:59:59'
+      # Table mappings for the task.
+      tableMappings:
+        rules:
+          - rule-type: selection
+            rule-id: '1'
+            rule-name: '1'
+            object-locator:
+              schema-name: public
+              table-name: '%'
+            rule-action: include
+
+    # Full-load-and-cdc migration task.
+    test-task-full-load-and-cdc:
+      replicationInstance: test-instance
+      sourceEndpoint: test-source
+      targetEndpoint: test-target
+      # Migration type: full-load-and-cdc.
+      migrationType: full-load-and-cdc
+      # CDC start time (epoch timestamp).
+      cdcStartTime: 1704067200
+      # Table mappings for the task.
+      tableMappings:
+        rules:
+          - rule-type: selection
+            rule-id: '1'
+            rule-name: '1'
+            object-locator:
+              schema-name: public
+              table-name: '%'
+            rule-action: include
+      # Overall settings for the task.
+      replicationTaskSettings:
+        TargetMetadata:
+          TargetSchema: ''
+          SupportLobs: true

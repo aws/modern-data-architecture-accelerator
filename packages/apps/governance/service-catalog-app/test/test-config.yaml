@@ -1,6 +1,0 @@
-portfolios:
-  TestPortfolio:
-    providerName: "test-provider"
-    description: "testing description"
-    access:
-      - name: Admin

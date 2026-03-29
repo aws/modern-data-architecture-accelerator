@@ -39,7 +39,61 @@ test('SynthTest', () => {
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/test-config.yaml',
+    module_configs: './sample_configs/sample-config-comprehensive.yaml',
+  };
+  const app = new GAIAApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - Minimal configuration', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-minimal.yaml',
+  };
+  const app = new GAIAApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - AD authentication', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-ad.yaml',
+  };
+  const app = new GAIAApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - Existing Cognito User Pool', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-existing.yaml',
   };
   const app = new GAIAApp({ context: context });
   app.generateStack();

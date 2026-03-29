@@ -1,0 +1,32 @@
+# Comprehensive config for the DataOps Shared module.
+# Demonstrates project-based resource auto-wiring where shared
+# infrastructure (bucket, KMS key, SNS topic, deployment role,
+# security configuration) is resolved from a DataOps project via
+# SSM parameters.
+
+# DataOps project name enabling auto-wiring of shared resources
+# (bucket, KMS key, SNS topic, deployment role, security
+# configuration) via SSM parameters.
+projectName: analytics-ml-pipeline
+
+# Glue security configuration name for job encryption
+# (at rest, in transit, CloudWatch logs). Auto-resolved from
+# project when projectName is set. Use 'project:' prefix for
+# project-relative SSM references.
+securityConfigurationName: project:securityConfiguration/ml-pipeline
+
+# S3 bucket name for project storage (scripts, artifacts,
+# temp files). Auto-resolved from project when projectName is set.
+bucketName: project:projectBucket/analytics-data
+
+# SNS topic ARN for job notifications and workflow alerts.
+# Auto-resolved from project when projectName is set.
+notificationTopicArn: project:projectTopicArn/ml-notifications
+
+# IAM role ARN for deployment operations and resource management.
+# Auto-resolved from project when projectName is set.
+deploymentRoleArn: project:deploymentRole/ml-pipeline
+
+# KMS key ARN for encrypting DataOps resources and data.
+# Auto-resolved from project when projectName is set.
+kmsArn: project:kmsArn/analytics-encryption

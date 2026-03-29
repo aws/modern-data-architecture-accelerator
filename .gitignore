@@ -60,12 +60,14 @@ uv.lock
 build/
 dist/
 
-.kiro
+.kiro/*
+!.kiro/steering/
+.kiro/steering/*.md.bak
+.kiro/steering-external
 
 e2e
 
 tmp
-.kiro/
 .apex/
 .workflow-state
 generated/design/

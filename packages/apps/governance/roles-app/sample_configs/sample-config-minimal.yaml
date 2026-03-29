@@ -1,0 +1,11 @@
+# Minimal Roles module configuration.
+# Creates a single IAM role with account-level trust. All
+# properties are optional but at least one role is recommended
+# for a useful deployment.
+
+# (Optional) Map of named IAM roles to generate.
+generateRoles:
+  # Basic role trusted by the current account
+  my-role:
+    # Primary trusted principal for the role's trust policy
+    trustedPrincipal: this_account

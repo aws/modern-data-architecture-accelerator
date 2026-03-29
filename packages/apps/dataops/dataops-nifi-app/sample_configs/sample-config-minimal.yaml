@@ -1,0 +1,38 @@
+# Minimal DataOps NiFi module configuration.
+# Deploys an EKS-based NiFi cluster with a single node and SAML
+# authentication, wired to a DataOps project.
+
+# (Optional) DataOps project name for NiFi resource autowiring.
+projectName: dataops-project-test
+
+nifi:
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # Roles granted admin access to the Kubernetes cluster
+  adminRoles:
+    - name: Admin
+
+  # VPC for NiFi cluster deployment
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: test-vpc-id
+
+  # Subnets for NiFi cluster deployment
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnetIds:
+    subnet1: test-subnet-id-1
+    subnet2: test-subnet-id-2
+
+  # NiFi cluster definitions
+  clusters:
+    my-cluster:
+      # Initial number of nodes
+      nodeCount: 2
+      # Node size (SMALL, MEDIUM, LARGE, XLARGE, 2XLARGE)
+      nodeSize: SMALL
+      # Admin identities for SAML-based access
+      adminIdentities:
+        - 'admin-identity'
+      # SAML federation configuration
+      saml:
+        idpMetadataUrl: 'https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123'

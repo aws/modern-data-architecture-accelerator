@@ -1,28 +1,57 @@
 # Glue Catalog Settings
 
-The Glue Catalog CDK application is used to configure an account's Glue Catalog for encryption at rest and cross account access for Data Mesh deployments. It should be deployed only once per AWS account.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/governance/glue-catalog-app/index.html).
 
-***
+Configures an account's Glue Catalog for encryption at rest and cross-account access for data mesh deployments. Supports complete mesh, partial mesh, and hub/spoke topologies. Should be deployed only once per AWS account. Use this module when you need to encrypt your Glue Catalog metadata and enable cross-account data sharing for multi-account data mesh or hub-and-spoke architectures.
 
-## Deployed Resources and Compliance Details
+---
+
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+**Glue Catalog KMS Key** - Customer-managed KMS key for encrypting Glue Catalog metadata at rest.
+
+**Glue Catalog Settings** - Configures the Glue Catalog to use the Catalog KMS Key for encryption.
+
+**Catalog Resource Policy** - Glue Catalog resource policy granting cross-account read access to consumer accounts.
+
+**Athena Data Source** - Each configured producer account creates an Athena Data Source pointing to the producer's Glue Catalog for cross-account queries.
+
+**RAM Resource Share** (Optional) - Shares the Catalog KMS Key SSM parameter with consumer accounts for cross-account key discovery.
+
+**SSM Parameters** - Catalog KMS Key ARN stored in Parameter Store for cross-module reference.
 
 ![GlueCatalog](../../../constructs/L3/governance/glue-catalog-l3-construct/docs/GlueCatalog.png)
 
-**Glue Catalog KMS Key** - This key will be used to encrypt the Glue Catalog metadata.
-  
-* Key usage via the Glue service, within the local account is permitted by default (by key policy)
-* Additional key usage via Glue service granted for each consumer account (by key policy)
-* Additional permissions may be granted via IAM policy
+---
 
-**Glue Catalog Settings** - These settings will be deployed in order to configure the Glue Catalog to utilize the Catalog KMS Key.
+## Related Modules
 
-* Each consumer account granted read access to the catalog via catalog resource policy
+- [Data Lake](../../datalake/datalake-app/README.md) — Data lake buckets and Glue databases use the Glue Catalog encryption configured by this module
+- [Lake Formation Settings](../lakeformation-settings-app/README.md) — Configure Lake Formation admin roles and IAM Allowed Principals behavior for the account
+- [DataZone](../datazone-app/README.md) — DataZone associated accounts require access to the Glue Catalog KMS key configured here
+- [SageMaker (Domain)](../sagemaker-app/README.md) — SageMaker associated accounts require access to the Glue Catalog KMS key configured here
+- [DataOps Project](../../dataops/dataops-project-app/README.md) — Project Glue databases are encrypted with the Catalog KMS key configured here
 
-**Athena Data Source** - Each configured producer account will create an Athena Data Source pointing to the producer account's Glue Catalog
+---
 
-* Does not grant any access unless otherwise granted on producer account's Glue Catalog resource policy
+## Security/Compliance Details
 
-***
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
+
+- **Encryption at Rest**:
+  - Glue Catalog metadata encrypted with customer-managed KMS key
+  - Key usage via Glue service within local account permitted by default
+  - Consumer accounts granted scoped key usage via key policy
+  - KMS-only consumer accounts can be granted decrypt access without catalog read
+- **Least Privilege**:
+  - Catalog resource policy grants read access to consumer accounts
+  - KMS-only consumer accounts can decrypt metadata without catalog read access
+- **Separation of Duties**:
+  - Athena data sources provide cross-account query access without granting underlying catalog permissions
+
+---
 
 ## Configuration
 
@@ -31,106 +60,39 @@ The Glue Catalog CDK application is used to configure an account's Glue Catalog 
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          glue-catalog: # Module Name can be customized
-            module_path: "@aws-mdaa/glue-catalog" # Must match module NPM package name
-            module_configs:
-              - ./glue-catalog.yaml # Filename/path can be customized
+glue-catalog: # Module Name can be customized
+  module_path: '@aws-mdaa/glue-catalog' # Must match module NPM package name
+  # module_configs is optional — all properties are optional.
+  # Omit to deploy the Glue Catalog KMS key and encryption
+  # settings with defaults.
+  module_configs:
+    - ./glue-catalog.yaml # Filename/path can be customized
 ```
 
-### Module Config (./glue-catalog.yaml)
+### Module Config Samples and Variants
+
+Copy the contents of the relevant sample config below into the `./glue-catalog.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Deploys the Glue Catalog KMS key and encryption settings. All properties are optional — this config demonstrates a single consumer account for cross-account catalog access. Start here for a basic encrypted Glue Catalog with optional cross-account sharing.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-minimal.yaml"
+```
+
+#### Comprehensive Configuration
+
+Manages cross-account Glue Catalog access through consumer/producer account mappings, KMS key sharing, and resource-scoped access policies for fine-grained data governance. Start here when evaluating all available options for data mesh topologies, Athena data sources, and multi-account catalog sharing.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+---
 
 [Config Schema Docs](SCHEMA.md)
-
-The Glue Catalog CDK accepts an optional configuration, which can be used to configure cross account catalog access for data mesh implementations.
-
-These configs can be used to generate cross account catalog access for use in a data mesh or hub/spoke archicture
-
-### Complete Data Mesh
-
-A complete mesh can be generated by deploying the same config to all node accounts within the data mesh:
-
-```yaml
-# An optional list of consumer accounts which will be provided read access to the catalog in the deployment account.
-consumerAccounts:
-  node1: "1234567890"
-  node2: "0987654321"
-# An optional list of consumer accounts which will be provided read access to the catalog KMS Key only in the deployment account.
-kmsKeyConsumerAccounts:
-  node3: "5678901234"
-# A optional list of producer accounts for which additional Athena catalogs will be created in the deployment account.
-producerAccounts:
-  node1: "1234567890"
-  node2: "0987654321"
-  node3: "5678901234"
-```
-
-### Partial Data Mesh
-
-A partial mesh can be generated by deploying separate configs to all node accounts specifying only the
-producer/consumer relationships required by the partial mesh
-
-Deployed to node1 account:
-
-```yaml
-# An optional list of consumer accounts which will be provided read access to the catalog in the deployment account.
-consumerAccounts:
-  node1: "1234567890"
-  node2: "0987654321"
-  node3: "5678901234"
-# A optional list of producer accounts for which additional Athena catalogs will be created in the deployment account.
-producerAccounts:
-  node1: "1234567890"
-  node2: "0987654321"
-  node3: "5678901234"
-```
-
-Deployed to node2 account, grants catalog read access from node 1 and node3 accounts, and creates additional catalog pointing at node1:
-
-```yaml
-# An optional list of consumer accounts which will be provided read access to the catalog in the deployment account.
-consumerAccounts:
-  node1: "1234567890"
-  node3: "5678901234"
-# A optional list of producer accounts for which additional Athena catalogs will be created in the deployment account.
-producerAccounts:
-  node1: "1234567890"
-```
-
-Deployed to node3 account, grants catalog read access from node1 account, and creates additional data source pointing at node1:
-
-```yaml
-# An optional list of consumer accounts which will be provided read access to the catalog in the deployment account.
-consumerAccounts:
-  node1: "1234567890"
-# A optional list of producer accounts for which additional Athena catalogs will be created in the deployment account.
-producerAccounts:
-  node1: "1234567890"
-```
-
-### Hub/Spoke Data Mesh
-
-Deployed to hub account, grants read access from spoke accounts to hub catalog, and creates additional data sources within hub for each spoke.
-
-```yaml
-# An optional list of consumer accounts which will be provided read access to the catalog in the deployment account.
-consumerAccounts:
-  spoke1: "1234567890"
-  spoke2: "0987654321"
-
-# A optional list of producer accounts for which additional Athena catalogs will be created in the deployment account.
-producerAccounts:
-  spoke1: "1234567890"
-  spoke2: "0987654321"
-
-```
-
-Deployed to each spoke account, grants read access from hub to spoke catalogs, and creates additional data sources within each spoke account pointing at the hub catalog.
-
-```yaml
-# An optional list of consumer accounts which will be provided read access to the catalog in the deployment account.
-consumerAccounts:
-  hub: "5678901234"
-# A optional list of producer accounts for which additional Athena catalogs will be created in the deployment account.
-producerAccounts:
-  hub: "5678901234"
-```

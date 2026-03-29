@@ -1,0 +1,326 @@
+# EC2 module configuration.
+# Provisions EC2 instances with key pairs, security groups, and
+# CloudFormation Init bootstrapping. Supports both Linux and Windows
+# instances with user data scripts and cfnInit configurations.
+# This comprehensive config exercises every compatible property at
+# full depth.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Roles granted access to the KMS key and KeyPair secrets.
+# Roles can be referenced by name, arn, or id.
+adminRoles:
+  - name: Admin
+  - arn: arn:{{partition}}:iam::{{account}}:role/some-admin-role
+  - name: EC2Admin
+
+# (Optional) Map of key pair names to key pair configurations.
+# Private keys are stored in Secrets Manager.
+keyPairs:
+  # Key pair with default settings
+  test-key-pair: {}
+  # Key pair with custom KMS encryption
+  test-key-pair2:
+    # (Optional) KMS key ARN to encrypt the private key in
+    # Secrets Manager
+    kmsKeyArn: 'arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key'
+
+# (Optional) Map of security group names to configurations
+securityGroups:
+  sg1:
+    # VPC ID for the security group
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-testvpc
+    # (Optional) Add bidirectional self-referencing rule allowing
+    # instances in this group to communicate with each other
+    addSelfReferenceRule: true
+    # (Optional) Inbound traffic rules
+    ingressRules:
+      # Rules for IPv4 CIDR-based ingress
+      ipv4:
+        - cidr: 10.0.0.0/28
+          port: 443
+          protocol: tcp
+          # (Optional) Description for the rule
+          description: HTTPS from internal subnet
+          # (Optional) Ending port for a port range
+          toPort: 443
+      # Rules for prefix list-based ingress
+      prefixList:
+        - prefixList: pl-4ea54027
+          description: prefix list for DynamoDB endpoint
+          protocol: tcp
+          port: 443
+          # (Optional) Ending port for a port range
+          toPort: 443
+      # Rules for security group-based ingress
+      sg:
+        - sgId: sg-ingresssource
+          port: 8080
+          protocol: tcp
+          # (Optional) Description for the rule
+          description: Ingress from app tier SG
+          # (Optional) Ending port for a port range
+          toPort: 8080
+    # (Optional) Outbound traffic rules
+    egressRules:
+      prefixList:
+        - prefixList: pl-4ea54027
+          description: prefix list for DynamoDB endpoint
+          protocol: tcp
+          port: 443
+        - prefixList: pl-7da54014
+          description: prefix list for S3 endpoint
+          protocol: tcp
+          port: 443
+      ipv4:
+        - cidr: 10.0.0.0/28
+          port: 443
+          protocol: tcp
+      sg:
+        - sgId: ssm:/ml/sm/sg/id
+          port: 5472
+          protocol: tcp
+
+# (Optional) Map of named CloudFormation Init configurations.
+# Referenced by instances via initName.
+cfnInit:
+  initWindows:
+    # Map of config set names to ordered config lists
+    configSets:
+      default:
+        # Ordered list of config names to execute
+        configs:
+          - 'awscli'
+          - 'Preinstall'
+      confgiset2:
+        configs:
+          - 'Preinstall'
+          - 'awscli'
+    # Map of config names to config definitions
+    configs:
+      awscli:
+        # (Optional) Packages to install
+        packages:
+          awspackage:
+            # Package manager (msi, rpm, python, yum, apt, gem)
+            packageManager: msi
+            # Package download location
+            packageLocation: 'https://awscli.amazonaws.com//AWSCLI64.msi'
+            # (Optional) Identifier key for MSI/RPM packages
+            key: awscli-msi
+            # (Optional) Restart associated services after install
+            restartRequired: true
+          anotherpackage:
+            packageManager: msi
+            packageLocation: 'https://awscli.amazonaws.com//thisisanotherpackage.msi'
+      Preinstall:
+        packages:
+          git:
+            packageManager: msi
+            packageLocation: 'https://awscli.amazonaws.com/somepackagefromconfig.msi'
+        # (Optional) Commands to execute (run in lexicographic order
+        # of key names)
+        commands:
+          01testCommand:
+            # Shell command string
+            shellCommand: 'echo "this is a command"'
+          02anotherTestCommand:
+            shellCommand: 'echo "this TOO is a command"'
+            # (Optional) Test command; success skips main command
+            testCommand: 'echo "this is test command"'
+            # (Optional) Working directory for the command
+            workingDir: '/some/dir/'
+            # (Optional) Resume cfn-init after reboot
+            waitForever: true
+            # (Optional) Restart service after command completes
+            restartRequired: true
+          03commandWithArgvs:
+            # (Optional) Command as argument vector (mutually
+            # exclusive with shellCommand)
+            argvs:
+              - 'powershell.exe'
+              - '-Command'
+              - 'Write-Host "argv command"'
+            # (Optional) Environment variables for the command
+            env:
+              MY_VAR: my-value
+              ANOTHER_VAR: another-value
+            # (Optional) Continue if this command fails
+            ignoreErrors: true
+            # (Optional) Minutes to wait after completion (Windows)
+            waitAfterCompletion: 2
+          04commandWithWaitNone:
+            shellCommand: 'echo "fire and forget"'
+            # (Optional) Do not wait after command completes
+            waitNone: true
+        # (Optional) Files to create on the instance
+        files:
+          testfile.txt:
+            # Path to source file
+            filePath: './somefile.txt'
+            restartRequired: true
+        # (Optional) Services to manage
+        services:
+          cfn-hup:
+            # Whether the service should be enabled
+            enabled: true
+            # Ensure the service is running
+            ensureRunning: true
+            # Restart after file/package/command changes
+            restartRequired: true
+          # (Optional) Explicitly disable and stop a service
+          unused-svc:
+            # (Optional) Disable and stop the service
+            disabled: true
+
+  initLinux:
+    configSets:
+      default:
+        configs:
+          - 'Apache'
+          - 'Prereq'
+      confgiset2:
+        configs:
+          - 'Prereq'
+          - 'Apache'
+    configs:
+      Prereq:
+        packages:
+          git:
+            packageManager: yum
+            packageName: git
+            packageVersions: []
+          rpmpackage:
+            packageManager: rpm
+            packageLocation: 'https://awscli.amazonaws.com//rpmpackage.rpm'
+          jqpackage:
+            packageManager: yum
+            packageName: jq
+            packageVersions: []
+        # (Optional) Linux/UNIX groups to create (not Windows)
+        groups:
+          app-group:
+            # (Optional) Specific numeric group ID
+            gid: '501'
+        # (Optional) Linux/UNIX user accounts to create (not Windows)
+        users:
+          app-user:
+            # Groups the user belongs to
+            groups:
+              - app-group
+            # Home directory path
+            homeDir: /home/app-user
+            # (Optional) Specific numeric user ID
+            uid: '1001'
+        # (Optional) Archive files to download and extract
+        sources:
+          /opt/app:
+            # URL of the archive to extract into the target directory
+            source: 'https://example.com/app-archive.tar.gz'
+      Apache:
+        packages:
+          apachepackage:
+            packageManager: yum
+            packageName: httpd
+            packageVersions: []
+
+# (Optional) Map of instance names to EC2 instance configurations
+instances:
+  # Linux instance with named init, key pair, and user data
+  instance-1:
+    # Reference to a security group from the securityGroups section
+    securityGroup: sg1
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-testvpc
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-testsubnet
+    availabilityZone: '{{region}}a'
+    instanceType: t3.medium
+    amiId: ami-linux
+    # Instance profile role (by arn, name, or id)
+    instanceRole:
+      arn: arn:{{partition}}:iam::{{account}}:role/instance-role
+    # (Optional) EBS block device mappings
+    blockDevices:
+      - # Device name (must include root volume for unencrypted AMIs)
+        deviceName: '/dev/sda1'
+        # Volume size in GB
+        volumeSizeInGb: 32
+        # EBS volume type (gp2, gp3, io1, io2, sc1, st1, standard)
+        ebsType: gp3
+    # OS type (linux, windows, unknown)
+    osType: linux
+    # (Optional) Path to user data script relative to this config
+    userDataScriptPath: './userdata.sh'
+    # (Optional) Name of a key pair from the keyPairs section
+    keyPairName: test-key-pair
+    # (Optional) Name of a cfnInit configuration to apply
+    initName: initLinux
+    # (Optional) Disable source/destination checking for NAT or
+    # routing instances
+    sourceDestCheck: false
+
+  # Windows instance with existing security group, custom KMS, and
+  # init options
+  instance-2:
+    # ID of an existing security group (not from this config)
+    securityGroupId: sg-123412412
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-testvpc
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-testsubnet
+    instanceType: t3.medium
+    availabilityZone: '{{region}}b'
+    amiId: ami-windows
+    instanceRole:
+      name: some-instance-role-name
+    blockDevices:
+      - deviceName: '/dev/sda1'
+        volumeSizeInGb: 32
+        ebsType: gp3
+      - deviceName: '/dev/sdb1'
+        volumeSizeInGb: 16
+        ebsType: gp2
+        # (Optional) IOPS for io1/io2 volumes
+        iops: 3000
+    # (Optional) KMS key ARN for EBS volume encryption
+    kmsKeyArn: 'arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key'
+    osType: windows
+    userDataScriptPath: './userdata.ps1'
+    # (Optional) Whether user data changes trigger instance
+    # replacement
+    userDataCausesReplacement: false
+    # (Optional) Name of an existing key pair (created outside
+    # this config)
+    existingKeyPairName: 'rsa-key'
+    initName: initWindows
+    # (Optional) Init execution options
+    initOptions:
+      # (Optional) Config sets to run (default: ['default'])
+      configSets: ['confgiset2']
+      # (Optional) Include IAM role in cfn-init call
+      includeRole: true
+      # (Optional) Embed config fingerprint in UserData for
+      # automatic replacement on config change (default: true)
+      embedFingerprint: false
+      # (Optional) Continue instance creation even if cfn-init
+      # fails (default: false)
+      ignoreFailures: false
+      # (Optional) Include --url argument for custom CloudFormation
+      # endpoint
+      includeUrl: true
+      # (Optional) Print cfn-init output to EC2 System Log
+      printLog: true
+      # (Optional) Max time in minutes to wait for init
+      # (default: 5)
+      timeout: 30
+    # (Optional) Number of success signals required before
+    # CREATE_COMPLETE
+    signalCount: 1
+    # (Optional) Timeout for creation policy (ISO 8601 duration)
+    creationTimeOut: PT25M

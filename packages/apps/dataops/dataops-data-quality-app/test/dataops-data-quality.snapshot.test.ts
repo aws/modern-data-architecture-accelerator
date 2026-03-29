@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { DataQualityCDKApp } from '../lib';
 import * as path from 'path';
 
 describe('dataops-data-quality Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Data Quality Stack',
-    Create.stackProvider(
-      'DataQualityStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Data Quality App',
+    Create.appProvider(
+      context => {
         const moduleApp = new DataQualityCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-data-quality-main',
@@ -41,20 +32,42 @@ describe('dataops-data-quality Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Data Quality App',
+    'Data Quality App Minimal',
     Create.appProvider(
       context => {
         const moduleApp = new DataQualityCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-data-quality-main',
+        module_name: 'test-data-quality-minimal',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'Data Quality App Noproject',
+    Create.appProvider(
+      context => {
+        const moduleApp = new DataQualityCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-noproject.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-data-quality-noproject',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

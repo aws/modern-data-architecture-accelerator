@@ -1,36 +1,70 @@
 # Data Lake
 
-This Data Lake CDK application is used to configure deploy the resources required to define a secure S3-based Data Lake on AWS.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/datalake/datalake-app/index.html).
 
-***
+Deploys a secure S3-based data lake with KMS encryption, versioned buckets, prefix-level access policies, S3 inventory, lifecycle rules, Lake Formation location registrations, and Glue catalog databases. Common scenarios include building a centralized data repository for analytics and ML workloads, establishing governed data zones (raw, curated, transformed) for ETL pipelines, or providing a shared storage layer for cross-team data access.
 
-## Deployed Resources and Compliance Details
+---
+
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+**Data Lake KMS Key** - Customer-managed KMS key used to encrypt all Data Lake resources which support encryption at rest.
+
+**Data Lake S3 Buckets** - S3 buckets forming the persistence basis of the Data Lake, with versioning, prefix-level access policies, and optional S3 Inventory and Lifecycle rules.
+
+**S3 Lifecycle Rules** - A set of lifecycle rule configurations which can be applied across data lake buckets.
+
+**Glue Utility Database** - Glue catalog database for bucket utility tables such as S3 inventory.
+
+**Lake Formation Locations** - Lake Formation resource registrations for S3 bucket prefixes, enabling governed data access.
+
+**Lake Formation Role** - IAM role assumed by Lake Formation for accessing registered data lake locations.
 
 ![DataLake](../../../constructs/L3/datalake/datalake-l3-construct/docs/DataLake.png)
 
-**Data Lake KMS Key** - This key will be used to encrypt all Data Lake resources which support encryption at rest (including the Data Lake S3 Buckets).
+---
 
-* Key usage access granted to all data lake roles (via key policy)
-* Encrypt access granted to S3 service to allow S3 Inventory data to be written (via key policy)
-* Additional permissions may be granted via IAM policy
+## Related Modules
 
-**Data Lake S3 Buckets** - These buckets will be deployed to form the persistence basis of the Data Lake.
+- [Athena Workgroup](../athena-workgroup-app/README.md) — Deploy Athena workgroups for querying data stored in data lake buckets
+- [Lake Formation Settings](../../governance/lakeformation-settings-app/README.md) — Configure account-level Lake Formation admin roles required for data lake location registrations
+- [Lake Formation Access Control](../../governance/lakeformation-access-control-app/README.md) — Manage fine-grained Lake Formation grants on data lake databases and tables
+- [Glue Catalog Settings](../../governance/glue-catalog-app/README.md) — Configure Glue Catalog encryption and cross-account access for data lake metadata
+- [Roles](../../governance/roles-app/README.md) — Create IAM roles that can be referenced as data admin, read, write, or super roles on data lake buckets
+- [Audit](../../governance/audit-app/README.md) — Configure S3 Inventory from data lake buckets into the audit bucket for compliance reporting
+- [Macie Session](../../governance/macie-session-app/README.md) — Enable Macie sensitive data discovery on data lake buckets
+- [DataOps Project](../../dataops/dataops-project-app/README.md) — DataOps projects can reference data lake buckets as output targets for ETL jobs
+- [M2M API](../../utility/m2m-api-app/README.md) — Expose data lake buckets via a secure REST API for programmatic machine-to-machine access
 
-* Bucket versioning will be automatically enabled
-  * Only super user level access may delete object versions (permanent deletion)
-  * Write access otherwise only allows creation of delete markers
-* Bucket will be encrypted by default using the Data Lake KMS Key
-  * By default, exclusive use of Data Lake KMS key will be enforced via bucket policy
-  * If exclusive use not enforced, an alternative KMS key may be specified
-  * BucketKey feature enabled to minimize impact on KMS Service during high volume read/write operations
-* Bucket policy will enforce use of SSL
-* Access policies statements (in Bucket Policy) are configured per prefix, and can be read, write, and super user level
-* By default, a defaultDeny bucket policy statement will be added to deny bucket read/write actions to any role not specified in the config
-  * Configurable by bucket
-* Each bucket may have S3 Inventory enabled to automatically produce inventory either on the bucket, or written to an external bucket
-* Each bucket may have S3 Lifecycle rules attached
+---
 
-**S3 Lifecycle Rules** -  A set of lifecycle rule configurations which can be applied across data lake buckets
+## Security/Compliance Details
+
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
+
+- **Encryption at Rest**:
+  - All buckets encrypted with customer-managed KMS key
+  - BucketKey feature minimizes KMS API calls during high-volume operations
+  - Exclusive KMS key usage enforced by default via bucket policy
+  - Key usage access granted to all data lake roles via key policy
+  - Encrypt access granted to S3 service for S3 Inventory writes
+- **Encryption in Transit**:
+  - SSL enforced on all bucket access via bucket policy
+- **Least Privilege**:
+  - Prefix-level access policies (read/write/super) injected into bucket policies
+  - Default-deny bucket policy blocks any role not explicitly specified in config
+- **Separation of Duties**:
+  - Three access tiers (read, write, super) at prefix level
+  - Only super user roles can permanently delete object versions
+  - Write access creates delete markers only
+  - Bucket versioning enabled by default
+- **Data Governance**:
+  - Lake Formation location registrations for governed data access
+  - Glue catalog databases for metadata management
+
+---
 
 ## Configuration
 
@@ -39,154 +73,36 @@ This Data Lake CDK application is used to configure deploy the resources require
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          datalake: # Module Name can be customized
-            module_path: "@aws-mdaa/datalake" # Must match module NPM package name
-            module_configs:
-              - ./datalake.yaml # Filename/path can be customized
+datalake: # Module Name can be customized
+  module_path: '@aws-mdaa/datalake' # Must match module NPM package name
+  module_configs:
+    - ./datalake.yaml # Filename/path can be customized
 ```
 
-### Module Config (./datalake.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./datalake.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Deploys a three-zone data lake (raw, standardized, curated) with a single admin role and root-level access policy. Start here for a quick data lake deployment before adding lifecycle rules, Lake Formation registrations, or fine-grained access tiers.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-roles:
-  DataAdmin: # The Logical Config Role name
-    # A list of role ids or SSM params which specify which physical roles will be bound to the Logical Config Role
-    - arn: arn:{{partition}}:iam::{{account}}:role/Admin
-    - name: Admin
-    - id: AROA1234567890
-  DataUser:
-    - id: ssm:/sample-org/instance1/generated-role/test-role/id
-    - arn: ssm:/sample-org/instance1/generated-role/data-scientist/arn
-    - id: generated-role-id:test-role
-    - id: generated-role-id:data-scientist
-    # Relsolves to the role generated by IAM Identity Center/SSO for the 'data_scientist' permission_set
-    - name: data_scientist
-      sso: true
-      
-# Definitions of access policies which grant access to S3 paths for specified Logical Config Roles.
-# These Access Policies can then be applied to Data Lake buckets (they will be injected into the corresponding bucket policies.)
-accessPolicies:
-  Root: # A friendly name for the access policy
-    rule:
-      prefix: / # The S3 prefix path to which policy will be applied in the bucket policies.
-      # A list of Logical Config Roles which will be provided ReadWriteSuper access.
-      # ReadWriteSuper access allows reading, writing, and permanent data deletion.
-      ReadWriteSuperRoles:
-        - DataAdmin
-  Data: # A friendly name for the access policy
-    rule:
-      prefix: /data
-      ReadRoles:
-        - DataUser
-
-lifecycleConfigurations:
-  SampleConfiguration1: # A friendly name for life cycle transition rules configuration.
-    SampleRule1:
-      Status: Enabled # Enabled or disabled
-      Prefix: test_prefix # (Optional) Prefix within S3 bucket to which the rule applies.
-      ObjectSizeGreaterThan: 500 # (Optional)
-      ObjectSizeLessThan: 10000 # (Optional)
-      AbortIncompleteMultipartUploadAfter: 2 # (Optional) Number of days after initiation of multi part creation.
-      Transitions: # (Optional) Storage class to move the current version of objects to after after object upload.
-        - Days: 30 # (Optional) Number of days after object creation.
-          StorageClass: STANDARD_IA # (Optional) Storage class to move the object to
-        - Days: 60
-          StorageClass: GLACIER_IR
-        - Days: 150
-          StorageClass: GLACIER
-        - Days: 240
-          StorageClass: DEEP_ARCHIVE
-      ExpirationDays: 270 # (Optional) Number of days. Current version of object will expire these many days after object creation.
-      # ExpiredObjectDeleteMarker: True # Permanently delete expired objects. Cannot be set if ExpirationDays is set
-      NoncurrentVersionTransitions: # (Optional) Storage class to move the previous versions of objects to after after object upload.
-        - Days: 30 # (Optional) Number of days after object creation.
-          StorageClass: STANDARD_IA # (Optional) Storage class to move the object to
-          NewerNoncurrentVersions: 1 # (Optional) Number of latest non-current versions to retain.
-        - Days: 60
-          StorageClass: GLACIER_IR
-          NewerNoncurrentVersions: 2
-        - Days: 150
-          StorageClass: GLACIER
-          NewerNoncurrentVersions: 3
-        - Days: 240
-          StorageClass: DEEP_ARCHIVE
-          NewerNoncurrentVersions: 4
-      NoncurrentVersionExpirationDays: 270 # (Optional) Number of days. Non-current object will expire these many days after object creation.
-      NoncurrentVersionsToRetain: 5 # (Optional) Number of latest non-current versions to retain.
-    SampleRule2:
-      Status: Enabled # Enabled or disabled
-      Prefix: test_prefix # (Optional) Prefix within S3 bucket to which the rule applies.
-      ObjectSizeGreaterThan: 500 # (Optional)
-      ObjectSizeLessThan: 10000 # (Optional)
-      AbortIncompleteMultipartUploadAfter: 2 # (Optional) Number of days after initiation of multi part upload
-      Transitions:
-        - Days: 30
-          StorageClass: STANDARD_IA
-        - Days: 60
-          StorageClass: GLACIER_IR
-        - Days: 150
-          StorageClass: GLACIER
-        - Days: 240
-          StorageClass: DEEP_ARCHIVE
-      ExpiredObjectDeleteMarker: True
-      NoncurrentVersionTransitions:
-        - Days: 30
-          StorageClass: STANDARD_IA
-          NewerNoncurrentVersions: 1
-        - Days: 60
-          StorageClass: GLACIER_IR
-          NewerNoncurrentVersions: 2
-        - Days: 150
-          StorageClass: GLACIER
-          NewerNoncurrentVersions: 3
-        - Days: 240
-          StorageClass: DEEP_ARCHIVE
-          NewerNoncurrentVersions: 4
-      NoncurrentVersionExpirationDays: 270 # Number of days. Non-current object will expire these many days after object creation.
-      NoncurrentVersionsToRetain: 5
-  SampleConfiguration2: # A friendly name for life cycle transition rules configuration.
-    SampleRule1:
-      Status: Enabled # Enabled or disabled
-      Prefix: test_prefix # (Optional) Prefix within S3 bucket to which the rule applies.
-      Transitions: # (Optional) Storage class to move the current version of objects to after after object upload.
-        - Days: 30 # (Optional) Number of days after object creation.
-          StorageClass: STANDARD_IA # (Optional) Storage class to move the object to
-    SampleRule2:
-      Status: Enabled # Enabled or disabled
-      Prefix: test_prefix # (Optional) Prefix within S3 bucket to which the rule applies.
-      NoncurrentVersionTransitions:
-        - Days: 30
-          StorageClass: STANDARD_IA
-          NewerNoncurrentVersions: 1
-
-# The set of S3 buckets which will be created, and the access policies which will be applied.
-buckets:
-  raw:
-    defaultDeny: false
-    #enableEventBridgeNotifications: true
-    createFolderSkeleton: false
-    #Inventory data will be written for each listed name/prefix under /inventory/<name>
-    inventories:
-      all-data:
-        prefix: data
-    accessPolicies:
-      - Root
-      - Data
-    lifecycleConfiguration: SampleConfiguration1
-
-  transformed:
-    createFolderSkeleton: true
-    enableEventBridgeNotifications: true
-    lakeFormationLocations:
-      all-data:
-        prefix: data
-      all-data2:
-        prefix: data2
-    accessPolicies:
-      - Root
-      - Data
-    lifecycleConfiguration: SampleConfiguration2
-
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+Deploys a three-zone data lake (raw, standardized, curated) with role-based access policies (admin/user/engineer), lifecycle configurations with tiered storage transitions, S3 inventories, LakeFormation locations, and EventBridge notifications. Use this as a reference when you need full control over bucket layout, access tiers, data lifecycle, and governance integration.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

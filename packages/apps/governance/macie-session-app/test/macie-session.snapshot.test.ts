@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { MacieSessionCDKApp } from '../lib/macie-session';
 import * as path from 'path';
 
 describe('macie-session Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Macie Stack',
-    Create.stackProvider(
-      'MacieStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Macie App',
+    Create.appProvider(
+      context => {
         const moduleApp = new MacieSessionCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-macie-main',
@@ -41,20 +32,20 @@ describe('macie-session Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Macie App',
+    'Macie App Minimal',
     Create.appProvider(
       context => {
         const moduleApp = new MacieSessionCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-macie-main',
+        module_name: 'test-macie-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

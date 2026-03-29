@@ -1,0 +1,49 @@
+# Minimal config for the GAIA GenAI platform module.
+# Deploys a basic GAIA application with email/password Cognito
+# authentication, no RAG engines, no SageMaker LLMs, and default
+# settings for all optional properties.
+
+# Minimal GAIA generative AI platform configuration with only
+# required properties.
+gaia:
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # Admin roles granted access to GAIA app resources (like
+  # KMS/Bucket). Roles can be referenced by name, arn, or id.
+  dataAdminRoles:
+    - name: Admin
+  # Prefix for GAIA resource naming
+  prefix: testing
+  # LLM model configurations
+  llms:
+    # SageMaker-hosted LLM model configurations
+    sagemaker: []
+  # Authentication configuration for user access.
+  # This config uses email/password authentication.
+  auth:
+    # Authentication method for the GAIA platform
+    # (enum: email_pass, ad, existing)
+    authType: 'email_pass'
+  # VPC networking configuration for GAIA infrastructure
+  vpc:
+    # VPC identifier for hosting GAIA application components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: XXXXXXXX
+    # Security group ID for application tier components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/security-group/id
+    appSecurityGroupId: 'sg-12345351356'
+    # Subnet IDs for the application tier
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    appSubnets:
+      - subnet1
+    # Security group ID for data tier components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/security-group/id
+    dataSecurityGroupId: 'sg-46576878787'
+    # Subnet IDs for the data tier
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    dataSubnets:
+      - subnet2

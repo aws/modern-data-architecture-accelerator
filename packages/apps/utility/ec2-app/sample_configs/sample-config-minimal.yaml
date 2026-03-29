@@ -1,0 +1,38 @@
+# Minimal EC2 module configuration.
+# Deploys a single EC2 instance with a security group.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Roles granted access to the KMS key and KeyPair secrets
+adminRoles:
+  - name: Admin
+
+# (Optional) Security group for the instance
+securityGroups:
+  my-sg:
+    # VPC ID for security group
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-testvpc
+
+# (Optional) EC2 instances — the module's primary resource.
+instances:
+  my-instance:
+    securityGroup: my-sg
+    # VPC ID for EC2 instance deployment
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-testvpc
+    # Subnet ID for EC2 instance placement
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-testsubnet
+    availabilityZone: '{{region}}a'
+    instanceType: t3.medium
+    amiId: ami-test
+    instanceRole:
+      name: instance-role
+    blockDevices:
+      - deviceName: '/dev/sda1'
+        volumeSizeInGb: 32
+        ebsType: gp3
+    osType: linux

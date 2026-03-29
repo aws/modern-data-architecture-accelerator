@@ -1,0 +1,20 @@
+# Minimal DevOps module configuration.
+# Deploys a single CI/CD pipeline for a domain with CodeCommit
+# integration.
+
+# The CodeCommit repo containing these configs
+configsCodeCommitRepo: test-config-repo
+# The CodeCommit repo containing the MDAA source code
+mdaaCodeCommitRepo: test-mdaa-repo
+# Pipelines to be deployed
+pipelines:
+  my-pipeline:
+    # Domains deployed via this pipeline
+    domainFilter:
+      - my-domain
+    # Envs deployed via this pipeline
+    envFilter:
+      - dev
+    # Modules deployed via this pipeline
+    moduleFilter:
+      - my-module

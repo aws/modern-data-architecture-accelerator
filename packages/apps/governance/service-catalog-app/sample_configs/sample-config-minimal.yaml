@@ -1,0 +1,7 @@
+# Minimal Service Catalog module configuration.
+# Contains only required properties for a basic portfolio.
+
+portfolios:
+  TestPortfolio:
+    # Provider name displayed in the Service Catalog console
+    providerName: 'test-provider'

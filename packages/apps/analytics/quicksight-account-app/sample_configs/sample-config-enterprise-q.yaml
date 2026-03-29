@@ -1,0 +1,31 @@
+# Sample config for the QuickSight Account module with Enterprise+Q edition.
+# Demonstrates ENTERPRISE_AND_Q edition with ACTIVE_DIRECTORY authentication
+# to exercise the remaining enum values not covered in the comprehensive or
+# minimal configs.
+
+# QuickSight account configuration with Q AI capabilities and Active
+# Directory authentication
+account:
+  # QuickSight edition determining feature set and pricing tier
+  # (enum: ENTERPRISE, ENTERPRISE_AND_Q, STANDARD)
+  edition: 'ENTERPRISE_AND_Q'
+  # Authentication method controlling how users sign in to QuickSight
+  # (enum: ACTIVE_DIRECTORY, IAM_AND_QUICKSIGHT, IAM_ONLY)
+  authenticationMethod: 'ACTIVE_DIRECTORY'
+  # Email address for QuickSight account notifications including billing
+  # and service alerts
+  notificationEmail: 'q-notifications@example.com'
+
+  # VPC to associate with the QuickSight account for secure data source
+  # connectivity
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: vpc-entq1234
+
+  # Subnets for the QuickSight VPC connection. QuickSight requires at
+  # least 2 subnets for multi-AZ availability.
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnetIds:
+    - subnet-entq1
+    - subnet-entq2

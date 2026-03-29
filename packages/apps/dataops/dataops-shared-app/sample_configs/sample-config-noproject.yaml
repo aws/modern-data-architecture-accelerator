@@ -1,0 +1,22 @@
+# DataOps Shared module configuration without project integration.
+# Use this approach when deploying independently of a DataOps
+# project. Infrastructure resources (KMS key, S3 bucket, IAM roles,
+# SNS topic, security configuration) must be provided directly
+# rather than auto-wired from a project.
+
+# Glue security configuration name for job encryption
+# (at rest, in transit, CloudWatch logs).
+securityConfigurationName: test-security-config
+
+# S3 bucket name for project storage (scripts, artifacts,
+# temp files).
+bucketName: test-shared-bucket
+
+# SNS topic ARN for job notifications and workflow alerts.
+notificationTopicArn: arn:{{partition}}:sns:{{region}}:{{account}}:test-shared-topic
+
+# IAM role ARN for deployment operations and resource management.
+deploymentRoleArn: arn:{{partition}}:iam::{{account}}:role/test-deploy-role
+
+# KMS key ARN for encrypting DataOps resources and data.
+kmsArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id

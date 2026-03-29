@@ -4,35 +4,26 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { DataBrewApp } from '../lib/dataops-databrew';
 import * as path from 'path';
 
 describe('dataops-databrew Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'DataBrew Stack',
-    Create.stackProvider(
-      'DataBrewStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'DataBrew App',
+    Create.appProvider(
+      context => {
         const moduleApp = new DataBrewApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
-        module_name: 'test-databrew-main',
+        module_name: 'test-dataBrew-main',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',
@@ -41,20 +32,64 @@ describe('dataops-databrew Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'DataBrew App',
+    'DataBrew App Dboutputs',
     Create.appProvider(
       context => {
         const moduleApp = new DataBrewApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-dboutputs.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-dataBrew-main',
+        module_name: 'test-databrew-dboutputs',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'DataBrew App Minimal',
+    Create.appProvider(
+      context => {
+        const moduleApp = new DataBrewApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-databrew-minimal',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'DataBrew App Noproject',
+    Create.appProvider(
+      context => {
+        const moduleApp = new DataBrewApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-noproject.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-databrew-noproject',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

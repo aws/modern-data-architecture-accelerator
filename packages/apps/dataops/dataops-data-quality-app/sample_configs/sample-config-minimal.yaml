@@ -1,0 +1,12 @@
+# Minimal configuration for DataOps Data Quality module.
+# Only required properties are included.
+
+# Map of ruleset names to Glue Data Quality ruleset definitions.
+rulesets:
+  customer-data-quality:
+    targetTable:
+      databaseName: project:databaseName/customer-data
+      tableName: customers
+    ruleset:
+      - ruleType: IsComplete
+        column: customer_id

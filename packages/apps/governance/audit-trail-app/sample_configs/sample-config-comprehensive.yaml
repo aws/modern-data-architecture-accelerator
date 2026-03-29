@@ -1,0 +1,18 @@
+# Comprehensive sample config for the Audit Trail module.
+# Covers EVERY non-excluded property from config-schema.json at full depth.
+# Deploys a CloudTrail trail with S3 audit bucket, KMS encryption,
+# and management event logging for compliance monitoring.
+
+# CloudTrail audit trail configuration for S3 data event logging
+# with KMS encryption. (AuditTrailProps)
+trail:
+  # (Required) S3 bucket name where CloudTrail audit logs are stored.
+  # Accepts bucket names or SSM parameter references.
+  cloudTrailAuditBucketName: ssm:/sample-org/shared/audit/bucket/name
+  # (Required) KMS key ARN for encrypting CloudTrail logs written to S3.
+  # Accepts key ARNs or SSM parameter references.
+  # Direct ARN example: arn:{{partition}}:kms:{{region}}:{{account}}:key/audit-key-id
+  cloudTrailAuditKmsKeyArn: ssm:/sample-org/shared/audit/kms/cmk/arn
+  # (Optional, boolean) If true, management/control plane events will be
+  # included in trail. Otherwise, only S3 Data Events will be included.
+  includeManagementEvents: true

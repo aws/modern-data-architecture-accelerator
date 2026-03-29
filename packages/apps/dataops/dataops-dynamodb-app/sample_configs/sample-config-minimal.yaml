@@ -1,0 +1,18 @@
+# Minimal DataOps DynamoDB module configuration.
+# Deploys a single on-demand DynamoDB table with a partition key,
+# wired to a DataOps project for KMS encryption.
+
+# (Optional) DataOps project name for resource autowiring.
+projectName: dataops-project-sample
+
+# Map of table names to DynamoDB table definitions.
+tableDefinitions:
+  my-table:
+    # Partition key attribute
+    partitionKey:
+      # Attribute name
+      name: pk
+      # Attribute data type (enum: B, N, S)
+      type: S
+    # (Optional) Billing mode
+    billingMode: PAY_PER_REQUEST

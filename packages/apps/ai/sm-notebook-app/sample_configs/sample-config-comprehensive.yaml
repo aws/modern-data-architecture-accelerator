@@ -1,0 +1,266 @@
+# Sample config for the SageMaker Notebook module.
+# Provisions notebook instances with lifecycle configs, security
+# groups, asset deployment, and various compute/networking options.
+# This comprehensive config exercises every compatible property at
+# full depth.
+
+# (Optional) Map of lifecycle configuration names to lifecycle
+# configs with startup/shutdown scripts.
+lifecycleConfigs:
+  example-lifecycle-config:
+    # (Optional) Lifecycle script for notebook instance startup.
+    # Runs once per startup.
+    onStart:
+      # (Optional) Assets staged in S3, then copied to container
+      # before lifecycle commands run. Available under
+      # $ASSETS_DIR/<asset_name>/
+      assets:
+        testing:
+          # Local file or directory path to deploy
+          sourcePath: ./assets
+          # (Optional) Glob patterns to exclude from asset
+          # packaging
+          exclude:
+            - '*.pyc'
+            - '__pycache__'
+      # Lifecycle commands to execute
+      cmds:
+        - echo "testing onStart"
+        - sh $ASSETS_DIR/testing/test.sh
+    # (Optional) Lifecycle script for notebook instance creation.
+    # Runs once when notebook is provisioned.
+    onCreate:
+      # (Optional) Assets staged in S3, then copied to container
+      # before lifecycle commands run.
+      assets:
+        setup-scripts:
+          # Local file or directory path to deploy
+          sourcePath: ./assets
+          # (Optional) Glob patterns to exclude from asset
+          # packaging
+          exclude:
+            - '*.tmp'
+      cmds:
+        - echo "Testing onCreate"
+
+# (Optional) Asset deployment configuration for automated notebook
+# code and resource provisioning. Required if assets are specified
+# in lifecycleConfigs.
+assetDeploymentConfig:
+  # S3 bucket name for notebook asset storage
+  assetBucketName: some-bucket-name
+  # (Optional) S3 prefix for asset organization. Defaults to
+  # 'sagemaker-lifecycle-assets/notebooks' if not specified.
+  assetPrefix: sagemaker/assets
+  # IAM role ARN for asset deployment Lambda. Must have write
+  # access to the assetBucket and assetPrefix, and an assume role
+  # trust policy for Lambda.
+  assetDeploymentRoleArn: arn:{{partition}}:iam::{{account}}:role/example_deployment_role
+  # (Optional) Lambda memory limit in MB for asset deployment
+  memoryLimitMB: 512
+
+# (Optional) Existing KMS key ARN for notebook instance encryption.
+# If omitted, a customer-managed key is created automatically.
+kmsKeyArn: 'arn:{{partition}}:kms:{{region}}:{{account}}:key/test-notebook-key'
+
+# (Optional) Map of notebook names to notebook instance
+# configurations with compute, networking, and access controls.
+notebooks:
+  notebook-1:
+    # (Optional) Custom notebook instance name. If not specified,
+    # the notebook ID will be used.
+    notebookName: 'test-notebook-name'
+    # VPC ID for notebook deployment
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-id
+    # Subnet ID for notebook placement
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-id
+    # EC2 instance type for the notebook
+    instanceType: ml.t3.medium
+    # (Optional) Elastic Inference accelerator types to associate
+    # with the notebook instance
+    acceleratorTypes:
+      - ml.eia2.medium
+    # (Optional) Instance metadata service configuration
+    instanceMetadataServiceConfiguration:
+      # Minimum IMDS version (e.g., "2" to enforce IMDSv2)
+      minimumInstanceMetadataServiceVersion: '2'
+    # (Optional) Inbound traffic rules for the notebook security
+    # group
+    securityGroupIngress:
+      # (Optional) IPv4 CIDR block rules for security group
+      # traffic control
+      ipv4:
+        - # CIDR block specification for network access control
+          cidr: 10.0.0.0/28
+          # (Optional) Port number to allow
+          port: 443
+          # IP protocol (e.g., tcp, udp)
+          protocol: tcp
+          # (Optional) Description for the rule
+          description: Allow HTTPS from internal network
+          # (Optional) Ending port number defining the upper bound
+          # of the port range
+          toPort: 443
+      # (Optional) Prefix list rules for security group traffic
+      # control
+      prefixList:
+        - # Prefix list identifier for managed IP range access
+          prefixList: pl-test-ingress
+          # IP protocol
+          protocol: tcp
+          # (Optional) Port number to allow
+          port: 443
+          # (Optional) Description for the rule
+          description: Allow HTTPS from managed prefix list
+          # (Optional) Ending port number defining the upper bound
+          # of the port range
+          toPort: 443
+      # (Optional) Security group rules for cross-security group
+      # traffic control
+      sg:
+        - # Security group identifier for SG-based access control
+          sgId: sg-ingresstest
+          # IP protocol
+          protocol: tcp
+          # (Optional) Port number to allow
+          port: 443
+          # (Optional) Description for the rule
+          description: Allow HTTPS from peer security group
+          # (Optional) Ending port number defining the upper bound
+          # of the port range
+          toPort: 443
+    # (Optional) Outbound traffic rules for the notebook security
+    # group
+    securityGroupEgress:
+      # (Optional) IPv4 CIDR block rules for egress traffic
+      # control
+      ipv4:
+        - cidr: 0.0.0.0/0
+          port: 443
+          protocol: tcp
+          # (Optional) Description for the rule
+          description: Allow HTTPS egress
+          # (Optional) Ending port number defining the upper bound
+          # of the port range
+          toPort: 443
+      # (Optional) Prefix list rules for egress traffic control
+      prefixList:
+        - prefixList: pl-4ea54027
+          description: prefix list for com.amazonaws.{{region}}.dynamodb
+          protocol: tcp
+          port: 443
+          # (Optional) Ending port number defining the upper bound
+          # of the port range
+          toPort: 443
+        - prefixList: pl-7da54014
+          description: prefix list for com.amazonaws.{{region}}.s3
+          protocol: tcp
+          port: 443
+      # (Optional) Security group rules for egress traffic control
+      sg:
+        - sgId: ssm:/ml/sm/sg/id
+          port: 443
+          protocol: tcp
+          # (Optional) Description for the rule
+          description: Allow HTTPS to peer security group
+          # (Optional) Ending port number defining the upper bound
+          # of the port range
+          toPort: 443
+    # (Optional) Size of the root volume in GB
+    volumeSizeInGb: 10
+    # (Optional) If true, user will have root access to the
+    # notebook
+    rootAccess: false
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    # IAM role for notebook instance. Requires an assume role trust
+    # policy for sagemaker.amazonaws.com.
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    notebookRole:
+      arn: arn:{{partition}}:iam::{{account}}:role/sagemaker-role
+    # (Optional) Reference to a lifecycle config created by this
+    # module
+    lifecycleConfigName: example-lifecycle-config
+    # (Optional) Platform identifier for the notebook
+    platformIdentifier: 'notebook-al2-v2'
+    # (Optional) Default code repository URL
+    defaultCodeRepository: 'https://github.com/example/repo.git'
+    # (Optional) Additional code repository URLs
+    additionalCodeRepositories:
+      - 'https://github.com/example/repo2.git'
+
+  notebook-2:
+    # VPC ID for notebook deployment
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-id
+    # Subnet ID for notebook placement
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-id
+    # EC2 instance type for the notebook
+    instanceType: ml.t3.large
+    # (Optional) ID of an existing security group (not created by
+    # this module)
+    securityGroupId: sg-123124124
+    # (Optional) Size of the root volume in GB
+    volumeSizeInGb: 5
+    # IAM role for notebook instance (name-based reference)
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    notebookRole:
+      name: sagemaker-role
+    # Reference to an existing lifecycle config (created outside
+    # this module) using the 'external:' prefix
+    lifecycleConfigName: external:existing-lifecycle-config
+
+  notebook-3:
+    # VPC ID for notebook deployment
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-id
+    # Subnet ID for notebook placement
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-id
+    # EC2 instance type for the notebook
+    instanceType: ml.t3.xlarge
+    # (Optional) ID of an existing security group
+    securityGroupId: sg-test-id-ref
+    # (Optional) Size of the root volume in GB
+    volumeSizeInGb: 10
+    # IAM role for notebook instance execution
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    notebookRole:
+      name: notebook-execution-role
+
+  # Example notebook using a Cfn Param input for the name.
+  # Suitable for use as a Service Catalog product.
+  sc-notebook:
+    # (Optional) Custom notebook instance name. Supports
+    # {{param:name}} syntax for Service Catalog parameters.
+    notebookName: '{{param:notebook_name}}'
+    # VPC ID for notebook deployment
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-id
+    # Subnet ID for notebook placement
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-id
+    # EC2 instance type for the notebook
+    instanceType: ml.t3.large
+    # (Optional) ID of an existing security group
+    securityGroupId: sg-12312412421
+    # (Optional) Size of the root volume in GB
+    volumeSizeInGb: 5
+    # IAM role for notebook instance
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    notebookRole:
+      name: sagemaker-role

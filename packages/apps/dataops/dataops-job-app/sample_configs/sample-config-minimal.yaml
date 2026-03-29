@@ -1,0 +1,27 @@
+# Minimal DataOps Job module configuration.
+# Deploys a single Glue ETL job with project autowiring.
+
+# (Optional) DataOps project name for job resource autowiring.
+projectName: dataops-project-test
+
+# Map of job names to Glue job definitions.
+jobs:
+  MyJob:
+    # IAM role ARN for Glue job execution permissions.
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    executionRoleArn: some-arn
+    # Job command configuration.
+    command:
+      # Job type. (enum: glueetl, pythonshell)
+      name: 'glueetl'
+      # (Optional) Python version. (enum: 2, 3)
+      pythonVersion: '3'
+      # Relative path to the Glue script.
+      scriptLocation: ./src/glue/python/job.py
+    # Job description.
+    description: Minimal Glue ETL job
+    # (Optional) Glue runtime version.
+    glueVersion: '2.0'
+    # (Optional) Number of capacity units.
+    allocatedCapacity: 2

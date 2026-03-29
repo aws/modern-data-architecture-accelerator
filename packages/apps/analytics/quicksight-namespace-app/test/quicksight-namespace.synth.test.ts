@@ -5,13 +5,31 @@
 
 import { QuickSightNamespaceCDKApp } from '../lib/quicksight-namespace';
 
-test('SynthTest LOB1', () => {
+test('SynthTest - Comprehensive', () => {
   const context = {
     org: 'test-org',
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/test-config-lob1.yaml',
+    module_configs: './sample_configs/sample-config-comprehensive.yaml',
+  };
+  const app = new QuickSightNamespaceCDKApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - Minimal', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-minimal.yaml',
   };
   const app = new QuickSightNamespaceCDKApp({ context: context });
   app.generateStack();

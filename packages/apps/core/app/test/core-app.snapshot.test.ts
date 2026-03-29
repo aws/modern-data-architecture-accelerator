@@ -4,7 +4,7 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { MdaaCdkApp } from '../lib';
 import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
@@ -32,75 +32,8 @@ class TestMdaaCdkApp extends MdaaCdkApp {
 }
 
 describe('Core App Snapshot Tests', () => {
-  snapShotTest(
-    'Core App Stack - Basic',
-    Create.stackProvider(
-      'CoreAppStack',
-      (_, context) => {
-        const moduleApp = new TestMdaaCdkApp({
-          context: {
-            ...context,
-          },
-        });
-        return moduleApp.generateStack();
-      },
-      {
-        module_name: 'test-core-app-basic',
-        org: 'test-org',
-        env: 'test-env',
-        domain: 'test-domain',
-      },
-    ),
-  );
-
-  snapShotTest(
-    'Core App Stack - Production',
-    Create.stackProvider(
-      'CoreAppStackProd',
-      (_, context) => {
-        const moduleApp = new TestMdaaCdkApp({
-          context: {
-            ...context,
-            env: 'prod',
-            domain: 'production',
-          },
-        });
-        return moduleApp.generateStack();
-      },
-      {
-        module_name: 'test-core-app-prod',
-        org: 'enterprise',
-        env: 'prod',
-        domain: 'production',
-      },
-    ),
-  );
-
-  snapShotTest(
-    'Core App Stack - Development',
-    Create.stackProvider(
-      'CoreAppStackDev',
-      (_, context) => {
-        const moduleApp = new TestMdaaCdkApp({
-          context: {
-            ...context,
-            env: 'dev',
-            domain: 'development',
-          },
-        });
-        return moduleApp.generateStack();
-      },
-      {
-        module_name: 'test-core-app-dev',
-        org: 'test-org',
-        env: 'dev',
-        domain: 'development',
-      },
-    ),
-  );
-
   snapShotTestApp(
-    'Core App - Complete',
+    'Core App - Basic',
     Create.appProvider(
       context => {
         const moduleApp = new TestMdaaCdkApp({
@@ -112,10 +45,56 @@ describe('Core App Snapshot Tests', () => {
         return moduleApp;
       },
       {
-        module_name: 'test-core-app-complete',
+        module_name: 'test-core-app-basic',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'Core App - Production',
+    Create.appProvider(
+      context => {
+        const moduleApp = new TestMdaaCdkApp({
+          context: {
+            ...context,
+            env: 'prod',
+            domain: 'production',
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-core-app-prod',
+        org: 'enterprise',
+        env: 'prod',
+        domain: 'production',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'Core App - Development',
+    Create.appProvider(
+      context => {
+        const moduleApp = new TestMdaaCdkApp({
+          context: {
+            ...context,
+            env: 'dev',
+            domain: 'development',
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-core-app-dev',
+        org: 'test-org',
+        env: 'dev',
+        domain: 'development',
       },
     ),
   );

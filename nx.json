@@ -30,7 +30,8 @@
         "{projectRoot}/bin/*.ts",
         "{projectRoot}/lib/*.ts",
         "{projectRoot}/test/*.ts",
-        "{projectRoot}/test/**/*.yaml"
+        "{projectRoot}/test/**/*.yaml",
+        "{projectRoot}/sample_configs/**/*.yaml"
       ],
       "options": {
         "retry": 2
@@ -43,7 +44,8 @@
         "{projectRoot}/bin/*.ts",
         "{projectRoot}/lib/*.ts",
         "{projectRoot}/test/*.ts",
-        "{projectRoot}/test/**/*.yaml"
+        "{projectRoot}/test/**/*.yaml",
+        "{projectRoot}/sample_configs/**/*.yaml"
       ],
       "outputs": ["{projectRoot}/coverage"],
       "options": {
@@ -58,7 +60,8 @@
         "{projectRoot}/lib/*.ts",
         "{projectRoot}/test/*.ts",
         "{projectRoot}/test/**/*.yaml",
-        "{projectRoot}/test/**/*.snap"
+        "{projectRoot}/test/**/*.snap",
+        "{projectRoot}/sample_configs/**/*.yaml"
       ],
       "cache": true
     }

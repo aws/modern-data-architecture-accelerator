@@ -5,13 +5,67 @@
 
 import { QuickSightProjectCDKApp } from '../lib/quicksight-project';
 
-test('SynthTest', () => {
+test('SynthTest - minimal config', () => {
   const context = {
     org: 'test-org',
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/test-config.yaml',
+    module_configs: './sample_configs/sample-config-minimal.yaml',
+  };
+  const app = new QuickSightProjectCDKApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - comprehensive config', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-comprehensive.yaml',
+  };
+  const app = new QuickSightProjectCDKApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - copysource credentials config', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-copysource.yaml',
+  };
+  const app = new QuickSightProjectCDKApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - credential pair config', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-credentialpair.yaml',
   };
   const app = new QuickSightProjectCDKApp({ context: context });
   app.generateStack();

@@ -16,23 +16,27 @@ For more information about AWS security, visit [AWS Cloud Security](https://aws.
 
 The following security principles are integral to the MDAA design:
 
-* Ubiquitous encryption at rest (using KMS Customer Managed Keys) and in transit, enforced within all MDAA Compliant Constructs 
+- Ubiquitous encryption at rest, using KMS Customer Managed Keys with least privilege
 
-* Least-privilege in generated permissions within all MDAA Compliant Constructs
+- Ubiquitous encryption in transit using TLS 1.3+
 
-* Separation of Duties in generated roles and permissions within all MDAA Compliant Constructs
+- Least-privilege in generated permissions within all MDAA Compliant Constructs
 
-* Compliance with [AWS Solutions CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#awssolutions) 
+- Separation of Duties in generated roles and permissions within all MDAA Compliant Constructs
 
-* Compliance with [NIST 800-53 Rev 5 CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#nist-800-53-rev-5) targeting FedRAMP Moderate Compliance
+- Network isolation and topology controls, preventing public connectivity to VPC bound resources
 
-* Compliance with [HIPAA CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#hipaa-security) 
+- Compliance with [AWS Solutions CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#awssolutions)
 
-* Compliance with [PCI-DSS CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#pci-dss-321) 
+- Compliance with [NIST 800-53 Rev 5 CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#nist-800-53-rev-5) targeting FedRAMP Moderate Compliance
 
-* Compliance with ITSG-33 PBMM Security Control Requirements targeting CCCS Medium Compliance
+- Compliance with [HIPAA CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#hipaa-security)
 
-* (Terraform) Compliance with Checkov standard policies
+- Compliance with [PCI-DSS CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#pci-dss-321)
+
+- Compliance with ITSG-33 PBMM Security Control Requirements targeting CCCS Medium Compliance
+
+- (Terraform) Compliance with Checkov standard policies
 
 ## Security Design
 
@@ -42,23 +46,23 @@ The following security principles are integral to the MDAA design:
 
 ## Compliance Assumptions and Recommendations
 
-* MDAA is assumed to be deployed into an AWS Organization/Account/VPC topology which meets the organization's security control requirements
-  * MDAA will inherit the security controls of the AWS Organization/Account/VPC into which it is deployed
+- MDAA is assumed to be deployed into an AWS Organization/Account/VPC topology which meets the organization's security control requirements
+  - MDAA will inherit the security controls of the AWS Organization/Account/VPC into which it is deployed
 
-* MDAA should be deployed to production via a governed and robust DevSecOps pipeline
+- MDAA should be deployed to production via a governed and robust DevSecOps pipeline
 
-* There should be a separation of duties within the DevSecOps pipeline, with separate roles employed for MDAA configuration, review, and final deployment
+- There should be a separation of duties within the DevSecOps pipeline, with separate roles employed for MDAA configuration, review, and final deployment
 
-* MDAA CDK/CloudFormation Diffs should be manually reviewed prior to final deployment
+- MDAA CDK/CloudFormation Diffs should be manually reviewed prior to final deployment
 
-* MDAA does not enforce Amazon S3 server logs on created S3 buckets because Amazon S3 server logs do not support KMS-encrypted log destination buckets
-  * Instead, S3 audit requirements must be met using account/org-level CloudTrail Data Events, optionally configured through the MDAA Audit Trail module
+- MDAA does not enforce Amazon S3 server logs on created S3 buckets because Amazon S3 server logs do not support KMS-encrypted log destination buckets
+  - Instead, S3 audit requirements must be met using account/org-level CloudTrail Data Events, optionally configured through the MDAA Audit Trail module
 
-* MDAA CDK Nag reports should be manually reviewed prior to final deployment
-  * CDK Nag reports will contain all evaluated CDK Nag rules, the resources they were evaluated against, and any explicit suppressions of these rules
-    * One CDK Nag report is generated per module
+- MDAA CDK Nag reports should be manually reviewed prior to final deployment
+  - CDK Nag reports will contain all evaluated CDK Nag rules, the resources they were evaluated against, and any explicit suppressions of these rules
+    - One CDK Nag report is generated per module
 
-* Additional compliance validation can be applied prior to deployment through application of CFN Nag/Checkov to generated CloudFormation templates
+- Additional compliance validation can be applied prior to deployment through application of CFN Nag/Checkov to generated CloudFormation templates
 
 ## CDK Nag Suppressions
 
@@ -74,21 +78,21 @@ Where appropriate, MDAA constructs will directly implement various CDK Nag suppr
 
 MDAA L2 Constructs implement resource-level compliance with CDK Nag rulesets. The security compliance details for each MDAA L2 construct is noted in the respective construct READMEs.
 
-* [**Athena Workgroup Constructs**](packages/constructs/L2/athena-constructs/README.md)
-* [**EC2 Constructs**](packages/constructs/L2/ec2-constructs/README.md)
-* [**(Preview) ECS Constructs**](packages/constructs/L2/ecs-constructs/README.md)
-* [**(Preview) EKS Constructs**](packages/constructs/L2/eks-constructs/README.md)
-* [**Glue Crawlers, Jobs, and Security Configuration Constructs**](packages/constructs/L2/glue-constructs/README.md)
-* [**Glue DataBrew Job and Recipe Constructs**](packages/constructs/L2/databrew-constructs/README.md)
-* [**IAM Role Construct**](packages/constructs/L2/iam-constructs/README.md)
-* [**KMS CMK Construct**](packages/constructs/L2/kms-constructs/README.md)
-* [**Lambda Role and Function Constructs**](packages/constructs/L2/lambda-constructs/README.md)
-* [**Redshift Cluster Construct**](packages/constructs/L2/redshift-constructs/README.md)
-* [**S3 Bucket Construct**](packages/constructs/L2/s3-constructs/README.md)
-* [**SageMaker Constructs (Studio and Notebooks)**](packages/constructs/L2/sagemaker-constructs/README.md)
-* [**OpenSearch Constructs**](packages/constructs/L2/opensearch-constructs/README.md)
-* [**SQS Queue Construct**](packages/constructs/L2/sqs-constructs/README.md)
-* [**SNS Topic Construct**](packages/constructs/L2/sns-constructs/README.md)
-* [**SFTP Transfer Family Server Construct**](packages/constructs/L2/transfer-family-constructs/README.md)
-* [**(Preview) RDS Aurora Constructs**](packages/constructs/L2/rds-constructs/README.md)
-* [**(Preview) DynamoDB Construct**](packages/constructs/L2/ddb-constructs/README.md)
+- [**Athena Workgroup Constructs**](packages/constructs/L2/athena-constructs/README.md)
+- [**EC2 Constructs**](packages/constructs/L2/ec2-constructs/README.md)
+- [**(Preview) ECS Constructs**](packages/constructs/L2/ecs-constructs/README.md)
+- [**(Preview) EKS Constructs**](packages/constructs/L2/eks-constructs/README.md)
+- [**Glue Crawlers, Jobs, and Security Configuration Constructs**](packages/constructs/L2/glue-constructs/README.md)
+- [**Glue DataBrew Job and Recipe Constructs**](packages/constructs/L2/databrew-constructs/README.md)
+- [**IAM Role Construct**](packages/constructs/L2/iam-constructs/README.md)
+- [**KMS CMK Construct**](packages/constructs/L2/kms-constructs/README.md)
+- [**Lambda Role and Function Constructs**](packages/constructs/L2/lambda-constructs/README.md)
+- [**Redshift Cluster Construct**](packages/constructs/L2/redshift-constructs/README.md)
+- [**S3 Bucket Construct**](packages/constructs/L2/s3-constructs/README.md)
+- [**SageMaker Constructs (Studio and Notebooks)**](packages/constructs/L2/sagemaker-constructs/README.md)
+- [**OpenSearch Constructs**](packages/constructs/L2/opensearch-constructs/README.md)
+- [**SQS Queue Construct**](packages/constructs/L2/sqs-constructs/README.md)
+- [**SNS Topic Construct**](packages/constructs/L2/sns-constructs/README.md)
+- [**SFTP Transfer Family Server Construct**](packages/constructs/L2/transfer-family-constructs/README.md)
+- [**(Preview) RDS Aurora Constructs**](packages/constructs/L2/rds-constructs/README.md)
+- [**(Preview) DynamoDB Construct**](packages/constructs/L2/ddb-constructs/README.md)

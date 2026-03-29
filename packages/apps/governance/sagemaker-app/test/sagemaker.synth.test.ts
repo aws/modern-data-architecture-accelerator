@@ -11,16 +11,34 @@ beforeEach(() => {
   process.env.CDK_DEFAULT_ACCOUNT = 'test-account';
   Fact.register(new TestRegionFact(), true);
 });
-test('SynthTest', () => {
+test('SynthTest - minimal config', () => {
   const context = {
     org: 'test-org',
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/test-config.yaml',
+    module_configs: './sample_configs/sample-config-minimal.yaml',
+  };
+  const app = new SagemakerCDKApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - comprehensive config', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-comprehensive.yaml',
     additional_stacks: JSON.stringify([
-      { account: '1234567890', region: 'test-region' },
-      { account: '2234567890', region: 'test-region' },
+      { account: '222222222222', region: 'test-region' },
+      { account: '333333333333', region: 'test-region' },
     ]),
   };
   const app = new SagemakerCDKApp({ context: context });

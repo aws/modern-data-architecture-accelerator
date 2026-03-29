@@ -1,0 +1,243 @@
+# Sample config for the Roles module.
+# Generates IAM roles, customer-managed policies, and SAML federation
+# providers. Supports persona-based policy assignment (data-admin,
+# data-engineer, data-scientist), multiple trust principal types,
+# and CDK Nag suppression management.
+
+# (Optional) If true (default), creates a set of MDAA persona-based
+# managed policies for predefined personas (data-admin,
+# data-engineer, data-scientist). Set to false to skip persona
+# policy creation.
+createPersonaManagedPolicies: true
+
+# (Optional) Map of named federation configurations for SAML
+# identity provider integration. Each entry either references an
+# existing IAM SAML provider or creates a new one from a metadata
+# document. Federation names are used in role trust policies via
+# the "federation:<name>" principal format.
+federations:
+  # Reference an existing SAML identity provider by ARN
+  example-federation:
+    # ARN of an existing IAM SAML identity provider. Mutually
+    # exclusive with samlDoc.
+    providerArn: arn:{{partition}}:iam::{{account}}:saml-provider/ExampleIdentityProvider
+
+  # Create a new SAML identity provider from a metadata document
+  new-federation:
+    # Path to a SAML metadata XML document used to create a new
+    # IAM SAML provider. Relative paths should be prefixed with
+    # "./". Mutually exclusive with providerArn.
+    samlDoc: ./saml-doc.xml
+
+# (Optional) Map of named customer-managed policies to generate.
+# Each policy defines an IAM policy document and optional CDK Nag
+# suppressions. Policy names are referenced by roles via the
+# generatedPolicies property.
+generatePolicies:
+  # Policy name used as a reference in role definitions. By
+  # default, MDAA naming prefixes are applied to the final
+  # policy name.
+  TestPolicy:
+    # (Required) IAM policy document with Statement array
+    policyDocument:
+      Statement:
+        - SID: testing
+          Effect: Allow
+          Resource:
+            - 'arn:{{partition}}:s3:::*'
+          Action:
+            - s3:List*
+            - s3:GetBucket*
+    # (Optional) CDK Nag suppressions for rules triggered by this
+    # policy. Each entry requires a rule id and justification.
+    suppressions:
+      - id: 'AwsSolutions-IAM5'
+        reason: 'Wildcard testing ok!'
+
+  # Example policy with verbatim naming (no MDAA prefix)
+  TestPolicyVerbatim:
+    # (Optional) When true, uses the exact policy name without
+    # MDAA naming prefixes. (default: false)
+    verbatimPolicyName: true
+    policyDocument:
+      Statement:
+        - SID: testing
+          Effect: Allow
+          Resource:
+            - 'arn:{{partition}}:s3:::*'
+          Action:
+            - s3:List*
+            - s3:GetBucket*
+    suppressions:
+      - id: 'AwsSolutions-IAM5'
+        reason: 'Wildcard testing ok!'
+
+# (Optional) Map of named IAM roles to generate. Each role defines
+# trust policies, managed policy attachments, and optional CDK Nag
+# suppressions. Role names are used as identifiers and SSM
+# parameter paths.
+generateRoles:
+  # ----------------------------------------------------------------
+  # Persona-based role example
+  # ----------------------------------------------------------------
+  # Role with a base persona for automatic MDAA policy attachment.
+  # Personas provide standardized permission sets.
+  my-data-admin:
+    # (Required) Primary trusted principal for the role's trust
+    # policy. Supported formats:
+    #   - "this_account": Trust IAM root of the current account
+    #   - "service:<svc>.amazonaws.com": Trust an AWS service
+    #   - "federation:<name>": Trust a SAML federation from config
+    #   - "account:<account-id>": Trust another AWS account
+    #   - "arn:...": Trust a specific IAM role/user ARN
+    trustedPrincipal: this_account
+    # (Optional) Base persona for automatic MDAA managed policy
+    # attachment. Valid values: data-admin, data-engineer,
+    # data-scientist. Requires createPersonaManagedPolicies: true.
+    basePersona: data-admin
+    # (Optional) Names of policies from generatePolicies to attach
+    generatedPolicies:
+      - TestPolicy
+
+  # ----------------------------------------------------------------
+  # Persona-based role: data-engineer
+  # ----------------------------------------------------------------
+  # Demonstrates the data-engineer basePersona enum value
+  my-data-engineer:
+    trustedPrincipal: this_account
+    # basePersona enum value: data-engineer
+    basePersona: data-engineer
+
+  # ----------------------------------------------------------------
+  # Persona-based role: data-scientist
+  # ----------------------------------------------------------------
+  # Demonstrates the data-scientist basePersona enum value
+  my-data-scientist:
+    trustedPrincipal: this_account
+    # basePersona enum value: data-scientist
+    basePersona: data-scientist
+
+  # ----------------------------------------------------------------
+  # Basic role with AWS managed policy
+  # ----------------------------------------------------------------
+  test-role:
+    trustedPrincipal: this_account
+    # (Optional) AWS managed policy names to attach. Use the policy
+    # path as shown in IAM console (e.g. "service-role/PolicyName")
+    awsManagedPolicies:
+      - service-role/AWSLambdaBasicExecutionRole
+    generatedPolicies:
+      - TestPolicy
+    # (Optional) CDK Nag suppressions for rules triggered by this
+    # role configuration
+    suppressions:
+      - id: 'AwsSolutions-IAM4'
+        reason: 'AWSLambdaBasicExecutionRole approved for use'
+
+  # ----------------------------------------------------------------
+  # Role with verbatim naming (no MDAA prefix)
+  # ----------------------------------------------------------------
+  test-role-verbatim:
+    # (Optional) When true, uses the exact role name without MDAA
+    # naming prefixes. Useful for integration with external systems
+    # expecting specific role names. (default: false)
+    verbatimRoleName: true
+    trustedPrincipal: this_account
+    awsManagedPolicies:
+      - service-role/AWSLambdaBasicExecutionRole
+    generatedPolicies:
+      - TestPolicy
+    suppressions:
+      - id: 'AwsSolutions-IAM4'
+        reason: 'AWSLambdaBasicExecutionRole approved for use'
+
+  # ----------------------------------------------------------------
+  # Service role example (Glue)
+  # ----------------------------------------------------------------
+  glue-role:
+    # Trust the Glue service to assume this role
+    trustedPrincipal: service:glue.amazonaws.com
+    awsManagedPolicies:
+      - service-role/AWSGlueServiceRole
+    suppressions:
+      - id: 'AwsSolutions-IAM4'
+        reason: 'AWSGlueServiceRole approved for use'
+
+  # ----------------------------------------------------------------
+  # Federated role examples (SAML)
+  # ----------------------------------------------------------------
+  # Role assumable via existing SAML federation
+  data-scientist:
+    # Reference a federation defined in the federations section
+    trustedPrincipal: federation:example-federation
+    generatedPolicies:
+      - TestPolicy
+
+  # Role assumable via new SAML federation (created from samlDoc)
+  data-engineer:
+    trustedPrincipal: federation:new-federation
+    generatedPolicies:
+      - TestPolicy
+
+  # ----------------------------------------------------------------
+  # Service role without additional policies
+  # ----------------------------------------------------------------
+  lakeformation:
+    trustedPrincipal: service:lakeformation.amazonaws.com
+
+  # ----------------------------------------------------------------
+  # Role with existing customer-managed policies
+  # ----------------------------------------------------------------
+  # Role that attaches pre-existing customer-managed policies
+  # (policies not defined in generatePolicies)
+  role-with-existing-policies:
+    trustedPrincipal: this_account
+    # (Optional) Names of existing customer-managed policies to
+    # attach. These must already exist in the account.
+    customerManagedPolicies:
+      - MyExistingPolicy
+      - AnotherExistingPolicy
+
+  # ----------------------------------------------------------------
+  # Cross-account/cross-role trust examples
+  # ----------------------------------------------------------------
+  # Role assumable by a specific IAM role ARN (direct trust)
+  application_data_role1:
+    # Trust a specific role ARN directly
+    trustedPrincipal: arn:{{partition}}:iam::{{account}}:role/test-application-role
+    generatedPolicies:
+      - TestPolicy
+
+  # Role with conditional trust (more restrictive)
+  application_data_role2:
+    trustedPrincipal: this_account
+    # (Optional) IAM conditions for the assume role trust policy.
+    # Provides context-aware access restrictions beyond the
+    # principal. Common conditions: StringEquals, StringLike,
+    # ArnEquals, IpAddress, etc.
+    assumeRoleTrustConditions:
+      StringEquals:
+        aws:PrincipalArn: arn:{{partition}}:iam::{{account}}:role/test-application-role
+    generatedPolicies:
+      - TestPolicy
+
+  # ----------------------------------------------------------------
+  # Multi-service trust with additional STS actions
+  # ----------------------------------------------------------------
+  # Role assumable by multiple services with extended trust actions
+  multiple_service_role:
+    trustedPrincipal: service:sagemaker.amazonaws.com
+    # (Optional) Additional principals that can assume this role
+    # beyond the primary. Each can specify additional trusted
+    # actions (e.g. sts:SetSourceIdentity for identity propagation)
+    additionalTrustedPrincipals:
+      - trustedPrincipal: service:sagemaker.amazonaws.com
+        # (Optional) Additional STS actions beyond sts:AssumeRole
+        additionalTrustedActions: ['sts:SetSourceIdentity']
+      - trustedPrincipal: service:elasticmapreduce.amazonaws.com
+        additionalTrustedActions: ['sts:SetSourceIdentity']
+      # Additional principal without additionalTrustedActions
+      # (only trustedPrincipal is required)
+      - trustedPrincipal: service:glue.amazonaws.com
+    generatedPolicies:
+      - TestPolicy

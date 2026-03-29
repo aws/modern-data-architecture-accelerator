@@ -1,0 +1,31 @@
+# Minimal sample config for the QuickSight Account module.
+# Demonstrates the simplest valid configuration with only required
+# properties. Uses STANDARD edition and IAM_ONLY authentication to
+# exercise alternative enum values not covered in the comprehensive
+# config.
+
+# QuickSight account configuration with only required fields
+account:
+  # QuickSight edition determining feature set and pricing tier
+  # (enum: ENTERPRISE, ENTERPRISE_AND_Q, STANDARD)
+  edition: 'STANDARD'
+  # Authentication method controlling how users sign in to QuickSight
+  # (enum: ACTIVE_DIRECTORY, IAM_AND_QUICKSIGHT, IAM_ONLY)
+  authenticationMethod: 'IAM_ONLY'
+  # Email address for QuickSight account notifications including billing
+  # and service alerts
+  notificationEmail: 'notifications@example.com'
+
+  # VPC to associate with the QuickSight account for secure data source
+  # connectivity
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: vpc-minimal1234
+
+  # Subnets for the QuickSight VPC connection. QuickSight requires at
+  # least 2 subnets for multi-AZ availability.
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnetIds:
+    - subnet-min1
+    - subnet-min2

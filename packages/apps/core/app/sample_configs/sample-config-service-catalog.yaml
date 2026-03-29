@@ -1,0 +1,73 @@
+# Sample config for the Core App module — Service Catalog deployment mode.
+# Exercises service_catalog_product_config with all properties at full depth,
+# including parameters with constraints. Mutually exclusive with sagemakerBlueprint.
+
+# Service Catalog product configuration for governed self-service deployment
+service_catalog_product_config:
+  # Display name for the Service Catalog product visible in the console
+  name: test-core-app-product
+  # Owner identifier for the Service Catalog product
+  owner: test-team
+  # ARN of the AWS Service Catalog portfolio where the product will be associated
+  portfolio_arn: arn:{{partition}}:catalog:{{region}}:{{account}}:portfolio/port-testportfolio1
+  # S3 bucket name for portfolio asset storage
+  portfolio_bucket_name: test-portfolio-bucket
+  # (Optional) IAM role name used to launch the Service Catalog product
+  launch_role_name: test-launch-role
+  # (Optional) Named parameter configurations for the Service Catalog product
+  parameters:
+    InstanceType:
+      # CloudFormation parameter properties
+      props:
+        # The data type for the parameter
+        type: String
+        # A value used if no value is specified when a stack is created
+        default: ml.t3.medium
+        # A string that describes the parameter
+        description: Instance type for compute resources
+        # An array of allowed values for the parameter
+        allowedValues:
+          - ml.t3.medium
+          - ml.t3.large
+          - ml.m5.xlarge
+        # A regular expression for allowed String type patterns
+        allowedPattern: "^ml\\.[a-z0-9]+\\.[a-z0-9]+$"
+        # Error message when constraint is violated
+        constraintDescription: Must be a valid SageMaker instance type
+        # Smallest number of characters allowed for String types
+        minLength: 5
+        # Largest number of characters allowed for String types
+        maxLength: 50
+        # Whether to mask the parameter value
+        noEcho: false
+      # (Optional) Constraint configuration for parameter validation
+      constraints:
+        # Human-readable description of the constraint
+        description: Instance type must be from the approved list
+        # Named constraint rules defining validation logic
+        rules:
+          InstanceTypeRule:
+            # Condition determining when assertions are evaluated
+            condition: {}
+            # Array of constraint assertions for validation
+            assertions:
+              - # Constraint assertion expression
+                assert: '{"Fn::Contains": [["ml.t3.medium", "ml.t3.large", "ml.m5.xlarge"], {"Ref": "InstanceType"}]}'
+                # Description of the assertion requirement
+                description: Instance type must be one of the approved types
+    VpcId:
+      props:
+        type: String
+        description: VPC ID for network configuration
+        # Smallest numeric value allowed for Number types
+        minValue: 0
+        # Largest numeric value allowed for Number types
+        maxValue: 100
+
+# CDK Nag suppression configurations
+nag_suppressions:
+  by_path:
+    - path: /test-org-test-env-test-domain-test-module/Product/Resource
+      suppressions:
+        - id: AwsSolutions-SC3
+          reason: Service Catalog product requires broader access for self-service

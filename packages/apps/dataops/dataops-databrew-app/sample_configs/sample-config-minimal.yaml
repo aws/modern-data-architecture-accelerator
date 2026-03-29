@@ -1,0 +1,32 @@
+# Minimal DataOps DataBrew module configuration.
+# Deploys a single DataBrew profile job against an S3 dataset.
+
+# (Optional) DataOps project name for resource autowiring
+projectName: dataops-project-sample
+
+# (Optional) Map of dataset names to DataBrew dataset definitions
+datasets:
+  my-dataset:
+    # File format for S3-based datasets
+    format: CSV
+    input:
+      # S3 input location
+      s3InputDefinition:
+        bucket: ssm:/path_to_bucket_name
+        key: 'data/input/'
+
+# (Optional) Map of job names to DataBrew job definitions — the
+# module's primary resource.
+jobs:
+  my-profile-job:
+    # Job type: PROFILE for data profiling, RECIPE for transformation
+    type: 'PROFILE'
+    # Input dataset reference
+    dataset:
+      generated: my-dataset
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    # IAM execution role for job permissions
+    executionRole:
+      name: glue-role
+    # KMS key ARN for encrypting job outputs
+    kmsKeyArn: ssm:/path_to_kms_arn

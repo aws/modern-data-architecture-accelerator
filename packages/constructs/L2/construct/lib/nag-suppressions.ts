@@ -6,6 +6,7 @@
 import { Stack } from 'aws-cdk-lib';
 import { NagPackSuppression, NagSuppressions } from 'cdk-nag';
 import { IConstruct } from 'constructs';
+import * as path from 'node:path';
 
 export interface NagSuppressionConfig {
   /** CDK Nag rule identifier for specific security rule suppression targeting */
@@ -57,10 +58,11 @@ export class MdaaNagSuppressions {
     applyToChildren?: boolean,
   ): void {
     const configFilePath = construct.node.tryGetContext('module_configs');
+    const configFileName = configFilePath ? path.relative(process.cwd(), path.resolve(configFilePath)) : configFilePath;
     const suppressionsWithSource = suppressions.map(x => {
       return {
         ...x,
-        reason: `[CONFIG:${configFilePath}] ${x.reason}`,
+        reason: `[CONFIG:${configFileName}] ${x.reason}`,
       };
     });
     NagSuppressions.addResourceSuppressions(construct, suppressionsWithSource, applyToChildren);

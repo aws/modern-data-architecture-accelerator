@@ -1,23 +1,48 @@
-# LakeFormation Access Control
+# Lake Formation Access Control
 
-The Lake Formation Access Control CDK application is used to deploy Lakeformation fine-grained access controls in the form of grant statements for users or groups to Lakeformation-control data assets.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/governance/lakeformation-access-control-app/index.html).
 
-***
+Deploys Lake Formation fine-grained access grants for databases and tables, supporting federated users/groups, IAM roles, and cross-account resource links. This module should be used to manage LF grants to Glue resources created outside of MDAA. For Glue resources created within the DataOps Project module, grants can be configured within the module itself. Use this module when you need to grant specific users, groups, or roles read, write, or admin access to Glue databases and tables that were created outside of your DataOps projects.
 
-## Deployed Resources and Compliance Details
+---
+
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+**Lake Formation Access Grants** - Grants deployed for each specification in the config.
+
+- Database or table scoped grants (read, write, or super)
+- Supports role, federated user, and federated group principals
+
+**Lake Formation Cross Account Resource Link Grants** - Optional cross-account describe grants pointing to resource links.
 
 ![LakeFormation](../../../constructs/L3/governance/lakeformation-access-control-l3-construct/docs/LakeFormation.png)
 
-**Lake Formation Access Grants** - For each access grant specified in the config, a Lake Formation Access Grant resource will be deployed by the CDK.
-  
-* Grants can be database or table scoped
-* Database-scoped grants provide access to all tables within database by default
-* Grants can be read, write, or superuser-level
-* Grants can be created for role, federated user, and federated group principals
+---
 
-**Lake Formation Cross Account Resource Link Grants** - For each access grant specified in the config, an optional cross account describe grant can be created pointing to an appropriate resource link.
+## Related Modules
 
-***
+- [Lake Formation Settings](../lakeformation-settings-app/README.md) — Configure account-level Lake Formation admin roles and IAM Allowed Principals behavior before deploying access grants
+- [Data Lake](../../datalake/datalake-app/README.md) — Data lake buckets register Lake Formation locations that this module can grant access to
+- [DataOps Project](../../dataops/dataops-project-app/README.md) — DataOps projects can configure Lake Formation grants directly; use this module for Glue resources created outside of MDAA
+- [Roles](../roles-app/README.md) — Create IAM roles that can be used as principals for Lake Formation grants
+- [Glue Catalog Settings](../glue-catalog-app/README.md) — Configure cross-account Glue Catalog access for resource link grants
+
+---
+
+## Security/Compliance Details
+
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
+
+- **Least Privilege**:
+  - Fine-grained Lake Formation grants at database and table level
+  - Three permission tiers: read (SELECT/DESCRIBE), write (INSERT/DELETE), and super (ALTER/DROP)
+- **Separation of Duties**:
+  - Supports SAML-federated users and groups via IAM identity providers
+  - Cross-account resource links with describe grants for data mesh/hub-spoke architectures
+
+---
 
 ## Configuration
 
@@ -26,93 +51,36 @@ The Lake Formation Access Control CDK application is used to deploy Lakeformatio
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          lakeformation-access-control: # Module Name can be customized
-            module_path: "@aws-mdaa/lakeformation-access-control" # Must match module NPM package name
-            module_configs:
-              - ./lakeformation-access-control.yaml # Filename/path can be customized
+lakeformation-access-control: # Module Name can be customized
+  module_path: '@aws-mdaa/lakeformation-access-control' # Must match module NPM package name
+  module_configs:
+    - ./lakeformation-access-control.yaml # Filename/path can be customized
 ```
 
-### Module Config (./lakeformation-access-control.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./lakeformation-access-control.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Required properties only — a single IAM role principal with a basic database grant. Start here for a straightforward Lake Formation grant to one role on one database.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-# Friendly names for federation providers in IAM through which our users and groups federate.
-# The provider Arns will be combined with the user/group names in order to define the grants in LF.
-federationProviders:
-  ExampleProvider: arn:{{partition}}:iam::{{account}}:saml-provider/test-provider
-
-# A list of logical config principals which will be referenced in the grants.
-# Logical config principals can be federated users, groups, or directly referenced
-# IAM principals.
-principals:
-  # A federated group principal
-  principalA:
-    federatedGroup: test-group1
-    federationProvider: ExampleProvider
-  # A federated user principal
-  principalB:
-    federatedUser: test-user@example.com
-    federationProvider: ExampleProvider
-  # An IAM role. Can be referenced by id:, arn:, or name:
-  principalC:
-    role:
-      name: Admin
-  principalD:
-    role:
-      arn: arn:{{partition}}:iam::{{account}}:role/Admin
-
-# The set of Lake Formation grants which will be deployed and managed by
-# the stack.
-grants:
-  example_complex:
-    database: example_database # Database must already exist in Glue
-    # Database Permissions to grant. Must be "read", "write", or "super"
-    # read -> [ "DESCRIBE" ],
-    # write -> [ "DESCRIBE", "CREATE_TABLE", "ALTER" ],
-    # super -> [ "DESCRIBE", "CREATE_TABLE", "ALTER", "DROP" ]
-    # Defaults to 'read'
-    databasePermissions: write
-    # Table Permissions to grant. Must be "read", "write", or "super"
-    # read -> [ "SELECT", "DESCRIBE" ]
-    # write -> [ "SELECT", "DESCRIBE", "INSERT", "DELETE" ]
-    # super -> [ "SELECT", "DESCRIBE", "INSERT", "DELETE", "ALTER", "DROP" ]
-    # Defaults to 'read'
-    tablePermissions: read
-    # Optional list of tables on which grant will be applied
-    # If not specified, permissions will be granted to all tables in the database
-    tables:
-      - example_table1 # Table must already exist in Glue
-    # List of principal references in the "principals" section to which the permissions will be granted
-    principals:
-      - principalA
-      - principalB
-      - principalC
-  example_simple:
-    database: example_database
-    databasePermissions: write
-    tables:
-      - example_table2
-    tablePermissions: write
-    principals:
-      - principalC
-
-# Optional resource links to be created
-# These may be created either in the local account, or in a remote account
-# via cross account stack.
-resourceLinks:
-  # The name of the resource link to be created.
-  # Note that if the resource link is being created in the same account
-  # as the target database, then the names must be different.
-  example_local_resource_link:
-    # The name of the target database.
-    targetDatabase: example_database
-    grantPrincipals:
-      - principalC
-  example_cross_account_resource_link:
-    # The name of the target database.
-    fromAccount: "123456789012"
-    targetDatabase: example_database
-    grantPrincipals:
-      - principalD
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+All optional properties covered — federation providers, federated user/group and IAM role principals, database and table-scoped permissions, and local/cross-account resource links. Start here when evaluating all available options for principal types, permission tiers, and cross-account resource link grants.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

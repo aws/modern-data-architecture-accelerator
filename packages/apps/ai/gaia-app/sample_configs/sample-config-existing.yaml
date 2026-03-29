@@ -1,0 +1,99 @@
+# Sample config for the GAIA GenAI platform module with an existing
+# Cognito User Pool. Use this variant when integrating GAIA with a
+# pre-existing Cognito User Pool and app client, for example when
+# sharing authentication infrastructure across multiple applications.
+#
+# Differs from the primary config only in the auth section, which
+# references an existing Cognito pool instead of creating a new one.
+
+# Complete GAIA generative AI platform configuration including RAG
+# engines, LLM models, authentication, VPC networking, and chatbot
+# API setup.
+gaia:
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # Admin roles granted access to GAIA app resources (like
+  # KMS/Bucket). Roles can be referenced by name, arn, or id.
+  dataAdminRoles:
+    - name: Admin
+  # Prefix for GAIA resource naming
+  prefix: testing
+  # (Optional) Amazon Bedrock integration configuration for
+  # foundation model access
+  bedrock:
+    # Enables or disables Amazon Bedrock foundation model
+    # integration
+    enabled: true
+    # AWS region for Bedrock foundation model access
+    # (enum: SupportedRegion values)
+    region: 'ca-central-1'
+  # LLM model configurations
+  llms:
+    # SageMaker-hosted LLM model configurations
+    sagemaker: []
+  # (Optional) RAG engine and embedding model configuration
+  rag:
+    # Retrieval engine configuration
+    engines:
+      # (Optional) Aurora RAG engine
+      aurora:
+        # (Optional) Minimum Aurora Serverless capacity units
+        minCapacity: 0.5
+        # (Optional) Maximum Aurora Serverless capacity units
+        maxCapacity: 4
+      # (Optional) Bedrock Knowledge Base RAG engine
+      knowledgeBase:
+        # (Optional) External Knowledge Base configurations
+        external:
+          - # Knowledge Base ID
+            kbId: test-kb-id
+            # Name for the external Knowledge Base
+            name: test-external-kb
+    # Embedding models for vector processing
+    embeddingsModels:
+      - # Model provider (enum: bedrock, openai, sagemaker)
+        provider: 'bedrock'
+        # Model name identifier
+        name: 'amazon.titan-embed-text-v2:0'
+        # Vector embedding dimensions
+        dimensions: 1024
+        # (Optional) Whether this is the default model
+        isDefault: true
+    # Cross-encoder models for document ranking
+    crossEncoderModels: []
+  # Authentication configuration for user access.
+  # This config uses an existing Cognito User Pool.
+  auth:
+    # Authentication method for the GAIA platform
+    # (enum: email_pass, ad, existing)
+    authType: 'existing'
+    # Existing Cognito User Pool ID for integrating GAIA with a
+    # pre-existing user pool. Required when authType is 'existing'.
+    existingPoolId: '{{region}}_TestPoolId'
+    # (Optional) Existing Cognito User Pool app client ID
+    existingPoolClientId: 'test-app-client-id-12345'
+    # (Optional) Existing Cognito User Pool domain
+    existingPoolDomain: 'existing-pool-domain'
+  # VPC networking configuration for GAIA infrastructure
+  vpc:
+    # VPC identifier for hosting GAIA application components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: XXXXXXXX
+    # Security group ID for application tier components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/security-group/id
+    appSecurityGroupId: 'sg-12345351356'
+    # Subnet IDs for the application tier
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    appSubnets:
+      - subnet1
+    # Security group ID for data tier components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/security-group/id
+    dataSecurityGroupId: 'sg-46576878787'
+    # Subnet IDs for the data tier
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    dataSubnets:
+      - subnet2

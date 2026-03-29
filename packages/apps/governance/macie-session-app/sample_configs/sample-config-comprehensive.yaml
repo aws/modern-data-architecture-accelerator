@@ -1,0 +1,15 @@
+# Comprehensive sample config for the Macie Session module.
+# Exercises ALL compatible non-excluded properties at full depth.
+# Covers all enum variants for findingPublishingFrequency and status.
+#
+# Enables Amazon Macie for automated sensitive data discovery,
+# PII detection, and data security monitoring.
+
+# Macie session settings (required)
+session:
+  # How often Macie publishes findings about sensitive data discovery.
+  # (required, enum: FIFTEEN_MINUTES | ONE_HOUR | SIX_HOURS)
+  findingPublishingFrequency: FIFTEEN_MINUTES
+  # Whether the Macie session is actively monitoring or paused.
+  # (optional, enum: ENABLED | PAUSED, default: ENABLED)
+  status: ENABLED

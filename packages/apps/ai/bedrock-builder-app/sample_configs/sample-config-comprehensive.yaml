@@ -1,0 +1,872 @@
+# Sample config for the Bedrock Builder module.
+# Deploys Bedrock agents with action groups, knowledge bases backed by
+# Aurora and OpenSearch vector stores, Lambda functions, guardrails
+# with content and sensitive information filters, and S3/SharePoint
+# data sources with multiple parsing and chunking strategies.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Admin roles granted access to Bedrock agent resources including
+# KMS keys and S3 buckets. Roles can be referenced by name, arn,
+# or id.
+dataAdminRoles:
+  - name: 'Admin'
+  - arn: 'arn:{{partition}}:iam::{{account}}:role/ReadOnlyAdmin'
+# (Optional) Existing S3 bucket ARN for agent data storage. If
+# omitted, a dedicated bucket is created automatically.
+agentBucketArn: 'arn:{{partition}}:s3:::test-agent-bucket'
+# (Optional) Existing KMS key ARN for encrypting Bedrock agent
+# resources. If omitted, a customer-managed key is created
+# automatically.
+kmsKeyArn: 'arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id'
+
+# (Optional) Lambda functions and layers for Bedrock agent action
+# groups. Enables custom business logic, API integrations, and
+# business process automation within agents.
+lambdaFunctions:
+  # (Optional) List of Lambda layers to create
+  layers:
+    # Layer name
+    - layerName: test-layer
+      # Source code directory path containing layer code
+      src: ./src/layer/
+      # (Optional) Layer description
+      description: 'test layer'
+      # (Optional) If true, src is expected to contain a Dockerfile
+      # for building the layer
+      dockerBuild: false
+
+  # (Optional) List of Lambda function definitions
+  functions:
+    # Lambda function name
+    - functionName: test-action-group
+      # (Optional) Optional function description
+      description: 'Lambda function for Bedrock Agent Action group'
+      # Source code directory path containing Lambda function code
+      srcDir: ./src/function
+      # Lambda function handler (e.g., 'index.handler')
+      handler: test.lambda_handler
+      # Lambda runtime (e.g., python3.9, nodejs18.x)
+      runtime: python3.13
+      # IAM role ARN for Lambda function execution
+      roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-lambda-role'
+      # (Optional) Memory allocation in MB (128-10240)
+      memorySizeMB: 256
+      # (Optional) Function timeout in seconds
+      timeoutSeconds: 60
+      # (Optional) The size of the function's /tmp directory in MB
+      # (default: 512 MiB)
+      ephemeralStorageSizeMB: 1024
+      # (Optional) Reserved concurrent executions for capacity
+      # management
+      reservedConcurrentExecutions: 10
+      # (Optional) Maximum retry attempts for failed executions
+      # (0-2)
+      retryAttempts: 2
+      # (Optional) Maximum event age in seconds (60-21600)
+      maxEventAgeSeconds: 3600
+      # (Optional) When true, srcDir must contain a Dockerfile for
+      # container image deployment
+      dockerBuild: false
+      # (Optional) Environment variables for function configuration
+      environment:
+        ENV_VAR_1: 'value1'
+        ENV_VAR_2: 'value2'
+      # (Optional) Generated layer names to attach to the function
+      generatedLayerNames:
+        - test-layer
+      # (Optional) Existing layer version ARNs mapped by name
+      layerArns:
+        external-layer: 'arn:{{partition}}:lambda:{{region}}:{{account}}:layer:ext-layer:1'
+      # (Optional) Principal ARN granted Lambda invoke permissions
+      grantInvoke: 'arn:{{partition}}:iam::{{account}}:role/invoker-role'
+      # (Optional) Additional resource permissions mapped by SID
+      additionalResourcePermissions:
+        crossAccountInvoke:
+          # AWS principal ARN for Lambda function access
+          principal: 'arn:{{partition}}:iam::{{account}}:role/cross-account-role'
+          # Lambda action (e.g., lambda:InvokeFunction)
+          action: lambda:InvokeFunction
+          # (Optional) Optional source account restriction for
+          # cross-account security
+          sourceAccount: '{{account}}'
+          # (Optional) Optional source resource ARN restriction for
+          # fine-grained access control
+          sourceArn: 'arn:{{partition}}:s3:::test-source-bucket'
+      # (Optional) VPC configuration for network deployment
+      vpcConfig:
+        # VPC ID for Lambda function deployment
+        vpcId: vpc-testvpc
+        # Subnet IDs for Lambda function ENI placement
+        subnetIds:
+          - subnet-test1
+          - subnet-test2
+        # (Optional) Optional security group ID. If omitted, a new
+        # security group is created.
+        securityGroupId: sg-test123
+        # (Optional) Optional egress rules for the Lambda function
+        # security group
+        securityGroupEgressRules:
+          # (Optional) IPv4 CIDR block rules
+          ipv4:
+            # CIDR block specification for network access control
+            - cidr: 10.0.0.0/16
+              # IP protocol (e.g., tcp, udp)
+              protocol: tcp
+              # Port number
+              port: 443
+              # (Optional) The ending port number for a port range
+              toPort: 443
+              # (Optional) Description of the rule
+              description: 'Allow HTTPS egress'
+              # (Optional) CDK Nag rule suppressions for this
+              # specific security group rule
+              suppressions:
+                - id: AwsSolutions-EC23
+                  reason: 'Test CIDR egress rule suppression'
+          # (Optional) Prefix list rules
+          prefixList:
+            # Prefix list identifier for managed IP range access
+            - prefixList: pl-test123
+              protocol: tcp
+              port: 443
+              # (Optional) The ending port number for a port range
+              toPort: 443
+              # (Optional) Description of the rule
+              description: 'Allow HTTPS via prefix list'
+              # (Optional) CDK Nag rule suppressions for this
+              # specific security group rule
+              suppressions:
+                - id: AwsSolutions-EC23
+                  reason: 'Test prefix list egress rule suppression'
+          # (Optional) Security group rules for cross-security
+          # group traffic
+          sg:
+            # Security group identifier
+            - sgId: sg-peer123
+              protocol: tcp
+              port: 5432
+              # (Optional) The ending port number for a port range
+              toPort: 5432
+              # (Optional) Description of the rule
+              description: 'Allow PostgreSQL to peer SG'
+              # (Optional) CDK Nag rule suppressions for this
+              # specific security group rule
+              suppressions:
+                - id: AwsSolutions-EC23
+                  reason: 'Test SG peer egress rule suppression'
+      # (Optional) EventBridge configuration for event-driven
+      # execution
+      eventBridge:
+        # (Optional) Maximum age in seconds that EventBridge will
+        # attempt to deliver an event (60-86400)
+        maxEventAgeSeconds: 3600
+        # (Optional) Maximum number of retry attempts EventBridge
+        # will make (0-185)
+        retryAttempts: 3
+        # (Optional) Collection of named S3 EventBridge rules
+        s3EventBridgeRules:
+          test-s3-rule:
+            # Array of S3 bucket names that trigger the rule
+            buckets:
+              - test-source-bucket
+            # (Optional) Array of S3 object key prefixes for
+            # filtering
+            prefixes:
+              - incoming/
+            # (Optional) ARN of the custom EventBridge event bus
+            eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/test-bus'
+        # (Optional) Collection of named general EventBridge rules
+        eventBridgeRules:
+          test-schedule-rule:
+            # (Optional) Human-readable description of the rule
+            description: 'Scheduled processing rule'
+            # (Optional) Schedule expression for time-based
+            # triggering (cron or rate syntax)
+            scheduleExpression: 'rate(1 hour)'
+          test-event-pattern-rule:
+            # (Optional) Human-readable description of the rule
+            description: 'Event pattern based rule'
+            # (Optional) ARN of the custom EventBridge event bus
+            eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/test-bus'
+            # (Optional) EventBridge event pattern for rule
+            # matching and filtering
+            eventPattern:
+              # (Optional) Service that sourced the event
+              source:
+                - 'aws.s3'
+              # (Optional) Identifies the fields and values in
+              # the detail field
+              detailType:
+                - 'Object Created'
+              # (Optional) The 12-digit number identifying an
+              # AWS account
+              account:
+                - '{{account}}'
+              # (Optional) AWS region where the event originated
+              region:
+                - '{{region}}'
+              # (Optional) ARNs that identify resources involved
+              # in the event
+              resources:
+                - 'arn:{{partition}}:s3:::test-bucket'
+              # (Optional) Event timestamp
+              time:
+                - '2024-01-01T00:00:00Z'
+              # (Optional) Event version (default: 0)
+              version:
+                - '0'
+              # (Optional) Unique event identifier for tracing
+              id:
+                - 'test-event-id'
+              # (Optional) A JSON object at the discretion of the
+              # service originating the event
+              detail:
+                bucket:
+                  name:
+                    - test-bucket
+            # (Optional) Custom input payload for the rule target
+            input: '{"action": "process"}'
+      # (Optional) CloudWatch metric filters for custom metric
+      # extraction
+      metricFilters:
+        # Unique name for the metric filter
+        - filterName: error-filter
+          # CloudWatch Logs filter pattern for matching log events
+          filterPattern: 'ERROR'
+          # Metric transformations defining how matched data is
+          # converted to metrics
+          metricTransformations:
+            # CloudWatch metric name for the transformed metric
+            - metricName: ErrorCount
+              # CloudWatch metric namespace for metric organization
+              metricNamespace: TestApp/Errors
+              # Metric value extraction pattern
+              metricValue: '1'
+              # (Optional) Default value when filter pattern does
+              # not match
+              defaultValue: 0
+              # (Optional) CloudWatch metric unit
+              unit: Count
+              # (Optional) Metric dimensions for segmentation
+              dimensions:
+                FunctionName: '{{functionName}}'
+      # (Optional) CloudWatch alarms for monitoring and alerting
+      alarms:
+        # Unique name for the alarm
+        - alarmName: test-error-alarm
+          # Comparison operator
+          comparisonOperator: GreaterThanOrEqualToThreshold
+          # Number of consecutive periods the metric must breach
+          evaluationPeriods: 3
+          # Threshold value for alarm comparison
+          threshold: 5
+          # (Optional) Human-readable alarm description
+          alarmDescription: 'Alert on high error rate'
+          # (Optional) Whether alarm actions are enabled during
+          # state changes
+          actionsEnabled: true
+          # (Optional) SNS topic ARNs for ALARM state notifications
+          alarmActions:
+            - 'arn:{{partition}}:sns:{{region}}:{{account}}:test-alarm-topic'
+          # (Optional) SNS topic ARNs for OK state notifications
+          okActions:
+            - 'arn:{{partition}}:sns:{{region}}:{{account}}:test-ok-topic'
+          # (Optional) SNS topic ARNs for INSUFFICIENT_DATA state
+          # notifications
+          insufficientDataActions:
+            - 'arn:{{partition}}:sns:{{region}}:{{account}}:test-insufficient-topic'
+          # (Optional) Metric name for single metric alarms
+          metricName: ErrorCount
+          # (Optional) Metric namespace. AWS/* namespaces bypass
+          # validation.
+          namespace: TestApp/Errors
+          # (Optional) Evaluation period in seconds
+          period: 300
+          # (Optional) Statistic for metric aggregation
+          statistic: Sum
+          # (Optional) Datapoints that must breach threshold
+          # (M out of N evaluation)
+          datapointsToAlarm: 2
+          # (Optional) Missing data treatment (notBreaching,
+          # breaching, ignore, missing)
+          treatMissingData: notBreaching
+          # (Optional) CloudWatch metric unit
+          unit: Count
+          # (Optional) Metric dimensions. Supports
+          # {{functionName}} placeholder.
+          dimensions:
+            FunctionName: '{{functionName}}'
+        # Alarm using metric math (mutually exclusive with
+        # metricName in the same alarm)
+        - alarmName: test-math-alarm
+          comparisonOperator: GreaterThanThreshold
+          evaluationPeriods: 1
+          threshold: 100
+          # (Optional) Metric data queries for metric math alarms.
+          # Mutually exclusive with metricName.
+          metrics:
+            # Unique identifier for the query
+            - id: m1
+              # (Optional) CloudWatch metric name. Mutually
+              # exclusive with expression.
+              metricName: Invocations
+              # (Optional) CloudWatch metric namespace
+              namespace: AWS/Lambda
+              # (Optional) Evaluation period in seconds
+              period: 300
+              # (Optional) Statistic for metric aggregation
+              statistic: Sum
+              # (Optional) Whether this metric data should be
+              # returned in query results
+              returnData: false
+              # (Optional) Human-readable label
+              label: 'Total Invocations'
+              # (Optional) CloudWatch metric unit
+              unit: Count
+              # (Optional) Metric dimensions for filtering
+              dimensions:
+                FunctionName: '{{functionName}}'
+            - id: m2
+              metricName: Errors
+              namespace: AWS/Lambda
+              period: 300
+              statistic: Sum
+              returnData: false
+            - id: error_rate
+              # (Optional) Metric math expression. Mutually
+              # exclusive with metricName.
+              expression: '(m2/m1)*100'
+              # (Optional) Human-readable label
+              label: 'Error Rate %'
+              returnData: true
+      # (Optional) CloudWatch Logs Insights saved queries for log
+      # analysis
+      logInsightsQueries:
+        # Unique name for the saved query
+        - queryName: error-query
+          # CloudWatch Logs Insights query string
+          queryString: |
+            fields @timestamp, @message
+            | filter @message like /ERROR/
+            | sort @timestamp desc
+          # (Optional) Optional log group names for cross-function
+          # queries. Defaults to the function's log group.
+          logGroupNames:
+            - /aws/lambda/test-function
+    - functionName: test-custom-transformer
+      srcDir: ./src/function
+      handler: test.lambda_handler
+      runtime: python3.13
+      roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-lambda-role'
+      description: For custom parsing and chunking logic
+    - functionName: test-custom-router1
+      srcDir: ./src/function
+      handler: test.lambda_handler
+      runtime: python3.13
+      roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-lambda-role'
+      description: For custom chat routing logic
+      grantInvoke: 'arn:{{partition}}:iam::{{account}}:role/role-in-another-account'
+
+# (Optional) Bedrock agent configurations with foundation models,
+# action groups, knowledge base integration, and guardrails.
+agents:
+  test-agent:
+    # (Optional) Agent alias name for version management
+    agentAliasName: test-alias
+    # Reference to role used as execution role on all agent(s).
+    # The role must have assume-role trust with
+    # bedrock.amazonaws.com.
+    role:
+      id: generated-role-id:agent-execution-role
+    # Foundation model identifier for agent reasoning
+    foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0'
+    # (Optional) Agent description
+    description: 'This is a Test Agent'
+    # (Optional) Auto-prepare DRAFT version after changes
+    autoPrepare: true
+    # Agent instructions defining behavior and interaction patterns
+    instruction: |
+      You are a helpful assistant
+      You are allowed to use associated Knowledge Base to answer questions
+      Provide responses in markdown format with source citations
+    # (Optional) Idle session timeout in seconds
+    idleSessionTtlInSeconds: 400
+    # (Optional) Knowledge base associations for RAG capabilities
+    knowledgeBases:
+      # Knowledge base association description
+      - description: 'This is a Test Knowledge Base'
+        # Knowledge base identifier
+        id: '<kb-id>'
+        # (Optional) Knowledge base state (controls usage during
+        # invocation)
+        knowledgeBaseState: ENABLED
+    # (Optional) Guardrail association for safety and content
+    # filtering
+    guardrail:
+      # Guardrail identifier
+      id: 'arn:{{partition}}:bedrock:{{region}}:{{account}}:guardrail/test-guardrail'
+      # (Optional) Guardrail version
+      version: '1'
+    # (Optional) Action groups for task execution and API
+    # integration
+    actionGroups:
+      - # Action group name
+        actionGroupName: 'test-action-group'
+        # (Optional) Action group description
+        description: 'This is a Test Action Group'
+        # (Optional) Action group state (ENABLED or DISABLED)
+        actionGroupState: ENABLED
+        # Action group executor (e.g. Lambda function)
+        actionGroupExecutor:
+          # The ARN of the Lambda function containing the business
+          # logic that is carried out upon invoking the action
+          lambda: arn:{{partition}}:lambda:{{region}}:{{account}}:function:existing-lambda-function
+        # (Optional) API schema for external API integration
+        apiSchema:
+          # (Optional) Relative path to JSON/YAML OpenAPI schema
+          # file
+          openApiSchemaPath: ./api-schema/test-schema.yaml
+          # (Optional) The JSON or YAML-formatted payload defining
+          # the OpenAPI schema for the action group
+          payload: |
+            openapi: "3.0.0"
+            info:
+              title: "Test API"
+              version: "1.0.0"
+          # (Optional) S3 location containing the OpenAPI schema
+          s3:
+            # (Optional) The name of the S3 bucket
+            s3BucketName: test-schema-bucket
+            # (Optional) The S3 object key for the schema resource
+            s3ObjectKey: schemas/test-schema.yaml
+      # Action group using functionSchema and customControl
+      - actionGroupName: 'test-function-action-group'
+        description: 'Action group using function schema'
+        actionGroupExecutor:
+          # (Optional) To return the action group invocation results
+          # directly in the InvokeInlineAgent response, specify
+          # RETURN_CONTROL
+          customControl: RETURN_CONTROL
+        # (Optional) Function schema for structured function
+        # invocation (alternative to apiSchema)
+        functionSchema:
+          # A list of functions that each define an action in the
+          # action group
+          functions:
+            # A name for the function
+            - name: testFunction
+              # (Optional) A description of the function and its
+              # purpose
+              description: 'A test function'
+              # (Optional) Contains information if user confirmation
+              # is required to invoke the function
+              requireConfirmation: 'ENABLED'
+    # (Optional) Prompt override configuration for advanced prompt
+    # engineering
+    promptOverrideConfiguration:
+      # Prompt configurations for overriding agent sequence steps
+      promptConfigurations:
+        # (Optional) The step in the agent sequence that this
+        # prompt configuration applies to
+        - promptType: ORCHESTRATION
+          # (Optional) Specifies whether to override the default
+          # prompt template. Set to OVERRIDDEN to use custom
+          # basePromptTemplate.
+          promptCreationMode: DEFAULT
+          # (Optional) Specifies whether to allow the agent to
+          # carry out the step (ENABLED or DISABLED)
+          promptState: ENABLED
+          # (Optional) The agent's foundation model
+          foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0'
+          # (Optional) Defines the prompt template with which to
+          # replace the default prompt template
+          basePromptTemplate: 'You are a helpful assistant. $instruction$'
+          # (Optional) Specifies whether to override the default
+          # parser Lambda function (DEFAULT or OVERRIDDEN)
+          parserMode: DEFAULT
+          # (Optional) Additional inference parameters beyond the
+          # base set, passed via Converse or ConverseStream
+          # operations
+          additionalModelRequestFields:
+            top_k: 50
+          # (Optional) Contains inference parameters to use when
+          # the agent invokes a foundation model
+          inferenceConfiguration:
+            # (Optional) The maximum number of tokens allowed in
+            # the generated response
+            maximumLength: 2048
+            # (Optional) The likelihood of the model selecting
+            # higher-probability options (0.0-1.0)
+            temperature: 0.7
+            # (Optional) The percentage of most-likely candidates
+            # the model considers (0.0-1.0)
+            topP: 0.9
+            # (Optional) The number of most-likely candidates from
+            # which the model chooses the next token
+            topK: 50
+            # (Optional) A list of stop sequences
+            stopSequences:
+              - '\n\nHuman:'
+      # (Optional) The ARN of the Lambda function to use when
+      # parsing the raw foundation model output
+      overrideLambda: 'arn:{{partition}}:lambda:{{region}}:{{account}}:function:parser-lambda'
+
+# (Optional) Vector store configurations for knowledge bases
+# (OpenSearch Serverless or Aurora). Provides vector database
+# storage for semantic search and retrieval-augmented generation.
+vectorStores:
+  test-vector-store:
+    # (Optional) Vector store type
+    # (enum: AURORA_SERVERLESS, OPENSEARCH_SERVERLESS)
+    vectorStoreType: 'AURORA_SERVERLESS'
+    # VPC ID for vector store network isolation
+    vpcId: test-vpc-id
+    # Subnet IDs for vector store deployment
+    subnetIds:
+      - 'test-subnet-id1'
+      - 'test-subnet-id2'
+    # (Optional) Minimum Aurora Capacity Units for serverless
+    # scaling (enum: 1, 2, 4, 8, 16, 32, 64, 128, 192, 256, 384)
+    minCapacity: 1
+    # (Optional) Maximum Aurora Capacity Units for serverless
+    # scaling (enum: 1, 2, 4, 8, 16, 32, 64, 128, 192, 256, 384)
+    maxCapacity: 8
+    # (Optional) PostgreSQL engine version
+    engineVersion: '15.5'
+    # (Optional) Database port for Aurora PostgreSQL connectivity
+    port: 5432
+  test-vector-store2:
+    # (Optional) Vector store type
+    # (enum: AURORA_SERVERLESS, OPENSEARCH_SERVERLESS)
+    vectorStoreType: 'OPENSEARCH_SERVERLESS'
+    vpcId: test-vpc-id
+    subnetIds:
+      - 'test-subnet-id1'
+      - 'test-subnet-id2'
+    # Standby replica configuration
+    # (enum: DISABLE, ENABLE)
+    standbyReplicas: ENABLE
+    # (Optional) Existing OpenSearch Serverless VPC endpoint
+    ossVpce:
+      # Existing VPC endpoint ID
+      vpceId: 'vpce-0123456789abcdef0'
+      # Security group ID associated with the VPC endpoint
+      securityGroupId: 'sg-0123456789abcdef0'
+
+# (Optional) Knowledge base configurations with S3/SharePoint data
+# sources and custom parsing strategies. Enables document ingestion,
+# embedding generation, and retrieval for RAG applications.
+knowledgeBases:
+  test-knowledge-base:
+    # Bedrock embedding model ID for vector generation
+    embeddingModel: 'amazon.titan-embed-text-v2:0'
+    # Vector store reference name
+    vectorStore: test-vector-store
+    # (Optional) Vector field size for embedding dimensionality
+    vectorFieldSize: 1024
+    # IAM role reference for knowledge base execution
+    role:
+      id: generated-role-id:kb-execution-role
+    # (Optional) Supplemental S3 bucket for advanced parsing
+    # workflows. For multimodal documents, mandatory to provide
+    # location to store images extracted from your data source.
+    supplementalBucketName: 'supplemental-image-storage-bucket'
+    # (Optional) S3 data sources for cloud document integration
+    s3DataSources:
+      test-ds-default-parsing:
+        # S3 bucket name containing source documents
+        bucketName: 'customer-docs-bucket'
+        # (Optional) S3 key prefix to scope document ingestion
+        prefix: 'support-documents/'
+        # (Optional) Enable automatic data source sync
+        # (default: false)
+        enableSync: true
+        # (Optional) Enable multi-account sync (default: false)
+        enableMultiSync: true
+        # (Optional) IAM role ARN for sync Lambda
+        syncLambdaRoleArn: 'arn:{{partition}}:iam::{{account}}:role/test-sync-role'
+
+      test-ds-bda-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents-2/'
+        # (Optional) Vector ingestion configuration for parsing
+        # and chunking
+        vectorIngestionConfiguration:
+          # (Optional) Parsing configuration for document
+          # processing
+          parsingConfiguration:
+            # Parsing strategy
+            # (enum: BEDROCK_DATA_AUTOMATION,
+            # BEDROCK_FOUNDATION_MODEL)
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            # (Optional) Bedrock Data Automation parsing config
+            bedrockDataAutomationConfiguration:
+              # Parsing modality for multimodal data processing
+              parsingModality: 'MULTIMODAL'
+          # (Optional) Chunking configuration for the data source
+          chunkingConfiguration:
+            # Chunking strategy
+            # (enum: FIXED_SIZE, HIERARCHICAL, NONE, SEMANTIC)
+            chunkingStrategy: 'FIXED_SIZE'
+            # (Optional) Fixed size chunking configuration
+            fixedSizeChunkingConfiguration:
+              # Maximum token count per chunk
+              maxTokens: 512
+              # Overlap percentage between adjacent chunks
+              overlapPercentage: 20
+
+      # Data source with hierarchical chunking strategy
+      test-ds-hierarchical-chunking:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents-hierarchical/'
+        vectorIngestionConfiguration:
+          chunkingConfiguration:
+            chunkingStrategy: 'HIERARCHICAL'
+            # (Optional) Hierarchical chunking configuration
+            hierarchicalChunkingConfiguration:
+              # Token overlap between hierarchical chunks
+              overlapTokens: 50
+              # Hierarchical chunking level configurations
+              levelConfigurations:
+                # Maximum token count for this hierarchical level
+                - maxTokens: 1024
+                - maxTokens: 256
+
+      # Data source with semantic chunking strategy
+      test-ds-semantic-chunking:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents-semantic/'
+        vectorIngestionConfiguration:
+          chunkingConfiguration:
+            chunkingStrategy: 'SEMANTIC'
+            # (Optional) Semantic chunking configuration
+            semanticChunkingConfiguration:
+              # Breakpoint percentile threshold for semantic
+              # boundary detection
+              breakpointPercentileThreshold: 95
+              # Buffer size for semantic context preservation
+              bufferSize: 1
+              # Maximum token count per semantic chunk
+              maxTokens: 300
+
+      test-ds-foundation-model-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents-3/'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_FOUNDATION_MODEL'
+            # (Optional) Bedrock Foundation Model parsing config
+            bedrockFoundationModelConfiguration:
+              # Foundation model ARN for document parsing
+              modelArn: 'anthropic.claude-3-sonnet-20240229-v1:0'
+              # (Optional) Parsing modality for multimodal
+              # foundation model processing
+              parsingModality: 'MULTIMODAL'
+              # (Optional) Custom parsing instructions for the
+              # foundation model
+              parsingPromptText: 'Extract key information from this document'
+
+      test-ds-custom-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents-4/'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          chunkingConfiguration:
+            chunkingStrategy: 'NONE'
+          # (Optional) Custom transformation configuration for
+          # data being ingested into the knowledge base
+          customTransformationConfiguration:
+            # S3 bucket for intermediate storage
+            intermediateStorageBucket: 'custom-transform-intermediate-bucket'
+            # S3 prefix for intermediate storage
+            intermediateStoragePrefix: 'path/to/data/objects'
+            # Lambda ARNs for custom transformation
+            transformLambdaArns:
+              - 'arn:{{partition}}:lambda:{{region}}:{{account}}:function:test-custom-transformer'
+              - generated-function:test-custom-transformer
+    # (Optional) SharePoint data sources for enterprise document
+    # integration
+    sharepointDataSources:
+      test-sharepoint-ds-default-parsing:
+        # SharePoint data source connection configuration
+        dataSource:
+          # Authentication type
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          # Secrets Manager ARN for SharePoint credentials
+          credentialsSecretArn: 'arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:/test/sharepoint/secret-qeTtB0'
+          # SharePoint domain
+          domain: mycompany.sharepoint.com
+          # SharePoint host type
+          hostType: ONLINE
+          # SharePoint site URLs to ingest
+          siteUrls:
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          # Azure AD tenant ID
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+      test-sharepoint-ds-bda-parsing:
+        dataSource:
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          credentialsSecretArn: 'arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:/test/sharepoint/secret-qeTtB0'
+          domain: mycompany.sharepoint.com
+          hostType: ONLINE
+          siteUrls:
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          chunkingConfiguration:
+            chunkingStrategy: 'FIXED_SIZE'
+            fixedSizeChunkingConfiguration:
+              maxTokens: 512
+              overlapPercentage: 20
+      test-sharepoint-ds-fm-parsing:
+        dataSource:
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          credentialsSecretArn: 'arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:/test/sharepoint/secret-qeTtB0'
+          domain: mycompany.sharepoint.com
+          hostType: ONLINE
+          siteUrls:
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_FOUNDATION_MODEL'
+            bedrockFoundationModelConfiguration:
+              modelArn: 'anthropic.claude-3-sonnet-20240229-v1:0'
+              parsingModality: 'MULTIMODAL'
+              parsingPromptText: 'Extract key information from this document'
+      test-sharepoint-ds-custom-parsing:
+        dataSource:
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          credentialsSecretArn: 'arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:/test/sharepoint/secret-qeTtB0'
+          domain: mycompany.sharepoint.com
+          hostType: ONLINE
+          siteUrls:
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          chunkingConfiguration:
+            chunkingStrategy: 'NONE'
+          customTransformationConfiguration:
+            intermediateStorageBucket: 'custom-transform-intermediate-bucket'
+            intermediateStoragePrefix: 'path/to/data/objects'
+            transformLambdaArns:
+              - 'arn:{{partition}}:lambda:{{region}}:{{account}}:function:test-custom-transformer'
+              - generated-function:test-custom-transformer
+  test-knowledge-base2:
+    embeddingModel: 'amazon.titan-embed-text-v2:0'
+    vectorStore: test-vector-store2
+    vectorFieldSize: 1024
+    role:
+      id: generated-role-id:kb-execution-role
+    supplementalBucketName: 'supplemental-image-storage-bucket'
+    s3DataSources:
+      test-ds-default-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents/'
+        enableSync: true
+
+# (Optional) Guardrail configurations for AI safety, content
+# filtering, and responsible AI deployment.
+guardrails:
+  enterprise-guardrail:
+    # (Optional) Guardrail description
+    description: 'Enterprise content safety guardrail'
+    # Content filter configuration across safety categories
+    contentFilters:
+      # (Optional) Hate content filter with input/output strength
+      # (enum: LOW, MEDIUM, HIGH)
+      hate:
+        inputStrength: 'MEDIUM'
+        outputStrength: 'MEDIUM'
+      # (Optional) Insults content filter
+      insults:
+        inputStrength: 'HIGH'
+        outputStrength: 'HIGH'
+      # (Optional) Misconduct content filter
+      misconduct:
+        inputStrength: 'HIGH'
+        outputStrength: 'HIGH'
+      # (Optional) Prompt attack content filter
+      promptAttack:
+        inputStrength: 'HIGH'
+        outputStrength: 'HIGH'
+      # (Optional) Sexual content filter
+      sexual:
+        inputStrength: 'HIGH'
+        outputStrength: 'HIGH'
+      # (Optional) Violence content filter
+      violence:
+        inputStrength: 'MEDIUM'
+        outputStrength: 'MEDIUM'
+    # (Optional) Custom message when user input is blocked
+    blockedInputMessaging: 'Your input contains restricted content'
+    # (Optional) Custom message when model output is blocked
+    blockedOutputsMessaging: 'Response blocked due to policy restrictions'
+    # (Optional) Contextual grounding filters for response accuracy
+    contextualGroundingFilters:
+      # (Optional) Grounding threshold (0.0-1.0) for source
+      # material adherence
+      grounding: 0.95
+      # (Optional) Relevance threshold (0.0-1.0) for query
+      # relevance
+      relevance: 0.90
+    # (Optional) Sensitive information filters for PII and custom
+    # regex patterns
+    sensitiveInformationFilters:
+      # (Optional) PII entity filter configurations
+      piiEntities:
+        # Configure guardrail type when the PII entity is
+        # detected
+        - type: EMAIL
+          # Configure guardrail action when the PII entity is
+          # detected
+          action: ANONYMIZE
+          # (Optional) Specifies the action to take when harmful
+          # content is detected in the input (BLOCK, ANONYMIZE,
+          # NONE)
+          inputAction: ANONYMIZE
+          # (Optional) Specifies whether to enable guardrail
+          # evaluation on the input
+          inputEnabled: true
+          # (Optional) Specifies the action to take when harmful
+          # content is detected in the output (BLOCK, ANONYMIZE,
+          # NONE)
+          outputAction: ANONYMIZE
+          # (Optional) Indicates whether guardrail evaluation is
+          # enabled on the output
+          outputEnabled: true
+        - type: PHONE
+          action: BLOCK
+      # (Optional) Custom regex pattern filters
+      regexes:
+        # The name of the regular expression
+        - name: 'account-number'
+          # The regular expression pattern
+          pattern: '\d{10,12}'
+          # The guardrail action when matching regex is detected
+          action: ANONYMIZE
+          # (Optional) Description of the regular expression
+          description: 'Matches account numbers'
+          # (Optional) Specifies the action to take when harmful
+          # content is detected in the input (BLOCK, NONE)
+          inputAction: BLOCK
+          # (Optional) Specifies whether to enable guardrail
+          # evaluation on the input
+          inputEnabled: true
+          # (Optional) Specifies the action to take when harmful
+          # content is detected in the output (BLOCK, NONE)
+          outputAction: BLOCK
+          # (Optional) Specifies whether to enable guardrail
+          # evaluation on the output
+          outputEnabled: true

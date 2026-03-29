@@ -1,26 +1,57 @@
 # DataZone
 
-The DataZone CDK application is used to configure and deploy DataZone Domains and associated resources such as environment blueprints.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/governance/datazone-app/index.html).
+
+Deploys Amazon DataZone (V1) domains with domain units, user/group profiles, environment blueprints, associated accounts, KMS encryption, and Lake Formation integration for governed data sharing. DataZone V1 is the predecessor to SageMaker Unified Studio. Choose this module if you have an existing DataZone V1 deployment; for new deployments, consider the [SageMaker module](../sagemaker-app/README.md) which provides the latest SageMaker Unified Studio experience with a unified portal for data engineering, analytics, and ML. Use this module when you need a governed data catalog and sharing portal for teams to discover, request access to, and consume data assets across organizational boundaries.
 
 ---
 
-## Deployed Resources and Compliance Details
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+**DataZone Domain** - A DataZone Domain with configurable SSO and user assignment modes.
+
+**DataZone Domain Units** - Hierarchical organizational units for project creation.
+
+**DataZone User/Group Profiles** - User/Group profiles for IAM and SSO principals.
+
+**KMS CMK** - Customer-managed encryption key per domain.
+
+**Domain Execution Role** - IAM Role used by DataZone, specific to each domain.
+
+**Domain Bucket** - S3 bucket for domain-specific resources.
+
+**Associated Account Stacks** - Cross-account resources for multi-account domain access.
 
 ![datazone](../../../constructs/L3/governance/datazone-l3-construct/docs/DataZone.png)
 
-- **DataZone Domain** - A DataZone Domain
+---
 
-- **DataZone Domain Unit** - Domain Units in which projects can be created
+## Related Modules
 
-- **DataZone User/Group Profiles** - User/Group profiles for IAM and SSO principals
+- [Lake Formation Settings](../lakeformation-settings-app/README.md) — Configure Lake Formation admin roles required for DataZone domain data governance
+- [Glue Catalog Settings](../glue-catalog-app/README.md) — Configure cross-account Glue Catalog encryption keys for associated accounts
+- [Roles](../roles-app/README.md) — Create IAM roles for DataZone domain user/group profiles
+- [SageMaker (Domain)](../sagemaker-app/README.md) — Alternative to DataZone for governed data access and project management using SageMaker Unified Studio
 
-- **KMS CMK** - A KMS CMK specific to each domain created
+---
 
-- **Domain Execution Role** - An IAM Role used by DataZone. This role is specific to the domain.
+## Security/Compliance Details
 
-- **Domain Bucket** - Used for hosting domain-specific resources
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
 
-- **Associated Account Stacks** - Deployed directly to associated domain accounts to provide account specific resources
+- **Encryption at Rest**:
+  - Each domain encrypted with a dedicated customer-managed KMS key
+  - Glue catalog encryption key integration for metadata access
+- **Least Privilege**:
+  - Domain unit ownership model with user/group-level access
+  - SSO and IAM authentication modes
+- **Separation of Duties**:
+  - Lake Formation admin role integration for fine-grained data access control
+  - Associated accounts with configurable Glue catalog KMS key access and per-account Lake Formation admin roles
+
+---
 
 ## Configuration
 
@@ -35,121 +66,30 @@ datazone: # Module Name can be customized
     - ./datazone.yaml # Filename/path can be customized
 ```
 
-### Module Config (./datazone.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./datazone.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Required properties only — a single domain with an admin role. Start here for a basic DataZone domain with a single administrator.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-# (Optional) The arn of the KMS key used to encrypt the glue catalog in this account
-# If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
-glueCatalogKmsKeyArn: test-glue-catalog-key-arn
-# (Optional) The role which will be used to manage LF permissions for all domains
-# This should be an LF Admin role within the account, likely created by the LF Settings module
-# If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
-lakeformationManageAccessRole:
-  arn: 'arn:test-partition:iam::test-account:role/test-role'
-# List of domains to create
-domains:
-  # domain's name (must be unique)
-  test-domain:
-    # Arns for IAM roles which will be provided to the projects's resources (IE bucket)
-    dataAdminRole:
-      name: Admin
-    # Required - Description to give to the domain
-    description: DataZone Domain Description
-
-    # Optional - Type of SSO (default: DISABLED): DISABLED | IAM_IDC
-    singleSignOnType: DISABLED
-
-    # Optional - How Users are assigned to domain (default: MANUAL): MANUAL | AUTOMATIC
-    userAssignment: MANUAL
-
-    # Users to be added to the domain (IAM Roles or SSO Users)
-    users:
-      # A friendly name for an iam user
-      iam-user-name:
-        # an IAM based user
-        # can be referenced by arn, name, or Id
-        iamRole:
-          arn: role-arn
-      # A friendly name for an sso user
-      sso-user-name:
-        ssoId: sso-user-id
-
-    # Groups to be added to the domain (SSO only)
-    groups:
-      # A friendly name for an sso group
-      test-sso-group1:
-        ssoId: test
-
-      test-sso-group2:
-        ssoId: test2
-
-    # List of users who will be added as owners on the root domain unit
-    ownerUsers:
-      - sso-user-name # Must be a named user on the domain
-    # List of groups who will be added as owners on the root domain unit
-    ownerGroups:
-      - test-sso-group1 # Must be a named group on the domain
-
-    # List associated accounts which will be as owners of this domain, allowing
-    # creation of projects within the domain root
-    ownerAccounts:
-      - associated-account-name1
-
-    # Domain units to be added to the domain
-    domainUnits:
-      # The domain unit name
-      test-unit1:
-        # List of owner users for the domain unit
-        ownerUsers:
-          - sso-user-name # Must be a named user on the domain
-        # List associated accounts which will be as owners of this domain unit, allowing
-        # creation of projects within
-        ownerAccounts:
-          - associated-account-name2
-        # Option domain unit description
-        description: testing
-        # Child domain units within this domain unit
-        domainUnits:
-          # The child domain unit name
-          test-unit2:
-            # Option domain unit description
-            description: testing
-            # List of owner groups for this domain unit
-            ownerGroups:
-              - test-sso-group2 # Must be a named group on the domain
-
-    # Optional - Additional accounts which will be associated to the domain
-    associatedAccounts:
-      # A friendly name for the associated account
-      associated-account-name1:
-        # The AWS account number fo the associated account.
-        # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
-        account: '1234567890'
-        # Optional - The arn of the KMS key used to encrypt the glue catalog in this associated account
-        # If not specified, the KMS key arn will be looked up from a standard SSM param created by the
-        # Glue Catalog Settings module and RAM shared to associated accounts.
-        glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
-        # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
-        createCdkUser: true
-        # (Optional) The role which will be used within the associated account to administer LF permissions.
-        # This should be an LF Admin role within the account, likely created by the LF Settings module in the associated account.
-        # If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
-        lakeformationManageAccessRoleArn: 'arn:test-partition:iam::test-account:role/test-role'
-      # A friendly name for the associated account
-      associated-account-name2:
-        # The AWS account number fo the associated account.
-        # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
-        account: '2234567890'
-        # Optional - The arn of the KMS key used to encrypt the glue catalog in this associated account
-        # If not specified, the KMS key arn will be looked up from a standard SSM param created by the
-        # Glue Catalog Settings module and RAM shared to associated accounts.
-        glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
-        # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
-        createCdkUser: true
-        # (Optional) The role which will be used within the associated account to administer LF permissions.
-        # This should be an LF Admin role within the account, likely created by the LF Settings module in the associated account.
-        # If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
-        lakeformationManageAccessRoleArn: 'arn:test-partition:iam::test-account:role/test-role'
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+Covers both enum variants, all PolicyType values, nested domain units, cross-account associations, and all principal types. Start here when evaluating all available options for domain units, user/group profiles, environment blueprints, and multi-account governance.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

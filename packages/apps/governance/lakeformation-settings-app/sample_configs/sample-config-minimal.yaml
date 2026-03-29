@@ -1,0 +1,10 @@
+# Minimal Lake Formation Settings module configuration.
+# Contains only required properties for account-level LF settings.
+
+# Lake Formation admin role references
+lakeFormationAdminRoles:
+  - name: Admin
+
+# Whether to add IAM_ALLOWED_PRINCIPALS by default to new
+# databases and tables
+iamAllowedPrincipalsDefault: true

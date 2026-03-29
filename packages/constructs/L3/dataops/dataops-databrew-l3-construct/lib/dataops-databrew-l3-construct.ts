@@ -176,17 +176,18 @@ export class DataBrewL3Construct extends MdaaL3Construct {
     }
 
     // create list of databrew jobs and schedule them
-    const records = this.props.jobs;
-    for (const key in records) {
+
+    Object.entries(this.props.jobs || {}).forEach(([jobName, jobProps]) => {
       const roleName = this.props.roleHelper
-        .resolveRoleRefsWithOrdinals([records[key].executionRole], 'executionRole')
-        .map(x => x.name())[0];
-      const job = this.createJob(key, roleName, records[key]);
-      const schedule = records[key]?.schedule;
-      if (schedule) {
-        this.createSchedule([job.name], schedule).addDependency(job);
+        .resolveRoleRefWithRefId(jobProps.executionRole, `${jobName}-executionRole`)
+        .name();
+
+      const job = this.createJob(jobName, roleName, jobProps);
+
+      if (jobProps.schedule) {
+        this.createSchedule([job.name], jobProps.schedule).addDependency(job);
       }
-    }
+    });
   }
 
   private createJob(jobName: string, roleName: string, params: DataBrewJobProps): MdaaDataBrewJob {

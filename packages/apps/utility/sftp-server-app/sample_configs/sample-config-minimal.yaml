@@ -1,0 +1,18 @@
+# SFTP Server Module — Minimal Sample Configuration
+# Contains only the required properties for deploying an AWS
+# Transfer Family SFTP server with VPC networking and CIDR-based
+# access control.
+
+server:
+  # CIDR blocks permitted to connect to the SFTP server on port 22.
+  ingressCidrs:
+    - 10.0.0.0/8
+  # VPC ID where the SFTP server will be deployed.
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: some-vpc-id
+  # Subnet IDs for the SFTP server network interfaces.
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnetIds:
+    - some-subnet-id1

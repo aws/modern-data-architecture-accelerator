@@ -1,0 +1,110 @@
+# (Required) The CodeCommit repo containing these configs
+# Pipelines will be triggered on updates to this repo
+configsCodeCommitRepo: test-config-repo
+# (Optional) The branch within the configs repo to be deployed
+configsBranch: test-branch
+# (Required) The CodeCommit repo containing the MDAA source code
+# Pipelines will be triggered on updates to this repo
+mdaaCodeCommitRepo: test-mdaa-repo
+# (Optional) The branch within the MDAA repo to be deployed
+mdaaBranch: test-mdaa-branch
+# (Optional) CDK bootstrap context qualifier for identifying CDK bootstrap
+# resources (deployment roles, asset buckets) in the target environment
+cdkBootstrapContext: my-cdk-qualifier
+# (Optional) Install commands to be run on all stages of all pipelines
+install:
+  - echo testing
+# (Optional) Pre commands to be run on all stages of all pipelines
+pre:
+  - echo testing
+# (Optional) Post commands to be run on all stages of all pipelines
+post:
+  - echo testing
+# (Optional) Commands to be run on PreDeploy stage of all pipelines
+preDeploy:
+  # Install dependencies for pre-deploy stage
+  install:
+    - echo testing
+  # Pre-execution commands for pre-deploy stage
+  pre:
+    - echo testing
+  # Post-execution commands for pre-deploy stage
+  post:
+    - echo testing
+# (Optional) Commands to be run on PreDeployValidate stage of all pipelines
+preDeployValidate:
+  # Install testing tools for pre-deploy validation
+  install:
+    - echo testing
+  # Validation commands for pre-deploy quality gate
+  commands:
+    - echo testing
+# (Optional) Commands to be run on Deploy stage of all pipelines
+deploy:
+  # Install dependencies for deploy stage
+  install:
+    - echo testing
+  # Pre-execution commands for deploy stage
+  pre:
+    - echo testing
+  # Post-execution commands for deploy stage
+  post:
+    - echo testing
+# (Optional) Commands to be run on PostDeployValidate stage of all pipelines
+postDeployValidate:
+  # Install testing tools for post-deploy validation
+  install:
+    - echo testing
+  # Validation commands for post-deploy quality gate
+  commands:
+    - echo testing
+# Pipelines to be deployed
+pipelines:
+  # Pipeline Name
+  domain-test1:
+    # Domains which will be deployed via this pipeline
+    domainFilter:
+      - testdomain1
+    # Envs which will be deployed via this pipeline
+    envFilter:
+      - testenv
+    # Modules which will be deployed via this pipeline
+    moduleFilter:
+      - testmodule1
+    # (Optional) Install commands for all stages of this pipeline
+    install:
+      - echo testing
+    # (Optional) Pre commands for all stages of this pipeline
+    pre:
+      - echo testing
+    # (Optional) Post commands for all stages of this pipeline
+    post:
+      - echo testing
+    # (Optional) Pipeline-level PreDeploy stage commands
+    preDeploy:
+      install:
+        - echo testing
+      pre:
+        - echo testing
+      post:
+        - echo testing
+    # (Optional) Pipeline-level PreDeployValidate stage commands
+    preDeployValidate:
+      install:
+        - echo testing
+      commands:
+        - echo testing
+    # (Optional) Pipeline-level Deploy stage commands
+    deploy:
+      install:
+        - echo testing
+      pre:
+        - echo testing
+      post:
+        - echo testing
+    # (Optional) Pipeline-level PostDeployValidate stage commands
+    postDeployValidate:
+      install:
+        - echo testing
+      commands:
+        - echo testing

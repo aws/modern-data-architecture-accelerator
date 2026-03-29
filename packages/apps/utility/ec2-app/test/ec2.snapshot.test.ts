@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { EC2InstanceApp } from '../lib/ec2';
 import * as path from 'path';
 
 describe('ec2 Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'EC2 Stack',
-    Create.stackProvider(
-      'EC2StackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'EC2 App',
+    Create.appProvider(
+      context => {
         const moduleApp = new EC2InstanceApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-ec2-main',
@@ -41,20 +32,42 @@ describe('ec2 Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'EC2 App',
+    'EC2 App Inline Init',
     Create.appProvider(
       context => {
         const moduleApp = new EC2InstanceApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-inline-init.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-ec2-main',
+        module_name: 'test-ec2-inline-init',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'EC2 App Minimal',
+    Create.appProvider(
+      context => {
+        const moduleApp = new EC2InstanceApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-ec2-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

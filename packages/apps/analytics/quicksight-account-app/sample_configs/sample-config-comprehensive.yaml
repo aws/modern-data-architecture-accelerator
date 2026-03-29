@@ -1,0 +1,122 @@
+# Sample config for the QuickSight Account module.
+# Provisions a QuickSight account with Enterprise edition, IAM+QuickSight
+# authentication, VPC connectivity for data sources, IP-based access
+# restrictions, security group rules, and Glue catalog integration.
+# This is the comprehensive config exercising all available properties.
+
+# QuickSight account configuration defining edition, authentication,
+# networking, and security settings. The module deploys a QS service role,
+# security group for VPC data source connectivity, and the QS account
+# itself.
+account:
+  # QuickSight edition determining feature set and pricing tier
+  # (enum: ENTERPRISE, ENTERPRISE_AND_Q, STANDARD)
+  edition: 'ENTERPRISE'
+  # Authentication method controlling how users sign in to QuickSight
+  # (enum: ACTIVE_DIRECTORY, IAM_AND_QUICKSIGHT, IAM_ONLY)
+  authenticationMethod: 'IAM_AND_QUICKSIGHT'
+  # Email address for QuickSight account notifications including billing
+  # and service alerts
+  notificationEmail: 'example@example.com'
+
+  # (Optional) First name of the QuickSight account administrator
+  firstName: 'Test'
+  # (Optional) Last name of the QuickSight account administrator
+  lastName: 'Admin'
+  # (Optional) Email address of the QuickSight account administrator
+  emailAddress: 'admin@example.com'
+  # (Optional) Phone number for the QuickSight account administrator
+  contactNumber: '1234567890'
+
+  # VPC to associate with the QuickSight account for secure data source
+  # connectivity
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: vpc-abcd1234
+
+  # Subnets for the QuickSight VPC connection. QuickSight requires at
+  # least 2 subnets for multi-AZ availability.
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnetIds:
+    - test-subnet-id1
+    - test-subnet-id2
+
+  # (Optional) IP CIDR restrictions for QuickSight console access. When
+  # specified, only requests from these IP ranges can access the
+  # QuickSight interface.
+  ipRestrictions:
+    # CIDR block defining the allowed IP range for QuickSight access
+    - cidr: a.b.c.d/n
+      # (Optional) Human-readable description of the IP restriction rule
+      description: Restrict to my IP
+
+  # (Optional) Security group rules controlling which VPC resources
+  # QuickSight can connect to. Defines ingress rules for the MDAA-created
+  # security group.
+  securityGroupAccess:
+    # (Optional) Security group rules for cross-security group traffic
+    # control
+    sg:
+      # Security group identifier for security group-based access control
+      - sgId: sg-1234abcd
+        # IP protocol for the security group rule
+        protocol: tcp
+        # (Optional) Port number for the security group rule
+        port: 5439
+        # (Optional) Ending port number defining the upper bound of the
+        # port range
+        toPort: 5439
+        # (Optional) Human-readable description of the security group rule
+        description: Redshift access via security group
+        # (Optional) CDK Nag rule suppressions for this security group
+        # rule
+        suppressions:
+          # The id of the rule to ignore
+          - id: AwsSolutions-EC23
+            # The reason to ignore the rule (minimum 10 characters)
+            reason: Required for QuickSight VPC connectivity
+            # (Optional) Rule specific granular suppressions
+            appliesTo:
+              - Resource::*
+    # (Optional) IPv4 CIDR block rules for security group traffic control
+    ipv4:
+      # CIDR block specification for network access control
+      - cidr: 1.1.1.1/32
+        # IP protocol for the security group rule
+        protocol: tcp
+        # (Optional) Port number for the security group rule
+        port: 1000
+        # (Optional) Ending port number defining the upper bound of the
+        # port range
+        toPort: 2000
+        # (Optional) Human-readable description of the security group rule
+        description: IPv4 CIDR-based access rule
+        # (Optional) CDK Nag rule suppressions for this security group
+        # rule
+        suppressions:
+          - id: AwsSolutions-EC23
+            reason: Required for QuickSight data source connectivity
+    # (Optional) Prefix list rules for security group traffic control
+    prefixList:
+      # Prefix list identifier for managed IP range access control
+      - prefixList: pl-test1234
+        # IP protocol for the security group rule
+        protocol: tcp
+        # (Optional) Port number for the security group rule
+        port: 443
+        # (Optional) Ending port number defining the upper bound of the
+        # port range
+        toPort: 443
+        # (Optional) Human-readable description of the prefix list rule
+        description: Prefix list access rule
+        # (Optional) CDK Nag rule suppressions for this security group
+        # rule
+        suppressions:
+          - id: AwsSolutions-EC23
+            reason: Required for QuickSight prefix list connectivity
+
+  # (Optional) Glue resource patterns granting the QuickSight service
+  # role read access to data catalog databases and tables
+  glueResourceAccess:
+    - database/some-database-name*

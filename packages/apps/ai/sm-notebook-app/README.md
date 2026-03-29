@@ -1,34 +1,70 @@
 # SageMaker Notebooks
 
-The SageMaker Notebook CDK application is used to configure and deploy secure SageMaker Notebook instances and associated resources.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/ai/sm-notebook-app/index.html).
 
-***
+The SageMaker Notebook module configures and deploys secure SageMaker Notebook instances with KMS encryption, VPC networking, lifecycle configurations, and security groups with restricted access. Use this module when you need individual, isolated notebook environments for data exploration, model prototyping, or ad-hoc analysis.
 
-## Deployed Resources and Compliance Details
+---
+
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+**KMS CMK** - Encrypts data on the storage volume attached to the notebook instance.
+
+**Notebook LifeCycle Configs** - Scripts for customizing Notebooks on creation or startup.
+
+**Notebook Instances** - VPC-bound SageMaker notebook instances, accessing internet only via VPC topology. An existing execution role must be specified for each notebook.
+
+**Notebook Security Group** - Controls network access for notebook instances.
 
 ![Mdaa Sagemaker Notebook](../../../constructs/L3/ai/sm-notebook-l3-construct/docs/sm-notebook.png)
 
-**KMS CMK** - The KMS CMK which will be used to encrypt data on the storage volume attached to the notebook instance.
+---
 
-* Key usage permission granted to Notebook execution roles by default
-* Additional permissions can be granted via IAM Policy
+## Related Modules
 
-**Notebook LifeCycle Configs** - Scripts for customizing Notebooks on creation or startup
+- [SageMaker Studio](../sm-studio-domain-app/README.md) — Deploy a Studio domain for a more full-featured interactive ML environment
+- [Data Science Team](../data-science-team-app/README.md) — Provisions notebook-equivalent functionality as part of a complete data science team environment with Athena, S3, and Lake Formation
+- [Service Catalog](../../governance/service-catalog-app/README.md) — Offer notebook instances as self-service products via Service Catalog portfolios
+- [Roles](../../governance/roles-app/README.md) — Create IAM execution roles for notebook instances
 
-**Notebook Instances** - Secure SageMaker notebook instances.
+---
 
-* All data at rest will be encrypted using KMS CMK
-* Notebook instances will be VPC bound, and will access internet only via VPC topology (Direct internet access disabled)
-* Notebook instance root access disabled by default (can optionally be enabled)
-* An existing, sufficiently permissive role must be specified for each Notebook
-  * Role should have assume role trust for SageMaker service
+## Security/Compliance Details
 
-**Notebook Security Group** - Will be used by notbook instance to control network access.
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
 
-* All egress traffic permitted by default
-* All ingress traffic denied by default
+- **Encryption at Rest**:
+  - Storage volumes encrypted with customer-managed KMS key
+  - Key usage permissions granted to notebook execution roles
+- **Encryption in Transit**:
+  - All SageMaker API communications use TLS
+- **Least Privilege**:
+  - Each notebook requires an existing execution role with SageMaker service trust
+  - Root access disabled by default (optionally enabled)
+- **Network Isolation**:
+  - Notebook instances are VPC-bound with direct internet access disabled
+  - Security group denies all ingress by default
+  - Egress rules control outbound connectivity
 
-***
+---
+
+## AWS Service Endpoints
+
+The following VPC endpoints may be required if public AWS service endpoint connectivity is unavailable (e.g., private subnets without NAT gateway, firewalled environments, or PrivateLink-only architectures):
+
+| AWS Service        | Endpoint Service Name                      | Type      |
+| ------------------ | ------------------------------------------ | --------- |
+| SageMaker API      | `com.amazonaws.{region}.sagemaker.api`     | Interface |
+| SageMaker Runtime  | `com.amazonaws.{region}.sagemaker.runtime` | Interface |
+| SageMaker Notebook | `com.amazonaws.{region}.notebook`          | Interface |
+| KMS                | `com.amazonaws.{region}.kms`               | Interface |
+| S3                 | `com.amazonaws.{region}.s3`                | Gateway   |
+| CloudWatch Logs    | `com.amazonaws.{region}.logs`              | Interface |
+| STS                | `com.amazonaws.{region}.sts`               | Interface |
+
+---
 
 ## Configuration
 
@@ -37,117 +73,36 @@ The SageMaker Notebook CDK application is used to configure and deploy secure Sa
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          sm-notebook: # Module Name can be customized
-            module_path: "@aws-mdaa/sm-notebook" # Must match module NPM package name
-            module_configs:
-              - ./sm-notebook.yaml # Filename/path can be customized
+sm-notebook: # Module Name can be customized
+  module_path: '@aws-mdaa/sm-notebook' # Must match module NPM package name
+  module_configs:
+    - ./sm-notebook.yaml # Filename/path can be customized
 ```
 
-### Module Config (./sm-notebook.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./sm-notebook.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Provisions a single notebook instance with required networking and IAM role settings. Start here for a quick single-user notebook environment before adding lifecycle configs or custom compute options.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-# Lifecycle configurations to be created and used by notebooks
-lifecycleConfigs:
-  example-lifecycle-config:
-    # will be run once per startup
-    onStart:
-      assets:
-        testing:
-          sourcePath: ./assets
-      # example script using list of shell commands
-      cmds:
-        - echo "testing onStart"
-        - sh $ASSETS_DIR/testing/test.sh
-    # will be run once when Notebook is provisioned
-    onCreate:
-      cmds:
-        - echo "Testing onCreate"
-
-# If assets are specified in the lifecycleConfigs section,
-# assetDeploymentConfig config must specify where assets will be staged on S3
-assetDeploymentConfig:
-  # Name of the S3 bucket where assets will be staged
-  assetBucketName: some-bucket-name
-  # (Optional) - The prefix under which assets will be staged on the assetBucket.
-  # If not specified, defaults to 'sagemaker-lifecycle-assets/notebooks'
-  assetPrefix: sagemaker/assets
-  # A role which has write access to the assetBucket and assetPrefix,
-  # and which has an assume role trust policy for Lambda.
-  assetDeploymentRoleArn: arn:{{partition}}:iam::account:role/example_deployment_role
-
-# List of notebook instances to be created
-notebooks:
-  #Unique id of the notebook
-  notebook-1:
-    # Optional notebook name. If not specified, Notebook Id will be used.
-    notebookName: "test-notebook-name"
-    # ID of the VPC on which notebook will be deployed
-    vpcId: vpc-id
-    # ID of the subnet on which notebook will be deployed
-    subnetId: subnet-id
-    # SageMaker instance type of the notebook
-    instanceType: ml.t3.medium
-    # Ingress rules for the Notebook security group
-    securityGroupIngress:
-      # In IPV4 CIDR-based rule
-      ipv4:
-        - cidr: 10.0.0.0/28
-          port: 443
-          protocol: tcp
-    # Egress rules for the Notebook security group
-    securityGroupEgress:
-      # Allow egress to prefixLists for gateway VPC endpoints
-      prefixList:
-        - prefixList: pl-4ea54027
-          description: prefix list for com.amazonaws.{{region}}.dynamodb
-          protocol: tcp
-          port: 443
-        - prefixList: pl-7da54014
-          description: prefix list for com.amazonaws.{{region}}.s3
-          protocol: tcp
-          port: 443
-      # A reference to an existing security group to which egress will be allowed
-      sg:
-        - sgId: ssm:/ml/sm/sg/id
-          port: 443
-          protocol: tcp
-    # Size of the root volume in GB
-    volumeSizeInGb: 10
-    # If true, user will have root access to the Notebook
-    # Defaults to false
-    rootAccess: false
-    # Role with which Notebook will be executed
-    # Requires an assume role trust policy for "sagemaker.amazonaws.com"
-    notebookRole:
-      arn: arn:{{partition}}:iam::account:role/sagemaker-role
-    # Reference to a lifecycle config created by this module
-    lifecycleConfigName: example-lifecycle-config
-
-  # Unique name of a second notebook
-  notebook-2:
-    vpcId: vpc-id
-    subnetId: subnet-id
-    instanceType: ml.t3.large
-    # ID of a an existing securityGroup
-    securityGroupId: sg-123124124
-    volumeSizeInGb: 5
-    notebookRole:
-      name: sagemaker-role
-    # Example of a reference to an existing lifecycle config name
-    # (created outside of this module)
-    lifecycleConfigName: external:existing-lifecycle-config
-
-  # Example notebook using a Cfn Param input for the name.
-  # Suitable for use as a Service Catalog product.
-  sc-notebook:
-    notebookName: "{{param:notebook_name}}"
-    vpcId: vpc-id
-    subnetId: subnet-id
-    instanceType: ml.t3.large
-    securityGroupId: sg-12312412421
-    volumeSizeInGb: 5
-    notebookRole:
-      name: sagemaker-role
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+Provisions notebook instances with lifecycle configs, security groups, asset deployment, and various compute/networking options. Use this as a reference when you need full control over instance types, lifecycle scripts, and network configuration.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

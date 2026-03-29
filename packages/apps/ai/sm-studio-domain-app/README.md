@@ -1,38 +1,79 @@
 # SageMaker Studio
 
-The SageMaker Studio Domain CDK application is used to configure and deploy a secure SageMaker Studio domain and associated resources. Note that only a single Studio domain can be deployed per AWS account.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/ai/sm-studio-domain-app/index.html).
 
-***
+Configures and deploys a secure SageMaker AI Studio domain with VPC-bound networking, KMS-encrypted EFS storage, user profiles, lifecycle configurations, and IAM or SSO authentication. Use this module when you need a standalone, collaborative ML development environment with user profiles and shared notebook capabilities.
 
-## Deployed Resources and Compliance Details
+---
+
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+**Studio EFS KMS CMK** - Encrypts the SageMaker Domain EFS volume (created automatically by SageMaker).
+
+**Studio Domain** - A VPC-bound (VpcOnly) SageMaker AI Studio domain with configurable subnets and security groups. Supports both IAM Identity Center (SSO) and IAM authentication. Logs all AWS control plane interactions with the Studio User Profile Name auditable as 'sourceIdentity'.
+
+**Studio Domain Security Group** - Controls network access to Studio resources and EFS.
+
+**Studio Default Execution Role** - The role with which Studio apps will be launched. By default has minimal permissions required to launch Studio apps; optionally, an existing, more permissive role may be specified within the config.
+
+**Studio Lifecycle Configs** - Scripts for automatically customizing Studio Apps/Kernels launched by domain users
+
+**Studio User Profiles** (Optional) - User-specific profiles within the Studio domain for individual workspace configuration.
+
+**Notebook Sharing Bucket** - S3 bucket for sharing notebooks between Studio users within the domain.
 
 ![studio-domain](../../../constructs/L3/ai/sm-studio-domain-l3-construct/docs/studio-domain.png)
 
-**Studio EFS KMS CMK** - The KMS CMK which will be used to encrypt the SageMaker Domain EFS volume (created automatically by SageMaker).
-  
-* dataAdminRoles will be granted admin/usage permissions on the key
+---
 
-**Studio Domain** - A secure Studio domain.
+## Related Modules
 
-* Domain will be configured to log all AWS control plane interactions with the Studio User Profile Name auditable as 'sourceIdentity'
-* Domain EFS volume will be encrypted using KMS CMK
-* Domain will be VPC bound (VpcOnly), using configurable subnets and security groups
-* Supports both IAM Identity Center (SSO) and IAM authentication
-* Will enforce usage of a minimal permissions execution role if one is not specified
+- [Data Science Team](../data-science-team-app/README.md) — Provisions a Studio domain automatically as part of a complete data science team environment with Athena, S3, and Lake Formation
+- [SageMaker Notebooks](../sm-notebook-app/README.md) — Deploy classic SageMaker notebook instances as an alternative to Studio
+- [Roles](../../governance/roles-app/README.md) — Create IAM roles that can be referenced as data admin roles or custom execution roles for the Studio domain
 
-**Studio Domain Security Group** - Will be used by all launched Studio apps to control network access to Studio resources and EFS.
+---
 
-* Allows all egress by default, including access to EFS
-* Allows no ingress by default
+## Security/Compliance Details
 
-**Studio Default Execution Role** - The role with which Studio apps will be launched.
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
 
-* By default this is a role with only the minimal permissions required to launch Studio apps, but not access any other AWS services.
-* Optionally, an existing, more permissive role may be specified within the config.
+- **Encryption at Rest**:
+  - Domain EFS volume encrypted with customer-managed KMS key
+  - Data admin roles granted key admin/usage permissions
+- **Encryption in Transit**:
+  - All SageMaker API and Studio communications use TLS
+- **Least Privilege**:
+  - Default execution role has minimal permissions (launch Studio apps only)
+  - Data admin roles granted scoped key admin/usage permissions
+- **Separation of Duties**:
+  - Supports both IAM and SSO authentication modes
+  - All AWS control plane interactions logged with Studio User Profile Name as auditable `sourceIdentity` for user attribution
+- **Network Isolation**:
+  - Domain is VPC-bound (VpcOnly mode) with configurable subnets and security groups
+  - No public internet access
+  - Security group denies all ingress by default
 
-**Studio Lifecycle Configs** - Scripts which can be used to automatically customize the Studio Apps/Kernels launched by domain users
+---
 
-***
+## AWS Service Endpoints
+
+The following VPC endpoints may be required if public AWS service endpoint connectivity is unavailable (e.g., private subnets without NAT gateway, firewalled environments, or PrivateLink-only architectures):
+
+| AWS Service       | Endpoint Service Name                      | Type      |
+| ----------------- | ------------------------------------------ | --------- |
+| SageMaker API     | `com.amazonaws.{region}.sagemaker.api`     | Interface |
+| SageMaker Runtime | `com.amazonaws.{region}.sagemaker.runtime` | Interface |
+| SageMaker Studio  | `com.amazonaws.{region}.studio`            | Interface |
+| KMS               | `com.amazonaws.{region}.kms`               | Interface |
+| S3                | `com.amazonaws.{region}.s3`                | Gateway   |
+| CloudWatch Logs   | `com.amazonaws.{region}.logs`              | Interface |
+| STS               | `com.amazonaws.{region}.sts`               | Interface |
+| EFS               | `com.amazonaws.{region}.elasticfilesystem` | Interface |
+
+---
 
 ## Configuration
 
@@ -41,128 +82,46 @@ The SageMaker Studio Domain CDK application is used to configure and deploy a se
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          sm-studio-domain: # Module Name can be customized
-            module_path: "@aws-mdaa/sm-studio-domain" # Must match module NPM package name
-            module_configs:
-              - ./sm-studio-domain.yaml # Filename/path can be customized
+sm-studio-domain: # Module Name can be customized
+  module_path: '@aws-mdaa/sm-studio-domain' # Must match module NPM package name
+  module_configs:
+    - ./sm-studio-domain.yaml # Filename/path can be customized
 ```
 
-### Module Config (./sm-studio-domain.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./sm-studio-domain.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Contains only the required properties to deploy a working Studio domain: authentication mode, VPC networking, and at least one user profile. Start here for a quick Studio setup before adding lifecycle configs, custom images, or notebook sharing.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-domain:
-  # The domain Authentication mode (one of "IAM" or "SSO")
-  authMode: IAM
-  # The VPC on which all Studio Apps will be launched
-  vpcId: vpc-id
-  # The subnets on which all Studio Apps will be launched
-  subnetIds:
-    - subnet-id
-  securityGroupIngress:
-    ipv4:
-      - cidr: 10.0.0.0/24
-        port: 443
-        protocol: tcp
-    sg:
-      - sgId: ssm:/ml/sm/sg/id
-        port: 443
-        protocol: tcp
-  securityGroupEgress:
-    # Allow egress to prefixLists for gateway VPC endpoints
-    prefixList:
-      - prefixList: pl-4ea54027
-        description: prefix list for com.amazonaws.{{region}}.dynamodb
-        protocol: tcp
-        port: 443
-      - prefixList: pl-7da54014
-        description: prefix list for com.amazonaws.{{region}}.s3
-        protocol: tcp
-        port: 443
-    ipv4:
-      - cidr: 0.0.0.0/0
-        port: 443
-        protocol: tcp
-    sg:
-      - sgId: ssm:/ml/sm/sg/id
-        port: 443
-        protocol: tcp
-
-  # List of Studio user profiles which will be created.
-  userProfiles:
-    # The key/name of the user profile should be specified as follows:
-    # If the Domain is in SSO auth mode, this should map to an SSO User ID.
-    # If in IAM mode, this should map to Session Name portion of the aws:userid variable.
-    example-user-id:
-      # Required if the domain is in IAM AuthMode. This is the role
-      # from which the user will launch the user profile in Studio.
-      # The role's id will be combined with the userid
-      # to grant the user access to launch the user profile.
-      userRole:
-        id: test-user-role-id
-    # The below example would be sufficient if the domain is in SSO auth mode.
-    # example-sso-user-id: {}
-
-  # Roles which will be granted admin access to Studio resources, such
-  # as sharing S3 bucket, KMS key, etc
-  dataAdminRoles:
-    - arn: test
-
-  # The prefix location on the Domain bucket where shared
-  # notebooks will be stored
-  notebookSharingPrefix: testing
-
-  # Default user profile settings for the domain.
-  defaultUserSettings:
-    kernelGatewayAppSettings:
-      customImages:
-        - appImageConfigName: "appImageConfigName"
-          imageName: "imageName"
-
-  lifecycleConfigs:
-    # Lifecycle config for the main Jupyter App. This will be run
-    # each time the main Jupyter app container is launched.
-    jupyter:
-      # Assets which will be staged in S3, then copied to SageMaker container
-      # before the lifecycle commands run.
-      # The assets will be available in the container under
-      # $ASSETS_DIR/<asset_name>/
-      assets:
-        testing:
-          sourcePath: ./testing_asset_dir
-      cmds:
-        - echo "testing jupyter"
-        - sh $ASSETS_DIR/testing/test.sh
-
-    # Lifecycle config for JupyterLab App (Studio Latest).
-    # This will be run each time the JupyterLab app container is launched.
-    # Required for lifecycle scripts to run in SageMaker Studio (Latest).
-    jupyterLab:
-      # Assets which will be staged in S3, then copied to SageMaker container
-      # before the lifecycle commands run.
-      # The assets will be available in the container under
-      # $ASSETS_DIR/<asset_name>/
-      assets:
-        testing:
-          sourcePath: ./testing_asset_dir
-      cmds:
-        - echo "testing jupyterlab"
-        - sh $ASSETS_DIR/testing/test.sh
-
-    # Kernel gateway app lifecycle config. This will run each time
-    # a kernel gateway container is launched.
-    kernel:
-      # Assets which will be staged in S3, then copied to SageMaker container
-      # before the lifecycle commands run.
-      # The assets will be available in the container under
-      # $ASSETS_DIR/<asset_name>/
-      assets:
-        testing:
-          sourcePath: ./testing_asset_dir
-      cmds:
-        - echo "testing kernel"
-        - sh $ASSETS_DIR/testing/test.sh
-
-
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+Provisions a Studio domain with IAM auth, VPC networking, user profiles, lifecycle configs for Jupyter/JupyterLab/Kernel apps, custom images, notebook sharing, and default user settings. Use this as a reference when you need full control over Studio domain configuration, user experience customization, and team collaboration features.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+#### SSO Authentication Configuration
+
+Use this variant when your organization uses AWS IAM Identity Center (SSO) for user authentication instead of IAM. In SSO mode, user profiles do not require a userRole. Choose this variant when your identity strategy is centralized through IAM Identity Center.
+
+[sample-config-sso.yaml](sample_configs/sample-config-sso.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-sso.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

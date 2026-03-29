@@ -1,0 +1,134 @@
+# Sample config for the Bedrock AgentCore Runtime module.
+# Deploys an agent runtime using a pre-built ECR container image with
+# VPC networking, JWT authentication, IAM policies, header forwarding,
+# and lifecycle management.
+
+# Unique name for the Bedrock AgentCore Runtime
+agentRuntimeName: testAgentRuntime
+# (Optional) Description of the agent runtime's purpose and functionality
+description: 'Test agent runtime for unit testing'
+# (Optional) Existing IAM role ARN for runtime execution. If omitted,
+# a new role is created with appropriate permissions.
+roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-runtime-role'
+# Container deployment configuration specifying Docker image source.
+# Use containerUri for pre-built ECR images or codePath to build
+# from source.
+agentRuntimeArtifact:
+  # Container configuration for the agent runtime Docker image
+  containerConfiguration:
+    # Pre-built container image URI from ECR.
+    # Mutually exclusive with codePath.
+    containerUri: '{{account}}.dkr.ecr.{{region}}.amazonaws.com/test-runtime:latest'
+    # (Optional) Target platform architecture for Docker image builds
+    # (default: linux/arm64)
+    platform: 'linux/amd64'
+# (Optional) Key-value environment variables passed to the agent
+# runtime container
+environmentVariables:
+  ENVIRONMENT: test
+  LOG_LEVEL: DEBUG
+# VPC network configuration for secure runtime deployment. MDAA
+# enforces VPC mode for all runtimes to ensure network isolation.
+networkConfiguration:
+  # Security group IDs controlling inbound/outbound traffic for
+  # runtime instances (1-16 items)
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/security-group/id
+  securityGroups:
+    - sg-12345678
+    - sg-87654321
+  # Subnet IDs for runtime instance placement enabling multi-AZ
+  # deployment (1-16 items)
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnets:
+    - subnet-12345678
+    - subnet-87654321
+    - subnet-abcdef12
+# (Optional) Session timeout and maximum lifetime settings for
+# runtime instances (values 60-28800 seconds)
+lifecycleConfiguration:
+  # (Optional) Idle session timeout in seconds before automatic
+  # termination (60-28800)
+  idleRuntimeSessionTimeout: 3600
+  # (Optional) Maximum session lifetime in seconds before forced
+  # termination regardless of activity (60-28800)
+  maxLifetime: 7200
+# (Optional) Authentication configuration with support for custom
+# JWT authorizers via OIDC
+authorizerConfiguration:
+  # (Optional) Custom JWT authorizer for token-based authentication
+  # via OIDC
+  customJwtAuthorizer:
+    # OIDC discovery URL for JWT token validation. Must end with
+    # /.well-known/openid-configuration.
+    discoveryUrl: 'https://cognito-idp.{{region}}.amazonaws.com/{{region}}_test/.well-known/openid-configuration'
+    # (Optional) Allowed audience values for JWT token validation
+    allowedAudience:
+      - 'test-client-id'
+    # (Optional) Allowed client IDs for JWT token validation
+    allowedClients:
+      - 'test-client-app-1'
+      - 'test-client-app-2'
+# (Optional) IAM policies to attach to the runtime execution role.
+# Supports managed policy ARNs and inline policy documents
+# (mutually exclusive per entry).
+policies:
+  # Policy using a managed policy ARN
+  - # (Optional) ARN of an existing managed policy to attach to the
+    # runtime role. Mutually exclusive with policyDocument.
+    policyArn: 'arn:{{partition}}:iam::aws:policy/AmazonS3ReadOnlyAccess'
+  # Policy using an inline policy document
+  - # (Optional) Inline policy document for custom permissions on the
+    # runtime role. Mutually exclusive with policyArn.
+    policyDocument:
+      # IAM policy statements (at least one required)
+      Statement:
+        - # (Optional) Statement identifier for tracking and management
+          Sid: AllowS3Access
+          # Effect of the policy statement (enum: Allow, Deny)
+          Effect: Allow
+          # IAM actions to allow or deny
+          Action:
+            - 's3:GetObject'
+            - 's3:ListBucket'
+          # AWS resource ARNs this statement applies to
+          Resource:
+            - 'arn:{{partition}}:s3:::test-bucket'
+            - 'arn:{{partition}}:s3:::test-bucket/*'
+          # (Optional) Conditions for when the policy statement is in effect
+          Condition: {}
+        - # Statement demonstrating Deny effect
+          Sid: DenyUnencryptedUploads
+          # Effect of the policy statement (enum: Allow, Deny)
+          Effect: Deny
+          # IAM actions to deny
+          Action: 's3:PutObject'
+          # AWS resource ARNs this statement applies to
+          Resource: 'arn:{{partition}}:s3:::test-bucket/*'
+          # (Optional) Conditions for when the policy statement is in effect
+          Condition: {}
+# (Optional) Protocol-level configuration for agent runtime
+# communication
+protocolConfiguration: {}
+# (Optional) HTTP headers to forward to agent runtime instances
+# (1-20 headers)
+requestHeaderConfiguration:
+  # (Optional) HTTP header names to forward to the agent runtime
+  requestHeaderAllowlist:
+    - 'X-Custom-Header'
+    - 'X-Request-Id'
+  # (Optional) Allowed headers
+  allowedHeaders:
+    - 'Authorization'
+    - 'Content-Type'
+# (Optional) Endpoint configuration for invoking the agent runtime
+# via Bedrock AgentCore API
+runtimeEndpoint:
+  # (Optional) Endpoint name for API access identification
+  # (alphanumeric and underscores, max 48 chars)
+  name: test_runtime_endpoint
+  # (Optional) Description of the runtime endpoint
+  description: 'Test runtime endpoint'
+  # (Optional) Specific agent runtime version for the endpoint
+  agentRuntimeVersion: '1.0.0'

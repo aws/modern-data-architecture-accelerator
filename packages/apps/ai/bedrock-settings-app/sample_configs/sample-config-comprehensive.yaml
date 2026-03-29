@@ -1,0 +1,13 @@
+# Sample config for the Bedrock Settings module.
+# Configures audit logging for Bedrock model invocations to both
+# S3 (long-term retention) and CloudWatch (real-time monitoring).
+
+# Enables S3 audit logging for Bedrock model invocations.
+# Creates an encrypted S3 bucket for storing invocation logs.
+# (default: false)
+enableAuditLoggingToS3: true
+
+# Enables CloudWatch audit logging for Bedrock model invocations.
+# Creates an encrypted CloudWatch Log Group for real-time
+# monitoring and alerting. (default: false)
+enableAuditLoggingToCloudwatch: true

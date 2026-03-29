@@ -1,0 +1,117 @@
+# DataBrew config without projectName — explicit KMS, bucket, deployment role,
+# and security configuration instead of auto-wiring from a DataOps project.
+
+# KMS key ARN for encrypting DataOps resources and data.
+kmsArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id
+# S3 bucket name for project storage (scripts, artifacts, temp files).
+bucketName: test-databrew-bucket
+# IAM role ARN for deployment operations and resource management.
+deploymentRoleArn: arn:{{partition}}:iam::{{account}}:role/test-deploy-role
+# Glue security configuration name for job encryption (at rest, in transit, CloudWatch logs).
+securityConfigurationName: test-security-config
+# SNS topic ARN for job notifications and workflow alerts.
+notificationTopicArn: arn:{{partition}}:sns:{{region}}:{{account}}:test-topic
+
+recipes:
+  mdaa-jdbc-recipe:
+    description: Renames id column to employee_id
+    steps: |
+      [
+        {
+          "Action": {
+            "Operation": "RENAME",
+            "Parameters": {
+              "sourceColumn": "id",
+              "targetColumn": "employee_id"
+            }
+          }
+        }
+      ]
+
+  mdaa-s3-recipe:
+    description: Renames employee_id column back to id
+    steps: |
+      [
+        {
+          "Action": {
+            "Operation": "RENAME",
+            "Parameters": {
+              "sourceColumn": "employee_id",
+              "targetColumn": "id"
+            }
+          }
+        }
+      ]
+
+  mdaa-catalog-recipe:
+    description: Renames employee_id column back to id for catalog sources
+    steps: |
+      [
+        {
+          "Action": {
+            "Operation": "RENAME",
+            "Parameters": {
+              "sourceColumn": "employee_id",
+              "targetColumn": "id"
+            }
+          }
+        }
+      ]
+
+datasets:
+  mdaa-jdbc-dataset:
+    input:
+      databaseInputDefinition:
+        glueConnectionName: project:connections/connectionJdbc
+        databaseTableName: 'mydb_admin.allusers'
+
+  mdaa-s3-dataset:
+    input:
+      s3InputDefinition:
+        bucket: ssm:/path_to_bucket_name
+        key: 'data/raw_data/input_data.csv.snappy'
+
+  mdaa-catalog-dataset:
+    input:
+      dataCatalogInputDefinition:
+        databaseName: project:databaseName/demo-database
+        tableName: demo_raw_data
+
+jobs:
+  test-recipe-job6:
+    type: 'RECIPE'
+    projectName: 'mdaa-test-project'
+    dataset:
+      generated: mdaa-jdbc-dataset
+    recipe:
+      existing:
+        name: org-dev-data-ops-databrew-mdaa-s3-recipe
+    outputs:
+      - location:
+          bucket: ssm:/path_to_bucket_name
+          key: 'data/databrew/transformed/'
+        compressionFormat: 'SNAPPY'
+        format: 'PARQUET'
+        overwrite: true
+        partitionColumns: ['id']
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    executionRole:
+      name: ssm:/path_to_role_name
+    kmsKeyArn: ssm:/path_to_kms_arn
+    schedule:
+      name: 'mdaa-test-job-schedule'
+      cronExpression: 'Cron(50 21 * * ? *)'
+
+  test-profile-job:
+    type: 'PROFILE'
+    dataset:
+      generated: mdaa-jdbc-dataset
+    outputLocation:
+      bucket: ssm:/path_to_bucket_name
+      key: 'data/databrew/profile/'
+    executionRole:
+      name: ssm:/path_to_role_name
+    kmsKeyArn: ssm:/path_to_kms_arn
+    schedule:
+      name: 'mdaa-test-profile-schedule'
+      cronExpression: 'Cron(50 21 * * ? *)'

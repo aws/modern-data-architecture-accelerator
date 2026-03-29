@@ -1,30 +1,57 @@
 # Athena Workgroup
 
-The Athena Workgroup CDK application is used to deploy the resources required to support usage of Athena via a Workgroup and Identity Federation, including an Athena results S3 Bucket and KMS CMK, and a federation role which can be used to federate identities from external identity providers.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/datalake/athena-workgroup-app/index.html).
 
-***
+Deploys Athena workgroups with encrypted query results, KMS key management, S3 results buckets, and IAM managed policies for workgroup access. Supports identity federation and configurable query limits. Use this module when you need a standalone Athena workgroup — note that the [Data Science Team](../../ai/data-science-team-app/README.md) and [DataOps Project](../../dataops/dataops-project-app/README.md) modules both provision their own Athena workgroups automatically, so you only need this module for workgroups outside of those contexts.
 
-## Deployed Resources and Compliance Details
+---
+
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+**Workgroup KMS Key** - Customer-managed KMS key used to encrypt all Workgroup resources which support encryption at rest.
+
+**Workgroup Results S3 Bucket** - S3 bucket for Athena query results, referenced by the Athena Workgroup configuration and client connection configurations.
+
+**Athena Workgroup** - The Athena Workgroup with configurable query limits and IAM managed policy for access control.
+
+**Workgroup Usage IAM Managed Policy** - IAM managed policy granting Athena workgroup access, automatically attached to mutable user roles.
+
+**Note**: Immutable user roles (e.g., IAM Identity Center/SSO roles) require out-of-band binding to the managed policy via SSO Permission Set.
 
 ![AthenaWorkgroup](../../../constructs/L3/datalake/athena-workgroup-l3-construct/docs/AthenaWorkgroup.png)
 
-**Workgroup KMS Key** - This key will be used to encrypt all Workgroup resources which support encryption at rest (including the Workgroup Results S3 Bucket).
+---
 
-* Key admin/usage access granted to data admin roles (via key policy)
-* Key usage access granted to user roles (via key policy)
-* Additional permissions may be granted via IAM policy
+## Related Modules
 
-**Workgroup Results S3 Bucket** - This S3 bucket holds the workgroup's Athena query results, and is specified by the Athena Workgroup configuration and/or client connection configurations. This bucket should be accessible only by the Workgroup Federation Roles, and the Data Admin roles.
+- [Data Lake](../datalake-app/README.md) — Deploy the data lake buckets and Glue databases that Athena workgroups query against
+- [Data Science Team](../../ai/data-science-team-app/README.md) — Provisions team-specific Athena workgroups automatically as part of a data science team environment
+- [DataOps Project](../../dataops/dataops-project-app/README.md) — Provisions project-specific Athena workgroups automatically as part of a DataOps project
+- [Roles](../../governance/roles-app/README.md) — Create IAM roles that can be referenced as data admin or user roles for workgroup access
+- [Glue Catalog Settings](../../governance/glue-catalog-app/README.md) — Configure cross-account Glue Catalog access for querying data across accounts
 
-* Read/write access granted to user roles (via bucket policy)
-* Read/write/super access granted to data admin roles (via bucket policy)
+---
 
-**Athena Workgroup** - The Athena Workgroup itself.
+## Security/Compliance Details
 
-* Workgroup usage access granted via IAM Managed Policy, bound to mutable user roles
-* Immutable user roles would need to be bound to managed policy out of band from MDAA (IE via SSO Permission Set)
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
 
-***
+- **Encryption at Rest**:
+  - Query results encrypted with customer-managed KMS key
+  - Results S3 bucket configured to require KMS encryption
+- **Least Privilege**:
+  - Workgroup access governed by IAM managed policies bound to mutable user roles
+  - Key admin/usage access granted to data admin roles via key policy
+  - Key usage access granted to user roles via key policy
+  - Results bucket read/write access granted to user roles via bucket policy
+  - Results bucket read/write/super access granted to data admin roles via bucket policy
+- **Separation of Duties**:
+  - Distinct data admin and user role access levels
+  - Configurable bytes-scanned cutoff per query to prevent runaway costs
+
+---
 
 ## Configuration
 
@@ -33,51 +60,36 @@ The Athena Workgroup CDK application is used to deploy the resources required to
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          athena-workgroup: # Module Name can be customized
-            module_path: "@aws-mdaa/athena-workgroup" # Must match module NPM package name
-            module_configs:
-              - ./athena-workgroup.yaml # Filename/path can be customized
+athena-workgroup: # Module Name can be customized
+  module_path: '@aws-mdaa/athena-workgroup' # Must match module NPM package name
+  module_configs:
+    - ./athena-workgroup.yaml # Filename/path can be customized
 ```
 
-### Module Config (./athena-workgroup.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./athena-workgroup.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Contains only the required admin and user role references. All other properties (workgroup configuration, verbatim policy name prefix) are optional. Start here for a quick Athena workgroup deployment before adding query cost controls or SSO role bindings.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-# Arns for IAM roles which will be provided to the Workgroup's resources (IE results bucket)
-# Roles within the target account may be referenced by id, arn, and/or name.
-dataAdminRoles:
-    # This is an arn which will be resolved first to a role ID for inclusion in the workgroup results bucket policy.
-    # Note that this resolution will require iam:GetRole against this role arn for the role executing CDK.
-    - arn: arn:{{partition}}:iam::{{account}}:role/DataAdmin
-    # This is an SSM param which should contain a role ID (ie "AROA..."). This role ID
-    # will be used directly in the bucket policies.
-    - id: ssm:/path/to/some/role/id/ssm/param
-    # This is an SSM param which should contain a role Arn, which will be
-    # resolved to role ID for inclusion in the bucket policies
-    - arn: ssm:/path/to/some/role/arn/ssm/param
-    # This is a pre-resolved role id which will be used directly in the bucket policy and does not require resolution.
-    - id: AROA123412512
-
-# List of roles which will be provided usage access to the Workgroup Resources
-# Roles within the target account may be referenced by id:, arn:, and/or name:.
-# Additionally, if a role has been generated by the MDAA Roles CDK within the same domain,
-# it can be referenced by "generated-role-id:" or "generated-role-arn:"
-athenaUserRoles:
-  - arn: ssm:/sample-org/instance1/generated-role/data-scientist/arn
-  - arn: arn:{{partition}}:iam::{{account}}:role/sample-org-dev-instance1-roles-data-scientist
-  - id: generated-role-id:data-scientist
-  # Below role will be provided access only to the workgroup bucket and KMS key. This is required
-  # for immutable roles such as SSO roles (which can only be modified via SSO permission set deployment). 
-  - arn: arn:{{partition}}:iam::{{account}}:role/aws-reserved/sso.amazonaws.com/{{region}}/AWSReservedSSO_d2e-datascientist-spoke_7123ab1231
-    immutable: true
-  - name: data_scientist
-    sso: true
-    
-workgroupConfiguration:
-  bytesScannedCutoffPerQuery: 10000000000
-  
-# If specified, managed policies generated by the module will use a verbatim name instead of a name generated by the naming module.
-# This is useful where a policy name must be stable across accounts, such as when integrating with SSO permission sets.
-verbatimPolicyNamePrefix: "some-prefix"
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+Deploys an Athena workgroup with KMS-encrypted results bucket, admin and user role access (including SSO and immutable roles), query cost controls, and a verbatim policy name prefix. Use this as a reference when you need full control over encryption, role bindings, and query cost guardrails.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

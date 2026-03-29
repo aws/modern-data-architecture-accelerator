@@ -1,0 +1,10 @@
+# Minimal DataZone module configuration.
+# Contains only required properties for a basic DataZone domain deployment.
+
+# Map of domain names to DataZone domain configurations
+domains:
+  test-domain:
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    # IAM role with administrative privileges over the domain
+    dataAdminRole:
+      name: Admin

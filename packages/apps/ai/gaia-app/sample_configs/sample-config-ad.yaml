@@ -1,0 +1,103 @@
+# Sample config for the GAIA GenAI platform module with Active Directory
+# authentication. Use this variant when integrating GAIA with an
+# enterprise Active Directory via SAML for SSO.
+#
+# Differs from the primary config only in the auth section, which uses
+# AD-specific SAML metadata and email claim parameters.
+
+# Complete GAIA generative AI platform configuration including RAG
+# engines, LLM models, authentication, VPC networking, and chatbot
+# API setup.
+gaia:
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # Admin roles granted access to GAIA app resources (like
+  # KMS/Bucket). Roles can be referenced by name, arn, or id.
+  dataAdminRoles:
+    - name: Admin
+  # Prefix for GAIA resource naming
+  prefix: testing
+  # (Optional) Enable Powertools dev logging
+  # (enum: "true", "false")
+  powertoolsDevLogging: 'false'
+  # (Optional) Amazon Bedrock integration configuration for
+  # foundation model access
+  bedrock:
+    # Enables or disables Amazon Bedrock foundation model
+    # integration
+    enabled: true
+    # AWS region for Bedrock foundation model access
+    # (enum: SupportedRegion values)
+    region: 'ca-central-1'
+  # LLM model configurations
+  llms:
+    # SageMaker-hosted LLM model configurations
+    sagemaker: []
+  # (Optional) RAG engine and embedding model configuration
+  rag:
+    # Retrieval engine configuration
+    engines:
+      # (Optional) Aurora RAG engine
+      aurora:
+        # (Optional) Minimum Aurora Serverless capacity units
+        minCapacity: 0.5
+        # (Optional) Maximum Aurora Serverless capacity units
+        maxCapacity: 4
+      # (Optional) Bedrock Knowledge Base RAG engine
+      knowledgeBase:
+        # (Optional) External Knowledge Base configurations
+        external:
+          - # Knowledge Base ID
+            kbId: test-kb-id
+            # Name for the external Knowledge Base
+            name: test-external-kb
+    # Embedding models for vector processing
+    embeddingsModels:
+      - # Model provider (enum: bedrock, openai, sagemaker)
+        provider: 'bedrock'
+        # Model name identifier
+        name: 'amazon.titan-embed-text-v2:0'
+        # Vector embedding dimensions
+        dimensions: 1024
+        # (Optional) Whether this is the default model
+        isDefault: true
+    # Cross-encoder models for document ranking
+    crossEncoderModels: []
+  # Authentication configuration for user access.
+  # This config uses Active Directory (SAML) authentication.
+  auth:
+    # Authentication method for the GAIA platform
+    # (enum: email_pass, ad, existing)
+    authType: 'ad'
+    # Custom Cognito User Pool domain for branded authentication
+    # URLs. Must be globally unique. Required for AD auth.
+    cognitoDomain: 'ad-unique-pool-domain-name'
+    # (Optional) SSM parameter path for SAML metadata URL or file
+    idpSamlMetadataUrlOrFileParamPath: '/gaia/saml/metadata-url'
+    # (Optional) SSM parameter path for SAML email claim attribute
+    idpSamlEmailClaimParamPath: '/gaia/saml/email-claim'
+    # (Optional) OAuth redirect URL for AD authentication flow
+    oAuthRedirectUrl: 'https://gaia.example.com/oauth/callback'
+  # VPC networking configuration for GAIA infrastructure
+  vpc:
+    # VPC identifier for hosting GAIA application components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: XXXXXXXX
+    # Security group ID for application tier components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/security-group/id
+    appSecurityGroupId: 'sg-12345351356'
+    # Subnet IDs for the application tier
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    appSubnets:
+      - subnet1
+    # Security group ID for data tier components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/security-group/id
+    dataSecurityGroupId: 'sg-46576878787'
+    # Subnet IDs for the data tier
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    dataSubnets:
+      - subnet2

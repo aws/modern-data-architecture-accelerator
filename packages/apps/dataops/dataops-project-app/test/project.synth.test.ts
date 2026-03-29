@@ -5,15 +5,15 @@
 
 import { DataOpsProjectCDKApp } from '../lib/dataops-project';
 
-test('Simple SynthTest', () => {
+test('Minimal SynthTest', () => {
   const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
   const context = {
     org: 'test-org',
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/simple-test-config.yaml',
-    additional_stacks: JSON.stringify([{ account: '12312412', region: region }]),
+    module_configs: './sample_configs/sample-config-minimal.yaml',
+    additional_stacks: JSON.stringify([{ account: '222222222222', region: region }]),
   };
   const app = new DataOpsProjectCDKApp({ context: context });
   app.generateStack();
@@ -32,8 +32,8 @@ test('SageMaker SynthTest', () => {
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/sagemaker-test-config.yaml',
-    additional_stacks: JSON.stringify([{ account: '12312412', region: region }]),
+    module_configs: './sample_configs/sample-config-sagemaker.yaml',
+    additional_stacks: JSON.stringify([{ account: '222222222222', region: region }]),
   };
   const app = new DataOpsProjectCDKApp({ context: context });
   app.generateStack();
@@ -52,8 +52,8 @@ test('DataZone SynthTest', () => {
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/datazone-test-config.yaml',
-    additional_stacks: JSON.stringify([{ account: '12312412', region: region }]),
+    module_configs: './sample_configs/sample-config-datazone.yaml',
+    additional_stacks: JSON.stringify([{ account: '222222222222', region: region }]),
   };
   const app = new DataOpsProjectCDKApp({ context: context });
   app.generateStack();
@@ -65,15 +65,15 @@ test('DataZone SynthTest', () => {
   ).not.toThrow();
 });
 
-test('Comprehensive SynthTest', () => {
+test('Comprehensive Full-Coverage SynthTest', () => {
   const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
   const context = {
     org: 'test-org',
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/test-config.yaml',
-    additional_stacks: JSON.stringify([{ account: '12312412', region: region }]),
+    module_configs: './sample_configs/sample-config-comprehensive.yaml',
+    additional_stacks: JSON.stringify([{ account: '222222222222', region: region }]),
   };
   const app = new DataOpsProjectCDKApp({ context: context });
   app.generateStack();

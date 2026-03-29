@@ -1,0 +1,40 @@
+# Comprehensive Athena Workgroup module configuration.
+# Deploys an Athena workgroup with KMS-encrypted results bucket,
+# admin and user role access (including SSO and immutable roles),
+# query cost controls, and a verbatim policy name prefix.
+# Exercises every non-excluded property at full depth.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Admin roles granted full access to Athena workgroup resources
+# including KMS key, results bucket, and workgroup management.
+# Roles can be referenced by name (auto-expanded to ARN) or by explicit ARN.
+dataAdminRoles:
+  # Role by ARN
+  - arn: arn:{{partition}}:iam::{{account}}:role/AthenaAdmin
+
+# User roles granted query execution access to the workgroup and
+# read/write access to the results bucket
+athenaUserRoles:
+  # Role by ARN via SSM parameter
+  - arn: ssm:/sample-org/instance2/generated-role/data-scientist/arn
+  # Role by ARN
+  - arn: arn:{{partition}}:iam::{{account}}:role/sample-org-dev-instance1-roles-data-scientist
+  # Role by MDAA-generated role ID
+  - id: generated-role-id:data-scientist
+  # Immutable SSO role — receives bucket/KMS access only
+  - arn: arn:{{partition}}:iam::{{account}}:role/aws-reserved/sso.amazonaws.com/{{region}}/AWSReservedSSO_data_scientist12321421
+    # Flag indicating the role is immutable and not modified by MDAA
+    immutable: true
+  # SSO-managed role (resolved from IAM Identity Center)
+  - name: data_scientist
+    sso: true
+
+# Workgroup configuration settings for query cost controls
+workgroupConfiguration:
+  # Upper limit in bytes for data scanned per query.
+  # Queries exceeding this limit are cancelled.
+  bytesScannedCutoffPerQuery: 10000000000
+
+# Verbatim policy name prefix bypassing MDAA naming conventions.
+# Useful for cross-account policy portability and SSO permission set integration.
+verbatimPolicyNamePrefix: 'some-prefix'

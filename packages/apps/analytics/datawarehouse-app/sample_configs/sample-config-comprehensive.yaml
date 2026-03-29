@@ -1,0 +1,195 @@
+# Sample config for the Redshift Data Warehouse module.
+# Deploys a multi-node Redshift cluster with SAML federation,
+# scheduled pause/resume, audit logging, database users with
+# secret rotation, event notifications, workload management,
+# parameter group tuning, and VPC networking.
+# This comprehensive config exercises every compatible non-excluded
+# property at full depth.
+
+# Admin username for the Redshift cluster. A secret is
+# automatically generated for the password.
+adminUsername: admin
+
+# Number of days between admin password rotation
+adminPasswordRotationDays: 30
+
+# (Optional) Number of days automated snapshots are retained
+# (1-35). Set to 0 to disable. (default: 1)
+automatedSnapshotRetentionDays: 3
+
+# (Optional) Additional KMS key ARNs allowed to write to the
+# cluster bucket. Useful for allowing Glue jobs or other services
+# to write encrypted data to the warehouse bucket.
+additionalBucketKmsKeyArns:
+  - arn:{{partition}}:kms:{{region}}:{{account}}:key/abcd-123123-abcd-12312421
+
+# (Optional) SAML or OIDC federation configurations for federated
+# Redshift access. Each federation creates an IAM role with SAML
+# trust for dynamic credential generation and group-based cluster
+# access.
+federations:
+  # Name of the federation for reference
+  - federationName: 'test'
+    # ARN of the IAM Identity Provider
+    providerArn: arn:{{partition}}:iam::{{account}}:saml-provider/sample-saml-identity-provider
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Admin roles granted full access to cluster resources including
+# KMS keys and S3 buckets. Roles can be referenced by name, arn,
+# or id.
+dataAdminRoles:
+  - arn: arn:{{partition}}:iam::{{account}}:role/Admin
+
+# (Optional) Roles granted read/write access to the data warehouse
+# S3 bucket for data loading/unloading
+warehouseBucketUserRoles:
+  - name: User
+  - name: team2-ex-role
+
+# (Optional) External execution roles associated with the Redshift
+# cluster for cross-service operations. If a role also needs
+# warehouse bucket access, add it to warehouseBucketUserRoles.
+executionRoles:
+  - arn: arn:{{partition}}:iam::{{account}}:role/team1-ex-role
+  - arn: arn:{{partition}}:iam::{{account}}:role/RedshiftExecRole
+
+# VPC ID for Redshift cluster deployment
+# Often created by your VPC/networking stack.
+# Example SSM: ssm:/path/to/vpc/id
+vpcId: vpc-12321421412
+
+# Subnet IDs for Redshift cluster node placement. For automatic
+# cluster relocation, specify at least one subnet per AZ.
+# Often created by your VPC/networking stack.
+# Example SSM: ssm:/path/to/subnet/id
+subnetIds:
+  - subnet-12312312421
+  - subnet-12312321412
+
+# Weekly maintenance window in ddd:hh24:mi-ddd:hh24:mi format
+# (UTC). Example: 'Sun:23:45-Mon:00:15'.
+preferredMaintenanceWindow: Sun:23:45-Mon:00:15
+
+# (Optional) TCP port for client connections to the cluster
+# (default: 5440)
+clusterPort: 5440
+
+# Security group ingress rules defining allowed inbound
+# connections to the cluster port. Supports IPv4 CIDR blocks and
+# security group references. All other traffic is blocked.
+securityGroupIngress:
+  # (Optional) IPv4 CIDR blocks to allow traffic from
+  ipv4:
+    - 172.31.0.0/16
+  # (Optional) Security group IDs to allow traffic from
+  sg:
+    - ssm:/path/to/ssm
+
+# Redshift node type determining compute and storage capacity
+nodeType: RA3_4XLARGE
+# Number of nodes in the Redshift cluster
+numberOfNodes: 2
+
+# Enable audit logging to a dedicated S3 bucket. The audit bucket
+# uses SSE-S3 encryption (not KMS) due to Redshift requirements.
+enableAuditLoggingToS3: true
+
+# (Optional) Control whether a dedicated S3 bucket is created for
+# warehouse data operations (default: true)
+createWarehouseBucket: true
+# (Optional) Initial database name created in the cluster
+# (default: default_db)
+dbName: 'test_db'
+# (Optional) Multi-node cluster flag. When true, creates a
+# multi-node cluster for distributed processing.
+multiNode: true
+# (Optional) Let Redshift manage the master password
+redshiftManageMasterPassword: false
+
+# (Optional) Additional cluster parameter group parameters for
+# performance tuning. Security-sensitive values are automatically
+# overridden for compliance (e.g., SSL enforcement).
+# Note: Schema defines this as Record<string,string>. Provide
+# string key-value pairs for Redshift parameter group settings.
+parameterGroupParams: {}
+
+# (Optional) Snapshot identifier for cluster restoration. Only
+# provide when restoring from an existing snapshot.
+snapshotIdentifier: test-snapshot-id
+
+# (Optional) Snapshot owner account. Applicable if restoring the
+# cluster from a snapshot that belongs to another account.
+# By default, snapshots are searched within the current account.
+snapshotOwnerAccount: 222222222222
+
+# (Optional) Database users created in Redshift with credentials
+# stored in Secrets Manager. Supports automated secret rotation.
+databaseUsers:
+  # Name of the database user
+  - userName: 'serviceuserGlue'
+    # The DB to which the user will be added
+    dbName: 'default_db'
+    # Number of days between secret rotation
+    secretRotationDays: 90
+    # (Optional) Characters to exclude in the password
+    excludeCharacters: '"@/\\'
+    # (Optional) List of roles that need Redshift secret access
+    secretAccessRoles:
+      - name: 'test-arn'
+  - userName: 'serviceuserQuicksight'
+    dbName: 'default_db'
+    secretRotationDays: 90
+
+# (Optional) Scheduled actions for automated cluster pause/resume.
+# Each action specifies a target action, cron schedule, and active
+# time window.
+scheduledActions:
+  # Pause cluster every Friday at 6pm ET
+  - name: pause-cluster
+    # Scheduled action is enabled if true
+    enable: true
+    # Target operation: 'pauseCluster' or 'resumeCluster'
+    targetAction: pauseCluster
+    # Cron expression: cron(Minutes Hours Day-of-month Month
+    # Day-of-week Year)
+    schedule: cron(0 22 ? * FRI *)
+    # (Optional) UTC start date/time when the schedule becomes
+    # active (ISO 8601 format)
+    startTime: '2023-12-31T00:00:00Z'
+    # (Optional) UTC end date/time after which the schedule is no
+    # longer active
+    endTime: '2099-12-31T00:00:00Z'
+
+  # Resume cluster every Monday at 7am ET
+  - name: resume-cluster
+    enable: true
+    targetAction: resumeCluster
+    schedule: cron(0 12 ? * MON *)
+    startTime: '2023-12-31T00:00:00Z'
+    endTime: '2099-12-31T00:00:00Z'
+
+# (Optional) Event notification configuration for cluster and
+# scheduled action monitoring. Configures SNS notifications with
+# email delivery, severity filtering, and event category selection.
+eventNotifications:
+  # (Optional) Email addresses for SNS notification delivery
+  email:
+    - example@example.com
+  # (Optional) Minimum event severity level (enum: ERROR, INFO)
+  severity: INFO
+  # (Optional) Event categories to monitor
+  # (enum: configuration, management, monitoring, security,
+  # pending)
+  eventCategories:
+    - configuration
+    - management
+    - monitoring
+    - security
+    - pending
+
+# (Optional) Workload management (WLM) configuration for query
+# queue management and resource allocation.
+workloadManagement:
+  - query_group: 'test-group'
+    memory_percent_to_use: 50
+    query_concurrency: 5

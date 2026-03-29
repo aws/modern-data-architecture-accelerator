@@ -1,0 +1,26 @@
+# Minimal DataOps Workflow module configuration.
+# Deploys a single Glue workflow with a scheduled trigger,
+# wired to a DataOps project.
+
+# (Optional) DataOps project name for resource autowiring.
+projectName: dataops-project-test
+
+# List of workflow definitions
+workflowDefinitions:
+  - rawWorkflowDef:
+      Workflow:
+        Name: my-workflow
+        DefaultRunProperties: {}
+        Graph:
+          Nodes:
+            - Type: TRIGGER
+              Name: Start_wf
+              TriggerDetails:
+                Trigger:
+                  Name: Start_wf
+                  WorkflowName: my-workflow
+                  Type: SCHEDULED
+                  Schedule: 'cron(0 12 * * ? *)'
+                  State: CREATED
+                  Actions:
+                    - CrawlerName: my-crawler

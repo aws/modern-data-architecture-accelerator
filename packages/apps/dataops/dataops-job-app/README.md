@@ -1,12 +1,14 @@
 # ETL Jobs
 
-The Data Ops Job CDK application is used to deploy the resources required to support and perform data operations on top of a Data Lake using Glue Jobs.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/dataops/dataops-job-app/index.html).
+
+Deploys Glue ETL jobs with automatic script deployment, job templates for config reuse, continuous logging, VPC binding, and project security configuration wiring. Supports Python and Scala runtimes. Use this module when you need to transform, enrich, or move data between sources using Glue Spark or Python shell jobs as part of your data pipeline.
 
 ---
 
-## Deployed Resources and Compliance Details
+## Deployed Resources
 
-![dataops-job](../../../constructs/L3/dataops/dataops-job-l3-construct/docs/dataops-job.png)
+This module deploys and integrates the following resources:
 
 **Glue Jobs** - Glue Jobs will be created for each job specification in the configs
 
@@ -14,6 +16,34 @@ The Data Ops Job CDK application is used to deploy the resources required to sup
 - Can optionally be VPC bound (via Glue connection)
 - Automatically configured to use project bucket as temp location
 - Can use job templates to promote reuse/minimize config duplication
+
+![dataops-job](../../../constructs/L3/dataops/dataops-job-l3-construct/docs/dataops-job.png)
+
+---
+
+## Related Modules
+
+- [DataOps Project](../dataops-project-app/README.md) — Deploy the shared project infrastructure (KMS keys, security configs, connections, buckets) that ETL jobs reference
+- [Crawlers](../dataops-crawler-app/README.md) — Deploy crawlers to catalog ETL job output data in the Glue Catalog
+- [Workflows](../dataops-workflow-app/README.md) — Orchestrate ETL jobs and crawlers together in Glue Workflows
+- [Step Functions](../dataops-stepfunction-app/README.md) — Orchestrate ETL jobs with Step Functions state machines
+- [Data Quality](../dataops-data-quality-app/README.md) — Deploy data quality rulesets to validate ETL job output
+- [Data Lake](../../datalake/datalake-app/README.md) — ETL jobs can read from and write to data lake S3 buckets
+
+---
+
+## Security/Compliance Details
+
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, to assist in meeting organization-specific compliance requirements.
+
+- **Encryption at Rest**:
+  - Jobs use project Glue security configuration for encrypting output data, logs, and bookmarks with the project KMS key
+  - S3 output optionally encrypted with a separate data lake KMS key
+- **Least Privilege**:
+  - Execution roles scoped per job
+  - Project resources referenced via `project:` prefix for consistent access control
+- **Network Isolation**:
+  - Optional VPC binding via Glue connections for accessing data sources in private networks
 
 ---
 
@@ -30,128 +60,50 @@ dataops-job: # Module Name can be customized
     - ./dataops-job.yaml # Filename/path can be customized
 ```
 
-### Module Config (./dataops-job.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./dataops-job.yaml` file referenced in the MDAA config snippet above.
 
-### Sample Job Config
+#### Minimal Configuration
 
-Job configs can be templated in order to reuse job definitions across multiple jobs for which perhaps only a few parameters change (such as input/output paths). Templates can be stored separate from job configs, or stored together with job configs in the same file.
+Deploys a single Glue ETL job with project autowiring. Start here for a basic ETL job within an existing DataOps project.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-# (Optional) Name of the Data Ops Project
-# Name the project the resources of which will be used by this job.
-# Other resources within the project can be referenced in the job config using
-# the "project:" prefix on the config value.
-projectName: dataops-project-test
-
-# Alternatively, if projectName is not provided, you can supply parameters directly:
-# kmsArn: arn:aws:kms:region:account:key/key-id  # KMS key for encrypting job artifacts and logs
-# deploymentRoleArnArn: arn:aws:iam::account:role/role-name  # IAM role for Glue job execution
-# bucketName: my-project-bucket  # S3 bucket for storing job scripts and temporary data
-# securityConfigurationName: my-security-config  # Glue security configuration for encryption settings
-# notificationTopicArn: arn:aws:sns:region:account:topic-name  # SNS topic for job status notifications
-
-templates:
-  # An example job template. Can be referenced from other jobs. Will not itself be deployed.
-  ExamplePythonTemplate:
-    executionRoleArn: some-arn
-    # (required) Command definition for the glue job
-    command:
-      # (required) Either of "glueetl" | "pythonshell"
-      name: 'glueetl'
-      # (optional) Python version.  Either "2" or "3"
-      pythonVersion: '3'
-      # (required) Path to a .py file relative to the configuration.
-      scriptLocation: ./src/glue/python/job.py
-    # (required) Description of the Glue Job
-    description: Example of a Glue Job using an inline script
-    # (optional) List of connections for the glue job to use.  Reference back to the connection name in the 'connections:' section of the project.yaml
-    connections:
-      - project:connections/connectionVpc
-    # (optional) key: value pairs for the glue job to use.  see: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html
-    defaultArguments:
-      --job-bookmark-option: job-bookmark-enable
-    # (optional) maximum concurrent runs.  See: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html#aws-glue-api-jobs-job-ExecutionProperty
-    executionProperty:
-      maxConcurrentRuns: 1
-    # (optional) Glue version to use as a string.  See: https://docs.aws.amazon.com/glue/latest/dg/release-notes.html
-    glueVersion: '2.0'
-    # (optional) Maximum capacity.  See: MaxCapcity Section: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html
-    # Use maxCapacity or WorkerType.  Not both.
-    #maxCapacity: 1
-    # (optional) Maximum retries.  see: MaxRetries section:
-    maxRetries: 3
-    # (optional) Number of minutes to wait before sending a job run delay notification.
-    notificationProperty:
-      notifyDelayAfter: 1
-    # (optional) Number of workers to provision
-    #numberOfWorkers: 1
-    # (optional) Number of minutes to wait before considering the job timed out
-    timeout: 60
-    # (optional) Worker type to use.  Any of: "Standard" | "G.1X" | "G.2X"
-    # Use maxCapacity or WorkerType.  Not both.
-    #workerType: Standard
-
-  # An example job template. Can be referenced from other jobs. Will not itself be deployed.
-  ExampleScalaTemplate:
-    executionRoleArn: some-arn
-    # (required) Command definition for the glue job
-    # (optional) key: value pairs for the glue job to use.  see: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html
-    defaultArguments:
-      --job-language: scala
-    # (optional) Glue version to use as a string.  See: https://docs.aws.amazon.com/glue/latest/dg/release-notes.html
-    glueVersion: '5.0'
-
-jobs:
-  # Job definitions below
-  PythonJobOne: # Job Name
-    template: 'ExamplePythonTemplate' # Reference a job template.
-    defaultArguments:
-      --Input: s3://some-bucket/some-location1
-    allocatedCapacity: 2
-    continuousLogging:
-      # For allowed values, refer https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_logs.RetentionDays.html
-      # Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0.
-      logGroupRetentionDays: 3
-
-  PythonJobTwo:
-    template: 'ExamplePythonTemplate' # Reference a job template.
-    defaultArguments:
-      --Input: s3://some-bucket/some-location2
-      --enable-spark-ui: 'true'
-      --spark-event-logs-path: s3://some-bucket/spark-event-logs-path/JobTwo/
-    allocatedCapacity: 20
-    # (Optional) List of all the helper scripts reference in main glue ETL script.
-    # All these helper scripts will be grouped at immediate parent directory level, which will result in dedicated zip.
-    # After deployment, they will be alongside the main script. Hence, must be referenced by file names directly from main glue script
-    # Example (main.py)
-    # from core import core_function1, core_function2;
-    # from helper_etl import helper_function1, helper_function2;
-    additionalScripts:
-      - ./src/glue/python/helper_etl.py
-      - ./src/glue/python/utils/core.py
-    # (Optional) List of additional files which will be available to the Glue Job next to the main script
-    additionalFiles:
-      - ./src/glue/scala/extra_file.txt
-
-  # Job definitions below
-  ScalaJobOne: # Job Name
-    template: 'ExampleScalaTemplate' # Reference a job template.
-    description: testing
-    defaultArguments:
-      --class: some.java.package.App
-    allocatedCapacity: 2
-    command:
-      # (required) Either of "glueetl" | "pythonshell"
-      name: 'glueetl'
-      # (required) Path to a script file relative to the configuration.
-      scriptLocation: ./src/glue/scala/App.scala
-    # (Optional) List of additional files which will be available to the Glue Job next to the main script
-    additionalFiles:
-      - ./src/glue/scala/extra_file.txt
-    # (Optional) List of additional jars which will be loaded into the Spark driver and executor JVMs for use
-    # within the Scala script
-    additionalJars:
-      - ./src/glue/scala/lib/extra.jar
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+Demonstrates Glue ETL and Python shell jobs with templates, job bookmarks, connections, and extra libraries, all wired to a DataOps project. Start here when evaluating all available options for job types, templates, connections, and library configurations.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+#### Standalone Configuration (No Project)
+
+Demonstrates standalone Glue jobs with explicit KMS, bucket, deployment role, and security configuration. Use this when deploying outside of a DataOps project, providing infrastructure references directly.
+
+[sample-config-noproject.yaml](sample_configs/sample-config-noproject.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-noproject.yaml"
+```
+
+#### Worker Type Configuration
+
+Uses workerType + numberOfWorkers instead of maxCapacity for explicit control over Glue worker sizing (Standard, G.1X, or G.2X). Choose this variant when you need predictable worker allocation instead of maxCapacity-based auto-scaling.
+
+[sample-config-workertype.yaml](sample_configs/sample-config-workertype.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-workertype.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

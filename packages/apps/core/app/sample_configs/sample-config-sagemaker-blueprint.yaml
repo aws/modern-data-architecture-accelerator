@@ -1,0 +1,94 @@
+# Sample config for the Core App module — SageMaker Blueprint deployment mode.
+# Exercises sagemakerBlueprint with all compatible properties at full depth,
+# using domainConfigSSMParam for domain configuration.
+# Mutually exclusive with service_catalog_product_config.
+
+# SageMaker blueprint configuration for governed self-service deployment
+sagemakerBlueprint:
+  # (Optional) Custom name for the blueprint (defaults to module name)
+  blueprintName: test-custom-blueprint
+  # SSM parameter reference for domain configuration
+  domainConfigSSMParam: /test/datazone/domain/config
+  # (Optional) S3 bucket name for domain assets
+  domainBucketName: test-domain-bucket
+  # (Optional) Description visible in the SageMaker console
+  description: Test blueprint for core app module
+  # (Optional) Regions where the blueprint is enabled
+  enabledRegions:
+    - '{{region}}'
+    - us-west-2
+  # Required provisioning role reference.
+  # Role by ARN
+  provisioningRole:
+    arn: arn:{{partition}}:iam::{{account}}:role/test-provisioning-role
+  # (Optional) Authorized DataZone domain units
+  authorizedDomainUnits:
+    - test-domain-unit-1
+    - test-domain-unit-2
+  # (Optional) Named parameter configurations for the blueprint
+  parameters:
+    InstanceType:
+      # Required blueprint parameter properties
+      blueprintParamProps:
+        # Field type for the parameter
+        fieldType: STRING
+        # (Optional) Default value for the parameter
+        defaultValue: ml.t3.medium
+        # (Optional) Description of the parameter
+        description: Instance type for SageMaker resources
+        # (Optional) Whether the parameter is editable by users
+        isEditable: true
+        # (Optional) Whether the parameter is optional
+        isOptional: false
+        # (Optional) Whether updates are supported for this parameter
+        isUpdateSupported: true
+      # (Optional) CloudFormation parameter properties
+      cfnParamProps:
+        type: String
+        default: ml.t3.medium
+        description: Instance type for SageMaker resources
+        allowedValues:
+          - ml.t3.medium
+          - ml.t3.large
+          - ml.m5.xlarge
+    VpcId:
+      blueprintParamProps:
+        fieldType: STRING
+        description: VPC ID for network configuration
+        isEditable: true
+        isOptional: false
+  # (Optional) Additional accounts for multi-account blueprint deployment
+  additionalAccounts:
+    secondary-account:
+      # AWS account ID for the additional account
+      account: '222222222222'
+      # (Optional) Regions enabled for this account
+      enabledRegions:
+        - '{{region}}'
+      # Required provisioning role for the additional account.
+      # Role by name (auto-expanded to ARN at deploy time)
+      provisioningRole:
+        name: test-secondary-provisioning-role
+      # (Optional) Account-specific parameter overrides
+      parameters:
+        InstanceType:
+          blueprintParamProps:
+            fieldType: STRING
+            defaultValue: ml.m5.large
+      # (Optional) Authorized domain units for this account
+      authorizedDomainUnits:
+        - secondary-domain-unit
+    tertiary-account:
+      account: '222222222222'
+      # Role by unique ID (use when stable references are a security
+      # requirement — IDs don't change when roles are recreated)
+      provisioningRole:
+        id: AROA1234567890EXAMPLE
+
+# CDK Nag suppression configurations
+nag_suppressions:
+  by_path:
+    - path: /test-org-test-env-test-domain-test-module/custom-blueprint-l3/Resource
+      suppressions:
+        - id: AwsSolutions-IAM5
+          reason: Blueprint provisioning requires wildcard permissions for resource creation

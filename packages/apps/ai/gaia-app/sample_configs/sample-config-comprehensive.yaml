@@ -1,0 +1,265 @@
+# Sample config for the GAIA GenAI platform module.
+# Deploys a conversational AI chatbot with Bedrock foundation models,
+# RAG engines (SageMaker, Aurora, Kendra, Knowledge Base), Cognito auth,
+# VPC networking, and API Gateway endpoints.
+#
+# This comprehensive config uses email/password authentication and
+# exercises every compatible optional property at full depth.
+
+# Complete GAIA generative AI platform configuration including RAG
+# engines, LLM models, authentication, VPC networking, and chatbot
+# API setup.
+gaia:
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # Admin roles granted access to GAIA app resources (like
+  # KMS/Bucket). Roles can be referenced by name, arn, or id.
+  dataAdminRoles:
+    - name: Admin
+    - arn: 'arn:{{partition}}:iam::{{account}}:role/test-admin-role'
+  # Prefix for GAIA resource naming
+  prefix: testing
+  # (Optional) Enable Powertools dev logging
+  # (enum: "true", "false")
+  powertoolsDevLogging: 'true'
+  # (Optional) Main domain for the GAIA platform
+  mainDomain: test-domain.example.com
+  # (Optional) Amazon Bedrock integration configuration for
+  # foundation model access
+  bedrock:
+    # Enables or disables Amazon Bedrock foundation model
+    # integration
+    enabled: true
+    # AWS region for Bedrock foundation model access
+    # (enum: SupportedRegion values)
+    region: 'ca-central-1'
+    # (Optional) IAM role ARN for cross-account or custom Bedrock
+    # access
+    roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-bedrock-role'
+  # LLM model configurations
+  llms:
+    # (Optional) HuggingFace API token for model access
+    huggingFaceApiToken: 'hf_test_token_placeholder'
+    # SageMaker-hosted LLM model configurations
+    sagemaker:
+      - # SageMaker LLM model to deploy
+        # (enum: FalconLite, Llama2_13b_Chat, Mistral7b_Instruct2)
+        model: FalconLite
+        # (Optional) SageMaker instance type for LLM hosting
+        instanceType: ml.g5.2xlarge
+        # (Optional) Initial number of instances for the LLM
+        # endpoint
+        initialInstanceCount: 1
+        # (Optional) Minimum instance count for auto-scaling
+        minimumInstanceCount: 1
+        # (Optional) Maximum instance count for auto-scaling
+        maximumInstanceCount: 2
+      - # SageMaker LLM model to deploy
+        # (enum: FalconLite, Llama2_13b_Chat, Mistral7b_Instruct2)
+        model: Llama2_13b_Chat
+      - # SageMaker LLM model to deploy
+        # (enum: FalconLite, Llama2_13b_Chat, Mistral7b_Instruct2)
+        model: Mistral7b_Instruct2
+  # (Optional) RAG engine and embedding model configuration
+  rag:
+    # Retrieval engine configuration
+    engines:
+      # (Optional) SageMaker RAG engine
+      sagemaker:
+        # (Optional) SageMaker instance type for RAG
+        instanceType: ml.inf1.xlarge
+        # (Optional) Initial instance count
+        initialInstanceCount: 1
+        # (Optional) Minimum instance count for auto-scaling
+        minInstanceCount: 1
+        # (Optional) Maximum instance count for auto-scaling
+        maxInstanceCount: 2
+      # (Optional) Aurora RAG engine
+      aurora:
+        # (Optional) Minimum Aurora Serverless capacity units
+        minCapacity: 0.5
+        # (Optional) Maximum Aurora Serverless capacity units
+        maxCapacity: 4
+        # (Optional) Create separate security group for Aurora
+        createSeparateSecurityGroup: true
+      # (Optional) Kendra RAG engine
+      kendra:
+        # Whether to create a new Kendra index
+        createIndex: true
+        # (Optional) S3 data source configuration for Kendra index
+        s3DataSourceConfig:
+          # S3 bucket name for Kendra data source
+          bucketName: test-kendra-bucket
+          # Directories to include in the Kendra index
+          includedDirectories:
+            - documents/
+          # KMS key ARN for encrypting Kendra data
+          kmsKeyArn: 'arn:{{partition}}:kms:{{region}}:{{account}}:key/test-kendra-key'
+          # (Optional) Metadata directory for Kendra documents
+          metadataDirectory: metadata/
+        # (Optional) External Kendra index configurations
+        external:
+          - # Kendra index ID
+            kendraId: test-kendra-index-id
+            # Name for the external Kendra index
+            name: test-external-kendra
+            # (Optional) AWS region for the external Kendra index
+            # (enum: SupportedRegion values)
+            region: ca-central-1
+            # (Optional) IAM role ARN for cross-account Kendra
+            # access
+            roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-kendra-role'
+      # (Optional) Bedrock Knowledge Base RAG engine
+      knowledgeBase:
+        # (Optional) External Knowledge Base configurations
+        external:
+          - # Knowledge Base ID
+            kbId: test-kb-id
+            # Name for the external Knowledge Base
+            name: test-external-kb
+            # (Optional) AWS region for the external Knowledge Base
+            # (enum: SupportedRegion values)
+            region: ca-central-1
+            # (Optional) IAM role ARN for cross-account KB access
+            roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-kb-role'
+    # Embedding models for vector processing
+    embeddingsModels:
+      - # Model provider (enum: bedrock, openai, sagemaker)
+        provider: 'bedrock'
+        # Model name identifier
+        name: 'amazon.titan-embed-text-v2:0'
+        # Vector embedding dimensions
+        dimensions: 1024
+        # (Optional) Whether this is the default model
+        isDefault: true
+      - # Model provider (enum: bedrock, openai, sagemaker)
+        provider: 'sagemaker'
+        # Model name identifier
+        name: 'test-sagemaker-embedding-model'
+        # Vector embedding dimensions
+        dimensions: 768
+      - # Model provider (enum: bedrock, openai, sagemaker)
+        provider: 'openai'
+        # Model name identifier
+        name: 'text-embedding-3-large'
+        # Vector embedding dimensions
+        dimensions: 3072
+    # Cross-encoder models for document ranking
+    crossEncoderModels:
+      - # Model provider (enum: bedrock, openai, sagemaker)
+        provider: 'bedrock'
+        # Model name identifier
+        name: 'test-cross-encoder-model'
+        # (Optional) Whether this is the default model
+        isDefault: true
+      - # Model provider (enum: bedrock, openai, sagemaker)
+        provider: 'sagemaker'
+        # Model name identifier
+        name: 'test-sagemaker-cross-encoder'
+  # (Optional) Lambda concurrency settings
+  concurrency:
+    # (Optional) Concurrent Lambda executions for model interface
+    modelInterfaceConcurrentLambdas: 10
+    # (Optional) Concurrent Lambda executions for REST API
+    restApiConcurrentLambdas: 10
+    # (Optional) Concurrent Lambda executions for WebSocket
+    websocketConcurrentLambdas: 10
+  # Authentication configuration for user access.
+  # This config uses email/password authentication.
+  auth:
+    # Authentication method for the GAIA platform
+    # (enum: email_pass, ad, existing)
+    authType: 'email_pass'
+    # (Optional) Custom Cognito User Pool domain for branded
+    # authentication URLs. Must be globally unique.
+    cognitoDomain: 'some-unique-pool-domain-name'
+  # (Optional) Set API Gateway account CloudWatch role
+  setApiGateWayAccountCloudwatchRole: true
+  # (Optional) Skip default WAF for API Gateway
+  skipApiGatewayDefaultWaf: true
+  # (Optional) Custom code override paths for GAIA Lambda
+  # functions, layers, and batch jobs. Allows replacing default
+  # implementations with custom code. Requires actual code
+  # directories/files to exist at the specified paths.
+  # Cannot be exercised in synth tests without real code assets.
+  # codeOverwrites:
+  #   # (Optional) Custom code path for the REST API handler
+  #   # Lambda replacing default CRUD operations.
+  #   restApiHandlerCodePath: ./custom/rest-api-handler
+  #   # (Optional) Custom code path for LangChain interface
+  #   # handler Lambda for AI chain orchestration.
+  #   langchainInterfaceHandlerCodePath: ./custom/langchain
+  #   # (Optional) Custom code path for WebSocket connection
+  #   # handler Lambda for real-time connection management.
+  #   webSocketConnectionHandlerCodePath: ./custom/ws-conn
+  #   # (Optional) Custom code path for WebSocket incoming
+  #   # message handler Lambda for message routing.
+  #   webSocketIncomingMessageHandlerCodePath: ./custom/ws-in
+  #   # (Optional) Custom code path for WebSocket outgoing
+  #   # message handler Lambda for response delivery.
+  #   webSocketOutgoingMessageHandlerCodePath: ./custom/ws-out
+  #   # (Optional) Custom code path for WebSocket authorizer
+  #   # Lambda for authentication and authorization.
+  #   webSocketAuthorizerFunctionCodePath: ./custom/ws-auth
+  #   # (Optional) Custom code path for RAG engines inference
+  #   # Lambda for document retrieval and AI response generation.
+  #   ragEnginesInferenceCodePath: ./custom/rag-inference
+  #   # (Optional) Custom code path for data import upload
+  #   # handler Lambda for data ingestion orchestration.
+  #   dataImportUploadHandlerCodePath: ./custom/data-import
+  #   # (Optional) Custom code path for Aurora workspace
+  #   # creation Lambda for workspace provisioning.
+  #   createAuroraWorkspaceCodePath: ./custom/aurora-workspace
+  #   # (Optional) Custom code path for workspace deletion
+  #   # handler Lambda for cleanup and resource management.
+  #   deleteWorkspaceHandlerCodePath: ./custom/delete-workspace
+  #   # (Optional) Custom code path for Aurora pgVector database
+  #   # setup Lambda for vector store initialization.
+  #   pgVectorDbSetupCodePath: ./custom/pgvector-setup
+  #   # (Optional) Custom code path for GenAI core Lambda layer
+  #   # containing shared AI clients and service functionality.
+  #   genAiCoreLayerCodePath: ./custom/genai-core-layer
+  #   # (Optional) Custom ZIP path for common libraries Lambda
+  #   # layer shared across multiple GAIA Lambda functions.
+  #   commonLibsLayerCodeZipPath: ./custom/common-libs.zip
+  #   # (Optional) Custom Dockerfile path for file import AWS
+  #   # Batch job container for batch processing.
+  #   fileImportBatchJobDockerFilePath: ./custom/Dockerfile
+  #   # (Optional) Custom code path for website parser Lambda
+  #   # for web crawling and content extraction.
+  #   websiteParserCodePath: ./custom/website-parser
+  # (Optional) Backend API configuration for custom REST and
+  # WebSocket domains with Route53 DNS. Requires account/region
+  # to be specified in the stack environment for hosted zone
+  # lookup. Cannot be exercised in synth tests without a real
+  # AWS environment.
+  # api:
+  #   # Route53 hosted zone name for DNS
+  #   hostedZoneName: example.com
+  #   # Custom domain name for REST API
+  #   restApiDomainName: api.example.com
+  #   # Custom domain name for WebSocket API
+  #   socketApiDomainName: ws.example.com
+  # VPC networking configuration for GAIA infrastructure
+  vpc:
+    # VPC identifier for hosting GAIA application components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: XXXXXXXX
+    # Security group ID for application tier components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/security-group/id
+    appSecurityGroupId: 'sg-12345351356'
+    # Subnet IDs for the application tier
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    appSubnets:
+      - subnet1
+    # Security group ID for data tier components
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/security-group/id
+    dataSecurityGroupId: 'sg-46576878787'
+    # Subnet IDs for the data tier
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    dataSubnets:
+      - subnet2

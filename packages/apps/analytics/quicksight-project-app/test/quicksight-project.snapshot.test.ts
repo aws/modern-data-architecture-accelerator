@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { QuickSightProjectCDKApp } from '../lib/quicksight-project';
 import * as path from 'path';
 
 describe('quicksight-project Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Quicksight Project Stack',
-    Create.stackProvider(
-      'QuicksightProjectStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Quicksight Project App',
+    Create.appProvider(
+      context => {
         const moduleApp = new QuickSightProjectCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-quicksight-project-main',
@@ -41,20 +32,64 @@ describe('quicksight-project Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Quicksight Project App',
+    'Quicksight Project App Copysource',
     Create.appProvider(
       context => {
         const moduleApp = new QuickSightProjectCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-copysource.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-quicksight-project-main',
+        module_name: 'test-quicksight-project-copysource',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'Quicksight Project App Credentialpair',
+    Create.appProvider(
+      context => {
+        const moduleApp = new QuickSightProjectCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-credentialpair.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-quicksight-project-credentialpair',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'Quicksight Project App Minimal',
+    Create.appProvider(
+      context => {
+        const moduleApp = new QuickSightProjectCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-quicksight-project-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

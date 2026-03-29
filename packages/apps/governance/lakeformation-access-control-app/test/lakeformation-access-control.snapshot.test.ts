@@ -4,34 +4,24 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { LakeFormationCdkApp } from '../lib/lakeformation-access-control';
 import * as path from 'path';
 
 describe('lakeformation-access-control Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Lakeformation Stack',
-    Create.stackProvider(
-      'LakeformationStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Lakeformation App',
+    Create.appProvider(
+      context => {
         const moduleApp = new LakeFormationCdkApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
-            additional_accounts: 'xxxxxxxxxxxx',
-            additional_stacks: '[{"account":"xxxxxxxxxxxx"}]',
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
+            additional_stacks: '[{"account":"222222222222"}]',
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-lakeformation-main',
@@ -43,22 +33,21 @@ describe('lakeformation-access-control Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Lakeformation App',
+    'Lakeformation App Minimal',
     Create.appProvider(
       context => {
         const moduleApp = new LakeFormationCdkApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
-            additional_accounts: 'xxxxxxxxxxxxx',
-            additional_stacks: '[{"account":"xxxxxxxxxxxxx"}]',
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
+            additional_stacks: '[{"account":"222222222222"}]',
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-lakeformation-main',
+        module_name: 'test-lakeformation-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

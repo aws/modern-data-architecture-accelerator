@@ -1,0 +1,154 @@
+# Comprehensive sample config for the LakeFormation Access Control module.
+# Exercises ALL non-excluded properties from config-schema.json at full depth,
+# including all enum values, optional fields, and cross-account scenarios.
+
+# (Optional) Maps federation provider logical names to IAM SAML identity provider ARNs.
+# Referenced by PrincipalConfig.federationProvider to resolve federated identities.
+federationProviders:
+  # Multiple providers to demonstrate multi-provider federation
+  ExampleProvider: arn:{{partition}}:iam::{{account}}:saml-provider/test-provider
+  SecondaryProvider: arn:{{partition}}:iam::{{account}}:saml-provider/secondary-provider
+
+# Named principal definitions for Lake Formation grant assignment.
+# Supports federated groups, federated users, and IAM roles.
+principals:
+  # Federated group principal (requires federationProvider)
+  fedGroupPrincipal:
+    federatedGroup: test-group1
+    federationProvider: ExampleProvider
+
+  # Federated user principal (requires federationProvider)
+  fedUserPrincipal:
+    federatedUser: test-user@example.com
+    federationProvider: ExampleProvider
+
+  # Federated group using secondary provider
+  secondaryGroupPrincipal:
+    federatedGroup: secondary-group
+    federationProvider: SecondaryProvider
+
+  # IAM role principal referenced by name
+  roleByNamePrincipal:
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    role:
+      name: Admin
+
+  # IAM role principal referenced by ARN
+  roleByArnPrincipal:
+    role:
+      arn: arn:{{partition}}:iam::{{account}}:role/Admin
+
+  # IAM role principal referenced by unique ID
+  roleByIdPrincipal:
+    role:
+      id: AROAEXAMPLEID12345
+
+  # IAM role with immutable flag (externally managed, not modified by MDAA)
+  immutableRolePrincipal:
+    role:
+      name: ExternallyManagedRole
+      immutable: true
+
+  # IAM role with SSO flag (AWS IAM Identity Center auto-generated role)
+  ssoRolePrincipal:
+    role:
+      name: AWSReservedSSO_ReadOnlyAccess
+      sso: true
+
+# Named Lake Formation grant configurations defining database/table-level access control.
+# Each grant specifies a target database, optional tables, permission levels, and recipient principals.
+grants:
+  # Grant with 'read' permissions (default) on specific tables
+  read_grant:
+    database: example_database
+    # databasePermissions: read → [DESCRIBE]
+    databasePermissions: read
+    # tablePermissions: read → [SELECT, DESCRIBE]
+    tablePermissions: read
+    tables:
+      - example_table1
+    principals:
+      - fedGroupPrincipal
+      - fedUserPrincipal
+
+  # Grant with 'write' permissions on specific tables
+  write_grant:
+    database: example_database
+    # databasePermissions: write → [DESCRIBE, CREATE_TABLE, ALTER]
+    databasePermissions: write
+    # tablePermissions: write → [SELECT, DESCRIBE, INSERT, DELETE]
+    tablePermissions: write
+    tables:
+      - example_table2
+    principals:
+      - roleByNamePrincipal
+
+  # Grant with 'super' permissions (full admin) on wildcard tables
+  super_grant:
+    database: admin_database
+    # databasePermissions: super → [DESCRIBE, CREATE_TABLE, ALTER, DROP]
+    databasePermissions: super
+    # tablePermissions: super → [SELECT, DESCRIBE, INSERT, DELETE, ALTER, DROP]
+    tablePermissions: super
+    # Wildcard '*' grants on all tables in the database
+    tables:
+      - '*'
+    principals:
+      - roleByArnPrincipal
+      - immutableRolePrincipal
+
+  # Database-only grant (no tables specified → only database-level permissions apply)
+  database_only_grant:
+    database: metadata_database
+    databasePermissions: read
+    principals:
+      - secondaryGroupPrincipal
+      - ssoRolePrincipal
+
+  # Multi-principal grant covering all principal types
+  multi_principal_grant:
+    database: shared_database
+    databasePermissions: write
+    tablePermissions: read
+    tables:
+      - shared_table
+    principals:
+      - fedGroupPrincipal
+      - fedUserPrincipal
+      - roleByNamePrincipal
+      - roleByIdPrincipal
+
+# (Optional) Named resource link configurations for cross-account database sharing.
+# Each resource link creates a local Glue database reference pointing to a database in another account.
+resourceLinks:
+  # Local resource link (fromAccount omitted → created in local/deployment account)
+  local_resource_link:
+    targetDatabase: example_database
+    # Principals granted DESCRIBE access to the resource link
+    grantPrincipals:
+      - roleByNamePrincipal
+      - fedGroupPrincipal
+
+  # Cross-account resource link with explicit target account
+  cross_account_resource_link:
+    targetDatabase: remote_database
+    # AWS account ID where the target database exists
+    targetAccount: '222222222222'
+    grantPrincipals:
+      - roleByArnPrincipal
+
+  # Resource link created in a remote account (fromAccount specified)
+  # fromAccount must match an account in additional_stacks for cross-account deployment
+  remote_resource_link:
+    targetDatabase: another_remote_database
+    # Account where the resource link will be created (must be in additional_stacks)
+    fromAccount: '222222222222'
+    # Account where the target database exists
+    targetAccount: '222222222222'
+    grantPrincipals:
+      - fedGroupPrincipal
+      - fedUserPrincipal
+
+  # Minimal resource link (only required targetDatabase)
+  minimal_resource_link:
+    targetDatabase: minimal_target_database

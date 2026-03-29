@@ -1,0 +1,31 @@
+# Minimal QuickSight Project module configuration.
+# Deploys a shared folder and an Athena data source.
+
+# Named QuickSight principals referenced in folder and data
+# source permissions
+principals:
+  Readers: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:group/default/Readers'
+  Authors: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:group/default/Authors'
+
+# (Optional) Data sources for QuickSight connectivity.
+dataSources:
+  ATHENA:
+    my-athena:
+      dataSourceSpecificParameters:
+        athenaParameters:
+          workGroup: 'my-workgroup'
+      displayName: 'MyAthena'
+      permissions:
+        - actions: 'READER_DATA_SOURCE'
+          principal: 'Readers'
+        - actions: 'AUTHOR_DATA_SOURCE'
+          principal: 'Authors'
+
+# (Optional) Shared folders for organizing QuickSight assets.
+sharedFolders:
+  my-folder:
+    permissions:
+      - principal: Readers
+        actions: 'READER_FOLDER'
+      - principal: Authors
+        actions: 'AUTHOR_FOLDER'

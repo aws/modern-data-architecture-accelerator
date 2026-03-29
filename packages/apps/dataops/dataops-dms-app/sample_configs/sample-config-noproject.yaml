@@ -1,0 +1,106 @@
+# Sample config for the DataOps DMS module - no-project variant.
+# Demonstrates standalone DMS configuration with explicit KMS,
+# bucket, deployment role, and security configuration.
+
+# (Optional) KMS key ARN for encrypting DataOps resources and data.
+# Auto-resolved from project when projectName is set.
+kmsArn: arn:test-partition:kms:test-region:test-acct:key/test-key-id
+# (Optional) S3 bucket name for project storage (scripts, artifacts,
+# temp files). Auto-resolved from project when projectName is set.
+bucketName: test-dms-bucket
+# (Optional) IAM role ARN for deployment operations and resource
+# management. Auto-resolved from project when projectName is set.
+deploymentRoleArn: arn:test-partition:iam::test-acct:role/test-deploy-role
+# (Optional) Glue security configuration name for job encryption
+# (at rest, in transit, CloudWatch logs). Auto-resolved from project
+# when projectName is set.
+securityConfigurationName: test-security-config
+# (Optional) SNS topic ARN for job notifications and workflow alerts.
+# Auto-resolved from project when projectName is set.
+notificationTopicArn: arn:test-partition:sns:test-region:test-acct:test-topic
+
+# DMS migration and replication configuration including instances,
+# endpoints, and tasks.
+dms:
+  # (Optional) Whether to create the DMS VPC service role.
+  createDmsVpcRole: true
+  # (Optional) Whether to create the DMS CloudWatch Logs service role.
+  createDmsLogRole: true
+  # (Optional) Custom IAM role ARN for DMS operations. Role must have
+  # an assume role trust policy to the regional DMS service name:
+  # dms.<region>.amazonaws.com
+  dmsRoleArn: arn:{{partition}}:iam::{{account}}:role/test-dms-role
+
+  # (Optional) Named replication instance configurations.
+  replicationInstances:
+    test-instance:
+      # The instance class.
+      instanceClass: dms.t3.micro
+      # The VPC ID on which the replication instance will be deployed.
+      # Often created by your VPC/networking stack.
+      # Example SSM: ssm:/path/to/vpc/id
+      vpcId: test_vpc_id
+      # The subnets to which the replication instance will be
+      # connected.
+      # Often created by your VPC/networking stack.
+      # Example SSM: ssm:/path/to/subnet/id
+      subnetIds:
+        - test_subnet_id1
+        - test_subnet_id2
+
+  # (Optional) Named endpoint configurations for source and target
+  # databases.
+  endpoints:
+    test-source:
+      # The type of endpoint. (enum: source, target)
+      endpointType: source
+      # The endpoint engine name.
+      engineName: sqlserver
+      # The appropriate settings for the provided engine name.
+      microsoftSqlServerSettings:
+        # Name of the database.
+        databaseName: test-database
+        # Secrets Manager secret ARN from which credentials will be
+        # read. The DMS role will be granted access to retrieve the
+        # secret.
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-secret-abc123
+        # KMS key ARN for the secret. The DMS role will be granted
+        # decrypt access to this key.
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key:test-secret-key-id
+    test-target:
+      endpointType: target
+      engineName: s3
+      s3Settings:
+        bucketName: test_target_bucket
+        serverSideEncryptionKmsKeyId: test_target_kms_key_id
+
+  # (Optional) Named replication task configurations.
+  replicationTasks:
+    test-task:
+      # The name of the replication instance from the
+      # replicationInstances section.
+      replicationInstance: test-instance
+      # The name of the source endpoint from the endpoints section.
+      sourceEndpoint: test-source
+      # The name of the target endpoint from the endpoints section.
+      targetEndpoint: test-target
+      # The type of migration.
+      # (enum: full-load, cdc, full-load-and-cdc)
+      migrationType: full-load
+      # Table mappings config passed directly to the task.
+      tableMappings:
+        rules:
+          - rule-type: selection
+            rule-id: '1'
+            rule-name: '1'
+            object-locator:
+              schema-name: Test
+              table-name: '%'
+            rule-action: include
+          - rule-type: selection
+            rule-id: '2'
+            rule-name: '2'
+            object-locator:
+              schema-name: Test
+              table-name: DMS%
+            rule-action: exclude

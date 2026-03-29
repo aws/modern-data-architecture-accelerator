@@ -1,140 +1,95 @@
-# DataOps Dashboard App
+# DataOps Dashboard
 
-CloudWatch dashboard module for MDAA observability features.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/dataops/dataops-dashboard-app/index.html).
 
-## Overview
+Creates CloudWatch dashboards for MDAA observability, aggregating metrics and logs from Lambda functions and other modules. Supports text, metric, and log insights widgets with SSM-based cross-module metric references and automatic widget layout. Use this module when you need a centralized view of your data pipeline health, including Lambda execution metrics, ETL job performance, and log-based error tracking.
 
-The DataOps Dashboard App creates CloudWatch dashboards that aggregate metrics and logs from multiple Lambda functions across different modules. It supports SSM-based metric references for cross-module integration and automatic widget layout.
+---
 
-## Features
+## Deployed Resources
 
-- **Text Widgets**: Display markdown content for dashboard headers and descriptions
-- **Metric Widgets**: Visualize time-series metrics with support for metric math
-- **Log Insights Widgets**: Display CloudWatch Logs Insights query results
-- **SSM References**: Reference metrics from other modules using SSM Parameter Store
-- **Placeholder Resolution**: Automatically resolve function names and log groups
-- **Auto-wrapping**: Widgets automatically wrap at 24-unit width
+This module deploys and integrates the following resources:
+
+<!-- TODO: Add architecture diagram -->
+
+- **CloudWatch Dashboard(s)** — One or more dashboards with configurable widget layouts. Widgets auto-wrap at 24-unit width.
+- **SSM Parameter References** — Resolves metric and log group references from other modules via SSM Parameter Store (e.g., Lambda function names, log groups, custom metric namespaces).
+
+---
+
+## Related Modules
+
+- [DataOps Project](../dataops-project-app/README.md) — Deploy the shared project infrastructure that dashboard metrics reference
+- [Lambda Functions](../dataops-lambda-app/README.md) — Deploy Lambda functions whose metrics and logs can be visualized in dashboards
+- [ETL Jobs](../dataops-job-app/README.md) — Deploy Glue ETL jobs whose metrics can be tracked in dashboards
+- [Step Functions](../dataops-stepfunction-app/README.md) — Deploy Step Functions whose execution metrics can be monitored in dashboards
+
+---
+
+## Security/Compliance Details
+
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
+
+- **Least Privilege**:
+  - Dashboard access governed by IAM policies
+  - SSM parameter references use least-privilege read access to resolve cross-module metrics
+
+---
 
 ## Configuration
 
-### Basic Dashboard
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-# (Optional) Name of the DataOps Project
-# Other resources within the project can be referenced in the config using
-# the "project:" prefix on the config value.
-projectName: my-project
-
-dashboards:
-  - dashboardName: etl-observability
-    widgets:
-      - type: text
-        markdown: |
-          # ETL Observability Dashboard
-          Monitoring for data pipeline
-        width: 24
-        height: 2
+dataops-dashboard: # Module Name can be customized
+  module_path: '@aws-mdaa/dataops-dashboard' # Must match module NPM package name
+  module_configs:
+    - ./dataops-dashboard.yaml # Filename/path can be customized
 ```
 
-### Metric Widget with SSM Reference
+### Module Config Samples and Variants
+
+Copy the contents of the relevant sample config below into the `./dataops-dashboard.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Deploys a single CloudWatch dashboard with a text widget. Start here for a basic observability dashboard that you can incrementally add widgets to.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-- type: metric
-  title: 'Error Count'
-  width: 12
-  height: 6
-  metrics:
-    - metricRef: 'ssm:/mdaa/org/dev/metrics/lambda_csv_parquet/error-count'
-      stat: Sum
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
 
-### Metric Widget with Direct Reference
+#### Comprehensive Configuration
+
+Demonstrates CloudWatch dashboards with text, metric, log insights, and advanced multi-metric widgets, all wired to a DataOps project. Start here when evaluating all available options for widget types, metric references, and cross-module SSM parameter resolution.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
-- type: metric
-  title: 'Lambda Duration'
-  width: 12
-  height: 6
-  metrics:
-    - namespace: AWS/Lambda
-      metricName: Duration
-      dimensions:
-        FunctionName: '{{function:lambda_csv_parquet}}'
-      stat: Average
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
 ```
 
-### Log Insights Widget
+#### Standalone Configuration (No Project)
+
+Demonstrates standalone CloudWatch dashboards with explicit KMS, bucket, deployment role, and security configuration instead of referencing a DataOps project. Use this when deploying outside of a DataOps project, providing infrastructure references directly.
+
+[sample-config-noproject.yaml](sample_configs/sample-config-noproject.yaml)
 
 ```yaml
-- type: log_insights
-  title: 'Recent Errors'
-  width: 24
-  height: 6
-  logGroupNames:
-    - '{{function:lambda_csv_parquet:logGroup}}'
-  queryString: |
-    fields @timestamp, @message
-    | filter @message like /ERROR/
-    | sort @timestamp desc
-    | limit 20
+--8<-- "sample_configs/sample-config-noproject.yaml"
 ```
 
-## Placeholders
-
-### Function Name Placeholder
-
-Use `{{function:functionName}}` to reference a Lambda function name from SSM:
-
-```yaml
-dimensions:
-  FunctionName: '{{function:lambda_csv_parquet}}'
-```
-
-Resolves to: `/mdaa/lambda/lambda_csv_parquet/name`
-
-### Log Group Placeholder
-
-Use `{{function:functionName:logGroup}}` to reference a Lambda function's log group:
-
-```yaml
-logGroupNames:
-  - '{{function:lambda_csv_parquet:logGroup}}'
-```
-
-Resolves to: `/mdaa/lambda/lambda_csv_parquet/log-group`
-
-## SSM Metric References
-
-Reference metrics created by other modules using SSM syntax:
-
-```yaml
-metricRef: 'ssm:/mdaa/{org}/{env}/metrics/{functionName}/{metricName}'
-```
-
-The construct will automatically resolve:
-
-- Namespace from: `/mdaa/{org}/{env}/metrics/{functionName}/{metricName}/namespace`
-- Name from: `/mdaa/{org}/{env}/metrics/{functionName}/{metricName}/name`
-
-## Deployment
-
-1. Deploy Lambda functions with metric filters first
-2. Wait for SSM parameters to be created
-3. Deploy dashboards
-
-```bash
-# Deploy Lambda functions
-cd packages/apps/dataops/dataops-lambda-app
-cdk deploy
-
-# Deploy dashboards
-cd packages/apps/dataops/dataops-dashboard-app
-cdk deploy
-```
+---
 
 ## Widget Types
 
 ### Text Widget
+
+Displays markdown content for dashboard headers, descriptions, and section dividers.
 
 ```yaml
 - type: text
@@ -145,9 +100,11 @@ cdk deploy
 
 ### Metric Widget
 
+Visualizes time-series metrics. Supports multiple metrics per widget, custom periods, stat types, and labels.
+
 ```yaml
 - type: metric
-  title: 'Metric Title'
+  title: 'Lambda Duration'
   width: 12
   height: 6
   period: 300
@@ -155,29 +112,36 @@ cdk deploy
     - namespace: AWS/Lambda
       metricName: Duration
       stat: Average
+      label: 'Avg Duration'
 ```
 
 ### Log Insights Widget
 
+Displays CloudWatch Logs Insights query results.
+
 ```yaml
 - type: log_insights
-  title: 'Query Title'
+  title: 'Recent Errors'
   width: 24
   height: 6
   logGroupNames:
     - '/aws/lambda/my-function'
   queryString: |
     fields @timestamp, @message
+    | filter @message like /ERROR/
     | sort @timestamp desc
+    | limit 20
 ```
+
+## Placeholders
+
+- `{{function:functionName}}` — Resolves Lambda function name from SSM
+- `{{function:functionName:logGroup}}` — Resolves Lambda function log group from SSM
 
 ## Widget Layout
 
-Widgets are automatically laid out in rows with a maximum width of 24 units. When adding a widget would exceed 24 units, a new row is started automatically.
+Widgets auto-wrap at 24-unit width. When adding a widget would exceed 24 units, a new row starts automatically.
 
-Example:
+---
 
-- Widget 1: width 12 (row 1)
-- Widget 2: width 12 (row 1)
-- Widget 3: width 12 (row 2, new row started)
-- Widget 4: width 12 (row 2)
+[Config Schema Docs](SCHEMA.md)

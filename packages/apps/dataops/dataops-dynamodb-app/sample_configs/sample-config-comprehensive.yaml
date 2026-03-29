@@ -1,0 +1,52 @@
+# DataOps DynamoDB module configuration with project integration.
+# When projectName is set, shared infrastructure (KMS key, S3 bucket,
+# IAM roles, SNS topic, security configuration) is automatically
+# resolved from the referenced DataOps project.
+
+# (Optional) DataOps project name for resource autowiring
+projectName: dataops-project-sample
+
+# Map of table names to DynamoDB table definitions.
+tableDefinitions:
+  # Table with provisioned capacity, composite key, and TTL
+  table-complex:
+    # Partition key attribute
+    partitionKey:
+      # Attribute name
+      name: pk1
+      # Attribute data type (enum: B, N, S)
+      type: S
+    # (Optional) Sort key attribute for composite primary key
+    sortKey:
+      name: sk1
+      type: N
+    # (Optional) Billing mode
+    # (enum: PROVISIONED, PAY_PER_REQUEST; default: PAY_PER_REQUEST)
+    billingMode: PROVISIONED
+    # (Optional) Provisioned read capacity units (only for
+    # PROVISIONED billing mode)
+    readCapacity: 2
+    # (Optional) Provisioned write capacity units (only for
+    # PROVISIONED billing mode)
+    writeCapacity: 1
+    # (Optional) TTL attribute name for automatic item expiration
+    timeToLiveAttribute: ttl
+
+  # Table with on-demand capacity and partition key only
+  table-simple:
+    partitionKey:
+      name: pk1
+      type: S
+    billingMode: PAY_PER_REQUEST
+
+  # Table exercising Binary (B) partition key and Number (N) sort key
+  table-binary-key:
+    partitionKey:
+      name: binary_pk
+      # Binary attribute type
+      type: B
+    sortKey:
+      name: numeric_sk
+      # Number attribute type
+      type: N
+    billingMode: PAY_PER_REQUEST

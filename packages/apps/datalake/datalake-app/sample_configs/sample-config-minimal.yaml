@@ -1,0 +1,29 @@
+# Minimal config for the Data Lake module.
+# Deploys a three-zone data lake (raw, standardized, curated) with
+# a single admin role and root-level access policy.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Logical role mappings used throughout the config.
+roles:
+  DataAdmin:
+    - arn: arn:{{partition}}:iam::{{account}}:role/Admin
+
+# Named access policies defining role-based permissions per S3 prefix.
+accessPolicies:
+  Root:
+    rule:
+      prefix: /
+      ReadWriteSuperRoles:
+        - DataAdmin
+
+# Data lake bucket definitions — one per zone.
+buckets:
+  raw:
+    accessPolicies:
+      - Root
+  standardized:
+    accessPolicies:
+      - Root
+  curated:
+    accessPolicies:
+      - Root

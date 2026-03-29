@@ -1,0 +1,64 @@
+# Comprehensive Lake Formation Settings module configuration.
+# Covers ALL non-excluded properties at full depth including
+# Lake Formation admin roles, IAM permission defaults,
+# cross-account sharing, DataZone integration, and IAM Identity
+# Center integration for centralized data governance.
+
+# Lake Formation admin role references (required).
+# Roles can be referenced by name (auto-expanded to ARN), by explicit ARN,
+# by MDAA-generated role ID, or as SSO-managed roles.
+lakeFormationAdminRoles:
+  # Role by name (auto-expanded to ARN at deploy time)
+  - name: Admin
+  # Role by ARN
+  - arn: arn:{{partition}}:iam::{{account}}:role/LakeFormationCrossAccountAdmin
+    immutable: true
+  # Role by ARN
+  - arn: arn:{{partition}}:iam::{{account}}:role/LakeFormationAdmin
+  # SSO-managed role (resolved from IAM Identity Center)
+  - name: SSOLakeFormationAdmin
+    sso: true
+
+# (Required) Controls whether IAM_ALLOWED_PRINCIPALS is added by
+# default to new databases and tables. When true, Lake Formation
+# defers to IAM policies on Glue catalog resources. When false,
+# all permissions must be managed exclusively in Lake Formation.
+iamAllowedPrincipalsDefault: true
+
+# (Optional) When true, adds the CDK execution role as a Lake
+# Formation admin so CDK deployments can manage Lake Formation
+# resources without manual setup.
+createCdkLFAdmin: true
+
+# (Optional) When true, creates a dedicated Lake Formation admin
+# role for DataZone so DataZone can manage Lake Formation
+# permissions in this account.
+createDataZoneAdminRole: true
+
+# (Optional) Additional account IDs added to the DataZone admin
+# role's trust policy, allowing DataZone in those accounts to
+# manage Lake Formation in this account. Requires
+# createDataZoneAdminRole: true.
+dataZoneAdminTrustAccounts:
+  - '{{account}}'
+
+# (Optional) Lake Formation cross-account sharing version.
+# Controls which cross-account sharing features are available
+# for data mesh and multi-account architectures.
+crossAccountVersion: '4'
+
+# (Optional) IAM Identity Center integration for Lake Formation,
+# enabling SSO-based data lake access and optional cross-account
+# or org sharing via RAM.
+iamIdentityCenter:
+  # (Required) IAM Identity Center instance ID
+  instanceId: ssoins-test-instance-id
+  # (Optional) Accounts, organizations, or OUs to share Lake
+  # Formation services with via IAM Identity Center
+  shares:
+    # Share with a specific account
+    - '{{account}}'
+    # Share with an entire organization
+    - 'arn:{{partition}}:organizations::{{account}}:organization/o-exampleorgid'
+    # Share with a specific organizational unit
+    - 'arn:{{partition}}:organizations::{{account}}:ou/o-exampleorgid/ou-exampleouid'

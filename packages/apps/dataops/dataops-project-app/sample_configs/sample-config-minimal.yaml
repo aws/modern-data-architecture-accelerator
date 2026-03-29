@@ -1,0 +1,26 @@
+# Minimal config for the DataOps Project module.
+# Contains only the required property (dataAdminRoles) plus one
+# database to demonstrate the core use case.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Data admin roles with full administrative access to all project resources
+dataAdminRoles:
+  - name: Admin
+
+# (Optional) Data engineer roles with operational access to project resources
+dataEngineerRoles:
+  - name: data-engineer
+
+# (Optional) Pre-defined execution roles for project resource operations
+projectExecutionRoles:
+  - name: glue-role
+
+# (Optional) Glue database definitions for centralized metadata management
+databases:
+  test-database:
+    description: Test Database
+    # S3 bucket name for database location
+    # Often created by the Data Lake module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<datalake_module_name>/bucket/<zone_name>/name
+    locationBucketName: some-bucket-name
+    locationPrefix: data/test

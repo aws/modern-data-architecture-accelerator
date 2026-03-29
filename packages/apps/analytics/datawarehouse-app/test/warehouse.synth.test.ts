@@ -5,13 +5,31 @@
 
 import { DataWarehouseCDKApp } from '../lib/datawarehouse';
 
-test('SynthTest', () => {
+test('SynthTest - minimal config', () => {
   const context = {
     org: 'test-org',
     env: 'test-env',
     domain: 'test-domain',
     module_name: 'test-module',
-    module_configs: './test/test-config.yaml',
+    module_configs: './sample_configs/sample-config-minimal.yaml',
+  };
+  const app = new DataWarehouseCDKApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});
+
+test('SynthTest - comprehensive config', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './sample_configs/sample-config-comprehensive.yaml',
   };
   const app = new DataWarehouseCDKApp({ context: context });
   app.generateStack();

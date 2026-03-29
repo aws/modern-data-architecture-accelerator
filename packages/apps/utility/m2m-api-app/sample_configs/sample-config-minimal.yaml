@@ -1,0 +1,27 @@
+# M2M API Module - Minimal Sample Configuration
+# Deploys an API Gateway with Cognito client credentials authentication,
+# WAF protection, CIDR-based access control, and Lambda integration
+# for secure machine-to-machine data lake access via REST API.
+#
+# This config includes only the required properties for a working deployment.
+
+# M2M API configuration defining API Gateway setup with
+# authentication, authorization, and security controls.
+api:
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # List of admin roles which will be granted admin access to generated resources
+  # (currently KMS key)
+  adminRoles:
+    - arn: arn:{{partition}}:iam::{{account}}:role/test-admin-role-arn
+  # The target bucket against which API interactions will be executed
+  # Often created by the Data Lake module.
+  # Example SSM: ssm:/{{org}}/{{domain}}/<datalake_module_name>/bucket/<zone_name>/name
+  targetBucketName: landing-bucket-name
+  # The target prefix in the target bucket
+  targetPrefix: testing
+  # The reserved concurrency limit for the Lambda which executes the API actions
+  concurrencyLimit: 10
+  # The list of allowed IPV4 CIDR ranges which will be permitted access to the API.
+  # All other requests will be denied.
+  allowedCidrs:
+    - 10.0.0.0/8

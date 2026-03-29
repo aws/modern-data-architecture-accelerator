@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { SftpUsersCDKApp } from '../lib/sftp-users';
 import * as path from 'path';
 
-describe('sftp-users Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'SFTP users Stack',
-    Create.stackProvider(
-      'SFTPusersStackMain',
-      (_, context) => {
+describe('sftp-users Comprehensive Snapshot Tests', () => {
+  snapShotTestApp(
+    'SFTP users App',
+    Create.appProvider(
+      context => {
         const moduleApp = new SftpUsersCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-sftp-users-main',
@@ -39,7 +30,9 @@ describe('sftp-users Snapshot Tests', () => {
       },
     ),
   );
+});
 
+describe('sftp-users Minimal Snapshot Tests', () => {
   snapShotTestApp(
     'SFTP users App',
     Create.appProvider(
@@ -47,7 +40,7 @@ describe('sftp-users Snapshot Tests', () => {
         const moduleApp = new SftpUsersCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
           },
         });
         moduleApp.generateStack();

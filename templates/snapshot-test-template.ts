@@ -4,127 +4,78 @@
  */
 
 /**
- * Template for creating snapshot tests for MDAA modules
+ * Template for creating snapshot tests for MDAA modules.
  *
  * Instructions:
  * 1. Copy this file to your module's test directory
  * 2. Rename it to match your module (e.g., my-module.snapshot.test.ts)
  * 3. Replace the placeholders with your actual module details
- * 4. Create test configuration files in test/test-configs/
- * 5. Run the tests with: npm run test:snapshots
+ * 4. Run the tests with: npx jest my-module.snapshot.test.ts --no-coverage
+ * 5. On first run, use --updateSnapshot to generate the initial snapshots
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
+import * as path from 'path';
 // TODO: Import your module's main class
 // import { MyModuleCDKApp } from '../lib/my-module';
 
 describe('MyModule Snapshot Tests', () => {
   // TODO: Replace 'MyModule' with your actual module name
 
-  // Test with basic configuration
-  snapShotTest(
-    'MyModule Stack (Basic Config): ',
-    Create.stackProvider(
-      'MyModuleStack',
-      (app, context) => {
-        // TODO: Replace with your module's CDK App class
-        // const myApp = new MyModuleCDKApp({
+  // Each sample config gets one snapShotTestApp call.
+  // snapShotTestApp captures all stacks in the app (including cross-account stacks),
+  // so it is the only snapshot test needed per config variant.
+
+  snapShotTestApp(
+    'MyModule App',
+    Create.appProvider(
+      context => {
+        // TODO: Replace MyModuleCDKApp with your module's CDK App class
+        // const moduleApp = new MyModuleCDKApp({
         //   context: {
         //     ...context,
-        //     module_configs: path.join(__dirname, 'test-configs', 'basic-config.yaml')
-        //   }
+        //     module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
+        //   },
         // });
-        // myApp.generateStack();
-        // return myApp.stacks[0];
+        // moduleApp.generateStack();
+        // return moduleApp;
 
-        // Placeholder - remove this when implementing
+        // Placeholder — remove this when implementing
+        void context;
         throw new Error('TODO: Implement your module test');
       },
       {
-        module_name: 'test-my-module-basic',
+        module_name: 'test-my-module',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
       },
     ),
   );
 
-  // Test with advanced configuration
-  snapShotTest(
-    'MyModule Stack (Advanced Config): ',
-    Create.stackProvider(
-      'MyModuleStackAdvanced',
-      (app, context) => {
-        // TODO: Replace with your module's CDK App class
-        // const myApp = new MyModuleCDKApp({
-        //   context: {
-        //     ...context,
-        //     module_configs: path.join(__dirname, 'test-configs', 'advanced-config.yaml')
-        //   }
-        // });
-        // myApp.generateStack();
-        // return myApp.stacks[0];
-
-        // Placeholder - remove this when implementing
-        throw new Error('TODO: Implement your advanced module test');
-      },
-      {
-        module_name: 'test-my-module-advanced',
-      },
-    ),
-  );
-
-  // Test the entire app synthesis (optional)
-  snapShotTestApp(
-    'MyModule App (Complete): ',
-    Create.appProvider(
-      context => {
-        // TODO: Replace with your module's CDK App class
-        // const myApp = new MyModuleCDKApp({
-        //   context: {
-        //     ...context,
-        //     module_configs: path.join(__dirname, 'test-configs', 'basic-config.yaml')
-        //   }
-        // });
-        // myApp.generateStack();
-        // return myApp.app;
-
-        // Placeholder - remove this when implementing
-        throw new Error('TODO: Implement your app test');
-      },
-      {
-        module_name: 'test-my-module-app',
-      },
-    ),
-  );
+  // Add one snapShotTestApp per additional sample config variant, e.g.:
+  // snapShotTestApp(
+  //   'MyModule App Minimal',
+  //   Create.appProvider(
+  //     context => {
+  //       const moduleApp = new MyModuleCDKApp({
+  //         context: {
+  //           ...context,
+  //           module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
+  //         },
+  //       });
+  //       moduleApp.generateStack();
+  //       return moduleApp;
+  //     },
+  //     {
+  //       module_name: 'test-my-module-minimal',
+  //       org: 'test-org',
+  //       env: 'test-env',
+  //       domain: 'test-domain',
+  //     },
+  //   ),
+  // );
 });
 
-/*
-TODO: Create test configuration files in test/test-configs/:
-
-1. basic-config.yaml - Minimal configuration for your module
-2. advanced-config.yaml - Full-featured configuration
-3. security-config.yaml - Security-focused configuration (if applicable)
-
-Example basic-config.yaml:
-```yaml
-# Replace with your module's configuration structure
-myModuleSettings:
-  enabled: true
-  name: test-module
-  properties:
-    - key: value
-```
-
-Example advanced-config.yaml:
-```yaml
-# Replace with your module's advanced configuration
-myModuleSettings:
-  enabled: true
-  name: test-advanced-module
-  properties:
-    - key: value
-    - advancedKey: advancedValue
-  advancedFeatures:
-    feature1: enabled
-    feature2: configured
-```
-*/
+void path; // used in commented examples above

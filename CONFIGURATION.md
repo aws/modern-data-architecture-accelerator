@@ -549,6 +549,86 @@ tags:
 
 Each MDAA Module/CDK App has its own configuration schema, which is documented in their respective READMEs. There are some common configuration behaviours and capabilities, however, which can be used across all MDAA Module configs.
 
+### Role References
+
+Many MDAA modules require IAM role references for granting access to resources like KMS keys, S3 buckets, SageMaker domains, and Lake Formation permissions. These are specified using the `MdaaRoleRef` format, which supports several resolution strategies.
+
+#### Reference Styles
+
+```yaml
+# By name — simplest approach, recommended for most cases.
+# MDAA automatically expands the name to a full ARN in the
+# deployment account.
+- name: Admin
+
+# By ARN — use when you need to reference a role in a specific
+# account, or when the role ARN is stored in an SSM parameter.
+- arn: arn:aws:iam::123456789012:role/Admin
+- arn: ssm:/my-org/shared/roles/admin/arn
+
+# By role ID — the AWS-generated unique identifier (e.g. AROA...).
+# Use when stable, immutable references are a security requirement,
+# since role names and ARNs can be reassigned to different roles.
+- id: AROA1234567890EXAMPLE
+- id: ssm:/my-org/shared/roles/admin/id
+
+# By MDAA generated role shorthand — resolves the role ID from
+# SSM parameters created by the MDAA Roles module.
+- id: generated-role-id:my-role-name
+```
+
+#### How Resolution Works
+
+When MDAA processes a role reference:
+
+1. `name:` is expanded to a full IAM role ARN using the deployment account ID
+2. `arn:` is used as-is (or resolved from SSM if prefixed with `ssm:`)
+3. `id:` is used as-is (or resolved from SSM / generated-role-id shorthand)
+
+Some modules (like Data Lake and Lake Formation) further resolve ARN references to role IDs at deploy time via a custom resource. This ensures that bucket policies and Lake Formation grants reference the immutable role ID rather than the role name, which provides stronger security guarantees.
+
+#### Optional Flags
+
+```yaml
+# Mark a role as immutable — MDAA will not attach managed policies
+# to this role. Use for roles managed outside of MDAA (e.g. SSO
+# permission set roles) where policy attachment is not permitted.
+- name: AWSReservedSSO_DataScientist_abcdef
+  immutable: true
+
+# Mark a role as SSO-managed — resolves the auto-generated IAM
+# role name created by IAM Identity Center for the given
+# permission set.
+- name: DataScientistPermissionSet
+  sso: true
+```
+
+#### Choosing a Reference Style
+
+| Style                | When to use                                                                                                                                                                                                      |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name:`              | Default choice. Simple, readable, works for same-account roles.                                                                                                                                                  |
+| `arn:`               | Cross-account roles, or when the ARN is stored in SSM for portability.                                                                                                                                           |
+| `id:`                | When your security policy requires stable references that survive role recreation. Role IDs are immutable — if a role is deleted and recreated with the same name, the ID changes, preventing unintended access. |
+| `generated-role-id:` | Referencing roles created by the MDAA Roles module. Resolves the role ID from SSM parameters automatically.                                                                                                      |
+
+#### Example
+
+```yaml
+# Data Lake module — demonstrates all reference styles
+roles:
+  DataAdmin:
+    - arn: arn:aws:iam::123456789012:role/Admin
+  DataUser:
+    - name: data-scientist
+    - id: generated-role-id:etl-role
+  DataEngineer:
+    - name: AWSReservedSSO_Engineer_abcdef
+      immutable: true
+```
+
+See the [Data Lake sample configs](packages/apps/datalake/datalake-app/sample_configs/) for a complete example demonstrating all role reference styles.
+
 ### Dynamic References
 
 MDAA allows use of Dynamic References in configuration files. These build on the concept of CloudFormation Dynamic References.

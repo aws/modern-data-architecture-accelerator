@@ -1,0 +1,21 @@
+# Minimal SageMaker Project module configuration.
+# Deploys a single SageMaker project with a project profile.
+
+# SSM parameter for SageMaker Domain config resolution
+# Often created by the SageMaker module.
+# Example SSM: ssm:/{{org}}/{{domain}}/<sagemaker_module_name>/domain/<domain_name>/config
+domainConfigSSMParam: /test-org/test-domain/test-module/domain/test-sus-domain/config
+
+# (Optional) Project profiles — reusable templates that determine
+# which environments are provisioned when a project is created.
+projectProfiles:
+  my-profile:
+    environments:
+      my-env:
+        deploymentMode: ON_CREATE
+
+# (Optional) SageMaker projects — the module's primary resource.
+projects:
+  my-project:
+    # Name of the project profile to use
+    profileName: my-profile

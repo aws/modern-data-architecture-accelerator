@@ -1,0 +1,49 @@
+# Comprehensive config for the QuickSight Namespace module.
+# Deploys a single SAML-federated QuickSight namespace with
+# multiple federation providers, reader/author/publisher role
+# tiers, and optional Glue catalog access for data source
+# discovery.
+#
+# This comprehensive config exercises every non-excluded schema
+# property at full depth.
+
+# Named federation configurations for identity provider integration
+# with QuickSight namespaces. Each federation creates IAM roles for
+# SAML-based access, a QuickSight namespace, users, and groups.
+# Roles are configured with QS user types (READER/AUTHOR) and group
+# memberships.
+federations:
+  test-federation:
+    # URL used by the connecting driver (redirect target after SAML
+    # tokens are obtained)
+    url: https://ca-central-1.quicksight.aws.amazon.com/sn/auth/signin?enable-sso=1
+    # ARN or SSM import (prefix with ssm:) of the federation provider
+    providerArn: arn:{{partition}}:iam::{{account}}:saml-provider/test-provider
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    # QS groups and role info for creating IAM roles, QS groups, and
+    # registering users with a QS role
+    roles:
+      testReaders:
+        # QS groups this role will be part of
+        qsGroups: ['READERS']
+        # QS role (Reader|Author) info for creating IAM roles
+        # (enum: READER, AUTHOR)
+        qsUserType: 'READER'
+      testAuthors:
+        # QS groups this role will be part of
+        qsGroups: ['AUTHORS', 'READERS']
+        # QS role (Reader|Author) info for creating IAM roles
+        # (enum: READER, AUTHOR)
+        qsUserType: 'AUTHOR'
+      testPublishers:
+        # QS groups this role will be part of
+        qsGroups: ['PUBLISHERS']
+        # QS role (Reader|Author) info for creating IAM roles
+        # (enum: READER, AUTHOR)
+        qsUserType: 'AUTHOR'
+
+# (Optional) Glue resource names (database/table patterns) to which
+# namespace roles are granted IAM read access. Used for QuickSight
+# data source setup and validation.
+glueResourceAccess:
+  - database/test_org*

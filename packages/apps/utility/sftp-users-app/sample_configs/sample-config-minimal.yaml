@@ -1,0 +1,40 @@
+# SFTP Users Module - Minimal Sample Configuration
+#
+# Provisions a single AWS Transfer Family SFTP user with SSH public key
+# authentication, one S3 bucket, and a home directory mapping.
+#
+# This config includes only the required properties:
+#   - serverId: Transfer Family server reference
+#   - publicKeys: one SSH public key
+#   - buckets: one S3 bucket with KMS encryption
+#   - users: one user with bucket, home directory, and key reference
+
+# Transfer Family server ID to associate users with.
+# Often created by the SFTP Server module.
+# Example SSM: ssm:/{{org}}/{{domain}}/<sftp_server_module_name>/server/id
+serverId: ssm:/path/to/ssm/server/id
+
+# SSH public key for user authentication.
+publicKeys:
+  default-key:
+    publicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCr1nEXAMPLEPubKey==
+
+# S3 bucket with KMS encryption for user home directory storage.
+buckets:
+  default-bucket:
+    # S3 bucket name for user storage
+    # Often created by the Data Lake module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<datalake_module_name>/bucket/<zone_name>/name
+    bucketName: ssm:/path/to/ssm/param/bucket/name
+    # KMS key ARN for bucket encryption
+    # Often created by the Data Lake module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<datalake_module_name>/kms/arn
+    kmsKeyArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/1234abcd-12ab-34cd-56ef-1234567890ab
+
+# Single SFTP user referencing the bucket and public key above.
+users:
+  sftp-user:
+    bucket: default-bucket
+    homeDirectory: /home
+    publicKeys:
+      - default-key

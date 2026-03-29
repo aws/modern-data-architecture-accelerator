@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { GlueCatalogSettingsCDKApp } from '../lib/glue-catalog';
 import * as path from 'path';
 
 describe('glue-catalog Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Glue Catalog Stack',
-    Create.stackProvider(
-      'GlueCatalogStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Glue Catalog App',
+    Create.appProvider(
+      context => {
         const moduleApp = new GlueCatalogSettingsCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-glue-catalog-main',
@@ -39,15 +30,17 @@ describe('glue-catalog Snapshot Tests', () => {
       },
     ),
   );
+});
 
+describe('glue-catalog Minimal Snapshot Tests', () => {
   snapShotTestApp(
-    'Glue Catalog App',
+    'Glue Catalog App Minimal',
     Create.appProvider(
       context => {
         const moduleApp = new GlueCatalogSettingsCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
           },
         });
         moduleApp.generateStack();

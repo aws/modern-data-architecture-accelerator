@@ -1,0 +1,49 @@
+# Comprehensive Audit module configuration.
+# Creates an S3 audit bucket that collects audit logs and S3
+# inventory reports from source accounts and regions. Supports
+# read access via IAM roles and Athena-queryable inventory tables.
+
+# (Optional) Roles granted read access to audit logs and decrypt
+# access to the audit KMS key.
+# Roles can be referenced by name (auto-expanded to ARN) or by explicit ARN.
+readRoles:
+  # Role by ARN
+  - arn: arn:{{partition}}:iam::{{account}}:role/Admin
+  # Role by unique ID (use when stable references are a security
+  # requirement — IDs don't change when roles are recreated)
+  - id: ssm:/sample-org/domain1/generated-role/test-role/id
+  # Role by name (auto-expanded to ARN at deploy time)
+  - name: AuditReadOnlyRole
+  # Role by name (auto-expanded to ARN at deploy time)
+  - name: AuditReadOnlyRole
+
+# (Optional) Additional AWS account IDs from which CloudTrail logs
+# and S3 inventories are accepted. The local account is included
+# automatically.
+sourceAccounts:
+  - '333333333333'
+  - '222222222222'
+
+# (Optional) Additional AWS regions from which CloudTrail logs and
+# S3 inventories are accepted. The local region is included
+# automatically.
+sourceRegions:
+  - eu-west-1
+
+# (Optional) S3 key prefix under which inventory reports are
+# permitted to be written. Controls bucket policy prefix scope
+# for inventory delivery. (default: "inventory/")
+inventoryPrefix: inventory/
+
+# (Optional) Bucket inventories queryable via the Glue/Athena
+# inventory table. Each entry identifies a source bucket and its
+# inventory configuration ID in "<bucketName>/<inventoryName>"
+# format.
+inventories:
+  - # Source S3 bucket name whose inventory data will be collected
+    bucketName: test-source-bucket
+    # Inventory configuration ID on the source bucket
+    inventoryName: test-inventory
+  - # Second source bucket for multi-bucket aggregation
+    bucketName: test-secondary-bucket
+    inventoryName: secondary-inventory

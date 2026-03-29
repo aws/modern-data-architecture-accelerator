@@ -4,7 +4,6 @@
  */
 
 import * as cdk from 'aws-cdk-lib';
-import { Template } from 'aws-cdk-lib/assertions';
 import { expect, test } from '@jest/globals';
 
 interface StackTemplates {
@@ -21,34 +20,18 @@ function isValidTestName(testNamePrefix: string): boolean {
   );
 }
 
-export function snapShotTest(testNamePrefix: string, stackProvider: () => cdk.Stack | undefined): void {
-  if (!isValidTestName(testNamePrefix)) {
-    throw new Error(
-      'Invalid test name prefix: must be 1-100 characters and contain only alphanumeric characters, spaces, hyphens, and underscores',
-    );
+function maskTemplateUrls(obj: unknown): unknown {
+  if (Array.isArray(obj)) {
+    return obj.map(maskTemplateUrls);
   }
-
-  if (typeof stackProvider !== 'function') {
-    throw new TypeError('stackProvider must be a function');
-  }
-
-  test(`${testNamePrefix} Snapshot Test`, () => {
-    let stack: cdk.Stack | undefined;
-
-    try {
-      stack = stackProvider();
-    } catch (error) {
-      throw new Error(`Failed to create stack: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  if (obj !== null && typeof obj === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+      result[key] = key === 'TemplateURL' ? 'REPLACED-TEMPLATE-URL' : maskTemplateUrls(value);
     }
-
-    expect(stack).toBeDefined();
-    if (!stack) return;
-
-    configureSnapshotSerializers();
-
-    const template = Template.fromStack(stack);
-    expect(template.toJSON()).toMatchSnapshot();
-  });
+    return result;
+  }
+  return obj;
 }
 
 export function snapShotTestApp(testNamePrefix: string, appProvider: () => cdk.App): void {
@@ -65,29 +48,25 @@ export function snapShotTestApp(testNamePrefix: string, appProvider: () => cdk.A
   test(`${testNamePrefix} App Snapshot Test`, () => {
     let app: cdk.App;
 
-    try {
-      app = appProvider();
-    } catch (error) {
-      throw new Error(`Failed to create app: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+    app = appProvider();
 
     expect(app).toBeDefined();
 
     configureSnapshotSerializers();
 
     let assembly;
-    try {
-      assembly = app.synth();
-    } catch (error) {
-      throw new Error(`Failed to synthesize app: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+
+    assembly = app.synth();
 
     const stackTemplates: StackTemplates = {};
 
     for (const stack of assembly.stacks) {
       if (stack?.stackName && stack?.template && typeof stack.stackName === 'string') {
         if (isValidTestName(stack.stackName)) {
-          stackTemplates[stack.stackName] = stack.template as Record<string, unknown>;
+          stackTemplates[stack.stackName] = maskTemplateUrls(stack.template as Record<string, unknown>) as Record<
+            string,
+            unknown
+          >;
         }
       }
     }

@@ -1,0 +1,35 @@
+# Minimal config for the SageMaker Studio Domain module.
+# Contains only the required properties to deploy a working
+# Studio domain: authentication mode, VPC networking, and at
+# least one user profile.
+
+# SageMaker Studio domain configuration with VPC networking,
+# authentication, user profiles, and lifecycle settings.
+domain:
+  # Authentication mode (enum: IAM, SSO)
+  authMode: IAM
+  # VPC ID for Studio domain deployment
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: vpc-id
+  # Subnet IDs for Studio user applications
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnetIds:
+    - subnet-id
+
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # (Optional) Admin roles for domain management. Required when
+  # a notebook sharing bucket is created (the default).
+  dataAdminRoles:
+    - arn: 'arn:{{partition}}:iam::{{account}}:role/test-admin-role'
+
+  # (Optional) Named user profiles for Studio domain
+  userProfiles:
+    # Key is the user identifier: SSO User ID (SSO mode) or
+    # Session Name portion of aws:userid (IAM mode).
+    example-user-id:
+      # Required for IAM AuthMode. The role from which the user
+      # will launch the user profile in Studio.
+      userRole:
+        name: test-user-role

@@ -1,0 +1,38 @@
+# Minimal config for the Data Science Team module.
+# Deploys a SageMaker Studio domain with IAM auth, team S3 data
+# lake, and Athena workgroup.
+
+team:
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # Admin roles granted access to team resources including KMS keys,
+  # S3 buckets, and SageMaker resources.
+  dataAdminRoles:
+    - name: Admin
+
+  # Execution role for SageMaker workloads. Must have
+  # sagemaker.amazonaws.com service trust.
+  teamExecutionRole:
+    name: team-execution-role
+
+  # (Optional) SageMaker Studio domain — the module's primary
+  # resource. Without this, only S3/Athena are deployed.
+  studioDomainConfig:
+    # Authentication mode (enum: IAM, SSO)
+    authMode: IAM
+    # VPC ID for Studio domain deployment
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-id
+    # Subnet IDs for Studio user applications
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetIds:
+      - subnet-id
+    # Admin roles for domain management
+    dataAdminRoles:
+      - name: Admin
+    # At least one user profile
+    userProfiles:
+      example-user-id:
+        userRole:
+          name: team-execution-role

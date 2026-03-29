@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { DashboardCDKApp } from '../lib';
 import * as path from 'path';
 
 describe('dataops-dashboard Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Dashboard Stack',
-    Create.stackProvider(
-      'DashboardStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Dashboard App',
+    Create.appProvider(
+      context => {
         const moduleApp = new DashboardCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-dashboard-main',
@@ -41,20 +32,42 @@ describe('dataops-dashboard Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Dashboard App',
+    'Dashboard App Minimal',
     Create.appProvider(
       context => {
         const moduleApp = new DashboardCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-dashboard-main',
+        module_name: 'test-dashboard-minimal',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'Dashboard App Noproject',
+    Create.appProvider(
+      context => {
+        const moduleApp = new DashboardCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-noproject.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-dashboard-noproject',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

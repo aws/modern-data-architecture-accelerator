@@ -1,0 +1,235 @@
+# DataSync module configuration.
+# Transfers data between on-premises storage and AWS using DataSync
+# agents, locations (S3, SMB, NFS, object storage), and tasks with
+# scheduling, filtering, and transfer options.
+
+# (Optional) VPC configuration for DataSync agent deployment. MDAA
+# creates a security group and VPC endpoint for the DataSync service.
+vpc:
+  # ID of the VPC for DataSync deployment
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: vpc-009ce5ec1cff75fx6
+  # CIDR block of the VPC for security group rules
+  vpcCidrBlock: 10.0.0.0/8
+
+# (Optional) Map of agent names to DataSync agent configurations.
+# Agents must be deployed externally before activation.
+agents:
+  # Agent without activation key (first-pass deployment creates
+  # VPC endpoint and security group only)
+  agent1:
+    # Subnet ID for data transfer ENIs
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-0c27f330c0ea98xx5
+    # IP address of the DataSync agent host
+    agentIpAddress: 1.1.1.1
+  # Agent with activation key (second-pass deployment registers
+  # the agent)
+  agent2:
+    # (Optional) Agent activation key (expires in 30 minutes)
+    activationKey: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: example-subnet
+    agentIpAddress: 1.1.1.2
+  # Agent with externally managed security group and VPC endpoint
+  agent3:
+    activationKey: XXXXX-YYYYY-XXXXX-YYYYY-XXXXX
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: '{{resolve:ssm:/path/to/subnet-id-ssm}}'
+    # (Optional) Existing VPC endpoint ID (if omitted, MDAA creates
+    # one)
+    vpcEndpointId: '{{resolve:ssm:/path/to/vpce-ssm}}'
+    agentIpAddress: 1.1.1.3
+    # (Optional) Existing security group ID (if omitted, MDAA
+    # creates one)
+    securityGroupId: sg-123456
+
+# (Optional) DataSync locations organized by storage protocol type.
+locations:
+  # S3 locations
+  s3:
+    s3location1:
+      # S3 bucket ARN (or dynamic reference)
+      # Often created by the Data Lake module.
+      # Example SSM: ssm:/{{org}}/{{domain}}/<datalake_module_name>/bucket/<zone_name>/arn
+      s3BucketArn: example-bucket-name1
+      # IAM role ARN for DataSync S3 access
+      # Often created by the Roles module.
+      # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+      bucketAccessRoleArn: '{{resolve:ssm:/path/to/role-arn-ssm}}'
+      # (Optional) Subdirectory prefix within the bucket
+      subdirectory: /some/prefix
+    s3location2:
+      # Often created by the Data Lake module.
+      # Example SSM: ssm:/{{org}}/{{domain}}/<datalake_module_name>/bucket/<zone_name>/arn
+      s3BucketArn: example-bucket-name2
+      subdirectory: /some/prefix
+      # Often created by the Roles module.
+      # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+      bucketAccessRoleArn: some-role-arn
+      # (Optional) S3 storage class for transferred files
+      # (enum: DEEP_ARCHIVE, GLACIER, INTELLIGENT_TIERING,
+      # ONEZONE_IA, OUTPOSTS, STANDARD, STANDARD_IA)
+      s3StorageClass: INTELLIGENT_TIERING
+
+  # SMB locations
+  smb:
+    smb-loc1:
+      # Names of MDAA-generated agents (mutually exclusive with
+      # agentArns)
+      agentNames:
+        - agent2
+      # Secrets Manager secret name storing SMB credentials
+      # ({user, password})
+      secretName: some-secret-name
+      # (Optional) Active Directory domain name
+      domain: some-ad-domain-name
+      # SMB server hostname or IP address
+      serverHostname: some.smbserver.hostname
+      # SMB share subdirectory path
+      subdirectory: /some/subdirectory
+      # (Optional) SMB protocol version
+      # (enum: AUTOMATIC, SMB2, SMB3; default: AUTOMATIC)
+      smbVersion: AUTOMATIC
+    smb-loc2:
+      # ARNs of externally registered DataSync agents (mutually
+      # exclusive with agentNames)
+      agentArns:
+        - arn:{{partition}}:datasync:{{region}}:{{account}}:agent/existing-agent-id
+      secretName: some-secret-name
+      domain: some-ad-domain-name
+      serverHostname: some.smbserver.hostname
+      subdirectory: /some/subdirectory
+
+  # NFS locations
+  nfs:
+    nfs_loc1:
+      agentNames:
+        - agent2
+        - agent3
+      # NFS server hostname or IP address
+      serverHostname: some.nfsserver.hostname
+      # NFS export path
+      subdirectory: /some/subdirectory
+      # (Optional) NFS protocol version
+      # (AUTOMATIC, NFS3, NFSv4_0, NFSv4_1; default: AUTOMATIC)
+      nfsVersion: NFSv4_0
+    nfs_loc2:
+      # ARNs of externally registered agents
+      agentArns:
+        - arn:{{partition}}:datasync:{{region}}:{{account}}:agent/existing-agent-id
+      serverHostname: another.nfsserver.hostname
+      subdirectory: /another/subdirectory
+
+  # Object storage locations (e.g. Google Cloud Storage)
+  objectStorage:
+    gcp1:
+      agentNames:
+        - agent2
+      # Object storage bucket name
+      bucketName: some-object-storage-name
+      # Object storage server endpoint
+      serverHostname: some-object-storage.endpoint.hostname
+      # Secrets Manager secret storing credentials
+      # ({accessKey, secretKey})
+      secretName: some-secret-name
+      # (Optional) Server port (default: 443)
+      serverPort: 443
+      # (Optional) Subdirectory prefix
+      subdirectory: /some/prefix
+      # (Optional) Server protocol (default: HTTPS)
+      serverProtocol: HTTPS
+    gcp2:
+      agentArns:
+        - arn:{{partition}}:datasync:{{region}}:{{account}}:agent/existing-agent-id
+      bucketName: another-object-storage
+      serverHostname: another.endpoint.hostname
+      secretName: another-secret-name
+
+# (Optional) Map of task names to DataSync task configurations.
+tasks:
+  # Task using MDAA-generated location names with scheduling and
+  # include filters
+  mytask1:
+    # Name of an MDAA-generated source location
+    sourceLocationName: s3location1
+    # Name of an MDAA-generated destination location
+    destinationLocationName: s3location2
+    # (Optional) Schedule for periodic execution
+    schedule:
+      # Cron or rate expression
+      scheduleExpression: cron(0 * * * ? *)
+      # (Optional) Enable or disable the schedule
+      status: ENABLED
+    # (Optional) Transfer options
+    options:
+      # (Optional) Preserve or ignore file access time
+      # (BEST_EFFORT, NONE; default: BEST_EFFORT)
+      atime: BEST_EFFORT
+      # (Optional) Bandwidth limit in bytes per second
+      bytesPerSecond: 1048576
+      # (Optional) Group ID handling
+      # (INT_VALUE, NAME, NONE; default: INT_VALUE)
+      gid: INT_VALUE
+      # (Optional) CloudWatch log level
+      # (BASIC, TRANSFER, OFF)
+      logLevel: TRANSFER
+      # (Optional) Preserve or ignore file modification time
+      # (PRESERVE, NONE; default: PRESERVE)
+      mtime: PRESERVE
+      # (Optional) Object tag handling
+      # (PRESERVE, NONE; default: PRESERVE)
+      objectTags: PRESERVE
+      # (Optional) Overwrite behavior at destination
+      # (ALWAYS, NEVER; default: ALWAYS)
+      overwriteMode: ALWAYS
+      # (Optional) POSIX permission handling
+      # (PRESERVE, NONE; default: PRESERVE)
+      posixPermissions: PRESERVE
+      # (Optional) Preserve deleted files at destination
+      # (PRESERVE, REMOVE; default: PRESERVE)
+      preserveDeletedFiles: PRESERVE
+      # (Optional) Block/character device metadata handling
+      # (NONE, PRESERVE; default: NONE)
+      preserveDevices: NONE
+      # (Optional) SMB security descriptor copy flags
+      # (OWNER_DACL, OWNER_DACL_SACL, NONE; default: OWNER_DACL)
+      securityDescriptorCopyFlags: OWNER_DACL
+      # (Optional) Task queueing behavior (ENABLED, DISABLED;
+      # default: ENABLED)
+      taskQueueing: ENABLED
+      # (Optional) Transfer mode (CHANGED, ALL)
+      transferMode: CHANGED
+      # (Optional) User ID handling
+      # (INT_VALUE, NAME, NONE; default: INT_VALUE)
+      uid: INT_VALUE
+      # (Optional) Data integrity verification mode
+      # (ONLY_FILES_TRANSFERRED, POINT_IN_TIME_CONSISTENT, NONE)
+      verifyMode: ONLY_FILES_TRANSFERRED
+    # (Optional) Include filter rules (one member max)
+    includes:
+      - # Filter type (SIMPLE_PATTERN)
+        filterType: SIMPLE_PATTERN
+        # Pipe-delimited patterns (must begin with /)
+        value: '/data*|/ingestion*'
+  # Task using external location ARNs with exclude filters
+  mytask2:
+    # ARN of an existing source location
+    sourceLocationArn: '{{resolve:ssm:/path/to/source/location/arn}}'
+    # ARN of an existing destination location
+    destinationLocationArn: '{{resolve:ssm:/path/to/destination/location/arn}}'
+    # (Optional) KMS key ARN for CloudWatch log group encryption
+    # (if omitted, MDAA creates a new KMS key)
+    logGroupEncryptionKeyArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-log-key
+    options:
+      transferMode: CHANGED
+      verifyMode: ONLY_FILES_TRANSFERRED
+    # (Optional) Exclude filter rules (one member max)
+    excludes:
+      - filterType: SIMPLE_PATTERN
+        # Pipe-delimited patterns for exclusion
+        value: '*.tmp|*.temp'

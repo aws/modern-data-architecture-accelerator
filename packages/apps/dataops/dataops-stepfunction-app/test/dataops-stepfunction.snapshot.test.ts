@@ -3,33 +3,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { describe, expect, beforeAll } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { describe } from '@jest/globals';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { StepFunctionCDKApp } from '../lib/dataops-stepfunction';
 import * as path from 'path';
 
 describe('dataops-stepfunction Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'StepFunction Stack',
-    Create.stackProvider(
-      'StepFunctionStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'StepFunction App',
+    Create.appProvider(
+      context => {
         const moduleApp = new StepFunctionCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-stepfunction-main',
@@ -41,20 +32,64 @@ describe('dataops-stepfunction Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'StepFunction App',
+    'StepFunction App Express',
     Create.appProvider(
       context => {
         const moduleApp = new StepFunctionCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-express.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-stepfunction-main',
+        module_name: 'test-stepfunction-express',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'StepFunction App Minimal',
+    Create.appProvider(
+      context => {
+        const moduleApp = new StepFunctionCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-stepfunction-minimal',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'StepFunction App Noproject',
+    Create.appProvider(
+      context => {
+        const moduleApp = new StepFunctionCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-noproject.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-stepfunction-noproject',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

@@ -1,0 +1,29 @@
+# Arns for IAM role which will be authoring code within the project
+dataEngineerRoles:
+  - name: data-engineer
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Arns for IAM roles which will be provided to the projects's resources (IE bucket)
+dataAdminRoles:
+  - name: Admin
+
+projectExecutionRoles:
+  - name: glue-role
+
+# (Optional) - Generate a SageMaker Project for this DataOps Project (comment if using datazone)
+sagemaker:
+  # The SSM Parameter containing domain config details for a SageMaker Domain created by the MDAA SageMaker module
+  domainConfigSSMParam: /test-org/test-domain/sagemaker/domain/test-domain/config
+  project:
+    profileName: test-profile
+
+databases:
+  # SageMaker Project Data Source (comment if using datazone)
+  test-database-sus:
+    description: Test SageMaker Database
+    # Creates a datasource in the SageMaker Project associated with this DataOps Project
+    createSagemakerDatasource: true
+    # Often created by the Data Lake module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<datalake_module_name>/bucket/<zone_name>/name
+    locationBucketName: some-bucket-name
+    locationPrefix: data/test-sus

@@ -1,0 +1,24 @@
+# Minimal SageMaker Notebook module configuration.
+# Provisions a single notebook instance with required networking
+# and IAM role settings.
+
+# (Optional) Map of notebook names to notebook instance
+# configurations.
+notebooks:
+  my-notebook:
+    # VPC ID for notebook deployment
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-id
+    # Subnet ID for notebook placement
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-id
+    # EC2 instance type for the notebook
+    instanceType: ml.t3.medium
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    # IAM role for notebook instance
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    notebookRole:
+      arn: arn:{{partition}}:iam::{{account}}:role/sagemaker-role

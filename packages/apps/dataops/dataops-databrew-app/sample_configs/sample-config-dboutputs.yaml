@@ -1,0 +1,91 @@
+# DataBrew variant config: database and Data Catalog output destinations.
+# Exercises dataCatalogOutputs and databaseOutputs job properties which are
+# alternative output types to the S3-based 'outputs' property.
+
+# DataOps project name for DataBrew resource autowiring.
+projectName: glue-project
+
+recipes:
+  mdaa-db-recipe:
+    description: Recipe for database output testing
+    steps: |
+      [
+        {
+          "Action": {
+            "Operation": "RENAME",
+            "Parameters": {
+              "sourceColumn": "id",
+              "targetColumn": "employee_id"
+            }
+          }
+        }
+      ]
+
+datasets:
+  mdaa-db-dataset:
+    input:
+      s3InputDefinition:
+        bucket: ssm:/path_to_bucket_name
+        key: 'data/raw_data/input_data.csv'
+
+jobs:
+  # Recipe job writing to Data Catalog output
+  test-catalog-output-job:
+    type: 'RECIPE'
+    dataset:
+      generated: mdaa-db-dataset
+    recipe:
+      generated: mdaa-db-recipe
+    # Data Catalog output configurations for Glue catalog integration.
+    dataCatalogOutputs:
+      - # The name of a database in the Data Catalog.
+        databaseName: my_output_database
+        # The name of a table in the Data Catalog.
+        tableName: my_output_table
+        # The unique identifier of the AWS account that holds the Data Catalog.
+        catalogId: '{{account}}'
+        # Whether data in the location is overwritten with new output.
+        overwrite: true
+        # Options for S3 output within Data Catalog.
+        s3Options:
+          # Represents an Amazon S3 location where DataBrew can write output.
+          location:
+            bucket: ssm:/path_to_bucket_name
+            key: 'data/databrew/catalog-output/'
+        # Options for database table output within Data Catalog.
+        databaseOptions:
+          # A prefix for the name of a table DataBrew will create.
+          tableName: output_table_prefix
+          # An Amazon S3 location for intermediate results.
+          tempDirectory:
+            bucket: ssm:/path_to_bucket_name
+            key: 'tmp/catalog-output/'
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    executionRole:
+      name: ssm:/path_to_role_name
+    kmsKeyArn: ssm:/path_to_kms_arn
+
+  # Recipe job writing to JDBC database output
+  test-database-output-job:
+    type: 'RECIPE'
+    dataset:
+      generated: mdaa-db-dataset
+    recipe:
+      generated: mdaa-db-recipe
+    # JDBC database output destinations for recipe job results.
+    databaseOutputs:
+      - # The AWS Glue connection for the target database.
+        glueConnectionName: project:connections/connectionJdbc
+        # The output mode to write into the database (currently NEW_TABLE).
+        databaseOutputMode: NEW_TABLE
+        # Options for database table output.
+        databaseOptions:
+          # A prefix for the name of a table DataBrew will create.
+          tableName: output_table_prefix
+          # An Amazon S3 location for intermediate results.
+          tempDirectory:
+            bucket: ssm:/path_to_bucket_name
+            key: 'tmp/db-output/'
+    executionRole:
+      name: ssm:/path_to_role_name
+    kmsKeyArn: ssm:/path_to_kms_arn

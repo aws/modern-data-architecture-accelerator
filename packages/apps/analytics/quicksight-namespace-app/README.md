@@ -1,30 +1,49 @@
 # QuickSight Namespace
 
-The QuickSight Namespace CDK application is used to configure and deploy following resources:
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/analytics/quicksight-namespace-app/index.html).
 
-1. IAM roles suitable for federation into the Namespace
-2. Quicksight Namespaces
-3. Quicksight Users
-4. Quicksight Groups
-5. Moves the Quicksight User in Namespace and Group
+Deploys a single QuickSight namespace with SAML federation roles, automatic user-to-namespace assignment via EventBridge, and QuickSight group management. Each deployment creates one namespace — deploy the module multiple times with different module names to create multiple namespaces for multi-tenancy. Use this module when you need to isolate QuickSight users and assets for a team or tenant within a shared QuickSight account.
 
-***
+---
 
-## Deployed Resources and Compliance Details
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+**QuickSight Namespace** - Creates a single QuickSight Namespace via Custom Resource. The namespace name is derived from the module name. Deploy the module multiple times with different module names to create multiple namespaces.
+
+- Supports multi-tenancy within a single QS/AWS account
+- Each namespace has its own users and groups
+
+**QuickSight Namespace Roles** - Creates IAM roles suitable for federation into the Namespace based on `roles` section in the config
+
+**QuickSight Namespace User Lambda and EventBridge Trigger** - Watches for new users created using the Namespace roles and automatically moves them into the namespace from the default namespace. Also creates QuickSight Groups and assigns QS users into groups.
 
 ![quicksight-namespace](../../../constructs/L3/analytics/quicksight-namespace-l3-construct/docs/quicksight-namespace.png)
 ![qs-namespace-groups-roles-mapping](../../../constructs/L3/analytics/quicksight-namespace-l3-construct/docs/qs-namespace-groups-roles-mapping.png)
 
-**QuickSight Namespace** - Creates a QuickSight Namepsace via Custom Resource
+---
 
-* Can be used to support multi-tennancy within a single QS/AWS account
-* Each namespace has it's own users and groups
+## Related Modules
 
-**QuickSight Namespace Roles** - Creates IAM roles suitable for federation into the Namespace based on `roles` section in the config
+- [QuickSight Account](../quicksight-account-app/README.md) — Configure the QuickSight account before deploying namespaces
+- [QuickSight Project](../quicksight-project-app/README.md) — Deploy shared folders and data sources within namespaces for team-level asset management
+- [Roles](../../governance/roles-app/README.md) — Create IAM federation providers and roles for SAML-based namespace access
 
-**QuickSight Namespace User Lambda and EventBridge Trigger** - Watches for new users created using the Namespace roles(refer `roles` section in the config) and automatically moves them into the namespace from the default namespace. Also, creates Quicksight Groups and assigns the QS users into groups.
+---
 
-***
+## Security/Compliance Details
+
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
+
+- **Least Privilege**:
+  - SAML federation roles provide SSO access with configurable QuickSight user types (READER, AUTHOR)
+  - Glue resource access scoped to specific database patterns
+- **Separation of Duties**:
+  - Users automatically assigned to appropriate QuickSight groups based on their federation role
+  - Namespace isolation helps segregate users and groups per tenant within a single QuickSight account
+
+---
 
 ## Configuration
 
@@ -33,36 +52,36 @@ The QuickSight Namespace CDK application is used to configure and deploy followi
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          quicksight-namespace: # Module Name can be customized
-            module_path: "@aws-mdaa/quicksight-namespace" # Must match module NPM package name
-            module_configs:
-              - ./quicksight-namespace.yaml # Filename/path can be customized
+quicksight-namespace: # Module Name can be customized
+  module_path: '@aws-mdaa/quicksight-namespace' # Must match module NPM package name
+  module_configs:
+    - ./quicksight-namespace.yaml # Filename/path can be customized
 ```
 
-### Module Config (./quicksight-namespace.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./quicksight-namespace.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Contains only the required properties to deploy a working SAML-federated QuickSight namespace: a single federation with one role mapping. Start here for a quick namespace setup before adding multiple federations, Glue catalog access, or complex group structures.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-# Used to configure SAML federations
-federations:
-  authhub: # Should be descriptive and unique
-    # This URL will be the redirect target after SAML tokens are obtained
-    url: https://{{region}}.quicksight.aws.amazon.com/sn/auth/signin?enable-sso=1
-    # This is the arn of the IAM Identity Provider
-    providerArn: arn:{{partition}}:iam::{{account}}:saml-provider/sample-org-dev-instance1-roles-new-federation
-    roles:
-      sampleReaders: 
-        qsGroups: ["READERS"] #User will be part of these QS Groups
-        qsUserType: "READER" #Each User will only be a READER | AUTHOR in QS 
-      sampleAuthors: 
-        qsGroups: ["AUTHORS", "READERS", "PUBLISHERS"] 
-        qsUserType: "AUTHOR" 
-      samplePublishers: 
-        qsGroups: ["PUBLISHERS", "READERS"] 
-        qsUserType: "AUTHOR"
-
-# Glue resources to which namespace roles will be granted IAM access.
-glueResourceAccess:
-  - database/sample_org*
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+Provisions a single SAML-federated QuickSight namespace with multiple federation providers, reader/author role tiers, and optional Glue catalog access for data source discovery. Use this as a reference when you need full control over federation role mappings and group management within a namespace.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

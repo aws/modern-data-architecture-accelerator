@@ -1,0 +1,43 @@
+# Variant config for Bedrock AgentCore Runtime using codePath.
+# Builds the container image from a local Dockerfile instead of
+# referencing a pre-built ECR image. Use this approach when
+# developing custom agent runtimes from source code.
+
+# Unique name for the Bedrock AgentCore Runtime
+agentRuntimeName: testAgentRuntimeCodePath
+# Container deployment configuration building from source code
+agentRuntimeArtifact:
+  # Container configuration for the agent runtime Docker image
+  containerConfiguration:
+    # Local directory path containing Dockerfile and agent code.
+    # Mutually exclusive with containerUri.
+    codePath: './runtime-src'
+    # (Optional) Target platform architecture for Docker image builds
+    # (default: linux/arm64)
+    platform: 'linux/arm64'
+# VPC network configuration for secure runtime deployment
+networkConfiguration:
+  # Security group IDs (1-16 items)
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/security-group/id
+  securityGroups:
+    - sg-12345678
+  # Subnet IDs (1-16 items)
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnets:
+    - subnet-12345678
+# (Optional) Authentication via jwtAuthorizer (alternative to
+# customJwtAuthorizer)
+authorizerConfiguration:
+  # (Optional) JWT authorizer configuration for token-based
+  # authentication via OIDC
+  jwtAuthorizer:
+    # OIDC discovery URL for JWT token validation
+    discoveryUrl: 'https://cognito-idp.{{region}}.amazonaws.com/{{region}}_test/.well-known/openid-configuration'
+    # (Optional) Allowed audience values for JWT token validation
+    allowedAudience:
+      - 'test-audience'
+    # (Optional) Allowed client IDs for JWT token validation
+    allowedClients:
+      - 'test-client-app'

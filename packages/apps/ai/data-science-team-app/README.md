@@ -1,38 +1,83 @@
 # Data Science Team
 
-The Data Science Team CDK App is used to deploy stacks and resources which support Data Science team activities within an AWS account.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/ai/data-science-team-app/index.html).
 
-***
+Provisions a complete data science team environment including SageMaker AI Studio domains with user profiles, Athena workgroups, team S3 data buckets, KMS encryption, Lake Formation permissions, and IAM role management. Supports both IAM and SSO authentication modes with configurable security guardrails. Use this module when you need to onboard a data science team with a ready-to-use ML workspace, shared storage, and governed data access in a single deployment.
 
-## Deployed Resources and Compliance Details
+---
+
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+**Team Mini Lake and KMS Key** - An S3-based mini data lake which the team can use as a persistence layer for their activities. Deployed using the [Datalake KMS and Buckets L3 Construct](../../../constructs/L3/datalake/datalake-l3-construct/README.md).
+
+**Team Athena Workgroup and Results Bucket** - An Athena Workgroup for use by the team, with a dedicated S3 bucket for query results. Deployed using the [Athena Workgroup L3 Construct](../../../constructs/L3/datalake/athena-workgroup-l3-construct/README.md).
+
+**SageMaker AI Studio Domain and User Profiles** - SageMaker AI Studio Domain configured to use the Team Execution Role, with optional user-specific User Profiles. Deployed using the [Studio Domain L3 Construct](../../../constructs/L3/ai/sm-studio-domain-l3-construct/README.md).
+
+**SageMaker Read/Write Team Managed Policies** - IAM managed policies providing read, write, and guardrail access to SageMaker. Policies are automatically added to team execution and mutable team user roles; immutable roles (such as IAM Identity Center/SSO roles) require manual policy binding via SSO permission set.
 
 ![data-science-team](../../../constructs/L3/ai/datascience-team-l3-construct/docs/datascience-team.png)
 
-**Team Mini Lake and KMS KEY** - An S3-based mini data lake which the team can use as a persistence layer for their activities. Deployed using the [Datalake KMS and Buckets L3 Construct](../../../constructs/L3/datalake/datalake-l3-construct/README.md).
+---
 
-* Access granted to team execution role, data admin roles, and team user roles
+## Related Modules
 
-**Team Athena Workgroup and Results Bucket** - An Athena Workgroup for use by the team. Deployed using the [Athena Workgroup L3 Construct](../../../constructs/L3/datalake/athena-workgroup-l3-construct/README.md).
+- [SageMaker Studio](../sm-studio-domain-app/README.md) — Deploy a standalone Studio domain when you need Studio without the full data science team environment
+- [SageMaker Notebooks](../sm-notebook-app/README.md) — Deploy standalone SageMaker notebook instances as an alternative to Studio
+- [Data Lake](../../datalake/datalake-app/README.md) — Deploy data lake buckets that the team can access via Lake Formation permissions
+- [Athena Workgroup](../../datalake/athena-workgroup-app/README.md) — Deploy standalone Athena workgroups; this module provisions team workgroups automatically
+- [Roles](../../governance/roles-app/README.md) — Create IAM roles that can be referenced as team user or data admin roles
+- [Lake Formation Access Control](../../governance/lakeformation-access-control-app/README.md) — Manage fine-grained Lake Formation grants for team access to data lake resources
 
-* Results bucket encrypted using Team KMS Key (from Team MiniLake)
-* Results bucket access limited to team execution role, team user roles, and data admin roles (via bucket policy)
-* Workgroup access granted to team execution role, and mutable team user roles via IAM managed policy
-  * Immutable team user roles (such as IAM Identity Center SSO Roles) will need to be manually bound to this IAM managed policy (IE via permission set Managed Policy binding), or otherwise have the permissions manually provided outside of MDAA (such as via SSO permission set inline policy)
+---
 
-**SageMaker Studio Domain and User Profiles** - SageMaker Studio Domain configured to use the Team Execution Role, with optional user-specific User Profiles. Deployed using the [Studio Domain L3 Construct](../../../constructs/L3/ai/sm-studio-domain-l3-construct/README.md).
+## Security/Compliance Details
 
-* Encrypted using Team KMS Key (from Team MiniLake)
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
 
-**SageMaker Read/Write Team Managed Policies** - Policies which grant access to SageMaker functionality
+- **Encryption at Rest**:
+  - Team S3 buckets encrypted with team-specific customer-managed KMS key
+  - SageMaker resources encrypted with team KMS key
+  - Athena query results encrypted with team KMS key
+- **Encryption in Transit**:
+  - All SageMaker and Athena communications use TLS
+- **Least Privilege**:
+  - Separate read, write, and guardrail managed policies for SageMaker
+  - Team bucket access restricted to team execution role, data admin roles, and team user roles via bucket policy
+  - Results bucket access limited to team execution role, team user roles, and data admin roles
+  - Workgroup access granted via IAM managed policy to team execution role and mutable team user roles
+- **Separation of Duties**:
+  - Guardrail policy enforces security parameters on SageMaker resource creation
+  - Team execution role requires explicit SageMaker service trust
+  - Lake Formation permissions control team access to data lake resources
+- **Network Isolation**:
+  - SageMaker AI Studio domain is VPC-bound with configurable security group ingress/egress rules
+  - Direct internet access disabled
 
-* Policies automatically added to team execution and mutable team user roles
-  * Policies must be added manually (such as via SSO permission set) to immutable team user roles (such as IAM Identity Center/SSO roles)
-* Read policy which provides general read/list/describe access to SageMaker
-* Write policy which provides general write/create/update/delete access to SageMaker
-* Guardrail policy which ensures SageMaker resources can only be created with appropriate security parameters specified
-  **Note** - Guardrail policy ***must*** be added manually to any immutable team user roles (such as IAM Identity Center/SSO roles)
+---
 
-***
+## AWS Service Endpoints
+
+The following VPC endpoints may be required if public AWS service endpoint connectivity is unavailable (e.g., private subnets without NAT gateway, firewalled environments, or PrivateLink-only architectures):
+
+| AWS Service         | Endpoint Service Name                      | Type      |
+| ------------------- | ------------------------------------------ | --------- |
+| SageMaker API       | `com.amazonaws.{region}.sagemaker.api`     | Interface |
+| SageMaker Runtime   | `com.amazonaws.{region}.sagemaker.runtime` | Interface |
+| SageMaker Studio    | `com.amazonaws.{region}.studio`            | Interface |
+| Athena              | `com.amazonaws.{region}.athena`            | Interface |
+| Glue                | `com.amazonaws.{region}.glue`              | Interface |
+| KMS                 | `com.amazonaws.{region}.kms`               | Interface |
+| S3                  | `com.amazonaws.{region}.s3`                | Gateway   |
+| CloudWatch Logs     | `com.amazonaws.{region}.logs`              | Interface |
+| STS                 | `com.amazonaws.{region}.sts`               | Interface |
+| SSM Parameter Store | `com.amazonaws.{region}.ssm`               | Interface |
+| Lake Formation      | `com.amazonaws.{region}.lakeformation`     | Interface |
+| EFS                 | `com.amazonaws.{region}.elasticfilesystem` | Interface |
+
+---
 
 ## Configuration
 
@@ -41,248 +86,46 @@ The Data Science Team CDK App is used to deploy stacks and resources which suppo
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          datascience-team: # Module Name can be customized
-            module_path: "@aws-mdaa/datascience-team" # Must match module NPM package name
-            module_configs:
-              - ./datascience-team.yaml # Filename/path can be customized
+datascience-team: # Module Name can be customized
+  module_path: '@aws-mdaa/datascience-team' # Must match module NPM package name
+  module_configs:
+    - ./datascience-team.yaml # Filename/path can be customized
 ```
 
-### Module Config (./datascience-team.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./datascience-team.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Deploys a SageMaker Studio domain with IAM auth, team S3 data lake, and Athena workgroup. Start here for a quick team environment with sensible defaults before customizing user profiles or lifecycle configs.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-team:
-  # List of roles which will be provided admin access to the team resources
-  dataAdminRoles:
-    - name: Admin
+--8<-- "sample_configs/sample-config-minimal.yaml"
+```
 
-  # List of roles which will be provided usage access to the team resources
-  # Permissions to team resources will be provided via team resource polices, and
-  # optionally customer managed policies (if role is not immutable)
-  teamUserRoles:
-    - id: generated-role-id:data-scientist
-    # Below role will be provided access only to the team bucket and KMS key. This is required
-    # for immutable roles such as SSO roles (which can only be modified via SSO permission set deployment).
-    - name: AWSReservedSSO_datascientist_abcdefg
-      immutable: true
+#### Comprehensive Configuration
 
-  # Role which will be used as execution role for team SageMaker resources.
-  # Requires an assume role trust for sagemaker.amazonaws.com, with assume role actions
-  # of sts:AssumeRole and sts:SetSourceIdentity. Can be produced using the MDAA roles module with the
-  # following config:
-  # team-execution-role:
-  #   trustedPrincipal: service:sagemaker.amazonaws.com
-  #   additionalTrustedPrincipals:
-  #     - trustedPrincipal: service:sagemaker.amazonaws.com
-  #       additionalTrustedActions: ["sts:SetSourceIdentity"]
-  teamExecutionRole:
-    id: generated-role-id:team-execution-role
+Provisions a SageMaker Studio domain with IAM auth, user profiles, lifecycle configs, custom images, S3 mini data lake with inventory, and team access controls for collaborative ML development. Use this as a reference when you need full control over user profiles, lifecycle scripts, storage policies, and team-level access controls.
 
-  # If specified, managed policies generated by the module will use a verbatim name instead of a name generated by the naming module.
-  # This is useful where a policy name must be stable across accounts, such as when integrating with SSO permission sets.
-  verbatimPolicyNamePrefix: "some-prefix"
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
-  studioDomainConfig:
-    # The domain Authentication mode (one of "IAM" or "SSO")
-    authMode: IAM
-    # The VPC on which all Studio Apps will be launched
-    vpcId: vpc-id
-    # The subnets on which all Studio Apps will be launched
-    subnetIds:
-      - subnet-id
-    # optional custom ingress rules
-    securityGroupIngress:
-      ipv4:
-        - cidr: 10.0.0.0/24
-          port: 443
-          protocol: tcp
-      sg:
-        - sgId: ssm:/ml/sm/sg/id
-          port: 443
-          protocol: tcp
-    # optional custom egress rules
-    securityGroupEgress:
-      # Allow egress to prefixLists for gateway VPC endpoints
-      prefixList:
-        - prefixList: pl-4ea54027
-          description: prefix list for com.amazonaws.{{region}}.dynamodb
-          protocol: tcp
-          port: 443
-        - prefixList: pl-7da54014
-          description: prefix list for com.amazonaws.{{region}}.s3
-          protocol: tcp
-          port: 443
-      ipv4:
-        - cidr: 0.0.0.0/0
-          port: 443
-          protocol: tcp
-      sg:
-        - sgId: ssm:/ml/sm/sg/id
-          port: 443
-          protocol: tcp
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
 
-    # The location on the team bucket where shared notebooks will be stored
-    notebookSharingPrefix: notebooks
+#### SSO Authentication Configuration
 
-    # List of Studio user profiles which will be created.
-    userProfiles:
-      # The key/name of the user profile should be specified as follows:
-      # If the Domain is in SSO auth mode, this should map to an SSO User ID.
-      # If in IAM mode, this should map to Session Name portion of the aws:userid variable.
-      example-user-id:
-        # Required if the domain is in IAM AuthMode. This is the role
-        # from which the user will launch the user profile in Studio.
-        # The role's id will be combined with the userid
-        # to grant the user access to launch the user profile.
-        userRole:
-          id: generated-role-id:data-scientist
-      # The below example would be sufficient if the domain is in SSO auth mode.
-      # example-sso-user-id: {}
+Demonstrates SSO auth mode with an existing security group and existing domain bucket. Choose this variant when your organization uses AWS IAM Identity Center (SSO) for federated user access to SageMaker Studio.
 
-    # Default user profile settings for the domain.
-    defaultUserSettings:
-      kernelGatewayAppSettings:
-        customImages:
-          - appImageConfigName: "appImageConfigName"
-            imageName: "imageName"
+[sample-config-sso.yaml](sample_configs/sample-config-sso.yaml)
 
-    lifecycleConfigs:
-      # Lifecycle config for the main Jupyter App. This will be run
-      # each time the main Jupyter app container is launched.
-      jupyter:
-        # Assets which will be staged in S3, then copied to SageMaker container
-        # before the lifecycle commands run.
-        # The assets will be available in the container under
-        # $ASSETS_DIR/<asset_name>/
-        assets:
-          testing:
-            sourcePath: ./testing_asset_dir
-        cmds:
-          - echo "testing jupyter"
-          - sh $ASSETS_DIR/testing/test.sh
-
-      # Kernel gateway app lifecycle config. This will run each time
-      # a kernel gateway container is launched.
-      kernel:
-        # Assets which will be staged in S3, then copied to SageMaker container
-        # before the lifecycle commands run.
-        # The assets will be available in the container under
-        # $ASSETS_DIR/<asset_name>/
-        assets:
-          testing:
-            sourcePath: ./testing_asset_dir
-        cmds:
-          - echo "testing kernel"
-          - sh $ASSETS_DIR/testing/test.sh
-
+```yaml
+--8<-- "sample_configs/sample-config-sso.yaml"
 ```
 
 ---
 
-## Troubleshooting
-
-### Custom Blueprint Deployment Errors: Permission Issues
-
-**Error Patterns:**
-
-1. **Access denied to blueprint template:**
-   ```
-   EnvironmentError(Code=403, Message=Access denied to blueprint template for blueprintId: <blueprint-id>)
-   ```
-
-2. **CloudFormation stack creation failures:**
-   ```
-   Stack creation failed with User: arn:aws:sts::<account>:assumed-role/<provisioning-role>/AmazonDataZoneEnvironmentDeployer-<account> 
-   is not authorized to perform: <action> on resource: <resource>
-   ```
-
-**Root Cause:**
-
-When deploying custom SageMaker/DataZone blueprints (created via the `datascience-team` module), DataZone assumes the provisioning role to deploy the blueprint's CloudFormation template. The provisioning role must have all permissions required to:
-
-1. Read the blueprint CloudFormation template from S3
-2. Read SSM parameters referenced in the template
-3. Create and manage all AWS resources defined in the blueprint (SageMaker Studio Domain, S3 buckets, IAM roles, Athena workgroups, etc.)
-4. Pass IAM roles to AWS services
-5. Execute CloudFormation operations
-
-**Solution:**
-
-Ensure your provisioning role policy includes all necessary permissions. At minimum, the role needs:
-
-```yaml
-# S3 permissions for reading blueprint CloudFormation templates
-- Sid: S3BlueprintTemplateAccess
-  Effect: Allow
-  Action:
-    - s3:GetObject
-    - s3:GetObjectVersion
-  Resource:
-    - "arn:{{partition}}:s3:::*-sagemaker-sagemaker-d-*/blueprints/*"
-
-# SSM permissions for reading parameters during blueprint deployment
-- Sid: SSMParameterAccess
-  Effect: Allow
-  Action:
-    - ssm:GetParameter
-    - ssm:GetParameters
-    - ssm:GetParametersByPath
-  Resource:
-    - "arn:{{partition}}:ssm:{{region}}:{{account}}:parameter/{{org}}/*"
-
-# IAM permissions for passing roles to services during blueprint deployment
-- Sid: IAMPassRole
-  Effect: Allow
-  Action:
-    - iam:PassRole
-    - iam:GetRole
-  Resource:
-    - "arn:{{partition}}:iam::{{account}}:role/*"
-  Condition:
-    StringEquals:
-      "iam:PassedToService":
-        - sagemaker.amazonaws.com
-        - athena.amazonaws.com
-        - glue.amazonaws.com
-
-# CloudFormation permissions for blueprint stack deployment
-- Sid: CloudFormationAccess
-  Effect: Allow
-  Action:
-    - cloudformation:CreateStack
-    - cloudformation:UpdateStack
-    - cloudformation:DeleteStack
-    - cloudformation:DescribeStacks
-    - cloudformation:DescribeStackEvents
-    - cloudformation:DescribeStackResources
-    - cloudformation:GetTemplate
-    - cloudformation:ValidateTemplate
-  Resource:
-    - "arn:{{partition}}:cloudformation:{{region}}:{{account}}:stack/DataZone-Env-*/*"
-```
-
-**Additional service-specific permissions** may be required depending on what resources your blueprint creates. Review the CloudFormation error messages to identify missing permissions.
-
-**Deployment Steps:**
-
-1. Update your provisioning role policy with the required permissions
-2. Redeploy the roles module containing your provisioning role
-3. Verify the permissions are applied: 
-   ```bash
-   aws iam get-policy-version --policy-arn <policy-arn> --version-id <version-id> --region <region> --no-paginate
-   ```
-4. Redeploy the project-profile or project module that uses the custom blueprint
-
-**Why CloudTrail may not show these errors:**
-
-DataZone often validates permissions internally before making AWS API calls. Permission denials during these internal checks may not appear in CloudTrail logs, making diagnosis more challenging. Always check CloudFormation stack events for detailed error messages.
-
-**Related Configuration:**
-
-- The provisioning role is specified in your SageMaker domain configuration via `provisioningRoleArn`
-- Custom blueprints are created by the `datascience-team` module and referenced in project profiles
-- The domain bucket follows the naming pattern: `<prefix>-sagemaker-sagemaker-d-<suffix>`
-- Blueprint CloudFormation templates are stored at: `s3://<domain-bucket>/blueprints/<blueprint-name>.json`
-
-```
+[Config Schema Docs](SCHEMA.md)

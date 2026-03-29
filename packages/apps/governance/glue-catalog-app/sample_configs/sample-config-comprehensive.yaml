@@ -1,0 +1,68 @@
+# Comprehensive Glue Catalog module configuration.
+# Manages cross-account Glue Catalog access through consumer/producer
+# account mappings, KMS key sharing, and resource-scoped access
+# policies for fine-grained data governance.
+
+# (Optional) Consumer accounts granted read access to the entire
+# Glue Catalog via catalog resource policy. Each entry maps a
+# friendly name to a 12-digit AWS account ID.
+consumerAccounts:
+  consumer-analytics: '888888888888'
+  consumer-reporting: '222222222222'
+
+# (Optional) Accounts granted access to the catalog KMS encryption
+# key only, without catalog read access. Useful when accounts need
+# to decrypt catalog-encrypted data but should not browse the catalog.
+kmsKeyConsumerAccounts:
+  kms-consumer-etl: '333333333333'
+  kms-consumer-lake: '444444444444'
+
+# (Optional) Producer accounts for which additional Athena data source
+# catalogs are created in the deployment account. Does not grant access
+# to the producer catalog unless separately configured on the producer side.
+producerAccounts:
+  producer-ingestion: '555555555555'
+  producer-transform: '666666666666'
+  producer-curated: '777777777777'
+
+# (Optional) Named catalog access policies for fine-grained
+# resource-level access control. Each policy defines read/write
+# principal ARNs scoped to specific catalog resource ARNs.
+accessPolicies:
+  # Policy with full read and write principal coverage
+  full-access-policy:
+    # (Required) Glue Catalog resource ARNs defining the policy scope.
+    # Supports catalog, database, table, and partition ARNs.
+    resources:
+      - arn:{{partition}}:glue:{{region}}:{{account}}:catalog
+      - arn:{{partition}}:glue:{{region}}:{{account}}:database/analytics-db
+      - arn:{{partition}}:glue:{{region}}:{{account}}:table/analytics-db/*
+    # (Optional) IAM principal ARNs granted read-only access
+    # (glue:Get*, glue:List*) to the specified catalog resources.
+    readPrincipalArns:
+      - arn:{{partition}}:iam::888888888888:root
+      - arn:{{partition}}:iam::222222222222:role/DataReader
+    # (Optional) IAM principal ARNs granted read/write access
+    # to the specified catalog resources.
+    writePrincipalArns:
+      - arn:{{partition}}:iam::333333333333:root
+
+  # Policy with resources only — no principals (minimal required config)
+  resources-only-policy:
+    resources:
+      - arn:{{partition}}:glue:{{region}}:{{account}}:database/staging-db
+      - arn:{{partition}}:glue:{{region}}:{{account}}:table/staging-db/*
+
+  # Policy with read-only principals (no write principals)
+  read-only-policy:
+    resources:
+      - arn:{{partition}}:glue:{{region}}:{{account}}:database/curated-db
+    readPrincipalArns:
+      - arn:{{partition}}:iam::444444444444:root
+
+  # Policy with write-only principals (no read principals)
+  write-only-policy:
+    resources:
+      - arn:{{partition}}:glue:{{region}}:{{account}}:database/ingest-db
+    writePrincipalArns:
+      - arn:{{partition}}:iam::555555555555:role/DataWriter

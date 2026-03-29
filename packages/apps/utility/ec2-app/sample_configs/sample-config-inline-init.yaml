@@ -1,0 +1,45 @@
+# EC2 module configuration — inline init variant.
+# Demonstrates using an inline CloudFormation Init definition directly
+# on an instance (via the "init" property) instead of referencing a
+# named init from the top-level cfnInit section. Also exercises the
+# osType "unknown" enum value.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Roles granted access to the KMS key and KeyPair secrets
+adminRoles:
+  - name: Admin
+
+# (Optional) Map of instance names to EC2 instance configurations
+instances:
+  # Instance with inline init and osType unknown
+  instance-inline:
+    securityGroupId: sg-inlinetest
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-testvpc
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-testsubnet
+    availabilityZone: '{{region}}a'
+    instanceType: t3.micro
+    amiId: ami-generic
+    instanceRole:
+      name: inline-instance-role
+    blockDevices:
+      - deviceName: '/dev/sda1'
+        volumeSizeInGb: 20
+        ebsType: gp3
+    # OS type for the instance
+    osType: linux
+    # (Optional) Inline CloudFormation Init configuration
+    # (alternative to initName referencing a top-level cfnInit entry)
+    init:
+      configSets:
+        default:
+          configs:
+            - 'setup'
+      configs:
+        setup:
+          commands:
+            01hello:
+              shellCommand: 'echo "inline init"'

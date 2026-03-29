@@ -1,0 +1,52 @@
+# Minimal DataSync module configuration.
+# Deploys VPC networking, an agent, two S3 locations, and a
+# transfer task between them.
+
+# (Optional) VPC configuration for DataSync agent deployment.
+vpc:
+  # ID of the VPC for DataSync deployment
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: vpc-009ce5ec1cff75fx6
+  # CIDR block of the VPC for security group rules
+  vpcCidrBlock: 10.0.0.0/8
+
+# (Optional) Map of agent names to DataSync agent configurations.
+agents:
+  agent1:
+    # Subnet ID for data transfer ENIs
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-0c27f330c0ea98xx5
+    # IP address of the DataSync agent host
+    agentIpAddress: 1.1.1.1
+
+# (Optional) DataSync locations organized by storage protocol type.
+locations:
+  s3:
+    source-location:
+      # S3 bucket ARN
+      # Often created by the Data Lake module.
+      # Example SSM: ssm:/{{org}}/{{domain}}/<datalake_module_name>/bucket/<zone_name>/arn
+      s3BucketArn: arn:{{partition}}:s3:::source-bucket
+      # IAM role ARN for DataSync S3 access
+      # Often created by the Roles module.
+      # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+      bucketAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/datasync-s3-role
+    destination-location:
+      # S3 bucket ARN
+      # Often created by the Data Lake module.
+      # Example SSM: ssm:/{{org}}/{{domain}}/<datalake_module_name>/bucket/<zone_name>/arn
+      s3BucketArn: arn:{{partition}}:s3:::destination-bucket
+      # IAM role ARN for DataSync S3 access
+      # Often created by the Roles module.
+      # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+      bucketAccessRoleArn: arn:{{partition}}:iam::{{account}}:role/datasync-s3-role
+
+# (Optional) Map of task names to DataSync task configurations.
+tasks:
+  my-task:
+    # Name of an MDAA-generated source location
+    sourceLocationName: source-location
+    # Name of an MDAA-generated destination location
+    destinationLocationName: destination-location

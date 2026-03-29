@@ -1,0 +1,43 @@
+# Sample config for the SageMaker Studio Domain module using SSO
+# authentication. Use this variant when your organization uses AWS
+# IAM Identity Center (SSO) for user authentication instead of IAM.
+# In SSO mode, user profiles do not require a userRole.
+
+# SageMaker Studio domain configuration with VPC networking,
+# authentication, user profiles, and lifecycle settings.
+domain:
+  # Authentication mode (enum: IAM, SSO)
+  authMode: SSO
+  # VPC ID for Studio domain deployment
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: vpc-id
+  # Subnet IDs for Studio user applications
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnetIds:
+    - subnet-id
+  # (Optional) KMS key ARN for EFS encryption
+  kmsKeyArn: 'arn:{{partition}}:kms:{{region}}:{{account}}:key/test-efs-key'
+
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # (Optional) Default execution role for Studio applications
+  defaultExecutionRole:
+    name: test-execution-role
+
+  # (Optional) Admin roles for domain management. Required when
+  # a notebook sharing bucket is created (the default).
+  dataAdminRoles:
+    - arn: 'arn:{{partition}}:iam::{{account}}:role/test-sso-admin-role'
+
+  # (Optional) Named user profiles for Studio domain.
+  # In SSO mode, the key is the SSO User ID and userRole is not
+  # required.
+  userProfiles:
+    sso-user-id: {}
+
+  # (Optional) Default user settings for Studio applications
+  defaultUserSettings:
+    # (Optional) Whether the Studio web portal is enabled
+    # (enum: DISABLED, ENABLED)
+    studioWebPortal: DISABLED

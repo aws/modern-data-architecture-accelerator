@@ -3,20 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { describe, expect, beforeAll } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { describe } from '@jest/globals';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { DataOpsProjectCDKApp } from '../lib/dataops-project';
 import * as path from 'path';
 
 describe('dataops-project Snapshot Tests', () => {
   beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
     expect.addSnapshotSerializer({
       test: (val: unknown) => typeof val === 'object' && val !== null && 'refresh' in val,
       print: (val: unknown) => {
@@ -26,50 +19,19 @@ describe('dataops-project Snapshot Tests', () => {
       },
     });
   });
-  snapShotTest(
-    'Dataops Project Stack',
-    Create.stackProvider(
-      'DataopsProjectStackMain',
-      (_, context) => {
-        const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
-        const moduleApp = new DataOpsProjectCDKApp({
-          context: {
-            ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
-            additional_accounts: 'xxxxxxxxxxxxx',
-            // Add additional_stacks to create the cross-account stack with the correct account ID and region
-            additional_stacks: JSON.stringify([
-              {
-                account: 'xxxxxxxxxxxxx',
-                region: region,
-              },
-            ]),
-          },
-        });
-        return moduleApp.generateStack();
-      },
-      {
-        module_name: 'test-dataops-project-main',
-        org: 'test-org',
-        env: 'test-env',
-        domain: 'test-domain',
-      },
-    ),
-  );
-
   snapShotTestApp(
-    'Dataops Project App',
+    'Dataops Project App Comprehensive',
     Create.appProvider(
       context => {
         const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
         const moduleApp = new DataOpsProjectCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
-            additional_accounts: 'xxxxxxxxxxxxx',
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
+            additional_accounts: '222222222222',
             additional_stacks: JSON.stringify([
               {
-                account: 'xxxxxxxxxxxxx',
+                account: '222222222222',
                 region: region,
               },
             ]),
@@ -79,7 +41,97 @@ describe('dataops-project Snapshot Tests', () => {
         return moduleApp;
       },
       {
-        module_name: 'test-dataops-project-main',
+        module_name: 'test-dataops-project-comprehensive',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'Dataops Project App Datazone',
+    Create.appProvider(
+      context => {
+        const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
+        const moduleApp = new DataOpsProjectCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-datazone.yaml'),
+            additional_accounts: '222222222222',
+            additional_stacks: JSON.stringify([
+              {
+                account: '222222222222',
+                region: region,
+              },
+            ]),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-dataops-project-datazone',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'Dataops Project App Sagemaker',
+    Create.appProvider(
+      context => {
+        const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
+        const moduleApp = new DataOpsProjectCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-sagemaker.yaml'),
+            additional_accounts: '222222222222',
+            additional_stacks: JSON.stringify([
+              {
+                account: '222222222222',
+                region: region,
+              },
+            ]),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-dataops-project-sagemaker',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'Dataops Project App Minimal',
+    Create.appProvider(
+      context => {
+        const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
+        const moduleApp = new DataOpsProjectCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
+            additional_accounts: '222222222222',
+            additional_stacks: JSON.stringify([
+              {
+                account: '222222222222',
+                region: region,
+              },
+            ]),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-dataops-project-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

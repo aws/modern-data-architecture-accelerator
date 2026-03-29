@@ -1,0 +1,21 @@
+# Minimal DataOps Lambda module configuration.
+# Deploys a single Lambda function with project autowiring.
+
+# (Optional) DataOps project name for Lambda resource autowiring.
+projectName: dataops-project-test
+
+# (Optional) Lambda function definitions.
+functions:
+  - functionName: my-function
+    # Function source code directory
+    srcDir: ./src/lambda/test
+    # Code path to the Lambda handler function.
+    handler: test.lambda_handler
+    # The runtime for the function source code.
+    runtime: python3.8
+    # The role with which the Lambda function will be executed.
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+    # Number of times Lambda (0-2) will retry.
+    retryAttempts: 2
+    # Max age of an invocation event in seconds.
+    maxEventAgeSeconds: 3600

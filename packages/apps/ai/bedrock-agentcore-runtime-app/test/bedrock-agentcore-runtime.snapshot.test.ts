@@ -3,33 +3,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { describe, expect, beforeAll } from '@jest/globals';
-import { snapShotTest, Create, snapShotTestApp } from '@aws-mdaa/testing';
+import { describe } from '@jest/globals';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { BedrockAgentcoreRuntimeApp } from '../lib';
 import * as path from 'path';
 
 describe('Bedrock Agentcore Runtime Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Bedrock Agentcore Runtime Stack',
-    Create.stackProvider(
-      'BedrockAgentcoreRuntimeStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Bedrock Agentcore Runtime App',
+    Create.appProvider(
+      context => {
         const moduleApp = new BedrockAgentcoreRuntimeApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-bedrock-agentcore-runtime-main',
@@ -41,20 +32,42 @@ describe('Bedrock Agentcore Runtime Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Bedrock Agentcore Runtime App',
+    'Bedrock Agentcore Runtime App Codepath',
     Create.appProvider(
       context => {
         const moduleApp = new BedrockAgentcoreRuntimeApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-codepath.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-bedrock-agentcore-runtime-main',
+        module_name: 'test-bedrock-agentcore-runtime-codepath',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'Bedrock Agentcore Runtime App Minimal',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockAgentcoreRuntimeApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-agentcore-runtime-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

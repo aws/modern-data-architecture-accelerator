@@ -1,0 +1,11 @@
+# Minimal DataOps Dashboard module configuration.
+# Deploys a single CloudWatch dashboard with a text widget.
+
+# (Optional) CloudWatch dashboard definitions.
+dashboards:
+  - dashboardName: my-dashboard
+    widgets:
+      - type: text
+        markdown: '# My Dashboard'
+        width: 24
+        height: 2

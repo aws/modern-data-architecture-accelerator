@@ -1,0 +1,65 @@
+# Minimal config for the OpenSearch module.
+# Demonstrates the simplest valid configuration using only required
+# properties.
+
+# Complete OpenSearch domain configuration
+domain:
+  # See CONFIGURATION.md for role reference options (name, arn, id).
+  # IAM role granted admin access to OpenSearch Dashboard.
+  # Role by name (auto-expanded to ARN at deploy time)
+  dataAdminRole:
+    name: Admin
+
+  # Functional name for the OpenSearch domain
+  opensearchDomainName: osdomain-min
+
+  # VPC ID for OpenSearch domain deployment
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: vpc-a1b2c3d4
+
+  # Subnet configurations for domain node placement
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnets:
+    # Availability zone of the subnet
+    - subnetId: subnet-1a2b3c4d
+      # Must match the actual AZ of the specified subnet
+      availabilityZone: '{{region}}a'
+
+  # Security group ingress rules controlling network access
+  securityGroupIngress:
+    # IPv4 CIDR blocks allowed to access the domain
+    ipv4:
+      - 10.0.0.0/28
+
+  # Cluster capacity configuration
+  capacity:
+    # Number of data nodes (default: 1)
+    dataNodes: 1
+    # Data node instance type (default: r5.large.search)
+    dataNodeInstanceType: r5.large.search
+
+  # EBS storage configuration for cluster data nodes
+  ebs:
+    # (Optional) EBS volume size in GiB (default: 10)
+    volumeSize: 10
+
+  # Hour of day (0-23 UTC) for automated snapshot creation
+  automatedSnapshotStartHour: 0
+
+  # OpenSearch engine version in x.y format
+  opensearchEngineVersion: '2.3'
+
+  # Allow automatic OpenSearch engine version upgrades
+  enableVersionUpgrade: false
+
+  # Access policy definitions as IAM policy statement JSON objects
+  accessPolicies:
+    - SID: minimal-access
+      Effect: Allow
+      Principal:
+        AWS:
+          - 'arn:{{partition}}:iam::{{account}}:root'
+      Resource: 'arn:{{partition}}:es:{{region}}:{{account}}:domain/test-domain/*'
+      Action: es:*

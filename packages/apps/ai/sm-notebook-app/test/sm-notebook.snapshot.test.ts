@@ -4,35 +4,26 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { SageMakerNotebookApp } from '../lib/sm-notebook';
 import * as path from 'path';
 
 describe('sm-notebook Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'Sagemaker Notebook Stack',
-    Create.stackProvider(
-      'SagemakerNotebookStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'Sagemaker Notebook App',
+    Create.appProvider(
+      context => {
         const moduleApp = new SageMakerNotebookApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
-        module_name: 'test-sagemaker-notebook',
+        module_name: 'test-sagemaker-notebook-app',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',
@@ -41,20 +32,20 @@ describe('sm-notebook Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'Sagemaker Notebook App',
+    'Sagemaker Notebook App Minimal',
     Create.appProvider(
       context => {
         const moduleApp = new SageMakerNotebookApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-sagemaker-notebook-app',
+        module_name: 'test-sagemaker-notebook-minimal',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

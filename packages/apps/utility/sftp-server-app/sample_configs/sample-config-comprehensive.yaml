@@ -1,0 +1,34 @@
+# SFTP Server Module — Comprehensive Sample Configuration
+# Deploys an AWS Transfer Family SFTP server with VPC networking,
+# ingress CIDR restrictions, optional public IP allocation, and
+# a custom security policy.
+# This config exercises EVERY available property at full depth.
+
+server:
+  # CIDR blocks permitted to connect to the SFTP server on port 22.
+  # All other ingress is denied by default.
+  ingressCidrs:
+    - 10.0.0.0/8
+    - 192.168.0.0/16
+    - 172.16.0.0/12
+  # VPC ID where the SFTP server will be deployed. The security
+  # group and server endpoints are created within this VPC.
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/vpc/id
+  vpcId: some-vpc-id
+  # Subnet IDs where the SFTP server will have network interfaces.
+  # Use multiple subnets across AZs for high availability.
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnetIds:
+    - some-subnet-id1
+    - some-subnet-id2
+  # (Optional) Whether to allocate a public Elastic IP for
+  # internet-facing access. When false, the server is only
+  # accessible within the VPC. (default: false)
+  internetFacing: false
+  # (Optional) Transfer Family security policy name controlling
+  # cryptographic algorithms for SFTP connections. Defaults to
+  # 'TransferSecurityPolicy-FIPS-2020-06'. Use a non-FIPS policy
+  # in regions that do not support FIPS.
+  securityPolicyName: TransferSecurityPolicy-2024-01

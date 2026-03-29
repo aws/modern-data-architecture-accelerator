@@ -1,0 +1,20 @@
+# Minimal configuration for DataOps Crawler module.
+# Only required properties are included.
+# projectName is included to auto-wire security configuration.
+
+# DataOps project name for crawler resource autowiring.
+projectName: dataops-project-test
+
+# Map of crawler names to Glue crawler definitions for data source
+# discovery and cataloging.
+crawlers:
+  test-crawler:
+    # IAM role ARN for crawler execution
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    executionRoleArn: some-arn
+    databaseName: project:databaseName/example-database
+    description: Example for a Crawler
+    targets:
+      s3Targets:
+        - path: s3://some-s3-bucket/path/to/crawler/target

@@ -1,0 +1,22 @@
+# Minimal Sagemaker (DataZone V2) module configuration.
+# Contains only required properties for a basic SageMaker domain deployment.
+
+# Map of domain names to SageMaker domain configurations
+domains:
+  test-domain:
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    # IAM role with administrative privileges over the domain
+    dataAdminRole:
+      name: Admin
+    # Required Tooling blueprint configuration including VPC and subnet
+    # settings for SageMaker environment provisioning
+    tooling:
+      # VPC ID for the Tooling blueprint environment
+      # Often created by your VPC/networking stack.
+      # Example SSM: ssm:/path/to/vpc/id
+      vpcId: test-vpc-id
+      # Subnet IDs within the VPC for the Tooling blueprint environment
+      # Often created by your VPC/networking stack.
+      # Example SSM: ssm:/path/to/subnet/id
+      subnetIds:
+        - test-subnet-id

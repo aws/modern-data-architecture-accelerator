@@ -1,20 +1,44 @@
 # SFTP Users
 
-The SFTP Users CDK application is used to deploy the resources required to provision SFTP user credentials for a deployed SFTP Transfer Family Server.
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/utility/sftp-users-app/index.html).
 
-***
+Deploys AWS Transfer Family user credentials with SSH public key authentication, S3 home directory mappings, and optional auto-generated least-privilege IAM roles for bucket and KMS access. Use this module when you need to onboard SFTP users with scoped access to specific S3 buckets and directories on your Transfer Family server.
 
-## Deployed Resources and Compliance Details
+---
+
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+- **SFTP Users**: Transfer Family users created with SSH public key credentials and home directory mappings to S3 buckets. Private keys are managed externally.
+- **SFTP User IAM Roles**: If an existing IAM role is not specified, a minimally-permissive role is automatically created with scoped-down S3 and KMS access policies for the user's assigned bucket and home directory.
 
 ![SFTPUser](../../../constructs/L3/utility/sftp-users-l3-construct/docs/SFTPUser.png)
 
-**SFTP User** - For each configured User, and SFTP Transfer Family User will be created with the specified SSH Public key credentials.
+---
 
-* Corresponding private key is expected to be managed externally to the config
+## Related Modules
 
-**SFTP User IAM Role** - If an existing IAM role is not specified for a User in the config, a minimally-permissive IAM role will be automatically created and assigned to the user.
+- [SFTP Server](../sftp-server-app/README.md) — Deploy the SFTP server that hosts the users configured here
+- [Data Lake](../../datalake/datalake-app/README.md) — Map SFTP user home directories to data lake S3 buckets for direct data ingestion
+- [Roles](../../governance/roles-app/README.md) — Create IAM roles that can be used as existing SFTP user access roles
 
-***
+---
+
+## Security/Compliance Details
+
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
+
+- **Encryption at Rest**:
+  - S3 buckets referenced by users are encrypted with KMS
+  - User roles are granted access to the specified KMS keys
+  - Cross-account KMS keys are supported
+- **Least Privilege**:
+  - Each user is scoped to a specific S3 bucket and home directory prefix
+  - Auto-generated IAM roles follow least-privilege with S3 path-scoped policies
+  - SSH public key authentication supports secure credential management
+
+---
 
 ## Configuration
 
@@ -23,53 +47,36 @@ The SFTP Users CDK application is used to deploy the resources required to provi
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          sftp-users: # Module Name can be customized
-            module_path: "@aws-mdaa/sftp-users" # Must match module NPM package name
-            module_configs:
-              - ./sftp-users.yaml # Filename/path can be customized
+sftp-users: # Module Name can be customized
+  module_path: '@aws-mdaa/sftp-users' # Must match module NPM package name
+  module_configs:
+    - ./sftp-users.yaml # Filename/path can be customized
 ```
 
-### Module Config (./sftp-users.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./sftp-users.yaml` file referenced in the MDAA config snippet above.
+
+#### Minimal Configuration
+
+Provisions a single AWS Transfer Family SFTP user with SSH public key authentication, one S3 bucket, and a home directory mapping. Start here for a basic SFTP user with access to a single S3 bucket.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-serverId: ssm:/path/to/ssm/server/id
-
-# User name to Public SSH RSA Keys.  These will be used to authenticate against the SFTP server and user
-publicKeys:
-  test-key1:
-    publicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCr1nEXAMPLEPubKey==
-  test-key2:
-    publicKey: ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAsyyGZsEXAMPLEPubKey==
-
-# Our existing buckets and existing KMS keys.  If these are cross account, assure the KMS key, and S3 bucket are shared with the account this is deployed within.
-buckets:
-  home-bucket1:
-    # Arn or SSM Parameter paths are accepted here
-    bucketName: ssm:/path/to/ssm/param/bucket/name
-    kmsKeyArn: ssm:/path/to/ssm/param/kms/arn
-
-  home-bucket2:
-    # Arn or SSM Parameter paths are accepted here
-    bucketName: some-home-bucket-name
-    kmsKeyArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/1234abcd-12ab-34cd-56ef-1234567890ab
-
-# Our User Mapping to Buckets and Object Prefixes.
-users:
-  test-user-1:
-    bucket: home-bucket1
-    homeDirectory: /incoming
-    # Optional existing role ARN or SSM parameter for the role to access the bucket na KMS Key.
-    # If this isn't specified, a minimally scoped role will be created
-    accessRoleArn: ssm:/path/to/ssm/param/role/arn
-    publicKeys:
-      - test-key1
-
-  test-user-2:
-    bucket: home-bucket2
-    homeDirectory: /incoming
-    # Optional existing role ARN or SSM parameter for the role to access the bucket na KMS Key.
-    publicKeys:
-      - test-key2
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+Provisions AWS Transfer Family SFTP users with SSH public key authentication, scoped S3 bucket access, and home directory mappings. Start here when evaluating all available options for multiple users, custom IAM roles, cross-account KMS keys, and home directory configurations.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

@@ -1,0 +1,31 @@
+# EventBridge module — advanced (comprehensive) configuration.
+# Exercises EVERY non-excluded schema property at full depth.
+# Includes multiple event buses demonstrating all optional fields,
+# both principal types, and a bus with no principals.
+
+# Map of event bus names to EventBridge event bus configurations.
+eventBuses:
+  # Bus with all optional properties populated
+  full-featured-bus:
+    # (Optional) Number of days to retain events in the automatically created archive. Enables event replay for debugging and recovery.
+    archiveRetention: 365
+    # (Optional) Principals authorized to publish events to this bus via resource policy. Each entry must specify exactly one of arn or service.
+    principals:
+      # Principal using ARN-based cross-account access (mutually exclusive with service)
+      - arn: arn:{{partition}}:iam::{{account}}:root
+      # Principal using AWS service principal (mutually exclusive with arn)
+      - service: events.amazonaws.com
+
+  # Bus with archive only, no principals
+  archive-only-bus:
+    # (Optional) Number of days to retain events in the automatically created archive. Enables event replay for debugging and recovery.
+    archiveRetention: 30
+
+  # Bus with principals only, no archive
+  principals-only-bus:
+    # (Optional) Principals authorized to publish events to this bus via resource policy. Each entry must specify exactly one of arn or service.
+    principals:
+      - service: logs.amazonaws.com
+
+  # Minimal bus — no optional properties
+  minimal-bus: {}

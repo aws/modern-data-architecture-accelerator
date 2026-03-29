@@ -1,0 +1,256 @@
+# Comprehensive QuickSight Project module configuration.
+# Sets up QuickSight principals, a Redshift data source with secret-based
+# credentials, VPC connectivity, SSL properties, error info, and a multi-LOB
+# shared folder hierarchy with dev/test/prod/self-serve/datasets tiers and
+# granular permissions. This config exercises every compatible optional property
+# using the secretArn credential approach.
+
+# Named QuickSight principals (users or groups) referenced in folder and
+# data source permissions. Each key is a logical name, value is the
+# QuickSight principal ARN.
+principals:
+  Lob1_READERS_GROUP: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:group/lob1-qs-ns/lob1-qs-ns-READERS'
+  Lob1_AUTHORS_GROUP: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:group/lob1-qs-ns/lob1-qs-ns-AUTHORS'
+  Lob1_PUBLISHERS_GROUP: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:group/lob1-qs-ns/lob1-qs-ns-PUBLISHERS'
+  Lob1_ALLUSERS_GROUP: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:group/lob1-qs-ns/lob1-qs-ns-ALLUSERS'
+  Lob2_READERS_GROUP: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:group/lob2-qs-ns/lob2-qs-ns-READERS'
+  Lob2_AUTHORS_GROUP: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:group/lob2-qs-ns/lob2-qs-ns-AUTHORS'
+  Lob2_PUBLISHERS_GROUP: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:group/lob2-qs-ns/lob2-qs-ns-PUBLISHERS'
+  Lob2_ALLUSERS_GROUP: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:group/lob2-qs-ns/lob2-qs-ns-ALLUSERS'
+
+# (Optional) Nested map of data source type to data source configurations
+# for QuickSight project data connectivity. Outer key is the data source
+# type (e.g., REDSHIFT, ATHENA), inner key is a unique data source ID.
+dataSources:
+  # Data source type key (e.g., REDSHIFT, ATHENA)
+  REDSHIFT:
+    datasource2:
+      # Type-specific connection parameters (e.g., redshiftParameters,
+      # athenaParameters)
+      dataSourceSpecificParameters:
+        redshiftParameters:
+          database: 'default_db'
+          clusterId: 'sample-datawarehouse'
+      # A display name for the data source
+      displayName: 'sampleRedshift'
+      # (Optional) The AWS account ID
+      awsAccountId: '{{account}}'
+      # (Optional) Credentials used to connect to the data source.
+      # Supports secret ARN (recommended), credential pair, or
+      # copying credentials from another data source.
+      credentials:
+        # (Optional) Credentials dynamically retrieved from a secret
+        # (recommended). Works with secret rotation.
+        secretArn: '{{resolve:ssm:/sample/sampleLOB/datawarehouse/secret/serviceuserquicksightTestsample}}'
+      # A list of resource permissions on the data source
+      permissions:
+        # Either "READER_DATA_SOURCE" or "AUTHOR_DATA_SOURCE"
+        # (enum: AUTHOR_DATA_SOURCE, READER_DATA_SOURCE)
+        - actions: 'READER_DATA_SOURCE'
+          # The Amazon Resource Name (ARN) of the principal
+          principal: 'Lob1_PUBLISHERS_GROUP'
+        - actions: 'AUTHOR_DATA_SOURCE'
+          principal: 'Lob1_AUTHORS_GROUP'
+      # (Optional) Error information from the last update or the creation
+      # of the data source
+      errorInfo:
+        # (Optional) Error message
+        message: 'test-error-message'
+        # (Optional) Error type. Valid Values are: ACCESS_DENIED |
+        # CONFLICT | COPY_SOURCE_NOT_FOUND | ENGINE_VERSION_NOT_SUPPORTED
+        # | GENERIC_SQL_FAILURE | TIMEOUT | UNKNOWN | UNKNOWN_HOST
+        type: 'UNKNOWN'
+      # (Optional) SSL properties that apply when Amazon QuickSight
+      # connects to your underlying source
+      sslProperties:
+        # Enable to Disable SSL. Default value is false (SSL is enabled)
+        disableSsl: false
+      # (Optional) Use this parameter only when you want Amazon
+      # QuickSight to use a VPC connection when connecting to your
+      # underlying source
+      vpcConnectionProperties:
+        # QuickSight VPC (created in QS) ARN
+        vpcConnectionArn: 'arn:{{partition}}:quicksight:{{region}}:{{account}}:vpcConnection/sampled2ecluster'
+  ATHENA:
+    sample-athena:
+      dataSourceSpecificParameters:
+        athenaParameters:
+          workGroup: 'sample-workgroup'
+      displayName: 'sampleAthena'
+      permissions:
+        - actions: 'READER_DATA_SOURCE'
+          principal: 'Lob1_READERS_GROUP'
+        - actions: 'AUTHOR_DATA_SOURCE'
+          principal: 'Lob1_AUTHORS_GROUP'
+
+# (Optional) Named shared folder configurations for collaborative
+# QuickSight workspace management. Each folder supports hierarchical
+# sub-folders and principal-based permissions (READER_FOLDER or
+# AUTHOR_FOLDER actions).
+sharedFolders:
+  Lob1_dev:
+    # Permission entries controlling who can access this folder and at
+    # what level. (enum: AUTHOR_FOLDER, READER_FOLDER)
+    permissions:
+      - principal: Lob1_AUTHORS_GROUP
+        actions: 'READER_FOLDER'
+      - principal: Lob1_PUBLISHERS_GROUP
+        actions: 'READER_FOLDER'
+    # (Optional) Nested child folders inheriting the parent's
+    # organizational context
+    folders:
+      working:
+        permissions:
+          - principal: Lob1_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob1_PUBLISHERS_GROUP
+            actions: 'AUTHOR_FOLDER'
+      publishing:
+        permissions:
+          - principal: Lob1_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob1_PUBLISHERS_GROUP
+            actions: 'AUTHOR_FOLDER'
+  Lob1_test:
+    permissions:
+      - principal: Lob1_AUTHORS_GROUP
+        actions: 'READER_FOLDER'
+      - principal: Lob1_PUBLISHERS_GROUP
+        actions: 'READER_FOLDER'
+      - principal: Lob1_READERS_GROUP
+        actions: 'READER_FOLDER'
+    folders:
+      working:
+        permissions:
+          - principal: Lob1_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob1_PUBLISHERS_GROUP
+            actions: 'READER_FOLDER'
+          - principal: Lob1_READERS_GROUP
+            actions: 'READER_FOLDER'
+      publishing:
+        permissions:
+          - principal: Lob1_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob1_PUBLISHERS_GROUP
+            actions: 'READER_FOLDER'
+          - principal: Lob1_READERS_GROUP
+            actions: 'READER_FOLDER'
+  Lob1_prod:
+    permissions:
+      - principal: Lob1_AUTHORS_GROUP
+        actions: 'READER_FOLDER'
+      - principal: Lob1_PUBLISHERS_GROUP
+        actions: 'READER_FOLDER'
+      - principal: Lob1_READERS_GROUP
+        actions: 'READER_FOLDER'
+    folders:
+      working:
+        permissions:
+          - principal: Lob1_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob1_PUBLISHERS_GROUP
+            actions: 'READER_FOLDER'
+          - principal: Lob1_READERS_GROUP
+            actions: 'READER_FOLDER'
+      publishing:
+        permissions:
+          - principal: Lob1_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob1_PUBLISHERS_GROUP
+            actions: 'READER_FOLDER'
+          - principal: Lob1_READERS_GROUP
+            actions: 'READER_FOLDER'
+  Lob1_self_serve:
+    permissions:
+      - principal: Lob1_AUTHORS_GROUP
+        actions: 'AUTHOR_FOLDER'
+      - principal: Lob1_PUBLISHERS_GROUP
+        actions: 'AUTHOR_FOLDER'
+      - principal: Lob1_READERS_GROUP
+        actions: 'READER_FOLDER'
+  Lob1_datasets:
+    permissions:
+      - principal: Lob1_ALLUSERS_GROUP
+        actions: 'READER_FOLDER'
+  Lob2_dev:
+    permissions:
+      - principal: Lob2_AUTHORS_GROUP
+        actions: 'READER_FOLDER'
+      - principal: Lob2_PUBLISHERS_GROUP
+        actions: 'READER_FOLDER'
+    folders:
+      working:
+        permissions:
+          - principal: Lob2_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob2_PUBLISHERS_GROUP
+            actions: 'AUTHOR_FOLDER'
+      publishing:
+        permissions:
+          - principal: Lob2_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob2_PUBLISHERS_GROUP
+            actions: 'AUTHOR_FOLDER'
+  Lob2_test:
+    permissions:
+      - principal: Lob2_AUTHORS_GROUP
+        actions: 'READER_FOLDER'
+      - principal: Lob2_PUBLISHERS_GROUP
+        actions: 'READER_FOLDER'
+      - principal: Lob2_READERS_GROUP
+        actions: 'READER_FOLDER'
+    folders:
+      working:
+        permissions:
+          - principal: Lob2_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob2_PUBLISHERS_GROUP
+            actions: 'READER_FOLDER'
+          - principal: Lob2_READERS_GROUP
+            actions: 'READER_FOLDER'
+      publishing:
+        permissions:
+          - principal: Lob2_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob2_PUBLISHERS_GROUP
+            actions: 'READER_FOLDER'
+          - principal: Lob2_READERS_GROUP
+            actions: 'READER_FOLDER'
+  Lob2_prod:
+    permissions:
+      - principal: Lob2_AUTHORS_GROUP
+        actions: 'READER_FOLDER'
+      - principal: Lob2_PUBLISHERS_GROUP
+        actions: 'READER_FOLDER'
+      - principal: Lob2_READERS_GROUP
+        actions: 'READER_FOLDER'
+    folders:
+      working:
+        permissions:
+          - principal: Lob2_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob2_PUBLISHERS_GROUP
+            actions: 'READER_FOLDER'
+          - principal: Lob2_READERS_GROUP
+            actions: 'READER_FOLDER'
+      publishing:
+        permissions:
+          - principal: Lob2_AUTHORS_GROUP
+            actions: 'AUTHOR_FOLDER'
+          - principal: Lob2_PUBLISHERS_GROUP
+            actions: 'READER_FOLDER'
+          - principal: Lob2_READERS_GROUP
+            actions: 'READER_FOLDER'
+  Lob2_self_serve:
+    permissions:
+      - principal: Lob2_AUTHORS_GROUP
+        actions: 'AUTHOR_FOLDER'
+      - principal: Lob2_PUBLISHERS_GROUP
+        actions: 'AUTHOR_FOLDER'
+      - principal: Lob2_READERS_GROUP
+        actions: 'READER_FOLDER'
+  Lob2_datasets:
+    permissions:
+      - principal: Lob2_ALLUSERS_GROUP
+        actions: 'READER_FOLDER'

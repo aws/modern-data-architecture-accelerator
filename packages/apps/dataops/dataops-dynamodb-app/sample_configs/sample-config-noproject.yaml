@@ -1,0 +1,34 @@
+# DataOps DynamoDB module configuration without project integration.
+# Use this approach when deploying DynamoDB tables independently of a
+# DataOps project. Infrastructure resources must be provided directly
+# rather than autowired.
+
+# (Optional) KMS key ARN for encrypting DynamoDB tables
+kmsArn: arn:test-partition:kms:test-region:test-acct:key/test-key-id
+# (Optional) Glue security configuration name
+securityConfigurationName: test-security-config
+# (Optional) S3 bucket name for project storage
+bucketName: test-dynamodb-bucket
+# (Optional) IAM role ARN for deployment operations
+deploymentRoleArn: arn:{{partition}}:iam::{{account}}:role/test-deploy-role
+# (Optional) SNS topic ARN for notifications
+notificationTopicArn: arn:{{partition}}:sns:{{region}}:{{account}}:test-topic
+
+# Map of table names to DynamoDB table definitions.
+tableDefinitions:
+  table-complex:
+    partitionKey:
+      name: pk1
+      type: S
+    sortKey:
+      name: sk1
+      type: S
+    billingMode: PROVISIONED
+    readCapacity: 2
+    writeCapacity: 1
+    timeToLiveAttribute: ttl
+  table-simple:
+    partitionKey:
+      name: pk1
+      type: S
+    billingMode: PAY_PER_REQUEST

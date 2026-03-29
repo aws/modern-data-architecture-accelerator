@@ -1,0 +1,22 @@
+# Minimal configuration for DataOps DMS module.
+# Only required properties are included.
+# projectName is included to auto-wire KMS and other shared resources.
+
+# DataOps project name for auto-wiring shared resources.
+projectName: test-project
+
+# DMS migration and replication configuration.
+dms:
+  replicationInstances:
+    test-instance:
+      instanceClass: dms.t3.micro
+      # VPC ID for DMS replication instance deployment
+      # Often created by your VPC/networking stack.
+      # Example SSM: ssm:/path/to/vpc/id
+      vpcId: test_vpc_id
+      # Subnet IDs for DMS replication instance placement
+      # Often created by your VPC/networking stack.
+      # Example SSM: ssm:/path/to/subnet/id
+      subnetIds:
+        - test_subnet_id1
+        - test_subnet_id2

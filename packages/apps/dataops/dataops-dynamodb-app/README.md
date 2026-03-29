@@ -1,16 +1,36 @@
 # DynamoDB
 
-The Data Ops DynamoDB CDK application is used to deploy the resources required to orchestrate data operations on the data lake (primarily Glue Crawlers, Glue Jobs, Step Functions and Lambdas).
+> **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/dataops/dataops-dynamodb-app/index.html).
+
+Deploys DynamoDB tables with KMS encryption, configurable billing modes (provisioned or on-demand), partition/sort keys, and optional TTL attributes. Use this module when you need fast key-value or document storage for pipeline metadata, lookup tables, or application state within your data environment.
 
 ---
 
-## Deployed Resources and Compliance Details
+## Deployed Resources
+
+This module deploys and integrates the following resources:
+
+**DynamoDB Tables** - DynamoDB tables will be created for each table specification in the configs, with configurable billing modes, partition/sort keys, and optional TTL attributes.
 
 ![Mdaa Dynamodb Architecture](../../../constructs/L3/dataops/dataops-dynamodb-l3-construct/docs/dataops-dynamodb.png)
 
-**DynamoDB** - DynamoDB tables will be created for each table specification in the configs
+---
 
-- DynamoDB table configs can be handcrafted using the simple yaml files
+## Related Modules
+
+- [DataOps Project](../dataops-project-app/README.md) — Deploy the shared project infrastructure (KMS keys) that DynamoDB tables reference
+
+---
+
+## Security/Compliance Details
+
+This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, to assist in meeting organization-specific compliance requirements.
+
+- **Encryption at Rest**:
+  - All tables encrypted with customer-managed KMS key (project KMS key or explicit key ARN)
+- **Data Protection**:
+  - Point-in-time recovery enabled for continuous backups
+  - Optional TTL attribute for automatic item expiration
 
 ---
 
@@ -27,47 +47,40 @@ dataops-dynamodb: # Module Name can be customized
     - ./dataops-dynamodb.yaml # Filename/path can be customized
 ```
 
-### Module Config (./dataops-stepfunction.yaml)
+### Module Config Samples and Variants
 
-[Config Schema Docs](SCHEMA.md)
+Copy the contents of the relevant sample config below into the `./dataops-dynamodb.yaml` file referenced in the MDAA config snippet above.
 
-### Sample DynamoDB Config
+#### Minimal Configuration
 
-DynamoDB configs are stored under the ./dynamodb/ directory, relative to the dynamodb config. Multiple dynamodb tables can be defined in a single config file or across multiple files, as long as they have globally unique names.
+Deploys a single on-demand DynamoDB table with a partition key, wired to a DataOps project for KMS encryption. Start here for a simple key-value table within an existing DataOps project.
+
+[sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
-# (Optional) Name of the Data Ops Project
-# Name the project the resources of which can be used by this dynamodb app.
-# Other resources within the project can be referenced in the dynamodb config using
-# the "project:" prefix on the config value.
-projectName: dataops-project-sample
-
-# Alternatively, if projectName is not provided, you can supply the parameter directly:
-# kmsArn: arn:aws:kms:region:account:key/key-id  # KMS key for table encryption
-# List of dynamodb definitions
-tableDefinitions:
-  table-complex:
-    # Partition key, required
-    partitionKey:
-      name: pk1
-      type: S
-    # Sort key, optional
-    sortKey:
-      name: sk1
-      type: S
-    # if PROVISIONED will need to indicate the read and write capacities
-    billingMode: PROVISIONED
-    # For an item up to 4 KB, one read capacity unit (RCU) represents one strongly consistent read operation per second, or two eventually consistent read operations per second
-    readCapacity: 2
-    # A write capacity unit (WCU) represents one write per second for an item up to 1 KB
-    writeCapacity: 1
-    # a specific attribute to store the TTL expiration timestamp, see https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html
-    timeToLiveAttribute: ttl
-  table-simple:
-    # Partition key, required
-    partitionKey:
-      name: pk1
-      type: S
-    # if PAY_PER_REQUEST don't indicate read/write capacity
-    billingMode: PAY_PER_REQUEST
+--8<-- "sample_configs/sample-config-minimal.yaml"
 ```
+
+#### Comprehensive Configuration
+
+When projectName is set, shared infrastructure (KMS key, S3 bucket, IAM roles, SNS topic, security configuration) is automatically resolved from the referenced DataOps project. Start here when evaluating all available options for billing modes, sort keys, TTL, and provisioned capacity settings.
+
+[sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-comprehensive.yaml"
+```
+
+#### Standalone Configuration (No Project)
+
+Deploys DynamoDB tables independently of a DataOps project. Infrastructure resources must be provided directly rather than autowired. Use this when deploying outside of a DataOps project, providing infrastructure references directly.
+
+[sample-config-noproject.yaml](sample_configs/sample-config-noproject.yaml)
+
+```yaml
+--8<-- "sample_configs/sample-config-noproject.yaml"
+```
+
+---
+
+[Config Schema Docs](SCHEMA.md)

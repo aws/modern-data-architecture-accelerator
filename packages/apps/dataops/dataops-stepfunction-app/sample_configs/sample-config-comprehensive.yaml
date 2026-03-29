@@ -1,0 +1,162 @@
+# Comprehensive DataOps Step Function module configuration.
+# Exercises every non-excluded schema property at full depth.
+
+# DataOps project name for Step Functions resource autowiring.
+projectName: dataops-project-sample
+
+# S3 bucket name for project storage (scripts, artifacts, temp files).
+# Auto-resolved from project when projectName is set.
+bucketName: test-stepfn-bucket
+
+# IAM role ARN for deployment operations and resource management.
+# Auto-resolved from project when projectName is set.
+deploymentRoleArn: arn:test-partition:iam::test-acct:role/test-deploy-role
+
+# KMS key ARN for encrypting DataOps resources and data.
+# Auto-resolved from project when projectName is set.
+kmsArn: arn:test-partition:kms:test-region:test-acct:key/test-key-id
+
+# Glue security configuration name for job encryption
+# (at rest, in transit, CloudWatch logs).
+# Auto-resolved from project when projectName is set.
+securityConfigurationName: test-security-config
+
+# SNS topic ARN for job notifications and workflow alerts.
+# Auto-resolved from project when projectName is set.
+notificationTopicArn: arn:test-partition:sns:test-region:test-acct:test-topic
+
+# Step Functions state machine definitions for serverless workflow orchestration.
+stepfunctionDefinitions:
+  # --- STANDARD state machine with full EventBridge integration ---
+  - # Name for the Step Functions state machine.
+    stateMachineName: sample-state-machine-standard
+    # State machine type: STANDARD for long-running workflows.
+    stateMachineType: STANDARD
+    # IAM role ARN the state machine assumes for executing workflow steps.
+    # Often created by the Roles module.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
+    stateMachineExecutionRole: 'arn:{{partition}}:iam::{{account}}:role/service-role/StepFunctions-standard-role'
+    # CloudWatch log group retention in days (0 for infinite, defaults to 731).
+    logGroupRetentionDays: 0
+    # Whether to log parameter values and execution data during state machine execution.
+    logExecutionData: false
+    # EventBridge configuration for event-driven state machine triggering.
+    eventBridge:
+      # Maximum number of retry attempts EventBridge will make when the target returns an error.
+      retryAttempts: 10
+      # Maximum age in seconds that EventBridge will attempt to deliver an event before discarding.
+      maxEventAgeSeconds: 3600
+      # S3 EventBridge rules that trigger processing workflows based on S3 object events.
+      s3EventBridgeRules:
+        testing-event-bridge-s3:
+          # S3 bucket names that should trigger the EventBridge rule.
+          buckets: [sample-org-dev-instance1-datalake-raw]
+          # S3 object key prefixes that filter which objects trigger the rule.
+          prefixes: [data/test-lambda/]
+          # ARN of the custom EventBridge event bus where the rule should be created.
+          eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name'
+      # General EventBridge rules that trigger processing workflows.
+      eventBridgeRules:
+        testing-event-bridge:
+          # Human-readable description of the EventBridge rule.
+          description: 'testing event pattern rule'
+          # ARN of the custom EventBridge event bus.
+          eventBusArn: 'arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name'
+          # EventBridge event pattern that defines which events trigger the rule.
+          eventPattern:
+            # The 12-digit number identifying an AWS account.
+            account:
+              - '{{account}}'
+            # Identifies the service that sourced the event.
+            source:
+              - 'glue.amazonaws.com'
+            # Identifies, in combination with source, the fields and values in detail.
+            detailType:
+              - 'Glue Job State Change'
+            # A unique value generated for every event.
+            id:
+              - 'example-event-id'
+            # Identifies the AWS region where the event originated.
+            region:
+              - '{{region}}'
+            # ARNs that identify resources involved in the event.
+            resources:
+              - 'arn:{{partition}}:glue:{{region}}:{{account}}:job/my-job'
+            # The event timestamp.
+            time:
+              - '2024-01-01T00:00:00Z'
+            # By default set to 0 in all events.
+            version:
+              - '0'
+            # JSON object with event detail at the discretion of the originating service.
+            detail:
+              some_event_key: some_event_value
+        testing-event-bridge-schedule:
+          # Human-readable description of the EventBridge rule.
+          description: 'testing schedule rule'
+          # Schedule expression for time-based rule triggering.
+          scheduleExpression: 'cron(0 20 * * ? *)'
+          # Custom input payload provided to the rule target instead of the original event.
+          input:
+            some-test-input-obj:
+              some-test-input-key: test-value
+    # State machine definition in Amazon States Language (ASL).
+    # ASL is natively JSON, so you can paste definitions directly
+    # from the Step Functions console or AWS CLI output.
+    rawStepFunctionDef:
+      {
+        'Comment': 'A description of my state machine',
+        'StartAt': 'StartCrawler-Domain1',
+        'States':
+          {
+            'StartCrawler-Domain1':
+              {
+                'Type': 'Task',
+                'Next': 'WaitForDomain1Crawler',
+                'Parameters':
+                  { 'Name': '{{resolve:ssm:/org/domain/glue-project/crawler/name/raw-source-files-crawler}}' },
+                'Resource': 'arn:{{partition}}:states:::aws-sdk:glue:startCrawler',
+              },
+            'WaitForDomain1Crawler': { 'Type': 'Wait', 'Seconds': 5, 'Next': 'GetCrawlerStatus-Domain1' },
+            'GetCrawlerStatus-Domain1':
+              {
+                'Type': 'Task',
+                'Next': 'CheckStatus-Domain1Crawler',
+                'Parameters':
+                  { 'Name': '{{resolve:ssm:/org/domain1/glue-project/crawler/name/raw-source-files-crawler}}' },
+                'Resource': 'arn:{{partition}}:states:::aws-sdk:glue:getCrawler',
+              },
+            'CheckStatus-Domain1Crawler':
+              {
+                'Type': 'Choice',
+                'Choices':
+                  [
+                    {
+                      'Or':
+                        [
+                          { 'Variable': '$.Crawler.State', 'StringEquals': 'RUNNING' },
+                          { 'Variable': '$.Crawler.State', 'StringEquals': 'STOPPING' },
+                        ],
+                      'Next': 'WaitForDomain1Crawler',
+                    },
+                    {
+                      'Or':
+                        [
+                          { 'Variable': '$.Crawler.State', 'StringEquals': 'FAILED' },
+                          { 'Variable': '$.Crawler.State', 'StringEquals': 'STOPPED' },
+                        ],
+                      'Next': 'Fail-Domain1Crawler',
+                    },
+                  ],
+                'Default': 'Success',
+              },
+            'Success': { 'Type': 'Pass', 'End': true },
+            'Fail-Domain1Crawler': { 'Type': 'Fail', 'Cause': 'GlueCrawlerError - Glue Crawler Failed' },
+          },
+      }
+    # CDK Nag suppressions for controlled security rule exceptions.
+    suppressions:
+      # CDK Nag rule ID to suppress.
+      - id: 'NIST.800.53.R5'
+        # Business or technical justification for the suppression.
+        reason: 'Cloudwatch Log Group retention period is managed by AWS Secure Environment Accelerator'

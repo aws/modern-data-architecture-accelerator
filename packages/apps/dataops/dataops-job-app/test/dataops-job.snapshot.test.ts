@@ -4,32 +4,23 @@
  */
 
 import { describe } from '@jest/globals';
-import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
+import { snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { GlueJobCDKApp } from '../lib/dataops-job';
 import * as path from 'path';
 
 describe('dataops-job Snapshot Tests', () => {
-  beforeAll(() => {
-    expect.addSnapshotSerializer({
-      test: val => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: val => {
-        const stringVal = val as string;
-        return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
-      },
-    });
-  });
-  snapShotTest(
-    'GlueJob Stack',
-    Create.stackProvider(
-      'GlueJobStackMain',
-      (_, context) => {
+  snapShotTestApp(
+    'GlueJob App',
+    Create.appProvider(
+      context => {
         const moduleApp = new GlueJobCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
           },
         });
-        return moduleApp.generateStack();
+        moduleApp.generateStack();
+        return moduleApp;
       },
       {
         module_name: 'test-gluejob-main',
@@ -41,20 +32,64 @@ describe('dataops-job Snapshot Tests', () => {
   );
 
   snapShotTestApp(
-    'GlueJob App',
+    'GlueJob App Minimal',
     Create.appProvider(
       context => {
         const moduleApp = new GlueJobCDKApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, 'test-config.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-gluejob-main',
+        module_name: 'test-gluejob-minimal',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'GlueJob App Noproject',
+    Create.appProvider(
+      context => {
+        const moduleApp = new GlueJobCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-noproject.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-gluejob-noproject',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  snapShotTestApp(
+    'GlueJob App Workertype',
+    Create.appProvider(
+      context => {
+        const moduleApp = new GlueJobCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-workertype.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-gluejob-workertype',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',
