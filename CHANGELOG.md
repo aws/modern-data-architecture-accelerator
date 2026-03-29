@@ -1,5 +1,11 @@
 # Change Log
 
+## [Unreleased]
+
+### Bug Fixes
+
+- Fixed IAM Policy cross-stack collision in `dataops-job` and `sm-studio-domain` caused by `BucketDeployment` adding inline policies to imported roles
+
 ## [1.5.0] - 2026-03-13
 
 ### New Features

@@ -129,9 +129,6 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook App App Snapshot Test 1`]
     },
     "Resources": {
       "REPLACED-CFN-LOGICAL-ID": {
-        "DependsOn": [
-          "REPLACED-CFN-LOGICAL-ID",
-        ],
         "Metadata": {
           "cdk_nag": {
             "rules_to_suppress": [
@@ -303,124 +300,6 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook App App Snapshot Test 1`]
         },
         "Type": "Custom::CDKBucketDeployment",
         "UpdateReplacePolicy": "Delete",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "PolicyDocument": {
-            "Statement": [
-              {
-                "Action": [
-                  "s3:GetObject*",
-                  "s3:GetBucket*",
-                  "s3:List*",
-                ],
-                "Effect": "Allow",
-                "Resource": [
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":s3:::",
-                        {
-                          "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-                        },
-                      ],
-                    ],
-                  },
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":s3:::",
-                        {
-                          "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-                        },
-                        "/*",
-                      ],
-                    ],
-                  },
-                ],
-              },
-              {
-                "Action": [
-                  "s3:GetObject*",
-                  "s3:GetBucket*",
-                  "s3:List*",
-                  "s3:DeleteObject*",
-                  "s3:PutObject",
-                  "s3:PutObjectLegalHold",
-                  "s3:PutObjectRetention",
-                  "s3:PutObjectTagging",
-                  "s3:PutObjectVersionTagging",
-                  "s3:Abort*",
-                ],
-                "Effect": "Allow",
-                "Resource": [
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":s3:::some-bucket-name",
-                      ],
-                    ],
-                  },
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":s3:::some-bucket-name/*",
-                      ],
-                    ],
-                  },
-                ],
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-          "Roles": [
-            "example_deployment_role",
-          ],
-        },
-        "Type": "AWS::IAM::Policy",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
@@ -1209,9 +1088,6 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook Stack Snapshot Test 1`] =
   },
   "Resources": {
     "REPLACED-CFN-LOGICAL-ID": {
-      "DependsOn": [
-        "REPLACED-CFN-LOGICAL-ID",
-      ],
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
@@ -1383,124 +1259,6 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook Stack Snapshot Test 1`] =
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":s3:::",
-                      {
-                        "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-                      },
-                    ],
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":s3:::",
-                      {
-                        "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":s3:::some-bucket-name",
-                    ],
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":s3:::some-bucket-name/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-        "Roles": [
-          "example_deployment_role",
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {

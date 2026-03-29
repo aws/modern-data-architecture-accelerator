@@ -198,6 +198,42 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:cdkassetsread:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:cdkassetsread:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:lambda:studiodomainupdatehandler:arn",
         },
         "Value": {
@@ -268,12 +304,84 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:domainbucketdeploy:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:domainbucketdeploy:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:security-group:testorgtestenvtestdomaintestsagemakerstudiodomainmain:id",
         },
         "Value": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "GroupId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:basicexecution:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:basicexecution:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
       },
@@ -1128,19 +1236,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
               },
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Permissions granted on deployment role in owning stack.",
               },
             ],
           },
@@ -1206,19 +1302,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
               },
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Permissions granted on deployment role in owning stack.",
               },
             ],
           },
@@ -1389,19 +1473,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
               },
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Permissions granted on deployment role in owning stack.",
               },
             ],
           },
@@ -1447,19 +1519,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
               },
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Permissions granted on deployment role in owning stack.",
               },
             ],
           },
@@ -1505,19 +1565,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
               },
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Permissions granted on deployment role in owning stack.",
               },
             ],
           },
@@ -1534,6 +1582,181 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "Type": "String",
           "Value": {
             "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "CDK assets bucket read access required for BucketDeployment.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Description": "",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-studio-do--42de369a",
+          "Path": "/",
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "s3:GetObject*",
+                  "s3:GetBucket*",
+                  "s3:List*",
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":s3:::cdk-hnb659fds-assets-",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        "-",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":s3:::cdk-hnb659fds-assets-",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        "-",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        "/*",
+                      ],
+                    ],
+                  },
+                ],
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "CDK assets bucket read access required for BucketDeployment.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/cdk-assets-read/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sm-studio-domain",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-studio-domain-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "CDK assets bucket read access required for BucketDeployment.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/cdk-assets-read/name",
+          "Tags": {
+            "mdaa_cdk_app": "sm-studio-domain",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-studio-domain-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
           },
         },
         "Type": "AWS::SSM::Parameter",
@@ -3163,6 +3386,245 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
         "Type": "AWS::IAM::Policy",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  "Action::s3:DeleteObject*",
+                  "Action::s3:PutObjectLegalHold",
+                  "Action::s3:PutObjectRetention",
+                  "Action::s3:PutObjectTagging",
+                  "Action::s3:PutObjectVersionTagging",
+                  "Action::s3:Abort*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                  {
+                    "regex": "/^Resource::.*\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Description": "",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-studio-dom-1b3a5998",
+          "Path": "/",
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "s3:GetObject*",
+                  "s3:GetBucket*",
+                  "s3:List*",
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":s3:::cdk-hnb659fds-assets-",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        "-",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":s3:::cdk-hnb659fds-assets-",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        "-",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        "/*",
+                      ],
+                    ],
+                  },
+                ],
+              },
+              {
+                "Action": [
+                  "s3:GetObject*",
+                  "s3:GetBucket*",
+                  "s3:List*",
+                  "s3:DeleteObject*",
+                  "s3:PutObject",
+                  "s3:PutObjectLegalHold",
+                  "s3:PutObjectRetention",
+                  "s3:PutObjectTagging",
+                  "s3:PutObjectVersionTagging",
+                  "s3:Abort*",
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                  {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        {
+                          "Fn::GetAtt": [
+                            "REPLACED-CFN-LOGICAL-ID",
+                            "Arn",
+                          ],
+                        },
+                        "/*",
+                      ],
+                    ],
+                  },
+                ],
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  "Action::s3:DeleteObject*",
+                  "Action::s3:PutObjectLegalHold",
+                  "Action::s3:PutObjectRetention",
+                  "Action::s3:PutObjectTagging",
+                  "Action::s3:PutObjectVersionTagging",
+                  "Action::s3:Abort*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                  {
+                    "regex": "/^Resource::.*\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/domain-bucket-deploy/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sm-studio-domain",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-studio-domain-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  "Action::s3:DeleteObject*",
+                  "Action::s3:PutObjectLegalHold",
+                  "Action::s3:PutObjectRetention",
+                  "Action::s3:PutObjectTagging",
+                  "Action::s3:PutObjectVersionTagging",
+                  "Action::s3:Abort*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                  {
+                    "regex": "/^Resource::.*\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/domain-bucket-deploy/name",
+          "Tags": {
+            "mdaa_cdk_app": "sm-studio-domain",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-studio-domain-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "GroupDescription": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main/security-group",
           "GroupName": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main-test-org-test-env-test-domain-test-sagemaker-studio-domain-main",
@@ -3575,7 +4037,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
         },
         "Properties": {
           "Description": "",
-          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main-basic-execution",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-studio-do--39bebade",
           "Path": "/",
           "PolicyDocument": {
             "Statement": [
@@ -3842,6 +4304,60 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           ],
         },
         "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/basic-execution/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sm-studio-domain",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-studio-domain-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/basic-execution/name",
+          "Tags": {
+            "mdaa_cdk_app": "sm-studio-domain",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-studio-domain-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
@@ -4840,6 +5356,42 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:cdkassetsread:arn",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:cdkassetsread:name",
+      },
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:lambda:studiodomainupdatehandler:arn",
       },
       "Value": {
@@ -4910,12 +5462,84 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:domainbucketdeploy:arn",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:domainbucketdeploy:name",
+      },
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:security-group:testorgtestenvtestdomaintestsagemakerstudiodomainmain:id",
       },
       "Value": {
         "Fn::GetAtt": [
           "REPLACED-CFN-LOGICAL-ID",
           "GroupId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:basicexecution:arn",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:basicexecution:name",
+      },
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
         ],
       },
     },
@@ -5770,19 +6394,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
             },
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Permissions granted on deployment role in owning stack.",
             },
           ],
         },
@@ -5848,19 +6460,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
             },
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Permissions granted on deployment role in owning stack.",
             },
           ],
         },
@@ -6031,19 +6631,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
             },
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Permissions granted on deployment role in owning stack.",
             },
           ],
         },
@@ -6089,19 +6677,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
             },
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Permissions granted on deployment role in owning stack.",
             },
           ],
         },
@@ -6147,19 +6723,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
             },
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Permissions granted on deployment role in owning stack.",
             },
           ],
         },
@@ -6176,6 +6740,181 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "Type": "String",
         "Value": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "CDK assets bucket read access required for BucketDeployment.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-studio-do--42de369a",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::cdk-hnb659fds-assets-",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::cdk-hnb659fds-assets-",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "CDK assets bucket read access required for BucketDeployment.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/cdk-assets-read/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "CDK assets bucket read access required for BucketDeployment.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/cdk-assets-read/name",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
         },
       },
       "Type": "AWS::SSM::Parameter",
@@ -7805,6 +8544,245 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
       "Type": "AWS::IAM::Policy",
     },
     "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-studio-dom-1b3a5998",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::cdk-hnb659fds-assets-",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::cdk-hnb659fds-assets-",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "REPLACED-CFN-LOGICAL-ID",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/domain-bucket-deploy/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/domain-bucket-deploy/name",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "GroupDescription": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main/security-group",
         "GroupName": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main-test-org-test-env-test-domain-test-sagemaker-studio-domain-main",
@@ -8217,7 +9195,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
       },
       "Properties": {
         "Description": "",
-        "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main-basic-execution",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-studio-do--39bebade",
         "Path": "/",
         "PolicyDocument": {
           "Statement": [
@@ -8484,6 +9462,60 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         ],
       },
       "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/basic-execution/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/basic-execution/name",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {

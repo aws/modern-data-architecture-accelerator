@@ -169,21 +169,31 @@ export class GlueJobL3Construct extends MdaaL3Construct {
 
     // Build our jobs!
     const allJobs = this.props.jobConfigs;
-    Object.keys(allJobs).forEach(jobName => {
+    for (const jobName of Object.keys(allJobs)) {
       const jobConfig = allJobs[jobName];
       this.createJob(jobName, jobConfig, deploymentRole, bucket);
-    });
-    //CDK S3 Deployment automatically adds inline policy to project deployment role.
+    }
+
+    // BucketDeployment adds an inline policy to the imported deployment role,
+    // which CDK synthesizes as a standalone AWS::IAM::Policy resource.
+    // Because the policy name is derived from the construct path (not the stack name),
+    // multiple stacks importing the same role produce colliding physical names.
+    // Remove the inline policy node — the deployment role already has the necessary
+    // S3 permissions granted in the dataops-project construct that owns it.
+    for (const child of deploymentRole.node.children) {
+      if (child.node.id === 'Policy') {
+        deploymentRole.node.tryRemoveChild(child.node.id);
+        break;
+      }
+    }
+
+    // Suppress nag warnings on the imported deployment role node itself
+    // (remaining after inline policy removal, e.g. wildcard resource warnings)
     this.scope.node.children.forEach(child => {
       if (child.node.id.startsWith('deployment-role')) {
         MdaaNagSuppressions.addCodeResourceSuppressions(
           child,
-          [
-            { id: 'AwsSolutions-IAM5', reason: 'Inline policy used only for deployment.' },
-            { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Policy used only for deployment.' },
-            { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Policy used only for deployment.' },
-            { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Policy used only for deployment.' },
-          ],
+          [{ id: 'AwsSolutions-IAM5', reason: 'Permissions granted on deployment role in owning stack.' }],
           true,
         );
       }

@@ -71,3 +71,5 @@ tmp
 generated/design/
 project-doc/
 .cache
+
+temp_configs

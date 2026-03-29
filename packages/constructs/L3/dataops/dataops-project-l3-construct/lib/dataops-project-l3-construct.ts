@@ -7,6 +7,7 @@ import { SecurityConfiguration } from '@aws-cdk/aws-glue-alpha';
 import { AthenaWorkgroupL3Construct, AthenaWorkgroupL3ConstructProps } from '@aws-mdaa/athena-workgroup-l3-construct';
 import { ConfigurationElement } from '@aws-mdaa/config';
 import { MdaaStringParameter } from '@aws-mdaa/construct';
+import { NagSuppressions } from 'cdk-nag';
 import {
   DomainConfig,
   MdaaDatazoneEnvironment,
@@ -18,7 +19,7 @@ import { MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
 import { Ec2L3Construct, Ec2L3ConstructProps } from '@aws-mdaa/ec2-l3-construct';
 import { GlueCatalogL3Construct } from '@aws-mdaa/glue-catalog-l3-construct';
 import { MdaaCfnCrawler, MdaaCfnCrawlerProps, MdaaSecurityConfig } from '@aws-mdaa/glue-constructs';
-import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
@@ -43,19 +44,11 @@ import {
   SageMakerProjectProps,
 } from '@aws-mdaa/sagemaker-project-l3-construct';
 import { MdaaSnsTopic, MdaaSnsTopicProps } from '@aws-mdaa/sns-constructs';
-import { Arn, ArnComponents, ArnFormat, Tags } from 'aws-cdk-lib';
+import { Arn, ArnComponents, ArnFormat, BOOTSTRAP_QUALIFIER_CONTEXT, DefaultStackSynthesizer, Tags } from 'aws-cdk-lib';
 import { CfnDataSource, CfnDataSourceProps } from 'aws-cdk-lib/aws-datazone';
 import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { CfnClassifier, CfnConnection, CfnCrawler, CfnDatabase } from 'aws-cdk-lib/aws-glue';
-import {
-  AccountPrincipal,
-  Effect,
-  IRole,
-  ManagedPolicy,
-  PolicyStatement,
-  Role,
-  ServicePrincipal,
-} from 'aws-cdk-lib/aws-iam';
+import { AccountPrincipal, Effect, IRole, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { CfnPrincipalPermissions, CfnResource } from 'aws-cdk-lib/aws-lakeformation';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
@@ -574,6 +567,65 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       lakeFormationLocationRole,
     );
 
+    // Grant the deployment role S3 permissions needed by BucketDeployment.
+    // BucketDeployment reads from the CDK assets bucket and writes to the project bucket.
+    // Without this managed policy, BucketDeployment adds an inline policy to the role,
+    // which causes IAM Policy physical name collisions when the role is imported
+    // across multiple stacks (see GitHub issue #36).
+    const qualifier = this.node.tryGetContext(BOOTSTRAP_QUALIFIER_CONTEXT) ?? DefaultStackSynthesizer.DEFAULT_QUALIFIER;
+    const cdkAssetsBucketArn = `arn:${this.partition}:s3:::cdk-${qualifier}-assets-${this.account}-${this.region}`;
+    const deploymentS3Policy = new MdaaManagedPolicy(this.scope, 'deployment-s3-policy', {
+      managedPolicyName: 'deployment-s3',
+      naming: this.props.naming,
+      roles: [projectDeploymentRole],
+      statements: [
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['s3:GetObject*', 's3:GetBucket*', 's3:List*'],
+          resources: [cdkAssetsBucketArn, `${cdkAssetsBucketArn}/*`],
+        }),
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: [
+            's3:GetObject*',
+            's3:GetBucket*',
+            's3:List*',
+            's3:DeleteObject*',
+            's3:PutObject',
+            's3:PutObjectLegalHold',
+            's3:PutObjectRetention',
+            's3:PutObjectTagging',
+            's3:PutObjectVersionTagging',
+            's3:Abort*',
+          ],
+          resources: [projectBucket.bucketArn, `${projectBucket.bucketArn}/*`],
+        }),
+      ],
+    });
+    NagSuppressions.addResourceSuppressions(
+      deploymentS3Policy,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'S3 permissions required for BucketDeployment to copy assets to project bucket.',
+          appliesTo: [
+            'Action::s3:GetObject*',
+            'Action::s3:GetBucket*',
+            'Action::s3:List*',
+            'Action::s3:DeleteObject*',
+            'Action::s3:PutObjectLegalHold',
+            'Action::s3:PutObjectRetention',
+            'Action::s3:PutObjectTagging',
+            'Action::s3:PutObjectVersionTagging',
+            'Action::s3:Abort*',
+            { regex: '/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/' },
+            { regex: '/^Resource::.*\\/\\*$/' },
+          ],
+        },
+      ],
+      true,
+    );
+
     const datazoneResources = this.createDataZoneSageMakerResources(projectBucket, datazoneUserRole);
 
     this.createAthenaWorkgroup(
@@ -614,8 +666,9 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       const projectExecutionRoles = this.projectExecutionRoles.map(x => {
         return MdaaRole.fromRoleArn(this.scope, `resolve-role-${i++}`, x.arn());
       });
-      const keyAccessPolicy = new ManagedPolicy(this.scope, 'catalog-key-access-policy', {
-        managedPolicyName: this.props.naming.resourceName('catalog-key-access'),
+      const keyAccessPolicy = new MdaaManagedPolicy(this.scope, 'catalog-key-access-policy', {
+        managedPolicyName: 'catalog-key-access',
+        naming: this.props.naming,
         roles: projectExecutionRoles,
       });
       const keyAccessStatement = new PolicyStatement({

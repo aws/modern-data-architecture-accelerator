@@ -187,6 +187,42 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:catalogkeyaccess:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:catalogkeyaccess:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-dataops-project-main:workgroup:name",
         },
         "Value": "test-org-test-env-test-domain-test-dataops-project-main",
@@ -377,6 +413,42 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "TopicName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:deployments3:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:deployments3:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
       },
@@ -1962,7 +2034,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "Description": "",
-          "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-main-catalog-key-access",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-main-40acaaab",
           "Path": "/",
           "PolicyDocument": {
             "Statement": [
@@ -2029,6 +2101,60 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           ],
         },
         "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/catalog-key-access/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-project",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dataops-project-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/catalog-key-access/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-project",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dataops-project-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
       },
       "classifierCsvclassifier": {
         "Properties": {
@@ -7440,6 +7566,245 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
         "Type": "AWS::SNS::Subscription",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  "Action::s3:DeleteObject*",
+                  "Action::s3:PutObjectLegalHold",
+                  "Action::s3:PutObjectRetention",
+                  "Action::s3:PutObjectTagging",
+                  "Action::s3:PutObjectVersionTagging",
+                  "Action::s3:Abort*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                  {
+                    "regex": "/^Resource::.*\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "S3 permissions required for BucketDeployment to copy assets to project bucket.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Description": "",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-main-30871f23",
+          "Path": "/",
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "s3:GetObject*",
+                  "s3:GetBucket*",
+                  "s3:List*",
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":s3:::cdk-hnb659fds-assets-",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        "-",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":s3:::cdk-hnb659fds-assets-",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        "-",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        "/*",
+                      ],
+                    ],
+                  },
+                ],
+              },
+              {
+                "Action": [
+                  "s3:GetObject*",
+                  "s3:GetBucket*",
+                  "s3:List*",
+                  "s3:DeleteObject*",
+                  "s3:PutObject",
+                  "s3:PutObjectLegalHold",
+                  "s3:PutObjectRetention",
+                  "s3:PutObjectTagging",
+                  "s3:PutObjectVersionTagging",
+                  "s3:Abort*",
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                  {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        {
+                          "Fn::GetAtt": [
+                            "REPLACED-CFN-LOGICAL-ID",
+                            "Arn",
+                          ],
+                        },
+                        "/*",
+                      ],
+                    ],
+                  },
+                ],
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  "Action::s3:DeleteObject*",
+                  "Action::s3:PutObjectLegalHold",
+                  "Action::s3:PutObjectRetention",
+                  "Action::s3:PutObjectTagging",
+                  "Action::s3:PutObjectVersionTagging",
+                  "Action::s3:Abort*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                  {
+                    "regex": "/^Resource::.*\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "S3 permissions required for BucketDeployment to copy assets to project bucket.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/deployment-s3/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-project",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dataops-project-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  "Action::s3:DeleteObject*",
+                  "Action::s3:PutObjectLegalHold",
+                  "Action::s3:PutObjectRetention",
+                  "Action::s3:PutObjectTagging",
+                  "Action::s3:PutObjectVersionTagging",
+                  "Action::s3:Abort*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                  {
+                    "regex": "/^Resource::.*\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "S3 permissions required for BucketDeployment to copy assets to project bucket.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/deployment-s3/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-project",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dataops-project-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "AssumeRolePolicyDocument": {
             "Statement": [
@@ -8493,6 +8858,42 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:catalogkeyaccess:arn",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:catalogkeyaccess:name",
+      },
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-dataops-project-main:workgroup:name",
       },
       "Value": "test-org-test-env-test-domain-test-dataops-project-main",
@@ -8683,6 +9084,42 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         "Fn::GetAtt": [
           "REPLACED-CFN-LOGICAL-ID",
           "TopicName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:deployments3:arn",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:deployments3:name",
+      },
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
         ],
       },
     },
@@ -10268,7 +10705,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "Description": "",
-        "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-main-catalog-key-access",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-main-40acaaab",
         "Path": "/",
         "PolicyDocument": {
           "Statement": [
@@ -10335,6 +10772,60 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         ],
       },
       "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/catalog-key-access/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/catalog-key-access/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
     },
     "classifierCsvclassifier": {
       "Properties": {
@@ -15744,6 +16235,245 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         },
       },
       "Type": "AWS::SNS::Subscription",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "S3 permissions required for BucketDeployment to copy assets to project bucket.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-main-30871f23",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::cdk-hnb659fds-assets-",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::cdk-hnb659fds-assets-",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "REPLACED-CFN-LOGICAL-ID",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "S3 permissions required for BucketDeployment to copy assets to project bucket.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/deployment-s3/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "S3 permissions required for BucketDeployment to copy assets to project bucket.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-main/managed-policy/deployment-s3/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {

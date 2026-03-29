@@ -62,10 +62,7 @@ export class LifeCycleConfigHelper {
     assetDeployment: AssetDeploymentProps,
   ) {
     //create assets
-    Object.entries(namedAssetProps).forEach(assetEntry => {
-      const assetName = assetEntry[0];
-      const assetProps = assetEntry[1];
-
+    for (const [assetName, assetProps] of Object.entries(namedAssetProps)) {
       const assetSource = Source.asset(assetProps.sourcePath, { exclude: assetProps.exclude });
 
       new BucketDeployment(assetDeployment.scope, `asset-deployment-${assetName}-${lifecycleType}`, {
@@ -76,18 +73,25 @@ export class LifeCycleConfigHelper {
         extract: true,
         memoryLimit: assetDeployment.memoryLimitMB,
       });
-    });
+    }
 
-    // BucketDeployment adds an inline policy to asset deployment role
-    // permitting the copy of assets from cdk depoy bucket to destination bucket.
+    // BucketDeployment adds an inline policy to the asset deployment role,
+    // which CDK synthesizes as a standalone AWS::IAM::Policy resource.
+    // Because the policy name is derived from the construct path (not the stack name),
+    // multiple stacks importing the same role produce colliding physical names.
+    // Remove the inline policy node — the asset deployment role should have the
+    // necessary S3 permissions granted in the construct that owns it.
+    for (const child of assetDeployment.assetDeploymentRole.node.children) {
+      if (child.node.id === 'Policy') {
+        assetDeployment.assetDeploymentRole.node.tryRemoveChild(child.node.id);
+        break;
+      }
+    }
+
+    // Suppress nag warnings on the asset deployment role
     MdaaNagSuppressions.addCodeResourceSuppressions(
       assetDeployment.assetDeploymentRole,
-      [
-        { id: 'AwsSolutions-IAM5', reason: 'Inline policy used only for deployment.' },
-        { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Policy used only for deployment.' },
-        { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Policy used only for deployment.' },
-        { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Policy used only for deployment.' },
-      ],
+      [{ id: 'AwsSolutions-IAM5', reason: 'Permissions granted on deployment role in owning stack.' }],
       true,
     );
 

@@ -292,6 +292,42 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-data-science-team:managed-policy:domainbucketdeploy:arn",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-data-science-team:managed-policy:domainbucketdeploy:name",
+      },
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-data-science-team:managed-policy:someprefixsmwrite:arn",
       },
       "Value": {
@@ -477,6 +513,42 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-data-science-team:managed-policy:basicexecution:arn",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-data-science-team:managed-policy:basicexecution:name",
+      },
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-data-science-team:layer-version:arn",
       },
       "Value": {
@@ -623,9 +695,6 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
   },
   "Resources": {
     "REPLACED-CFN-LOGICAL-ID": {
-      "DependsOn": [
-        "REPLACED-CFN-LOGICAL-ID",
-      ],
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
@@ -4185,6 +4254,279 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
       },
       "Type": "AWS::CloudFormation::CustomResource",
       "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-data-science-team-d--7880ef85",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::cdk-hnb659fds-assets-",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::cdk-hnb659fds-assets-",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "REPLACED-CFN-LOGICAL-ID",
+                              "Arn",
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-data-science-team/managed-policy/domain-bucket-deploy/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datascience-team",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-science-team",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/",
+                },
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-data-science-team/managed-policy/domain-bucket-deploy/name",
+        "Tags": {
+          "mdaa_cdk_app": "datascience-team",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-science-team",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Metadata": {
@@ -8201,159 +8543,6 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
       "DependsOn": [
         "REPLACED-CFN-LOGICAL-ID",
       ],
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":s3:::",
-                      {
-                        "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-                      },
-                    ],
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":s3:::",
-                      {
-                        "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":s3:::",
-                      {
-                        "Ref": "REPLACED-CFN-LOGICAL-ID",
-                      },
-                    ],
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":s3:::",
-                      {
-                        "Ref": "REPLACED-CFN-LOGICAL-ID",
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-        "Roles": [
-          {
-            "Fn::Select": [
-              1,
-              {
-                "Fn::Split": [
-                  "/",
-                  {
-                    "Fn::Select": [
-                      5,
-                      {
-                        "Fn::Split": [
-                          ":",
-                          {
-                            "Fn::GetAtt": [
-                              "REPLACED-CFN-LOGICAL-ID",
-                              "Arn",
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "DependsOn": [
-        "REPLACED-CFN-LOGICAL-ID",
-      ],
       "Properties": {
         "Content": {
           "S3Bucket": {
@@ -8460,7 +8649,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
       },
       "Properties": {
         "Description": "",
-        "ManagedPolicyName": "test-org-test-env-test-domain-test-data-science-team-basic-execution",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-data-science-team-ba--17773a1",
         "Path": "/",
         "PolicyDocument": {
           "Statement": [
@@ -8750,6 +8939,66 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         ],
       },
       "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "Name": "/test-org/test-domain/test-data-science-team/managed-policy/basic-execution/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datascience-team",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-science-team",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "Name": "/test-org/test-domain/test-data-science-team/managed-policy/basic-execution/name",
+        "Tags": {
+          "mdaa_cdk_app": "datascience-team",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-science-team",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "DependsOn": [
@@ -9969,6 +10218,42 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-data-science-team-app:managed-policy:domainbucketdeploy:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-data-science-team-app:managed-policy:domainbucketdeploy:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-data-science-team-app:managed-policy:someprefixsmwrite:arn",
         },
         "Value": {
@@ -10154,6 +10439,42 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-data-science-team-app:managed-policy:basicexecution:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-data-science-team-app:managed-policy:basicexecution:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-data-science-team-app:layer-version:arn",
         },
         "Value": {
@@ -10300,9 +10621,6 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
     },
     "Resources": {
       "REPLACED-CFN-LOGICAL-ID": {
-        "DependsOn": [
-          "REPLACED-CFN-LOGICAL-ID",
-        ],
         "Metadata": {
           "cdk_nag": {
             "rules_to_suppress": [
@@ -13862,6 +14180,279 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
         },
         "Type": "AWS::CloudFormation::CustomResource",
         "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  "Action::s3:DeleteObject*",
+                  "Action::s3:PutObjectLegalHold",
+                  "Action::s3:PutObjectRetention",
+                  "Action::s3:PutObjectTagging",
+                  "Action::s3:PutObjectVersionTagging",
+                  "Action::s3:Abort*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                  {
+                    "regex": "/^Resource::.*\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Description": "",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-data-science-team-ap-7db2afa7",
+          "Path": "/",
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "s3:GetObject*",
+                  "s3:GetBucket*",
+                  "s3:List*",
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":s3:::cdk-hnb659fds-assets-",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        "-",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":s3:::cdk-hnb659fds-assets-",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        "-",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        "/*",
+                      ],
+                    ],
+                  },
+                ],
+              },
+              {
+                "Action": [
+                  "s3:GetObject*",
+                  "s3:GetBucket*",
+                  "s3:List*",
+                  "s3:DeleteObject*",
+                  "s3:PutObject",
+                  "s3:PutObjectLegalHold",
+                  "s3:PutObjectRetention",
+                  "s3:PutObjectTagging",
+                  "s3:PutObjectVersionTagging",
+                  "s3:Abort*",
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":s3:::",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":s3:::",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                        "/*",
+                      ],
+                    ],
+                  },
+                ],
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Roles": [
+            {
+              "Fn::Select": [
+                1,
+                {
+                  "Fn::Split": [
+                    "/",
+                    {
+                      "Fn::Select": [
+                        5,
+                        {
+                          "Fn::Split": [
+                            ":",
+                            {
+                              "Fn::GetAtt": [
+                                "REPLACED-CFN-LOGICAL-ID",
+                                "Arn",
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  "Action::s3:DeleteObject*",
+                  "Action::s3:PutObjectLegalHold",
+                  "Action::s3:PutObjectRetention",
+                  "Action::s3:PutObjectTagging",
+                  "Action::s3:PutObjectVersionTagging",
+                  "Action::s3:Abort*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                  {
+                    "regex": "/^Resource::.*\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-data-science-team-app/managed-policy/domain-bucket-deploy/arn",
+          "Tags": {
+            "mdaa_cdk_app": "datascience-team",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-data-science-team-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Action::s3:GetObject*",
+                  "Action::s3:GetBucket*",
+                  "Action::s3:List*",
+                  "Action::s3:DeleteObject*",
+                  "Action::s3:PutObjectLegalHold",
+                  "Action::s3:PutObjectRetention",
+                  "Action::s3:PutObjectTagging",
+                  "Action::s3:PutObjectVersionTagging",
+                  "Action::s3:Abort*",
+                  {
+                    "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/",
+                  },
+                  {
+                    "regex": "/^Resource::.*\\/\\*$/",
+                  },
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-data-science-team-app/managed-policy/domain-bucket-deploy/name",
+          "Tags": {
+            "mdaa_cdk_app": "datascience-team",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-data-science-team-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Metadata": {
@@ -17878,159 +18469,6 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
         "DependsOn": [
           "REPLACED-CFN-LOGICAL-ID",
         ],
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "PolicyDocument": {
-            "Statement": [
-              {
-                "Action": [
-                  "s3:GetObject*",
-                  "s3:GetBucket*",
-                  "s3:List*",
-                ],
-                "Effect": "Allow",
-                "Resource": [
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":s3:::",
-                        {
-                          "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-                        },
-                      ],
-                    ],
-                  },
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":s3:::",
-                        {
-                          "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-                        },
-                        "/*",
-                      ],
-                    ],
-                  },
-                ],
-              },
-              {
-                "Action": [
-                  "s3:GetObject*",
-                  "s3:GetBucket*",
-                  "s3:List*",
-                  "s3:DeleteObject*",
-                  "s3:PutObject",
-                  "s3:PutObjectLegalHold",
-                  "s3:PutObjectRetention",
-                  "s3:PutObjectTagging",
-                  "s3:PutObjectVersionTagging",
-                  "s3:Abort*",
-                ],
-                "Effect": "Allow",
-                "Resource": [
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":s3:::",
-                        {
-                          "Ref": "REPLACED-CFN-LOGICAL-ID",
-                        },
-                      ],
-                    ],
-                  },
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":s3:::",
-                        {
-                          "Ref": "REPLACED-CFN-LOGICAL-ID",
-                        },
-                        "/*",
-                      ],
-                    ],
-                  },
-                ],
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-          "Roles": [
-            {
-              "Fn::Select": [
-                1,
-                {
-                  "Fn::Split": [
-                    "/",
-                    {
-                      "Fn::Select": [
-                        5,
-                        {
-                          "Fn::Split": [
-                            ":",
-                            {
-                              "Fn::GetAtt": [
-                                "REPLACED-CFN-LOGICAL-ID",
-                                "Arn",
-                              ],
-                            },
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-        "Type": "AWS::IAM::Policy",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "DependsOn": [
-          "REPLACED-CFN-LOGICAL-ID",
-        ],
         "Properties": {
           "Content": {
             "S3Bucket": {
@@ -18137,7 +18575,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
         },
         "Properties": {
           "Description": "",
-          "ManagedPolicyName": "test-org-test-env-test-domain-test-data-science-team-app-basic-execution",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-data-science-team-ap--33ede4d",
           "Path": "/",
           "PolicyDocument": {
             "Statement": [
@@ -18427,6 +18865,66 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           ],
         },
         "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "Name": "/test-org/test-domain/test-data-science-team-app/managed-policy/basic-execution/arn",
+          "Tags": {
+            "mdaa_cdk_app": "datascience-team",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-data-science-team-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "Name": "/test-org/test-domain/test-data-science-team-app/managed-policy/basic-execution/name",
+          "Tags": {
+            "mdaa_cdk_app": "datascience-team",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-data-science-team-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "DependsOn": [

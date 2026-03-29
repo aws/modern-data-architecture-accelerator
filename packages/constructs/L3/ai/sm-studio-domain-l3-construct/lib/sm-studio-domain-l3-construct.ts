@@ -4,7 +4,7 @@
  */
 
 import { MdaaSecurityGroup, MdaaSecurityGroupProps, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
-import { IMdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
+import { IMdaaManagedPolicy, MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
@@ -18,14 +18,15 @@ import {
   MdaaStudioLifecycleConfigProps,
 } from '@aws-mdaa/sagemaker-constructs';
 import { AssetDeploymentProps, LifeCycleConfigHelper, LifecycleScriptProps } from '@aws-mdaa/sm-shared';
-import { CfnTag } from 'aws-cdk-lib';
+import { BOOTSTRAP_QUALIFIER_CONTEXT, CfnTag, DefaultStackSynthesizer } from 'aws-cdk-lib';
 import { ISecurityGroup, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { Effect, IRole, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Effect, IRole, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 
 import { CfnDomain, CfnUserProfile } from 'aws-cdk-lib/aws-sagemaker';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
+import { NagSuppressions } from 'cdk-nag';
 
 import { Construct } from 'constructs';
 
@@ -197,6 +198,63 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
           assetDeploymentRole,
         );
 
+    // Grant the deployment role access to the CDK assets bucket (read)
+    // and the domain bucket (read/write). BucketDeployment copies assets
+    // from the CDK assets bucket to the domain bucket.
+    const qualifier = this.node.tryGetContext(BOOTSTRAP_QUALIFIER_CONTEXT) ?? DefaultStackSynthesizer.DEFAULT_QUALIFIER;
+    const cdkAssetsBucketArn = `arn:${this.partition}:s3:::cdk-${qualifier}-assets-${this.account}-${this.region}`;
+    const domainBucketPolicy = new MdaaManagedPolicy(this.scope, 'domain-bucket-deployment-policy', {
+      managedPolicyName: 'domain-bucket-deploy',
+      naming: this.props.naming,
+      roles: [assetDeploymentRole],
+      statements: [
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['s3:GetObject*', 's3:GetBucket*', 's3:List*'],
+          resources: [cdkAssetsBucketArn, `${cdkAssetsBucketArn}/*`],
+        }),
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: [
+            's3:GetObject*',
+            's3:GetBucket*',
+            's3:List*',
+            's3:DeleteObject*',
+            's3:PutObject',
+            's3:PutObjectLegalHold',
+            's3:PutObjectRetention',
+            's3:PutObjectTagging',
+            's3:PutObjectVersionTagging',
+            's3:Abort*',
+          ],
+          resources: [domainBucket.bucketArn, `${domainBucket.bucketArn}/*`],
+        }),
+      ],
+    });
+    NagSuppressions.addResourceSuppressions(
+      domainBucketPolicy,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'S3 permissions required for BucketDeployment to copy lifecycle assets.',
+          appliesTo: [
+            'Action::s3:GetObject*',
+            'Action::s3:GetBucket*',
+            'Action::s3:List*',
+            'Action::s3:DeleteObject*',
+            'Action::s3:PutObjectLegalHold',
+            'Action::s3:PutObjectRetention',
+            'Action::s3:PutObjectTagging',
+            'Action::s3:PutObjectVersionTagging',
+            'Action::s3:Abort*',
+            { regex: '/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/' },
+            { regex: '/^Resource::.*\\/\\*$/' },
+          ],
+        },
+      ],
+      true,
+    );
+
     this.securityGroup = props.domain.securityGroupId
       ? SecurityGroup.fromSecurityGroupId(this, `domain-sg`, props.domain.securityGroupId)
       : this.createDomainSecurityGroup(
@@ -226,11 +284,49 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
   }
 
   private createAssetDeploymentRole(): IRole {
-    return new MdaaLambdaRole(this.scope, `asset-deployment-role`, {
+    const role = new MdaaLambdaRole(this.scope, `asset-deployment-role`, {
       roleName: 'deployment',
       naming: this.props.naming,
       logGroupNames: [`*CustomCDK*`],
     });
+
+    // Grant the deployment role read access to the CDK assets bucket.
+    // BucketDeployment copies assets from this bucket to the domain bucket.
+    // Without this, BucketDeployment adds an inline policy to the role, which
+    // causes IAM Policy physical name collisions when the role is imported
+    // across multiple stacks (see GitHub issue #36).
+    const qualifier = this.node.tryGetContext(BOOTSTRAP_QUALIFIER_CONTEXT) ?? DefaultStackSynthesizer.DEFAULT_QUALIFIER;
+    const cdkAssetsBucketArn = `arn:${this.partition}:s3:::cdk-${qualifier}-assets-${this.account}-${this.region}`;
+    const cdkAssetsPolicy = new MdaaManagedPolicy(this.scope, 'cdk-assets-read-policy', {
+      managedPolicyName: 'cdk-assets-read',
+      naming: this.props.naming,
+      roles: [role],
+      statements: [
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['s3:GetObject*', 's3:GetBucket*', 's3:List*'],
+          resources: [cdkAssetsBucketArn, `${cdkAssetsBucketArn}/*`],
+        }),
+      ],
+    });
+    NagSuppressions.addResourceSuppressions(
+      cdkAssetsPolicy,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'CDK assets bucket read access required for BucketDeployment.',
+          appliesTo: [
+            'Action::s3:GetObject*',
+            'Action::s3:GetBucket*',
+            'Action::s3:List*',
+            { regex: '/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/' },
+          ],
+        },
+      ],
+      true,
+    );
+
+    return role;
   }
 
   private createStudioLifecycleConfig(
@@ -399,8 +495,9 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
   }
 
   private createBasicExecutionPolicy(domainId: string, executionRole: IRole, kmsKey: IKey): IMdaaManagedPolicy {
-    const basicExecutionPolicy = new ManagedPolicy(this, 'basic-execution-policy', {
-      managedPolicyName: this.props.naming.resourceName('basic-execution'),
+    const basicExecutionPolicy = new MdaaManagedPolicy(this, 'basic-execution-policy', {
+      managedPolicyName: 'basic-execution',
+      naming: this.props.naming,
       roles: [executionRole],
     });
 
