@@ -7,7 +7,7 @@ import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
-import { NamedDatabaseGrantProps, DataOpsProjectL3Construct, DataOpsProjectL3ConstructProps } from '../lib';
+import { DataOpsProjectL3Construct, DataOpsProjectL3ConstructProps, NamedDatabaseGrantProps } from '../lib';
 // nosemgrep
 import * as path from 'path';
 import { Protocol } from 'aws-cdk-lib/aws-ec2';
@@ -524,6 +524,65 @@ describe('MDAA Compliance Stack Tests', () => {
         ]),
       },
     });
+  });
+
+  test('DeploymentS3PolicyActions', () => {
+    const policies = template.findResources('AWS::IAM::ManagedPolicy', {
+      Properties: {
+        ManagedPolicyName: Match.stringLikeRegexp('.*deployment-s3.*'),
+      },
+    });
+    const policyKeys = Object.keys(policies);
+    expect(policyKeys).toHaveLength(1);
+    const policy = policies[policyKeys[0]];
+    const statements = policy.Properties.PolicyDocument.Statement;
+    const actions = statements.map((s: { Action: string | string[] }) => s.Action);
+    expect(actions).toEqual([
+      ['s3:GetObject*', 's3:GetBucket*', 's3:List*'],
+      [
+        's3:GetObject*',
+        's3:GetBucket*',
+        's3:List*',
+        's3:DeleteObject*',
+        's3:PutObject',
+        's3:PutObjectLegalHold',
+        's3:PutObjectRetention',
+        's3:PutObjectTagging',
+        's3:PutObjectVersionTagging',
+        's3:Abort*',
+      ],
+    ]);
+  });
+
+  test('DeploymentS3PolicyNagSuppressions', () => {
+    const policies = template.findResources('AWS::IAM::ManagedPolicy', {
+      Properties: {
+        ManagedPolicyName: Match.stringLikeRegexp('.*deployment-s3.*'),
+      },
+    });
+    const policyKeys = Object.keys(policies);
+    expect(policyKeys).toHaveLength(1);
+    const policy = policies[policyKeys[0]];
+    const suppressions = policy.Metadata?.cdk_nag?.rules_to_suppress;
+    expect(suppressions).toEqual([
+      {
+        id: 'AwsSolutions-IAM5',
+        reason: 'S3 permissions required for BucketDeployment to copy assets to project bucket.',
+        applies_to: [
+          'Action::s3:GetObject*',
+          'Action::s3:GetBucket*',
+          'Action::s3:List*',
+          'Action::s3:DeleteObject*',
+          'Action::s3:PutObjectLegalHold',
+          'Action::s3:PutObjectRetention',
+          'Action::s3:PutObjectTagging',
+          'Action::s3:PutObjectVersionTagging',
+          'Action::s3:Abort*',
+          { regex: '/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/' }, // NOSONAR - intentionally using escaped form to cross-validate against String.raw in construct
+          { regex: '/^Resource::.*\\/\\*$/' }, // NOSONAR
+        ],
+      },
+    ]);
   });
 
   test('GlueSecurityConfiguration', () => {

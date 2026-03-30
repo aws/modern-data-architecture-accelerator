@@ -33,7 +33,7 @@ jest.mock('command-exists', () => ({
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Protocol } from 'aws-cdk-lib/aws-ec2';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import {
@@ -142,6 +142,77 @@ describe('Studio Domain Optional Props', () => {
       IpProtocol: 'tcp',
       ToPort: 443,
     });
+  });
+
+  test('DomainBucketDeploymentPolicyActions', () => {
+    const policies = template.findResources('AWS::IAM::ManagedPolicy', {
+      Properties: {
+        ManagedPolicyName: Match.stringLikeRegexp('.*domain-bucket-deploy.*'),
+      },
+    });
+    const policyKeys = Object.keys(policies);
+    expect(policyKeys).toHaveLength(1);
+    const policy = policies[policyKeys[0]];
+    const statements = policy.Properties.PolicyDocument.Statement;
+    const actions = statements.map((s: { Action: string | string[] }) => s.Action);
+    expect(actions).toEqual([
+      ['s3:GetObject*', 's3:GetBucket*', 's3:List*'],
+      [
+        's3:GetObject*',
+        's3:GetBucket*',
+        's3:List*',
+        's3:DeleteObject*',
+        's3:PutObject',
+        's3:PutObjectLegalHold',
+        's3:PutObjectRetention',
+        's3:PutObjectTagging',
+        's3:PutObjectVersionTagging',
+        's3:Abort*',
+      ],
+    ]);
+  });
+
+  test('DomainBucketDeploymentPolicyNagSuppressions', () => {
+    const policies = template.findResources('AWS::IAM::ManagedPolicy', {
+      Properties: {
+        ManagedPolicyName: Match.stringLikeRegexp('.*domain-bucket-deploy.*'),
+      },
+    });
+    const policyKeys = Object.keys(policies);
+    expect(policyKeys).toHaveLength(1);
+    const policy = policies[policyKeys[0]];
+    const suppressions = policy.Metadata?.cdk_nag?.rules_to_suppress;
+    expect(suppressions).toEqual([
+      {
+        id: 'AwsSolutions-IAM5',
+        reason: 'S3 permissions required for BucketDeployment to copy lifecycle assets.',
+        applies_to: [
+          'Action::s3:GetObject*',
+          'Action::s3:GetBucket*',
+          'Action::s3:List*',
+          'Action::s3:DeleteObject*',
+          'Action::s3:PutObjectLegalHold',
+          'Action::s3:PutObjectRetention',
+          'Action::s3:PutObjectTagging',
+          'Action::s3:PutObjectVersionTagging',
+          'Action::s3:Abort*',
+          { regex: '/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/' }, // NOSONAR - intentionally using escaped form to cross-validate against String.raw in construct
+          { regex: '/^Resource::.*\\/\\*$/' }, // NOSONAR
+        ],
+      },
+    ]);
+  });
+
+  test('CdkAssetsReadPolicyNagSuppressions', () => {
+    const policies = template.findResources('AWS::IAM::ManagedPolicy', {
+      Properties: {
+        ManagedPolicyName: Match.stringLikeRegexp('.*cdk-assets-read.*'),
+      },
+    });
+    // cdk-assets-read policy is only created when the construct creates its own
+    // deployment role. This test setup provides an existing role, so verify
+    // the policy is not created in this configuration.
+    expect(Object.keys(policies)).toHaveLength(0);
   });
 });
 

@@ -247,8 +247,8 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
             'Action::s3:PutObjectTagging',
             'Action::s3:PutObjectVersionTagging',
             'Action::s3:Abort*',
-            { regex: '/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/' },
-            { regex: '/^Resource::.*\\/\\*$/' },
+            { regex: String.raw`/^Resource::arn:.+:s3:::cdk-.+-assets-.+\/\*$/` },
+            { regex: String.raw`/^Resource::.*\/\*$/` },
           ],
         },
       ],
@@ -319,7 +319,7 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
             'Action::s3:GetObject*',
             'Action::s3:GetBucket*',
             'Action::s3:List*',
-            { regex: '/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/' },
+            { regex: String.raw`/^Resource::arn:.+:s3:::cdk-.+-assets-.+\/\*$/` },
           ],
         },
       ],
@@ -675,16 +675,14 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
       const profileTags: CfnTag[] = [];
 
       if (this.props.domain.authMode == 'IAM') {
-        if (!userProfileProps.userRole) {
+        if (!userProfileProps.userRole)
           throw new Error("'userRole' must be defined on user profile when domain is in IAM authMode");
-        } else {
-          const resolvedRole = this.props.roleHelper.resolveRoleRefWithRefId(userProfileProps.userRole, userid);
-          const tag = {
-            key: 'userid',
-            value: `${resolvedRole.id()}:${userid}`,
-          };
-          profileTags.push(tag);
-        }
+        const resolvedRole = this.props.roleHelper.resolveRoleRefWithRefId(userProfileProps.userRole, userid);
+        const tag = {
+          key: 'userid',
+          value: `${resolvedRole.id()}:${userid}`,
+        };
+        profileTags.push(tag);
       }
 
       new CfnUserProfile(this, `user-profile-${userid}`, {
