@@ -3042,6 +3042,11 @@
             "description": "Description of the agent runtime's purpose and functionality.\n\nUse cases: Runtime documentation, operational clarity\n\nAWS: Bedrock AgentCore Runtime description\n\nValidation: Optional; String",
             "type": "string"
         },
+        "enableTransactionSearch": {
+            "default": true,
+            "description": "Enable X-Ray Transaction Search Config for enhanced trace analysis.\nThis resource is a singleton per AWS account per region.\nSet to false if this resource already exists in your account/region.\n\nUse cases: X-Ray trace search, natural language trace analysis, avoiding resource conflicts\n\nAWS: X-Ray Transaction Search Config\n\nValidation: Optional; Boolean",
+            "type": "boolean"
+        },
         "environmentVariables": {
             "additionalProperties": {
                 "type": "string"

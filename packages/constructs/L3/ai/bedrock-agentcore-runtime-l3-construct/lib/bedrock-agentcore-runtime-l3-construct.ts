@@ -437,6 +437,19 @@ export interface BedrockAgentcoreRuntimeProps {
    **/
   readonly agentRuntimeName: string;
   /**
+   * Enable X-Ray Transaction Search Config for enhanced trace analysis.
+   * This resource is a singleton per AWS account per region.
+   * Set to false if this resource already exists in your account/region.
+   *
+   * Use cases: X-Ray trace search, natural language trace analysis, avoiding resource conflicts
+   *
+   * AWS: X-Ray Transaction Search Config
+   *
+   * Validation: Optional; Boolean
+   * @default true
+   **/
+  readonly enableTransactionSearch?: boolean;
+  /**
    * Description of the agent runtime.
    *
    * Use cases: Runtime documentation, operational clarity
@@ -641,15 +654,18 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
       ],
     });
 
-    // Create X-Ray Transaction Search Config for enhanced trace analysis
+    // Create X-Ray Transaction Search Config for enhanced trace analysis if enabled
     // This enables natural language search and analysis of X-Ray traces for the agent runtime
-    // IndexingPercentage defaults to 100% if not specified, indexing all traces
-    const transactionSearchConfig = new xray.CfnTransactionSearchConfig(this, 'TransactionSearchConfig', {
-      indexingPercentage: 1,
-    });
+    // Note: This resource is a singleton per AWS account per region
+    // Set enableTransactionSearch to false if this resource already exists in your account/region
+    if (props.enableTransactionSearch !== false) {
+      const transactionSearchConfig = new xray.CfnTransactionSearchConfig(this, 'TransactionSearchConfig', {
+        indexingPercentage: 1,
+      });
 
-    // Ensure the resource policy is created before the transaction search config
-    transactionSearchConfig.node.addDependency(xrayResourcePolicy);
+      // Ensure the resource policy is created before the transaction search config
+      transactionSearchConfig.node.addDependency(xrayResourcePolicy);
+    }
 
     // Create runtime endpoint if specified
     if (props.runtimeEndpoint) {

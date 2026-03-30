@@ -62,6 +62,7 @@ const runtime = new BedrockAgentcoreRuntimeL3Construct(this, 'MyRuntime', {
 - `authorizerConfiguration`: JWT authorizer configuration
 - `requestHeaderConfiguration`: HTTP header forwarding configuration
 - `runtimeEndpoint`: Endpoint configuration for runtime invocation
+- `enableTransactionSearch`: Enable X-Ray Transaction Search Config (default: true, set to false for multiple runtimes in same region)
 
 ### Container Configuration
 - `containerUri`: Pre-built ECR image URI
@@ -82,6 +83,35 @@ Note: All runtimes are deployed in VPC mode for security. The network mode is au
 ### Lifecycle Configuration
 - `idleRuntimeSessionTimeout`: Idle timeout in seconds (60-28800)
 - `maxLifetime`: Maximum lifetime in seconds (60-28800)
+
+## X-Ray Transaction Search
+
+By default, the construct creates an X-Ray Transaction Search Config resource for enhanced trace analysis. Because this resource is limited to one per AWS account per region, set `enableTransactionSearch: false` if this resource already exists in your account/region (either from another runtime deployment or configured separately).
+
+### When to Disable Transaction Search
+
+Set `enableTransactionSearch: false` in these scenarios:
+- Deploying multiple AgentCore runtimes in the same region
+- The TransactionSearchConfig resource already exists in your account/region
+- Another service or deployment has already configured X-Ray transaction search
+
+Example with multiple runtimes:
+
+```typescript
+// First runtime - creates transaction search config
+const runtime1 = new BedrockAgentcoreRuntimeL3Construct(this, 'Runtime1', {
+  agentRuntimeName: 'runtime-1',
+  enableTransactionSearch: true, // or omit (defaults to true)
+  // ... other config
+});
+
+// Additional runtimes - skip transaction search creation
+const runtime2 = new BedrockAgentcoreRuntimeL3Construct(this, 'Runtime2', {
+  agentRuntimeName: 'runtime-2',
+  enableTransactionSearch: false, // Required since config already exists
+  // ... other config
+});
+```
 
 ## IAM Permissions
 

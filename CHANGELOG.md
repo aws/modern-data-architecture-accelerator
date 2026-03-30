@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### New Features
+- Agentcore Runtime app: added enableTransactionSearch(boolean) config param to optionally prevent creation of X-Ray Transaction Search Config if it already exists
+
 ### Bug Fixes
 
 - Fixed IAM Policy cross-stack collision in `dataops-job` and `sm-studio-domain` caused by `BucketDeployment` adding inline policies to imported roles

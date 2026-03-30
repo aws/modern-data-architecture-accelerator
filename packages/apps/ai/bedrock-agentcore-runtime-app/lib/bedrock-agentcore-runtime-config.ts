@@ -142,6 +142,19 @@ export interface BedrockAgentcoreRuntimeConfigContents extends MdaaBaseConfigCon
    * Validation: Optional; RuntimeEndpointProperty
    **/
   readonly runtimeEndpoint?: RuntimeEndpointProperty;
+  /**
+   * Enable X-Ray Transaction Search Config for enhanced trace analysis.
+   * This resource is a singleton per AWS account per region.
+   * Set to false if this resource already exists in your account/region.
+   *
+   * Use cases: X-Ray trace search, natural language trace analysis, avoiding resource conflicts
+   *
+   * AWS: X-Ray Transaction Search Config
+   *
+   * Validation: Optional; Boolean
+   * @default true
+   **/
+  readonly enableTransactionSearch?: boolean;
 }
 
 export class BedrockAgentcoreRuntimeConfigParser extends MdaaAppConfigParser<BedrockAgentcoreRuntimeConfigContents> {
@@ -157,6 +170,7 @@ export class BedrockAgentcoreRuntimeConfigParser extends MdaaAppConfigParser<Bed
   public readonly roleArn?: string;
   public readonly policies?: PolicyProperty[];
   public readonly runtimeEndpoint?: RuntimeEndpointProperty;
+  public readonly enableTransactionSearch?: boolean;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -173,5 +187,6 @@ export class BedrockAgentcoreRuntimeConfigParser extends MdaaAppConfigParser<Bed
     this.roleArn = this.configContents.roleArn;
     this.policies = this.configContents.policies;
     this.runtimeEndpoint = this.configContents.runtimeEndpoint;
+    this.enableTransactionSearch = this.configContents.enableTransactionSearch;
   }
 }

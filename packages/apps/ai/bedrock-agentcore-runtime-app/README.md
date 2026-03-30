@@ -113,6 +113,13 @@ Builds the container image from a local Dockerfile instead of referencing a pre-
 --8<-- "sample_configs/sample-config-codepath.yaml"
 ```
 
+### Troubleshooting
+
+For common deployment issues and their solutions, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).
+
+Common issues:
+- [X-Ray Transaction Search Config Already Exists](./TROUBLESHOOTING.md#x-ray-transaction-search-config-already-exists) - `AlreadyExists` error during deployment
+
 ---
 
 [Config Schema Docs](SCHEMA.md)

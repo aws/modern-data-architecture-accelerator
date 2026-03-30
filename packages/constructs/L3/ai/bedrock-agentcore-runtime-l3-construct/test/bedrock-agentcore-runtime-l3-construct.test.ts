@@ -533,4 +533,119 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       }).toThrow('MaxLifetime must be between 60 and 28800 seconds');
     });
   });
+
+  describe('Transaction Search Configuration', () => {
+    test('should create TransactionSearchConfig by default', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'default-xray-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'default-xray-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.resourceCountIs('AWS::XRay::TransactionSearchConfig', 1);
+      template.hasResourceProperties('AWS::XRay::TransactionSearchConfig', {
+        IndexingPercentage: 1,
+      });
+    });
+
+    test('should create TransactionSearchConfig when explicitly enabled', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'enabled-xray-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        enableTransactionSearch: true,
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'enabled-xray-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.resourceCountIs('AWS::XRay::TransactionSearchConfig', 1);
+    });
+
+    test('should not create TransactionSearchConfig when disabled', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'disabled-xray-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        enableTransactionSearch: false,
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'disabled-xray-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.resourceCountIs('AWS::XRay::TransactionSearchConfig', 0);
+    });
+
+    test('should allow multiple runtimes in same stack when TransactionSearch disabled', () => {
+      const constructProps1: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'multi-runtime-1',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        enableTransactionSearch: false,
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      const constructProps2: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'multi-runtime-2',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-87654321'],
+          subnets: ['subnet-87654321'],
+        },
+        enableTransactionSearch: false,
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'multi-runtime-1-construct', constructProps1);
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'multi-runtime-2-construct', constructProps2);
+      const template = Template.fromStack(testApp.testStack);
+
+      // Should have 2 runtimes but no TransactionSearchConfig
+      template.resourceCountIs('AWS::BedrockAgentCore::Runtime', 2);
+      template.resourceCountIs('AWS::XRay::TransactionSearchConfig', 0);
+    });
+  });
 });

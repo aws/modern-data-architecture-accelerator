@@ -132,3 +132,5 @@ runtimeEndpoint:
   description: 'Test runtime endpoint'
   # (Optional) Specific agent runtime version for the endpoint
   agentRuntimeVersion: '1.0.0'
+# (Optional) Enable XRay Transaction Search Configuration (singleton per account-region)
+enableTransactionSearch: true
