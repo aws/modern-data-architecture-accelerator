@@ -9,6 +9,14 @@
 
 - Fixed IAM Policy cross-stack collision in `dataops-job` and `sm-studio-domain` caused by `BucketDeployment` adding inline policies to imported roles
 
+### Enhancements
+
+#### RDS Constructs (#752)
+
+- `MdaaAuroraPgVector`: Engine version is now configurable via the `engineVersion` prop (default: `16.6`). The default is deprecated and will be removed in a future release — explicitly set the engine version to avoid breakage.
+- `MdaaRdsServerlessCluster`: Reader instance count is now configurable via the `numberOfReaderInstances` prop (default: `1`).
+- `BedrockKnowledgeBase` L3 construct: `engineVersion` from vector store config is now passed through to the Aurora PgVector cluster.
+
 ## [1.5.0] - 2026-03-13
 
 ### New Features

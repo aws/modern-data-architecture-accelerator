@@ -432,6 +432,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       subnets: { subnets: subnets },
       dbSecurityGroup: vectorStoreSg,
       encryptionKey: kmsKey,
+      engineVersion: vectorStoreConfig.engineVersion,
       minCapacity: vectorStoreConfig.minCapacity,
       maxCapacity: vectorStoreConfig.maxCapacity,
       naming: this.props.naming,

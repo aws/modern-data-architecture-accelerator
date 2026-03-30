@@ -74,6 +74,7 @@ vectorStores:
       - "{{context:subnet_id_1}}"
       - "{{context:subnet_id_2}}"
       - "{{context:subnet_id_3}}"
+    engineVersion: '16.6'
     minCapacity: 1.0
     maxCapacity: 8.0
     # Optional: If you already have an OpenSearch Serverless VPC endpoint for this VPC,

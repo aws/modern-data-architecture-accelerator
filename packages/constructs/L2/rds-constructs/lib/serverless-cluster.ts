@@ -38,6 +38,11 @@ export interface MdaaRdsServerlessClusterProps extends MdaaConstructProps {
   readonly enableDataApi?: boolean;
   readonly parameterGroup?: IParameterGroup;
   readonly scaling?: ServerlessScalingOptions;
+  /**
+   * Number of reader instances for the Aurora cluster.
+   * @default 1
+   */
+  readonly numberOfReaderInstances?: number;
   /** Array of security groups for Aurora cluster network access control defining inbound and */
   readonly securityGroups?: ISecurityGroup[];
   readonly encryptionKey: IMdaaKmsKey;
@@ -106,7 +111,12 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
       storageEncryptionKey: props.encryptionKey,
       removalPolicy: RemovalPolicy.RETAIN,
       writer: ClusterInstance.serverlessV2(`${props.clusterIdentifier}-cluster-writer`),
-      readers: [ClusterInstance.serverlessV2(`${props.clusterIdentifier}-cluster-readers`)],
+      readers:
+        props.numberOfReaderInstances !== undefined && props.numberOfReaderInstances > 0
+          ? Array.from({ length: props.numberOfReaderInstances }, (_, i) =>
+              ClusterInstance.serverlessV2(`${props.clusterIdentifier}-cluster-reader-${i}`),
+            )
+          : [ClusterInstance.serverlessV2(`${props.clusterIdentifier}-cluster-readers`)],
       backup: {
         retention: Duration.days(props.backupRetention || 1),
       },

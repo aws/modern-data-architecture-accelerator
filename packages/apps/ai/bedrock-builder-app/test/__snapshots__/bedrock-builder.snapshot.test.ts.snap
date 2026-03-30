@@ -7131,7 +7131,7 @@ Provide responses in markdown format with source citations
           "BackupRetentionPeriod": 20,
           "CopyTagsToSnapshot": true,
           "DBClusterIdentifier": "REPLACED-S3-BUCKET-NAME",
-          "DBClusterParameterGroupName": "default.aurora-postgresql16",
+          "DBClusterParameterGroupName": "default.aurora-postgresql15",
           "DBSubnetGroupName": {
             "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
@@ -7142,7 +7142,7 @@ Provide responses in markdown format with source citations
           "EnableHttpEndpoint": true,
           "EnableIAMDatabaseAuthentication": true,
           "Engine": "aurora-postgresql",
-          "EngineVersion": "16.6",
+          "EngineVersion": "15.5",
           "KmsKeyId": {
             "Fn::Join": [
               "",
