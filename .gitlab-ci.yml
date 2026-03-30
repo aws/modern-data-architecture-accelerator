@@ -260,6 +260,8 @@ feature_merge_sonarqube:
       - node_modules/
       - packages/**/node_modules/
     policy: pull
+  variables:
+    GIT_DEPTH: "0"
   allow_failure: false
   script:
     - ./scripts/sonarqube.sh
@@ -668,6 +670,12 @@ prerelease_analyze:
     exclude:
       - '**/node_modules/**'
   stage: analyze
+  dependencies:
+    - prerelease_build_test
+  needs:
+    - prerelease_build_test
+  variables:
+    GIT_DEPTH: "0"
   allow_failure: false
   script:
     - ./scripts/sonarqube.sh
