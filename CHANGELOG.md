@@ -8,6 +8,7 @@
 ### Bug Fixes
 
 - Fixed IAM Policy cross-stack collision in `dataops-job` and `sm-studio-domain` caused by `BucketDeployment` adding inline policies to imported roles
+- Agentcore Runtime app: fixed missing ECR permissions when `containerUri` config param is used
 
 ### Enhancements
 

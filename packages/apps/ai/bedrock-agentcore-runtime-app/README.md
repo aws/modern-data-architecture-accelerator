@@ -119,6 +119,7 @@ For common deployment issues and their solutions, see [TROUBLESHOOTING.md](./TRO
 
 Common issues:
 - [X-Ray Transaction Search Config Already Exists](./TROUBLESHOOTING.md#x-ray-transaction-search-config-already-exists) - `AlreadyExists` error during deployment
+- [Cross-Account ECR Access Denied](./TROUBLESHOOTING.md#cross-account-ecr-access-denied) - `Failed to pull image` error in cloudwatch logs
 
 ---
 

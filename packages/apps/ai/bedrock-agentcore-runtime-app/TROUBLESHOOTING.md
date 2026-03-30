@@ -6,6 +6,7 @@ This guide helps you diagnose and resolve common issues when deploying Bedrock A
 
 ## Table of Contents
 - [X-Ray Transaction Search Config Already Exists](#x-ray-transaction-search-config-already-exists)
+- [Cross-Account ECR Access Denied](#cross-account-ecr-access-denied)
 
 ---
 
@@ -43,3 +44,32 @@ networkConfiguration:
   subnets:
     - subnet-12345678
 ```
+
+---
+
+## Cross-Account ECR Access Denied
+
+### Symptom
+
+Runtime deployment succeeds, but the container fails to start with an error in CloudWatch Logs:
+
+```
+Failed to pull image: <account>.dkr.ecr.<region>.amazonaws.com/<repository>:latest!
+Message: failed to resolve image: unexpected status from HEAD request to 
+https://<account>.dkr.ecr.<region>.amazonaws.com/v2/<repository>/manifests/latest: 403 Forbidden
+```
+
+Or you see errors like:
+```
+Error response from daemon: pull access denied for <account>.dkr.ecr.<region>.amazonaws.com/<repository>
+```
+
+### Cause
+
+The runtime is trying to pull a container image from an ECR repository in a different AWS account, but the ECR repository policy doesn't grant the runtime role permission to pull the image.
+
+**Example scenario**: Runtime deployed in Account A, container image stored in ECR in Account B.
+
+### Solution
+
+Add an ECR repository policy in the source account (Account B) to grant the runtime role access. Check **Cross-Account ECR Access** in README.

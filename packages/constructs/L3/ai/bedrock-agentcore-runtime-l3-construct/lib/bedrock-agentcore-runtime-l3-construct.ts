@@ -570,16 +570,16 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
   public readonly runtime: CfnResource;
   public readonly runtimeEndpoint?: CfnResource;
   public readonly runtimeRole?: MdaaRole;
-  private readonly dockerImage?: DockerImageAsset;
+  private readonly repositoryArn?: string;
   protected readonly props: BedrockAgentcoreRuntimeL3ConstructProps;
 
   constructor(scope: Construct, id: string, props: BedrockAgentcoreRuntimeL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
 
-    // Build artifact property and get Docker image if building from source
-    const { artifactProperty, dockerImage } = this.buildArtifactProperty(props.agentRuntimeArtifact);
-    this.dockerImage = dockerImage;
+    // Build artifact property and get repository ARN if building from source or using containerUri
+    const { artifactProperty, repositoryArn } = this.buildArtifactProperty(props.agentRuntimeArtifact);
+    this.repositoryArn = repositoryArn;
 
     // Create or reference IAM role for the runtime
     const runtimeRole = this.createOrReferenceRuntimeRole(props);
@@ -678,11 +678,14 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
 
   private resolveContainerConfiguration(containerConfig: ContainerConfigurationProperty): {
     containerUri: string;
-    dockerImage?: DockerImageAsset;
+    repositoryArn?: string;
   } {
-    // If ContainerUri is provided, use it directly
+    // If ContainerUri is provided, use it directly and parse repository ARN
     if (containerConfig.containerUri) {
-      return { containerUri: containerConfig.containerUri };
+      return {
+        containerUri: containerConfig.containerUri,
+        repositoryArn: this.parseEcrRepositoryArn(containerConfig.containerUri),
+      };
     }
     // If CodePath is provided, build Docker image and push to ECR
     if (containerConfig.codePath) {
@@ -694,9 +697,9 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
 
   private buildArtifactProperty(artifactConfig: AgentRuntimeArtifactProperty): {
     artifactProperty: Record<string, unknown>;
-    dockerImage?: DockerImageAsset;
+    repositoryArn?: string;
   } {
-    const { containerUri, dockerImage } = this.resolveContainerConfiguration(artifactConfig.containerConfiguration);
+    const { containerUri, repositoryArn } = this.resolveContainerConfiguration(artifactConfig.containerConfiguration);
 
     return {
       artifactProperty: {
@@ -704,13 +707,13 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
           ContainerUri: containerUri,
         },
       },
-      dockerImage,
+      repositoryArn,
     };
   }
 
   private buildAndPushDockerImage(containerConfig: ContainerConfigurationProperty): {
     containerUri: string;
-    dockerImage: DockerImageAsset;
+    repositoryArn: string;
   } {
     const codePath = containerConfig.codePath!;
 
@@ -726,7 +729,7 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
 
     return {
       containerUri: dockerImage.imageUri,
-      dockerImage,
+      repositoryArn: dockerImage.repository.repositoryArn,
     };
   }
 
@@ -840,14 +843,14 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
       }),
     ];
 
-    // ECR Image Access - specific repository if Docker image was built
-    if (this.dockerImage) {
+    // ECR Image Access - specific repository if Docker image was built or containerUri provided
+    if (this.repositoryArn) {
       policyStatements.push(
         new PolicyStatement({
-          sid: 'ECRImageAccess',
+          sid: 'ECRRepositoryAccess',
           effect: Effect.ALLOW,
-          actions: ['ecr:BatchGetImage', 'ecr:GetDownloadUrlForLayer'],
-          resources: [this.dockerImage.repository.repositoryArn],
+          actions: ['ecr:GetDownloadUrlForLayer', 'ecr:BatchGetImage'],
+          resources: [this.repositoryArn],
         }),
       );
     }
@@ -931,6 +934,28 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
       return role.arn;
     }
     return (role as MdaaRole).roleArn;
+  }
+
+  private parseEcrRepositoryArn(containerUri: string): string {
+    // Parse ECR container URI format: {account}.dkr.ecr.{region}.amazonaws.com/{repository}[:{tag}|@{digest}]
+    // Examples:
+    //   123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo:latest
+    //   123456789012.dkr.ecr.us-east-1.amazonaws.com/my-org/my-team/my-repo:v1.0.0
+    //   123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo@sha256:abc123...
+    //   123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo
+    const uriPattern = /^(\d+)\.dkr\.ecr\.([a-z0-9-]+)\.amazonaws\.com\/([^:@]+)/;
+    const match = uriPattern.exec(containerUri);
+
+    if (!match) {
+      throw new Error(
+        `Invalid ECR container URI format: ${containerUri}. Expected format: {account}.dkr.ecr.{region}.amazonaws.com/{repository}[:{tag}|@{digest}]`,
+      );
+    }
+
+    const [, account, region, repository] = match;
+    const stack = Stack.of(this);
+
+    return `arn:${stack.partition}:ecr:${region}:${account}:repository/${repository}`;
   }
 
   private createRuntimeEndpoint(endpointConfig: RuntimeEndpointProperty, runtimeName: string): CfnResource {

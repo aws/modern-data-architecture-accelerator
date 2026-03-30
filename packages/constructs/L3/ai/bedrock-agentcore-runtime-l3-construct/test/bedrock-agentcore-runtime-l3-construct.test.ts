@@ -370,6 +370,260 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       });
     });
 
+    test('should add ECR repository permissions for containerUri', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'ecr-permissions-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'ecr-permissions-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      // Verify the managed policy contains ECR repository access permissions
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'ECRRepositoryAccess',
+              Effect: 'Allow',
+              Action: ['ecr:GetDownloadUrlForLayer', 'ecr:BatchGetImage'],
+              Resource: 'arn:test-partition:ecr:us-east-1:123456789012:repository/my-runtime',
+            }),
+          ]),
+        },
+      });
+    });
+
+    test('should throw error for invalid containerUri format', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'invalid-uri-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: 'invalid-uri-format',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      expect(() => {
+        new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'invalid-uri-runtime-construct', constructProps);
+      }).toThrow('Invalid ECR container URI format');
+    });
+
+    test('should throw error for containerUri without account', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'no-account-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: 'dkr.ecr.us-east-1.amazonaws.com/my-repo:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      expect(() => {
+        new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'no-account-runtime-construct', constructProps);
+      }).toThrow('Invalid ECR container URI format');
+    });
+
+    test('should throw error for containerUri without region', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'no-region-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.amazonaws.com/my-repo:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      expect(() => {
+        new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'no-region-runtime-construct', constructProps);
+      }).toThrow('Invalid ECR container URI format');
+    });
+
+    test('should throw error for containerUri without repository', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'no-repo-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      expect(() => {
+        new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'no-repo-runtime-construct', constructProps);
+      }).toThrow('Invalid ECR container URI format');
+    });
+
+    test('should parse containerUri with different regions', () => {
+      const regions = ['us-east-1', 'us-west-2', 'eu-west-1', 'ap-southeast-1'];
+
+      regions.forEach(region => {
+        const testAppRegion = new MdaaTestApp();
+        const roleHelperRegion = new MdaaRoleHelper(testAppRegion.testStack, testAppRegion.naming);
+
+        const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+          agentRuntimeName: `runtime-${region}`,
+          agentRuntimeArtifact: {
+            containerConfiguration: {
+              containerUri: `123456789012.dkr.ecr.${region}.amazonaws.com/my-repo:latest`,
+            },
+          },
+          networkConfiguration: {
+            securityGroups: ['sg-12345678'],
+            subnets: ['subnet-12345678'],
+          },
+          naming: testAppRegion.naming,
+          roleHelper: roleHelperRegion,
+        };
+
+        new BedrockAgentcoreRuntimeL3Construct(testAppRegion.testStack, `runtime-${region}-construct`, constructProps);
+        const template = Template.fromStack(testAppRegion.testStack);
+
+        // Verify the managed policy contains ECR repository access with correct region
+        template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+          PolicyDocument: {
+            Statement: Match.arrayWith([
+              Match.objectLike({
+                Sid: 'ECRRepositoryAccess',
+                Resource: `arn:test-partition:ecr:${region}:123456789012:repository/my-repo`,
+              }),
+            ]),
+          },
+        });
+      });
+    });
+
+    test('should parse containerUri with nested repository paths', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'nested-repo-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-org/my-team/my-repo:v1.0.0',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'nested-repo-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      // Verify the managed policy contains ECR repository access with nested path
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'ECRRepositoryAccess',
+              Resource: 'arn:test-partition:ecr:us-east-1:123456789012:repository/my-org/my-team/my-repo',
+            }),
+          ]),
+        },
+      });
+    });
+
+    test('should parse containerUri without tag', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'no-tag-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'no-tag-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      // Verify the managed policy contains ECR repository access
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'ECRRepositoryAccess',
+              Resource: 'arn:test-partition:ecr:us-east-1:123456789012:repository/my-repo',
+            }),
+          ]),
+        },
+      });
+    });
+
+    test('should parse containerUri with digest instead of tag', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'digest-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri:
+              '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo@sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'digest-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      // Verify the managed policy contains ECR repository access
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'ECRRepositoryAccess',
+              Resource: 'arn:test-partition:ecr:us-east-1:123456789012:repository/my-repo',
+            }),
+          ]),
+        },
+      });
+    });
+
     test('should use existing role ARN when provided', () => {
       const existingRoleArn = 'arn:aws:iam::123456789012:role/existing-role';
       const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {

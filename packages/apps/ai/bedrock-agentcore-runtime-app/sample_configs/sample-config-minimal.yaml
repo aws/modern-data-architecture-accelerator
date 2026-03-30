@@ -9,7 +9,7 @@ agentRuntimeArtifact:
   # Container configuration for the agent runtime Docker image
   containerConfiguration:
     # Pre-built container image URI from ECR
-    containerUri: '{{account}}.dkr.ecr.{{region}}.amazonaws.com/test-runtime:latest'
+    containerUri: '1234567890.dkr.ecr.us-east-1.amazonaws.com/test-runtime:latest'
 # VPC network configuration for secure runtime deployment
 networkConfiguration:
   # Security group IDs controlling inbound/outbound traffic

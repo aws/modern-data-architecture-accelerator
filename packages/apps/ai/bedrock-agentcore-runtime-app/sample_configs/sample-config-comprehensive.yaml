@@ -18,7 +18,7 @@ agentRuntimeArtifact:
   containerConfiguration:
     # Pre-built container image URI from ECR.
     # Mutually exclusive with codePath.
-    containerUri: '{{account}}.dkr.ecr.{{region}}.amazonaws.com/test-runtime:latest'
+    containerUri: '1234567890.dkr.ecr.us-east-1.amazonaws.com/test-runtime:latest'
     # (Optional) Target platform architecture for Docker image builds
     # (default: linux/arm64)
     platform: 'linux/amd64'

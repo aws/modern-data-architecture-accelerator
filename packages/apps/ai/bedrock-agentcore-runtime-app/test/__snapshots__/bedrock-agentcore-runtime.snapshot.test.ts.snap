@@ -88,21 +88,7 @@ exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime App 
         "Properties": {
           "AgentRuntimeArtifact": {
             "ContainerConfiguration": {
-              "ContainerUri": {
-                "Fn::Join": [
-                  "",
-                  [
-                    {
-                      "Ref": "AWS::AccountId",
-                    },
-                    ".dkr.ecr.",
-                    {
-                      "Ref": "AWS::Region",
-                    },
-                    ".amazonaws.com/test-runtime:latest",
-                  ],
-                ],
-              },
+              "ContainerUri": "1234567890.dkr.ecr.us-east-1.amazonaws.com/test-runtime:latest",
             },
           },
           "AgentRuntimeName": "test_org_test_env_test_domain_test_bedr__82df822",
@@ -753,8 +739,8 @@ exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime App 
               },
               {
                 "Action": [
-                  "ecr:BatchGetImage",
                   "ecr:GetDownloadUrlForLayer",
+                  "ecr:BatchGetImage",
                 ],
                 "Effect": "Allow",
                 "Resource": {
@@ -780,7 +766,7 @@ exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime App 
                     ],
                   ],
                 },
-                "Sid": "ECRImageAccess",
+                "Sid": "ECRRepositoryAccess",
               },
             ],
             "Version": "2012-10-17",
@@ -1222,21 +1208,7 @@ exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime App 
         "Properties": {
           "AgentRuntimeArtifact": {
             "ContainerConfiguration": {
-              "ContainerUri": {
-                "Fn::Join": [
-                  "",
-                  [
-                    {
-                      "Ref": "AWS::AccountId",
-                    },
-                    ".dkr.ecr.",
-                    {
-                      "Ref": "AWS::Region",
-                    },
-                    ".amazonaws.com/test-runtime:latest",
-                  ],
-                ],
-              },
+              "ContainerUri": "1234567890.dkr.ecr.us-east-1.amazonaws.com/test-runtime:latest",
             },
           },
           "AgentRuntimeName": "test_org_test_env_test_domain_test_bedr_745873cc",
@@ -1473,6 +1445,26 @@ exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime App 
                   },
                 ],
                 "Sid": "BedrockModelInvocation",
+              },
+              {
+                "Action": [
+                  "ecr:GetDownloadUrlForLayer",
+                  "ecr:BatchGetImage",
+                ],
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":ecr:us-east-1:1234567890:repository/test-runtime",
+                    ],
+                  ],
+                },
+                "Sid": "ECRRepositoryAccess",
               },
             ],
             "Version": "2012-10-17",
