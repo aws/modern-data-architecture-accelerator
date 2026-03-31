@@ -32,6 +32,8 @@ base_image:
     - arch:amd64
     - size:2xlarge
   rules:
+    - if: $VULN_SCAN_ONLY == "true"
+      when: never
     - when: always
 
 image: ${CI_REGISTRY_IMAGE}:base-latest
@@ -578,6 +580,8 @@ prerelease_version:
     refs:
       - main
   except:
+    variables:
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   cache:
@@ -614,6 +618,8 @@ prerelease_build_test:
     refs:
       - main
   except:
+    variables:
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   cache:
@@ -650,6 +656,8 @@ prerelease_analyze:
     refs:
       - main
   except:
+    variables:
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   cache:
@@ -688,6 +696,8 @@ prerelease_package:
     refs:
       - main
   except:
+    variables:
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   cache:
@@ -723,6 +733,7 @@ prerelease_generate_html_docs:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -760,6 +771,8 @@ prerelease_publish_npm:
     refs:
       - main
   except:
+    variables:
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   stage: prerelease_publish
@@ -792,6 +805,8 @@ prerelease_publish_pip:
     refs:
       - main
   except:
+    variables:
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   stage: prerelease_publish
@@ -820,6 +835,7 @@ prerelease_publish_s3:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -863,6 +879,7 @@ release_version_package:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -911,6 +928,7 @@ release:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -932,6 +950,7 @@ release_publish_npm_prerelease:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -976,6 +995,7 @@ release_npm_readiness_check:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -1013,6 +1033,7 @@ release_publish_npm:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -1058,6 +1079,7 @@ release_publish_pip:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -1102,6 +1124,7 @@ release_publish_s3:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -1146,6 +1169,7 @@ release_generate_html_docs:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -1186,6 +1210,7 @@ confirm_push_to_git:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -1212,6 +1237,7 @@ prerelease_push_git:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -1255,6 +1281,7 @@ release_push_git:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -1300,6 +1327,7 @@ rollback_release:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -1326,6 +1354,7 @@ rollback_delete_prerelease_packages:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -1359,6 +1388,7 @@ rollback_delete_release_packages:
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   only:
@@ -1394,6 +1424,8 @@ cornerstone_build_distributions:
     refs:
       - main
   except:
+    variables:
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   stage: post_release
@@ -1432,6 +1464,8 @@ cornerstone_package_artifact:
     refs:
       - main
   except:
+    variables:
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   stage: post_release
@@ -1488,6 +1522,8 @@ cornerstone_upload:
     refs:
       - main
   except:
+    variables:
+      - $VULN_SCAN_ONLY == "true"
     refs:
       - tags
   stage: post_release
@@ -1510,3 +1546,52 @@ cornerstone_upload:
     - aws s3 cp artifact.zip s3://$CORNERSTONE_PACKAGE_BUCKET/SO0320/$PUBLISHED_VERSION/$CI_COMMIT_SHA/artifact.zip --metadata "package=ModernDataArchitectureAccelerator,commitId=$CI_COMMIT_SHA,solutionId=SO0320,solutionVersion=$PUBLISHED_VERSION,solutionName=modern-data-architecture-accelerator,commitauthor=$AUTHOR_EMAIL,publishpublicecrimage=false,commitmessage=$CI_COMMIT_MESSAGE,committimestamp=$CI_COMMIT_TIMESTAMP,enablequicksight=No,branch=$CI_COMMIT_MESSAGE"
     - 'echo "Published solution archive to s3://$CORNERSTONE_PACKAGE_BUCKET/SO0320/$PUBLISHED_VERSION/$CI_COMMIT_SHA/artifact.zip"'
   allow_failure: false
+
+# =============================================================================
+# Weekly Vulnerability Scan (schedule-triggered only)
+# =============================================================================
+# Requires a pipeline schedule targeting main with cron e.g. "0 6 * * 1"
+# Required CI/CD variables: VULN_SCAN_TOKEN, VULN_ASSIGNEE
+# =============================================================================
+
+weekly_vulnerability_scan:
+  tags:
+    - arch:amd64
+    - size:large
+  stage: analyze
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $CI_PIPELINE_SCHEDULE_DESCRIPTION == "Weekly Jobs" && $CI_COMMIT_BRANCH == "main"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"  # TODO: Remove after testing
+      when: always
+    - when: never
+  variables:
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    GIT_STRATEGY: clone
+    GIT_CHECKOUT: 'true'
+  before_script:
+    - git config advice.addIgnoredFile false
+    - git config --global user.name "CICD"
+    - git config --global user.email "ci@example.com"
+    - echo "Fetching vulnerability scan scripts from caef-delivery..."
+    - git clone --depth 1 --branch 968-feat-add-automatic-dtas-scanning-in-code-and-create-issues-for-vulnerabilities https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_NAMESPACE}/caef-delivery.git /tmp/caef-delivery
+    - chmod +x /tmp/caef-delivery/gitlab-scripts/*.sh
+    - mkdir -p /tmp/scan-workdir
+    - ln -sf "${CI_PROJECT_DIR}" /tmp/scan-workdir/source
+  script:
+    - cd /tmp/scan-workdir
+    - /tmp/caef-delivery/gitlab-scripts/vulnerability_scan.sh
+    - cp -f *.json "${CI_PROJECT_DIR}/" 2>/dev/null || true
+    - /tmp/caef-delivery/gitlab-scripts/issue_manager.sh
+    - cp -f *.json *.txt "${CI_PROJECT_DIR}/" 2>/dev/null || true
+    - cd "${CI_PROJECT_DIR}"
+    - /tmp/caef-delivery/gitlab-scripts/auto_remediate.sh
+  artifacts:
+    paths:
+      - software-dependency-findings.json
+      - filtered-findings.json
+      - all-findings.json
+      - remediation-report.json
+    when: always
+    expire_in: 30 days
+  allow_failure: true
