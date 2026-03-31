@@ -102,14 +102,15 @@ export interface BedrockAgentcoreRuntimeConfigContents extends MdaaBaseConfigCon
   readonly requestHeaderConfiguration?: RequestHeaderConfigurationProperty;
   /**
    * Protocol-level configuration for agent runtime communication.
+   * Defines which protocol the agent runtime uses to communicate with clients.
    *
-   * Use cases: Protocol configuration, communication settings
+   * Use cases: Protocol configuration, MCP server deployment, A2A communication, HTTP endpoints
    *
    * AWS: Bedrock AgentCore Runtime protocol configuration
    *
-   * Validation: Optional; Record<string, unknown>
+   * Validation: Optional; string
    **/
-  readonly protocolConfiguration?: Record<string, unknown>;
+  readonly protocolConfiguration?: string;
   /**
    * Existing IAM role ARN for runtime execution.
    * If omitted, a new role is created with appropriate permissions.
@@ -166,7 +167,7 @@ export class BedrockAgentcoreRuntimeConfigParser extends MdaaAppConfigParser<Bed
   public readonly lifecycleConfiguration?: LifecycleConfigurationProperty;
   public readonly authorizerConfiguration?: AuthorizerConfigurationProperty;
   public readonly requestHeaderConfiguration?: RequestHeaderConfigurationProperty;
-  public readonly protocolConfiguration?: Record<string, unknown>;
+  public readonly protocolConfiguration?: string;
   public readonly roleArn?: string;
   public readonly policies?: PolicyProperty[];
   public readonly runtimeEndpoint?: RuntimeEndpointProperty;

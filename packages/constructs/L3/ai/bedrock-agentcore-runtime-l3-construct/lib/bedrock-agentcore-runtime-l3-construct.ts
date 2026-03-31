@@ -522,14 +522,15 @@ export interface BedrockAgentcoreRuntimeProps {
   readonly requestHeaderConfiguration?: RequestHeaderConfigurationProperty;
   /**
    * Protocol-level configuration for runtime communication.
+   * Defines which protocol the agent runtime uses to communicate with clients.
    *
-   * Use cases: Protocol configuration, communication settings
+   * Use cases: Protocol configuration, MCP server deployment, A2A communication, HTTP endpoints
    *
    * AWS: Bedrock AgentCore Runtime protocol configuration
    *
-   * Validation: Optional; Record<string, unknown>
+   * Validation: Optional; ProtocolConfigurationProperty
    **/
-  readonly protocolConfiguration?: Record<string, unknown>;
+  readonly protocolConfiguration?: string;
   /**
    * Existing IAM role ARN for runtime execution.
    * If omitted, a new role is created.

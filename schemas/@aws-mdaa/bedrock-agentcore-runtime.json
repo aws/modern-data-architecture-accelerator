@@ -2452,10 +2452,6 @@
             "additionalProperties": false,
             "type": "object"
         },
-        "Record<string,unknown>": {
-            "additionalProperties": false,
-            "type": "object"
-        },
         "RequestHeaderConfigurationProperty": {
             "additionalProperties": false,
             "description": "Request header configuration for HTTP header forwarding to agent runtime instances.\n\nUse cases: Header forwarding, custom request context, header passthrough\n\nAWS: Bedrock AgentCore Runtime request header configuration\n\nValidation: requestHeaderAllowlist must contain 1-20 header names if provided",
@@ -3074,8 +3070,8 @@
             "type": "array"
         },
         "protocolConfiguration": {
-            "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
-            "description": "Protocol-level configuration for agent runtime communication.\n\nUse cases: Protocol configuration, communication settings\n\nAWS: Bedrock AgentCore Runtime protocol configuration\n\nValidation: Optional; Record<string, unknown>"
+            "description": "Protocol-level configuration for agent runtime communication.\nDefines which protocol the agent runtime uses to communicate with clients.\n\nUse cases: Protocol configuration, MCP server deployment, A2A communication, HTTP endpoints\n\nAWS: Bedrock AgentCore Runtime protocol configuration\n\nValidation: Optional; string",
+            "type": "string"
         },
         "requestHeaderConfiguration": {
             "$ref": "#/definitions/RequestHeaderConfigurationProperty",

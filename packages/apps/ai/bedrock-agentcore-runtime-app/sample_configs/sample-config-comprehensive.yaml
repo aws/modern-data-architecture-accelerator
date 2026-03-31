@@ -109,8 +109,10 @@ policies:
           # (Optional) Conditions for when the policy statement is in effect
           Condition: {}
 # (Optional) Protocol-level configuration for agent runtime
-# communication
-protocolConfiguration: {}
+# communication. Defines which protocol the agent runtime uses
+# to communicate with clients.
+  # Valid values: MCP | HTTP | A2A
+protocolConfiguration: 'MCP'
 # (Optional) HTTP headers to forward to agent runtime instances
 # (1-20 headers)
 requestHeaderConfiguration:

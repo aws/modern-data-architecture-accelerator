@@ -142,7 +142,7 @@ exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime App 
               ],
             },
           },
-          "ProtocolConfiguration": {},
+          "ProtocolConfiguration": "MCP",
           "RequestHeaderConfiguration": {
             "RequestHeaderAllowlist": [
               "X-Custom-Header",
@@ -514,6 +514,7 @@ exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime App 
               ],
             },
           },
+          "ProtocolConfiguration": "MCP",
           "RoleArn": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -1223,6 +1224,7 @@ exports[`Bedrock Agentcore Runtime Snapshot Tests Bedrock Agentcore Runtime App 
               ],
             },
           },
+          "ProtocolConfiguration": "HTTP",
           "RoleArn": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",

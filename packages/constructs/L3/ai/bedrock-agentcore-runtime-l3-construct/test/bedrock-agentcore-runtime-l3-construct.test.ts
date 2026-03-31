@@ -734,6 +734,107 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
     });
   });
 
+  describe('Protocol Configuration', () => {
+    test('should create runtime with MCP protocol configuration', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'mcp-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        protocolConfiguration: 'MCP',
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'mcp-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::BedrockAgentCore::Runtime', {
+        ProtocolConfiguration: 'MCP',
+      });
+    });
+
+    test('should create runtime with HTTP protocol configuration', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'http-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        protocolConfiguration: 'HTTP',
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'http-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::BedrockAgentCore::Runtime', {
+        ProtocolConfiguration: 'HTTP',
+      });
+    });
+
+    test('should create runtime with A2A protocol configuration', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'a2a-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        protocolConfiguration: 'A2A',
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'a2a-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::BedrockAgentCore::Runtime', {
+        ProtocolConfiguration: 'A2A',
+      });
+    });
+
+    test('should not include ProtocolConfiguration when not provided', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'no-protocol-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'no-protocol-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::BedrockAgentCore::Runtime', {
+        ProtocolConfiguration: Match.absent(),
+      });
+    });
+  });
+
   describe('Lifecycle Configuration Validation', () => {
     test('should throw error for invalid idle timeout', () => {
       const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
