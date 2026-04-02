@@ -134,7 +134,8 @@ Deploys VPC networking, an agent, two S3 locations, and a transfer task between 
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/utility/datasync-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -144,7 +145,8 @@ Transfers data between on-premises storage and AWS using DataSync agents, locati
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/utility/datasync-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

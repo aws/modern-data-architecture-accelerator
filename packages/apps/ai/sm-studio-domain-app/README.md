@@ -99,7 +99,8 @@ Contains only the required properties to deploy a working Studio domain: authent
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/sm-studio-domain-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -109,7 +110,8 @@ Provisions a Studio domain with IAM auth, VPC networking, user profiles, lifecyc
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/sm-studio-domain-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### SSO Authentication Configuration
@@ -119,7 +121,8 @@ Use this variant when your organization uses AWS IAM Identity Center (SSO) for u
 [sample-config-sso.yaml](sample_configs/sample-config-sso.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-sso.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/sm-studio-domain-app/sample_configs/sample-config-sso.yaml"
 ```
 
 ---

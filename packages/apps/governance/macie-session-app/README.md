@@ -56,7 +56,8 @@ Required properties only — a Macie session with finding publishing frequency. 
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/macie-session-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -66,7 +67,8 @@ Enables Amazon Macie for automated sensitive data discovery, PII detection, and 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/macie-session-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

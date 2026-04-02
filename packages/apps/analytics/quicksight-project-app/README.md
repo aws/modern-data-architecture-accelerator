@@ -80,7 +80,8 @@ Deploys a shared folder and an Athena data source. Start here for a quick QuickS
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/quicksight-project-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -90,7 +91,8 @@ Sets up QuickSight principals, a Redshift data source with secret-based credenti
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/quicksight-project-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### Copy Source Configuration
@@ -100,7 +102,8 @@ Uses copied credentials from another data source to share credentials across mul
 [sample-config-copysource.yaml](sample_configs/sample-config-copysource.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-copysource.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/quicksight-project-app/sample_configs/sample-config-copysource.yaml"
 ```
 
 #### Credential Pair Configuration
@@ -110,7 +113,8 @@ Uses direct username/password credentials for data source connectivity instead o
 [sample-config-credentialpair.yaml](sample_configs/sample-config-credentialpair.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-credentialpair.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/quicksight-project-app/sample_configs/sample-config-credentialpair.yaml"
 ```
 
 ---

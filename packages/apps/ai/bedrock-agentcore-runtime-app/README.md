@@ -90,7 +90,8 @@ Contains only required properties for deploying an agent runtime with a pre-buil
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/bedrock-agentcore-runtime-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration (Pre-built Container Image)
@@ -100,7 +101,8 @@ Deploys an agent runtime using a pre-built ECR container image with VPC networki
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/bedrock-agentcore-runtime-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### Local Code Path Variant
@@ -110,7 +112,8 @@ Builds the container image from a local Dockerfile instead of referencing a pre-
 [sample-config-codepath.yaml](sample_configs/sample-config-codepath.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-codepath.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/bedrock-agentcore-runtime-app/sample_configs/sample-config-codepath.yaml"
 ```
 
 ### Troubleshooting
@@ -118,6 +121,7 @@ Builds the container image from a local Dockerfile instead of referencing a pre-
 For common deployment issues and their solutions, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).
 
 Common issues:
+
 - [X-Ray Transaction Search Config Already Exists](./TROUBLESHOOTING.md#x-ray-transaction-search-config-already-exists) - `AlreadyExists` error during deployment
 - [Cross-Account ECR Access Denied](./TROUBLESHOOTING.md#cross-account-ecr-access-denied) - `Failed to pull image` error in cloudwatch logs
 

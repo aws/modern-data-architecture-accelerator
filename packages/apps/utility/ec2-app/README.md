@@ -89,7 +89,8 @@ Deploys a single EC2 instance with a security group. Start here for a basic inst
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/utility/ec2-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -99,7 +100,8 @@ Provisions EC2 instances with key pairs, security groups, and CloudFormation Ini
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/utility/ec2-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### Inline Init Configuration
@@ -109,7 +111,8 @@ Demonstrates using an inline CloudFormation Init definition directly on an insta
 [sample-config-inline-init.yaml](sample_configs/sample-config-inline-init.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-inline-init.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/utility/ec2-app/sample_configs/sample-config-inline-init.yaml"
 ```
 
 ---

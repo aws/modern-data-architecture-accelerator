@@ -57,17 +57,15 @@ deploy_github() {
 }
 
 # Main deployment logic
-case "$DEPLOY_TARGET" in
-    "gitlab")
-        echo "Deploying to GitLab Pages..."
-        deploy_gitlab
-        ;;
-    "github")
-        echo "Deploying to GitHub Pages..."
-        deploy_github
-        ;;
-    *)
-        echo "Error: Invalid deployment target. Use 'github' or 'gitlab'"
-        exit 1
-        ;;
-esac
+if [ -z "$DEPLOY_TARGET" ]; then
+    echo "No deployment target specified. Documentation built successfully (build-only mode)."
+elif [ "$DEPLOY_TARGET" = "gitlab" ]; then
+    echo "Deploying to GitLab Pages..."
+    deploy_gitlab
+elif [ "$DEPLOY_TARGET" = "github" ]; then
+    echo "Deploying to GitHub Pages..."
+    deploy_github
+else
+    echo "Error: Invalid deployment target '$DEPLOY_TARGET'. Use 'github' or 'gitlab'"
+    exit 1
+fi

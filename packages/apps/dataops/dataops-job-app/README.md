@@ -71,7 +71,8 @@ Deploys a single Glue ETL job with project autowiring. Start here for a basic ET
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-job-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -81,7 +82,8 @@ Demonstrates Glue ETL and Python shell jobs with templates, job bookmarks, conne
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-job-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### Standalone Configuration (No Project)
@@ -91,7 +93,8 @@ Demonstrates standalone Glue jobs with explicit KMS, bucket, deployment role, an
 [sample-config-noproject.yaml](sample_configs/sample-config-noproject.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-noproject.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-job-app/sample_configs/sample-config-noproject.yaml"
 ```
 
 #### Worker Type Configuration
@@ -101,7 +104,8 @@ Uses workerType + numberOfWorkers instead of maxCapacity for explicit control ov
 [sample-config-workertype.yaml](sample_configs/sample-config-workertype.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-workertype.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-job-app/sample_configs/sample-config-workertype.yaml"
 ```
 
 ---

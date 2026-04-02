@@ -59,7 +59,8 @@ Only required properties are included. Start here for a single data quality rule
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-data-quality-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -69,7 +70,8 @@ Exercises all non-excluded schema properties at full depth. Defines Glue Data Qu
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-data-quality-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### Standalone Configuration (No Project)
@@ -79,7 +81,8 @@ Demonstrates standalone data quality rulesets with explicit KMS, bucket, deploym
 [sample-config-noproject.yaml](sample_configs/sample-config-noproject.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-noproject.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-data-quality-app/sample_configs/sample-config-noproject.yaml"
 ```
 
 ---

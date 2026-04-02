@@ -89,7 +89,8 @@ Demonstrates the simplest valid configuration with only required properties, usi
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/quicksight-account-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -99,7 +100,8 @@ Configures a QuickSight Enterprise account with IAM+QuickSight authentication, V
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/quicksight-account-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### Enterprise+Q Edition Configuration
@@ -109,7 +111,8 @@ Demonstrates ENTERPRISE_AND_Q edition with ACTIVE_DIRECTORY authentication. Choo
 [sample-config-enterprise-q.yaml](sample_configs/sample-config-enterprise-q.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-enterprise-q.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/quicksight-account-app/sample_configs/sample-config-enterprise-q.yaml"
 ```
 
 ---

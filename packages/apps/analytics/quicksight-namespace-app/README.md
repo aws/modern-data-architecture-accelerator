@@ -69,7 +69,8 @@ Contains only the required properties to deploy a working SAML-federated QuickSi
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/quicksight-namespace-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -79,7 +80,8 @@ Provisions a single SAML-federated QuickSight namespace with multiple federation
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/quicksight-namespace-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

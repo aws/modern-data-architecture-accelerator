@@ -58,7 +58,8 @@ Deploys a single custom event bus with no optional properties. Start here for a 
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/utility/eventbridge-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -68,7 +69,8 @@ Includes multiple event buses with all optional fields and both principal types 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/utility/eventbridge-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

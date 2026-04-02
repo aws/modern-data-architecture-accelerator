@@ -100,7 +100,8 @@ Demonstrates the simplest valid configuration using only required properties. Us
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/opensearch-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -110,7 +111,8 @@ Deploys a VPC-bound OpenSearch domain with multi-AZ zone awareness, master/data/
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/opensearch-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### SAML Authentication Configuration
@@ -120,7 +122,8 @@ Demonstrates an OpenSearch domain with SAML SSO authentication enabled, using a 
 [sample-config-saml.yaml](sample_configs/sample-config-saml.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-saml.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/opensearch-app/sample_configs/sample-config-saml.yaml"
 ```
 
 ---

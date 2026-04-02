@@ -70,7 +70,8 @@ Deploys an API Gateway with Cognito client credentials authentication, WAF prote
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/utility/m2m-api-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -80,7 +81,8 @@ Deploys an API Gateway with Cognito client credentials authentication, WAF prote
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/utility/m2m-api-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

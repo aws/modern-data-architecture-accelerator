@@ -101,7 +101,8 @@ Contains only the required property (dataAdminRoles) plus one database to demons
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-project-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -111,7 +112,8 @@ Covers all available configuration options using the SageMaker integration path.
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-project-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### SageMaker Integration Configuration
@@ -121,7 +123,8 @@ Extends the primary configuration with SageMaker domain integration, project pro
 [sample-config-sagemaker.yaml](sample_configs/sample-config-sagemaker.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-sagemaker.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-project-app/sample_configs/sample-config-sagemaker.yaml"
 ```
 
 #### DataZone Integration Configuration
@@ -131,7 +134,8 @@ Uses Amazon DataZone for data governance and catalog management instead of SageM
 [sample-config-datazone.yaml](sample_configs/sample-config-datazone.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-datazone.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-project-app/sample_configs/sample-config-datazone.yaml"
 ```
 
 ---

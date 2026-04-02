@@ -105,7 +105,8 @@ Deploys an EKS-based NiFi cluster with a single node and SAML authentication, wi
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-nifi-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -115,7 +116,8 @@ Exercises every compatible, non-excluded property at full depth, wired to a Data
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-nifi-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### Standalone Configuration (No Project)
@@ -125,7 +127,8 @@ Demonstrates standalone NiFi EKS cluster with explicit KMS, bucket, deployment r
 [sample-config-noproject.yaml](sample_configs/sample-config-noproject.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-noproject.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-nifi-app/sample_configs/sample-config-noproject.yaml"
 ```
 
 ---

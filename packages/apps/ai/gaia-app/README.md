@@ -132,7 +132,8 @@ Deploys a basic GAIA application with email/password Cognito authentication, no 
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/gaia-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -142,7 +143,8 @@ Deploys a conversational AI chatbot with Bedrock foundation models, RAG engines 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/gaia-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### Active Directory Authentication Configuration
@@ -152,7 +154,8 @@ Use this variant when integrating GAIA with an enterprise Active Directory via S
 [sample-config-ad.yaml](sample_configs/sample-config-ad.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-ad.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/gaia-app/sample_configs/sample-config-ad.yaml"
 ```
 
 #### Existing Cognito User Pool Configuration
@@ -162,7 +165,8 @@ Use this variant when integrating GAIA with a pre-existing Cognito User Pool and
 [sample-config-existing.yaml](sample_configs/sample-config-existing.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-existing.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/gaia-app/sample_configs/sample-config-existing.yaml"
 ```
 
 ---

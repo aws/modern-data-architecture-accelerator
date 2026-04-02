@@ -85,7 +85,8 @@ Required properties only — a single domain with an admin role and tooling blue
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/sagemaker-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -95,7 +96,8 @@ Creates SageMaker Unified Studio domains with user/group management, domain unit
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/sagemaker-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

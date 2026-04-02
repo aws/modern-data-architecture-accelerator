@@ -68,7 +68,8 @@ Required properties only — Lake Formation admin roles and IAM Allowed Principa
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/lakeformation-settings-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -78,7 +79,8 @@ Covers Lake Formation admin roles, IAM permission defaults, cross-account sharin
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/lakeformation-settings-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

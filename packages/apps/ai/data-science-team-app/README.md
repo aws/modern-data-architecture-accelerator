@@ -103,7 +103,8 @@ Deploys a SageMaker Studio domain with IAM auth, team S3 data lake, and Athena w
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/data-science-team-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -113,7 +114,8 @@ Provisions a SageMaker Studio domain with IAM auth, user profiles, lifecycle con
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/data-science-team-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### SSO Authentication Configuration
@@ -123,7 +125,8 @@ Demonstrates SSO auth mode with an existing security group and existing domain b
 [sample-config-sso.yaml](sample_configs/sample-config-sso.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-sso.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/data-science-team-app/sample_configs/sample-config-sso.yaml"
 ```
 
 ---

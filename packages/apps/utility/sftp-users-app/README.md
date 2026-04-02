@@ -64,7 +64,8 @@ Provisions a single AWS Transfer Family SFTP user with SSH public key authentica
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/utility/sftp-users-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -74,7 +75,8 @@ Provisions AWS Transfer Family SFTP users with SSH public key authentication, sc
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/utility/sftp-users-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

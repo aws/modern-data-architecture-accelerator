@@ -90,7 +90,8 @@ Provisions a single notebook instance with required networking and IAM role sett
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/sm-notebook-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -100,7 +101,8 @@ Provisions notebook instances with lifecycle configs, security groups, asset dep
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/sm-notebook-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

@@ -90,7 +90,8 @@ Deploys a three-zone data lake (raw, standardized, curated) with a single admin 
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/datalake/datalake-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -100,7 +101,8 @@ Deploys a three-zone data lake (raw, standardized, curated) with role-based acce
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/datalake/datalake-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

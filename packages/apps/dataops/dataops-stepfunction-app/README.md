@@ -68,7 +68,8 @@ Deploys a single Step Functions state machine with a basic pass-through definiti
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-stepfunction-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -78,7 +79,8 @@ Exercises every non-excluded schema property at full depth. Start here when eval
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-stepfunction-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### Standalone Configuration (No Project)
@@ -88,7 +90,8 @@ Demonstrates standalone Step Functions with explicit KMS, bucket, deployment rol
 [sample-config-noproject.yaml](sample_configs/sample-config-noproject.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-noproject.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-stepfunction-app/sample_configs/sample-config-noproject.yaml"
 ```
 
 #### Express State Machine Configuration
@@ -98,7 +101,8 @@ Demonstrates an EXPRESS state machine type for high-volume, short-duration workf
 [sample-config-express.yaml](sample_configs/sample-config-express.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-express.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-stepfunction-app/sample_configs/sample-config-express.yaml"
 ```
 
 ---

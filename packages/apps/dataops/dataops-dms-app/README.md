@@ -93,7 +93,8 @@ Only required properties are included, with projectName to auto-wire KMS and oth
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-dms-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -103,7 +104,8 @@ Covers all available replication instance, endpoint, and task settings using pro
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-dms-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### Standalone Configuration (No Project)
@@ -113,7 +115,8 @@ Demonstrates standalone DMS configuration with explicit KMS, bucket, deployment 
 [sample-config-noproject.yaml](sample_configs/sample-config-noproject.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-noproject.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-dms-app/sample_configs/sample-config-noproject.yaml"
 ```
 
 #### CDC Migration Configuration
@@ -123,7 +126,8 @@ Demonstrates CDC and full-load-and-cdc migration types with CDC-specific task pr
 [sample-config-cdc.yaml](sample_configs/sample-config-cdc.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-cdc.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-dms-app/sample_configs/sample-config-cdc.yaml"
 ```
 
 ---

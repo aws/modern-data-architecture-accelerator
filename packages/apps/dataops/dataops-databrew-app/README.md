@@ -62,7 +62,8 @@ Deploys a single DataBrew profile job against an S3 dataset. Start here for a qu
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-databrew-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -72,7 +73,8 @@ Exercises all compatible non-excluded properties at full depth. Start here when 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-databrew-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 #### Standalone Configuration (No Project)
@@ -82,7 +84,8 @@ Explicit KMS, bucket, deployment role, and security configuration instead of aut
 [sample-config-noproject.yaml](sample_configs/sample-config-noproject.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-noproject.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-databrew-app/sample_configs/sample-config-noproject.yaml"
 ```
 
 #### Database Outputs Configuration
@@ -92,7 +95,8 @@ Exercises dataCatalogOutputs and databaseOutputs job properties, which are alter
 [sample-config-dboutputs.yaml](sample_configs/sample-config-dboutputs.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-dboutputs.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-databrew-app/sample_configs/sample-config-dboutputs.yaml"
 ```
 
 ---

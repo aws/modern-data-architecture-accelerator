@@ -77,7 +77,8 @@ Required properties only — a single domain with an admin role. Start here for 
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/datazone-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -87,7 +88,8 @@ Covers both enum variants, all PolicyType values, nested domain units, cross-acc
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/datazone-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

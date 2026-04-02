@@ -88,7 +88,8 @@ Deploys a single SageMaker project with a project profile. Start here for a basi
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/sagemaker-project-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -98,7 +99,8 @@ Covers both ON_CREATE and ON_DEMAND deployment modes, environment templates, pro
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/sagemaker-project-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

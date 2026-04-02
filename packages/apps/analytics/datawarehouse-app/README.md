@@ -114,7 +114,8 @@ Required properties only — a basic Redshift cluster with VPC networking, secur
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/datawarehouse-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -124,7 +125,8 @@ Deploys a multi-node Redshift cluster with SAML federation, scheduled pause/resu
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/datawarehouse-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

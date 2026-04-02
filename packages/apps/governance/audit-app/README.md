@@ -71,7 +71,8 @@ Deploys an S3 audit bucket with read access for a single role. All properties ar
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/audit-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -81,7 +82,8 @@ Creates an S3 audit bucket that collects audit logs and S3 inventory reports fro
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/audit-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---

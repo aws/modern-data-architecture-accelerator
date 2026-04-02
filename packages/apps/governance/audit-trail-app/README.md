@@ -57,7 +57,8 @@ Required properties only — a CloudTrail trail with audit bucket and KMS key re
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-minimal.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/audit-trail-app/sample_configs/sample-config-minimal.yaml"
 ```
 
 #### Comprehensive Configuration
@@ -67,7 +68,8 @@ Deploys a CloudTrail trail with S3 audit bucket, KMS encryption, and management 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
 ```yaml
---8<-- "sample_configs/sample-config-comprehensive.yaml"
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/audit-trail-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
 ---
