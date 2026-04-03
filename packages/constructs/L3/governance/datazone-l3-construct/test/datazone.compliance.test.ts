@@ -493,4 +493,126 @@ describe('MDAA Compliance Stack Tests', () => {
       }).not.toThrow();
     });
   });
+
+  describe('Multiple DataZone Domains', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+
+    // Both domains share the same admin role since the construct uses a fixed refId 'admin'
+    const constructProps: DataZoneL3ConstructProps = {
+      glueCatalogKmsKeyArn: 'test-key-arn',
+      lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::test-account:role/test-role' },
+      crossAccountStacks: {},
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+      dataZoneDomains: {
+        'domain-alpha': {
+          description: 'First DataZone Domain',
+          singleSignOnType: 'DISABLED',
+          userAssignment: 'MANUAL',
+          dataAdminRole: { name: 'shared-admin' },
+          users: {
+            alphaUser1: { ssoId: 'alpha-sso-1' },
+            alphaUser2: { ssoId: 'alpha-sso-2' },
+          },
+          groups: {
+            alphaGroup: { ssoId: 'alpha-group-sso' },
+          },
+          ownerUsers: ['alphaUser1'],
+          ownerGroups: ['alphaGroup'],
+          domainUnits: {
+            'alpha-unit': {
+              ownerUsers: ['alphaUser1'],
+            },
+          },
+        },
+        'domain-beta': {
+          description: 'Second DataZone Domain',
+          singleSignOnType: 'DISABLED',
+          userAssignment: 'MANUAL',
+          dataAdminRole: { name: 'shared-admin' },
+          users: {
+            betaUser1: { ssoId: 'beta-sso-1' },
+          },
+          ownerUsers: ['betaUser1'],
+        },
+      },
+    };
+
+    new DataZoneL3Construct(stack, 'teststack', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    test('Creates two DataZone Domains', () => {
+      template.resourceCountIs('AWS::DataZone::Domain', 2);
+    });
+
+    test('Creates two KMS keys for the domains', () => {
+      const kmsKeys = template.findResources('AWS::KMS::Key');
+      expect(Object.keys(kmsKeys).length).toBeGreaterThanOrEqual(2);
+    });
+  });
+
+  describe('Multiple SageMaker Domains', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+
+    const constructProps: DataZoneL3ConstructProps = {
+      glueCatalogKmsKeyArn: 'test-key-arn',
+      lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::test-account:role/test-role' },
+      crossAccountStacks: {},
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+      sageMakerDomains: {
+        'sm-domain-alpha': {
+          description: 'First SageMaker Domain',
+          userAssignment: 'MANUAL',
+          tooling: {
+            vpcId: 'vpc-alpha',
+            subnetIds: ['subnet-alpha-1', 'subnet-alpha-2'],
+          },
+          dataAdminRole: { name: 'shared-sm-admin' },
+          users: {
+            smUser1: { ssoId: 'sm-sso-1' },
+            smUser2: { ssoId: 'sm-sso-2' },
+          },
+          groups: {
+            smGroup1: { ssoId: 'sm-group-sso-1' },
+          },
+          ownerUsers: ['smUser1'],
+          ownerGroups: ['smGroup1'],
+          domainUnits: {
+            'alpha-ml-unit': {
+              ownerUsers: ['smUser1'],
+              ownerGroups: ['smGroup1'],
+            },
+          },
+        },
+        'sm-domain-beta': {
+          description: 'Second SageMaker Domain',
+          userAssignment: 'MANUAL',
+          tooling: {
+            vpcId: 'vpc-beta',
+            subnetIds: ['subnet-beta-1'],
+          },
+          dataAdminRole: { name: 'shared-sm-admin' },
+          users: {
+            smUser3: { ssoId: 'sm-sso-3' },
+          },
+          ownerUsers: ['smUser3'],
+        },
+      },
+    };
+
+    new DataZoneL3Construct(stack, 'teststack', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    test('Creates two SageMaker (DataZone) Domains', () => {
+      template.resourceCountIs('AWS::DataZone::Domain', 2);
+    });
+
+    test('Creates two KMS keys for the SageMaker domains', () => {
+      const kmsKeys = template.findResources('AWS::KMS::Key');
+      expect(Object.keys(kmsKeys).length).toBeGreaterThanOrEqual(2);
+    });
+  });
 });

@@ -611,4 +611,239 @@ describe('MDAA Compliance Stack Tests', () => {
       }).toThrow('Please provide kmsArn');
     });
   });
+
+  describe('Multiple Replication Instances and Tasks', () => {
+    const testApp = new MdaaTestApp();
+
+    const instance1: ReplicationInstanceProps = {
+      instanceClass: 'dms.r5.large',
+      subnetIds: ['subnet-1a', 'subnet-1b'],
+      vpcId: 'vpc-1',
+      ingressRules: {
+        ipv4: [{ protocol: 'tcp', port: 3306, toPort: 3306, cidr: '10.0.0.0/8', description: 'MySQL' }],
+      },
+      addSelfReferenceRule: true,
+    };
+
+    const instance2: ReplicationInstanceProps = {
+      instanceClass: 'dms.r5.xlarge',
+      subnetIds: ['subnet-2a'],
+      vpcId: 'vpc-2',
+      egressRules: {
+        ipv4: [{ protocol: 'tcp', port: 443, toPort: 443, cidr: '0.0.0.0/0', description: 'HTTPS' }],
+      },
+    };
+
+    const sourceEndpoint: EndpointProps = {
+      endpointType: 'source',
+      engineName: 'mysql',
+      mySqlSettings: {
+        secretsManagerSecretArn: 'arn:test-partition:secretsmanager:test-region:test-account:secret:mysql-secret',
+      },
+    };
+
+    const targetEndpoint1: EndpointProps = {
+      endpointType: 'target',
+      engineName: 's3',
+      s3Settings: {
+        bucketName: 'target-bucket-1',
+        serverSideEncryptionKmsKeyId: 'arn:test-partition:kms:test-region:test-acct:key/test-key-id',
+      },
+    };
+
+    const targetEndpoint2: EndpointProps = {
+      endpointType: 'target',
+      engineName: 's3',
+      s3Settings: {
+        bucketName: 'target-bucket-2',
+        serverSideEncryptionKmsKeyId: 'arn:test-partition:kms:test-region:test-acct:key/test-key-id',
+      },
+    };
+
+    const task1: ReplicationTaskProps = {
+      replicationInstance: 'instance1',
+      sourceEndpoint: 'mysqlSource',
+      targetEndpoint: 's3Target1',
+      migrationType: 'full-load',
+      tableMappings: { rules: [{ 'rule-type': 'selection', 'rule-id': '1' }] },
+      replicationTaskSettings: { TargetMetadata: { SupportLobs: true } },
+      taskData: { targetMetadata: { supportLobs: true } },
+    };
+
+    const task2: ReplicationTaskProps = {
+      replicationInstance: 'instance2',
+      sourceEndpoint: 'mysqlSource',
+      targetEndpoint: 's3Target2',
+      migrationType: 'full-load-and-cdc',
+      tableMappings: { rules: [{ 'rule-type': 'selection', 'rule-id': '2' }] },
+      cdcStartPosition: 'checkpoint:V1#27#mysql-bin-changelog.157832:1975',
+      cdcStopPosition: 'server_time:2018-02-09T12:12:12',
+    };
+
+    const constructProps: DMSL3ConstructProps = {
+      projectName: 'test-multi',
+      kmsArn: 'arn:test-partition:kms:test-region:test-acct:key/test-key-id',
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      dms: {
+        createDmsVpcRole: true,
+        createDmsLogRole: true,
+        replicationInstances: {
+          instance1: instance1,
+          instance2: instance2,
+        },
+        endpoints: {
+          mysqlSource: sourceEndpoint,
+          s3Target1: targetEndpoint1,
+          s3Target2: targetEndpoint2,
+        },
+        replicationTasks: {
+          task1: task1,
+          task2: task2,
+        },
+      },
+    };
+
+    new DMSL3Construct(testApp.testStack, 'test-stack', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    test('Creates two replication instances', () => {
+      template.resourceCountIs('AWS::DMS::ReplicationInstance', 2);
+    });
+
+    test('Creates three endpoints', () => {
+      template.resourceCountIs('AWS::DMS::Endpoint', 3);
+    });
+
+    test('Creates two replication tasks', () => {
+      template.resourceCountIs('AWS::DMS::ReplicationTask', 2);
+    });
+
+    test('First task has full-load with task settings and task data', () => {
+      template.hasResourceProperties('AWS::DMS::ReplicationTask', {
+        ReplicationTaskIdentifier: 'test-org-test-env-test-domain-test-module-task1',
+        MigrationType: 'full-load',
+        ReplicationTaskSettings: '{"TargetMetadata":{"SupportLobs":true}}',
+        TaskData: '{"targetMetadata":{"supportLobs":true}}',
+      });
+    });
+
+    test('Second task has CDC start/stop positions', () => {
+      template.hasResourceProperties('AWS::DMS::ReplicationTask', {
+        ReplicationTaskIdentifier: 'test-org-test-env-test-domain-test-module-task2',
+        MigrationType: 'full-load-and-cdc',
+        CdcStartPosition: 'checkpoint:V1#27#mysql-bin-changelog.157832:1975',
+        CdcStopPosition: 'server_time:2018-02-09T12:12:12',
+      });
+    });
+
+    test('Creates two replication subnet groups', () => {
+      template.resourceCountIs('AWS::DMS::ReplicationSubnetGroup', 2);
+    });
+
+    test('Creates DMS VPC role alongside instances', () => {
+      template.hasResourceProperties('AWS::IAM::Role', {
+        RoleName: 'dms-vpc-role',
+      });
+    });
+
+    test('Creates DMS CloudWatch logs role alongside instances', () => {
+      template.hasResourceProperties('AWS::IAM::Role', {
+        RoleName: 'dms-cloudwatch-logs-role',
+      });
+    });
+
+    test('Creates two security groups for two instances', () => {
+      const sgs = template.findResources('AWS::EC2::SecurityGroup');
+      const dmsSgs = Object.values(sgs).filter((sg: { Properties?: { GroupDescription?: string } }) =>
+        sg.Properties?.GroupDescription?.includes('security-group-instance'),
+      );
+      expect(dmsSgs.length).toBe(2);
+    });
+  });
+});
+
+describe('Multiple Replication Instances and Tasks', () => {
+  const testApp = new MdaaTestApp();
+
+  const instance1: ReplicationInstanceProps = {
+    instanceClass: 'dms.t3.medium',
+    subnetIds: ['subnet-1'],
+    vpcId: 'vpc-1',
+  };
+
+  const instance2: ReplicationInstanceProps = {
+    instanceClass: 'dms.t3.large',
+    subnetIds: ['subnet-2'],
+    vpcId: 'vpc-2',
+  };
+
+  const sourceEndpoint: EndpointProps = {
+    endpointType: 'source',
+    engineName: 'mysql',
+    mySqlSettings: {
+      secretsManagerSecretArn: 'arn:test-partition:secretsmanager:test-region:test-account:secret:mysql-secret',
+    },
+  };
+
+  const targetEndpoint: EndpointProps = {
+    endpointType: 'target',
+    engineName: 's3',
+    s3Settings: {
+      bucketName: 'test-bucket',
+      serverSideEncryptionKmsKeyId: 'arn:test-partition:kms:test-region:test-acct:key/test-key-id',
+    },
+  };
+
+  const task1: ReplicationTaskProps = {
+    replicationInstance: 'instance1',
+    sourceEndpoint: 'source1',
+    targetEndpoint: 'target1',
+    migrationType: 'full-load',
+    tableMappings: {},
+  };
+
+  const task2: ReplicationTaskProps = {
+    replicationInstance: 'instance2',
+    sourceEndpoint: 'source1',
+    targetEndpoint: 'target1',
+    migrationType: 'cdc',
+    tableMappings: {},
+  };
+
+  const constructProps: DMSL3ConstructProps = {
+    projectName: 'test-multi',
+    kmsArn: 'arn:test-partition:kms:test-region:test-acct:key/test-key-id',
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    dms: {
+      replicationInstances: {
+        instance1: instance1,
+        instance2: instance2,
+      },
+      endpoints: {
+        source1: sourceEndpoint,
+        target1: targetEndpoint,
+      },
+      replicationTasks: {
+        task1: task1,
+        task2: task2,
+      },
+    },
+  };
+
+  new DMSL3Construct(testApp.testStack, 'test-stack', constructProps);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Multiple Replication Instance Resource Count', () => {
+    template.resourceCountIs('AWS::DMS::ReplicationInstance', 2);
+  });
+
+  test('Multiple Replication Task Resource Count', () => {
+    template.resourceCountIs('AWS::DMS::ReplicationTask', 2);
+  });
+
+  test('Multiple Replication Subnet Groups', () => {
+    template.resourceCountIs('AWS::DMS::ReplicationSubnetGroup', 2);
+  });
 });

@@ -204,3 +204,69 @@ describe('MDAA Notebook Tests', () => {
     });
   });
 });
+
+describe('Multiple Notebooks Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const testRoleRef1: MdaaRoleRef = {
+    arn: 'arn:test-partition:iam::test-account:role/role-one',
+    id: 'role-id-one',
+    name: 'role-one',
+  };
+
+  const testRoleRef2: MdaaRoleRef = {
+    arn: 'arn:test-partition:iam::test-account:role/role-two',
+    id: 'role-id-two',
+    name: 'role-two',
+  };
+
+  const notebook1: NotebookProps = {
+    vpcId: 'test-vpc-id',
+    subnetId: 'test-sub-id-1',
+    instanceType: 'ml.t3.medium',
+    notebookRole: testRoleRef1,
+  };
+
+  const notebook2: NotebookProps = {
+    vpcId: 'test-vpc-id',
+    subnetId: 'test-sub-id-2',
+    instanceType: 'ml.t3.large',
+    notebookRole: testRoleRef2,
+  };
+
+  const constructProps: SagemakerNotebookL3ConstructProps = {
+    notebooks: {
+      'notebook-one': notebook1,
+      'notebook-two': notebook2,
+    },
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+  };
+
+  new SagemakerNotebookL3Construct(stack, 'multi-notebooks', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Multiple Notebook Instance Resource Count', () => {
+    template.resourceCountIs('AWS::SageMaker::NotebookInstance', 2);
+  });
+
+  test('Notebook One Properties', () => {
+    template.hasResourceProperties('AWS::SageMaker::NotebookInstance', {
+      InstanceType: 'ml.t3.medium',
+      SubnetId: 'test-sub-id-1',
+    });
+  });
+
+  test('Notebook Two Properties', () => {
+    template.hasResourceProperties('AWS::SageMaker::NotebookInstance', {
+      InstanceType: 'ml.t3.large',
+      SubnetId: 'test-sub-id-2',
+    });
+  });
+
+  test('Multiple Security Groups for Notebooks', () => {
+    template.resourceCountIs('AWS::EC2::SecurityGroup', 2);
+  });
+});

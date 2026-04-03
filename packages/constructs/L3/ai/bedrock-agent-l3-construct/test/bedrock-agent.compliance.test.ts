@@ -313,4 +313,150 @@ describe('Bedrock Agent L3 Construct Tests', () => {
     // Verify resolveModelArn was called with the invalid ARN
     expect(mockedResolveModelArn).toHaveBeenCalledWith(invalidArn, 'test-partition', 'test-region', 'test-account');
   });
+
+  test('Agent without Action Groups', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const agentWithoutActionGroups: BedrockAgentProps = {
+      role: agentExecutionRoleRef,
+      autoPrepare: true,
+      description: 'Agent without action groups',
+      instruction: 'Test instructions',
+      foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
+      // actionGroups intentionally omitted
+    };
+
+    const constructProps: BedrockAgentL3ConstructProps = {
+      agentName: 'test-agent-no-actions',
+      agentConfig: agentWithoutActionGroups,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockAgentL3Construct(testApp.testStack, 'test-agent-no-actions-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::Bedrock::Agent', {
+      AgentName: 'test-org-test-env-test-domain-test-module-test-agent-no-actions',
+      AutoPrepare: true,
+    });
+
+    // No Lambda permissions should be created without action groups
+    const lambdaPermissions = template.findResources('AWS::Lambda::Permission');
+    expect(Object.keys(lambdaPermissions).length).toBe(0);
+  });
+
+  test('Agent without Alias', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const agentWithoutAlias: BedrockAgentProps = {
+      role: agentExecutionRoleRef,
+      description: 'Agent without alias',
+      instruction: 'Test instructions',
+      foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
+      actionGroups: [
+        {
+          actionGroupExecutor: {
+            lambda: 'arn:aws:lambda:us-east-1:123456789012:function:test-function',
+          },
+          actionGroupName: 'test-action-group',
+        },
+      ],
+      // agentAliasName intentionally omitted
+    };
+
+    const constructProps: BedrockAgentL3ConstructProps = {
+      agentName: 'test-agent-no-alias',
+      agentConfig: agentWithoutAlias,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockAgentL3Construct(testApp.testStack, 'test-agent-no-alias-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    // Agent should be created
+    template.hasResourceProperties('AWS::Bedrock::Agent', {
+      AgentName: 'test-org-test-env-test-domain-test-module-test-agent-no-alias',
+    });
+
+    // No alias should be created
+    const aliases = template.findResources('AWS::Bedrock::AgentAlias');
+    expect(Object.keys(aliases).length).toBe(0);
+  });
+
+  test('Agent with Knowledge Base and Guardrail combined', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const agentWithBoth: BedrockAgentProps = {
+      role: agentExecutionRoleRef,
+      description: 'Agent with KB and Guardrail',
+      instruction: 'Test instructions',
+      foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
+      knowledgeBases: [
+        {
+          id: 'kb-12345',
+          description: 'Test KB',
+          knowledgeBaseState: 'ENABLED',
+        },
+      ],
+      guardrail: {
+        id: 'guardrail-67890',
+        version: '1',
+      },
+      actionGroups: [
+        {
+          actionGroupExecutor: {
+            lambda: 'arn:aws:lambda:us-east-1:123456789012:function:test-function',
+          },
+          actionGroupName: 'test-action-group',
+        },
+      ],
+      agentAliasName: 'test-alias',
+    };
+
+    const constructProps: BedrockAgentL3ConstructProps = {
+      agentName: 'test-agent-combined',
+      agentConfig: agentWithBoth,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockAgentL3Construct(testApp.testStack, 'test-agent-combined-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    // Verify policy has both KB and guardrail statements
+    template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+      PolicyDocument: {
+        Statement: [
+          {},
+          {},
+          {
+            Sid: 'AllowApplyBedrockGuardrail',
+            Effect: 'Allow',
+            Action: 'bedrock:ApplyGuardrail',
+          },
+          {
+            Sid: 'AllowBedrockKnowledgeBase',
+            Effect: 'Allow',
+            Action: 'bedrock:Retrieve',
+          },
+        ],
+      },
+    });
+
+    // Alias should be created
+    template.hasResourceProperties('AWS::Bedrock::AgentAlias', {
+      AgentAliasName: 'test-alias',
+    });
+  });
 });

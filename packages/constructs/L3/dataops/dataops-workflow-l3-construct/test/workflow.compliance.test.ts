@@ -228,3 +228,83 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 });
+
+describe('Multiple Workflows Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const wf1: WorkflowProps = {
+    rawWorkflowDef: {
+      Workflow: {
+        Name: 'workflow-one',
+        DefaultRunProperties: {},
+        Graph: {
+          Nodes: [
+            {
+              Type: 'TRIGGER',
+              Name: 'Start_wf1',
+              TriggerDetails: {
+                Trigger: {
+                  Name: 'Start_wf1',
+                  WorkflowName: 'workflow-one',
+                  Type: 'SCHEDULED',
+                  Schedule: 'cron(0 12 * * ? *)',
+                  State: 'CREATED',
+                  Actions: [{ CrawlerName: 'test-crawler-1' }],
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
+  };
+
+  const wf2: WorkflowProps = {
+    rawWorkflowDef: {
+      Workflow: {
+        Name: 'workflow-two',
+        DefaultRunProperties: {},
+        Graph: {
+          Nodes: [
+            {
+              Type: 'TRIGGER',
+              Name: 'Start_wf2',
+              TriggerDetails: {
+                Trigger: {
+                  Name: 'Start_wf2',
+                  WorkflowName: 'workflow-two',
+                  Type: 'SCHEDULED',
+                  Schedule: 'cron(0 6 * * ? *)',
+                  State: 'CREATED',
+                  Actions: [{ CrawlerName: 'test-crawler-2' }],
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
+  };
+
+  const constructProps: GlueWorkflowL3ConstructProps = {
+    kmsArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
+    securityConfigurationName: 'test-security-configuration',
+    projectName: 'test-project',
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+    workflowDefinitions: [wf1, wf2],
+  };
+
+  new GlueWorkflowL3Construct(stack, 'multi-wf', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Multiple Workflow Resource Count', () => {
+    template.resourceCountIs('AWS::Glue::Workflow', 2);
+  });
+
+  test('Multiple Trigger Resource Count', () => {
+    template.resourceCountIs('AWS::Glue::Trigger', 2);
+  });
+});

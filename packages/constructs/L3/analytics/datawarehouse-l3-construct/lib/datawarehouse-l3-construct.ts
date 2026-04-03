@@ -549,6 +549,14 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
             id: 'NIST.800.53.R5-RedshiftClusterConfiguration',
             reason: 'Audit logging to S3 is disabled in config. Cluster encryption using KMS is enforced in Construct.',
           },
+          {
+            id: 'PCI.DSS.321-RedshiftClusterConfiguration',
+            reason: 'Audit logging to S3 is disabled in config. Cluster encryption using KMS is enforced in Construct.',
+          },
+          {
+            id: 'HIPAA.Security-RedshiftClusterConfiguration',
+            reason: 'Audit logging to S3 is disabled in config. Cluster encryption using KMS is enforced in Construct.',
+          },
         ],
         true,
       );

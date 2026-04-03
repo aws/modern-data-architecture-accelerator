@@ -412,3 +412,76 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 });
+
+describe('DataLake with EventBridge Notifications', () => {
+  const testApp = new MdaaTestApp();
+
+  const testAccessPolicy: AccessPolicyProps = {
+    name: 'test-policy',
+    s3Prefix: '/data',
+    readRoleRefs: [{ id: 'test-read-role-id' }],
+  };
+
+  const eventBridgeBucketProps: BucketDefinition = {
+    bucketZone: 'eventbridge-zone',
+    accessPolicies: [testAccessPolicy],
+    enableEventBridgeNotifications: true,
+  };
+
+  const constructProps: DataLakeL3ConstructProps = {
+    buckets: [eventBridgeBucketProps],
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+  };
+
+  new S3DatalakeBucketL3Construct(testApp.testStack, 'test-eventbridge-stack', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('EventBridge notification enabled on bucket', () => {
+    template.hasResource('AWS::S3::Bucket', {
+      Properties: Match.objectLike({
+        NotificationConfiguration: {
+          EventBridgeConfiguration: {
+            EventBridgeEnabled: true,
+          },
+        },
+      }),
+    });
+  });
+});
+
+describe('DataLake with createFolderSkeleton disabled', () => {
+  const testApp = new MdaaTestApp();
+
+  const testAccessPolicy: AccessPolicyProps = {
+    name: 'test-policy',
+    s3Prefix: '/data',
+    readRoleRefs: [{ id: 'test-read-role-id' }],
+  };
+
+  const noFolderBucketProps: BucketDefinition = {
+    bucketZone: 'no-folder-zone',
+    accessPolicies: [testAccessPolicy],
+    createFolderSkeleton: false,
+  };
+
+  const constructProps: DataLakeL3ConstructProps = {
+    buckets: [noFolderBucketProps],
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+  };
+
+  new S3DatalakeBucketL3Construct(testApp.testStack, 'test-no-folder-stack', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('No custom resource for folder creation when createFolderSkeleton is false', () => {
+    const customResources = template.findResources('AWS::CloudFormation::CustomResource');
+    expect(Object.keys(customResources).length).toBe(0);
+  });
+
+  test('Bucket still created', () => {
+    template.resourceCountIs('AWS::S3::Bucket', 1);
+  });
+});

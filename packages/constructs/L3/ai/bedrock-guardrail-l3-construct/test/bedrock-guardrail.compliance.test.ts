@@ -431,4 +431,78 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
       },
     });
   });
+
+  test('Guardrail with Grounding Only (no Relevance)', () => {
+    const testApp = new MdaaTestApp();
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const guardrailGroundingOnly: BedrockGuardrailProps = {
+      ...basicGuardrail,
+      contextualGroundingFilters: {
+        grounding: 0.95,
+        // relevance intentionally omitted
+      },
+    };
+
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const constructProps: BedrockGuardrailL3ConstructProps = {
+      guardrailName: 'test-guardrail-grounding-only',
+      guardrailConfig: guardrailGroundingOnly,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockGuardrailL3Construct(testApp.testStack, 'test-guardrail-grounding-only-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      ContextualGroundingPolicyConfig: {
+        FiltersConfig: [
+          {
+            Type: 'GROUNDING',
+            Threshold: 0.95,
+          },
+        ],
+      },
+    });
+  });
+
+  test('Guardrail with No Optional Filters', () => {
+    const testApp = new MdaaTestApp();
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const minimalGuardrail: BedrockGuardrailProps = {
+      contentFilters: {
+        hate: { inputStrength: 'LOW', outputStrength: 'LOW' },
+      },
+      // No contextualGroundingFilters, no sensitiveInformationFilters, no custom messages
+    };
+
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const constructProps: BedrockGuardrailL3ConstructProps = {
+      guardrailName: 'test-guardrail-minimal',
+      guardrailConfig: minimalGuardrail,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockGuardrailL3Construct(testApp.testStack, 'test-guardrail-minimal-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    const guardrails = template.findResources('AWS::Bedrock::Guardrail');
+    const guardrail = Object.values(guardrails)[0] as {
+      Properties: {
+        ContextualGroundingPolicyConfig?: unknown;
+        SensitiveInformationPolicyConfig?: unknown;
+        BlockedInputMessaging: string;
+        BlockedOutputsMessaging: string;
+      };
+    };
+
+    // Should use default messages
+    expect(guardrail.Properties.BlockedInputMessaging).toBe('Your input contains content that is not allowed.');
+    expect(guardrail.Properties.BlockedOutputsMessaging).toBe('The response contains content that is not allowed.');
+  });
 });

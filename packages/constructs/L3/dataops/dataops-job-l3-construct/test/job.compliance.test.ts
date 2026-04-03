@@ -328,3 +328,62 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 });
+
+describe('Multiple Jobs Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const jobCommand: JobCommand = {
+    name: 'glueetl',
+    scriptLocation: './test/src/glue/python/job.py',
+  };
+
+  const job1: JobConfig = {
+    executionRoleArn: 'arn:test-partition:iam:test-region:test-account:role/role-one',
+    command: jobCommand,
+    description: 'first job',
+  };
+
+  const job2: JobConfig = {
+    executionRoleArn: 'arn:test-partition:iam:test-region:test-account:role/role-two',
+    command: { name: 'pythonshell', scriptLocation: './test/src/glue/python/job.py' },
+    description: 'second job',
+  };
+
+  const constructProps: GlueJobL3ConstructProps = {
+    kmsArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
+    securityConfigurationName: 'test-security-configuration',
+    projectName: 'test-project',
+    notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:MyTopic',
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+    deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/some-deployment-role',
+    bucketName: 'some-project-bucket-name',
+    jobConfigs: {
+      'job-one': job1,
+      'job-two': job2,
+    },
+  };
+
+  new GlueJobL3Construct(stack, 'multi-jobs', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Multiple Glue Job Resource Count', () => {
+    template.resourceCountIs('AWS::Glue::Job', 2);
+  });
+
+  test('Job One Properties', () => {
+    template.hasResourceProperties('AWS::Glue::Job', {
+      Description: 'first job',
+      Command: Match.objectLike({ Name: 'glueetl' }),
+    });
+  });
+
+  test('Job Two Properties', () => {
+    template.hasResourceProperties('AWS::Glue::Job', {
+      Description: 'second job',
+      Command: Match.objectLike({ Name: 'pythonshell' }),
+    });
+  });
+});

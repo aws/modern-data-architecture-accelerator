@@ -447,3 +447,74 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 });
+
+describe('Multiple Federations and Database Users Tests', () => {
+  const securityGroupIngresProps: SecurityGroupIngressProps = {
+    ipv4: ['127.0.0.1/24'],
+  };
+
+  const dataAdminRoleRef: MdaaRoleRef = {
+    id: 'testdataAdminRole',
+    arn: 'arn:test-partition:iam::test-account:role/TestAccess',
+  };
+
+  const federation1: FederationProps = {
+    federationName: 'federation-one',
+    providerArn: 'arn:test-partition:iam::test-account:saml-provider/provider-one',
+  };
+
+  const federation2: FederationProps = {
+    federationName: 'federation-two',
+    providerArn: 'arn:test-partition:iam::test-account:saml-provider/provider-two',
+  };
+
+  const dbUser1: DatabaseUsersProps = {
+    userName: 'user-one',
+    dbName: 'db-one',
+    secretRotationDays: 10,
+  };
+
+  const dbUser2: DatabaseUsersProps = {
+    userName: 'user-two',
+    dbName: 'db-two',
+    secretRotationDays: 30,
+    secretAccessRoles: [{ name: 'test-role' }],
+  };
+
+  const testApp = new MdaaTestApp();
+
+  const constructProps: DataWarehouseL3ConstructProps = {
+    adminUsername: 'admin',
+    adminPasswordRotationDays: 10,
+    dataAdminRoleRefs: [dataAdminRoleRef],
+    vpcId: 'vpcId',
+    subnetIds: ['test1'],
+    securityGroupIngress: securityGroupIngresProps,
+    nodeType: 'RA3_LARGE',
+    numberOfNodes: 2,
+    enableAuditLoggingToS3: false,
+    preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    naming: testApp.naming,
+    federations: [federation1, federation2],
+    databaseUsers: [dbUser1, dbUser2],
+    parameterGroupParams: { key1: 'value1' },
+    workloadManagement: [{ key1: 'value1' }],
+  };
+
+  new DataWarehouseL3Construct(testApp.testStack, 'multistack', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Multiple Federation Roles', () => {
+    template.resourceCountIs('AWS::IAM::Role', 6);
+  });
+
+  test('Multiple Federation Managed Policies', () => {
+    template.resourceCountIs('AWS::IAM::ManagedPolicy', 3);
+  });
+
+  test('Multiple Database User Secrets', () => {
+    template.resourceCountIs('AWS::SecretsManager::Secret', 3);
+  });
+});

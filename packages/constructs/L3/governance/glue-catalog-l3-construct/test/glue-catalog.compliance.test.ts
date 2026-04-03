@@ -56,3 +56,69 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 });
+
+describe('Multiple Access Policies and Accounts Tests', () => {
+  const testApp = new MdaaTestApp();
+
+  const accessPolicy1: CatalogAccessPolicyProps = {
+    resources: ['database/db-one'],
+    readPrincipalArns: ['arn:test-partition:iam::test-account:role/reader-one'],
+  };
+
+  const accessPolicy2: CatalogAccessPolicyProps = {
+    resources: ['database/db-two'],
+    readPrincipalArns: ['arn:test-partition:iam::test-account:role/reader-two'],
+    writePrincipalArns: ['arn:test-partition:iam::test-account:role/writer-two'],
+  };
+
+  const constructProps: GlueCatalogL3ConstructProps = {
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    naming: testApp.naming,
+    accessPolicies: {
+      'policy-one': accessPolicy1,
+      'policy-two': accessPolicy2,
+    },
+    consumerAccounts: {
+      consumer1: '111111111111',
+      consumer2: '222222222222',
+    },
+    producerAccounts: {
+      producer1: '333333333333',
+      producer2: '444444444444',
+    },
+  };
+
+  new GlueCatalogL3Construct(testApp.testStack, 'multistack', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Multiple Athena Data Catalogs for Producer Accounts', () => {
+    template.resourceCountIs('AWS::Athena::DataCatalog', 2);
+  });
+
+  test('Producer One Athena Catalog', () => {
+    template.hasResourceProperties('AWS::Athena::DataCatalog', {
+      Name: 'producer1',
+      Type: 'GLUE',
+      Parameters: {
+        'catalog-id': '333333333333',
+      },
+    });
+  });
+
+  test('Producer Two Athena Catalog', () => {
+    template.hasResourceProperties('AWS::Athena::DataCatalog', {
+      Name: 'producer2',
+      Type: 'GLUE',
+      Parameters: {
+        'catalog-id': '444444444444',
+      },
+    });
+  });
+
+  test('GlueCatalogSettings Created', () => {
+    template.hasResourceProperties('AWS::Glue::DataCatalogEncryptionSettings', {
+      CatalogId: 'test-account',
+    });
+  });
+});

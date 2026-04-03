@@ -493,3 +493,48 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 });
+
+describe('Multiple Step Functions Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const sfn1: StepFunctionProps = {
+    stateMachineName: 'sfn-one',
+    stateMachineType: 'STANDARD',
+    stateMachineExecutionRole: 'arn:test-partition:iam::test-account:role/role-one',
+    logExecutionData: false,
+    rawStepFunctionDef: {
+      Comment: 'First state machine',
+      StartAt: 'Pass',
+      States: { Pass: { Type: 'Pass', End: true } },
+    },
+  };
+
+  const sfn2: StepFunctionProps = {
+    stateMachineName: 'sfn-two',
+    stateMachineType: 'STANDARD',
+    stateMachineExecutionRole: 'arn:test-partition:iam::test-account:role/role-two',
+    logExecutionData: false,
+    rawStepFunctionDef: {
+      Comment: 'Second state machine',
+      StartAt: 'Pass',
+      States: { Pass: { Type: 'Pass', End: true } },
+    },
+  };
+
+  const constructProps: StepFunctionL3ConstructProps = {
+    kmsArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
+    projectName: 'test-project',
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+    stepfunctionDefinitions: [sfn1, sfn2],
+  };
+
+  new StepFunctionL3Construct(stack, 'multi-sfn', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Multiple State Machine Resource Count', () => {
+    template.resourceCountIs('AWS::StepFunctions::StateMachine', 2);
+  });
+});

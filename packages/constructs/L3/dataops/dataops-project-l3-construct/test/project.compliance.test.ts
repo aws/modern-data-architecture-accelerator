@@ -795,3 +795,63 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 });
+
+describe('Multiple Security Groups Tests', () => {
+  const testApp = new MdaaTestApp();
+
+  const testGlueRoleRef: MdaaRoleRef = {
+    id: 'test-glue-role-id',
+  };
+
+  const testAdminRoleRef: MdaaRoleRef = {
+    id: 'test-admin-role-id',
+  };
+
+  const testEngRoleRef: MdaaRoleRef = {
+    id: 'test-eng-super-role-id',
+  };
+
+  const constructProps: DataOpsProjectL3ConstructProps = {
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(
+      testApp.testStack,
+      testApp.naming,
+      path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
+    ),
+    projectExecutionRoleRefs: [testGlueRoleRef],
+    dataEngineerRoleRefs: [testEngRoleRef],
+    dataAdminRoleRefs: [testAdminRoleRef],
+    securityGroupConfigs: {
+      'sg-one': {
+        vpcId: 'vpc-one',
+        securityGroupEgressRules: {
+          ipv4: [
+            {
+              cidr: '10.0.0.0/24',
+              protocol: Protocol.TCP,
+              port: 443,
+            },
+          ],
+        },
+      },
+      'sg-two': {
+        vpcId: 'vpc-two',
+        securityGroupEgressRules: {
+          ipv4: [
+            {
+              cidr: '10.1.0.0/24',
+              protocol: Protocol.TCP,
+              port: 3306,
+            },
+          ],
+        },
+      },
+    },
+  };
+
+  test('Multiple security groups can be created without construct ID collision', () => {
+    new DataOpsProjectL3Construct(testApp.testStack, 'multi-sg-stack', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+    template.resourceCountIs('AWS::EC2::SecurityGroup', 2);
+  });
+});

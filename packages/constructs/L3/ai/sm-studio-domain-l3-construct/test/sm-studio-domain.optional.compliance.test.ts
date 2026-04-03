@@ -300,3 +300,58 @@ describe('Studio Domain User Profile Name Validation', () => {
     }).not.toThrow();
   });
 });
+
+describe('Multiple User Profiles Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const constructProps: SagemakerStudioDomainL3ConstructProps = {
+    domain: {
+      authMode: 'IAM',
+      vpcId: 'test-vpc-id',
+      subnetIds: ['test-sub-id'],
+      defaultUserSettings: {},
+      dataAdminRoles: [{ id: 'admin-role-id' }],
+      notebookSharingPrefix: 'testing',
+      userProfiles: {
+        'user-one': {
+          userRole: { id: 'role-id-one' },
+        },
+        'user-two': {
+          userRole: { id: 'role-id-two' },
+        },
+        'user-three': {
+          userRole: { id: 'role-id-three' },
+        },
+      },
+    },
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+  };
+
+  new SagemakerStudioDomainL3Construct(stack, 'multi-domain', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Multiple User Profile Resource Count', () => {
+    template.resourceCountIs('AWS::SageMaker::UserProfile', 3);
+  });
+
+  test('User One Profile', () => {
+    template.hasResourceProperties('AWS::SageMaker::UserProfile', {
+      UserProfileName: 'user-one',
+    });
+  });
+
+  test('User Two Profile', () => {
+    template.hasResourceProperties('AWS::SageMaker::UserProfile', {
+      UserProfileName: 'user-two',
+    });
+  });
+
+  test('User Three Profile', () => {
+    template.hasResourceProperties('AWS::SageMaker::UserProfile', {
+      UserProfileName: 'user-three',
+    });
+  });
+});

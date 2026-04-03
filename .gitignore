@@ -63,6 +63,7 @@ dist/
 .kiro/*
 !.kiro/steering/
 .kiro/steering/internal/
+.kiro/steering/internal
 .kiro/steering/*.md.bak
 .kiro/steering-external
 

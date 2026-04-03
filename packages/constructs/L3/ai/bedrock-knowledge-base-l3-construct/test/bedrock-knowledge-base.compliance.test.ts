@@ -1228,4 +1228,50 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
       });
     });
   });
+
+  describe('Multiple S3 Data Sources', () => {
+    test('Creates correct number of DataSource resources for multiple S3 sources', () => {
+      const testApp = new MdaaTestApp();
+      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+      const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+      const kbWithMultipleSources: BedrockKnowledgeBaseProps = {
+        role: kbRoleRef,
+        vectorStore: 'test-vector-store',
+        embeddingModel: 'amazon.titan-embed-text-v2:0',
+        s3DataSources: {
+          'source-alpha': {
+            bucketName: 'bucket-alpha',
+            prefix: 'alpha/',
+          },
+          'source-beta': {
+            bucketName: 'bucket-beta',
+            prefix: 'beta/',
+          },
+          'source-gamma': {
+            bucketName: 'bucket-gamma',
+          },
+        },
+      };
+
+      const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+        kbName: 'test-kb-multi-ds',
+        kbConfig: kbWithMultipleSources,
+        vectorStoreConfig,
+        kmsKey,
+        roleHelper,
+        naming: testApp.naming,
+      };
+
+      new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-multi-ds-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      // Verify 3 DataSource resources are created
+      const dataSources = template.findResources('AWS::Bedrock::DataSource');
+      expect(Object.keys(dataSources).length).toBe(3);
+
+      // Verify only 1 KnowledgeBase resource is created
+      template.resourceCountIs('AWS::Bedrock::KnowledgeBase', 1);
+    });
+  });
 });

@@ -3067,6 +3067,121 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(kbRoleResolvers.length).toBeGreaterThanOrEqual(0);
     });
   });
+
+  describe('Multiple Named Entries in Map Props', () => {
+    const testApp = new MdaaTestApp();
+
+    const agentExecutionRoleRef2: MdaaRoleRef = {
+      arn: 'arn:test-partition:iam::test-account:role/agent-execution-role-2',
+      name: 'agent-execution-role-2',
+    };
+
+    const kbRoleRef2: MdaaRoleRef = {
+      arn: 'arn:test-partition:iam::test-account:role/kb-execution-role-2',
+      name: 'kb-execution-role-2',
+    };
+
+    const agent2: BedrockAgentProps = {
+      role: agentExecutionRoleRef2,
+      autoPrepare: true,
+      description: 'Second Agent',
+      instruction: 'Agent 2 Instructions',
+      foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
+      agentAliasName: 'beta-alias',
+      idleSessionTtlInSeconds: 1800,
+    };
+
+    const guardrail2: BedrockGuardrailProps = {
+      description: 'Second guardrail for violence filtering',
+      contentFilters: {
+        violence: {
+          inputStrength: 'HIGH',
+          outputStrength: 'HIGH',
+        },
+      },
+    };
+
+    const vectorStore: AuroraServerlessPgVectorProps = {
+      vpcId: 'test-vpc-id',
+      subnetIds: ['test-subnet'],
+    };
+
+    const vectorStore2: AuroraServerlessPgVectorProps = {
+      vpcId: 'test-vpc-id-2',
+      subnetIds: ['test-subnet-2'],
+    };
+
+    const kb1: BedrockKnowledgeBaseProps = {
+      role: kbRoleRef,
+      vectorStore: 'vector-store-1',
+      s3DataSources: {
+        source1: { bucketName: 'bucket-1', prefix: 'prefix-1/' },
+        source1b: { bucketName: 'bucket-1b' },
+      },
+      embeddingModel: 'amazon.titan-embed-text-v1',
+    };
+
+    const kb2: BedrockKnowledgeBaseProps = {
+      role: kbRoleRef2,
+      vectorStore: 'vector-store-2',
+      s3DataSources: {
+        source2: { bucketName: 'bucket-2', prefix: 'prefix-2/' },
+      },
+      embeddingModel: 'amazon.titan-embed-text-v1',
+      supplementalBucketName: 'supplemental-bucket-2',
+    };
+
+    const template = generateTemplateFromTestInput(
+      testApp,
+      dataAdminRoleRef,
+      { 'agent-alpha': agent, 'agent-beta': agent2 },
+      { 'vector-store-1': vectorStore, 'vector-store-2': vectorStore2 },
+      { 'kb-alpha': kb1, 'kb-beta': kb2 },
+      { 'guardrail-alpha': guardrail, 'guardrail-beta': guardrail2 },
+      lambdaFunctions,
+      undefined,
+      true,
+    );
+
+    test('Creates two Bedrock Agents', () => {
+      const agents = template.findResources('AWS::Bedrock::Agent');
+      expect(Object.keys(agents).length).toBe(2);
+    });
+
+    test('First agent has correct name', () => {
+      template.hasResourceProperties('AWS::Bedrock::Agent', {
+        AgentName: 'test-org-test-env-test-domain-test-module-agent-alpha',
+      });
+    });
+
+    test('Second agent has correct name', () => {
+      template.hasResourceProperties('AWS::Bedrock::Agent', {
+        AgentName: 'test-org-test-env-test-domain-test-module-agent-beta',
+        AutoPrepare: true,
+        IdleSessionTTLInSeconds: 1800,
+      });
+    });
+
+    test('Creates two Knowledge Bases', () => {
+      const kbs = template.findResources('AWS::Bedrock::KnowledgeBase');
+      expect(Object.keys(kbs).length).toBe(2);
+    });
+
+    test('KB1 has two data sources, KB2 has one', () => {
+      const dataSources = template.findResources('AWS::Bedrock::DataSource');
+      expect(Object.keys(dataSources).length).toBe(3);
+    });
+
+    test('Creates two Guardrails', () => {
+      const guardrails = template.findResources('AWS::Bedrock::Guardrail');
+      expect(Object.keys(guardrails).length).toBe(2);
+    });
+
+    test('Creates two RDS Aurora clusters for vector stores', () => {
+      const clusters = template.findResources('AWS::RDS::DBCluster');
+      expect(Object.keys(clusters).length).toBe(2);
+    });
+  });
 });
 
 function generateTemplateFromTestInput(

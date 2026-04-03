@@ -150,3 +150,72 @@ describe('MDAA Compliance Stack Tests', () => {
     }).toThrow('Security configuration name is required for crawler configuration');
   });
 });
+
+describe('Multiple Crawlers Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const crawlerDef1: CrawlerDefinition = {
+    executionRoleArn: 'arn:test-partition:iam::test-account:role/test-role-1',
+    databaseName: 'database-one',
+    description: 'First crawler',
+    targets: {
+      s3Targets: [{ connectionName: 'conn-1' }],
+    },
+  };
+
+  const crawlerDef2: CrawlerDefinition = {
+    executionRoleArn: 'arn:test-partition:iam::test-account:role/test-role-2',
+    databaseName: 'database-two',
+    description: 'Second crawler',
+    targets: {
+      jdbcTargets: [{ connectionName: 'conn-2' }],
+    },
+  };
+
+  const constructProps: GlueCrawlerL3ConstructProps = {
+    crawlerConfigs: {
+      'crawler-one': crawlerDef1,
+      'crawler-two': crawlerDef2,
+    },
+    securityConfigurationName: 'test-security-configuration',
+    projectName: 'test-project',
+    notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:MyTopic',
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+  };
+
+  new GlueCrawlerL3Construct(stack, 'multistack', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Multiple Crawler Resource Count', () => {
+    template.resourceCountIs('AWS::Glue::Crawler', 2);
+  });
+
+  test('Crawler One Properties', () => {
+    template.hasResourceProperties('AWS::Glue::Crawler', {
+      DatabaseName: 'database-one',
+      Description: 'First crawler',
+      Role: 'arn:test-partition:iam::test-account:role/test-role-1',
+      Targets: {
+        S3Targets: [{ ConnectionName: 'conn-1' }],
+      },
+    });
+  });
+
+  test('Crawler Two Properties', () => {
+    template.hasResourceProperties('AWS::Glue::Crawler', {
+      DatabaseName: 'database-two',
+      Description: 'Second crawler',
+      Role: 'arn:test-partition:iam::test-account:role/test-role-2',
+      Targets: {
+        JdbcTargets: [{ ConnectionName: 'conn-2' }],
+      },
+    });
+  });
+
+  test('Multiple Crawler Monitoring Rules', () => {
+    template.resourceCountIs('AWS::Events::Rule', 2);
+  });
+});

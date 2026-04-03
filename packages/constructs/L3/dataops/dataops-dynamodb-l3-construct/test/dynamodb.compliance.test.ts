@@ -93,3 +93,56 @@ describe('MDAA DynamoDB Construct Tests', () => {
     }).toThrow('Project KMS ARN is required for DynamoDB L3 construct');
   });
 });
+
+describe('Multiple Tables Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const table1: DynamodbProps = {
+    partitionKey: { name: 'pk1', type: AttributeType.STRING },
+    billingMode: BillingMode.PAY_PER_REQUEST,
+  };
+
+  const table2: DynamodbProps = {
+    partitionKey: { name: 'pk2', type: AttributeType.NUMBER },
+    sortKey: { name: 'sk2', type: AttributeType.STRING },
+    billingMode: BillingMode.PAY_PER_REQUEST,
+  };
+
+  const constructProps: DynamodbL3ConstructProps = {
+    kmsArn: 'arn:test-partition:kms:test-region:test-account:key/testing-key-id',
+    tableDefinitions: {
+      'table-one': table1,
+      'table-two': table2,
+    },
+    projectName: 'test-project',
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+  };
+
+  new DynamodbL3Construct(stack, 'multi-ddb-stack', constructProps);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Multiple DynamoDB Table Resource Count', () => {
+    template.resourceCountIs('AWS::DynamoDB::Table', 2);
+  });
+
+  test('Multiple SSM Parameters', () => {
+    template.resourceCountIs('AWS::SSM::Parameter', 2);
+  });
+
+  test('Table One Properties', () => {
+    template.hasResourceProperties('AWS::DynamoDB::Table', {
+      KeySchema: [{ AttributeName: 'pk1', KeyType: 'HASH' }],
+    });
+  });
+
+  test('Table Two Properties', () => {
+    template.hasResourceProperties('AWS::DynamoDB::Table', {
+      KeySchema: [
+        { AttributeName: 'pk2', KeyType: 'HASH' },
+        { AttributeName: 'sk2', KeyType: 'RANGE' },
+      ],
+    });
+  });
+});

@@ -49,3 +49,53 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 });
+
+describe('Multiple Users Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const user1: UserProps = {
+    name: 'user-one',
+    homeBucketName: 'bucket-one',
+    homeBucketKmsKeyArn: 'arn:test-partition:kms:test-region:test-account:key/key-one',
+    homeDirectory: 'home-one',
+    publicKeys: [],
+  };
+
+  const user2: UserProps = {
+    name: 'user-two',
+    homeBucketName: 'bucket-two',
+    homeBucketKmsKeyArn: 'arn:test-partition:kms:test-region:test-account:key/key-two',
+    homeDirectory: 'home-two',
+    publicKeys: [],
+  };
+
+  const constructProps: SftpUsersL3ConstructProps = {
+    users: [user1, user2],
+    serverId: 'test-server-id',
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+  };
+
+  new SftpUsersL3Construct(stack, 'multistack', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Multiple Transfer User Resource Count', () => {
+    template.resourceCountIs('AWS::Transfer::User', 2);
+  });
+
+  test('User One Properties', () => {
+    template.hasResourceProperties('AWS::Transfer::User', {
+      UserName: 'user-one',
+      HomeDirectory: '/bucket-one/home-one',
+    });
+  });
+
+  test('User Two Properties', () => {
+    template.hasResourceProperties('AWS::Transfer::User', {
+      UserName: 'user-two',
+      HomeDirectory: '/bucket-two/home-two',
+    });
+  });
+});

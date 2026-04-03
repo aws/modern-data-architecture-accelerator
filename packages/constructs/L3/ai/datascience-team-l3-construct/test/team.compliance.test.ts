@@ -695,3 +695,60 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 });
+
+describe('DataScience Team without Studio Domain', () => {
+  const testApp = new MdaaTestApp();
+
+  const teamExecutionRoleRef: MdaaRoleRef = {
+    arn: 'arn:test-partition:iam::test-account:role/team-execution-role',
+    name: 'team-execution-role',
+  };
+
+  const dataAdminRoleRef: MdaaRoleRef = {
+    arn: 'arn:test-partition:iam::test-account:role/test-role',
+    name: 'test-role',
+  };
+
+  const dataScientistRoleRef: MdaaRoleRef = {
+    arn: 'arn:test-partition:iam::test-account:role/test-role',
+    name: 'test-role',
+  };
+
+  const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+  const constructProps: DataScienceTeamL3ConstructProps = {
+    team: {
+      teamExecutionRole: teamExecutionRoleRef,
+      dataAdminRoles: [dataAdminRoleRef],
+      teamUserRoles: [dataScientistRoleRef],
+      // studioDomainConfig intentionally omitted
+    },
+    roleHelper: roleHelper,
+    naming: testApp.naming,
+  };
+
+  new DataScienceTeamL3Construct(testApp.testStack, 'teststack-no-studio', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Construct creates successfully without Studio domain', () => {
+    // No SageMaker domain should be created
+    const domains = template.findResources('AWS::SageMaker::Domain');
+    expect(Object.keys(domains).length).toBe(0);
+  });
+
+  test('Core resources still created without Studio domain', () => {
+    // S3 bucket for team projects should still exist
+    template.resourceCountIs('AWS::S3::Bucket', 1);
+    // KMS key should still exist
+    template.resourceCountIs('AWS::KMS::Key', 1);
+    // Athena workgroup should still exist
+    template.resourceCountIs('AWS::Athena::WorkGroup', 1);
+  });
+
+  test('SageMaker policies still attached without Studio domain', () => {
+    template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+      ManagedPolicyName: 'test-org-test-env-test-domain-test-module-sm-guardrail',
+    });
+  });
+});

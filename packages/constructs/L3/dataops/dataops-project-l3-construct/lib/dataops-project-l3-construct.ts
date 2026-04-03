@@ -16,7 +16,12 @@ import {
   MdaaDatazoneProjectProps,
 } from '@aws-mdaa/datazone-constructs';
 import { MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
-import { Ec2L3Construct, Ec2L3ConstructProps } from '@aws-mdaa/ec2-l3-construct';
+import {
+  Ec2L3Construct,
+  Ec2L3ConstructProps,
+  NamedSecurityGroupProps,
+  SecurityGroupProps,
+} from '@aws-mdaa/ec2-l3-construct';
 import { GlueCatalogL3Construct } from '@aws-mdaa/glue-catalog-l3-construct';
 import { MdaaCfnCrawler, MdaaCfnCrawlerProps, MdaaSecurityConfig } from '@aws-mdaa/glue-constructs';
 import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
@@ -545,18 +550,9 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       ? MdaaKmsKey.fromKeyArn(this.scope, 's3OutputKmsKey', props.s3OutputKmsKeyArn)
       : kmsKey;
 
-    const projectSecurityGroups = Object.fromEntries(
-      Object.entries(props.securityGroupConfigs || {}).map(entry => {
-        const securityGroupName = entry[0];
-        const securityGroupProps = entry[1];
-        const sg = this.createProjectSecurityGroup(
-          securityGroupName,
-          securityGroupProps.vpcId,
-          securityGroupProps.securityGroupEgressRules,
-        );
-        return [securityGroupName, sg];
-      }),
-    );
+    const projectSecurityGroups = props.securityGroupConfigs
+      ? this.createProjectSecurityGroups(props.securityGroupConfigs)
+      : {};
 
     // Create project bucket
     const projectBucket = this.createProjectBucket(
@@ -899,29 +895,31 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     }
   }
 
-  private createProjectSecurityGroup(
-    sgName: string,
-    vpcId: string,
-    securityGroupEgressRules?: MdaaSecurityGroupRuleProps,
-  ): SecurityGroup {
+  private createProjectSecurityGroups(securityGroupConfigs: NamedSecurityGroupConfigProps): {
+    [name: string]: SecurityGroup;
+  } {
+    const securityGroupProps: NamedSecurityGroupProps = Object.fromEntries(
+      Object.entries(securityGroupConfigs).map(([sgName, sgConfig]) => {
+        const sgProps: SecurityGroupProps = {
+          vpcId: sgConfig.vpcId,
+          egressRules: sgConfig.securityGroupEgressRules,
+          addSelfReferenceRule: true,
+        };
+        return [sgName, sgProps];
+      }),
+    );
     const ec2L3Props: Ec2L3ConstructProps = {
       ...(this.props as MdaaL3ConstructProps),
       adminRoles: [],
-      securityGroups: {
-        [sgName]: {
-          vpcId: vpcId,
-          egressRules: securityGroupEgressRules,
-          addSelfReferenceRule: true,
-        },
-      },
+      securityGroups: securityGroupProps,
     };
     const ec2Construct = new Ec2L3Construct(this, `ec2`, ec2L3Props);
-    const securityGroup = ec2Construct.securityGroups[sgName];
+    Object.entries(ec2Construct.securityGroups).forEach(([sgName, securityGroup]) => {
+      // Required so we can auto-wire other stacks/resources to this project resource via SSM
+      this.createProjectSSMParam(`sg-ssm-${sgName}`, `securityGroupId/${sgName}`, securityGroup.securityGroupId);
+    });
 
-    // Required so we can auto-wire other stacks/resources to this project resource via SSM
-    this.createProjectSSMParam(`sg-ssm-${sgName}`, `securityGroupId/${sgName}`, securityGroup.securityGroupId);
-
-    return securityGroup;
+    return ec2Construct.securityGroups;
   }
 
   /** @jsii ignore */
