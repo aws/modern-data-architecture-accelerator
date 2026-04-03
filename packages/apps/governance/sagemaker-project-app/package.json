@@ -42,7 +42,7 @@
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "@aws-mdaa/sagemaker-project-l3-construct": "1.5.0",
-    "ajv": "8.17.1",
+    "ajv": "8.18.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96",

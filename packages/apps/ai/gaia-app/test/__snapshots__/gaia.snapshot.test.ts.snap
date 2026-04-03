@@ -28509,7 +28509,7 @@ def sort_filter_rules(json_obj):
           },
           "FunctionVersion": {
             "Fn::GetAtt": [
-              "gaiaLangchainInterfaceRequestHandlerCurrentVersion2B67ADE694faa682beaaba13fdf767a75cadb899",
+              "gaiaLangchainInterfaceRequestHandlerCurrentVersion2B67ADE6f8d3e3e01f31e157243521248b188ee0",
               "Version",
             ],
           },
@@ -28951,7 +28951,7 @@ def sort_filter_rules(json_obj):
         },
         "Type": "AWS::Lambda::Function",
       },
-      "gaiaLangchainInterfaceRequestHandlerCurrentVersion2B67ADE694faa682beaaba13fdf767a75cadb899": {
+      "gaiaLangchainInterfaceRequestHandlerCurrentVersion2B67ADE6f8d3e3e01f31e157243521248b188ee0": {
         "Metadata": {
           "aws:cdk:do-not-refactor": true,
           "cdk_nag": {

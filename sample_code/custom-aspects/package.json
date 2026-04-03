@@ -21,7 +21,7 @@
     "@types/node": "22.9.0",
     "jest": "30.0.0",
     "source-map-support": "0.5.21",
-    "ts-jest": "29.4.6",
+    "ts-jest": "29.4.9",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
     "typescript-json-schema": "0.50.0"
