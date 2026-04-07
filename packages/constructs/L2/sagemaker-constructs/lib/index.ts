@@ -6,3 +6,6 @@
 export * from './domain';
 export * from './notebook';
 export * from './studio-lifecycle-config';
+export * from './project-template';
+export * from './ground-truth';
+export * from './model-monitor';

@@ -3,9 +3,50 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * Based on requirements in https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateNotebookInstance.html
- */
+// ---- Model Monitor helpers -------------------------------------------------
+
+export function validateScheduleExpression(value: string): void {
+  if (!/^(cron|rate)\(.+\)$/.test(value)) {
+    throw new Error(`schedule must be a valid cron(...) or rate(...) expression, got: ${value}`);
+  }
+}
+
+// ---- Ground Truth helpers --------------------------------------------------
+// Based on requirements in https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateLabelingJob.html
+
+export function validateNumberOfHumanWorkersPerDataObject(value: number): void {
+  if (!Number.isInteger(value) || value < 1 || value > 9) {
+    throw new Error(`numberOfHumanWorkersPerDataObject must be an integer between 1 and 9, got: ${value}`);
+  }
+}
+
+export function validateTaskTimeLimitInSeconds(value: number): void {
+  if (!Number.isInteger(value) || value < 30 || value > 28800) {
+    throw new Error(`taskTimeLimitInSeconds must be an integer between 30 and 28800, got: ${value}`);
+  }
+}
+
+export function validateTaskAvailabilityLifetimeInSeconds(value: number): void {
+  if (!Number.isInteger(value) || value < 60 || value > 864000) {
+    throw new Error(`taskAvailabilityLifetimeInSeconds must be an integer between 60 and 864000, got: ${value}`);
+  }
+}
+
+export function serializeTaskPrice(price: number): string {
+  if (!Number.isInteger(price) || price <= 0) {
+    throw new Error(`taskPrice must be a positive integer (tenthFractionsOfACent), got: ${price}`);
+  }
+  return JSON.stringify({
+    AmountInUsd: {
+      Dollars: Math.floor(price / 1000),
+      Cents: Math.floor(price / 10) % 100,
+      TenthFractionsOfACent: price % 10,
+    },
+  });
+}
+
+// ---- Notebook helpers ------------------------------------------------------
+// Based on requirements in https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateNotebookInstance.html
 const NOTEBOOK_NAME_REGEX = /^[a-zA-Z0-9](?:-*[a-zA-Z0-9])*$/;
 
 export class InvalidNotebookNameError implements Error {
