@@ -253,6 +253,17 @@ exports[`DataLake Snapshot Tests Datalake App App Snapshot Test 1`] = `
           "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
       },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-datalake-main:storage-lens:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "storagelens",
+            "StorageLensConfiguration.StorageLensArn",
+          ],
+        },
+      },
     },
     "Parameters": {
       "BootstrapVersion": {
@@ -4160,6 +4171,82 @@ exports[`DataLake Snapshot Tests Datalake App App Snapshot Test 1`] = `
           "UseServiceLinkedRole": false,
         },
         "Type": "AWS::LakeFormation::Resource",
+      },
+      "storagelens": {
+        "Properties": {
+          "StorageLensConfiguration": {
+            "AccountLevel": {
+              "BucketLevel": {},
+            },
+            "Id": "test-org-test-env-test-domain-test-datalake-main-storage-lens",
+            "Include": {
+              "Buckets": [
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              ],
+            },
+            "IsEnabled": true,
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "datalake",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-datalake-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::S3::StorageLens",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-datalake-main/storage-lens/arn",
+          "Tags": {
+            "mdaa_cdk_app": "datalake",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-datalake-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "storagelens",
+              "StorageLensConfiguration.StorageLensArn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {

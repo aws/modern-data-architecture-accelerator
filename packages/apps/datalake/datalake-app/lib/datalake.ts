@@ -22,6 +22,7 @@ export class DataLakeCDKApp extends MdaaCdkApp {
     const constructProps: DataLakeL3ConstructProps = {
       ...{
         buckets: appConfig.buckets,
+        storageLensEnabled: appConfig.storageLensEnabled,
       },
       ...l3ConstructProps,
     };

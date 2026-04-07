@@ -8058,3 +8058,21 @@ Validation: Must be valid AWS Service Catalog portfolio ARN format
 | **Required** | Yes      |
 
 ----------------------------------------------------------------------------------------------------------------------------
+
+## <a name="storageLensEnabled"></a>8. Property `root > storageLensEnabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** Enable S3 Storage Lens for the data lake buckets. When `true`, creates a Storage Lens configuration covering all buckets defined in this app's config.
+
+### Example Configuration
+
+```yaml
+storageLensEnabled: true
+```
+
+----------------------------------------------------------------------------------------------------------------------------

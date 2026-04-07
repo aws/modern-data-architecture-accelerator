@@ -3055,6 +3055,10 @@
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
             "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
+        },
+        "storageLensEnabled": {
+            "description": "Enable S3 Storage Lens for the data lake buckets.\nWhen true, creates a Storage Lens configuration covering all buckets defined in this app's config.",
+            "type": "boolean"
         }
     },
     "required": [

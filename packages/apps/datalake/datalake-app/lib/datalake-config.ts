@@ -444,6 +444,11 @@ export interface DataLakeConfigContents extends MdaaBaseConfigContents {
    * Validation: Required; map of zone name to BucketConfig; zone names must be unique
    */
   readonly buckets: { [key: string]: BucketConfig };
+  /**
+   * Enable S3 Storage Lens for the data lake buckets.
+   * When true, creates a Storage Lens configuration covering all buckets defined in this app's config.
+   */
+  readonly storageLensEnabled?: boolean;
 }
 
 export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigContents> {
@@ -452,6 +457,7 @@ export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigCont
   public readonly accessPolicies: { [name: string]: AccessPolicyProps };
   public readonly lifecycleConfigurations?: { [configName: string]: LifecycleConfigurationRuleProps[] };
   public readonly inventories?: { [key: string]: string };
+  public readonly storageLensEnabled: boolean;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -462,6 +468,8 @@ export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigCont
     this.lifecycleConfigurations = this.configContents.lifecycleConfigurations
       ? this.buildLifecycleConfigurations(this.configContents.lifecycleConfigurations)
       : undefined;
+
+    this.storageLensEnabled = this.configContents.storageLensEnabled ?? false;
 
     this.buckets = Object.entries(this.configContents.buckets).map(zoneAndBucketConfig => {
       const bucketZone: string = zoneAndBucketConfig[0];

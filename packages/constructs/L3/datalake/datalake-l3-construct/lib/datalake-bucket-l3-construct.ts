@@ -21,6 +21,7 @@ import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import {
   Bucket,
   CfnBucket,
+  CfnStorageLens,
   IBucket,
   LifecycleRule,
   NoncurrentVersionTransition,
@@ -28,7 +29,7 @@ import {
   Transition,
 } from 'aws-cdk-lib/aws-s3';
 import { Provider } from 'aws-cdk-lib/custom-resources';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
+import { MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
@@ -157,9 +158,12 @@ export interface LifecycleConfigurationRuleProps {
   readonly noncurrentVersionExpirationDays?: number;
   readonly noncurrentVersionsToRetain?: number;
 }
+
 export interface DataLakeL3ConstructProps extends MdaaL3ConstructProps {
   /** Bucket definitions forming the data lake structure. */
   readonly buckets: BucketDefinition[];
+  /** Enable S3 Storage Lens for the data lake buckets. */
+  readonly storageLensEnabled?: boolean;
 }
 
 export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
@@ -220,6 +224,8 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
         return [bucketDefinition.bucketZone, bucket];
       }),
     );
+
+    this.createStorageLens();
   }
 
   private resolveAccessPolicy(accessPolicy: AccessPolicyProps): AccessPolicyResolved {
@@ -236,6 +242,39 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
         .resolveRoleRefsWithOrdinals(accessPolicy.readWriteSuperRoleRefs || [], `${accessPolicy.name}-rws`)
         .map(x => x.id()),
     };
+  }
+
+  private createStorageLens() {
+    if (!this.props.storageLensEnabled) {
+      return;
+    }
+
+    const configId = this.props.naming.resourceName('storage-lens', 64);
+    const bucketArns = Object.values(this.buckets).map(bucket => bucket.bucketArn);
+
+    const storageLens = new CfnStorageLens(this.scope, 'storage-lens', {
+      storageLensConfiguration: {
+        id: configId,
+        isEnabled: true,
+        accountLevel: {
+          bucketLevel: {},
+        },
+        include: {
+          buckets: bucketArns,
+        },
+      },
+    });
+
+    new MdaaParamAndOutput(
+      storageLens,
+      {
+        resourceType: 'storage-lens',
+        name: 'arn',
+        value: storageLens.attrStorageLensConfigurationStorageLensArn,
+        naming: this.props.naming,
+      },
+      this.scope,
+    );
   }
 
   private resolveTransitions(transitionsWithName: LifecycleTransitionProps[]): Transition[] {

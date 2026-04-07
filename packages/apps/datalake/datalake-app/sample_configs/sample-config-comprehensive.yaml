@@ -226,3 +226,7 @@ buckets:
       - Root
       - Data
     lifecycleConfiguration: SampleConfiguration2
+
+# (Optional) Enable S3 Storage Lens for storage analytics
+# covering all buckets defined in this app's config.
+storageLensEnabled: true
