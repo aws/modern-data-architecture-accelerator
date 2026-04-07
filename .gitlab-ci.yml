@@ -637,11 +637,15 @@ prerelease_build_test:
     refs:
       - tags
   cache:
-    key: prerelease-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-    policy: pull
+    - key: prerelease-$CI_COMMIT_SHA
+      paths:
+        - node_modules/
+        - packages/**/node_modules/
+      policy: pull
+    - key: nx-main
+      paths:
+        - .nx/
+      policy: push
   artifacts:
     untracked: false
     paths:
@@ -660,7 +664,8 @@ prerelease_build_test:
     - prerelease_version
   allow_failure: false
   script:
-    - ./scripts/build_test.sh
+    - ./scripts/build.sh
+    - ./scripts/test_ci.sh
 
 prerelease_analyze:
   tags:
@@ -917,7 +922,8 @@ release_version_package:
     - ./scripts/git_secrets.sh
     - ./scripts/npm_install.sh
     - ./scripts/version_release.sh
-    - ./scripts/build_test.sh
+    - ./scripts/build.sh
+    - ./scripts/test_ci.sh
     - npx lerna run test:snapshots:update --stream
     - ./scripts/package.sh
 

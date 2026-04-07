@@ -7,6 +7,7 @@ module.exports = {
   transform: {
     '^.+.tsx?$': 'ts-jest',
   },
+  coverageReporters: ['lcov', 'text'],
   coverageThreshold: {
     global: {
       branches: 80,

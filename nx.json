@@ -27,10 +27,12 @@
     "test": {
       "dependsOn": ["build", "^test"],
       "inputs": [
+        "{projectRoot}/package.json",
         "{projectRoot}/bin/*.ts",
         "{projectRoot}/lib/*.ts",
         "{projectRoot}/test/*.ts",
         "{projectRoot}/test/**/*.yaml",
+        "{projectRoot}/test/**/*.json",
         "{projectRoot}/sample_configs/**/*.yaml"
       ],
       "options": {
