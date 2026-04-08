@@ -2938,9 +2938,13 @@
             "description": "Number of days automated snapshots are retained (1-35). Set to 0 to disable.\n\nUse cases: Backup management; Point-in-time recovery; Data protection compliance\n\nAWS: Redshift automated snapshot retention\n\nValidation: Optional; integer 0-35",
             "type": "number"
         },
+        "backupRegion": {
+            "description": "Target region for cross-region snapshot copies. When set, enables cross-region snapshot copy to this region.\n\nUse cases: Disaster recovery; Cross-region backup; Business continuity\n\nAWS: Redshift snapshot copy destination region\n\nValidation: Optional; valid AWS region string, must differ from the deployment region",
+            "type": "string"
+        },
         "clusterPort": {
             "default": 5440,
-            "description": "TCP port for client connections to the cluster.\n\nUse cases: Custom port configuration; Network security; Port standardization\n\nAWS: Redshift cluster listening port\n\nValidation: Optional; valid port number",
+            "description": "TCP port for client connections to the cluster.\n\nUse cases: Custom port configuration; Network security; Port standardization\n\nAWS: Redshift cluster listening port\n\nValidation: Optional; valid port number; must be in range 5431-5455 or 8191-8215 when multiAz is true",
             "type": "number"
         },
         "createWarehouseBucket": {
@@ -2989,6 +2993,10 @@
             },
             "type": "array"
         },
+        "multiAz": {
+            "description": "Enable multi-AZ deployment for high availability.\n\nUse cases: High availability; Fault tolerance; Production deployments\n\nAWS: Redshift multi-AZ deployment\n\nValidation: Optional; boolean. When true, requires: numberOfNodes >= 2, subnetIds in >= 3 AZs,\nclusterPort in range 5431-5455 or 8191-8215, and pause/resume scheduled actions are not supported.",
+            "type": "boolean"
+        },
         "multiNode": {
             "description": "Multi-node cluster flag. When true, creates a multi-node cluster for distributed processing;\nwhen false, creates a single-node cluster for development or small workloads.\n\nUse cases: Cluster architecture selection; Dev vs production deployment; Cost optimization\n\nAWS: Redshift cluster type (single-node or multi-node)\n\nValidation: Optional; boolean",
             "type": "boolean"
@@ -3002,7 +3010,7 @@
             "type": "string"
         },
         "numberOfNodes": {
-            "description": "Number of nodes in the Redshift cluster.\n\nUse cases: Cluster sizing; Performance scaling; Cost management\n\nAWS: Redshift cluster node count\n\nValidation: Required; positive integer",
+            "description": "Number of nodes in the Redshift cluster.\n\nUse cases: Cluster sizing; Performance scaling; Cost management\n\nAWS: Redshift cluster node count\n\nValidation: Required; positive integer; must be >= 2 when multiAz is true",
             "type": "number"
         },
         "parameterGroupParams": {
@@ -3059,7 +3067,7 @@
             "type": "number"
         },
         "subnetIds": {
-            "description": "Subnet IDs for Redshift cluster node placement. For automatic cluster relocation,\nspecify at least one subnet per AZ.\n\nUse cases: Multi-AZ placement; Subnet-specific deployment; Cluster relocation support\n\nAWS: VPC subnets for Redshift subnet group\n\nValidation: Required; array of valid subnet IDs in the specified VPC",
+            "description": "Subnet IDs for Redshift cluster node placement. For automatic cluster relocation,\nspecify at least one subnet per AZ.\n\nUse cases: Multi-AZ placement; Subnet-specific deployment; Cluster relocation support\n\nAWS: VPC subnets for Redshift subnet group\n\nValidation: Required; array of valid subnet IDs in the specified VPC; must contain >= 3 subnets in different AZs when multiAz is true",
             "items": {
                 "type": "string"
             },

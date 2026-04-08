@@ -19,6 +19,7 @@ import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaRedshiftCluster, MdaaRedshiftClusterParameterGroup } from '@aws-mdaa/redshift-constructs';
+import { MultiAzValidationError } from '@aws-mdaa/redshift-constructs/lib/utils';
 import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { Duration, Fn, RemovalPolicy, Stack } from 'aws-cdk-lib';
@@ -277,6 +278,10 @@ export interface DataWarehouseL3ConstructProps extends MdaaL3ConstructProps {
   readonly snapshotIdentifier?: string;
   // Snapshot owner account for cross-account restoration
   readonly snapshotOwnerAccount?: number;
+  // Enable multi-AZ deployment for high availability
+  readonly multiAz?: boolean;
+  // Target region for cross-region snapshot copies. Must differ from the deployment region.
+  readonly backupRegion?: string;
 }
 
 //This stack creates all of the resources required for a Data Warehouse
@@ -437,6 +442,14 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
 
     const subnets = this.props.subnetIds.map(id => Subnet.fromSubnetId(this.scope, `subnet-${id}`, id));
     const clusterPort = this.props.clusterPort || DataWarehouseL3Construct.defaultClusterPort;
+
+    // Multi-AZ requires subnets in at least 3 AZs
+    if (this.props.multiAz && this.props.subnetIds.length < 3) {
+      throw new MultiAzValidationError(
+        'Multi-AZ deployment requires subnets in at least 3 Availability Zones. ' +
+          `Configured subnetIds count: ${this.props.subnetIds.length}.`,
+      );
+    }
     //Create subnet group
     const subnetGroup = new ClusterSubnetGroup(this.scope, 'subnet-group', {
       description: this.props.naming.resourceName('subnet-group'),
@@ -528,6 +541,8 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       defaultDatabaseName: dbName,
       ...snapshotProps,
       redshiftManageMasterPassword: this.props.redshiftManageMasterPassword,
+      multiAz: this.props.multiAz,
+      backupRegion: this.props.backupRegion,
     });
 
     //Roles to grant SAML federated users access to the warehouse

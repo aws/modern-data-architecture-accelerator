@@ -13,14 +13,16 @@ import {
   LoggingProperties,
   NodeType,
 } from '@aws-cdk/aws-redshift-alpha';
-import { Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { ArnFormat, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { ISecurityGroup, IVpc, SecurityGroup, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
-import { IRole } from 'aws-cdk-lib/aws-iam';
+import { IRole, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { CfnCluster } from 'aws-cdk-lib/aws-redshift';
 import { Construct } from 'constructs';
 import { MdaaRedshiftClusterParameterGroup } from './parameter-group';
 import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
-import { sanitizeClusterName } from './utils';
+import { MultiAzValidationError, sanitizeClusterName } from './utils';
+import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
+import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 
 export interface MdaaRedshiftClusterProps extends MdaaConstructProps {
   /** VPC security group for controlling network access to the Redshift cluster */
@@ -56,6 +58,10 @@ export interface MdaaRedshiftClusterProps extends MdaaConstructProps {
   readonly snapshotIdentifier?: string;
   readonly ownerAccount?: number;
   readonly redshiftManageMasterPassword?: boolean;
+  /** Enable multi-AZ deployment for high availability */
+  readonly multiAz?: boolean;
+  /** Target region for cross-region snapshot copies. When set, enables cross-region snapshot copy to this region. Must differ from the cluster's deployment region. */
+  readonly backupRegion?: string;
 }
 
 /**
@@ -67,6 +73,23 @@ export interface MdaaRedshiftClusterProps extends MdaaConstructProps {
  */
 export class MdaaRedshiftCluster extends Cluster {
   private static setProps(props: MdaaRedshiftClusterProps): ClusterProps {
+    // Multi-AZ constraint validation (before construct creation)
+    if (props.multiAz) {
+      if (props.numberOfNodes !== undefined && props.numberOfNodes < 2) {
+        throw new MultiAzValidationError(
+          'Multi-AZ deployment requires at least 2 nodes per Availability Zone. ' +
+            `Configured numberOfNodes: ${props.numberOfNodes}.`,
+        );
+      }
+      const port = props.port;
+      const validPort = (port >= 5431 && port <= 5455) || (port >= 8191 && port <= 8215);
+      if (!validPort) {
+        throw new MultiAzValidationError(
+          'Multi-AZ deployment requires a port in range 5431-5455 or 8191-8215. ' + `Configured port: ${port}.`,
+        );
+      }
+    }
+
     const overrideProps = {
       clusterName: sanitizeClusterName(props.naming.resourceName(props.clusterName, 63)),
       publiclyAccessible: false,
@@ -108,6 +131,62 @@ export class MdaaRedshiftCluster extends Cluster {
     }
     if (props.ownerAccount) {
       cfnCluster.addOverride('Properties.OwnerAccount', props.ownerAccount);
+    }
+
+    // Enable multi-AZ for high availability
+    if (props.multiAz) {
+      cfnCluster.addOverride('Properties.MultiAZ', true);
+    }
+
+    // Enable cross-region snapshot copy for disaster recovery
+    if (props.backupRegion) {
+      const deployRegion = Stack.of(scope).region;
+      if (props.backupRegion === deployRegion) {
+        throw new Error(
+          `backupRegion (${props.backupRegion}) must differ from the deployment region (${deployRegion}).`,
+        );
+      }
+      const clusterName = cfnCluster.ref;
+      const handlerProps: Record<string, unknown> = {
+        clusterIdentifier: clusterName,
+        destinationRegion: props.backupRegion,
+      };
+
+      const crProps: MdaaCustomResourceProps = {
+        resourceType: 'RedshiftSnapshotCopy',
+        code: Code.fromAsset(`${__dirname}/../src/lambda/snapshot_copy`),
+        runtime: Runtime.PYTHON_3_13,
+        handler: 'snapshot_copy.lambda_handler',
+        handlerRolePolicyStatements: [
+          new PolicyStatement({
+            actions: ['redshift:EnableSnapshotCopy', 'redshift:DisableSnapshotCopy'],
+            resources: [
+              Stack.of(scope).formatArn({
+                service: 'redshift',
+                resource: 'cluster',
+                resourceName: cfnCluster.ref,
+                arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+              }),
+            ],
+          }),
+          new PolicyStatement({
+            actions: ['kms:CreateGrant', 'kms:DescribeKey'],
+            resources: [props.encryptionKey.keyArn],
+          }),
+        ],
+        handlerPolicySuppressions: [
+          {
+            id: 'AwsSolutions-IAM5',
+            reason: 'Cluster ARN contains a CloudFormation Ref token that CDK Nag cannot resolve at synth time.',
+          },
+        ],
+        handlerProps: handlerProps,
+        naming: props.naming,
+        handlerTimeout: Duration.seconds(60),
+        pascalCaseProperties: true,
+      };
+
+      new MdaaCustomResource(this, 'enable-snapshot-copy', crProps);
     }
 
     if (props.redshiftManageMasterPassword) {

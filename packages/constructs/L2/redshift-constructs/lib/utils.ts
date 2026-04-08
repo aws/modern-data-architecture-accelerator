@@ -6,3 +6,13 @@
 export function sanitizeClusterName(actionName: string): string {
   return actionName.replace(/-+/g, '-');
 }
+
+export class MultiAzValidationError implements Error {
+  constructor(message: string) {
+    this.message = message;
+    this.name = 'MultiAzValidationError';
+  }
+
+  message: string;
+  name: string;
+}

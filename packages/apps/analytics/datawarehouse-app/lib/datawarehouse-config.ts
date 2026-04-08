@@ -99,7 +99,7 @@ export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
    *
    * AWS: VPC subnets for Redshift subnet group
    *
-   * Validation: Required; array of valid subnet IDs in the specified VPC
+   * Validation: Required; array of valid subnet IDs in the specified VPC; must contain >= 3 subnets in different AZs when multiAz is true
    */
   readonly subnetIds: string[];
   /**
@@ -130,7 +130,7 @@ export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
    *
    * AWS: Redshift cluster node count
    *
-   * Validation: Required; positive integer
+   * Validation: Required; positive integer; must be >= 2 when multiAz is true
    */
   readonly numberOfNodes: number;
   /**
@@ -151,7 +151,7 @@ export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
    *
    * AWS: Redshift cluster listening port
    *
-   * Validation: Optional; valid port number
+   * Validation: Optional; valid port number; must be in range 5431-5455 or 8191-8215 when multiAz is true
    * @default 5440
    */
   readonly clusterPort?: number;
@@ -294,6 +294,27 @@ export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
   readonly snapshotOwnerAccount?: number;
 
   readonly redshiftManageMasterPassword?: boolean;
+  /**
+   * Enable multi-AZ deployment for high availability.
+   *
+   * Use cases: High availability; Fault tolerance; Production deployments
+   *
+   * AWS: Redshift multi-AZ deployment
+   *
+   * Validation: Optional; boolean. When true, requires: numberOfNodes >= 2, subnetIds in >= 3 AZs,
+   * clusterPort in range 5431-5455 or 8191-8215, and pause/resume scheduled actions are not supported.
+   */
+  readonly multiAz?: boolean;
+  /**
+   * Target region for cross-region snapshot copies. When set, enables cross-region snapshot copy to this region.
+   *
+   * Use cases: Disaster recovery; Cross-region backup; Business continuity
+   *
+   * AWS: Redshift snapshot copy destination region
+   *
+   * Validation: Optional; valid AWS region string, must differ from the deployment region
+   */
+  readonly backupRegion?: string;
 }
 
 export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouseConfigContents> {
@@ -325,6 +346,8 @@ export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouse
   public readonly snapshotIdentifier?: string;
   public readonly snapshotOwnerAccount?: number;
   public readonly redshiftManageMasterPassword?: boolean;
+  public readonly multiAz?: boolean;
+  public readonly backupRegion?: string;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -360,5 +383,7 @@ export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouse
     this.snapshotIdentifier = this.configContents.snapshotIdentifier;
     this.snapshotOwnerAccount = this.configContents.snapshotOwnerAccount;
     this.redshiftManageMasterPassword = this.configContents.redshiftManageMasterPassword;
+    this.multiAz = this.configContents.multiAz;
+    this.backupRegion = this.configContents.backupRegion;
   }
 }

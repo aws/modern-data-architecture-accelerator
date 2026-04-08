@@ -77,3 +77,4 @@ project-doc/
 .cache
 
 temp_configs
+*.code-workspace

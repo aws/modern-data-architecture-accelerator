@@ -446,6 +446,154 @@ describe('MDAA Compliance Stack Tests', () => {
       );
     });
   });
+
+  describe('Multi-AZ and Cross-Region Snapshot Tests', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const constructProps: DataWarehouseL3ConstructProps = {
+      adminUsername: 'admin',
+      adminPasswordRotationDays: 10,
+      dataAdminRoleRefs: [dataAdminRoleRef],
+      vpcId: 'vpcId',
+      subnetIds: ['subnet-1', 'subnet-2', 'subnet-3'],
+      securityGroupIngress: securityGroupIngresProps,
+      nodeType: 'RA3_LARGE',
+      numberOfNodes: 4,
+      enableAuditLoggingToS3: true,
+      clusterPort: 5440,
+      preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+      multiNode: true,
+      parameterGroupParams: { key1: 'value1' },
+      workloadManagement: [{ key1: 'value1' }],
+      multiAz: true,
+      backupRegion: 'us-west-2',
+    };
+    new DataWarehouseL3Construct(stack, 'teststack', constructProps);
+    testApp.checkCdkNagCompliance(testApp.testStack);
+    const template = Template.fromStack(testApp.testStack);
+
+    test('Multi-AZ is enabled on cluster', () => {
+      template.hasResourceProperties('AWS::Redshift::Cluster', {
+        MultiAZ: true,
+      });
+    });
+
+    test('Cross-region snapshot copy is configured', () => {
+      template.resourceCountIs('Custom::RedshiftSnapshotCopy', 1);
+    });
+  });
+
+  describe('Backward Compatibility - No New Props', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const constructProps: DataWarehouseL3ConstructProps = {
+      adminUsername: 'admin',
+      adminPasswordRotationDays: 10,
+      dataAdminRoleRefs: [dataAdminRoleRef],
+      vpcId: 'vpcId',
+      subnetIds: ['test1'],
+      securityGroupIngress: securityGroupIngresProps,
+      nodeType: 'RA3_LARGE',
+      numberOfNodes: 4,
+      enableAuditLoggingToS3: true,
+      clusterPort: 5440,
+      preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+      multiNode: true,
+      parameterGroupParams: { key1: 'value1' },
+      workloadManagement: [{ key1: 'value1' }],
+    };
+    new DataWarehouseL3Construct(stack, 'teststack', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    test('Cluster does not have MultiAZ when not specified', () => {
+      const clusters = template.findResources('AWS::Redshift::Cluster');
+      const clusterKeys = Object.keys(clusters);
+      expect(clusterKeys.length).toBe(1);
+      const clusterProps = clusters[clusterKeys[0]].Properties;
+      expect(clusterProps.MultiAZ).toBeUndefined();
+    });
+
+    test('Cluster does not have DestinationRegion when not specified', () => {
+      template.resourceCountIs('Custom::RedshiftSnapshotCopy', 0);
+    });
+  });
+
+  describe('Multi-AZ subnet validation', () => {
+    test('throws when multiAz is true and fewer than 3 subnets', () => {
+      const testApp = new MdaaTestApp();
+      const stack = testApp.testStack;
+      const constructProps: DataWarehouseL3ConstructProps = {
+        adminUsername: 'admin',
+        adminPasswordRotationDays: 10,
+        dataAdminRoleRefs: [dataAdminRoleRef],
+        vpcId: 'vpcId',
+        subnetIds: ['subnet-1', 'subnet-2'],
+        securityGroupIngress: securityGroupIngresProps,
+        nodeType: 'RA3_LARGE',
+        numberOfNodes: 4,
+        enableAuditLoggingToS3: true,
+        clusterPort: 5440,
+        preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+        roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+        naming: testApp.naming,
+        multiNode: true,
+        multiAz: true,
+      };
+      expect(() => new DataWarehouseL3Construct(stack, 'teststack', constructProps)).toThrow(
+        /at least 3 Availability Zones/,
+      );
+    });
+
+    test('does not throw when multiAz is true and 3 or more subnets', () => {
+      const testApp = new MdaaTestApp();
+      const stack = testApp.testStack;
+      const constructProps: DataWarehouseL3ConstructProps = {
+        adminUsername: 'admin',
+        adminPasswordRotationDays: 10,
+        dataAdminRoleRefs: [dataAdminRoleRef],
+        vpcId: 'vpcId',
+        subnetIds: ['subnet-1', 'subnet-2', 'subnet-3'],
+        securityGroupIngress: securityGroupIngresProps,
+        nodeType: 'RA3_LARGE',
+        numberOfNodes: 4,
+        enableAuditLoggingToS3: true,
+        clusterPort: 5440,
+        preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+        roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+        naming: testApp.naming,
+        multiNode: true,
+        multiAz: true,
+      };
+      expect(() => new DataWarehouseL3Construct(stack, 'teststack', constructProps)).not.toThrow();
+    });
+
+    test('does not validate subnets when multiAz is false', () => {
+      const testApp = new MdaaTestApp();
+      const stack = testApp.testStack;
+      const constructProps: DataWarehouseL3ConstructProps = {
+        adminUsername: 'admin',
+        adminPasswordRotationDays: 10,
+        dataAdminRoleRefs: [dataAdminRoleRef],
+        vpcId: 'vpcId',
+        subnetIds: ['subnet-1'],
+        securityGroupIngress: securityGroupIngresProps,
+        nodeType: 'RA3_LARGE',
+        numberOfNodes: 4,
+        enableAuditLoggingToS3: true,
+        clusterPort: 5440,
+        preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+        roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+        naming: testApp.naming,
+        multiNode: true,
+        multiAz: false,
+      };
+      expect(() => new DataWarehouseL3Construct(stack, 'teststack', constructProps)).not.toThrow();
+    });
+  });
 });
 
 describe('Multiple Federations and Database Users Tests', () => {

@@ -6,6 +6,7 @@
 - Added SageMaker L2 constructs: `MdaaSageMakerProjectTemplate`, `MdaaGroundTruth`, and `MdaaModelMonitor` for ML lifecycle management (project templates, data labeling, model monitoring)
 - Agentcore Runtime app: added enableTransactionSearch(boolean) config param to optionally prevent creation of X-Ray Transaction Search Config if it already exists
 - Datalake app: added optional S3 Storage Lens support — enable via storageLensEnabled: true
+- Data Warehouse app: Added `multiAz` (multi-AZ high availability) and `backupRegion` (cross-region snapshot copy) config options
 
 ### Bug Fixes
 

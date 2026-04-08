@@ -65,6 +65,7 @@ vpcId: vpc-12321421412
 subnetIds:
   - subnet-12312312421
   - subnet-12312321412
+  - subnet-12312321413
 
 # Weekly maintenance window in ddd:hh24:mi-ddd:hh24:mi format
 # (UTC). Example: 'Sun:23:45-Mon:00:15'.
@@ -193,3 +194,13 @@ workloadManagement:
   - query_group: 'test-group'
     memory_percent_to_use: 50
     query_concurrency: 5
+
+# (Optional) Enable multi-AZ deployment for high availability.
+# Requires: numberOfNodes >= 2, subnetIds in >= 3 AZs,
+# clusterPort in range 5431-5455 or 8191-8215.
+multiAz: true
+
+# (Optional) Target region for cross-region snapshot copies.
+# When set, enables automatic cross-region snapshot copy to this region.
+# Must differ from the cluster's deployment region.
+backupRegion: us-east-1
