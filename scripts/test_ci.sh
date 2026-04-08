@@ -27,11 +27,8 @@ if [ "${CI_COMMIT_BRANCH:-}" = "main" ]; then
   echo "Running full test suite on main (seeds Nx cache)"
   npx nx run-many -t test:coverage --all --parallel="$CONCURRENCY" -- --silent --maxWorkers="$MAX_WORKERS"
 else
-  if [ -n "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-}" ]; then
-    NX_BASE="origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}"
-  else
-    NX_BASE="origin/main"
-  fi
+  source "$SCRIPT_DIR/nx/affected-base.sh"
   echo "Running affected tests (base: $NX_BASE)"
-  npx nx affected -t test:coverage --base="$NX_BASE" --parallel="$CONCURRENCY" -- --silent --maxWorkers="$MAX_WORKERS"
+
+  npx nx affected -t test:coverage --base="$NX_BASE" --head="$NX_HEAD" --parallel="$CONCURRENCY" -- --silent --maxWorkers="$MAX_WORKERS"
 fi

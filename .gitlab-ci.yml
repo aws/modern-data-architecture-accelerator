@@ -41,10 +41,6 @@ include:
   - template: Jobs/Dependency-Scanning.latest.gitlab-ci.yml
   - template: Jobs/SAST.latest.gitlab-ci.yml
   - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
-  # AWS Solutions SAST
-  - project: $CI_PROJECT_NAMESPACE/mdaa-testing
-    ref: main
-    file: '/gitlab-ci/mdaa-testing.yaml'
 
 sast:
   stage: prebuild
@@ -109,13 +105,14 @@ feature_validate_packages:
 feature_merge_lint:
   tags:
     - arch:amd64
-    - size:3xlarge
+    - size:large
   only:
     - merge_requests
   stage: prebuild
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    GIT_DEPTH: '0'
   script:
     - echo "Running npm_install.sh script"
     - ./scripts/npm_install.sh
@@ -170,6 +167,7 @@ feature_merge_build_test:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: push
   artifacts:
     untracked: false
@@ -180,10 +178,12 @@ feature_merge_build_test:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    GIT_DEPTH: '0'
   script:
     - ./scripts/git_secrets.sh
     - ./scripts/npm_install.sh
-    - ./scripts/build_test.sh
+    - ./scripts/build.sh
+    - ./scripts/test_ci.sh
 
 feature_merge_python_test:
   stage: build # Same stage = parallel execution
@@ -229,6 +229,7 @@ feature_merge_snapshot_test:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: pull
   artifacts:
     untracked: false
@@ -239,9 +240,9 @@ feature_merge_snapshot_test:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    GIT_DEPTH: '0'
   script:
-    - npx lerna run build
-    - npx lerna run test:snapshots --stream -- --silent --reporters=default
+    - ./scripts/snapshot_test.sh
 
 feature_merge_test_docs:
   tags:
@@ -259,10 +260,22 @@ feature_merge_test_docs:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: pull
   allow_failure: false
   script:
-    - ./scripts/generate_docs.sh docs_prerelease
+    - echo -e "\e[0Ksection_start:$(date +%s):prepare\r\e[0KPrepare docs output"
+    - source ./scripts/generate_docs/prepare.sh
+    - echo -e "\e[0Ksection_end:$(date +%s):prepare\r\e[0K"
+    - echo -e "\e[0Ksection_start:$(date +%s):schema_docs\r\e[0KGenerate Schema Docs"
+    - ./scripts/generate_docs/schema_docs.sh
+    - echo -e "\e[0Ksection_end:$(date +%s):schema_docs\r\e[0K"
+    - echo -e "\e[0Ksection_start:$(date +%s):typedocs\r\e[0KGenerate TypeDocs"
+    - ./scripts/generate_docs/typedocs.sh
+    - echo -e "\e[0Ksection_end:$(date +%s):typedocs\r\e[0K"
+    - echo -e "\e[0Ksection_start:$(date +%s):mkdocs\r\e[0KBuild MkDocs Site"
+    - ./scripts/generate_docs/mkdocs.sh
+    - echo -e "\e[0Ksection_end:$(date +%s):mkdocs\r\e[0K"
 
 feature_merge_sonarqube:
   tags:
@@ -280,22 +293,13 @@ feature_merge_sonarqube:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: pull
   variables:
     GIT_DEPTH: '0'
   allow_failure: false
   script:
     - ./scripts/sonarqube.sh
-
-feature_merge_smoke_test:
-  stage: analyze
-  dependencies:
-    - feature_merge_build_test
-  needs:
-    - feature_merge_build_test
-  ## optionally state which mdaa-testing branch
-  variables:
-    CAEF_TESTING_BRANCH: main
 
 feature_merge_risk_assessment:
   rules:
@@ -315,6 +319,7 @@ feature_merge_risk_assessment:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: pull
   allow_failure: true
   variables:
@@ -345,6 +350,7 @@ feature_merge_risk_assessment:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: pull
   allow_failure: true
 
@@ -386,7 +392,7 @@ feature_merge_integ_split_2:
 feature_version:
   tags:
     - arch:amd64
-    - size:3xlarge
+    - size:large
   except:
     refs:
       - main
@@ -448,7 +454,8 @@ feature_build_test:
       - '**/node_modules/**'
   allow_failure: false
   script:
-    - ./scripts/build_test.sh
+    - ./scripts/build.sh
+    - ./scripts/test_ci.sh
 
 feature_python_test:
   stage: build # Same stage = parallel execution
@@ -483,7 +490,7 @@ feature_python_test:
 feature_package:
   tags:
     - arch:amd64
-    - size:3xlarge
+    - size:large
   except:
     refs:
       - main
@@ -637,15 +644,12 @@ prerelease_build_test:
     refs:
       - tags
   cache:
-    - key: prerelease-$CI_COMMIT_SHA
-      paths:
-        - node_modules/
-        - packages/**/node_modules/
-      policy: pull
-    - key: nx-main
-      paths:
-        - .nx/
-      policy: push
+    key: prerelease-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+      - .nx/
+    policy: pull-push
   artifacts:
     untracked: false
     paths:
@@ -682,6 +686,7 @@ prerelease_analyze:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: pull
   artifacts:
     untracked: false
@@ -720,6 +725,7 @@ prerelease_package:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: pull
   artifacts:
     untracked: false
@@ -759,6 +765,7 @@ prerelease_generate_html_docs:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: pull
   artifacts:
     untracked: false
@@ -774,7 +781,11 @@ prerelease_generate_html_docs:
     - prerelease_analyze
   allow_failure: false
   script:
-    - ./scripts/generate_docs.sh docs_prerelease gitlab
+    - source ./scripts/generate_docs/prepare.sh
+    - ./scripts/generate_docs/schema_docs.sh
+    - ./scripts/generate_docs/typedocs.sh
+    - ./scripts/generate_docs/mkdocs.sh
+    - ./scripts/generate_docs/deploy_gitlab.sh docs_prerelease
 
 prerelease_publish_npm:
   tags:
@@ -793,6 +804,7 @@ prerelease_publish_npm:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: pull
   needs:
     - prerelease_analyze
@@ -825,6 +837,7 @@ prerelease_publish_pip:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: pull
   needs:
     - prerelease_analyze
@@ -856,6 +869,7 @@ prerelease_publish_s3:
     paths:
       - node_modules/
       - packages/**/node_modules/
+      - .nx/
     policy: pull
   artifacts:
     untracked: false
@@ -1199,8 +1213,12 @@ release_generate_html_docs:
     - prerelease_analyze
   allow_failure: false
   script:
-    - ./scripts/generate_docs.sh docs_prerelease gitlab
-    - ./scripts/generate_docs.sh docs_release gitlab
+    - source ./scripts/generate_docs/prepare.sh
+    - ./scripts/generate_docs/schema_docs.sh
+    - ./scripts/generate_docs/typedocs.sh
+    - ./scripts/generate_docs/mkdocs.sh
+    - ./scripts/generate_docs/deploy_gitlab.sh docs_prerelease
+    - ./scripts/generate_docs/deploy_gitlab.sh docs_release
 
 confirm_push_to_git:
   tags:

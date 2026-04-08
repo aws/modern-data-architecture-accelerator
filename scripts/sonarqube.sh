@@ -25,9 +25,28 @@ if [ "${CI_PIPELINE_SOURCE}" = "merge_request_event" ] || [ -n "${CI_MERGE_REQUE
   echo "Merge Request detected (MR !${CI_MERGE_REQUEST_IID}, branch: ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}) - using project key: ${PROJECT_KEY}"
 
   # Pass the project version so SonarQube can compute new code correctly.
-  # Using the MR source branch commit as the version ties the new-code
-  # window to exactly what changed in this MR.
   VERSION_ARGS="-Dsonar.projectVersion=${CI_COMMIT_SHORT_SHA}"
+
+  # Scope the scanner to only affected packages so we don't need full-repo
+  # coverage. Each MR project is independent, so partial analysis is fine.
+  SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  source "$SCRIPT_DIR/nx/affected-base.sh"
+
+  echo "Computing affected packages (base: $NX_BASE)"
+  AFFECTED_PATHS=$(npx nx show projects --affected --base="$NX_BASE" --head="$NX_HEAD" --json 2>/dev/null \
+    | python3 ./scripts/nx/affected-paths.py)
+
+  if [ -n "$AFFECTED_PATHS" ]; then
+    echo "Scoping scanner to affected packages: $AFFECTED_PATHS"
+    # Build sonar.sources as comma-separated list of affected package roots
+    SCOPE_ARGS="-Dsonar.sources=${AFFECTED_PATHS}"
+    # Restrict inclusions to lib/**/*.ts within affected packages only
+    INCLUSIONS=$(echo "$AFFECTED_PATHS" | tr ',' '\n' | sed 's|$|/lib/**/*.ts|' | paste -sd ',' -)
+    SCOPE_ARGS="${SCOPE_ARGS} -Dsonar.inclusions=${INCLUSIONS}"
+  else
+    echo "No affected packages found, skipping SonarQube scan"
+    exit 0
+  fi
 else
   # Main branch analysis - use the canonical project key
   PROJECT_KEY="${BASE_PROJECT_KEY}"
@@ -46,6 +65,9 @@ else
   else
     VERSION_ARGS=""
   fi
+
+  # Main branch scans the full repo
+  SCOPE_ARGS=""
 fi
 
 sonar-scanner \
@@ -55,4 +77,5 @@ sonar-scanner \
   -Dsonar.host.url=${SONAR_SERVER} \
   -Dsonar.token=${SONAR_LOGIN} \
   -Dsonar.sourceEncoding=utf-8 \
-  ${VERSION_ARGS}
+  ${VERSION_ARGS} \
+  ${SCOPE_ARGS}

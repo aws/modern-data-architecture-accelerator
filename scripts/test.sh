@@ -1,17 +1,15 @@
 #!/bin/bash
 set -e
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 echo "Running test script."
 
-# Run TypeScript tests
+# Run TypeScript tests (affected only)
 echo "Running TypeScript tests..."
-npx lerna run test --stream
+source "$SCRIPT_DIR/nx/affected-base.sh"
+npx nx affected -t test --base="$NX_BASE" --head="$NX_HEAD" --parallel=10
 
 # Run Python tests
 echo "Running Python tests..."
 npm run test:python:all
-
-
-
-
-
-
