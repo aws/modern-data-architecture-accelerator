@@ -93,3 +93,45 @@ rulesets:
         ColumnValues "status" in ["pending", "completed", "cancelled"],
         RowCount > 0
       ]
+
+  # Ruleset with Redshift source metadata and SMUS asset mapping
+  redshift-inventory-quality:
+    description: Validate inventory data from Redshift
+    targetTable:
+      databaseName: project:databaseName/inventory-data
+      tableName: inventory
+    # Source configuration describing where the data lives.
+    source:
+      sourceType: redshift
+      connectionName: project:connections/redshift-jdbc
+      redshiftTable: public.inventory
+    # DataZone asset ID for SMUS publishing.
+    smusAssetId: asset-abc-123
+    ruleset:
+      - ruleType: IsComplete
+        column: product_id
+
+  # Recommendation-based ruleset (no explicit rules)
+  auto-recommended-rules:
+    description: Auto-generated rules from Glue DQ recommendations
+    targetTable:
+      databaseName: project:databaseName/customer-data
+      tableName: customers
+    # Glue Data Quality recommendation run ID.
+    recommendationRunId: dqrun-abc-123-def
+
+# Dynamic targets for runtime table discovery.
+dynamicTargets:
+  - name: raw-parquet-data
+    s3DirUri: s3://my-data-lake/raw/parquet/
+    source:
+      sourceType: s3
+      s3Format: parquet
+
+# SMUS publishing configuration for DataZone integration.
+smusPublishing:
+  domainId: dzd_my_domain
+  accountId: '{{account}}'
+  region: '{{region}}'
+  # roleArn: arn:{{partition}}:iam::{{account}}:role/dq-publisher
+  # domainKmsKeyArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/abc-123

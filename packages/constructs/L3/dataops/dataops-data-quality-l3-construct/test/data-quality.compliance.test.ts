@@ -118,4 +118,91 @@ describe('MDAA Compliance Stack Tests', () => {
       },
     });
   });
+
+  test('Source metadata SSM parameter created', () => {
+    const testApp3 = new MdaaTestApp();
+    const propsWithSource: DataOpsDataQualityL3ConstructProps = {
+      projectName: 'test-project',
+      rulesetConfigs: {
+        'source-rules': {
+          targetTable: { databaseName: 'test_db', tableName: 'test_tbl' },
+          source: { sourceType: 'redshift', connectionName: 'my-conn', redshiftTable: 'public.orders' },
+          ruleset: [{ ruleType: 'RowCount', comparisonOperator: '>', value: 0 }],
+        },
+      },
+      roleHelper: new MdaaRoleHelper(testApp3.testStack, testApp3.naming),
+      naming: testApp3.naming,
+    };
+    new DataOpsDataQualityL3Construct(testApp3.testStack, 'source-test', propsWithSource);
+    const template3 = Template.fromStack(testApp3.testStack);
+    template3.hasResourceProperties('AWS::SSM::Parameter', {
+      Description: 'Source configuration for ruleset source-rules',
+    });
+  });
+
+  test('SMUS publishing SSM parameter created', () => {
+    const testApp4 = new MdaaTestApp();
+    const propsWithSmus: DataOpsDataQualityL3ConstructProps = {
+      projectName: 'test-project',
+      smusPublishing: {
+        domainId: 'dzd_test',
+        accountId: '123456789012',
+        region: 'us-west-2',
+        domainKmsKeyArn: 'arn:aws:kms:us-west-2:123456789012:key/abc',
+      },
+      rulesetConfigs: {
+        'smus-rules': {
+          targetTable: { databaseName: 'test_db', tableName: 'test_tbl' },
+          smusAssetId: 'asset-123',
+          ruleset: [{ ruleType: 'RowCount', comparisonOperator: '>', value: 0 }],
+        },
+      },
+      roleHelper: new MdaaRoleHelper(testApp4.testStack, testApp4.naming),
+      naming: testApp4.naming,
+    };
+    new DataOpsDataQualityL3Construct(testApp4.testStack, 'smus-test', propsWithSmus);
+    const template4 = Template.fromStack(testApp4.testStack);
+    template4.hasResourceProperties('AWS::SSM::Parameter', {
+      Description: 'SMUS publishing configuration for data quality',
+    });
+  });
+
+  test('Recommendation ruleset without explicit rules', () => {
+    const testApp5 = new MdaaTestApp();
+    const propsWithRecommendation: DataOpsDataQualityL3ConstructProps = {
+      projectName: 'test-project',
+      rulesetConfigs: {
+        'recommendation-rules': {
+          targetTable: { databaseName: 'test_db', tableName: 'test_tbl' },
+          recommendationRunId: 'run-abc-123',
+        },
+      },
+      roleHelper: new MdaaRoleHelper(testApp5.testStack, testApp5.naming),
+      naming: testApp5.naming,
+    };
+    new DataOpsDataQualityL3Construct(testApp5.testStack, 'recommendation-test', propsWithRecommendation);
+    const template5 = Template.fromStack(testApp5.testStack);
+    template5.resourceCountIs('AWS::Glue::DataQualityRuleset', 0);
+    template5.hasResourceProperties('AWS::SSM::Parameter', {
+      Description: 'Recommendation configuration for ruleset recommendation-rules',
+    });
+  });
+
+  test('Dynamic target SSM parameter created', () => {
+    const testApp6 = new MdaaTestApp();
+    const propsWithDynamic: DataOpsDataQualityL3ConstructProps = {
+      projectName: 'test-project',
+      dynamicTargets: [
+        { name: 's3-parquet', s3DirUri: 's3://my-bucket/data/', source: { sourceType: 's3', s3Format: 'parquet' } },
+      ],
+      roleHelper: new MdaaRoleHelper(testApp6.testStack, testApp6.naming),
+      naming: testApp6.naming,
+    };
+    new DataOpsDataQualityL3Construct(testApp6.testStack, 'dynamic-test', propsWithDynamic);
+    const template6 = Template.fromStack(testApp6.testStack);
+    template6.resourceCountIs('AWS::Glue::DataQualityRuleset', 0);
+    template6.hasResourceProperties('AWS::SSM::Parameter', {
+      Description: 'Dynamic discovery target configuration for s3-parquet',
+    });
+  });
 });

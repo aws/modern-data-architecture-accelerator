@@ -26,7 +26,9 @@ export class DataQualityCDKApp extends MdaaCdkApp {
 
     const constructProps: DataOpsDataQualityL3ConstructProps = {
       rulesetConfigs: appConfig.rulesetConfigs,
+      dynamicTargets: appConfig.dynamicTargets,
       projectName: appConfig.projectName,
+      smusPublishing: appConfig.smusPublishing,
       ...l3ConstructProps,
     };
 

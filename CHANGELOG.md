@@ -4,6 +4,12 @@
 
 ### New Features
 - Added SageMaker L2 constructs: `MdaaSageMakerProjectTemplate`, `MdaaGroundTruth`, and `MdaaModelMonitor` for ML lifecycle management (project templates, data labeling, model monitoring)
+- Data Quality App:
+  - Added multi-source support for data quality rulesets — each ruleset can now specify a `source` block with `sourceType` (glue, s3, redshift), connection details, and S3 paths. Source metadata is published to SSM for downstream DQ evaluation jobs.
+  - Added `smusAssetId` per-ruleset field for mapping DQ results to DataZone assets
+  - Added recommendation-based rulesets via `recommendationRunId` — delegates rule generation to Glue DQ recommendations instead of requiring explicit DQDL rules (metadata-only, no CfnDataQualityRuleset created)
+  - Added dynamic target discovery via `dynamicTargets` — configure S3 directories for runtime dataset enumeration by DQ evaluation jobs
+  - Added `smusPublishing` configuration for publishing data quality metrics to SageMaker Unified Studio (DataZone)
 - Agentcore Runtime app: added enableTransactionSearch(boolean) config param to optionally prevent creation of X-Ray Transaction Search Config if it already exists
 - Datalake app: added optional S3 Storage Lens support — enable via storageLensEnabled: true
 - Data Warehouse app: Added `multiAz` (multi-AZ high availability) and `backupRegion` (cross-region snapshot copy) config options

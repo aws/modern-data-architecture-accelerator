@@ -519,6 +519,10 @@
                     "description": "Description explaining the purpose and scope of the ruleset.\n\nUse cases: Documentation, ruleset purpose explanation\n\nAWS: AWS Glue Data Quality ruleset description\n\nValidation: Optional string; recommended for documentation",
                     "type": "string"
                 },
+                "recommendationRunId": {
+                    "description": "Glue Data Quality recommendation run ID.\nWhen set, creates a recommendation-based ruleset instead of an explicit DQDL ruleset.",
+                    "type": "string"
+                },
                 "ruleset": {
                     "anyOf": [
                         {
@@ -531,7 +535,15 @@
                             "type": "string"
                         }
                     ],
-                    "description": "Ruleset as either a raw DQDL string or an array of structured rule objects.\n\nUse cases: Rule definition, validation logic, quality criteria specification\n\nAWS: AWS Glue Data Quality rules in DQDL format\n\nValidation: Must be a valid DQDL string or array of DataQualityRule objects; required"
+                    "description": "Ruleset as either a raw DQDL string or an array of structured rule objects.\nNot required when using recommendation-based rulesets.\n\nUse cases: Rule definition, validation logic, quality criteria specification\n\nAWS: AWS Glue Data Quality rules in DQDL format\n\nValidation: Must be a valid DQDL string or array of DataQualityRule objects; required unless recommendationRunId is set"
+                },
+                "smusAssetId": {
+                    "description": "DataZone asset ID for SMUS publishing.\nMaps this ruleset's DQ results to a specific DataZone asset.",
+                    "type": "string"
+                },
+                "source": {
+                    "$ref": "#/definitions/DataQualitySourceConfig",
+                    "description": "Source configuration describing where the data lives.\nUsed by downstream DQ evaluation jobs to read data from the correct source.\nDefault source type is 'glue' (Glue Catalog table)."
                 },
                 "targetTable": {
                     "$ref": "#/definitions/DataQualityTargetTable",
@@ -539,9 +551,67 @@
                 }
             },
             "required": [
-                "ruleset",
                 "targetTable"
             ],
+            "type": "object"
+        },
+        "DynamicTargetConfig": {
+            "additionalProperties": false,
+            "description": "Dynamic target for runtime table discovery.\nThe DQ evaluation job will enumerate data at the given S3 directory and run Glue DQ recommendations on each discovered dataset.",
+            "properties": {
+                "name": {
+                    "description": "Logical name for this dynamic target (used in SSM parameter paths).",
+                    "type": "string"
+                },
+                "s3DirUri": {
+                    "description": "S3 directory URI to discover datasets from at runtime.",
+                    "type": "string"
+                },
+                "source": {
+                    "$ref": "#/definitions/DataQualitySourceConfig",
+                    "description": "Source configuration describing the data format and connection details."
+                }
+            },
+            "required": [
+                "name",
+                "s3DirUri",
+                "source"
+            ],
+            "type": "object"
+        },
+        "DataQualitySourceConfig": {
+            "additionalProperties": false,
+            "description": "Source configuration for data quality targets.\nDescribes where the data lives so downstream DQ evaluation jobs know how to read it.",
+            "properties": {
+                "connectionName": {
+                    "description": "Glue connection name for Redshift source type (can be an SSM reference).",
+                    "type": "string"
+                },
+                "redshiftTable": {
+                    "description": "Redshift table name for Redshift source type.",
+                    "type": "string"
+                },
+                "s3Format": {
+                    "description": "S3 data format for S3 source type (e.g., 'parquet', 'csv', 'json').",
+                    "type": "string"
+                },
+                "s3Paths": {
+                    "description": "S3 paths for S3 source type.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "sourceType": {
+                    "description": "Source type: 'glue' (Glue Catalog table), 's3' (S3 paths), or 'redshift' (via Glue connection). Default: 'glue'.",
+                    "enum": [
+                        "glue",
+                        "redshift",
+                        "s3"
+                    ],
+                    "type": "string"
+                }
+            },
             "type": "object"
         },
         "DataQualityTargetTable": {
@@ -2465,6 +2535,38 @@
             ],
             "type": "object"
         },
+        "SmusPublishingConfig": {
+            "additionalProperties": false,
+            "description": "SMUS (SageMaker Unified Studio) publishing configuration for data quality metrics.",
+            "properties": {
+                "accountId": {
+                    "description": "AWS account ID where the DataZone domain resides.",
+                    "type": "string"
+                },
+                "domainId": {
+                    "description": "DataZone domain ID.",
+                    "type": "string"
+                },
+                "domainKmsKeyArn": {
+                    "description": "KMS key ARN for the DataZone domain if using customer-managed encryption (optional).",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "AWS region where the DataZone domain resides.",
+                    "type": "string"
+                },
+                "roleArn": {
+                    "description": "IAM role ARN to assume for publishing (optional).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "accountId",
+                "domainId",
+                "region"
+            ],
+            "type": "object"
+        },
         "Stack": {
             "additionalProperties": false,
             "description": "A root construct which represents a single CloudFormation stack.",
@@ -2916,6 +3018,13 @@
             "description": "DataOps project name for data quality ruleset integration and naming.\n\nUse cases: Project integration; Resource coordination\n\nAWS: DataOps project reference\n\nValidation: Optional; must match an existing deployed project",
             "type": "string"
         },
+        "dynamicTargets": {
+            "description": "Dynamic targets for runtime table discovery. The DQ evaluation job will enumerate data at each S3 directory and run Glue DQ recommendations on discovered datasets.",
+            "items": {
+                "$ref": "#/definitions/DynamicTargetConfig"
+            },
+            "type": "array"
+        },
         "rulesets": {
             "additionalProperties": {
                 "$ref": "#/definitions/DataQualityRulesetDefinition"
@@ -2934,11 +3043,12 @@
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
             "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
+        },
+        "smusPublishing": {
+            "$ref": "#/definitions/SmusPublishingConfig",
+            "description": "SMUS publishing configuration for data quality metrics.\n\nUse cases: DataZone integration; Quality metrics publishing\n\nAWS: SageMaker Unified Studio (DataZone) publishing\n\nValidation: Optional; requires domainId, accountId, and region"
         }
     },
-    "required": [
-        "rulesets"
-    ],
+    "required": [],
     "type": "object"
 }
-
