@@ -4429,6 +4429,28 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
                   },
                 },
               },
+              {
+                "Action": "sts:TagSession",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":iam::",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":root",
+                      ],
+                    ],
+                  },
+                },
+              },
             ],
             "Version": "2012-10-17",
           },

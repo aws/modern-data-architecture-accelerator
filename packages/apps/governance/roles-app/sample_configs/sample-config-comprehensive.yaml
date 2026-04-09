@@ -122,6 +122,12 @@ generateRoles:
   # ----------------------------------------------------------------
   test-role:
     trustedPrincipal: this_account
+    # (Optional) Additional STS actions the primary trusted principal
+    # can perform beyond the default assume role action. Common use
+    # case: allowing sts:TagSession for callers with principal tags
+    # (e.g. OIDC federation, ABAC policies).
+    additionalTrustedActions:
+      - 'sts:TagSession'
     # (Optional) AWS managed policy names to attach. Use the policy
     # path as shown in IAM console (e.g. "service-role/PolicyName")
     awsManagedPolicies:

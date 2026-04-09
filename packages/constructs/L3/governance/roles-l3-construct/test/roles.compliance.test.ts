@@ -116,6 +116,31 @@ describe('MDAA Compliance Stack Tests', () => {
       trustedPrincipal: 'this_account',
       verbatimRoleName: true,
     },
+    {
+      name: 'test-role8',
+      trustedPrincipal: 'this_account',
+      additionalTrustedActions: ['sts:TagSession'],
+    },
+    {
+      name: 'test-role9',
+      trustedPrincipal: 'service:glue.amazonaws.com',
+      additionalTrustedActions: ['sts:TagSession'],
+    },
+    {
+      name: 'test-role10',
+      trustedPrincipal: 'account:123456789',
+      additionalTrustedActions: ['sts:TagSession'],
+    },
+    {
+      name: 'test-role11',
+      trustedPrincipal: 'arn:test-partition:iam::test-account:role/test-assuming-role',
+      additionalTrustedActions: ['sts:TagSession'],
+    },
+    {
+      name: 'test-role12',
+      trustedPrincipal: 'this_account',
+      additionalTrustedActions: [],
+    },
   ];
 
   const federation1: FederationProps = {
@@ -347,5 +372,190 @@ describe('MDAA Compliance Stack Tests', () => {
     template.hasResourceProperties('AWS::IAM::Role', {
       RoleName: 'test-role7',
     });
+  });
+
+  test('Role with additionalTrustedActions on primary principal', () => {
+    template.hasResourceProperties(
+      'AWS::IAM::Role',
+      Match.objectLike({
+        RoleName: 'test-org-test-env-test-domain-test-module-test-role8',
+        AssumeRolePolicyDocument: {
+          Statement: Match.arrayWith([
+            {
+              Action: 'sts:AssumeRole',
+              Effect: 'Allow',
+              Principal: {
+                AWS: 'arn:test-partition:iam::test-account:root',
+              },
+            },
+            {
+              Action: 'sts:TagSession',
+              Effect: 'Allow',
+              Principal: {
+                AWS: 'arn:test-partition:iam::test-account:root',
+              },
+            },
+          ]),
+        },
+      }),
+    );
+  });
+
+  test('Role with additionalTrustedActions on service principal', () => {
+    template.hasResourceProperties(
+      'AWS::IAM::Role',
+      Match.objectLike({
+        RoleName: 'test-org-test-env-test-domain-test-module-test-role9',
+        AssumeRolePolicyDocument: {
+          Statement: Match.arrayWith([
+            {
+              Action: 'sts:AssumeRole',
+              Effect: 'Allow',
+              Principal: {
+                Service: 'glue.amazonaws.com',
+              },
+            },
+            {
+              Action: 'sts:TagSession',
+              Effect: 'Allow',
+              Principal: {
+                Service: 'glue.amazonaws.com',
+              },
+            },
+          ]),
+        },
+      }),
+    );
+  });
+
+  test('Role with additionalTrustedActions on account principal', () => {
+    template.hasResourceProperties(
+      'AWS::IAM::Role',
+      Match.objectLike({
+        RoleName: 'test-org-test-env-test-domain-test-module-test-role10',
+        AssumeRolePolicyDocument: {
+          Statement: Match.arrayWith([
+            {
+              Action: 'sts:AssumeRole',
+              Effect: 'Allow',
+              Principal: {
+                AWS: 'arn:test-partition:iam::123456789:root',
+              },
+            },
+            {
+              Action: 'sts:TagSession',
+              Effect: 'Allow',
+              Principal: {
+                AWS: 'arn:test-partition:iam::123456789:root',
+              },
+            },
+          ]),
+        },
+      }),
+    );
+  });
+
+  test('Role with additionalTrustedActions on arn principal', () => {
+    template.hasResourceProperties(
+      'AWS::IAM::Role',
+      Match.objectLike({
+        RoleName: 'test-org-test-env-test-domain-test-module-test-role11',
+        AssumeRolePolicyDocument: {
+          Statement: Match.arrayWith([
+            {
+              Action: 'sts:AssumeRole',
+              Effect: 'Allow',
+              Principal: {
+                AWS: 'arn:test-partition:iam::test-account:role/test-assuming-role',
+              },
+            },
+            {
+              Action: 'sts:TagSession',
+              Effect: 'Allow',
+              Principal: {
+                AWS: 'arn:test-partition:iam::test-account:role/test-assuming-role',
+              },
+            },
+          ]),
+        },
+      }),
+    );
+  });
+
+  test('Role with empty additionalTrustedActions produces no extra statement', () => {
+    template.hasResourceProperties(
+      'AWS::IAM::Role',
+      Match.objectLike({
+        RoleName: 'test-org-test-env-test-domain-test-module-test-role12',
+        AssumeRolePolicyDocument: {
+          Statement: [
+            {
+              Action: 'sts:AssumeRole',
+              Effect: 'Allow',
+              Principal: {
+                AWS: 'arn:test-partition:iam::test-account:root',
+              },
+            },
+          ],
+        },
+      }),
+    );
+  });
+});
+
+describe('additionalTrustedActions validation', () => {
+  const testApp = new MdaaTestApp();
+
+  test('rejects invalid action on primary principal', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'invalid-primary', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'this_account',
+            additionalTrustedActions: ['s3:GetObject'],
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/Invalid action 's3:GetObject'/);
+  });
+
+  test('rejects wildcard action', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'invalid-wildcard', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'this_account',
+            additionalTrustedActions: ['sts:*'],
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/Invalid action 'sts:\*'/);
+  });
+
+  test('rejects invalid action on additional principal', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'invalid-additional', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'this_account',
+            additionalTrustedPrincipals: [
+              {
+                trustedPrincipal: 'service:glue.amazonaws.com',
+                additionalTrustedActions: ['iam:PassRole'],
+              },
+            ],
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/Invalid action 'iam:PassRole'/);
   });
 });

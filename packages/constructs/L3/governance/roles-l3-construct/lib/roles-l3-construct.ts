@@ -204,6 +204,17 @@ export interface GenerateRoleProps {
    */
   readonly trustedPrincipal: string;
   /**
+   * Additional STS actions the primary trusted principal can perform beyond the default
+   * assume role action (e.g. ["sts:TagSession", "sts:SetSourceIdentity"]).
+   *
+   * Use cases: Session tagging for principals with principal tags; ABAC; OIDC federation
+   *
+   * AWS: IAM trust policy additional actions
+   *
+   * Validation: Optional; array of valid IAM action strings
+   */
+  readonly additionalTrustedActions?: string[];
+  /**
    * Additional principals that can assume this role beyond the primary.
    * Each can specify additional trusted actions (e.g. sts:SetSourceIdentity).
    *
@@ -442,12 +453,32 @@ export class RolesL3Construct extends MdaaL3Construct {
         verbatimRoleName: generateRole.verbatimRoleName,
       });
 
+      if (role.assumeRolePolicy && generateRole.additionalTrustedActions?.length) {
+        RolesL3Construct.validateTrustedActions(
+          generateRole.additionalTrustedActions,
+          `role '${generateRole.name}' additionalTrustedActions`,
+        );
+        role.assumeRolePolicy.addStatements(
+          new PolicyStatement({
+            actions: generateRole.additionalTrustedActions,
+            principals: [resolvedTrustPrincipal],
+            effect: Effect.ALLOW,
+          }),
+        );
+      }
+
       generateRole.additionalTrustedPrincipals?.forEach(trustPrincipalProps => {
         if (role.assumeRolePolicy) {
           const trustPrincipal = this.resolveTrustedPrincipal(
             trustPrincipalProps.trustedPrincipal,
             federationProviders,
           );
+          if (trustPrincipalProps.additionalTrustedActions?.length) {
+            RolesL3Construct.validateTrustedActions(
+              trustPrincipalProps.additionalTrustedActions,
+              `role '${generateRole.name}' additionalTrustedPrincipals`,
+            );
+          }
           role.assumeRolePolicy.addStatements(
             new PolicyStatement({
               actions: [trustPrincipal.assumeRoleAction, ...(trustPrincipalProps.additionalTrustedActions || [])],
@@ -510,6 +541,18 @@ export class RolesL3Construct extends MdaaL3Construct {
     } else {
       throw new Error("Trusted principal must start with service:, account:, federation: or equal 'this_account'");
     }
+  }
+
+  private static readonly STS_ACTION_PATTERN = /^sts:[A-Za-z]+$/;
+
+  private static validateTrustedActions(actions: string[], context: string): void {
+    actions.forEach(action => {
+      if (!RolesL3Construct.STS_ACTION_PATTERN.test(action)) {
+        throw new Error(
+          `Invalid action '${action}' in ${context}. Actions must match pattern '^sts:[A-Za-z]+$' (e.g. 'sts:TagSession', 'sts:SetSourceIdentity').`,
+        );
+      }
+    });
   }
 
   private loadPolicyConfig(fileName: string) {

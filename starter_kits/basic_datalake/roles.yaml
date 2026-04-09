@@ -90,6 +90,8 @@ generateRoles:
 
   data-admin:
     trustedPrincipal: this_account
+    additionalTrustedActions:
+      - "sts:TagSession"
     awsManagedPolicies:
       - AWSGlueConsoleFullAccess
     generatedPolicies:

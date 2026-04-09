@@ -754,6 +754,13 @@
             "additionalProperties": false,
             "description": "IAM role generation configuration with persona-based permissions, trust policies,\nand managed policy attachments. Supports multiple trust principals, conditional\naccess, and both AWS and customer managed policies.\n\nUse cases: Automated role creation; Persona-based permissions; Multi-principal trust; Conditional access\n\nAWS: IAM role with configurable trust policy, managed policy attachments, and CDK Nag suppressions\n\nValidation: trustedPrincipal required; all other properties optional",
             "properties": {
+                "additionalTrustedActions": {
+                    "description": "Additional STS actions the primary trusted principal can perform beyond the default\nassume role action (e.g. [\"sts:TagSession\", \"sts:SetSourceIdentity\"]).\n\nUse cases: Session tagging for principals with principal tags; ABAC; OIDC federation\n\nAWS: IAM trust policy additional actions\n\nValidation: Optional; array of valid IAM action strings",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "additionalTrustedPrincipals": {
                     "description": "Additional principals that can assume this role beyond the primary.\nEach can specify additional trusted actions (e.g. sts:SetSourceIdentity).\n\nUse cases: Multi-service trust; Cross-account sharing; Complex trust relationships\n\nAWS: IAM role trust policy additional principals\n\nValidation: Optional; array of valid TrustedPrincipalProps",
                     "items": {

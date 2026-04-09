@@ -13,6 +13,8 @@
 - Agentcore Runtime app: added enableTransactionSearch(boolean) config param to optionally prevent creation of X-Ray Transaction Search Config if it already exists
 - Datalake app: added optional S3 Storage Lens support — enable via storageLensEnabled: true
 - Data Warehouse app: Added `multiAz` (multi-AZ high availability) and `backupRegion` (cross-region snapshot copy) config options
+- Roles app: added an optional `additionalTrustedActions` for the role primary principal, allowing additional actions like 
+`sts:TagSession` to be added to the trust policy;
 
 ### Bug Fixes
 
