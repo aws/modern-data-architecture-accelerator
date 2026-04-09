@@ -32,9 +32,9 @@ if [ "${CI_PIPELINE_SOURCE}" = "merge_request_event" ] || [ -n "${CI_MERGE_REQUE
   SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
   source "$SCRIPT_DIR/nx/affected-base.sh"
 
-  echo "Computing affected packages (base: $NX_BASE)"
-  AFFECTED_PATHS=$(npx nx show projects --affected --base="$NX_BASE" --head="$NX_HEAD" --json 2>/dev/null \
-    | python3 ./scripts/nx/affected-paths.py)
+  echo "Computing directly changed packages (base: $NX_BASE)"
+  CHANGED_PROJECTS=$(python3 ./scripts/nx/changed-only.py "$NX_BASE" "$NX_HEAD")
+  AFFECTED_PATHS=$(echo "$CHANGED_PROJECTS" | python3 ./scripts/nx/affected-paths.py)
 
   if [ -n "$AFFECTED_PATHS" ]; then
     echo "Scoping scanner to affected packages: $AFFECTED_PATHS"
