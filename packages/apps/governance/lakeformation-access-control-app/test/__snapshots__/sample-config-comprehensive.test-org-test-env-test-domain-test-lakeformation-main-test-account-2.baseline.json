@@ -1,0 +1,94 @@
+{
+  "Resources": {
+    "remoteresourcelinkresourcelink": {
+      "Type": "AWS::Glue::Database",
+      "Properties": {
+        "CatalogId": "test-account-2",
+        "DatabaseInput": {
+          "Name": "remote_resource_link",
+          "TargetDatabase": {
+            "CatalogId": "test-account-2",
+            "DatabaseName": "another_remote_database"
+          }
+        }
+      }
+    },
+    "grantRESOURCELINKremoteresourcelinkfedGroupPrincipal": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/test-provider:group/test-group1"
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "remote_resource_link"
+          }
+        }
+      },
+      "DependsOn": [
+        "remoteresourcelinkresourcelink"
+      ]
+    },
+    "grantRESOURCELINKremoteresourcelinkfedUserPrincipal": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/test-provider:user/test-user@example.com"
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "remote_resource_link"
+          }
+        }
+      },
+      "DependsOn": [
+        "grantRESOURCELINKremoteresourcelinkfedGroupPrincipal",
+        "remoteresourcelinkresourcelink"
+      ]
+    }
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

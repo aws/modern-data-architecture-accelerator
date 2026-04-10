@@ -1,0 +1,2150 @@
+{
+  "Description": "(SO0320-dataops-dms) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuetestorgtestdomaintestprojectsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-project/securityConfiguration/default"
+    },
+    "SsmParameterValuetestorgtestdomaintestprojectprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-project/projectBucket/default"
+    },
+    "SsmParameterValuetestorgtestdomaintestprojectdeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-project/deploymentRole/default"
+    },
+    "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-project/kmsArn/default"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-dms-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-dms) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "dmsdmsvpcrole142522B4": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "dms.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AmazonDMSVPCManagementRole"
+              ]
+            ]
+          }
+        ],
+        "RoleName": "dms-vpc-role",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] AmazonDMSVPCManagementRole has explicit actions but requires wildcard resource so all VPCs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DMS_migration-IAM.dms-vpc-role.html",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmsvpcroleroledmsvpcrolearnssmB59BE6F9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/role/dms-vpc-role/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsdmsvpcrole142522B4",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] AmazonDMSVPCManagementRole has explicit actions but requires wildcard resource so all VPCs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DMS_migration-IAM.dms-vpc-role.html",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmsvpcroleroledmsvpcroleidssm7E77274C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/role/dms-vpc-role/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsdmsvpcrole142522B4",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] AmazonDMSVPCManagementRole has explicit actions but requires wildcard resource so all VPCs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DMS_migration-IAM.dms-vpc-role.html",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmsvpcroleroledmsvpcrolenamessm00D40CC8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/role/dms-vpc-role/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsdmsvpcrole142522B4"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] AmazonDMSVPCManagementRole has explicit actions but requires wildcard resource so all VPCs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DMS_migration-IAM.dms-vpc-role.html",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmscloudwatchlogsrole73252CAE": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "dms.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole"
+              ]
+            ]
+          }
+        ],
+        "RoleName": "dms-cloudwatch-logs-role",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsrolearnssm01E3663D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/role/dms-cloudwatch-logs-role/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsdmscloudwatchlogsrole73252CAE",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsroleidssmDFC0AC04": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/role/dms-cloudwatch-logs-role/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsdmscloudwatchlogsrole73252CAE",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsrolenamessmCDEB85E9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/role/dms-cloudwatch-logs-role/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsdmscloudwatchlogsrole73252CAE"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsreplicationsubnetgrouptestinstance162D08A6": {
+      "Type": "AWS::DMS::ReplicationSubnetGroup",
+      "Properties": {
+        "ReplicationSubnetGroupDescription": "test-org-test-env-test-domain-test-dms-main-test-instance",
+        "ReplicationSubnetGroupIdentifier": "test-org-test-env-test-domain-test-dms-main-test-instance",
+        "SubnetIds": [
+          "test_subnet_id1",
+          "test_subnet_id2"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "dmsdmsvpcrole142522B4"
+      ]
+    },
+    "dmssecuritygrouptestinstanceA983FA0F": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-dms-main/dms/security-group-test-instance",
+        "GroupName": "test-org-test-env-test-domain-test-dms-main-test-instance",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "test_vpc_id"
+      }
+    },
+    "dmssecuritygrouptestinstancefrom1000016tcpPORT3306158B4878": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "CidrIp": "10.0.0.0/16",
+        "Description": "Allow MySQL from VPC",
+        "FromPort": 3306,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "dmssecuritygrouptestinstanceA983FA0F",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 3306
+      }
+    },
+    "dmssecuritygrouptestinstancefromsg12345678tcpPORT1521DAD83EA1": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "Allow Oracle from app SG",
+        "FromPort": 1521,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "dmssecuritygrouptestinstanceA983FA0F",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": "sg-12345678",
+        "ToPort": 1521
+      }
+    },
+    "dmssecuritygrouptestinstancefrompl12345678tcpPORT5432EC20E8CC": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "Allow PostgreSQL via prefix list",
+        "FromPort": 5432,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "dmssecuritygrouptestinstanceA983FA0F",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "SourcePrefixListId": "pl-12345678",
+        "ToPort": 5432
+      }
+    },
+    "dmssecuritygrouptestinstanceto00000tcpPORT44321196AD5": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "CidrIp": "0.0.0.0/0",
+        "Description": "Allow HTTPS egress",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "dmssecuritygrouptestinstanceA983FA0F",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "dmssecuritygrouptestinstancefromtestorgtestenvtestdomaintestdmsmaindmssecuritygrouptestinstance661D1383ALLTRAFFIC8AE5243D": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "Self-Ref",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "dmssecuritygrouptestinstanceA983FA0F",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "dmssecuritygrouptestinstanceA983FA0F",
+            "GroupId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] Ingress/Egress is limited to this security group",
+              "id": "NIST.800.53.R5-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] Ingress/Egress is limited to this security group",
+              "id": "HIPAA.Security-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] Ingress/Egress is limited to this security group",
+              "id": "PCI.DSS.321-EC2RestrictedCommonPorts"
+            }
+          ]
+        }
+      }
+    },
+    "dmssecuritygrouptestinstancetotestorgtestenvtestdomaintestdmsmaindmssecuritygrouptestinstance661D1383ALLTRAFFICD9AB88E1": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "Self-Ref",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "dmssecuritygrouptestinstanceA983FA0F",
+            "GroupId"
+          ]
+        },
+        "GroupId": {
+          "Fn::GetAtt": [
+            "dmssecuritygrouptestinstanceA983FA0F",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "-1"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] Ingress/Egress is limited to this security group",
+              "id": "NIST.800.53.R5-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] Ingress/Egress is limited to this security group",
+              "id": "HIPAA.Security-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] Ingress/Egress is limited to this security group",
+              "id": "PCI.DSS.321-EC2RestrictedCommonPorts"
+            }
+          ]
+        }
+      }
+    },
+    "dmssecuritygrouptestinstancesecuritygrouptestinstanceidssmAEA1FDD9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/security-group/test-instance/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmssecuritygrouptestinstanceA983FA0F",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "dmsreplicationinstancetestinstanceCD0A619E": {
+      "Type": "AWS::DMS::ReplicationInstance",
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "PubliclyAccessible": false,
+        "ReplicationInstanceClass": "dms.t3.micro",
+        "ReplicationInstanceIdentifier": "test-org-test-env-test-domain-test-dms-main-test-instance",
+        "ReplicationSubnetGroupIdentifier": "test-org-test-env-test-domain-test-dms-main-test-instance",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcSecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "dmssecuritygrouptestinstanceA983FA0F",
+              "GroupId"
+            ]
+          }
+        ]
+      },
+      "DependsOn": [
+        "dmsreplicationsubnetgrouptestinstance162D08A6"
+      ]
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceidentifierssm9F199903": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/replicationinstance/test-instance/identifier",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
+        }
+      }
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceipssmE8599E88": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/replicationinstance/test-instance/ip",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsreplicationinstancetestinstanceCD0A619E",
+            "ReplicationInstancePrivateIpAddresses"
+          ]
+        }
+      }
+    },
+    "dmsendpointtestsourcesqlserver96BC5EAA": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "DatabaseName": "test-database",
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-source-sqlserver",
+        "EndpointType": "source",
+        "EngineName": "sqlserver",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "MicrosoftSqlServerSettings": {
+          "BcpPacketSize": 4096,
+          "ControlTablesFileGroup": "dms_control",
+          "DatabaseName": "test-database",
+          "ForceLobLookup": false,
+          "Port": 1433,
+          "QuerySingleAlwaysOnNode": false,
+          "ReadBackupOnly": false,
+          "SafeguardPolicy": "rely-on-sql-server-replication-agent",
+          "SecretsManagerAccessRoleArn": "arn:test-partition:iam::test-account:role/test-sm-access-role",
+          "ServerName": "test-sqlserver.example.com",
+          "TlogAccessMode": "BackupOnly",
+          "TrimSpaceInChar": false,
+          "UseBcpFullLoad": true,
+          "UseThirdPartyBackupDevice": false
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtestsourcesqlserverendpointtestsourcesqlserverarnssmB3A46E5F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-source-sqlserver/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtestsourcesqlserver96BC5EAA"
+        }
+      }
+    },
+    "dmsendpointtesttargets35DB2DC93": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-target-s3",
+        "EndpointType": "target",
+        "EngineName": "s3",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "S3Settings": {
+          "AddColumnName": true,
+          "BucketFolder": "dms-output",
+          "BucketName": "test-target-bucket",
+          "CannedAclForObjects": "bucket-owner-full-control",
+          "CdcInsertsAndUpdates": true,
+          "CdcInsertsOnly": false,
+          "CdcMaxBatchInterval": 60,
+          "CdcMinFileSize": 32000,
+          "CdcPath": "cdc-data",
+          "CompressionType": "gzip",
+          "CsvDelimiter": ",",
+          "CsvNoSupValue": "",
+          "CsvNullValue": "NULL",
+          "CsvRowDelimiter": "\\n",
+          "DataFormat": "parquet",
+          "DataPageSize": 1048576,
+          "DatePartitionDelimiter": "SLASH",
+          "DatePartitionEnabled": true,
+          "DatePartitionSequence": "YYYYMMDD",
+          "DatePartitionTimezone": "UTC",
+          "DictPageSizeLimit": 1048576,
+          "EnableStatistics": true,
+          "EncodingType": "rle-dictionary",
+          "EncryptionMode": "SSE_KMS",
+          "ExternalTableDefinition": "",
+          "IgnoreHeaderRows": 1,
+          "IncludeOpForFullLoad": true,
+          "MaxFileSize": 1048576,
+          "ParquetTimestampInMillisecond": true,
+          "ParquetVersion": "parquet-2-0",
+          "PreserveTransactions": true,
+          "Rfc4180": true,
+          "RowGroupLength": 10000,
+          "ServerSideEncryptionKmsKeyId": "test-target-kms-key-id",
+          "ServiceAccessRoleArn": "arn:test-partition:iam::test-account:role/test-dms-role",
+          "TimestampColumnName": "_dms_timestamp",
+          "UseCsvNoSupValue": false,
+          "UseTaskStartTimeForFullLoadTimestamp": true
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtesttargets3endpointtesttargets3arnssmA25F8C1D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-target-s3/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtesttargets35DB2DC93"
+        }
+      }
+    },
+    "dmsendpointtestsourcemysqlC12C5944": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "DatabaseName": "test-mysql-db",
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-source-mysql",
+        "EndpointType": "source",
+        "EngineName": "mysql",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "MySqlSettings": {
+          "AfterConnectScript": "SET SESSION wait_timeout=28800",
+          "CleanSourceMetadataOnMismatch": true,
+          "EventsPollInterval": 5,
+          "MaxFileSize": 65536,
+          "ParallelLoadThreads": 1,
+          "SecretsManagerAccessRoleArn": "arn:test-partition:iam::test-account:role/test-sm-access-role",
+          "ServerTimezone": "UTC",
+          "TargetDbType": "specific-database"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtestsourcemysqlendpointtestsourcemysqlarnssmF49C3740": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-source-mysql/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtestsourcemysqlC12C5944"
+        }
+      }
+    },
+    "dmsendpointtestsourcepostgres94426057": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "DatabaseName": "test-postgres-db",
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-source-postgres",
+        "EndpointType": "source",
+        "EngineName": "postgres",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "PostgreSqlSettings": {
+          "AfterConnectScript": "SET search_path TO public",
+          "BabelfishDatabaseName": "test-babelfish-db",
+          "CaptureDdls": true,
+          "DatabaseMode": "default",
+          "DdlArtifactsSchema": "cdc_ddl_schema",
+          "ExecuteTimeout": 60,
+          "FailTasksOnLobTruncation": false,
+          "HeartbeatEnable": true,
+          "HeartbeatFrequency": 5,
+          "HeartbeatSchema": "public",
+          "MapBooleanAsBoolean": true,
+          "MaxFileSize": 32000,
+          "PluginName": "pglogical",
+          "SecretsManagerAccessRoleArn": "arn:test-partition:iam::test-account:role/test-sm-access-role",
+          "SlotName": "test_slot"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtestsourcepostgresendpointtestsourcepostgresarnssmE6FCA4D2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-source-postgres/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtestsourcepostgres94426057"
+        }
+      }
+    },
+    "dmsendpointtestsourceoracleFA96393E": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "DatabaseName": "test-oracle-db",
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-source-oracle",
+        "EndpointType": "source",
+        "EngineName": "oracle",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "OracleSettings": {
+          "AccessAlternateDirectly": false,
+          "AddSupplementalLogging": true,
+          "AdditionalArchivedLogDestId": 1,
+          "AllowSelectNestedTables": true,
+          "ArchivedLogDestId": 1,
+          "ArchivedLogsOnly": false,
+          "AsmServer": "test-asm-server",
+          "CharLengthSemantics": "byte",
+          "DirectPathNoLog": false,
+          "DirectPathParallelLoad": false,
+          "EnableHomogenousTablespace": false,
+          "ExtraArchivedLogDestIds": [
+            2,
+            3
+          ],
+          "FailTasksOnLobTruncation": false,
+          "NumberDatatypeScale": -1,
+          "OraclePathPrefix": "/rdsdbdata/db/",
+          "ParallelAsmReadThreads": 2,
+          "ReadAheadBlocks": 1000,
+          "ReadTableSpaceName": false,
+          "ReplacePathPrefix": false,
+          "RetryInterval": 5,
+          "SecretsManagerAccessRoleArn": "arn:test-partition:iam::test-account:role/test-sm-access-role",
+          "SecretsManagerOracleAsmAccessRoleArn": "arn:test-partition:iam::test-account:role/test-asm-role",
+          "SpatialDataOptionToGeoJsonFunctionName": "test_sdo_to_geojson",
+          "StandbyDelayTime": 0,
+          "UseAlternateFolderForOnline": false,
+          "UseBFile": false,
+          "UseDirectPathFullLoad": true,
+          "UseLogminerReader": true,
+          "UsePathPrefix": "/rdsdbdata/log/"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtestsourceoracleendpointtestsourceoraclearnssm86A1ED2A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-source-oracle/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtestsourceoracleFA96393E"
+        }
+      }
+    },
+    "dmsendpointtestsourcemongodbB576F7FB": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "DatabaseName": "test-mongo-db",
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-source-mongodb",
+        "EndpointType": "source",
+        "EngineName": "mongodb",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "MongoDbSettings": {
+          "AuthMechanism": "scram-sha-1",
+          "AuthSource": "admin",
+          "AuthType": "password",
+          "DatabaseName": "test-mongo-db",
+          "DocsToInvestigate": "1000",
+          "ExtractDocId": "true",
+          "NestingLevel": "one",
+          "Port": 27017,
+          "SecretsManagerAccessRoleArn": "arn:test-partition:iam::test-account:role/test-sm-access-role",
+          "ServerName": "test-mongo-server.example.com"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtestsourcemongodbendpointtestsourcemongodbarnssm4A2B393D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-source-mongodb/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtestsourcemongodbB576F7FB"
+        }
+      }
+    },
+    "dmsendpointtestsourcedocdb967C8011": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "DatabaseName": "test-docdb-db",
+        "DocDbSettings": {
+          "DocsToInvestigate": 1000,
+          "ExtractDocId": true,
+          "NestingLevel": "one",
+          "SecretsManagerAccessRoleArn": "arn:test-partition:iam::test-account:role/test-sm-access-role"
+        },
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-source-docdb",
+        "EndpointType": "source",
+        "EngineName": "docdb",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtestsourcedocdbendpointtestsourcedocdbarnssmCEBD84B3": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-source-docdb/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtestsourcedocdb967C8011"
+        }
+      }
+    },
+    "dmsendpointtestsourcedb289065E1C": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "DatabaseName": "test-db2-db",
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-source-db2",
+        "EndpointType": "source",
+        "EngineName": "db2",
+        "IbmDb2Settings": {
+          "CurrentLsn": "00000000:00000000:0000",
+          "MaxKBytesPerRead": 64,
+          "SecretsManagerAccessRoleArn": "arn:test-partition:iam::test-account:role/test-sm-access-role",
+          "SetDataCaptureChanges": true
+        },
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtestsourcedb2endpointtestsourcedb2arnssm66E0FD72": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-source-db2/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtestsourcedb289065E1C"
+        }
+      }
+    },
+    "dmsendpointtesttargetdynamodb3752A9C4": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "DynamoDbSettings": {
+          "ServiceAccessRoleArn": "arn:test-partition:iam::test-account:role/test-dms-role"
+        },
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-target-dynamodb",
+        "EndpointType": "target",
+        "EngineName": "dynamodb",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtesttargetdynamodbendpointtesttargetdynamodbarnssm4DF361E4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-target-dynamodb/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtesttargetdynamodb3752A9C4"
+        }
+      }
+    },
+    "dmsendpointtesttargetelasticsearch2178E47B": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "ElasticsearchSettings": {
+          "EndpointUri": "https://test-es-domain.test-region.es.amazonaws.com",
+          "ErrorRetryDuration": 300,
+          "FullLoadErrorPercentage": 10,
+          "ServiceAccessRoleArn": "arn:test-partition:iam::test-account:role/test-es-access-role"
+        },
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-target-elasticsearch",
+        "EndpointType": "target",
+        "EngineName": "elasticsearch",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtesttargetelasticsearchendpointtesttargetelasticsearcharnssm43D3C318": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-target-elasticsearch/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtesttargetelasticsearch2178E47B"
+        }
+      }
+    },
+    "dmsendpointtesttargetkinesis8F4377FB": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-target-kinesis",
+        "EndpointType": "target",
+        "EngineName": "kinesis",
+        "KinesisSettings": {
+          "IncludeControlDetails": true,
+          "IncludeNullAndEmpty": true,
+          "IncludePartitionValue": true,
+          "IncludeTableAlterOperations": true,
+          "IncludeTransactionDetails": true,
+          "MessageFormat": "json",
+          "NoHexPrefix": false,
+          "PartitionIncludeSchemaTable": true,
+          "ServiceAccessRoleArn": "arn:test-partition:iam::test-account:role/test-dms-role",
+          "StreamArn": "arn:test-partition:kinesis:test-region:test-account:stream/test-stream"
+        },
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtesttargetkinesisendpointtesttargetkinesisarnssm94ACC103": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-target-kinesis/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtesttargetkinesis8F4377FB"
+        }
+      }
+    },
+    "dmsendpointtesttargetneptuneE933A9B0": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-target-neptune",
+        "EndpointType": "target",
+        "EngineName": "neptune",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "NeptuneSettings": {
+          "ErrorRetryDuration": 300,
+          "IamAuthEnabled": true,
+          "MaxFileSize": 1048576,
+          "MaxRetryCount": 3,
+          "S3BucketFolder": "neptune-staging",
+          "S3BucketName": "test-neptune-staging-bucket",
+          "ServiceAccessRoleArn": "arn:test-partition:iam::test-account:role/test-dms-role"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtesttargetneptuneendpointtesttargetneptunearnssm2DD96E48": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-target-neptune/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtesttargetneptuneE933A9B0"
+        }
+      }
+    },
+    "dmsendpointtesttargetredshiftBD7C8FA3": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "DatabaseName": "test-redshift-db",
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-target-redshift",
+        "EndpointType": "target",
+        "EngineName": "redshift",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "RedshiftSettings": {
+          "AcceptAnyDate": true,
+          "AfterConnectScript": "SET search_path TO public",
+          "BucketFolder": "redshift-staging",
+          "BucketName": "test-redshift-staging-bucket",
+          "CaseSensitiveNames": false,
+          "CompUpdate": true,
+          "ConnectionTimeout": 10000,
+          "DateFormat": "auto",
+          "EmptyAsNull": true,
+          "EncryptionMode": "SSE_KMS",
+          "ExplicitIds": false,
+          "FileTransferUploadStreams": 3,
+          "LoadTimeout": 600000,
+          "MapBooleanAsBoolean": true,
+          "MaxFileSize": 1048576,
+          "RemoveQuotes": true,
+          "ReplaceChars": "?",
+          "ReplaceInvalidChars": "",
+          "SecretsManagerAccessRoleArn": "arn:test-partition:iam::test-account:role/test-sm-access-role",
+          "ServerSideEncryptionKmsKeyId": "test-redshift-kms-key-id",
+          "ServiceAccessRoleArn": "arn:test-partition:iam::test-account:role/test-redshift-access-role",
+          "TimeFormat": "auto",
+          "TrimBlanks": true,
+          "TruncateColumns": true,
+          "WriteBufferSize": 512
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtesttargetredshiftendpointtesttargetredshiftarnssmE435517C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-target-redshift/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtesttargetredshiftBD7C8FA3"
+        }
+      }
+    },
+    "dmsendpointtestsourcesybaseCC1D8180": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "DatabaseName": "test-sybase-db",
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-main-test-source-sybase",
+        "EndpointType": "source",
+        "EngineName": "sybase",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "SybaseSettings": {
+          "SecretsManagerAccessRoleArn": "arn:test-partition:iam::test-account:role/test-sm-access-role"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtestsourcesybaseendpointtestsourcesybasearnssm5CC016CA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/endpoint/test-source-sybase/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtestsourcesybaseCC1D8180"
+        }
+      }
+    },
+    "dmsreplicationtasktesttaskfullloadF0B6BD04": {
+      "Type": "AWS::DMS::ReplicationTask",
+      "Properties": {
+        "MigrationType": "full-load",
+        "ReplicationInstanceArn": {
+          "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
+        },
+        "ReplicationTaskIdentifier": "test-org-test-env-test-domain-test-dms-main-test-task-full-load",
+        "ReplicationTaskSettings": "{\"TargetMetadata\":{\"TargetSchema\":\"\",\"SupportLobs\":true},\"FullLoadSettings\":{\"TargetTablePrepMode\":\"DROP_AND_CREATE\"}}",
+        "SourceEndpointArn": {
+          "Ref": "dmsendpointtestsourcesqlserver96BC5EAA"
+        },
+        "TableMappings": "{\"rules\":[{\"rule-type\":\"selection\",\"rule-id\":\"1\",\"rule-name\":\"1\",\"object-locator\":{\"schema-name\":\"Test\",\"table-name\":\"%\"},\"rule-action\":\"include\"},{\"rule-type\":\"selection\",\"rule-id\":\"2\",\"rule-name\":\"2\",\"object-locator\":{\"schema-name\":\"Test\",\"table-name\":\"DMS%\"},\"rule-action\":\"exclude\"}]}",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TargetEndpointArn": {
+          "Ref": "dmsendpointtesttargets35DB2DC93"
+        },
+        "TaskData": "{\"supplementalKey\":\"supplementalValue\"}"
+      },
+      "DependsOn": [
+        "dmsdmscloudwatchlogsrole73252CAE"
+      ]
+    }
+  },
+  "Outputs": {
+    "dmsdmsvpcroleroledmsvpcrolearnout728F50CB": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsdmsvpcrole142522B4",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:role:dmsvpcrole:arn"
+      }
+    },
+    "dmsdmsvpcroleroledmsvpcroleidoutF2FEA442": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsdmsvpcrole142522B4",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:role:dmsvpcrole:id"
+      }
+    },
+    "dmsdmsvpcroleroledmsvpcrolenameout725DDDDA": {
+      "Value": {
+        "Ref": "dmsdmsvpcrole142522B4"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:role:dmsvpcrole:name"
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsrolearnout8F259CCE": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsdmscloudwatchlogsrole73252CAE",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:role:dmscloudwatchlogsrole:arn"
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsroleidout09151D75": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsdmscloudwatchlogsrole73252CAE",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:role:dmscloudwatchlogsrole:id"
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsrolenameoutBD494A99": {
+      "Value": {
+        "Ref": "dmsdmscloudwatchlogsrole73252CAE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:role:dmscloudwatchlogsrole:name"
+      }
+    },
+    "dmssecuritygrouptestinstancesecuritygrouptestinstanceidout734E06F6": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmssecuritygrouptestinstanceA983FA0F",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:security-group:testinstance:id"
+      }
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceidentifierout98FFE137": {
+      "Value": {
+        "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:replicationinstance:testinstance:identifier"
+      }
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceipoutFAF1D039": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsreplicationinstancetestinstanceCD0A619E",
+          "ReplicationInstancePrivateIpAddresses"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:replicationinstance:testinstance:ip"
+      }
+    },
+    "dmsendpointtestsourcesqlserverendpointtestsourcesqlserverarnout29B69585": {
+      "Value": {
+        "Ref": "dmsendpointtestsourcesqlserver96BC5EAA"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testsourcesqlserver:arn"
+      }
+    },
+    "dmsendpointtesttargets3endpointtesttargets3arnoutEB5D91ED": {
+      "Value": {
+        "Ref": "dmsendpointtesttargets35DB2DC93"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testtargets3:arn"
+      }
+    },
+    "dmsendpointtestsourcemysqlendpointtestsourcemysqlarnoutBFFF4EA5": {
+      "Value": {
+        "Ref": "dmsendpointtestsourcemysqlC12C5944"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testsourcemysql:arn"
+      }
+    },
+    "dmsendpointtestsourcepostgresendpointtestsourcepostgresarnoutE0F44C49": {
+      "Value": {
+        "Ref": "dmsendpointtestsourcepostgres94426057"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testsourcepostgres:arn"
+      }
+    },
+    "dmsendpointtestsourceoracleendpointtestsourceoraclearnout2E84AC00": {
+      "Value": {
+        "Ref": "dmsendpointtestsourceoracleFA96393E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testsourceoracle:arn"
+      }
+    },
+    "dmsendpointtestsourcemongodbendpointtestsourcemongodbarnoutA31DA828": {
+      "Value": {
+        "Ref": "dmsendpointtestsourcemongodbB576F7FB"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testsourcemongodb:arn"
+      }
+    },
+    "dmsendpointtestsourcedocdbendpointtestsourcedocdbarnout32E287A4": {
+      "Value": {
+        "Ref": "dmsendpointtestsourcedocdb967C8011"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testsourcedocdb:arn"
+      }
+    },
+    "dmsendpointtestsourcedb2endpointtestsourcedb2arnout2A0C29F5": {
+      "Value": {
+        "Ref": "dmsendpointtestsourcedb289065E1C"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testsourcedb2:arn"
+      }
+    },
+    "dmsendpointtesttargetdynamodbendpointtesttargetdynamodbarnoutC348517C": {
+      "Value": {
+        "Ref": "dmsendpointtesttargetdynamodb3752A9C4"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testtargetdynamodb:arn"
+      }
+    },
+    "dmsendpointtesttargetelasticsearchendpointtesttargetelasticsearcharnout0DA1C6FF": {
+      "Value": {
+        "Ref": "dmsendpointtesttargetelasticsearch2178E47B"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testtargetelasticsearch:arn"
+      }
+    },
+    "dmsendpointtesttargetkinesisendpointtesttargetkinesisarnout3AF1C44A": {
+      "Value": {
+        "Ref": "dmsendpointtesttargetkinesis8F4377FB"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testtargetkinesis:arn"
+      }
+    },
+    "dmsendpointtesttargetneptuneendpointtesttargetneptunearnout5725A394": {
+      "Value": {
+        "Ref": "dmsendpointtesttargetneptuneE933A9B0"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testtargetneptune:arn"
+      }
+    },
+    "dmsendpointtesttargetredshiftendpointtesttargetredshiftarnoutAB2D262F": {
+      "Value": {
+        "Ref": "dmsendpointtesttargetredshiftBD7C8FA3"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testtargetredshift:arn"
+      }
+    },
+    "dmsendpointtestsourcesybaseendpointtestsourcesybasearnoutA254DDE6": {
+      "Value": {
+        "Ref": "dmsendpointtestsourcesybaseCC1D8180"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:endpoint:testsourcesybase:arn"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

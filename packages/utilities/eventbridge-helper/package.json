@@ -15,11 +15,8 @@
     "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references",
     "watch": "jsii -w  --project-references",
     "package": "jsii-pacmak --npmignore=false",
-    "test": "jest --passWithNoTests --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
-    "lint": "eslint --max-warnings 0 -c ../../../eslint.config.mjs",
-    "test:coverage": "jest --passWithNoTests --coverage --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
-    "test:snapshots": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts'",
-    "test:snapshots:update": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts' --updateSnapshot"
+    "test": "jest --passWithNoTests --coverage",
+    "lint": "eslint --max-warnings 0 -c ../../../eslint.config.mjs"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

@@ -34,7 +34,8 @@ export class MdaaNagSuppressions {
       .replace(/.*\(/, '') //NOSONAR
       .replace(/\).*/, '')
       .replace(/.*\/constructs\/L./, '@aws-mdaa') //NOSONAR
-      .replace(/.*@aws-mdaa/, '@aws-mdaa'); //NOSONAR
+      .replace(/.*@aws-mdaa/, '@aws-mdaa') //NOSONAR
+      .replace(/:\d+:\d+$/, ''); // Strip line:col for stable nag suppression reasons
     Error.stackTraceLimit = oldLimit;
     Error.stackTraceLimit = oldLimit;
     const suppressionsWithSource = suppressions.map(x => {

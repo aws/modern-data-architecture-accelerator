@@ -1,0 +1,2894 @@
+{
+  "Description": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "namespacereaderpolicyC9465F2D": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-reader-policy",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "quicksight:CreateReader",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:quicksight::test-account:user/${aws:userid}",
+              "Sid": "CreateReader"
+            },
+            {
+              "Action": [
+                "quicksight:DescribeAnalysis",
+                "quicksight:DescribeDashboard",
+                "quicksight:DescribeDataset",
+                "quicksight:DescribeDataSource",
+                "quicksight:DescribeFolder",
+                "quicksight:DescribeGroup",
+                "quicksight:DescribeIngestion",
+                "quicksight:DescribeTemplate",
+                "quicksight:DescribeTheme",
+                "quicksight:DescribeUser"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "Describe"
+            },
+            {
+              "Action": [
+                "quicksight:ListAnalyses",
+                "quicksight:ListCustomPermissions",
+                "quicksight:ListDashboards",
+                "quicksight:ListDashboardVersions",
+                "quicksight:ListDataSets",
+                "quicksight:ListDataSources",
+                "quicksight:ListFolders",
+                "quicksight:ListFolderMembers",
+                "quicksight:ListGroups",
+                "quicksight:ListGroupMemberships",
+                "quicksight:ListIngestions",
+                "quicksight:ListTagsForResource",
+                "quicksight:ListTemplates",
+                "quicksight:ListTemplateAliases",
+                "quicksight:ListTemplateVersions",
+                "quicksight:ListThemes",
+                "quicksight:ListThemeAliases",
+                "quicksight:ListThemeVersions",
+                "quicksight:ListUsers",
+                "quicksight:ListUserGroups"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "List"
+            },
+            {
+              "Action": [
+                "quicksight:SearchAnalyses",
+                "quicksight:SearchDashboards",
+                "quicksight:SearchFolders"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "Search"
+            },
+            {
+              "Action": "lakeformation:GetDataAccess",
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "LakeFormationAccess"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "namespaceroletestReaderstestfederationCA005093"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] quicksight:CreateReader - Username not known at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] lakeformation:GetDataAccess does not take resource. QuickSight resource permissions managed in QuickSight.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Resource::*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "namespaceglueaccesspolicy8ECFA4EF": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-glue-access-policy",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "glue:GetDatabase",
+                "glue:GetDatabases",
+                "glue:GetTable",
+                "glue:GetTables",
+                "glue:GetPartition",
+                "glue:GetPartitions",
+                "glue:SearchTables"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:glue:test-region:test-account:database/test_org*",
+                "arn:test-partition:glue:test-region:test-account:catalog",
+                "arn:test-partition:glue:test-region:test-account:database/default"
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "namespaceroletestAuthorstestfederation7964C5A6"
+          },
+          {
+            "Ref": "namespaceroletestPublisherstestfederationB977186E"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Resource wildcards may originate from app config. Warnings logged.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceauthorpolicy68C6C2C9": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-author-policy",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "redshift:DescribeClusters",
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "RedShiftDescribe"
+            },
+            {
+              "Action": "quicksight:CancelIngestion",
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "CancelIngestion"
+            },
+            {
+              "Action": [
+                "quicksight:CreateDashboard",
+                "quicksight:CreateFolder",
+                "quicksight:CreateFolderMembership",
+                "quicksight:CreateIngestion"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "Create"
+            },
+            {
+              "Action": [
+                "quicksight:DeleteAnalysis",
+                "quicksight:DeleteDashboard",
+                "quicksight:DeleteFolder",
+                "quicksight:DeleteFolderMembership"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "Delete"
+            },
+            {
+              "Action": [
+                "quicksight:GenerateEmbedUrlForRegisteredUser",
+                "quicksight:GetDashboardEmbedUrl"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "GenerateEmbedUrl"
+            },
+            {
+              "Action": [
+                "quicksight:PassDataSet",
+                "quicksight:PassDataSource"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "PassData"
+            },
+            {
+              "Action": "quicksight:RestoreAnalysis",
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "RestoreAnalysis"
+            },
+            {
+              "Action": [
+                "quicksight:TagResource",
+                "quicksight:UnTagResource"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "Tags"
+            },
+            {
+              "Action": [
+                "quicksight:UpdateAnalysis",
+                "quicksight:UpdateAnalysisPermissions",
+                "quicksight:UpdateDashboard",
+                "quicksight:UpdateDashboardPermissions",
+                "quicksight:UpdateDashboardPublishedVersion",
+                "quicksight:UpdateFolder",
+                "quicksight:UpdateFolderPermissions"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "Update"
+            },
+            {
+              "Action": "quicksight:CreateUser",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:quicksight::test-account:user/${aws:userid}",
+              "Sid": "CreateUser"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "namespaceroletestAuthorstestfederation7964C5A6"
+          },
+          {
+            "Ref": "namespaceroletestPublisherstestfederationB977186E"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Quicksight usernames not known at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] redshift:DescribeClusters does not take resource. QuickSight resource permissions managed in QuickSight.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Resource::*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "namespacenamespacecrrole626961D6": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-quicksight-namespace-6cfe8393",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "namespacenamespacecrroleDefaultPolicy91913CC0": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-ns-cr-func*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-ns-cr-func*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "namespacenamespacecrroleDefaultPolicy91913CC0",
+        "Roles": [
+          {
+            "Ref": "namespacenamespacecrrole626961D6"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "namespacenscrlambda0E251FCD": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-ns-cr-lambda",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "quicksight:CreateNamespace",
+                "quicksight:DescribeNamespace",
+                "quicksight:DeleteNamespace",
+                "quicksight:TagResource"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:quicksight:test-region:test-account:namespace/test-org-test-env-test-domain-test-quicksight-namespace-comprehensive"
+            },
+            {
+              "Action": [
+                "ds:CreateIdentityPoolDirectory",
+                "ds:DescribeDirectories"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "ds:AuthorizeApplication",
+                "ds:UnauthorizeApplication"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:ds:test-region:test-account:directory/*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "namespacenamespacecrrole626961D6"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] ds:CreateIdentityPoolDirectory,ds:DescribeDirectories - Takes no resource.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Resource::*"
+              ]
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] ds:AuthorizeApplication,ds:UnauthorizeApplication - Directory name randomly generated.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Resource::arn:test-partition:ds:test-region:test-account:directory/*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "namespacenscrfuncA54C0A63": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "ACCOUNT_ID": "test-account",
+            "IDENTITY_STORE": "QUICKSIGHT",
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespace-6cfe8393",
+        "Handler": "quicksight_namespace.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "namespacenamespacecrrole626961D6",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 120
+      },
+      "DependsOn": [
+        "namespacenamespacecrroleDefaultPolicy91913CC0",
+        "namespacenamespacecrrole626961D6"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespacenscrfunclambdanamespacecrnamessm03F0C6C4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/namespace-cr/name",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "namespacenscrfuncA54C0A63"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespacenscrfunclambdanamespacecrarnssm7E68F997": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/namespace-cr/arn",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "namespacenscrfuncA54C0A63",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespacenscrfunclambdanamespacecrloggroupssm3068EFF2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/namespace-cr/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "namespacenscrfuncA54C0A63"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespacenamespacecrprovrole3A12C3EC": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-quicksight-namespac--75dd7a9d",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "namespacenamespacecrprovroleDefaultPolicyA8853867": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-quicksight-namespace-79141bf1*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-quicksight-namespace-79141bf1*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "namespacenscrfuncA54C0A63",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "namespacenscrfuncA54C0A63",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "namespacenscrfuncA54C0A63",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "namespacenamespacecrprovroleDefaultPolicyA8853867",
+        "Roles": [
+          {
+            "Ref": "namespacenamespacecrprovrole3A12C3EC"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "namespacenscrproviderframeworkonEvent2F9A119E": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-quicksight-namespace-comprehensive/namespace/ns-cr-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "namespacenscrfuncA54C0A63",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespace-79141bf1",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "namespacenamespacecrprovrole3A12C3EC",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs18.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "namespacenamespacecrprovroleDefaultPolicyA8853867",
+        "namespacenamespacecrprovrole3A12C3EC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespacenamespacecr959360AF": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "namespacenscrproviderframeworkonEvent2F9A119E",
+            "Arn"
+          ]
+        },
+        "name": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive"
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "namespaceusercrroleA3C37806": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-quicksight-namespace--b452cff",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceusercrroleDefaultPolicy15B8337B": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-user-reader*",
+                "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-user-author*"
+              ]
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-user-reader*",
+                "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-user-author*"
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "namespaceusercrroleDefaultPolicy15B8337B",
+        "Roles": [
+          {
+            "Ref": "namespaceusercrroleA3C37806"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "namespacensuserlambda656EA583": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-ns-user-lambda",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "quicksight:DescribeUser",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:quicksight:test-region:test-account:user/default/*"
+            },
+            {
+              "Action": "quicksight:RegisterUser",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:quicksight:test-region:test-account:user/test-org-test-env-test-domain-test-quicksight-namespace-comprehensive/*"
+            },
+            {
+              "Action": [
+                "quicksight:ListGroups",
+                "quicksight:CreateGroup",
+                "quicksight:CreateGroupMembership",
+                "quicksight:ListGroupMemberships"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:quicksight:test-region:test-account:group/test-org-test-env-test-domain-test-quicksight-namespace-comprehensive/*"
+            },
+            {
+              "Action": "quicksight:DeleteUser",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:quicksight:test-region:test-account:user/default/*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "namespaceusercrroleA3C37806"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] User Name is not known at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceroletestReaderstestfederationCA005093": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRoleWithSAML",
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:test-partition:iam::test-account:saml-provider/test-provider"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "QuickSight Federation Role for testReaders",
+        "RoleName": "test-org-test-env-test-domain-test-quicksight-namespace-5f010f1d",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "namespaceroletestReaderstestfederationroletestReaderstestfederationarnssm07B02D3A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/role/testreaders-test-federation/arn",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "namespaceroletestReaderstestfederationCA005093",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "namespaceroletestReaderstestfederationroletestReaderstestfederationidssmE1943818": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/role/testreaders-test-federation/id",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "namespaceroletestReaderstestfederationCA005093",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "namespaceroletestReaderstestfederationroletestReaderstestfederationnamessm20B6630B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/role/testreaders-test-federation/name",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "namespaceroletestReaderstestfederationCA005093"
+        }
+      }
+    },
+    "namespaceusertestReaders831F0532": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "ACCOUNT_ID": "test-account",
+            "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive",
+            "QUICKSIGHT_ROLE": "READER",
+            "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-READERS",
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespace-2f9514ae",
+        "Handler": "quicksight_namespace_user.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "namespaceusercrroleA3C37806",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 600
+      },
+      "DependsOn": [
+        "namespaceusercrroleDefaultPolicy15B8337B",
+        "namespaceusercrroleA3C37806"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceusertestReaderslambdausertestReadersnamessm0743BFEA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/user-testreaders/name",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "namespaceusertestReaders831F0532"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceusertestReaderslambdausertestReadersarnssm0D503D87": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/user-testreaders/arn",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "namespaceusertestReaders831F0532",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceusertestReaderslambdausertestReadersloggroupssmB379E739": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/user-testreaders/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "namespaceusertestReaders831F0532"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceeventruletestReaders7C59D81B": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Events to map QuickSight users for testReaders to namespace test-org-test-env-test-domain-test-quicksight-namespace-comprehensive",
+        "EventPattern": {
+          "source": [
+            "aws.quicksight"
+          ],
+          "detail": {
+            "eventName": [
+              "CreateUser"
+            ],
+            "userIdentity": {
+              "sessionContext": {
+                "sessionIssuer": {
+                  "userName": [
+                    {
+                      "Ref": "namespaceroletestReaderstestfederationCA005093"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-quicksight-namespac--3f85444e",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "namespaceusertestReaders831F0532",
+                "Arn"
+              ]
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumRetryAttempts": 5
+            }
+          }
+        ]
+      }
+    },
+    "namespaceeventruletestReadersAllowEventRuletestorgtestenvtestdomaintestquicksightnamespacecomprehensivenamespaceusertestReaders30D02F3E523A05E9": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "namespaceusertestReaders831F0532",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "namespaceeventruletestReaders7C59D81B",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "namespaceroletestAuthorstestfederation7964C5A6": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRoleWithSAML",
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:test-partition:iam::test-account:saml-provider/test-provider"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "QuickSight Federation Role for testAuthors",
+        "RoleName": "test-org-test-env-test-domain-test-quicksight-namespace-709aef55",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "namespaceroletestAuthorstestfederationroletestAuthorstestfederationarnssmC68C55C6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/role/testauthors-test-federation/arn",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "namespaceroletestAuthorstestfederation7964C5A6",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "namespaceroletestAuthorstestfederationroletestAuthorstestfederationidssm4FB06D92": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/role/testauthors-test-federation/id",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "namespaceroletestAuthorstestfederation7964C5A6",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "namespaceroletestAuthorstestfederationroletestAuthorstestfederationnamessm4267D875": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/role/testauthors-test-federation/name",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "namespaceroletestAuthorstestfederation7964C5A6"
+        }
+      }
+    },
+    "namespaceusertestAuthorsB3611FBC": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "ACCOUNT_ID": "test-account",
+            "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive",
+            "QUICKSIGHT_ROLE": "AUTHOR",
+            "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-AUTHORS,test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-READERS",
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--37599b1a",
+        "Handler": "quicksight_namespace_user.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "namespaceusercrroleA3C37806",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 600
+      },
+      "DependsOn": [
+        "namespaceusercrroleDefaultPolicy15B8337B",
+        "namespaceusercrroleA3C37806"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceusertestAuthorslambdausertestAuthorsnamessmB530B0A4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/user-testauthors/name",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "namespaceusertestAuthorsB3611FBC"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceusertestAuthorslambdausertestAuthorsarnssmDB4DC9A2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/user-testauthors/arn",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "namespaceusertestAuthorsB3611FBC",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceusertestAuthorslambdausertestAuthorsloggroupssmDFA37355": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/user-testauthors/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "namespaceusertestAuthorsB3611FBC"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceeventruletestAuthorsDC9E1E87": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Events to map QuickSight users for testAuthors to namespace test-org-test-env-test-domain-test-quicksight-namespace-comprehensive",
+        "EventPattern": {
+          "source": [
+            "aws.quicksight"
+          ],
+          "detail": {
+            "eventName": [
+              "CreateUser"
+            ],
+            "userIdentity": {
+              "sessionContext": {
+                "sessionIssuer": {
+                  "userName": [
+                    {
+                      "Ref": "namespaceroletestAuthorstestfederation7964C5A6"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-quicksight-namespace-598c0bea",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "namespaceusertestAuthorsB3611FBC",
+                "Arn"
+              ]
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumRetryAttempts": 5
+            }
+          }
+        ]
+      }
+    },
+    "namespaceeventruletestAuthorsAllowEventRuletestorgtestenvtestdomaintestquicksightnamespacecomprehensivenamespaceusertestAuthorsBA7351A63EE8967D": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "namespaceusertestAuthorsB3611FBC",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "namespaceeventruletestAuthorsDC9E1E87",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "namespaceroletestPublisherstestfederationB977186E": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRoleWithSAML",
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:test-partition:iam::test-account:saml-provider/test-provider"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "QuickSight Federation Role for testPublishers",
+        "RoleName": "test-org-test-env-test-domain-test-quicksight-namespace-40653e8c",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "namespaceroletestPublisherstestfederationroletestPublisherstestfederationarnssm34EED941": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/role/testpublishers-test-federation/arn",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "namespaceroletestPublisherstestfederationB977186E",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "namespaceroletestPublisherstestfederationroletestPublisherstestfederationidssm7367EAA6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/role/testpublishers-test-federation/id",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "namespaceroletestPublisherstestfederationB977186E",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "namespaceroletestPublisherstestfederationroletestPublisherstestfederationnamessmF04A976A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/role/testpublishers-test-federation/name",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "namespaceroletestPublisherstestfederationB977186E"
+        }
+      }
+    },
+    "namespaceusertestPublishers0DDCECF7": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "ACCOUNT_ID": "test-account",
+            "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive",
+            "QUICKSIGHT_ROLE": "AUTHOR",
+            "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-comprehensive-PUBLISHERS",
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--58a96367",
+        "Handler": "quicksight_namespace_user.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "namespaceusercrroleA3C37806",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 600
+      },
+      "DependsOn": [
+        "namespaceusercrroleDefaultPolicy15B8337B",
+        "namespaceusercrroleA3C37806"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceusertestPublisherslambdausertestPublishersnamessm4D2A0E8B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/user-testpublishers/name",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "namespaceusertestPublishers0DDCECF7"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceusertestPublisherslambdausertestPublishersarnssm86CF4034": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/user-testpublishers/arn",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "namespaceusertestPublishers0DDCECF7",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceusertestPublisherslambdausertestPublishersloggroupssm9B37B112": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-quicksight-namespace-comprehensive/lambda/user-testpublishers/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-namespace",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-namespace-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "namespaceusertestPublishers0DDCECF7"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Function will interact only with QuickSight APIs.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] No DLQ required. Failures to be manually remediated by Admin.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-namespace-l3-construct/lib/quicksight-namespace-l3-construct.ts] Concurrency limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "namespaceeventruletestPublishersDD2953A5": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Events to map QuickSight users for testPublishers to namespace test-org-test-env-test-domain-test-quicksight-namespace-comprehensive",
+        "EventPattern": {
+          "source": [
+            "aws.quicksight"
+          ],
+          "detail": {
+            "eventName": [
+              "CreateUser"
+            ],
+            "userIdentity": {
+              "sessionContext": {
+                "sessionIssuer": {
+                  "userName": [
+                    {
+                      "Ref": "namespaceroletestPublisherstestfederationB977186E"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-quicksight-namespace-7c3d6715",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "namespaceusertestPublishers0DDCECF7",
+                "Arn"
+              ]
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumRetryAttempts": 5
+            }
+          }
+        ]
+      }
+    },
+    "namespaceeventruletestPublishersAllowEventRuletestorgtestenvtestdomaintestquicksightnamespacecomprehensivenamespaceusertestPublishers34B60F5394DCA0D7": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "namespaceusertestPublishers0DDCECF7",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "namespaceeventruletestPublishersDD2953A5",
+            "Arn"
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "namespacenscrfunclambdanamespacecrnameout773F56CF": {
+      "Value": {
+        "Ref": "namespacenscrfuncA54C0A63"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:namespacecr:name"
+      }
+    },
+    "namespacenscrfunclambdanamespacecrarnout2B3C96B4": {
+      "Value": {
+        "Fn::GetAtt": [
+          "namespacenscrfuncA54C0A63",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:namespacecr:arn"
+      }
+    },
+    "namespacenscrfunclambdanamespacecrloggroupoutD4CEFB1B": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "namespacenscrfuncA54C0A63"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:namespacecr:log-group"
+      }
+    },
+    "namespaceroletestReaderstestfederationroletestReaderstestfederationarnout9F8BEFCE": {
+      "Value": {
+        "Fn::GetAtt": [
+          "namespaceroletestReaderstestfederationCA005093",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:role:testreaderstestfederation:arn"
+      }
+    },
+    "namespaceroletestReaderstestfederationroletestReaderstestfederationidout5FFA3050": {
+      "Value": {
+        "Fn::GetAtt": [
+          "namespaceroletestReaderstestfederationCA005093",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:role:testreaderstestfederation:id"
+      }
+    },
+    "namespaceroletestReaderstestfederationroletestReaderstestfederationnameout00D6ADD1": {
+      "Value": {
+        "Ref": "namespaceroletestReaderstestfederationCA005093"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:role:testreaderstestfederation:name"
+      }
+    },
+    "namespaceusertestReaderslambdausertestReadersnameout1EF70A62": {
+      "Value": {
+        "Ref": "namespaceusertestReaders831F0532"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:usertestreaders:name"
+      }
+    },
+    "namespaceusertestReaderslambdausertestReadersarnout3D86F489": {
+      "Value": {
+        "Fn::GetAtt": [
+          "namespaceusertestReaders831F0532",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:usertestreaders:arn"
+      }
+    },
+    "namespaceusertestReaderslambdausertestReadersloggroupoutC459EBEE": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "namespaceusertestReaders831F0532"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:usertestreaders:log-group"
+      }
+    },
+    "namespaceroletestAuthorstestfederationroletestAuthorstestfederationarnoutF86BE222": {
+      "Value": {
+        "Fn::GetAtt": [
+          "namespaceroletestAuthorstestfederation7964C5A6",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:role:testauthorstestfederation:arn"
+      }
+    },
+    "namespaceroletestAuthorstestfederationroletestAuthorstestfederationidout53FCF50E": {
+      "Value": {
+        "Fn::GetAtt": [
+          "namespaceroletestAuthorstestfederation7964C5A6",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:role:testauthorstestfederation:id"
+      }
+    },
+    "namespaceroletestAuthorstestfederationroletestAuthorstestfederationnameout9150ACC0": {
+      "Value": {
+        "Ref": "namespaceroletestAuthorstestfederation7964C5A6"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:role:testauthorstestfederation:name"
+      }
+    },
+    "namespaceusertestAuthorslambdausertestAuthorsnameoutAA4FF5EF": {
+      "Value": {
+        "Ref": "namespaceusertestAuthorsB3611FBC"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:usertestauthors:name"
+      }
+    },
+    "namespaceusertestAuthorslambdausertestAuthorsarnout88A44290": {
+      "Value": {
+        "Fn::GetAtt": [
+          "namespaceusertestAuthorsB3611FBC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:usertestauthors:arn"
+      }
+    },
+    "namespaceusertestAuthorslambdausertestAuthorsloggroupoutFE7C6A79": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "namespaceusertestAuthorsB3611FBC"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:usertestauthors:log-group"
+      }
+    },
+    "namespaceroletestPublisherstestfederationroletestPublisherstestfederationarnoutFFD56FAE": {
+      "Value": {
+        "Fn::GetAtt": [
+          "namespaceroletestPublisherstestfederationB977186E",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:role:testpublisherstestfederation:arn"
+      }
+    },
+    "namespaceroletestPublisherstestfederationroletestPublisherstestfederationidoutFF3583FC": {
+      "Value": {
+        "Fn::GetAtt": [
+          "namespaceroletestPublisherstestfederationB977186E",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:role:testpublisherstestfederation:id"
+      }
+    },
+    "namespaceroletestPublisherstestfederationroletestPublisherstestfederationnameout598047F8": {
+      "Value": {
+        "Ref": "namespaceroletestPublisherstestfederationB977186E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:role:testpublisherstestfederation:name"
+      }
+    },
+    "namespaceusertestPublisherslambdausertestPublishersnameoutFA9CDAE6": {
+      "Value": {
+        "Ref": "namespaceusertestPublishers0DDCECF7"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:usertestpublishers:name"
+      }
+    },
+    "namespaceusertestPublisherslambdausertestPublishersarnout98A570F0": {
+      "Value": {
+        "Fn::GetAtt": [
+          "namespaceusertestPublishers0DDCECF7",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:usertestpublishers:arn"
+      }
+    },
+    "namespaceusertestPublisherslambdausertestPublishersloggroupout35131331": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "namespaceusertestPublishers0DDCECF7"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-quicksight-namespace-comprehensive:lambda:usertestpublishers:log-group"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

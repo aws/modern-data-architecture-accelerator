@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### New Features
+
 - Added SageMaker L2 constructs: `MdaaSageMakerProjectTemplate`, `MdaaGroundTruth`, and `MdaaModelMonitor` for ML lifecycle management (project templates, data labeling, model monitoring)
 - Data Quality App:
   - Added multi-source support for data quality rulesets — each ruleset can now specify a `source` block with `sourceType` (glue, s3, redshift), connection details, and S3 paths. Source metadata is published to SSM for downstream DQ evaluation jobs.
@@ -21,13 +22,17 @@
 - Fixed IAM Policy cross-stack collision in `dataops-job` and `sm-studio-domain` caused by `BucketDeployment` adding inline policies to imported roles
 - Agentcore Runtime app: fixed missing ECR permissions when `containerUri` config param is used
 
-### Enhancements
-
 #### RDS Constructs (#752)
 
 - `MdaaAuroraPgVector`: Engine version is now configurable via the `engineVersion` prop (default: `16.6`). The default is deprecated and will be removed in a future release — explicitly set the engine version to avoid breakage.
 - `MdaaRdsServerlessCluster`: Reader instance count is now configurable via the `numberOfReaderInstances` prop (default: `1`).
 - `BedrockKnowledgeBase` L3 construct: `engineVersion` from vector store config is now passed through to the Aurora PgVector cluster.
+
+### General Enhancements
+
+- Every app module now includes `sample-config-minimal.yaml` and `sample-config-comprehensive.yaml` with full schema coverage, inline documentation, and template variables for portability
+- All app module READMEs follow a consistent structure with architecture overview, configuration reference, and ordered sample config sections
+- Replaced Jest snapshot and synth tests with CDK diff-based baseline testing across all app modules, using the CDK toolkit's semantic diff engine to detect resource changes
 
 ## [1.5.0] - 2026-03-13
 

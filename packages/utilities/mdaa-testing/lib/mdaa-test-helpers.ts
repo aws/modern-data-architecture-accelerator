@@ -36,6 +36,8 @@ export interface MdaaTestContext {
   /** AWS account identifier for MDAA test context enabling account-specific testing and cross-account validation */
   readonly account?: string;
   readonly partition?: string;
+  /** Index signature to allow additional context variables such as cross-account references */
+  readonly [key: string]: string | undefined;
 }
 
 /**
@@ -49,6 +51,8 @@ export const DEFAULT_TEST_CONTEXT: MdaaTestContext = {
   region: 'us-east-1',
   account: 'xxxxxxxxxxxxx',
   partition: 'aws',
+  'account-2': 'test-account-2',
+  'account-3': 'test-account-3',
 };
 
 /**

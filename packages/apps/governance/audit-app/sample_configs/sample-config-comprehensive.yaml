@@ -21,8 +21,8 @@ readRoles:
 # and S3 inventories are accepted. The local account is included
 # automatically.
 sourceAccounts:
-  - '333333333333'
-  - '222222222222'
+  - '{{context:account-3}}'
+  - '{{context:account-2}}'
 
 # (Optional) Additional AWS regions from which CloudTrail logs and
 # S3 inventories are accepted. The local region is included

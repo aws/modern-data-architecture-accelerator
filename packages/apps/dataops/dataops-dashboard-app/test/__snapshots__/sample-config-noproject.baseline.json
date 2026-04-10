@@ -1,0 +1,287 @@
+{
+  "Description": "(SO0320-dataops-dashboard) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-dashboard-noproject/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dashboard",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dashboard-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-dashboard) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "dashboard0Dashboard8CD7E636": {
+      "Type": "AWS::CloudWatch::Dashboard",
+      "Properties": {
+        "DashboardBody": "{\"widgets\":[{\"type\":\"text\",\"width\":24,\"height\":2,\"x\":0,\"y\":0,\"properties\":{\"markdown\":\"# Test Dashboard\\nThis is a test dashboard with text widgets\\n\"}},{\"type\":\"text\",\"width\":12,\"height\":2,\"x\":0,\"y\":2,\"properties\":{\"markdown\":\"## Section 1\"}},{\"type\":\"text\",\"width\":12,\"height\":2,\"x\":12,\"y\":2,\"properties\":{\"markdown\":\"## Section 2\"}}]}",
+        "DashboardName": "test-text-dashboard"
+      }
+    },
+    "dashboard0dashboardtesttextdashboardnamessmF1823515": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dashboard-noproject/dashboard/test-text-dashboard/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dashboard",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dashboard-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-text-dashboard"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (dashboard name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "dashboard1Dashboard5D612693": {
+      "Type": "AWS::CloudWatch::Dashboard",
+      "Properties": {
+        "DashboardBody": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"widgets\":[{\"type\":\"text\",\"width\":24,\"height\":2,\"x\":0,\"y\":0,\"properties\":{\"markdown\":\"# Metrics Dashboard\"}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":2,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Error Count\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"CustomMetrics\",\"ErrorCount\",{\"stat\":\"Sum\"}]],\"yAxis\":{},\"period\":300}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":2,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Duration\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/Lambda\",\"Duration\"]],\"yAxis\":{},\"period\":300}}]}"
+            ]
+          ]
+        },
+        "DashboardName": "test-metric-dashboard"
+      }
+    },
+    "dashboard1dashboardtestmetricdashboardnamessm87BA5CC1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dashboard-noproject/dashboard/test-metric-dashboard/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dashboard",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dashboard-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-metric-dashboard"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (dashboard name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "dashboard2DashboardDDAFB8AF": {
+      "Type": "AWS::CloudWatch::Dashboard",
+      "Properties": {
+        "DashboardBody": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"widgets\":[{\"type\":\"text\",\"width\":24,\"height\":2,\"x\":0,\"y\":0,\"properties\":{\"markdown\":\"# Log Insights Dashboard\"}},{\"type\":\"log\",\"width\":24,\"height\":6,\"x\":0,\"y\":2,\"properties\":{\"view\":\"table\",\"title\":\"Recent Errors\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"query\":\"SOURCE '/aws/lambda/test-function' | fields @timestamp, @message\\n| filter @message like /ERROR/\\n| sort @timestamp desc\\n| limit 20\\n\"}}]}"
+            ]
+          ]
+        },
+        "DashboardName": "test-log-insights-dashboard"
+      }
+    },
+    "dashboard2dashboardtestloginsightsdashboardnamessmC3B9E24E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dashboard-noproject/dashboard/test-log-insights-dashboard/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dashboard",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dashboard-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-log-insights-dashboard"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (dashboard name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "dashboard3Dashboard090C3B75": {
+      "Type": "AWS::CloudWatch::Dashboard",
+      "Properties": {
+        "DashboardBody": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"widgets\":[{\"type\":\"text\",\"width\":24,\"height\":2,\"x\":0,\"y\":0,\"properties\":{\"markdown\":\"# Mixed Widget Dashboard\"}},{\"type\":\"metric\",\"width\":8,\"height\":6,\"x\":0,\"y\":2,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Errors\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/Lambda\",\"Errors\",{\"stat\":\"Sum\"}]],\"yAxis\":{},\"period\":300}},{\"type\":\"metric\",\"width\":8,\"height\":6,\"x\":8,\"y\":2,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Invocations\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/Lambda\",\"Invocations\",{\"stat\":\"Sum\"}]],\"yAxis\":{},\"period\":300}},{\"type\":\"metric\",\"width\":8,\"height\":6,\"x\":16,\"y\":2,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Duration\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/Lambda\",\"Duration\"]],\"yAxis\":{},\"period\":300}},{\"type\":\"log\",\"width\":24,\"height\":6,\"x\":0,\"y\":8,\"properties\":{\"view\":\"table\",\"title\":\"Recent Logs\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"query\":\"SOURCE '/aws/lambda/test-function' | fields @timestamp, @message\\n| sort @timestamp desc\\n| limit 50\\n\"}}]}"
+            ]
+          ]
+        },
+        "DashboardName": "test-mixed-dashboard"
+      }
+    },
+    "dashboard3dashboardtestmixeddashboardnamessm07931A06": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dashboard-noproject/dashboard/test-mixed-dashboard/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dashboard",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dashboard-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-mixed-dashboard"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (dashboard name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "dashboard4DashboardFD15C4E4": {
+      "Type": "AWS::CloudWatch::Dashboard",
+      "Properties": {
+        "DashboardBody": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"widgets\":[{\"type\":\"text\",\"width\":24,\"height\":3,\"x\":0,\"y\":0,\"properties\":{\"markdown\":\"# 📊 Advanced Dashboard Features\\n#### Testing multiple metrics per widget and metric math\\n---\\n\"}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":3,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Multiple Metrics - Error Counts\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"ETL/ServiceA\",\"error-count\",{\"stat\":\"Sum\"}],[\"ETL/ServiceB\",\"error-count\",{\"stat\":\"Sum\"}],[\"ETL/ServiceC\",\"error-count\",{\"stat\":\"Sum\"}]],\"yAxis\":{},\"period\":300}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":3,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Duration (5 min period)\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/Lambda\",\"Duration\"]],\"yAxis\":{},\"period\":300}},{\"type\":\"metric\",\"width\":24,\"height\":6,\"x\":0,\"y\":9,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Lambda Metrics - Mixed Stats\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/Lambda\",\"Invocations\",{\"label\":\"Total Invocations\",\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",{\"label\":\"Total Errors\",\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Duration\",{\"label\":\"Avg Duration\"}],[\"AWS/Lambda\",\"Duration\",{\"label\":\"Max Duration\",\"stat\":\"Maximum\"}]],\"yAxis\":{},\"period\":300}}]}"
+            ]
+          ]
+        },
+        "DashboardName": "test-advanced-dashboard"
+      }
+    },
+    "dashboard4dashboardtestadvanceddashboardnamessm61D41DC1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dashboard-noproject/dashboard/test-advanced-dashboard/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dashboard",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dashboard-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-advanced-dashboard"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (dashboard name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,208 @@
+{
+  "Description": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsamplesecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/securityConfiguration/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/projectBucket/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/projectTopicArn/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampledeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/deploymentRole/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/kmsArn/default"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-stepfunction-minimal/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructmystatemachineloggroupF20987B8": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "LogGroupName": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-minimal-my-state-machine",
+        "RetentionInDays": 731,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmystatemachineloggrouploggroupmystatemachinenamessmB100AB5F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-stepfunction-minimal/loggroup/my-state-machine/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-minimal-my-state-machine"
+      }
+    },
+    "stepfunctionmystatemachineB683ED56": {
+      "Type": "AWS::StepFunctions::StateMachine",
+      "Properties": {
+        "DefinitionString": "{\"Comment\":\"Minimal state machine\",\"StartAt\":\"PassState\",\"States\":{\"PassState\":{\"Type\":\"Pass\",\"End\":true}}}",
+        "LoggingConfiguration": {
+          "Destinations": [
+            {
+              "CloudWatchLogsLogGroup": {
+                "LogGroupArn": {
+                  "Fn::GetAtt": [
+                    "constructmystatemachineloggroupF20987B8",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "IncludeExecutionData": false,
+          "Level": "ALL"
+        },
+        "RoleArn": "arn:test-partition:iam::test-account:role/service-role/StepFunctions-role",
+        "StateMachineName": "test-org-test-env-test-domain-test-stepfunction-minimal-my-state-machine",
+        "StateMachineType": "STANDARD",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TracingConfiguration": {
+          "Enabled": true
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "dataopsprojectsamplestepfunctionnamemystatemachine1364BBB5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/dataops-project-sample/stepfunction/name/my-state-machine",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "stepfunctionmystatemachineB683ED56",
+            "Name"
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "constructmystatemachineloggrouploggroupmystatemachinenameoutBA56B890": {
+      "Value": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-minimal-my-state-machine",
+      "Export": {
+        "Name": "test-org:test-domain:test-stepfunction-minimal:loggroup:mystatemachine:name"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

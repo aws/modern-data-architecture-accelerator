@@ -1,0 +1,354 @@
+{
+  "Description": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-minimal/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "notebookskmskeynotebooks39E79F2A": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:CreateGrant",
+                "kms:DescribeKey",
+                "kms:ListAliases"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:role/sagemaker-role"
+              },
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-notebook"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-notebook-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "notebookskmskeynotebooksAlias5C630D4D": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-sagemaker-notebook-minimal-kmskey-notebooks",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "notebookskmskeynotebooks39E79F2A",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "notebookskmskeynotebookskmskmskeynotebooksarnssm5738F367": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-minimal/kms/kmskey-notebooks/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "notebookskmskeynotebooks39E79F2A",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "notebookskmskeynotebookskmskmskeynotebooksidssmD1A4064B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-minimal/kms/kmskey-notebooks/id",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "notebookskmskeynotebooks39E79F2A"
+        }
+      }
+    },
+    "notebooksmynotebooksg466FB24D": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-sagemaker-notebook-minimal/notebooks/my-notebook-sg",
+        "GroupName": "test-org-test-env-test-domain-test-sagemaker-notebook-minimal-my-notebook",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-notebook"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-notebook-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-id"
+      }
+    },
+    "notebooksmynotebooksgsecuritygroupmynotebookidssm153A9932": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-minimal/security-group/my-notebook/id",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "notebooksmynotebooksg466FB24D",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "notebooksmynotebook07A9D9F2": {
+      "Type": "AWS::SageMaker::NotebookInstance",
+      "Properties": {
+        "DirectInternetAccess": "Disabled",
+        "InstanceType": "ml.t3.medium",
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "notebookskmskeynotebooks39E79F2A",
+            "Arn"
+          ]
+        },
+        "NotebookInstanceName": "test-org-test-env-test-domain-test-sagemaker-notebook-360d94f7",
+        "RoleArn": "arn:test-partition:iam::test-account:role/sagemaker-role",
+        "RootAccess": "Disabled",
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "notebooksmynotebooksg466FB24D",
+              "GroupId"
+            ]
+          }
+        ],
+        "SubnetId": "subnet-id",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-notebook"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-notebook-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "notebooksmynotebooknotebookidmynotebookssm0B076A24": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-minimal/notebook/id-my-notebook",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "notebooksmynotebook07A9D9F2"
+        }
+      }
+    },
+    "notebooksmynotebooknotebooksubnetmynotebookssm1F3722FA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-minimal/notebook/subnetid-my-notebook",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "subnet-id"
+      }
+    }
+  },
+  "Outputs": {
+    "notebookskmskeynotebookskmskmskeynotebooksarnout042E02CC": {
+      "Value": {
+        "Fn::GetAtt": [
+          "notebookskmskeynotebooks39E79F2A",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-minimal:kms:kmskeynotebooks:arn"
+      }
+    },
+    "notebookskmskeynotebookskmskmskeynotebooksidout113C2B19": {
+      "Value": {
+        "Ref": "notebookskmskeynotebooks39E79F2A"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-minimal:kms:kmskeynotebooks:id"
+      }
+    },
+    "notebooksmynotebooksgsecuritygroupmynotebookidoutF055ACA6": {
+      "Value": {
+        "Fn::GetAtt": [
+          "notebooksmynotebooksg466FB24D",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-minimal:security-group:mynotebook:id"
+      }
+    },
+    "notebooksmynotebooknotebookidmynotebookoutD044AEF2": {
+      "Value": {
+        "Ref": "notebooksmynotebook07A9D9F2"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-minimal:notebook:id-my-notebook"
+      }
+    },
+    "notebooksmynotebooknotebooksubnetmynotebookoutE5B3D07E": {
+      "Value": "subnet-id",
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-minimal:notebook:subnetid-my-notebook"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

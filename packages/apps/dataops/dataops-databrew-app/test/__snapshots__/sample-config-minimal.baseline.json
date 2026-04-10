@@ -1,0 +1,206 @@
+{
+  "Description": "(SO0320-dataops-databrew) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuepathtobucketnameC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path_to_bucket_name"
+    },
+    "SsmParameterValuepathtokmsarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path_to_kms_arn"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsamplesecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/securityConfiguration/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/projectBucket/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/projectTopicArn/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampledeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/deploymentRole/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/kmsArn/default"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-databrew-minimal/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-databrew",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-databrew-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-databrew) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "jobsmydatasetD1B5E445": {
+      "Type": "AWS::DataBrew::Dataset",
+      "Properties": {
+        "Format": "CSV",
+        "Input": {
+          "S3InputDefinition": {
+            "Bucket": {
+              "Ref": "SsmParameterValuepathtobucketnameC96584B6F00A464EAD1953AFF4B05118Parameter"
+            },
+            "Key": "data/input/"
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-databrew-minimal-my-dataset",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-databrew"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-databrew-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "jobsmydatasetDatasetmydatasetmydatasetssmFFB4124B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-databrew-minimal/dataset/my-dataset/my-dataset",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-databrew",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-databrew-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-databrew-minimal-my-dataset"
+      }
+    },
+    "jobsmyprofilejobF9A01860": {
+      "Type": "AWS::DataBrew::Job",
+      "Properties": {
+        "DatasetName": "test-org-test-env-test-domain-test-databrew-minimal-my-dataset",
+        "EncryptionKeyArn": {
+          "Ref": "SsmParameterValuepathtokmsarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "EncryptionMode": "SSE-KMS",
+        "Name": "test-org-test-env-test-domain-test-databrew-minimal-my-profile-job",
+        "RoleArn": "glue-role",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-databrew"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-databrew-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Type": "PROFILE"
+      },
+      "DependsOn": [
+        "jobsmydatasetD1B5E445"
+      ]
+    },
+    "jobsmyprofilejobJobmyprofilejobmyprofilejobssm94D6BFC0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-databrew-minimal/job/my-profile-job/my-profile-job",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-databrew",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-databrew-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-databrew-minimal-my-profile-job"
+      }
+    }
+  },
+  "Outputs": {
+    "jobsmydatasetDatasetmydatasetmydatasetout034BC6CE": {
+      "Value": "test-org-test-env-test-domain-test-databrew-minimal-my-dataset",
+      "Export": {
+        "Name": "test-org:test-domain:test-databrew-minimal:dataset:mydataset:my-dataset"
+      }
+    },
+    "jobsmyprofilejobJobmyprofilejobmyprofilejobout2D85EFDF": {
+      "Value": "test-org-test-env-test-domain-test-databrew-minimal-my-profile-job",
+      "Export": {
+        "Name": "test-org:test-domain:test-databrew-minimal:job:myprofilejob:my-profile-job"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

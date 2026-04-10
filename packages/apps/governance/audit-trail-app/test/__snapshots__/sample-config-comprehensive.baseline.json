@@ -1,0 +1,137 @@
+{
+  "Description": "(SO0320-audit-trail) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuesampleorgsharedauditbucketnameC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/sample-org/shared/audit/bucket/name"
+    },
+    "SsmParameterValuesampleorgsharedauditkmscmkarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/sample-org/shared/audit/kms/cmk/arn"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-audit-trail-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "audit-trail",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-audit-trail-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-audit-trail) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "audittrailaudittrails3audit0EDDE67C": {
+      "Type": "AWS::CloudTrail::Trail",
+      "Properties": {
+        "EnableLogFileValidation": true,
+        "EventSelectors": [
+          {
+            "DataResources": [
+              {
+                "Type": "AWS::S3::Object",
+                "Values": [
+                  "arn:test-partition:s3:::"
+                ]
+              }
+            ],
+            "IncludeManagementEvents": true,
+            "ReadWriteType": "All"
+          }
+        ],
+        "IncludeGlobalServiceEvents": false,
+        "IsLogging": true,
+        "IsMultiRegionTrail": false,
+        "KMSKeyId": {
+          "Ref": "SsmParameterValuesampleorgsharedauditkmscmkarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "S3BucketName": {
+          "Ref": "SsmParameterValuesampleorgsharedauditbucketnameC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "audit-trail"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-audit-trail-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TrailName": "test-org-test-env-test-domain-test-audit-trail-main-s3-audit"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts] CloudTrail targeted at dedicated Audit Bucket.",
+              "id": "NIST.800.53.R5-CloudTrailCloudWatchLogsEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts] CloudTrail targeted at dedicated Audit Bucket.",
+              "id": "HIPAA.Security-CloudTrailCloudWatchLogsEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts] CloudTrail targeted at dedicated Audit Bucket.",
+              "id": "PCI.DSS.321-CloudTrailCloudWatchLogsEnabled"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

@@ -298,7 +298,7 @@ domains:
     associatedAccounts:
       associated-account-name1:
         # AWS account ID of the associated account (required)
-        account: '222222222222'
+        account: '{{context:account-2}}'
         # (Optional) KMS key ARN for Glue catalog encryption in this
         # associated account
         glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
@@ -307,16 +307,16 @@ domains:
         createCdkUser: true
         # (Optional) IAM role ARN for Lake Formation access management
         # in the associated account
-        lakeformationManageAccessRoleArn: 'arn:{{partition}}:iam::222222222222:role/test-role'
+        lakeformationManageAccessRoleArn: 'arn:{{partition}}:iam::{{context:account-2}}:role/test-role'
         # (Optional) CDK deployment role ARN for cross-account
         # infrastructure provisioning
-        cdkRoleArn: 'arn:{{partition}}:iam::222222222222:role/test-cdk-role'
+        cdkRoleArn: 'arn:{{partition}}:iam::{{context:account-2}}:role/test-cdk-role'
         # (Optional) AWS region for the associated account resources
-        region: test-region
+        region: '{{region}}'
         # (Optional) Externally-defined roles for blueprint provisioning
         # in the associated account
         blueprintProvisioningRoles:
-          - arn: 'arn:{{partition}}:iam::222222222222:role/test-provisioning-role'
+          - arn: 'arn:{{partition}}:iam::{{context:account-2}}:role/test-provisioning-role'
           - name: test-provisioning-role2
         # Required Tooling blueprint configuration for the associated account
         tooling:
@@ -329,7 +329,7 @@ domains:
             - test-subnet-id
           # (Optional) Provisioning role for associated account tooling
           provisioningRole:
-            arn: 'arn:{{partition}}:iam::222222222222:role/test-assoc-tooling-role'
+            arn: 'arn:{{partition}}:iam::{{context:account-2}}:role/test-assoc-tooling-role'
           # (Optional) Parameter values for associated account tooling
           parameterValues:
             assocToolingParam: assocToolingValue
@@ -345,7 +345,7 @@ domains:
               - /root
             # (Optional) Provisioning role for managed blueprint in assoc account
             provisioningRole:
-              arn: 'arn:{{partition}}:iam::222222222222:role/test-assoc-managed-bp-role'
+              arn: 'arn:{{partition}}:iam::{{context:account-2}}:role/test-assoc-managed-bp-role'
           CustomAwsService:
             parameterValues:
               simpleString: test
@@ -363,9 +363,9 @@ domains:
               - /root
             # (Optional) Provisioning role for custom blueprint in assoc account
             provisioningRole:
-              arn: 'arn:{{partition}}:iam::222222222222:role/test-assoc-custom-bp-role'
+              arn: 'arn:{{partition}}:iam::{{context:account-2}}:role/test-assoc-custom-bp-role'
       associated-account-name2:
-        account: '333333333333'
+        account: '{{context:account-3}}'
         glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
         createCdkUser: true
         lakeformationManageAccessRoleArn: 'arn:{{partition}}:iam::{{account}}:role/test-role'

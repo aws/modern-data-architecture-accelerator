@@ -1,0 +1,4888 @@
+{
+  "Description": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-datazone/domain/test-domain/config/id"
+    },
+    "constructdomainconfigparserdomainconfigparserssmdomainarnParameter13101F6F": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-datazone/domain/test-domain/config/arn"
+    },
+    "constructdomainconfigparserdomainconfigparserssmcustomresourceroleParameterDF4F1581": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-datazone/domain/test-domain/config/custom_resource_role"
+    },
+    "constructdomainconfigparserdomainconfigparserssmdomainkmsarnParameterB14E453F": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-datazone/domain/test-domain/config/kms_arn"
+    },
+    "constructdomainconfigparserdomainconfigparserssmgluecatalogkmsarnsDFE04B72": {
+      "Type": "AWS::SSM::Parameter::Value<List<String>>",
+      "Default": "/test-org/test-domain/test-datazone/domain/test-domain/config/glue_catalog_kms_key_arns"
+    },
+    "constructdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2FDFD42C": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-datazone/domain/test-domain/config/kms_usage_policy_name"
+    },
+    "constructdomainconfigparserdomainconfigparserssmdomainbucketusagepolicynameParameter4498C272": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-datazone/domain/test-domain/config/bucket_usage_policy_name"
+    },
+    "constructdomainconfigparserdomainconfigparserssmdomainbucketarnParameterC1BA2242": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-datazone/domain/test-domain/config/bucket_arn"
+    },
+    "constructdomainconfigparserssmgluecatalogresourcearns09B5496F": {
+      "Type": "AWS::SSM::Parameter::Value<List<String>>",
+      "Default": "/test-org/test-domain/test-datazone/domain/test-domain/config/glue_catalog_resource_arns"
+    },
+    "SsmParameterValuegluecatalogsettingscatalogkmskeyC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/glue-catalog-settings/catalog-kms-key"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructdomainconfigparserdomainConfigcrD5B95C36": {
+      "Type": "Custom::DomainConfig",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDomainConfigproviderframeworkonEvent5699DE11",
+            "Arn"
+          ]
+        },
+        "domain_id": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "constructdatazoneproject5CD687B2": {
+      "Type": "AWS::DataZone::Project",
+      "Properties": {
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "DomainUnitId": {
+          "Fn::GetAtt": [
+            "constructdomainconfigparserdomainConfigcrD5B95C36",
+            "domain_unit_id/root/test-domain-unit"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-dataops-project-datazone"
+      }
+    },
+    "constructdatazoneprojectowneruserowneruserF13743A1": {
+      "Type": "AWS::DataZone::ProjectMembership",
+      "Properties": {
+        "Designation": "PROJECT_OWNER",
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "Member": {
+          "UserIdentifier": "owner-user-config-name"
+        },
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatazoneproject5CD687B2",
+            "Id"
+          ]
+        }
+      },
+      "DependsOn": [
+        "constructdatazoneprojectuserprofilemanagerowneruserA95070AA"
+      ]
+    },
+    "constructdatazoneprojectuserprofilemanagerowneruserA95070AA": {
+      "Type": "Custom::UserProfileManager",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customUserProfileManagerproviderframeworkonEvent7063FDCB",
+            "Arn"
+          ]
+        },
+        "domain_id": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "user_identifier": "owner-user-config-name"
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "constructdatazoneprojectownergroupownergroup44AF090D": {
+      "Type": "AWS::DataZone::ProjectMembership",
+      "Properties": {
+        "Designation": "PROJECT_OWNER",
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "Member": {
+          "GroupIdentifier": "owner-group-config-name"
+        },
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatazoneproject5CD687B2",
+            "Id"
+          ]
+        }
+      }
+    },
+    "constructdatazoneprojectusercontributoruser3FD4E62C": {
+      "Type": "AWS::DataZone::ProjectMembership",
+      "Properties": {
+        "Designation": "PROJECT_CONTRIBUTOR",
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "Member": {
+          "UserIdentifier": "user-config-name"
+        },
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatazoneproject5CD687B2",
+            "Id"
+          ]
+        }
+      },
+      "DependsOn": [
+        "constructdatazoneprojectuserprofilemanagercontributoruserC039A228"
+      ]
+    },
+    "constructdatazoneprojectuserprofilemanagercontributoruserC039A228": {
+      "Type": "Custom::UserProfileManager",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customUserProfileManagerproviderframeworkonEvent7063FDCB",
+            "Arn"
+          ]
+        },
+        "domain_id": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "user_identifier": "user-config-name"
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "constructdatazoneprojectgroupcontributorgroupB76EC3A0": {
+      "Type": "AWS::DataZone::ProjectMembership",
+      "Properties": {
+        "Designation": "PROJECT_CONTRIBUTOR",
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "Member": {
+          "GroupIdentifier": "group-config-name"
+        },
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatazoneproject5CD687B2",
+            "Id"
+          ]
+        }
+      }
+    },
+    "constructdatazoneprojectprojectnamessm3557E2BA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/project/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-dataops-project-datazone"
+      }
+    },
+    "constructdatalakeenv400D630C": {
+      "Type": "AWS::DataZone::Environment",
+      "Properties": {
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "EnvironmentAccountIdentifier": "test-account",
+        "EnvironmentAccountRegion": "test-region",
+        "EnvironmentProfileIdentifier": "",
+        "EnvironmentRoleArn": {
+          "Fn::GetAtt": [
+            "dzuserrole4DA7E8E2",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-dataops-project-datazone",
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatazoneproject5CD687B2",
+            "Id"
+          ]
+        },
+        "EnvironmentBlueprintId": {
+          "Fn::GetAtt": [
+            "constructdomainconfigparserdomainConfigcrD5B95C36",
+            "blueprint_id/CustomAwsService"
+          ]
+        }
+      }
+    },
+    "constructathenaenvaction4BD3C154": {
+      "Type": "AWS::DataZone::EnvironmentActions",
+      "Properties": {
+        "Description": "Amazon Athena",
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "EnvironmentIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatalakeenv400D630C",
+            "Id"
+          ]
+        },
+        "Name": "Query data",
+        "Parameters": {
+          "Uri": "https://test-region.console.aws.amazon.com/athena/home?region=test-region#/query-editor"
+        }
+      }
+    },
+    "constructglueetlenvaction798DAA6A": {
+      "Type": "AWS::DataZone::EnvironmentActions",
+      "Properties": {
+        "Description": "AWS Glue ETL",
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "EnvironmentIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatalakeenv400D630C",
+            "Id"
+          ]
+        },
+        "Name": "View Glue ETL jobs",
+        "Parameters": {
+          "Uri": "https://test-region.console.aws.amazon.com/gluestudio/home?region=test-region#/jobs"
+        }
+      }
+    },
+    "constructgluecatalogenvactionD523D4E8": {
+      "Type": "AWS::DataZone::EnvironmentActions",
+      "Properties": {
+        "Description": "AWS Glue Catalog",
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "EnvironmentIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatalakeenv400D630C",
+            "Id"
+          ]
+        },
+        "Name": "View Glue Catalogs",
+        "Parameters": {
+          "Uri": "https://test-region.console.aws.amazon.com/glue/home?region=test-region#/v2/data-catalog/tables"
+        }
+      }
+    },
+    "constructs3envaction17B8E837": {
+      "Type": "AWS::DataZone::EnvironmentActions",
+      "Properties": {
+        "Description": "Amazon S3",
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "EnvironmentIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatalakeenv400D630C",
+            "Id"
+          ]
+        },
+        "Name": "Project S3 Data",
+        "Parameters": {
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "https://test-region.console.aws.amazon.com/s3/buckets/",
+                {
+                  "Ref": "BucketprojectAACC6DD8"
+                },
+                "/data/"
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "constructconsoleenvactionEBD6C4D5": {
+      "Type": "AWS::DataZone::EnvironmentActions",
+      "Properties": {
+        "Description": "AWS Console",
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "EnvironmentIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatalakeenv400D630C",
+            "Id"
+          ]
+        },
+        "Name": "View AWS Console",
+        "Parameters": {
+          "Uri": "https://console.aws.amazon.com/"
+        }
+      }
+    },
+    "constructdatazoneuseraccesspolicy2BDC8507": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-datazone-datazone-user-access-policy",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "datazone:ListDomains",
+                "datazone:ListProjects",
+                "datazone:ListAccountEnvironments",
+                "datazone:ListEnvironments",
+                "datazone:GetEnvironment"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "s3:GetBucketLocation",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketTagging",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetIntelligentTieringConfiguration",
+                "s3:GetBucketPolicy"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "BucketprojectAACC6DD8",
+                  "Arn"
+                ]
+              },
+              "Sid": "ProjectBucketGet"
+            },
+            {
+              "Action": "athena:ListWorkGroups",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "lakeformation:GetDataAccess",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "glue:GetColumnStatisticsTaskRuns",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "glue:GetDatabase",
+                "glue:GetDatabases",
+                "glue:GetTable",
+                "glue:GetTables",
+                "glue:GetPartition",
+                "glue:GetPartitions",
+                "glue:SearchTables",
+                "glue:GetTableVersion",
+                "glue:GetTableVersions",
+                "glue:GetColumnStatistics*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "constructdomainconfigparserssmgluecatalogresourcearns09B5496F"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "dzuserrole4DA7E8E2"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/environment.ts] Fine-grained permissions enforced via LakeFormation.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/environment.ts] Fine-grained permissions enforced via LakeFormation.",
+              "id": "NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/environment.ts] Fine-grained permissions enforced via LakeFormation.",
+              "id": "HIPAA.Security-IAMPolicyNoStatementsWithFullAccess"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/environment.ts] Fine-grained permissions enforced via LakeFormation.",
+              "id": "PCI.DSS.321-IAMPolicyNoStatementsWithFullAccess"
+            }
+          ]
+        }
+      }
+    },
+    "constructdatazonesubtargetC8BEA34C": {
+      "Type": "AWS::DataZone::SubscriptionTarget",
+      "Properties": {
+        "ApplicableAssetTypes": [
+          "GlueTableAssetType"
+        ],
+        "AuthorizedPrincipals": [
+          {
+            "Fn::GetAtt": [
+              "dzuserrole4DA7E8E2",
+              "Arn"
+            ]
+          }
+        ],
+        "DomainIdentifier": {
+          "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+        },
+        "EnvironmentIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatalakeenv400D630C",
+            "Id"
+          ]
+        },
+        "ManageAccessRole": {
+          "Fn::GetAtt": [
+            "RoleReslfmanageaccessrole",
+            "arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-dataops-project-datazone",
+        "SubscriptionTargetConfig": [
+          {
+            "Content": "{\"databaseName\":\"test-org-test-env-test-domain-test-dataops-project-datazone-datazone-sub\"}",
+            "FormName": "GlueSubscriptionTargetConfigForm"
+          }
+        ],
+        "Type": "GlueSubscriptionTargetType"
+      }
+    },
+    "constructlfgrantsdatazonesubgrantDATABASEdataadminsdatazonesubDataAdmin0174AFDDF": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER",
+          "DROP"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResDataAdmin0",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "test-org-test-env-test-domain-test-dataops-project-datazone-datazone-sub"
+          }
+        }
+      },
+      "DependsOn": [
+        "datazonesubdatabase"
+      ]
+    },
+    "constructlfgrantsdatazonesubgrantALLTABLESdataadminsdatazonesubDataAdmin0DA10A26E": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE",
+          "ALTER",
+          "DROP"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResDataAdmin0",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "test-org-test-env-test-domain-test-dataops-project-datazone-datazone-sub",
+            "TableWildcard": {}
+          }
+        }
+      },
+      "DependsOn": [
+        "constructlfgrantsdatazonesubgrantDATABASEdataadminsdatazonesubDataAdmin0174AFDDF",
+        "datazonesubdatabase"
+      ]
+    },
+    "constructlfgrantsdatazonesubgrantDATABASEdatazonerolesdatazonesubdatazone68D7181D": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER"
+        ],
+        "PermissionsWithGrantOption": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER"
+        ],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleReslfmanageaccessrole",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "test-org-test-env-test-domain-test-dataops-project-datazone-datazone-sub"
+          }
+        }
+      },
+      "DependsOn": [
+        "constructlfgrantsdatazonesubgrantALLTABLESdataadminsdatazonesubDataAdmin0DA10A26E",
+        "datazonesubdatabase"
+      ]
+    },
+    "constructlfgrantsdatazonesubgrantALLTABLESdatazonerolesdatazonesubdatazone870C71F7": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE"
+        ],
+        "PermissionsWithGrantOption": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE"
+        ],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleReslfmanageaccessrole",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "test-org-test-env-test-domain-test-dataops-project-datazone-datazone-sub",
+            "TableWildcard": {}
+          }
+        }
+      },
+      "DependsOn": [
+        "constructlfgrantsdatazonesubgrantDATABASEdatazonerolesdatazonesubdatazone68D7181D",
+        "datazonesubdatabase"
+      ]
+    },
+    "constructathenaworkgroupE449636D": {
+      "Type": "AWS::Athena::WorkGroup",
+      "Properties": {
+        "Name": "test-org-test-env-test-domain-test-dataops-project-datazone",
+        "Tags": [
+          {
+            "Key": "AmazonDataZoneDomain",
+            "Value": {
+              "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+            }
+          },
+          {
+            "Key": "AmazonDataZoneEnvironment",
+            "Value": {
+              "Fn::GetAtt": [
+                "constructdatalakeenv400D630C",
+                "Id"
+              ]
+            }
+          },
+          {
+            "Key": "AmazonDataZoneProject",
+            "Value": {
+              "Fn::GetAtt": [
+                "constructdatazoneproject5CD687B2",
+                "Id"
+              ]
+            }
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "WorkGroupConfiguration": {
+          "EnforceWorkGroupConfiguration": true,
+          "PublishCloudWatchMetricsEnabled": true,
+          "ResultConfiguration": {
+            "EncryptionConfiguration": {
+              "EncryptionOption": "SSE_KMS",
+              "KmsKey": {
+                "Fn::GetAtt": [
+                  "ProjectKmsKey2B296F94",
+                  "Arn"
+                ]
+              }
+            },
+            "OutputLocation": {
+              "Fn::Join": [
+                "",
+                [
+                  "s3://",
+                  {
+                    "Ref": "BucketprojectAACC6DD8"
+                  },
+                  "/athena-results/"
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "constructathenaworkgroupworkgroupnamessmD9453F14": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/workgroup/name",
+        "Tags": {
+          "AmazonDataZoneDomain": {
+            "Ref": "constructdomainconfigparserdomainconfigparserssmdomainidParameterEDFDA2C5"
+          },
+          "AmazonDataZoneEnvironment": {
+            "Fn::GetAtt": [
+              "constructdatalakeenv400D630C",
+              "Id"
+            ]
+          },
+          "AmazonDataZoneProject": {
+            "Fn::GetAtt": [
+              "constructdatazoneproject5CD687B2",
+              "Id"
+            ]
+          },
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-dataops-project-datazone"
+      }
+    },
+    "constructwgusagepolicy947C3041": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-data-3e6f860c",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "athena:BatchGetQueryExecution",
+                "athena:ListDataCatalogs",
+                "athena:ListDatabases",
+                "athena:ListEngineVersions",
+                "athena:ListNamedQueries",
+                "athena:ListPreparedStatements",
+                "athena:ListQueryExecutions",
+                "athena:ListTableMetadata",
+                "athena:ListTagsForResource",
+                "athena:ListWorkGroups",
+                "athena:GetDataCatalog",
+                "athena:GetDatabase",
+                "athena:GetNamedQuery",
+                "athena:GetPreparedStatement",
+                "athena:GetQueryExecution",
+                "athena:GetQueryResults",
+                "athena:GetQueryResultsStream",
+                "athena:GetTableMetadata",
+                "athena:GetWorkGroup",
+                "athena:BatchGetNamedQuery",
+                "athena:StartQueryExecution",
+                "athena:StopQueryExecution"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:athena:test-region:test-account:workgroup/test-org-test-env-test-domain-test-dataops-project-datazone"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "dzuserrole4DA7E8E2",
+                              "Arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataEngineer0",
+                              "arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "constructwgusagepolicymanagedpolicywgusagearnssmD45C95FC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/managed-policy/wg-usage/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructwgusagepolicy947C3041"
+        }
+      }
+    },
+    "constructwgusagepolicymanagedpolicywgusagenamessmA284FEB0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/managed-policy/wg-usage/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "constructwgusagepolicy947C3041"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "constructtestdatabasedatazonedatazonedatasource4CEE8227": {
+      "Type": "AWS::DataZone::DataSource",
+      "Properties": {
+        "Configuration": {
+          "GlueRunConfiguration": {
+            "AutoImportDataQualityResult": true,
+            "DataAccessRole": {
+              "Fn::GetAtt": [
+                "RoleReslfmanageaccessrole",
+                "arn"
+              ]
+            },
+            "RelationalFilterConfigurations": [
+              {
+                "DatabaseName": "test-org-test-env-test-domain-test-dataops-project-datazone-test-database-datazone"
+              }
+            ]
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatazoneproject5CD687B2",
+            "DomainId"
+          ]
+        },
+        "EnvironmentIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatalakeenv400D630C",
+            "Id"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-dataops-project-datazone-test-database-datazone",
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "constructdatazoneproject5CD687B2",
+            "Id"
+          ]
+        },
+        "Type": "glue"
+      },
+      "DependsOn": [
+        "testdatabasedatazonedatabase"
+      ]
+    },
+    "constructlfgrantstestdatabasedatazonegrantDATABASEdatazonerolestestdatabasedatazonedatazone1927144D": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER"
+        ],
+        "PermissionsWithGrantOption": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER"
+        ],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleReslfmanageaccessrole",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "test-org-test-env-test-domain-test-dataops-project-datazone-test-database-datazone"
+          }
+        }
+      },
+      "DependsOn": [
+        "testdatabasedatazonedatabase"
+      ]
+    },
+    "constructlfgrantstestdatabasedatazonegrantALLTABLESdatazonerolestestdatabasedatazonedatazone33896A4A": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE"
+        ],
+        "PermissionsWithGrantOption": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE"
+        ],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleReslfmanageaccessrole",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "test-org-test-env-test-domain-test-dataops-project-datazone-test-database-datazone",
+            "TableWildcard": {}
+          }
+        }
+      },
+      "DependsOn": [
+        "constructlfgrantstestdatabasedatazonegrantDATABASEdatazonerolestestdatabasedatazonedatazone1927144D",
+        "testdatabasedatazonedatabase"
+      ]
+    },
+    "RoleResDataAdmin0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataAdmin-0",
+          "name": "Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "projectdeploymentrole542A1AAB": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-dataops-project-data-6502326d",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "projectdeploymentroleroledeploymentarnssm8E63623E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/role/deployment/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "projectdeploymentrole542A1AAB",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "projectdeploymentroleroledeploymentidssmAEFFFD22": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/role/deployment/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "projectdeploymentrole542A1AAB",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "projectdeploymentroleroledeploymentnamessm0E18264E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/role/deployment/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "projectdeploymentrole542A1AAB"
+        }
+      }
+    },
+    "ssmdeploymentrole51037379": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/deploymentRole/default",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "projectdeploymentrole542A1AAB",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "lakeformationrole7FEE6C3C": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lakeformation.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "Role for accessing the data lake via LakeFormation.",
+        "RoleName": "test-org-test-env-test-domain-test-dataops-project-data-77a7f99b",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "lakeformationrolerolelakeformationarnssm4A27AA60": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/role/lake-formation/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "lakeformationrole7FEE6C3C",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "lakeformationrolerolelakeformationidssm3549EABA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/role/lake-formation/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "lakeformationrole7FEE6C3C",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "lakeformationrolerolelakeformationnamessmFA48C07A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/role/lake-formation/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "lakeformationrole7FEE6C3C"
+        }
+      }
+    },
+    "dzuserrole4DA7E8E2": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              }
+            },
+            {
+              "Action": [
+                "sts:AssumeRole",
+                "sts:TagSession"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "datazone.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:test-partition:iam::test-account:policy/",
+                {
+                  "Ref": "constructdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2FDFD42C"
+                }
+              ]
+            ]
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-dataops-project-data-3d9b57fa",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dzuserroleroledzuserarnssm2DF3C8D2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/role/dz-user/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dzuserrole4DA7E8E2",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "dzuserroleroledzuseridssm2AC9EBED": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/role/dz-user/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dzuserrole4DA7E8E2",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "dzuserroleroledzusernamessm4B3F3128": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/role/dz-user/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dzuserrole4DA7E8E2"
+        }
+      }
+    },
+    "RoleResDataEngineer0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataEngineer-0",
+          "name": "data-engineer"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResProjectExRoles0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "ProjectExRoles-0",
+          "name": "glue-role"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "ProjectKmsKey2B296F94": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataAdmin0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataEngineer0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResProjectExRoles0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "projectdeploymentrole542A1AAB",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "dzuserrole4DA7E8E2",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "lakeformationrole7FEE6C3C",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-dataops-project-datazone-usage-stmt"
+            },
+            {
+              "Action": [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataAdmin0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-dataops-project-datazone-usage-stmt"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext"
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "kms:EncryptionContext:aws:logs:arn": "arn:test-partition:logs:test-region:test-account:log-group:*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "logs.test-region.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "CloudWatchLogsEncryption"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  {
+                    "Fn::GetAtt": [
+                      "projectdeploymentrole542A1AAB",
+                      "Arn"
+                    ]
+                  },
+                  {
+                    "Fn::GetAtt": [
+                      "dzuserrole4DA7E8E2",
+                      "Arn"
+                    ]
+                  },
+                  {
+                    "Fn::GetAtt": [
+                      "lakeformationrole7FEE6C3C",
+                      "Arn"
+                    ]
+                  }
+                ]
+              },
+              "Resource": "*",
+              "Sid": "ProjectDeployment"
+            },
+            {
+              "Action": [
+                "kms:GenerateDataKey",
+                "kms:Decrypt"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:CallerAccount": "test-account",
+                  "kms:ViaService": "sqs.test-region.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "sqsEncryption"
+            },
+            {
+              "Action": [
+                "kms:GenerateDataKey",
+                "kms:Decrypt"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "eventBridgeEncryption"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "ProjectKmsKeyAlias3BDA34F9": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-dataops-project-datazone-cmk",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "ProjectKmsKey2B296F94",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "ProjectKmsKeykmscmkarnssm6726C0E0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/kms/cmk/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "ProjectKmsKey2B296F94",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "ProjectKmsKeykmscmkidssm7FE688EF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/kms/cmk/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "ProjectKmsKey2B296F94"
+        }
+      }
+    },
+    "ssmkmsarnA2708738": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/kmsArn/default",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "ProjectKmsKey2B296F94",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "BucketprojectAACC6DD8": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "BucketKeyEnabled": true,
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "ProjectKmsKey2B296F94",
+                    "Arn"
+                  ]
+                },
+                "SSEAlgorithm": "aws:kms"
+              }
+            }
+          ]
+        },
+        "BucketName": "test-org-test-env-test-domain-test-dataops-project-datazone",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "BucketprojectPolicyDAE0D5BD": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "BucketprojectAACC6DD8"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "BucketprojectAACC6DD8",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "BucketprojectAACC6DD8",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-server-side-encryption": "AES256"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "DenyAES"
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "ForAllValues:StringNotLikeIfExists": {
+                  "s3:x-amz-server-side-encryption-aws-kms-key-id": [
+                    {
+                      "Fn::GetAtt": [
+                        "ProjectKmsKey2B296F94",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "ProjectKmsKey2B296F94",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "ForceKMS"
+            },
+            {
+              "Action": "s3:GetObject*",
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataEngineer0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "/_Read"
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject",
+                "s3:DeleteObjectVersion"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataAdmin0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "/_ReadWriteSuper"
+            },
+            {
+              "Action": "s3:GetObject*",
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataEngineer0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/athena-results/*"
+                  ]
+                ]
+              },
+              "Sid": "/athena-results_Read"
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "dzuserrole4DA7E8E2",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/athena-results/*"
+                  ]
+                ]
+              },
+              "Sid": "/athena-results_ReadWrite"
+            },
+            {
+              "Action": "s3:GetObject*",
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResProjectExRoles0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/deployment/*"
+                  ]
+                ]
+              },
+              "Sid": "/deployment_Read"
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "projectdeploymentrole542A1AAB",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/deployment/*"
+                  ]
+                ]
+              },
+              "Sid": "/deployment_ReadWrite"
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataEngineer0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResProjectExRoles0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/data/*"
+                  ]
+                ]
+              },
+              "Sid": "/data_ReadWrite"
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "lakeformationrole7FEE6C3C",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/data/*"
+                  ]
+                ]
+              },
+              "Sid": "/data_ReadWrite"
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResProjectExRoles0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/temp/*"
+                  ]
+                ]
+              },
+              "Sid": "/temp_ReadWrite"
+            },
+            {
+              "Action": [
+                "s3:PutObject*",
+                "s3:GetObject*",
+                "s3:DeleteObject*"
+              ],
+              "Condition": {
+                "ForAnyValue:StringNotLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataAdmin0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataEngineer0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResProjectExRoles0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "lakeformationrole7FEE6C3C",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "dzuserrole4DA7E8E2",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ],
+                  "aws:PrincipalArn": [
+                    {
+                      "Fn::GetAtt": [
+                        "projectdeploymentrole542A1AAB",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "BucketDeny"
+            },
+            {
+              "Action": [
+                "s3:List*",
+                "s3:GetBucket*"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataAdmin0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataEngineer0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResProjectExRoles0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "lakeformationrole7FEE6C3C",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "dzuserrole4DA7E8E2",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "BucketprojectAACC6DD8",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "BucketprojectAACC6DD8",
+                    "Arn"
+                  ]
+                }
+              ],
+              "Sid": "BucketAllow"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "BucketprojectbucketnamessmCFE478E4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/bucket/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "BucketprojectAACC6DD8"
+        }
+      }
+    },
+    "BucketprojectbucketarnssmBE3A8D90": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/bucket/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "BucketprojectAACC6DD8",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "ssmbucketname87E4B9FF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/projectBucket/default",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "BucketprojectAACC6DD8"
+        }
+      }
+    },
+    "lfresourceprojectdata": {
+      "Type": "AWS::LakeFormation::Resource",
+      "Properties": {
+        "ResourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::GetAtt": [
+                  "BucketprojectAACC6DD8",
+                  "Arn"
+                ]
+              },
+              "/data"
+            ]
+          ]
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "lakeformationrole7FEE6C3C",
+            "Arn"
+          ]
+        },
+        "UseServiceLinkedRole": false
+      }
+    },
+    "deployments3policy8D368CBB": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-data-7aaad180",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:s3:::cdk-hnb659fds-assets-test-account-test-region",
+                "arn:test-partition:s3:::cdk-hnb659fds-assets-test-account-test-region/*"
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "BucketprojectAACC6DD8",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "BucketprojectAACC6DD8",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "projectdeploymentrole542A1AAB"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "S3 permissions required for BucketDeployment to copy assets to project bucket.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/"
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "deployments3policymanagedpolicydeployments3arnssm00CCE607": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/managed-policy/deployment-s3/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "deployments3policy8D368CBB"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "S3 permissions required for BucketDeployment to copy assets to project bucket.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/"
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "deployments3policymanagedpolicydeployments3namessm29137B6C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/managed-policy/deployment-s3/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "deployments3policy8D368CBB"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "S3 permissions required for BucketDeployment to copy assets to project bucket.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/"
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerrole74F440EA": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-dataops-project-data-58138f2b",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerroleDefaultPolicyAAC574D5": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-data-58138f2b*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-data-58138f2b*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customDomainConfighandlerroleDefaultPolicyAAC574D5",
+        "Roles": [
+          {
+            "Ref": "customDomainConfighandlerrole74F440EA"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerpolicy737179DC": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "datazone:GetDomain",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "constructdomainconfigparserdomainconfigparserssmdomainarnParameter13101F6F"
+              }
+            },
+            {
+              "Action": [
+                "datazone:ListDomainUnitsForParent",
+                "datazone:ListProjectProfiles",
+                "datazone:ListProjects",
+                "datazone:ListEnvironmentBlueprints"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "kms:Decrypt",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "constructdomainconfigparserdomainconfigparserssmdomainkmsarnParameterB14E453F"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "DomainConfig-handler",
+        "Roles": [
+          {
+            "Ref": "customDomainConfighandlerrole74F440EA"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] DataZone List operations (ListDomainUnitsForParent, ListProjectProfiles, ListProjects, ListEnvironmentBlueprints) do not support resource-level permissions.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunction0598741F": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-dataops-project-data-58138f2b",
+        "Handler": "domain_config.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "customDomainConfighandlerrole74F440EA",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC",
+        "customDomainConfighandlerroleDefaultPolicyAAC574D5",
+        "customDomainConfighandlerrole74F440EA"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlernamessmEF46C3A7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/lambda/domainconfig-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customDomainConfighandlerfunction0598741F"
+        }
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerarnssm57D2852A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/lambda/domainconfig-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customDomainConfighandlerfunction0598741F",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerloggroupssmBE855158": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/lambda/domainconfig-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customDomainConfighandlerfunction0598741F"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfigproviderroleA82661DC": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-dataops-project-data-6f62ca30",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfigproviderroleDefaultPolicy1BCABDD9": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-data-6f62ca30*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-data-6f62ca30*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customDomainConfighandlerfunction0598741F",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customDomainConfighandlerfunction0598741F",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customDomainConfighandlerfunction0598741F",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customDomainConfigproviderroleDefaultPolicy1BCABDD9",
+        "Roles": [
+          {
+            "Ref": "customDomainConfigproviderroleA82661DC"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfigproviderframeworkonEvent5699DE11": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-dataops-project-datazone/custom-DomainConfig-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customDomainConfighandlerfunction0598741F",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-dataops-project-data-6f62ca30",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customDomainConfigproviderroleA82661DC",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs18.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customDomainConfigproviderroleDefaultPolicy1BCABDD9",
+        "customDomainConfigproviderroleA82661DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerhandlerfunction18673242": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-dataops-project-data-50ef7594",
+        "Handler": "check_user_profiles.lambda_handler",
+        "Role": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:iam::test-account:role/",
+              {
+                "Ref": "constructdomainconfigparserdomainconfigparserssmcustomresourceroleParameterDF4F1581"
+              }
+            ]
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 300
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlernamessm09177F64": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/lambda/userprofilemanager-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customUserProfileManagerhandlerfunction18673242"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlerarnssmE04AF3D6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/lambda/userprofilemanager-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customUserProfileManagerhandlerfunction18673242",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlerloggroupssmE4EE2B1A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/lambda/userprofilemanager-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customUserProfileManagerhandlerfunction18673242"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerproviderroleE99A9401": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-dataops-project-dat--6dfc4f19",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerproviderroleDefaultPolicyFEB838D8": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-dat--6dfc4f19*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-dat--6dfc4f19*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customUserProfileManagerhandlerfunction18673242",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customUserProfileManagerhandlerfunction18673242",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customUserProfileManagerhandlerfunction18673242",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customUserProfileManagerproviderroleDefaultPolicyFEB838D8",
+        "Roles": [
+          {
+            "Ref": "customUserProfileManagerproviderroleE99A9401"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerproviderframeworkonEvent7063FDCB": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-dataops-project-datazone/custom-UserProfileManager-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customUserProfileManagerhandlerfunction18673242",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-dataops-project-dat--6dfc4f19",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customUserProfileManagerproviderroleE99A9401",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs18.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customUserProfileManagerproviderroleDefaultPolicyFEB838D8",
+        "customUserProfileManagerproviderroleE99A9401"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "RoleReslfmanageaccessrole": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "lf-manage-access-role",
+          "name": "lf-manage-access-role"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "datazonesubdatabase": {
+      "Type": "AWS::Glue::Database",
+      "Properties": {
+        "CatalogId": "test-account",
+        "DatabaseInput": {
+          "Description": "For consuming Datazone subscripts",
+          "LocationUri": {
+            "Fn::Join": [
+              "",
+              [
+                "s3://",
+                {
+                  "Ref": "BucketprojectAACC6DD8"
+                },
+                "/data/datazone"
+              ]
+            ]
+          },
+          "Name": "test-org-test-env-test-domain-test-dataops-project-datazone-datazone-sub"
+        }
+      }
+    },
+    "securityconfig6DD90031": {
+      "Type": "AWS::Glue::SecurityConfiguration",
+      "Properties": {
+        "EncryptionConfiguration": {
+          "CloudWatchEncryption": {
+            "CloudWatchEncryptionMode": "SSE-KMS",
+            "KmsKeyArn": {
+              "Fn::GetAtt": [
+                "ProjectKmsKey2B296F94",
+                "Arn"
+              ]
+            }
+          },
+          "JobBookmarksEncryption": {
+            "JobBookmarksEncryptionMode": "CSE-KMS",
+            "KmsKeyArn": {
+              "Fn::GetAtt": [
+                "ProjectKmsKey2B296F94",
+                "Arn"
+              ]
+            }
+          },
+          "S3Encryptions": [
+            {
+              "KmsKeyArn": {
+                "Fn::GetAtt": [
+                  "ProjectKmsKey2B296F94",
+                  "Arn"
+                ]
+              },
+              "S3EncryptionMode": "SSE-KMS"
+            }
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-dataops-project-datazone"
+      }
+    },
+    "ssmsecurityconfigB7BBED22": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/securityConfiguration/default",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "securityconfig6DD90031"
+        }
+      }
+    },
+    "testdatabasedatazonedatabase": {
+      "Type": "AWS::Glue::Database",
+      "Properties": {
+        "CatalogId": "test-account",
+        "DatabaseInput": {
+          "Description": "Test DataZone Database",
+          "LocationUri": "s3://some-bucket-name/data/test-sus",
+          "Name": "test-org-test-env-test-domain-test-dataops-project-datazone-test-database-datazone"
+        }
+      }
+    },
+    "ssmdatabasenametestdatabasedatazoneE4B43C32": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/databaseName/test-database-datazone",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-dataops-project-datazone-test-database-datazone"
+      }
+    },
+    "dataopssnstopicBA22D4B8": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "ProjectKmsKey2B296F94",
+            "Arn"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-datazone"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TopicName": "test-org-test-env-test-domain-test-dataops-project-datazone-dataops-sns-topic"
+      }
+    },
+    "dataopssnstopicPolicyFFB7F5F6": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sns:Publish",
+                "sns:RemovePermission",
+                "sns:SetTopicAttributes",
+                "sns:DeleteTopic",
+                "sns:ListSubscriptionsByTopic",
+                "sns:GetTopicAttributes",
+                "sns:Receive",
+                "sns:AddPermission",
+                "sns:Subscribe"
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sns:Publish",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Ref": "dataopssnstopicBA22D4B8"
+              },
+              "Sid": "Publish Policy"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Topics": [
+          {
+            "Ref": "dataopssnstopicBA22D4B8"
+          }
+        ]
+      }
+    },
+    "dataopssnstopicTopicdataopssnstopicnamessm2F907C8D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/topic/dataops-sns-topic/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dataopssnstopicBA22D4B8",
+            "TopicName"
+          ]
+        }
+      }
+    },
+    "dataopssnstopicTopicdataopssnstopicarnssm83801724": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/topic/dataops-sns-topic/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dataopssnstopicBA22D4B8"
+        }
+      }
+    },
+    "ssmtopicarn77341DAD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/projectTopicArn/default",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dataopssnstopicBA22D4B8"
+        }
+      }
+    },
+    "catalogkeyaccesspolicy1B2A1B03": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-data-31baea6e",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "kms:Decrypt",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "SsmParameterValuegluecatalogsettingscatalogkmskeyC96584B6F00A464EAD1953AFF4B05118Parameter"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResProjectExRoles0",
+                              "arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "catalogkeyaccesspolicymanagedpolicycatalogkeyaccessarnssm5F063BAB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/managed-policy/catalog-key-access/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "catalogkeyaccesspolicy1B2A1B03"
+        }
+      }
+    },
+    "catalogkeyaccesspolicymanagedpolicycatalogkeyaccessnamessm8B572905": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/managed-policy/catalog-key-access/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "catalogkeyaccesspolicy1B2A1B03"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "constructdatazoneprojectprojectnameout9F171CCC": {
+      "Value": "test-org-test-env-test-domain-test-dataops-project-datazone",
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:project:name"
+      }
+    },
+    "constructathenaworkgroupworkgroupnameout1BA3E2CE": {
+      "Value": "test-org-test-env-test-domain-test-dataops-project-datazone",
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:workgroup:name"
+      }
+    },
+    "constructwgusagepolicymanagedpolicywgusagearnout91C39B29": {
+      "Value": {
+        "Ref": "constructwgusagepolicy947C3041"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:managed-policy:wgusage:arn"
+      }
+    },
+    "constructwgusagepolicymanagedpolicywgusagenameoutD8FF6F16": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "constructwgusagepolicy947C3041"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:managed-policy:wgusage:name"
+      }
+    },
+    "projectdeploymentroleroledeploymentarnoutF0B5D6A5": {
+      "Value": {
+        "Fn::GetAtt": [
+          "projectdeploymentrole542A1AAB",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:role:deployment:arn"
+      }
+    },
+    "projectdeploymentroleroledeploymentidout39338B33": {
+      "Value": {
+        "Fn::GetAtt": [
+          "projectdeploymentrole542A1AAB",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:role:deployment:id"
+      }
+    },
+    "projectdeploymentroleroledeploymentnameout9F845ADF": {
+      "Value": {
+        "Ref": "projectdeploymentrole542A1AAB"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:role:deployment:name"
+      }
+    },
+    "lakeformationrolerolelakeformationarnoutA1685580": {
+      "Value": {
+        "Fn::GetAtt": [
+          "lakeformationrole7FEE6C3C",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:role:lakeformation:arn"
+      }
+    },
+    "lakeformationrolerolelakeformationidout3AFAC8B3": {
+      "Value": {
+        "Fn::GetAtt": [
+          "lakeformationrole7FEE6C3C",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:role:lakeformation:id"
+      }
+    },
+    "lakeformationrolerolelakeformationnameout72EAEF6C": {
+      "Value": {
+        "Ref": "lakeformationrole7FEE6C3C"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:role:lakeformation:name"
+      }
+    },
+    "dzuserroleroledzuserarnoutF6832327": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dzuserrole4DA7E8E2",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:role:dzuser:arn"
+      }
+    },
+    "dzuserroleroledzuseridout83C191C7": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dzuserrole4DA7E8E2",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:role:dzuser:id"
+      }
+    },
+    "dzuserroleroledzusernameout04528815": {
+      "Value": {
+        "Ref": "dzuserrole4DA7E8E2"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:role:dzuser:name"
+      }
+    },
+    "ProjectKmsKeykmscmkarnoutE1DB321F": {
+      "Value": {
+        "Fn::GetAtt": [
+          "ProjectKmsKey2B296F94",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:kms:cmk:arn"
+      }
+    },
+    "ProjectKmsKeykmscmkidout7435A102": {
+      "Value": {
+        "Ref": "ProjectKmsKey2B296F94"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:kms:cmk:id"
+      }
+    },
+    "Bucketprojectbucketnameout76965462": {
+      "Value": {
+        "Ref": "BucketprojectAACC6DD8"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:bucket:name"
+      }
+    },
+    "BucketprojectbucketarnoutC9A9BBDB": {
+      "Value": {
+        "Fn::GetAtt": [
+          "BucketprojectAACC6DD8",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:bucket:arn"
+      }
+    },
+    "deployments3policymanagedpolicydeployments3arnoutA560A556": {
+      "Value": {
+        "Ref": "deployments3policy8D368CBB"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:managed-policy:deployments3:arn"
+      }
+    },
+    "deployments3policymanagedpolicydeployments3nameoutDE3AEC5E": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "deployments3policy8D368CBB"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:managed-policy:deployments3:name"
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlernameout4B81B055": {
+      "Value": {
+        "Ref": "customDomainConfighandlerfunction0598741F"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:lambda:domainconfighandler:name"
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerarnout36F1978E": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customDomainConfighandlerfunction0598741F",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:lambda:domainconfighandler:arn"
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerloggroupoutC16C694A": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customDomainConfighandlerfunction0598741F"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:lambda:domainconfighandler:log-group"
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlernameout22E34206": {
+      "Value": {
+        "Ref": "customUserProfileManagerhandlerfunction18673242"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:lambda:userprofilemanagerhandler:name"
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlerarnout43DD7474": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customUserProfileManagerhandlerfunction18673242",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:lambda:userprofilemanagerhandler:arn"
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlerloggroupout03343431": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customUserProfileManagerhandlerfunction18673242"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:lambda:userprofilemanagerhandler:log-group"
+      }
+    },
+    "dataopssnstopicTopicdataopssnstopicnameoutD7D1DCB0": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dataopssnstopicBA22D4B8",
+          "TopicName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:topic:dataopssnstopic:name"
+      }
+    },
+    "dataopssnstopicTopicdataopssnstopicarnout7364B4B3": {
+      "Value": {
+        "Ref": "dataopssnstopicBA22D4B8"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:topic:dataopssnstopic:arn"
+      }
+    },
+    "catalogkeyaccesspolicymanagedpolicycatalogkeyaccessarnout59F55E3C": {
+      "Value": {
+        "Ref": "catalogkeyaccesspolicy1B2A1B03"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:managed-policy:catalogkeyaccess:arn"
+      }
+    },
+    "catalogkeyaccesspolicymanagedpolicycatalogkeyaccessnameoutD4994F42": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "catalogkeyaccesspolicy1B2A1B03"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:managed-policy:catalogkeyaccess:name"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

@@ -45,7 +45,22 @@ export function readYamlFileWithIncludes(fileName: string): unknown {
     },
   };
 
-  return yaml.parse(fs.readFileSync(fileName, 'utf8'), { customTags: [includeTag] });
+  // Wrap process.emitWarning to handle YAMLWarning instances that aren't
+  // valid string|Error arguments in newer Node versions
+  const origEmitWarning = process.emitWarning;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  process.emitWarning = ((warning: any, ...args: any[]) => {
+    if (typeof warning === 'object' && warning?.constructor?.name === 'YAMLWarning') {
+      return origEmitWarning.call(process, String(warning.message ?? warning));
+    }
+    return origEmitWarning.call(process, warning, ...args);
+  }) as typeof process.emitWarning;
+
+  try {
+    return yaml.parse(fs.readFileSync(fileName, 'utf8'), { customTags: [includeTag] });
+  } finally {
+    process.emitWarning = origEmitWarning;
+  }
 }
 
 export function filterConfigurationElement<T extends ConfigurationElement, K extends keyof T>(

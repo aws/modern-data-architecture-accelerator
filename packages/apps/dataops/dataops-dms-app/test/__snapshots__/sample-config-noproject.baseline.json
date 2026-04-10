@@ -1,0 +1,913 @@
+{
+  "Description": "(SO0320-dataops-dms) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-dms-noproject/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-dms) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "dmsdmsvpcrole142522B4": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "dms.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AmazonDMSVPCManagementRole"
+              ]
+            ]
+          }
+        ],
+        "RoleName": "dms-vpc-role",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] AmazonDMSVPCManagementRole has explicit actions but requires wildcard resource so all VPCs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DMS_migration-IAM.dms-vpc-role.html",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmsvpcroleroledmsvpcrolearnssmB59BE6F9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/role/dms-vpc-role/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsdmsvpcrole142522B4",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] AmazonDMSVPCManagementRole has explicit actions but requires wildcard resource so all VPCs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DMS_migration-IAM.dms-vpc-role.html",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmsvpcroleroledmsvpcroleidssm7E77274C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/role/dms-vpc-role/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsdmsvpcrole142522B4",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] AmazonDMSVPCManagementRole has explicit actions but requires wildcard resource so all VPCs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DMS_migration-IAM.dms-vpc-role.html",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmsvpcroleroledmsvpcrolenamessm00D40CC8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/role/dms-vpc-role/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsdmsvpcrole142522B4"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] AmazonDMSVPCManagementRole has explicit actions but requires wildcard resource so all VPCs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DMS_migration-IAM.dms-vpc-role.html",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmscloudwatchlogsrole73252CAE": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "dms.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole"
+              ]
+            ]
+          }
+        ],
+        "RoleName": "dms-cloudwatch-logs-role",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsrolearnssm01E3663D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/role/dms-cloudwatch-logs-role/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsdmscloudwatchlogsrole73252CAE",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsroleidssmDFC0AC04": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/role/dms-cloudwatch-logs-role/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsdmscloudwatchlogsrole73252CAE",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsrolenamessmCDEB85E9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/role/dms-cloudwatch-logs-role/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsdmscloudwatchlogsrole73252CAE"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "dmsreplicationsubnetgrouptestinstance162D08A6": {
+      "Type": "AWS::DMS::ReplicationSubnetGroup",
+      "Properties": {
+        "ReplicationSubnetGroupDescription": "test-org-test-env-test-domain-test-dms-noproject-test-instance",
+        "ReplicationSubnetGroupIdentifier": "test-org-test-env-test-domain-test-dms-noproject-test-instance",
+        "SubnetIds": [
+          "test_subnet_id1",
+          "test_subnet_id2"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "dmsdmsvpcrole142522B4"
+      ]
+    },
+    "dmssecuritygrouptestinstanceA983FA0F": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-dms-noproject/dms/security-group-test-instance",
+        "GroupName": "test-org-test-env-test-domain-test-dms-noproject-test-instance",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "test_vpc_id"
+      }
+    },
+    "dmssecuritygrouptestinstancesecuritygrouptestinstanceidssmAEA1FDD9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/security-group/test-instance/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmssecuritygrouptestinstanceA983FA0F",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "dmsreplicationinstancetestinstanceCD0A619E": {
+      "Type": "AWS::DMS::ReplicationInstance",
+      "Properties": {
+        "KmsKeyId": "test-key-id",
+        "PubliclyAccessible": false,
+        "ReplicationInstanceClass": "dms.t3.micro",
+        "ReplicationInstanceIdentifier": "test-org-test-env-test-domain-test-dms-noproject-test-instance",
+        "ReplicationSubnetGroupIdentifier": "test-org-test-env-test-domain-test-dms-noproject-test-instance",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcSecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "dmssecuritygrouptestinstanceA983FA0F",
+              "GroupId"
+            ]
+          }
+        ]
+      },
+      "DependsOn": [
+        "dmsreplicationsubnetgrouptestinstance162D08A6"
+      ]
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceidentifierssm9F199903": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/replicationinstance/test-instance/identifier",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
+        }
+      }
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceipssmE8599E88": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/replicationinstance/test-instance/ip",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsreplicationinstancetestinstanceCD0A619E",
+            "ReplicationInstancePrivateIpAddresses"
+          ]
+        }
+      }
+    },
+    "dmsendpointtestsourceB82259C8": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-noproject-test-source",
+        "EndpointType": "source",
+        "EngineName": "sqlserver",
+        "KmsKeyId": "test-key-id",
+        "MicrosoftSqlServerSettings": {
+          "DatabaseName": "test-database",
+          "SecretsManagerAccessRoleArn": "arn:test-partition:iam::test-account:role/test-dms-role",
+          "SecretsManagerSecretId": "arn:test-partition:secretsmanager:test-region:test-account:secret:test-secret-abc123"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtestsourceendpointtestsourcearnssmC1985836": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/endpoint/test-source/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtestsourceB82259C8"
+        }
+      }
+    },
+    "dmsendpointtesttargetD30A650E": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-noproject-test-target",
+        "EndpointType": "target",
+        "EngineName": "s3",
+        "KmsKeyId": "test-key-id",
+        "S3Settings": {
+          "BucketName": "test_target_bucket",
+          "EncryptionMode": "SSE_KMS",
+          "ServerSideEncryptionKmsKeyId": "test_target_kms_key_id",
+          "ServiceAccessRoleArn": "arn:test-partition:iam::test-account:role/test-dms-role"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtesttargetendpointtesttargetarnssm38D2CCDC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/endpoint/test-target/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtesttargetD30A650E"
+        }
+      }
+    },
+    "dmssecretsaccesspolicy98CFFB2E": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-dms-noproject-secrets-access",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:GetSecretValue"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:secretsmanager:test-region:test-account:secret:test-secret-abc123"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:kms:test-region:test-account:key:test-secret-key-id"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          "test-dms-role"
+        ]
+      }
+    },
+    "dmssecretsaccesspolicymanagedpolicysecretsaccessarnssm32A991C4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/managed-policy/secrets-access/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmssecretsaccesspolicy98CFFB2E"
+        }
+      }
+    },
+    "dmssecretsaccesspolicymanagedpolicysecretsaccessnamessm19C4CEBD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-noproject/managed-policy/secrets-access/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "dmssecretsaccesspolicy98CFFB2E"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "dmsreplicationtasktesttask6BD7B5DB": {
+      "Type": "AWS::DMS::ReplicationTask",
+      "Properties": {
+        "MigrationType": "full-load",
+        "ReplicationInstanceArn": {
+          "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
+        },
+        "ReplicationTaskIdentifier": "test-org-test-env-test-domain-test-dms-noproject-test-task",
+        "SourceEndpointArn": {
+          "Ref": "dmsendpointtestsourceB82259C8"
+        },
+        "TableMappings": "{\"rules\":[{\"rule-type\":\"selection\",\"rule-id\":\"1\",\"rule-name\":\"1\",\"object-locator\":{\"schema-name\":\"Test\",\"table-name\":\"%\"},\"rule-action\":\"include\"},{\"rule-type\":\"selection\",\"rule-id\":\"2\",\"rule-name\":\"2\",\"object-locator\":{\"schema-name\":\"Test\",\"table-name\":\"DMS%\"},\"rule-action\":\"exclude\"}]}",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TargetEndpointArn": {
+          "Ref": "dmsendpointtesttargetD30A650E"
+        }
+      },
+      "DependsOn": [
+        "dmsdmscloudwatchlogsrole73252CAE"
+      ]
+    }
+  },
+  "Outputs": {
+    "dmsdmsvpcroleroledmsvpcrolearnout728F50CB": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsdmsvpcrole142522B4",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:role:dmsvpcrole:arn"
+      }
+    },
+    "dmsdmsvpcroleroledmsvpcroleidoutF2FEA442": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsdmsvpcrole142522B4",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:role:dmsvpcrole:id"
+      }
+    },
+    "dmsdmsvpcroleroledmsvpcrolenameout725DDDDA": {
+      "Value": {
+        "Ref": "dmsdmsvpcrole142522B4"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:role:dmsvpcrole:name"
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsrolearnout8F259CCE": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsdmscloudwatchlogsrole73252CAE",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:role:dmscloudwatchlogsrole:arn"
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsroleidout09151D75": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsdmscloudwatchlogsrole73252CAE",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:role:dmscloudwatchlogsrole:id"
+      }
+    },
+    "dmsdmscloudwatchlogsroleroledmscloudwatchlogsrolenameoutBD494A99": {
+      "Value": {
+        "Ref": "dmsdmscloudwatchlogsrole73252CAE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:role:dmscloudwatchlogsrole:name"
+      }
+    },
+    "dmssecuritygrouptestinstancesecuritygrouptestinstanceidout734E06F6": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmssecuritygrouptestinstanceA983FA0F",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:security-group:testinstance:id"
+      }
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceidentifierout98FFE137": {
+      "Value": {
+        "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:replicationinstance:testinstance:identifier"
+      }
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceipoutFAF1D039": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsreplicationinstancetestinstanceCD0A619E",
+          "ReplicationInstancePrivateIpAddresses"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:replicationinstance:testinstance:ip"
+      }
+    },
+    "dmsendpointtestsourceendpointtestsourcearnout80678FB6": {
+      "Value": {
+        "Ref": "dmsendpointtestsourceB82259C8"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:endpoint:testsource:arn"
+      }
+    },
+    "dmsendpointtesttargetendpointtesttargetarnout752778E1": {
+      "Value": {
+        "Ref": "dmsendpointtesttargetD30A650E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:endpoint:testtarget:arn"
+      }
+    },
+    "dmssecretsaccesspolicymanagedpolicysecretsaccessarnout5330B707": {
+      "Value": {
+        "Ref": "dmssecretsaccesspolicy98CFFB2E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:managed-policy:secretsaccess:arn"
+      }
+    },
+    "dmssecretsaccesspolicymanagedpolicysecretsaccessnameoutA3C7FEB3": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "dmssecretsaccesspolicy98CFFB2E"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-noproject:managed-policy:secretsaccess:name"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

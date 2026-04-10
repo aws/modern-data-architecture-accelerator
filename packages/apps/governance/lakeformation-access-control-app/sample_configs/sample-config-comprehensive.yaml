@@ -133,7 +133,7 @@ resourceLinks:
   cross_account_resource_link:
     targetDatabase: remote_database
     # AWS account ID where the target database exists
-    targetAccount: '222222222222'
+    targetAccount: '{{context:account-2}}'
     grantPrincipals:
       - roleByArnPrincipal
 
@@ -142,9 +142,9 @@ resourceLinks:
   remote_resource_link:
     targetDatabase: another_remote_database
     # Account where the resource link will be created (must be in additional_stacks)
-    fromAccount: '222222222222'
+    fromAccount: '{{context:account-2}}'
     # Account where the target database exists
-    targetAccount: '222222222222'
+    targetAccount: '{{context:account-2}}'
     grantPrincipals:
       - fedGroupPrincipal
       - fedUserPrincipal

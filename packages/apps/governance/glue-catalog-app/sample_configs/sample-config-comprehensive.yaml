@@ -8,13 +8,13 @@
 # friendly name to a 12-digit AWS account ID.
 consumerAccounts:
   consumer-analytics: '888888888888'
-  consumer-reporting: '222222222222'
+  consumer-reporting: '{{context:account-2}}'
 
 # (Optional) Accounts granted access to the catalog KMS encryption
 # key only, without catalog read access. Useful when accounts need
 # to decrypt catalog-encrypted data but should not browse the catalog.
 kmsKeyConsumerAccounts:
-  kms-consumer-etl: '333333333333'
+  kms-consumer-etl: '{{context:account-3}}'
   kms-consumer-lake: '444444444444'
 
 # (Optional) Producer accounts for which additional Athena data source
@@ -41,11 +41,11 @@ accessPolicies:
     # (glue:Get*, glue:List*) to the specified catalog resources.
     readPrincipalArns:
       - arn:{{partition}}:iam::888888888888:root
-      - arn:{{partition}}:iam::222222222222:role/DataReader
+      - 'arn:{{partition}}:iam::{{context:account-2}}:role/DataReader'
     # (Optional) IAM principal ARNs granted read/write access
     # to the specified catalog resources.
     writePrincipalArns:
-      - arn:{{partition}}:iam::333333333333:root
+      - 'arn:{{partition}}:iam::{{context:account-3}}:root'
 
   # Policy with resources only — no principals (minimal required config)
   resources-only-policy:

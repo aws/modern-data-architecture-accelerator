@@ -1,0 +1,405 @@
+{
+  "Description": "(SO0320-dataops-dynamodb) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsamplesecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/securityConfiguration/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/projectBucket/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/projectTopicArn/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampledeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/deploymentRole/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/kmsArn/default"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-dynamodb-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dynamodb",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dynamodb-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-dynamodb) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructTabletablecomplex2357F144": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk1",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "sk1",
+            "AttributeType": "N"
+          }
+        ],
+        "DeletionProtectionEnabled": true,
+        "KeySchema": [
+          {
+            "AttributeName": "pk1",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "sk1",
+            "KeyType": "RANGE"
+          }
+        ],
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": true
+        },
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 2,
+          "WriteCapacityUnits": 1
+        },
+        "SSESpecification": {
+          "KMSMasterKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
+          "SSEEnabled": true,
+          "SSEType": "KMS"
+        },
+        "TableName": "test-org-test-env-test-domain-test-dynamodb-main-table-complex",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dynamodb"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dynamodb-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of AWS Backup",
+              "id": "HIPAA.Security-DynamoDBInBackupPlan"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of AWS Backup",
+              "id": "PCI.DSS.321-DynamoDBInBackupPlan"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of AWS Backup",
+              "id": "NIST.800.53.R5-DynamoDBInBackupPlan"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "id": "NIST.800.53.R5-DynamoDBAutoScalingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "id": "HIPAA.Security-DynamoDBAutoScalingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "id": "PCI.DSS.321-DynamoDBAutoScalingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "constructTabletablesimple54D1C7E6": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk1",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "DeletionProtectionEnabled": true,
+        "KeySchema": [
+          {
+            "AttributeName": "pk1",
+            "KeyType": "HASH"
+          }
+        ],
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": true
+        },
+        "SSESpecification": {
+          "KMSMasterKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
+          "SSEEnabled": true,
+          "SSEType": "KMS"
+        },
+        "TableName": "test-org-test-env-test-domain-test-dynamodb-main-table-simple",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dynamodb"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dynamodb-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of AWS Backup",
+              "id": "HIPAA.Security-DynamoDBInBackupPlan"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of AWS Backup",
+              "id": "PCI.DSS.321-DynamoDBInBackupPlan"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of AWS Backup",
+              "id": "NIST.800.53.R5-DynamoDBInBackupPlan"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "id": "NIST.800.53.R5-DynamoDBAutoScalingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "id": "HIPAA.Security-DynamoDBAutoScalingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "id": "PCI.DSS.321-DynamoDBAutoScalingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "constructTabletablebinarykeyB65A3143": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "binary_pk",
+            "AttributeType": "B"
+          },
+          {
+            "AttributeName": "numeric_sk",
+            "AttributeType": "N"
+          }
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "DeletionProtectionEnabled": true,
+        "KeySchema": [
+          {
+            "AttributeName": "binary_pk",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "numeric_sk",
+            "KeyType": "RANGE"
+          }
+        ],
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": true
+        },
+        "SSESpecification": {
+          "KMSMasterKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
+          "SSEEnabled": true,
+          "SSEType": "KMS"
+        },
+        "TableName": "test-org-test-env-test-domain-test-dynamodb-main-table-binary-key",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dynamodb"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dynamodb-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of AWS Backup",
+              "id": "HIPAA.Security-DynamoDBInBackupPlan"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of AWS Backup",
+              "id": "PCI.DSS.321-DynamoDBInBackupPlan"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of AWS Backup",
+              "id": "NIST.800.53.R5-DynamoDBInBackupPlan"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "id": "NIST.800.53.R5-DynamoDBAutoScalingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "id": "HIPAA.Security-DynamoDBAutoScalingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "id": "PCI.DSS.321-DynamoDBAutoScalingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "dataopsprojectsampledynamodbnametablecomplexE2C951F7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/dataops-project-sample/dynamodb/name/table-complex",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dynamodb",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dynamodb-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructTabletablecomplex2357F144"
+        }
+      }
+    },
+    "dataopsprojectsampledynamodbnametablesimpleF3E8952A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/dataops-project-sample/dynamodb/name/table-simple",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dynamodb",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dynamodb-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructTabletablesimple54D1C7E6"
+        }
+      }
+    },
+    "dataopsprojectsampledynamodbnametablebinarykey1CC440B5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/dataops-project-sample/dynamodb/name/table-binary-key",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dynamodb",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dynamodb-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructTabletablebinarykeyB65A3143"
+        }
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

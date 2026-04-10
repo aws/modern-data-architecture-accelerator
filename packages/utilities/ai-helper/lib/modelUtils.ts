@@ -7,7 +7,7 @@
 // documentation: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-bedrock-agent.html
 // skipping sonar. it complained this ARN is too complex, but we want to keep it close to how it's documented in the above doc
 const BEDROCK_MODEL_ARN_PATTERN =
-  /^arn:aws(-[^:]+)?:bedrock:[a-z\d-]{1,20}:((\d{12}:custom-model\/[a-z\d-]{1,63}\.[a-z\d-]{1,63}(:[a-z\d-]{1,63}){0,2}\/[a-z\d]{12})|(:foundation-model\/[a-z\d-]{1,63}\.[a-z\d-]{1,63}\.?[a-z\d-]{1,63}(:[a-z\d-]{1,63}){0,2})|(\d{12}:(inference-profile|application-inference-profile)\/[a-zA-Z\d-:.]+))$/; // NOSONAR
+  /^arn:[a-zA-Z\d-]+:bedrock:[a-zA-Z\d-]+:(([a-zA-Z\d-]+:custom-model\/[a-z\d-]{1,63}\.[a-z\d-]{1,63}(:[a-z\d-]{1,63}){0,2}\/[a-z\d]{12})|(:foundation-model\/[a-z\d-]{1,63}\.[a-z\d-]{1,63}\.?[a-z\d-]{1,63}(:[a-z\d-]{1,63}){0,2})|([a-zA-Z\d-]+:(inference-profile|application-inference-profile)\/[a-zA-Z\d-:.]+))$/; // NOSONAR
 
 /**
  * Validates that a model ARN matches the expected CloudFormation pattern.

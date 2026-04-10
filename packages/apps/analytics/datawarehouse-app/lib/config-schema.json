@@ -3064,7 +3064,10 @@
         },
         "snapshotOwnerAccount": {
             "description": "ownerAccount Refers to snapshot owner account. Applicable if restoring the cluster from snapshot and snapshot belongs to another account\nOptional - By default, snapshots are searched within current account",
-            "type": "number"
+            "type": [
+                "string",
+                "number"
+            ]
         },
         "subnetIds": {
             "description": "Subnet IDs for Redshift cluster node placement. For automatic cluster relocation,\nspecify at least one subnet per AZ.\n\nUse cases: Multi-AZ placement; Subnet-specific deployment; Cluster relocation support\n\nAWS: VPC subnets for Redshift subnet group\n\nValidation: Required; array of valid subnet IDs in the specified VPC; must contain >= 3 subnets in different AZs when multiAz is true",

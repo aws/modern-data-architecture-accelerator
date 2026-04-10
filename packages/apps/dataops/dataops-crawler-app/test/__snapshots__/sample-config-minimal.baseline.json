@@ -1,0 +1,188 @@
+{
+  "Description": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestdatabaseNameexampledatabaseC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/databaseName/example-database"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/securityConfiguration/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/projectBucket/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/projectTopicArn/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestdeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/deploymentRole/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/kmsArn/default"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-glue-crawler-minimal/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-crawler",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-crawler-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "testcrawlercrawler": {
+      "Type": "AWS::Glue::Crawler",
+      "Properties": {
+        "CrawlerSecurityConfiguration": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "DatabaseName": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestdatabaseNameexampledatabaseC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Description": "Example for a Crawler",
+        "Name": "test-org-test-env-test-domain-test-glue-crawler-minimal-test-crawler",
+        "RecrawlPolicy": {},
+        "Role": "some-arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-crawler",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-crawler-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Targets": {
+          "S3Targets": [
+            {
+              "Path": "s3://some-s3-bucket/path/to/crawler/target"
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/crawler.ts] Log encryption configured via SecurityConfiguration",
+              "id": "AwsSolutions-GL1"
+            }
+          ]
+        }
+      }
+    },
+    "eventruletestcrawlermonitor6B9B4EED": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Workflow Crawler failure events",
+        "EventPattern": {
+          "source": [
+            "aws.glue"
+          ],
+          "detail": {
+            "crawlerName": [
+              "test-org-test-env-test-domain-test-glue-crawler-minimal-test-crawler"
+            ],
+            "state": [
+              "Failed"
+            ]
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-glue-crawler-minimal-54d8f04d",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-crawler"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-crawler-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+            },
+            "Id": "Target0"
+          }
+        ]
+      }
+    },
+    "dataopsprojecttestcrawlernametestcrawler597E88EC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/dataops-project-test/crawler/name/test-crawler",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-crawler",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-crawler-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-glue-crawler-minimal-test-crawler"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

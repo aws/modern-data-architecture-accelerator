@@ -56,7 +56,7 @@ export interface MdaaRedshiftClusterProps extends MdaaConstructProps {
   readonly automatedSnapshotRetentionDays?: number;
   /** Snapshot identifier for cluster restoration from existing snapshot enabling disaster recovery */
   readonly snapshotIdentifier?: string;
-  readonly ownerAccount?: number;
+  readonly ownerAccount?: string;
   readonly redshiftManageMasterPassword?: boolean;
   /** Enable multi-AZ deployment for high availability */
   readonly multiAz?: boolean;

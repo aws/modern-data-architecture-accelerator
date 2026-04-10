@@ -1,0 +1,771 @@
+{
+  "Description": "(SO0320-dataops-workflow) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-glue-workflow-noproject/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-workflow) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "workfloweventbasedwf": {
+      "Type": "AWS::Glue::Workflow",
+      "Properties": {
+        "DefaultRunProperties": {},
+        "Name": "test-org-test-env-test-domain-test-glue-workflow-noproject-event-based-wf",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        }
+      }
+    },
+    "triggereventbasedwfStartwf": {
+      "Type": "AWS::Glue::Trigger",
+      "Properties": {
+        "Actions": [
+          {
+            "CrawlerName": "project:crawler/name/test-crawler",
+            "NotificationProperty": {},
+            "SecurityConfiguration": "test-security-config"
+          }
+        ],
+        "Name": "test-org-test-env-test-domain-test-glue-workflow-noproject-event-based-wf-start_wf",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "EVENT",
+        "WorkflowName": "test-org-test-env-test-domain-test-glue-workflow-noproject-event-based-wf"
+      },
+      "DependsOn": [
+        "workfloweventbasedwf"
+      ]
+    },
+    "triggereventbasedwfifcrawlersuccessed": {
+      "Type": "AWS::Glue::Trigger",
+      "Properties": {
+        "Actions": [
+          {
+            "JobName": "project:job/name/JobOne",
+            "NotificationProperty": {},
+            "SecurityConfiguration": "test-security-config"
+          }
+        ],
+        "Name": "test-org-test-env-test-domain-test-glue-workflow-noproject-event-based-wf-if_crawler_successed",
+        "Predicate": {
+          "Conditions": [
+            {
+              "CrawlState": "SUCCEEDED",
+              "CrawlerName": "project:crawler/name/test-crawler",
+              "LogicalOperator": "EQUALS"
+            }
+          ],
+          "Logical": "ANY"
+        },
+        "StartOnCreation": true,
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "CONDITIONAL",
+        "WorkflowName": "test-org-test-env-test-domain-test-glue-workflow-noproject-event-based-wf"
+      },
+      "DependsOn": [
+        "triggereventbasedwfStartwf",
+        "workfloweventbasedwf"
+      ]
+    },
+    "triggereventbasedwfifcsvtoparquetjobsuccessed": {
+      "Type": "AWS::Glue::Trigger",
+      "Properties": {
+        "Actions": [
+          {
+            "JobName": "project:job/name/JobTwo",
+            "NotificationProperty": {},
+            "SecurityConfiguration": "test-security-config"
+          }
+        ],
+        "Name": "test-org-test-env-test-domain-test-glue-workflow-noproject-event-based-wf-if_csv_to_parquet_job_successed",
+        "Predicate": {
+          "Conditions": [
+            {
+              "JobName": "project:job/name/JobOne",
+              "LogicalOperator": "EQUALS",
+              "State": "SUCCEEDED"
+            }
+          ],
+          "Logical": "ANY"
+        },
+        "StartOnCreation": true,
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "CONDITIONAL",
+        "WorkflowName": "test-org-test-env-test-domain-test-glue-workflow-noproject-event-based-wf"
+      },
+      "DependsOn": [
+        "triggereventbasedwfifcrawlersuccessed",
+        "workfloweventbasedwf"
+      ]
+    },
+    "eventbridgeroleCE0AAA81": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-glue-workflow-nopro--7f886b03",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-workflow"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-workflow-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "eventbridgeroleroleeventbridgearnssm98FD15CB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-glue-workflow-noproject/role/event-bridge/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "eventbridgeroleCE0AAA81",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "eventbridgeroleroleeventbridgeidssmAF032293": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-glue-workflow-noproject/role/event-bridge/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "eventbridgeroleCE0AAA81",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "eventbridgeroleroleeventbridgenamessm6708E549": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-glue-workflow-noproject/role/event-bridge/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "eventbridgeroleCE0AAA81"
+        }
+      }
+    },
+    "eventbridgepolicy8A9A6D93": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-glue-workflow-noproject-event-bridge-policy",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "glue:notifyEvent",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:glue:test-region:test-account:workflow/test-org-test-env-test-domain-test-glue-workflow-noproject-event-based-wf"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "eventbridgeroleCE0AAA81"
+          }
+        ]
+      }
+    },
+    "dlqeventbasedwfevents86954E84": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
+        "QueueName": "test-org-test-env-test-domain-test-glue-workflow-noproject-event-based--7a5fa99b",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-workflow"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-workflow-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqeventbasedwfeventsPolicyB1468EE8": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "eventbridgeroleCE0AAA81",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "dlqeventbasedwfevents86954E84"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqeventbasedwfeventsqueueeventbasedwfeventsdlqnamessm02413A0D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-glue-workflow-noproject/queue/event-based-wf-events-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqeventbasedwfevents86954E84",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqeventbasedwfeventsqueueeventbasedwfeventsdlqarnssm362A4CEB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-glue-workflow-noproject/queue/event-based-wf-events-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqeventbasedwfevents86954E84",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqeventbasedwfeventsqueueeventbasedwfeventsdlqurlssm18C94DC2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-glue-workflow-noproject/queue/event-based-wf-events-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dlqeventbasedwfevents86954E84"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "eventruletestingeventbridge09AA772D": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "testing",
+        "EventBusName": "some-custom-name",
+        "EventPattern": {
+          "source": [
+            "glue.amazonaws.com"
+          ],
+          "detail": {
+            "some_event_key": "some_event_value"
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-glue-workflow-nopro--4dce0f66",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-workflow"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-workflow-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": "arn:test-partition:glue:test-region:test-account:workflow/test-org-test-env-test-domain-test-glue-workflow-noproject-event-based-wf",
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "dlqeventbasedwfevents86954E84",
+                  "Arn"
+                ]
+              }
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "eventbridgeroleCE0AAA81",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "eventruletestingeventbridgeschedule5225694F": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "testing",
+        "Name": "test-org-test-env-test-domain-test-glue-workflow-nopro--1667cd96",
+        "ScheduleExpression": "cron(0 20 * * ? *)",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-workflow"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-workflow-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": "arn:test-partition:glue:test-region:test-account:workflow/test-org-test-env-test-domain-test-glue-workflow-noproject-event-based-wf",
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "dlqeventbasedwfevents86954E84",
+                  "Arn"
+                ]
+              }
+            },
+            "Id": "Target0",
+            "Input": "{\"some-test-input-obj\":{\"some-test-input-key\":\"test-value\"}}",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "eventbridgeroleCE0AAA81",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "eventruletestingeventbridges3A2425715": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Event Rule for triggering event-based-wf-testing-event-bridge-s3 with S3 events",
+        "EventBusName": "some-custom-name",
+        "EventPattern": {
+          "source": [
+            "aws.s3"
+          ],
+          "detail": {
+            "bucket": {
+              "name": [
+                "sample-org-dev-instance1-datalake-raw"
+              ]
+            },
+            "object": {
+              "key": [
+                {
+                  "prefix": "data/test-lambda/"
+                }
+              ]
+            }
+          },
+          "detail-type": [
+            "Object Created"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-glue-workflow-nopro--3e7137cd",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-workflow"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-workflow-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": "arn:test-partition:glue:test-region:test-account:workflow/test-org-test-env-test-domain-test-glue-workflow-noproject-event-based-wf",
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "dlqeventbasedwfevents86954E84",
+                  "Arn"
+                ]
+              }
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "eventbridgeroleCE0AAA81",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "workflowschedulebasedwf": {
+      "Type": "AWS::Glue::Workflow",
+      "Properties": {
+        "DefaultRunProperties": {},
+        "Name": "test-org-test-env-test-domain-test-glue-workflow-noproject-schedule-based-wf",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        }
+      }
+    },
+    "triggerschedulebasedwfStartwfwithschedule": {
+      "Type": "AWS::Glue::Trigger",
+      "Properties": {
+        "Actions": [
+          {
+            "CrawlerName": "project:crawler/name/test-crawler",
+            "NotificationProperty": {},
+            "SecurityConfiguration": "test-security-config"
+          }
+        ],
+        "Name": "test-org-test-env-test-domain-test-glue-workflow-noproject-schedule-based-wf-start_wf-with-schedule",
+        "Schedule": "cron(5 12 * * ? *)",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-workflow",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-workflow-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "SCHEDULED",
+        "WorkflowName": "test-org-test-env-test-domain-test-glue-workflow-noproject-schedule-based-wf"
+      },
+      "DependsOn": [
+        "workflowschedulebasedwf"
+      ]
+    }
+  },
+  "Outputs": {
+    "eventbridgeroleroleeventbridgearnout652A10B7": {
+      "Value": {
+        "Fn::GetAtt": [
+          "eventbridgeroleCE0AAA81",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-glue-workflow-noproject:role:eventbridge:arn"
+      }
+    },
+    "eventbridgeroleroleeventbridgeidoutFFEB7940": {
+      "Value": {
+        "Fn::GetAtt": [
+          "eventbridgeroleCE0AAA81",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-glue-workflow-noproject:role:eventbridge:id"
+      }
+    },
+    "eventbridgeroleroleeventbridgenameoutA562E795": {
+      "Value": {
+        "Ref": "eventbridgeroleCE0AAA81"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-glue-workflow-noproject:role:eventbridge:name"
+      }
+    },
+    "dlqeventbasedwfeventsqueueeventbasedwfeventsdlqnameoutEB8C325E": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqeventbasedwfevents86954E84",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-glue-workflow-noproject:queue:eventbasedwfeventsdlq:name"
+      }
+    },
+    "dlqeventbasedwfeventsqueueeventbasedwfeventsdlqarnoutA70E0E12": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqeventbasedwfevents86954E84",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-glue-workflow-noproject:queue:eventbasedwfeventsdlq:arn"
+      }
+    },
+    "dlqeventbasedwfeventsqueueeventbasedwfeventsdlqurlout59A50333": {
+      "Value": {
+        "Ref": "dlqeventbasedwfevents86954E84"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-glue-workflow-noproject:queue:eventbasedwfeventsdlq:url"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

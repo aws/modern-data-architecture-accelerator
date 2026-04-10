@@ -1,0 +1,2963 @@
+{
+  "Description": "(SO0320-sagemaker-project) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/id"
+    },
+    "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainarnParameter5B46A0EA": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/arn"
+    },
+    "sagemakerprojectdomainconfigparserdomainconfigparserssmcustomresourceroleParameter5AA01E60": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/custom_resource_role"
+    },
+    "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainkmsarnParameter5530CEE7": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/kms_arn"
+    },
+    "sagemakerprojectdomainconfigparserdomainconfigparserssmgluecatalogkmsarns141A5C38": {
+      "Type": "AWS::SSM::Parameter::Value<List<String>>",
+      "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/glue_catalog_kms_key_arns"
+    },
+    "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2FABE028": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/kms_usage_policy_name"
+    },
+    "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainbucketusagepolicynameParameter04545303": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/bucket_usage_policy_name"
+    },
+    "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainbucketarnParameterF30E0730": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/bucket_arn"
+    },
+    "sagemakerprojectdomainconfigparserssmgluecatalogresourcearns2174ECBD": {
+      "Type": "AWS::SSM::Parameter::Value<List<String>>",
+      "Default": "/test-org/test-domain/test-module/domain/test-sus-domain/config/glue_catalog_resource_arns"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-sagemaker-project) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "sagemakerprojectdomainconfigparserdomainConfigcrE93F92A5": {
+      "Type": "Custom::DomainConfig",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDomainConfigproviderframeworkonEvent5699DE11",
+            "Arn"
+          ]
+        },
+        "domain_id": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "refresh": 1775061362993
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojecttestprofilefull55318B36": {
+      "Type": "AWS::DataZone::ProjectProfile",
+      "Properties": {
+        "DomainIdentifier": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "DomainUnitIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectdomainconfigparserdomainConfigcrE93F92A5",
+            "domain_unit_id/root/team-a"
+          ]
+        },
+        "EnvironmentConfigurations": [
+          {
+            "AwsAccount": {
+              "AwsAccountId": "test-account"
+            },
+            "AwsRegion": {
+              "RegionName": "test-region"
+            },
+            "ConfigurationParameters": {
+              "ParameterOverrides": [
+                {
+                  "IsEditable": false,
+                  "Name": "logGroupRetention",
+                  "Value": ""
+                },
+                {
+                  "IsEditable": false,
+                  "Name": "sagemakerDomainNetworkType",
+                  "Value": "VpcOnly"
+                },
+                {
+                  "IsEditable": false,
+                  "Name": "enableNetworkIsolation",
+                  "Value": "true"
+                }
+              ]
+            },
+            "DeploymentMode": "ON_CREATE",
+            "DeploymentOrder": 1,
+            "EnvironmentBlueprintId": {
+              "Fn::GetAtt": [
+                "sagemakerprojectdomainconfigparserdomainConfigcrE93F92A5",
+                "blueprint_id/Tooling"
+              ]
+            },
+            "Name": "Tooling"
+          },
+          {
+            "AwsAccount": {
+              "AwsAccountId": "test-account"
+            },
+            "AwsRegion": {
+              "RegionName": "test-region"
+            },
+            "ConfigurationParameters": {
+              "ParameterOverrides": []
+            },
+            "DeploymentMode": "ON_CREATE",
+            "DeploymentOrder": 2,
+            "EnvironmentBlueprintId": {
+              "Fn::GetAtt": [
+                "sagemakerprojectdomainconfigparserdomainConfigcrE93F92A5",
+                "blueprint_id/DataLake"
+              ]
+            },
+            "Name": "DataLake"
+          },
+          {
+            "AwsAccount": {
+              "AwsAccountId": "test-account"
+            },
+            "AwsRegion": {
+              "RegionName": "test-region"
+            },
+            "ConfigurationParameters": {
+              "ParameterOverrides": [
+                {
+                  "IsEditable": true,
+                  "Name": "param-one",
+                  "Value": "override-value-one"
+                },
+                {
+                  "IsEditable": false,
+                  "Name": "param-two",
+                  "Value": "locked-value"
+                }
+              ]
+            },
+            "DeploymentMode": "ON_CREATE",
+            "DeploymentOrder": 1,
+            "EnvironmentBlueprintId": {
+              "Fn::GetAtt": [
+                "sagemakerprojectdomainconfigparserdomainConfigcrE93F92A5",
+                "blueprint_id/test-env-blueprint"
+              ]
+            },
+            "Name": "test-env-blueprint"
+          },
+          {
+            "AwsAccount": {
+              "AwsAccountId": "test-account"
+            },
+            "AwsRegion": {
+              "RegionName": "test-region"
+            },
+            "ConfigurationParameters": {
+              "ParameterOverrides": [
+                {
+                  "IsEditable": true,
+                  "Name": "profile-param",
+                  "Value": "profile-value"
+                }
+              ]
+            },
+            "DeploymentMode": "ON_CREATE",
+            "DeploymentOrder": 3,
+            "EnvironmentBlueprintId": {
+              "Fn::GetAtt": [
+                "sagemakerprojectdomainconfigparserdomainConfigcrE93F92A5",
+                "blueprint_id/profile-specific-env"
+              ]
+            },
+            "Name": "profile-specific-env"
+          }
+        ],
+        "Name": "test-profile-full",
+        "Status": "ENABLED"
+      }
+    },
+    "sagemakerprojecttestprofileminimalBC0BE0BB": {
+      "Type": "AWS::DataZone::ProjectProfile",
+      "Properties": {
+        "DomainIdentifier": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "EnvironmentConfigurations": [
+          {
+            "AwsAccount": {
+              "AwsAccountId": "test-account"
+            },
+            "AwsRegion": {
+              "RegionName": "test-region"
+            },
+            "ConfigurationParameters": {
+              "ParameterOverrides": [
+                {
+                  "IsEditable": false,
+                  "Name": "logGroupRetention",
+                  "Value": ""
+                },
+                {
+                  "IsEditable": false,
+                  "Name": "sagemakerDomainNetworkType",
+                  "Value": "VpcOnly"
+                },
+                {
+                  "IsEditable": false,
+                  "Name": "enableNetworkIsolation",
+                  "Value": "true"
+                }
+              ]
+            },
+            "DeploymentMode": "ON_CREATE",
+            "DeploymentOrder": 1,
+            "EnvironmentBlueprintId": {
+              "Fn::GetAtt": [
+                "sagemakerprojectdomainconfigparserdomainConfigcrE93F92A5",
+                "blueprint_id/Tooling"
+              ]
+            },
+            "Name": "Tooling"
+          },
+          {
+            "AwsAccount": {
+              "AwsAccountId": "test-account"
+            },
+            "AwsRegion": {
+              "RegionName": "test-region"
+            },
+            "ConfigurationParameters": {
+              "ParameterOverrides": []
+            },
+            "DeploymentMode": "ON_CREATE",
+            "DeploymentOrder": 2,
+            "EnvironmentBlueprintId": {
+              "Fn::GetAtt": [
+                "sagemakerprojectdomainconfigparserdomainConfigcrE93F92A5",
+                "blueprint_id/DataLake"
+              ]
+            },
+            "Name": "DataLake"
+          },
+          {
+            "AwsAccount": {
+              "AwsAccountId": "test-account"
+            },
+            "AwsRegion": {
+              "RegionName": "test-region"
+            },
+            "ConfigurationParameters": {
+              "ParameterOverrides": []
+            },
+            "DeploymentMode": "ON_DEMAND",
+            "EnvironmentBlueprintId": {
+              "Fn::GetAtt": [
+                "sagemakerprojectdomainconfigparserdomainConfigcrE93F92A5",
+                "blueprint_id/minimal-env"
+              ]
+            },
+            "Name": "minimal-env"
+          }
+        ],
+        "Name": "test-profile-minimal",
+        "Status": "ENABLED"
+      }
+    },
+    "sagemakerprojectprojectprofilesconfigssmprojectprofiletestprofilefullid425A4FA3": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-module/domain/test-sus-domain/config/project_profile/test-profile-full/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "sagemakerprojecttestprofilefull55318B36",
+            "Id"
+          ]
+        }
+      }
+    },
+    "sagemakerprojectprojectprofilesconfigssmprojectprofiletestprofileminimalid9B9639E8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-module/domain/test-sus-domain/config/project_profile/test-profile-minimal/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "sagemakerprojecttestprofileminimalBC0BE0BB",
+            "Id"
+          ]
+        }
+      }
+    },
+    "sagemakerprojectprojecttestprojectfullprojectC620150B": {
+      "Type": "AWS::DataZone::Project",
+      "Properties": {
+        "DomainIdentifier": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "DomainUnitId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectdomainconfigparserdomainConfigcrE93F92A5",
+            "domain_unit_id/root/some/domain/unit"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-sagemaker-project-ma-7845c0c9",
+        "ProjectProfileId": {
+          "Fn::GetAtt": [
+            "sagemakerprojecttestprofilefull55318B36",
+            "Id"
+          ]
+        },
+        "UserParameters": [
+          {
+            "EnvironmentConfigurationName": "test-env-blueprint",
+            "EnvironmentParameters": [
+              {
+                "Name": "env-param-key",
+                "Value": "env-param-value"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "sagemakerprojectprojecttestprojectfullowneruserowner15F6D3BEF": {
+      "Type": "AWS::DataZone::ProjectMembership",
+      "Properties": {
+        "Designation": "PROJECT_OWNER",
+        "DomainIdentifier": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "Member": {
+          "UserIdentifier": "test-owner-user"
+        },
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        }
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfulluserprofilemanagerowner15DC0D751"
+      ]
+    },
+    "sagemakerprojectprojecttestprojectfulluserprofilemanagerowner15DC0D751": {
+      "Type": "Custom::UserProfileManager",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customUserProfileManagerproviderframeworkonEvent7063FDCB",
+            "Arn"
+          ]
+        },
+        "domain_id": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "user_identifier": "test-owner-user"
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojectprojecttestprojectfullownergroupownergrp1A908C4CE": {
+      "Type": "AWS::DataZone::ProjectMembership",
+      "Properties": {
+        "Designation": "PROJECT_OWNER",
+        "DomainIdentifier": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "Member": {
+          "GroupIdentifier": "test-owner-group"
+        },
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        }
+      }
+    },
+    "sagemakerprojectprojecttestprojectfulluseruser1B4832DBF": {
+      "Type": "AWS::DataZone::ProjectMembership",
+      "Properties": {
+        "Designation": "PROJECT_CONTRIBUTOR",
+        "DomainIdentifier": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "Member": {
+          "UserIdentifier": "test-contributor-user"
+        },
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        }
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfulluserprofilemanageruser150FC5289"
+      ]
+    },
+    "sagemakerprojectprojecttestprojectfulluserprofilemanageruser150FC5289": {
+      "Type": "Custom::UserProfileManager",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customUserProfileManagerproviderframeworkonEvent7063FDCB",
+            "Arn"
+          ]
+        },
+        "domain_id": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "user_identifier": "test-contributor-user"
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojectprojecttestprojectfullgroupgrp150657EF1": {
+      "Type": "AWS::DataZone::ProjectMembership",
+      "Properties": {
+        "Designation": "PROJECT_CONTRIBUTOR",
+        "DomainIdentifier": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "Member": {
+          "GroupIdentifier": "test-contributor-group"
+        },
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        }
+      }
+    },
+    "sagemakerprojectprojecttestprojectfullprojecttestprojectfulltestprojectfullssmF7CEAA82": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/project/test-project-full/test-project-full",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-sagemaker-project-ma-7845c0c9"
+      }
+    },
+    "sagemakerprojectprojecttestprojectfullenvdeploymentmonitor46B25A8C": {
+      "Type": "Custom::EnvDeploymentMonitor",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customEnvDeploymentMonitorproviderframeworkonEvent32E39E2B",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "projectId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        },
+        "envName": "Tooling",
+        "connectionName": "LAKEHOUSE",
+        "kmsPolicyArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:iam::test-account:policy/",
+              {
+                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2FABE028"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojectprojecttestprojectfulluserprofilemanagermonitorhandlerroleE38FC5DD": {
+      "Type": "Custom::UserProfileManager",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customUserProfileManagerproviderframeworkonEvent7063FDCB",
+            "Arn"
+          ]
+        },
+        "domain_id": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "user_identifier": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:iam::test-account:role/",
+              {
+                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmcustomresourceroleParameter5AA01E60"
+              }
+            ]
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137": {
+      "Type": "AWS::DataZone::ProjectMembership",
+      "Properties": {
+        "Designation": "PROJECT_OWNER",
+        "DomainIdentifier": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "Member": {
+          "UserIdentifier": {
+            "Fn::GetAtt": [
+              "sagemakerprojectprojecttestprojectfulluserprofilemanagermonitorhandlerroleE38FC5DD",
+              "id"
+            ]
+          }
+        },
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        }
+      }
+    },
+    "sagemakerprojectprojecttestprojectfulltestsourcedatazonedatasource4A4BDFB2": {
+      "Type": "AWS::DataZone::DataSource",
+      "Properties": {
+        "Configuration": {
+          "GlueRunConfiguration": {
+            "AutoImportDataQualityResult": true,
+            "RelationalFilterConfigurations": [
+              {
+                "DatabaseName": "test-database-name"
+              }
+            ]
+          }
+        },
+        "ConnectionIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullenvdeploymentmonitor46B25A8C",
+            "connectionId"
+          ]
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "DomainId"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-sagemaker-project-main-test-source",
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        },
+        "Type": "glue"
+      }
+    },
+    "sagemakerprojectprojecttestprojectfulltestsourcedatazonedatasourcelfpermissionsgrantDATABASEdatasourceusraccessdatazoneuser15FD6F28": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [
+          "DESCRIBE"
+        ],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "sagemakerprojectprojecttestprojectfullenvdeploymentmonitor46B25A8C",
+              "userRoleArn"
+            ]
+          }
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "test-database-name"
+          }
+        }
+      }
+    },
+    "sagemakerprojectprojecttestprojectfulltestsourcedatazonedatasourcelfpermissionsgrantALLTABLESdatasourceusraccessdatazoneuser550C2D39": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "sagemakerprojectprojecttestprojectfullenvdeploymentmonitor46B25A8C",
+              "userRoleArn"
+            ]
+          }
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "test-database-name",
+            "TableWildcard": {}
+          }
+        }
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfulltestsourcedatazonedatasourcelfpermissionsgrantDATABASEdatasourceusraccessdatazoneuser15FD6F28"
+      ]
+    },
+    "sagemakerprojectprojecttestprojectfullsecondsourcedatazonedatasourceA1D68152": {
+      "Type": "AWS::DataZone::DataSource",
+      "Properties": {
+        "Configuration": {
+          "GlueRunConfiguration": {
+            "AutoImportDataQualityResult": true,
+            "RelationalFilterConfigurations": [
+              {
+                "DatabaseName": "another-database"
+              }
+            ]
+          }
+        },
+        "ConnectionIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullenvdeploymentmonitor46B25A8C",
+            "connectionId"
+          ]
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "DomainId"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-sagemaker-project-main-second-source",
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        },
+        "Type": "glue"
+      }
+    },
+    "sagemakerprojectprojecttestprojectfullsecondsourcedatazonedatasourcelfpermissionsgrantDATABASEdatasourceusraccessdatazoneuser6BB5A056": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [
+          "DESCRIBE"
+        ],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "sagemakerprojectprojecttestprojectfullenvdeploymentmonitor46B25A8C",
+              "userRoleArn"
+            ]
+          }
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "another-database"
+          }
+        }
+      }
+    },
+    "sagemakerprojectprojecttestprojectfullsecondsourcedatazonedatasourcelfpermissionsgrantALLTABLESdatasourceusraccessdatazoneuserB9E8EA20": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "sagemakerprojectprojecttestprojectfullenvdeploymentmonitor46B25A8C",
+              "userRoleArn"
+            ]
+          }
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "another-database",
+            "TableWildcard": {}
+          }
+        }
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfullsecondsourcedatazonedatasourcelfpermissionsgrantDATABASEdatasourceusraccessdatazoneuser6BB5A056"
+      ]
+    },
+    "sagemakerprojectprojecttestprojectminimalproject110A53D8": {
+      "Type": "AWS::DataZone::Project",
+      "Properties": {
+        "DomainIdentifier": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "Name": "test-org-test-env-test-domain-test-sagemaker-project-m--64d472d9",
+        "ProjectProfileId": {
+          "Fn::GetAtt": [
+            "sagemakerprojecttestprofileminimalBC0BE0BB",
+            "Id"
+          ]
+        }
+      }
+    },
+    "sagemakerprojectprojecttestprojectminimalprojecttestprojectminimaltestprojectminimalssm305121B6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/project/test-project-minimal/test-project-minimal",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-sagemaker-project-m--64d472d9"
+      }
+    },
+    "sagemakerprojectprojecttestprojectminimalenvdeploymentmonitor9C3BE7BD": {
+      "Type": "Custom::EnvDeploymentMonitor",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customEnvDeploymentMonitorproviderframeworkonEvent32E39E2B",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "projectId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectminimalproject110A53D8",
+            "Id"
+          ]
+        },
+        "envName": "Tooling",
+        "connectionName": "LAKEHOUSE",
+        "kmsPolicyArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:iam::test-account:policy/",
+              {
+                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2FABE028"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectminimalmonitorcrprojectmembership60FCFB34"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojectprojecttestprojectminimaluserprofilemanagermonitorhandlerroleC24A0F75": {
+      "Type": "Custom::UserProfileManager",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customUserProfileManagerproviderframeworkonEvent7063FDCB",
+            "Arn"
+          ]
+        },
+        "domain_id": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "user_identifier": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:iam::test-account:role/",
+              {
+                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmcustomresourceroleParameter5AA01E60"
+              }
+            ]
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojectprojecttestprojectminimalmonitorcrprojectmembership60FCFB34": {
+      "Type": "AWS::DataZone::ProjectMembership",
+      "Properties": {
+        "Designation": "PROJECT_OWNER",
+        "DomainIdentifier": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "Member": {
+          "UserIdentifier": {
+            "Fn::GetAtt": [
+              "sagemakerprojectprojecttestprojectminimaluserprofilemanagermonitorhandlerroleC24A0F75",
+              "id"
+            ]
+          }
+        },
+        "ProjectIdentifier": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectminimalproject110A53D8",
+            "Id"
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerrole74F440EA": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-project-ma-4feba2f8",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-project-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerroleDefaultPolicyAAC574D5": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-project-ma-4feba2f8*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-project-ma-4feba2f8*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customDomainConfighandlerroleDefaultPolicyAAC574D5",
+        "Roles": [
+          {
+            "Ref": "customDomainConfighandlerrole74F440EA"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerpolicy737179DC": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "datazone:GetDomain",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainarnParameter5B46A0EA"
+              }
+            },
+            {
+              "Action": [
+                "datazone:ListDomainUnitsForParent",
+                "datazone:ListProjectProfiles",
+                "datazone:ListProjects",
+                "datazone:ListEnvironmentBlueprints"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "kms:Decrypt",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainkmsarnParameter5530CEE7"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "DomainConfig-handler",
+        "Roles": [
+          {
+            "Ref": "customDomainConfighandlerrole74F440EA"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] DataZone List operations (ListDomainUnitsForParent, ListProjectProfiles, ListProjects, ListEnvironmentBlueprints) do not support resource-level permissions.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunction0598741F": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-ma-4feba2f8",
+        "Handler": "domain_config.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "customDomainConfighandlerrole74F440EA",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-project-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC",
+        "customDomainConfighandlerroleDefaultPolicyAAC574D5",
+        "customDomainConfighandlerrole74F440EA"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlernamessmEF46C3A7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/lambda/domainconfig-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customDomainConfighandlerfunction0598741F"
+        }
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerarnssm57D2852A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/lambda/domainconfig-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customDomainConfighandlerfunction0598741F",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerloggroupssmBE855158": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/lambda/domainconfig-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customDomainConfighandlerfunction0598741F"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfigproviderroleA82661DC": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-project-ma-728d3003",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-project-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfigproviderroleDefaultPolicy1BCABDD9": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-project-ma-728d3003*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-project-ma-728d3003*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customDomainConfighandlerfunction0598741F",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customDomainConfighandlerfunction0598741F",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customDomainConfighandlerfunction0598741F",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customDomainConfigproviderroleDefaultPolicy1BCABDD9",
+        "Roles": [
+          {
+            "Ref": "customDomainConfigproviderroleA82661DC"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfigproviderframeworkonEvent5699DE11": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-sagemaker-project-main/custom-DomainConfig-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customDomainConfighandlerfunction0598741F",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-ma-728d3003",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customDomainConfigproviderroleA82661DC",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs18.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-project-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customDomainConfigproviderroleDefaultPolicy1BCABDD9",
+        "customDomainConfigproviderroleA82661DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "profilesconfigramshare": {
+      "Type": "AWS::RAM::ResourceShare",
+      "Properties": {
+        "Name": "test-org-test-env-test-domain-test-sagemaker-project-main-project-profiles-config-ssm",
+        "Principals": [
+          "test-account"
+        ],
+        "ResourceArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:test-partition:ssm:test-region:test-account:parameter",
+                {
+                  "Ref": "sagemakerprojectprojectprofilesconfigssmprojectprofiletestprofilefullid425A4FA3"
+                }
+              ]
+            ]
+          },
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:test-partition:ssm:test-region:test-account:parameter",
+                {
+                  "Ref": "sagemakerprojectprojectprofilesconfigssmprojectprofiletestprofileminimalid9B9639E8"
+                }
+              ]
+            ]
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-project-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "customUserProfileManagerhandlerfunction18673242": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-ma-798abba1",
+        "Handler": "check_user_profiles.lambda_handler",
+        "Role": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:iam::test-account:role/",
+              {
+                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmcustomresourceroleParameter5AA01E60"
+              }
+            ]
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-project-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 300
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlernamessm09177F64": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/lambda/userprofilemanager-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customUserProfileManagerhandlerfunction18673242"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlerarnssmE04AF3D6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/lambda/userprofilemanager-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customUserProfileManagerhandlerfunction18673242",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlerloggroupssmE4EE2B1A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/lambda/userprofilemanager-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customUserProfileManagerhandlerfunction18673242"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerproviderroleE99A9401": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-project-ma-7cd12c7a",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-project-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerproviderroleDefaultPolicyFEB838D8": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-project-ma-7cd12c7a*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-project-ma-7cd12c7a*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customUserProfileManagerhandlerfunction18673242",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customUserProfileManagerhandlerfunction18673242",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customUserProfileManagerhandlerfunction18673242",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customUserProfileManagerproviderroleDefaultPolicyFEB838D8",
+        "Roles": [
+          {
+            "Ref": "customUserProfileManagerproviderroleE99A9401"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customUserProfileManagerproviderframeworkonEvent7063FDCB": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-sagemaker-project-main/custom-UserProfileManager-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customUserProfileManagerhandlerfunction18673242",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-ma-7cd12c7a",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customUserProfileManagerproviderroleE99A9401",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs18.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-project-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customUserProfileManagerproviderroleDefaultPolicyFEB838D8",
+        "customUserProfileManagerproviderroleE99A9401"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customEnvDeploymentMonitorhandlerfunctionB2339369": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-ma--18fff66",
+        "Handler": "monitor_env_deployment.lambda_handler",
+        "Role": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:iam::test-account:role/",
+              {
+                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmcustomresourceroleParameter5AA01E60"
+              }
+            ]
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-project-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customEnvDeploymentMonitorhandlerfunctionlambdaEnvDeploymentMonitorhandlernamessm92D68D59": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/lambda/envdeploymentmonitor-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customEnvDeploymentMonitorhandlerfunctionB2339369"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customEnvDeploymentMonitorhandlerfunctionlambdaEnvDeploymentMonitorhandlerarnssm3A4517B2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/lambda/envdeploymentmonitor-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customEnvDeploymentMonitorhandlerfunctionB2339369",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customEnvDeploymentMonitorhandlerfunctionlambdaEnvDeploymentMonitorhandlerloggroupssmEE6BAA84": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-project-main/lambda/envdeploymentmonitor-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-project-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customEnvDeploymentMonitorhandlerfunctionB2339369"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customEnvDeploymentMonitorproviderrole588A27BA": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-project-m--6b6b795f",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-project-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customEnvDeploymentMonitorproviderroleDefaultPolicy577B5A4A": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-project-m--6b6b795f*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-project-m--6b6b795f*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customEnvDeploymentMonitorhandlerfunctionB2339369",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customEnvDeploymentMonitorhandlerfunctionB2339369",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customEnvDeploymentMonitorhandlerfunctionB2339369",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customEnvDeploymentMonitorproviderroleDefaultPolicy577B5A4A",
+        "Roles": [
+          {
+            "Ref": "customEnvDeploymentMonitorproviderrole588A27BA"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customEnvDeploymentMonitorproviderframeworkonEvent32E39E2B": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-sagemaker-project-main/custom-EnvDeploymentMonitor-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customEnvDeploymentMonitorhandlerfunctionB2339369",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-project-m--6b6b795f",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customEnvDeploymentMonitorproviderrole588A27BA",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs18.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-project-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customEnvDeploymentMonitorproviderroleDefaultPolicy577B5A4A",
+        "customEnvDeploymentMonitorproviderrole588A27BA"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "sagemakerprojectprojecttestprojectfullprojecttestprojectfulltestprojectfulloutEB533425": {
+      "Value": "test-org-test-env-test-domain-test-sagemaker-project-ma-7845c0c9",
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-project-main:project:testprojectfull:test-project-full"
+      }
+    },
+    "sagemakerprojectprojecttestprojectminimalprojecttestprojectminimaltestprojectminimalout3333C8CA": {
+      "Value": "test-org-test-env-test-domain-test-sagemaker-project-m--64d472d9",
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-project-main:project:testprojectminimal:test-project-minimal"
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlernameout4B81B055": {
+      "Value": {
+        "Ref": "customDomainConfighandlerfunction0598741F"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-project-main:lambda:domainconfighandler:name"
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerarnout36F1978E": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customDomainConfighandlerfunction0598741F",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-project-main:lambda:domainconfighandler:arn"
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerloggroupoutC16C694A": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customDomainConfighandlerfunction0598741F"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-project-main:lambda:domainconfighandler:log-group"
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlernameout22E34206": {
+      "Value": {
+        "Ref": "customUserProfileManagerhandlerfunction18673242"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-project-main:lambda:userprofilemanagerhandler:name"
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlerarnout43DD7474": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customUserProfileManagerhandlerfunction18673242",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-project-main:lambda:userprofilemanagerhandler:arn"
+      }
+    },
+    "customUserProfileManagerhandlerfunctionlambdaUserProfileManagerhandlerloggroupout03343431": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customUserProfileManagerhandlerfunction18673242"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-project-main:lambda:userprofilemanagerhandler:log-group"
+      }
+    },
+    "customEnvDeploymentMonitorhandlerfunctionlambdaEnvDeploymentMonitorhandlernameoutBDE6AE3E": {
+      "Value": {
+        "Ref": "customEnvDeploymentMonitorhandlerfunctionB2339369"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-project-main:lambda:envdeploymentmonitorhandler:name"
+      }
+    },
+    "customEnvDeploymentMonitorhandlerfunctionlambdaEnvDeploymentMonitorhandlerarnout60828535": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customEnvDeploymentMonitorhandlerfunctionB2339369",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-project-main:lambda:envdeploymentmonitorhandler:arn"
+      }
+    },
+    "customEnvDeploymentMonitorhandlerfunctionlambdaEnvDeploymentMonitorhandlerloggroupout864B7157": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customEnvDeploymentMonitorhandlerfunctionB2339369"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-project-main:lambda:envdeploymentmonitorhandler:log-group"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

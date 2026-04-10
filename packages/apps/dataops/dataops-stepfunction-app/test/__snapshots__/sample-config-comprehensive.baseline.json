@@ -1,0 +1,838 @@
+{
+  "Description": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValueorgdomainglueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/org/domain/glue-project/crawler/name/raw-source-files-crawler"
+    },
+    "SsmParameterValueorgdomain1glueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/org/domain1/glue-project/crawler/name/raw-source-files-crawler"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-stepfunction-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructsamplestatemachinestandardloggroupB8D0730E": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
+        "LogGroupName": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-main-sample-state-machine-standard",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-comprehensive.yaml] Cloudwatch Log Group retention period is managed by AWS Secure Environment Accelerator",
+              "id": "NIST.800.53.R5"
+            }
+          ]
+        }
+      }
+    },
+    "constructsamplestatemachinestandardloggrouploggroupsamplestatemachinestandardnamessmE76E25A2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-stepfunction-main/loggroup/sample-state-machine-standard/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-main-sample-state-machine-standard"
+      }
+    },
+    "stepfunctionsamplestatemachinestandardB20AD0C7": {
+      "Type": "AWS::StepFunctions::StateMachine",
+      "Properties": {
+        "DefinitionString": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"Comment\":\"A description of my state machine\",\"StartAt\":\"StartCrawler-Domain1\",\"States\":{\"StartCrawler-Domain1\":{\"Type\":\"Task\",\"Next\":\"WaitForDomain1Crawler\",\"Parameters\":{\"Name\":\"",
+              {
+                "Ref": "SsmParameterValueorgdomainglueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter"
+              },
+              "\"},\"Resource\":\"arn:test-partition:states:::aws-sdk:glue:startCrawler\"},\"WaitForDomain1Crawler\":{\"Type\":\"Wait\",\"Seconds\":5,\"Next\":\"GetCrawlerStatus-Domain1\"},\"GetCrawlerStatus-Domain1\":{\"Type\":\"Task\",\"Next\":\"CheckStatus-Domain1Crawler\",\"Parameters\":{\"Name\":\"",
+              {
+                "Ref": "SsmParameterValueorgdomain1glueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter"
+              },
+              "\"},\"Resource\":\"arn:test-partition:states:::aws-sdk:glue:getCrawler\"},\"CheckStatus-Domain1Crawler\":{\"Type\":\"Choice\",\"Choices\":[{\"Or\":[{\"Variable\":\"$.Crawler.State\",\"StringEquals\":\"RUNNING\"},{\"Variable\":\"$.Crawler.State\",\"StringEquals\":\"STOPPING\"}],\"Next\":\"WaitForDomain1Crawler\"},{\"Or\":[{\"Variable\":\"$.Crawler.State\",\"StringEquals\":\"FAILED\"},{\"Variable\":\"$.Crawler.State\",\"StringEquals\":\"STOPPED\"}],\"Next\":\"Fail-Domain1Crawler\"}],\"Default\":\"Success\"},\"Success\":{\"Type\":\"Pass\",\"End\":true},\"Fail-Domain1Crawler\":{\"Type\":\"Fail\",\"Cause\":\"GlueCrawlerError - Glue Crawler Failed\"}}}"
+            ]
+          ]
+        },
+        "LoggingConfiguration": {
+          "Destinations": [
+            {
+              "CloudWatchLogsLogGroup": {
+                "LogGroupArn": {
+                  "Fn::GetAtt": [
+                    "constructsamplestatemachinestandardloggroupB8D0730E",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "IncludeExecutionData": false,
+          "Level": "ALL"
+        },
+        "RoleArn": "arn:test-partition:iam::test-account:role/service-role/StepFunctions-standard-role",
+        "StateMachineName": "test-org-test-env-test-domain-test-stepfunction-main-sample-state-mach--2889237f",
+        "StateMachineType": "STANDARD",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TracingConfiguration": {
+          "Enabled": true
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "stepfunctionsamplestatemachinestandardEventsRoleD38B4CD8": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "stepfunctionsamplestatemachinestandardEventsRoleDefaultPolicy5C08075F": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "stepfunctionsamplestatemachinestandardB20AD0C7"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "stepfunctionsamplestatemachinestandardEventsRoleDefaultPolicy5C08075F",
+        "Roles": [
+          {
+            "Ref": "stepfunctionsamplestatemachinestandardEventsRoleD38B4CD8"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "dlqsamplestatemachinestandardeventsA04C65C4": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
+        "QueueName": "test-org-test-env-test-domain-test-stepfunction-main-sample-state-machi--abaf4ff",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqsamplestatemachinestandardeventsPolicyEE5783A2": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "eventruletestingeventbridge09AA772D",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "dlqsamplestatemachinestandardeventsA04C65C4",
+                  "Arn"
+                ]
+              },
+              "Sid": "AllowEventRuletestorgtestenvtestdomainteststepfunctionmaineventruletestingeventbridge533DBEBE"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "eventruletestingeventbridgeschedule5225694F",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "dlqsamplestatemachinestandardeventsA04C65C4",
+                  "Arn"
+                ]
+              },
+              "Sid": "AllowEventRuletestorgtestenvtestdomainteststepfunctionmaineventruletestingeventbridgescheduleA797E31E"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "eventruletestingeventbridges3A2425715",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "dlqsamplestatemachinestandardeventsA04C65C4",
+                  "Arn"
+                ]
+              },
+              "Sid": "AllowEventRuletestorgtestenvtestdomainteststepfunctionmaineventruletestingeventbridges3A042B33A"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "dlqsamplestatemachinestandardeventsA04C65C4"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqsamplestatemachinestandardeventsqueuesamplestatemachinestandardeventsdlqnamessmB5BFBAF3": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-stepfunction-main/queue/sample-state-machine-standard-events-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqsamplestatemachinestandardeventsA04C65C4",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqsamplestatemachinestandardeventsqueuesamplestatemachinestandardeventsdlqarnssmA47EAEC7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-stepfunction-main/queue/sample-state-machine-standard-events-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqsamplestatemachinestandardeventsA04C65C4",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqsamplestatemachinestandardeventsqueuesamplestatemachinestandardeventsdlqurlssm509F6562": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-stepfunction-main/queue/sample-state-machine-standard-events-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dlqsamplestatemachinestandardeventsA04C65C4"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "eventruletestingeventbridge09AA772D": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "testing event pattern rule",
+        "EventBusName": "some-custom-name",
+        "EventPattern": {
+          "account": [
+            "test-account"
+          ],
+          "source": [
+            "glue.amazonaws.com"
+          ],
+          "detail-type": [
+            "Glue Job State Change"
+          ],
+          "id": [
+            "example-event-id"
+          ],
+          "region": [
+            "test-region"
+          ],
+          "resources": [
+            "arn:test-partition:glue:test-region:test-account:job/my-job"
+          ],
+          "time": [
+            "2024-01-01T00:00:00Z"
+          ],
+          "version": [
+            "0"
+          ],
+          "detail": {
+            "some_event_key": "some_event_value"
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-stepfunction-main-t--6f7329e6",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "stepfunctionsamplestatemachinestandardB20AD0C7"
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "dlqsamplestatemachinestandardeventsA04C65C4",
+                  "Arn"
+                ]
+              }
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "stepfunctionsamplestatemachinestandardEventsRoleD38B4CD8",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "eventruletestingeventbridgeschedule5225694F": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "testing schedule rule",
+        "Name": "test-org-test-env-test-domain-test-stepfunction-main-te-67677cea",
+        "ScheduleExpression": "cron(0 20 * * ? *)",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "stepfunctionsamplestatemachinestandardB20AD0C7"
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "dlqsamplestatemachinestandardeventsA04C65C4",
+                  "Arn"
+                ]
+              }
+            },
+            "Id": "Target0",
+            "Input": "{\"some-test-input-obj\":{\"some-test-input-key\":\"test-value\"}}",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "stepfunctionsamplestatemachinestandardEventsRoleD38B4CD8",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "eventruletestingeventbridges3A2425715": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Event Rule for triggering sample-state-machine-standard-testing-event-bridge-s3 with S3 events",
+        "EventBusName": "some-custom-name",
+        "EventPattern": {
+          "source": [
+            "aws.s3"
+          ],
+          "detail": {
+            "bucket": {
+              "name": [
+                "sample-org-dev-instance1-datalake-raw"
+              ]
+            },
+            "object": {
+              "key": [
+                {
+                  "prefix": "data/test-lambda/"
+                }
+              ]
+            }
+          },
+          "detail-type": [
+            "Object Created"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-stepfunction-main-te-7547f2b3",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "stepfunctionsamplestatemachinestandardB20AD0C7"
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "dlqsamplestatemachinestandardeventsA04C65C4",
+                  "Arn"
+                ]
+              }
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "stepfunctionsamplestatemachinestandardEventsRoleD38B4CD8",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "dataopsprojectsamplestepfunctionnamesamplestatemachinestandardDDBFDCEC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/dataops-project-sample/stepfunction/name/sample-state-machine-standard",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "stepfunctionsamplestatemachinestandardB20AD0C7",
+            "Name"
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "constructsamplestatemachinestandardloggrouploggroupsamplestatemachinestandardnameout496D5924": {
+      "Value": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-main-sample-state-machine-standard",
+      "Export": {
+        "Name": "test-org:test-domain:test-stepfunction-main:loggroup:samplestatemachinestandard:name"
+      }
+    },
+    "dlqsamplestatemachinestandardeventsqueuesamplestatemachinestandardeventsdlqnameout0272344A": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqsamplestatemachinestandardeventsA04C65C4",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-stepfunction-main:queue:samplestatemachinestandardeventsdlq:name"
+      }
+    },
+    "dlqsamplestatemachinestandardeventsqueuesamplestatemachinestandardeventsdlqarnoutAD40E55A": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqsamplestatemachinestandardeventsA04C65C4",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-stepfunction-main:queue:samplestatemachinestandardeventsdlq:arn"
+      }
+    },
+    "dlqsamplestatemachinestandardeventsqueuesamplestatemachinestandardeventsdlqurlout8E3C975B": {
+      "Value": {
+        "Ref": "dlqsamplestatemachinestandardeventsA04C65C4"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-stepfunction-main:queue:samplestatemachinestandardeventsdlq:url"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

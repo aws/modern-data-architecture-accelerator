@@ -555,30 +555,6 @@
             ],
             "type": "object"
         },
-        "DynamicTargetConfig": {
-            "additionalProperties": false,
-            "description": "Dynamic target for runtime table discovery.\nThe DQ evaluation job will enumerate data at the given S3 directory and run Glue DQ recommendations on each discovered dataset.",
-            "properties": {
-                "name": {
-                    "description": "Logical name for this dynamic target (used in SSM parameter paths).",
-                    "type": "string"
-                },
-                "s3DirUri": {
-                    "description": "S3 directory URI to discover datasets from at runtime.",
-                    "type": "string"
-                },
-                "source": {
-                    "$ref": "#/definitions/DataQualitySourceConfig",
-                    "description": "Source configuration describing the data format and connection details."
-                }
-            },
-            "required": [
-                "name",
-                "s3DirUri",
-                "source"
-            ],
-            "type": "object"
-        },
         "DataQualitySourceConfig": {
             "additionalProperties": false,
             "description": "Source configuration for data quality targets.\nDescribes where the data lives so downstream DQ evaluation jobs know how to read it.",
@@ -868,6 +844,30 @@
                 "amount",
                 "components",
                 "unit"
+            ],
+            "type": "object"
+        },
+        "DynamicTargetConfig": {
+            "additionalProperties": false,
+            "description": "Dynamic target for runtime table discovery.\nThe DQ evaluation job will enumerate data at the given S3 directory and run\nGlue DQ recommendations on each discovered dataset.",
+            "properties": {
+                "name": {
+                    "description": "Logical name for this dynamic target (used in SSM parameter paths).",
+                    "type": "string"
+                },
+                "s3DirUri": {
+                    "description": "S3 directory URI to discover datasets from at runtime.",
+                    "type": "string"
+                },
+                "source": {
+                    "$ref": "#/definitions/DataQualitySourceConfig",
+                    "description": "Source configuration describing the data format and connection details."
+                }
+            },
+            "required": [
+                "name",
+                "s3DirUri",
+                "source"
             ],
             "type": "object"
         },
@@ -3002,6 +3002,13 @@
             "description": "IAM role ARN for deployment operations and resource management.\nAuto-resolved from project when projectName is set.\n\nUse cases: Deployment permissions; Resource provisioning\n\nAWS: IAM role\n\nValidation: Optional; auto-wired from project if projectName provided",
             "type": "string"
         },
+        "dynamicTargets": {
+            "description": "Dynamic targets for runtime table discovery.\n\nUse cases: Auto-discover datasets in S3 directories; Run DQ recommendations on unknown tables\n\nValidation: Optional; each entry requires name, s3DirUri, and source",
+            "items": {
+                "$ref": "#/definitions/DynamicTargetConfig"
+            },
+            "type": "array"
+        },
         "kmsArn": {
             "description": "KMS key ARN for encrypting DataOps resources and data.\nAuto-resolved from project when projectName is set.\n\nUse cases: Data encryption; Security compliance\n\nAWS: KMS key\n\nValidation: Optional; auto-wired from project if projectName provided",
             "type": "string"
@@ -3017,13 +3024,6 @@
         "projectName": {
             "description": "DataOps project name for data quality ruleset integration and naming.\n\nUse cases: Project integration; Resource coordination\n\nAWS: DataOps project reference\n\nValidation: Optional; must match an existing deployed project",
             "type": "string"
-        },
-        "dynamicTargets": {
-            "description": "Dynamic targets for runtime table discovery. The DQ evaluation job will enumerate data at each S3 directory and run Glue DQ recommendations on discovered datasets.",
-            "items": {
-                "$ref": "#/definitions/DynamicTargetConfig"
-            },
-            "type": "array"
         },
         "rulesets": {
             "additionalProperties": {
@@ -3049,6 +3049,6 @@
             "description": "SMUS publishing configuration for data quality metrics.\n\nUse cases: DataZone integration; Quality metrics publishing\n\nAWS: SageMaker Unified Studio (DataZone) publishing\n\nValidation: Optional; requires domainId, accountId, and region"
         }
     },
-    "required": [],
     "type": "object"
 }
+

@@ -213,10 +213,10 @@ feature_merge_python_test:
     - echo "Running Python tests with coverage..."
     - npm run test:python:all
 
-feature_merge_snapshot_test:
+feature_merge_baseline_review:
   tags:
     - arch:amd64
-    - size:large
+    - size:medium
   only:
     - merge_requests
   stage: analyze
@@ -231,18 +231,18 @@ feature_merge_snapshot_test:
       - packages/**/node_modules/
       - .nx/
     policy: pull
-  artifacts:
-    untracked: false
-    paths:
-      - '*'
-    exclude:
-      - '**/node_modules/**'
-  allow_failure: false
+  allow_failure: true
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     GIT_DEPTH: '0'
   script:
-    - ./scripts/snapshot_test.sh
+    - python3 ./scripts/baseline_review.py --output-dir baseline-review
+  artifacts:
+    paths:
+      - baseline-review/report.json
+    reports:
+      junit: baseline-review/junit-report.xml
+    when: always
 
 feature_merge_test_docs:
   tags:
@@ -280,7 +280,7 @@ feature_merge_test_docs:
 feature_merge_sonarqube:
   tags:
     - arch:amd64
-    - size:large
+    - size:3xlarge
   only:
     - merge_requests
   stage: analyze
@@ -671,6 +671,39 @@ prerelease_build_test:
     - ./scripts/build.sh
     - ./scripts/test_ci.sh
 
+prerelease_baseline_review:
+  tags:
+    - arch:amd64
+    - size:medium
+  only:
+    refs:
+      - main
+  except:
+    refs:
+      - tags
+  stage: analyze
+  dependencies:
+    - prerelease_build_test
+  needs:
+    - prerelease_build_test
+  cache:
+    key: prerelease-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  allow_failure: true
+  variables:
+    GIT_DEPTH: '0'
+  script:
+    - python3 ./scripts/baseline_review.py --output-dir baseline-review
+  artifacts:
+    paths:
+      - baseline-review/report.json
+    reports:
+      junit: baseline-review/junit-report.xml
+    when: always
+
 prerelease_analyze:
   tags:
     - arch:amd64
@@ -938,7 +971,6 @@ release_version_package:
     - ./scripts/version_release.sh
     - ./scripts/build.sh
     - ./scripts/test_ci.sh
-    - npx lerna run test:snapshots:update --stream
     - ./scripts/package.sh
 
 release:

@@ -61,7 +61,7 @@ sagemakerBlueprint:
   additionalAccounts:
     secondary-account:
       # AWS account ID for the additional account
-      account: '222222222222'
+      account: '{{context:account-2}}'
       # (Optional) Regions enabled for this account
       enabledRegions:
         - '{{region}}'
@@ -79,7 +79,7 @@ sagemakerBlueprint:
       authorizedDomainUnits:
         - secondary-domain-unit
     tertiary-account:
-      account: '222222222222'
+      account: '{{context:account-2}}'
       # Role by unique ID (use when stable references are a security
       # requirement — IDs don't change when roles are recreated)
       provisioningRole:

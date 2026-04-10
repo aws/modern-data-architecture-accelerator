@@ -17,13 +17,10 @@
     "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references",
     "watch": "jsii -w  --project-references",
     "package": "jsii-pacmak --npmignore=false",
-    "test": "jest --passWithNoTests --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
+    "test": "jest --passWithNoTests --coverage",
     "lint": "eslint --max-warnings 0 -c ../../../../eslint.config.mjs",
     "test:python": "cd python-tests && uv run pytest",
-    "test:python:coverage": "cd python-tests && uv run pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html",
-    "test:coverage": "jest --passWithNoTests --coverage --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
-    "test:snapshots": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts'",
-    "test:snapshots:update": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts' --updateSnapshot"
+    "test:python:coverage": "cd python-tests && uv run pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html"
   },
   "devDependencies": {
     "@aws-mdaa/construct": "1.5.0",

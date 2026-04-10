@@ -1,0 +1,389 @@
+{
+  "Description": "(SO0320-dataops-databrew) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuepathtobucketnameC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path_to_bucket_name"
+    },
+    "SsmParameterValuepathtorolenameC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path_to_role_name"
+    },
+    "SsmParameterValuepathtokmsarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path_to_kms_arn"
+    },
+    "SsmParameterValuetestorgtestdomainglueprojectconnectionsconnectionJdbcC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/glue-project/connections/connectionJdbc"
+    },
+    "SsmParameterValuetestorgtestdomainglueprojectsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/glue-project/securityConfiguration/default"
+    },
+    "SsmParameterValuetestorgtestdomainglueprojectprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/glue-project/projectBucket/default"
+    },
+    "SsmParameterValuetestorgtestdomainglueprojectprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/glue-project/projectTopicArn/default"
+    },
+    "SsmParameterValuetestorgtestdomainglueprojectdeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/glue-project/deploymentRole/default"
+    },
+    "SsmParameterValuetestorgtestdomainglueprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/glue-project/kmsArn/default"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-databrew-dboutputs/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-databrew",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-databrew-dboutputs",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-databrew) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "jobsmdaadbdatasetCEC3D8B0": {
+      "Type": "AWS::DataBrew::Dataset",
+      "Properties": {
+        "Input": {
+          "S3InputDefinition": {
+            "Bucket": {
+              "Ref": "SsmParameterValuepathtobucketnameC96584B6F00A464EAD1953AFF4B05118Parameter"
+            },
+            "Key": "data/raw_data/input_data.csv"
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-databrew-dboutputs-mdaa-db-dataset",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-databrew"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-databrew-dboutputs"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "jobsmdaadbdatasetDatasetmdaadbdatasetmdaadbdatasetssm179BB659": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-databrew-dboutputs/dataset/mdaa-db-dataset/mdaa-db-dataset",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-databrew",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-databrew-dboutputs",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-databrew-dboutputs-mdaa-db-dataset"
+      }
+    },
+    "jobsmdaadbrecipe9EF4E85B": {
+      "Type": "AWS::DataBrew::Recipe",
+      "Properties": {
+        "Description": "Recipe for database output testing",
+        "Name": "test-org-test-env-test-domain-test-databrew-dboutputs-mdaa-db-recipe",
+        "Steps": [
+          {
+            "Action": {
+              "Operation": "RENAME",
+              "Parameters": {
+                "sourceColumn": "id",
+                "targetColumn": "employee_id"
+              }
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-databrew"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-databrew-dboutputs"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "jobsmdaadbrecipeRecipemdaadbrecipemdaadbrecipessm40F14A21": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-databrew-dboutputs/recipe/mdaa-db-recipe/mdaa-db-recipe",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-databrew",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-databrew-dboutputs",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-databrew-dboutputs-mdaa-db-recipe"
+      }
+    },
+    "jobstestcatalogoutputjob55FF867F": {
+      "Type": "AWS::DataBrew::Job",
+      "Properties": {
+        "DataCatalogOutputs": [
+          {
+            "CatalogId": "test-account",
+            "DatabaseName": "my_output_database",
+            "DatabaseOptions": {
+              "TableName": "output_table_prefix",
+              "TempDirectory": {
+                "Bucket": {
+                  "Ref": "SsmParameterValuepathtobucketnameC96584B6F00A464EAD1953AFF4B05118Parameter"
+                },
+                "Key": "tmp/catalog-output/"
+              }
+            },
+            "Overwrite": true,
+            "S3Options": {
+              "Location": {
+                "Bucket": {
+                  "Ref": "SsmParameterValuepathtobucketnameC96584B6F00A464EAD1953AFF4B05118Parameter"
+                },
+                "Key": "data/databrew/catalog-output/"
+              }
+            },
+            "TableName": "my_output_table"
+          }
+        ],
+        "DatasetName": "test-org-test-env-test-domain-test-databrew-dboutputs-mdaa-db-dataset",
+        "EncryptionKeyArn": {
+          "Ref": "SsmParameterValuepathtokmsarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "EncryptionMode": "SSE-KMS",
+        "Name": "test-org-test-env-test-domain-test-databrew-dboutputs-test-catalog-output-job",
+        "Recipe": {
+          "Name": "test-org-test-env-test-domain-test-databrew-dboutputs-mdaa-db-recipe",
+          "Version": ""
+        },
+        "RoleArn": {
+          "Ref": "SsmParameterValuepathtorolenameC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-databrew"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-databrew-dboutputs"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Type": "RECIPE"
+      },
+      "DependsOn": [
+        "jobsmdaadbdatasetCEC3D8B0",
+        "jobsmdaadbrecipe9EF4E85B"
+      ]
+    },
+    "jobstestcatalogoutputjobJobtestcatalogoutputjobtestcatalogoutputjobssm7652E628": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-databrew-dboutputs/job/test-catalog-output-job/test-catalog-output-job",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-databrew",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-databrew-dboutputs",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-databrew-dboutputs-test-catalog-output-job"
+      }
+    },
+    "jobstestdatabaseoutputjob058511D8": {
+      "Type": "AWS::DataBrew::Job",
+      "Properties": {
+        "DatabaseOutputs": [
+          {
+            "DatabaseOptions": {
+              "TableName": "output_table_prefix",
+              "TempDirectory": {
+                "Bucket": {
+                  "Ref": "SsmParameterValuepathtobucketnameC96584B6F00A464EAD1953AFF4B05118Parameter"
+                },
+                "Key": "tmp/db-output/"
+              }
+            },
+            "DatabaseOutputMode": "NEW_TABLE",
+            "GlueConnectionName": {
+              "Ref": "SsmParameterValuetestorgtestdomainglueprojectconnectionsconnectionJdbcC96584B6F00A464EAD1953AFF4B05118Parameter"
+            }
+          }
+        ],
+        "DatasetName": "test-org-test-env-test-domain-test-databrew-dboutputs-mdaa-db-dataset",
+        "EncryptionKeyArn": {
+          "Ref": "SsmParameterValuepathtokmsarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "EncryptionMode": "SSE-KMS",
+        "Name": "test-org-test-env-test-domain-test-databrew-dboutputs-test-database-output-job",
+        "Recipe": {
+          "Name": "test-org-test-env-test-domain-test-databrew-dboutputs-mdaa-db-recipe",
+          "Version": ""
+        },
+        "RoleArn": {
+          "Ref": "SsmParameterValuepathtorolenameC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-databrew"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-databrew-dboutputs"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Type": "RECIPE"
+      },
+      "DependsOn": [
+        "jobsmdaadbdatasetCEC3D8B0",
+        "jobsmdaadbrecipe9EF4E85B"
+      ]
+    },
+    "jobstestdatabaseoutputjobJobtestdatabaseoutputjobtestdatabaseoutputjobssm94E078CD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-databrew-dboutputs/job/test-database-output-job/test-database-output-job",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-databrew",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-databrew-dboutputs",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-databrew-dboutputs-test-database-output-job"
+      }
+    }
+  },
+  "Outputs": {
+    "jobsmdaadbdatasetDatasetmdaadbdatasetmdaadbdatasetout9459B9BA": {
+      "Value": "test-org-test-env-test-domain-test-databrew-dboutputs-mdaa-db-dataset",
+      "Export": {
+        "Name": "test-org:test-domain:test-databrew-dboutputs:dataset:mdaadbdataset:mdaa-db-dataset"
+      }
+    },
+    "jobsmdaadbrecipeRecipemdaadbrecipemdaadbrecipeout736CDC1D": {
+      "Value": "test-org-test-env-test-domain-test-databrew-dboutputs-mdaa-db-recipe",
+      "Export": {
+        "Name": "test-org:test-domain:test-databrew-dboutputs:recipe:mdaadbrecipe:mdaa-db-recipe"
+      }
+    },
+    "jobstestcatalogoutputjobJobtestcatalogoutputjobtestcatalogoutputjobout73C332A3": {
+      "Value": "test-org-test-env-test-domain-test-databrew-dboutputs-test-catalog-output-job",
+      "Export": {
+        "Name": "test-org:test-domain:test-databrew-dboutputs:job:testcatalogoutputjob:test-catalog-output-job"
+      }
+    },
+    "jobstestdatabaseoutputjobJobtestdatabaseoutputjobtestdatabaseoutputjobout53B777BD": {
+      "Value": "test-org-test-env-test-domain-test-databrew-dboutputs-test-database-output-job",
+      "Export": {
+        "Name": "test-org:test-domain:test-databrew-dboutputs:job:testdatabaseoutputjob:test-database-output-job"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

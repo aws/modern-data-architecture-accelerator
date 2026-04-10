@@ -1,0 +1,816 @@
+{
+  "Description": "(SO0320-dataops-dms) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuetestorgtestdomaintestprojectsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-project/securityConfiguration/default"
+    },
+    "SsmParameterValuetestorgtestdomaintestprojectprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-project/projectBucket/default"
+    },
+    "SsmParameterValuetestorgtestdomaintestprojectprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-project/projectTopicArn/default"
+    },
+    "SsmParameterValuetestorgtestdomaintestprojectdeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-project/deploymentRole/default"
+    },
+    "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-project/kmsArn/default"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-dms-cdc/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-cdc",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-dms) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "dmsdmsrole68D68131": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "dms.test-region.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-dms-cdc-dms",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-cdc"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsdmsroleroledmsarnssm8C563FEE": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-cdc/role/dms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-cdc",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsdmsrole68D68131",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "dmsdmsroleroledmsidssm76140C35": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-cdc/role/dms/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-cdc",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsdmsrole68D68131",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "dmsdmsroleroledmsnamessmF8694DA9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-cdc/role/dms/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-cdc",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsdmsrole68D68131"
+        }
+      }
+    },
+    "dmsreplicationsubnetgrouptestinstance162D08A6": {
+      "Type": "AWS::DMS::ReplicationSubnetGroup",
+      "Properties": {
+        "ReplicationSubnetGroupDescription": "test-org-test-env-test-domain-test-dms-cdc-test-instance",
+        "ReplicationSubnetGroupIdentifier": "test-org-test-env-test-domain-test-dms-cdc-test-instance",
+        "SubnetIds": [
+          "test_subnet_id1",
+          "test_subnet_id2"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-cdc"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmssecuritygrouptestinstanceA983FA0F": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-dms-cdc/dms/security-group-test-instance",
+        "GroupName": "test-org-test-env-test-domain-test-dms-cdc-test-instance",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-cdc"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "test_vpc_id"
+      }
+    },
+    "dmssecuritygrouptestinstancesecuritygrouptestinstanceidssmAEA1FDD9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-cdc/security-group/test-instance/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-cdc",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmssecuritygrouptestinstanceA983FA0F",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "dmsreplicationinstancetestinstanceCD0A619E": {
+      "Type": "AWS::DMS::ReplicationInstance",
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "PubliclyAccessible": false,
+        "ReplicationInstanceClass": "dms.t3.micro",
+        "ReplicationInstanceIdentifier": "test-org-test-env-test-domain-test-dms-cdc-test-instance",
+        "ReplicationSubnetGroupIdentifier": "test-org-test-env-test-domain-test-dms-cdc-test-instance",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-cdc"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcSecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "dmssecuritygrouptestinstanceA983FA0F",
+              "GroupId"
+            ]
+          }
+        ]
+      },
+      "DependsOn": [
+        "dmsreplicationsubnetgrouptestinstance162D08A6"
+      ]
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceidentifierssm9F199903": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-cdc/replicationinstance/test-instance/identifier",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-cdc",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
+        }
+      }
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceipssmE8599E88": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-cdc/replicationinstance/test-instance/ip",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-cdc",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dmsreplicationinstancetestinstanceCD0A619E",
+            "ReplicationInstancePrivateIpAddresses"
+          ]
+        }
+      }
+    },
+    "dmsendpointtestsourceB82259C8": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "DatabaseName": "test-cdc-db",
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-cdc-test-source",
+        "EndpointType": "source",
+        "EngineName": "postgres",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "PostgreSqlSettings": {
+          "CaptureDdls": true,
+          "PluginName": "pglogical",
+          "SecretsManagerAccessRoleArn": {
+            "Fn::GetAtt": [
+              "dmsdmsrole68D68131",
+              "Arn"
+            ]
+          },
+          "SecretsManagerSecretId": "arn:test-partition:secretsmanager:test-region:test-account:secret:test-pg-secret",
+          "SlotName": "test_cdc_slot"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-cdc"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtestsourceendpointtestsourcearnssmC1985836": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-cdc/endpoint/test-source/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-cdc",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtestsourceB82259C8"
+        }
+      }
+    },
+    "dmsendpointtesttargetD30A650E": {
+      "Type": "AWS::DMS::Endpoint",
+      "Properties": {
+        "EndpointIdentifier": "test-org-test-env-test-domain-test-dms-cdc-test-target",
+        "EndpointType": "target",
+        "EngineName": "s3",
+        "KmsKeyId": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "SsmParameterValuetestorgtestdomaintestprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "S3Settings": {
+          "BucketName": "test-cdc-target-bucket",
+          "EncryptionMode": "SSE_KMS",
+          "ServerSideEncryptionKmsKeyId": "test-cdc-kms-key-id",
+          "ServiceAccessRoleArn": {
+            "Fn::GetAtt": [
+              "dmsdmsrole68D68131",
+              "Arn"
+            ]
+          }
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-cdc"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "dmsendpointtesttargetendpointtesttargetarnssm38D2CCDC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-cdc/endpoint/test-target/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-cdc",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmsendpointtesttargetD30A650E"
+        }
+      }
+    },
+    "dmssecretsaccesspolicy98CFFB2E": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-dms-cdc-secrets-access",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:GetSecretValue"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:secretsmanager:test-region:test-account:secret:test-pg-secret"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/test-pg-key"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "dmsdmsrole68D68131"
+          }
+        ]
+      }
+    },
+    "dmssecretsaccesspolicymanagedpolicysecretsaccessarnssm32A991C4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-cdc/managed-policy/secrets-access/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-cdc",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dmssecretsaccesspolicy98CFFB2E"
+        }
+      }
+    },
+    "dmssecretsaccesspolicymanagedpolicysecretsaccessnamessm19C4CEBD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-cdc/managed-policy/secrets-access/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-cdc",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "dmssecretsaccesspolicy98CFFB2E"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "dmsreplicationtasktesttaskcdc17FA1594": {
+      "Type": "AWS::DMS::ReplicationTask",
+      "Properties": {
+        "CdcStartPosition": "2024-01-01T00:00:00",
+        "CdcStopPosition": "server_time:2024-12-31T23:59:59",
+        "MigrationType": "cdc",
+        "ReplicationInstanceArn": {
+          "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
+        },
+        "ReplicationTaskIdentifier": "test-org-test-env-test-domain-test-dms-cdc-test-task-cdc",
+        "SourceEndpointArn": {
+          "Ref": "dmsendpointtestsourceB82259C8"
+        },
+        "TableMappings": "{\"rules\":[{\"rule-type\":\"selection\",\"rule-id\":\"1\",\"rule-name\":\"1\",\"object-locator\":{\"schema-name\":\"public\",\"table-name\":\"%\"},\"rule-action\":\"include\"}]}",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-cdc"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TargetEndpointArn": {
+          "Ref": "dmsendpointtesttargetD30A650E"
+        }
+      }
+    },
+    "dmsreplicationtasktesttaskfullloadandcdc1D601D24": {
+      "Type": "AWS::DMS::ReplicationTask",
+      "Properties": {
+        "CdcStartTime": 1704067200,
+        "MigrationType": "full-load-and-cdc",
+        "ReplicationInstanceArn": {
+          "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
+        },
+        "ReplicationTaskIdentifier": "test-org-test-env-test-domain-test-dms-cdc-test-task-full-load-and-cdc",
+        "ReplicationTaskSettings": "{\"TargetMetadata\":{\"TargetSchema\":\"\",\"SupportLobs\":true}}",
+        "SourceEndpointArn": {
+          "Ref": "dmsendpointtestsourceB82259C8"
+        },
+        "TableMappings": "{\"rules\":[{\"rule-type\":\"selection\",\"rule-id\":\"1\",\"rule-name\":\"1\",\"object-locator\":{\"schema-name\":\"public\",\"table-name\":\"%\"},\"rule-action\":\"include\"}]}",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-cdc"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TargetEndpointArn": {
+          "Ref": "dmsendpointtesttargetD30A650E"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "dmsdmsroleroledmsarnoutD950F6ED": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsdmsrole68D68131",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-cdc:role:dms:arn"
+      }
+    },
+    "dmsdmsroleroledmsidout6A7EE9EE": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsdmsrole68D68131",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-cdc:role:dms:id"
+      }
+    },
+    "dmsdmsroleroledmsnameout5E4346FD": {
+      "Value": {
+        "Ref": "dmsdmsrole68D68131"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-cdc:role:dms:name"
+      }
+    },
+    "dmssecuritygrouptestinstancesecuritygrouptestinstanceidout734E06F6": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmssecuritygrouptestinstanceA983FA0F",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-cdc:security-group:testinstance:id"
+      }
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceidentifierout98FFE137": {
+      "Value": {
+        "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-cdc:replicationinstance:testinstance:identifier"
+      }
+    },
+    "dmsreplicationinstancetestinstancereplicationInstancetestinstanceipoutFAF1D039": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dmsreplicationinstancetestinstanceCD0A619E",
+          "ReplicationInstancePrivateIpAddresses"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-cdc:replicationinstance:testinstance:ip"
+      }
+    },
+    "dmsendpointtestsourceendpointtestsourcearnout80678FB6": {
+      "Value": {
+        "Ref": "dmsendpointtestsourceB82259C8"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-cdc:endpoint:testsource:arn"
+      }
+    },
+    "dmsendpointtesttargetendpointtesttargetarnout752778E1": {
+      "Value": {
+        "Ref": "dmsendpointtesttargetD30A650E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-cdc:endpoint:testtarget:arn"
+      }
+    },
+    "dmssecretsaccesspolicymanagedpolicysecretsaccessarnout5330B707": {
+      "Value": {
+        "Ref": "dmssecretsaccesspolicy98CFFB2E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-cdc:managed-policy:secretsaccess:arn"
+      }
+    },
+    "dmssecretsaccesspolicymanagedpolicysecretsaccessnameoutA3C7FEB3": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "dmssecretsaccesspolicy98CFFB2E"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-cdc:managed-policy:secretsaccess:name"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

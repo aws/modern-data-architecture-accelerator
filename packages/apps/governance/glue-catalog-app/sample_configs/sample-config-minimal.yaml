@@ -6,4 +6,4 @@
 # (Optional) Consumer accounts granted read access to the Glue
 # Catalog via catalog resource policy.
 consumerAccounts:
-  consumer-team: '222222222222'
+  consumer-team: '{{context:account-2}}'

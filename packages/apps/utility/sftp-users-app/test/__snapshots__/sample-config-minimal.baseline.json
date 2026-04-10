@@ -1,0 +1,423 @@
+{
+  "Description": "(SO0320-sftp-users) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuepathtossmserveridC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path/to/ssm/server/id"
+    },
+    "SsmParameterValuepathtossmparambucketnameC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path/to/ssm/param/bucket/name"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-sftp-users-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "sftp-users",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sftp-users-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-sftp-users) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "usersTransferUserSFTPRolesftpuser8C334D0C": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "transfer.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-sftp-users-main-sftp-user",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sftp-users"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sftp-users-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "usersTransferUserSFTPRolesftpuserrolesftpuserarnssm6B22BDD1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sftp-users-main/role/sftp-user/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sftp-users",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sftp-users-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "usersTransferUserSFTPRolesftpuser8C334D0C",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "usersTransferUserSFTPRolesftpuserrolesftpuseridssm98D7D40D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sftp-users-main/role/sftp-user/id",
+        "Tags": {
+          "mdaa_cdk_app": "sftp-users",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sftp-users-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "usersTransferUserSFTPRolesftpuser8C334D0C",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "usersTransferUserSFTPRolesftpuserrolesftpusernamessm8C78DCAC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sftp-users-main/role/sftp-user/name",
+        "Tags": {
+          "mdaa_cdk_app": "sftp-users",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sftp-users-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "usersTransferUserSFTPRolesftpuser8C334D0C"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "usersTransferUserSFTPRolesftpuserDefaultPolicy36288C26": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:PutObject",
+                "s3:PutObjectAcl",
+                "s3:GetObject",
+                "s3:DeleteObjectVersion",
+                "s3:DeleteObject",
+                "s3:GetObjectVersion",
+                "s3:ListBucket",
+                "s3:GetBucketLocation"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:s3:::",
+                      {
+                        "Ref": "SsmParameterValuepathtossmparambucketnameC96584B6F00A464EAD1953AFF4B05118Parameter"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:s3:::",
+                      {
+                        "Ref": "SsmParameterValuepathtossmparambucketnameC96584B6F00A464EAD1953AFF4B05118Parameter"
+                      },
+                      "/home/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt",
+                "kms:GenerateDataKey",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/1234abcd-12ab-34cd-56ef-1234567890ab"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "usersTransferUserSFTPRolesftpuserDefaultPolicy36288C26",
+        "Roles": [
+          {
+            "Ref": "usersTransferUserSFTPRolesftpuser8C334D0C"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "usersSFTPServerUsersftpuser7FC92252": {
+      "Type": "AWS::Transfer::User",
+      "Properties": {
+        "HomeDirectory": {
+          "Fn::Join": [
+            "",
+            [
+              "/",
+              {
+                "Ref": "SsmParameterValuepathtossmparambucketnameC96584B6F00A464EAD1953AFF4B05118Parameter"
+              },
+              "/home"
+            ]
+          ]
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "usersTransferUserSFTPRolesftpuser8C334D0C",
+            "Arn"
+          ]
+        },
+        "ServerId": {
+          "Ref": "SsmParameterValuepathtossmserveridC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "SshPublicKeys": [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCr1nEXAMPLEPubKey=="
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sftp-users"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sftp-users-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "UserName": "sftp-user"
+      }
+    }
+  },
+  "Outputs": {
+    "usersTransferUserSFTPRolesftpuserrolesftpuserarnoutF847FB7E": {
+      "Value": {
+        "Fn::GetAtt": [
+          "usersTransferUserSFTPRolesftpuser8C334D0C",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sftp-users-main:role:sftpuser:arn"
+      }
+    },
+    "usersTransferUserSFTPRolesftpuserrolesftpuseridoutCE5F1318": {
+      "Value": {
+        "Fn::GetAtt": [
+          "usersTransferUserSFTPRolesftpuser8C334D0C",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sftp-users-main:role:sftpuser:id"
+      }
+    },
+    "usersTransferUserSFTPRolesftpuserrolesftpusernameoutCE83D565": {
+      "Value": {
+        "Ref": "usersTransferUserSFTPRolesftpuser8C334D0C"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sftp-users-main:role:sftpuser:name"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

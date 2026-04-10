@@ -4,7 +4,7 @@
 # rather than autowired.
 
 # (Optional) KMS key ARN for encrypting DynamoDB tables
-kmsArn: arn:test-partition:kms:test-region:test-acct:key/test-key-id
+kmsArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id
 # (Optional) Glue security configuration name
 securityConfigurationName: test-security-config
 # (Optional) S3 bucket name for project storage

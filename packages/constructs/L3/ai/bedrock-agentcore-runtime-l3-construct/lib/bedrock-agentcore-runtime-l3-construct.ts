@@ -944,7 +944,7 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
     //   123456789012.dkr.ecr.us-east-1.amazonaws.com/my-org/my-team/my-repo:v1.0.0
     //   123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo@sha256:abc123...
     //   123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo
-    const uriPattern = /^(\d+)\.dkr\.ecr\.([a-z0-9-]+)\.amazonaws\.com\/([^:@]+)/;
+    const uriPattern = /^([a-zA-Z\d-]+)\.dkr\.ecr\.([a-zA-Z\d-]+)\.amazonaws\.com\/([^:@]+)/;
     const match = uriPattern.exec(containerUri);
 
     if (!match) {

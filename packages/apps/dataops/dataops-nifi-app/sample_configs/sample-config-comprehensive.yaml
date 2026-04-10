@@ -46,7 +46,7 @@ nifi:
     subnet2: test-subnet-id-2
 
   # Existing ACM Private CA ARN for signing the internal CA
-  existingPrivateCaArn: arn:{{partition}}:acm-pca:test-region:test-account:certificate-authority/test-acm-pca-id
+  existingPrivateCaArn: arn:{{partition}}:acm-pca:{{region}}:{{account}}:certificate-authority/test-acm-pca-id
 
   # CA certificate validity period (must be <7 days for ACM Private CA short-term certs)
   caCertDuration: 144h0m0s

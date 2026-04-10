@@ -12,11 +12,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest --passWithNoTests --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
-    "lint": "eslint --max-warnings 0 -c ../../../eslint.config.mjs",
-    "test:coverage": "jest --passWithNoTests --coverage --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
-    "test:snapshots": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts'",
-    "test:snapshots:update": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts' --updateSnapshot"
+    "test": "jest --passWithNoTests --coverage",
+    "lint": "eslint --max-warnings 0 -c ../../../eslint.config.mjs"
   },
   "devDependencies": {
     "@types/jest": "29.5.14",

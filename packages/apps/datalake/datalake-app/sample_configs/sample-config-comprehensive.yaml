@@ -179,7 +179,7 @@ buckets:
         # S3 prefix to include in the inventory report.
         prefix: data/reports
         # (Optional) AWS account ID owning the destination bucket for cross-account inventory delivery.
-        destinationAccount: '222222222222'
+        destinationAccount: '{{context:account-2}}'
         # (Optional) Destination bucket for inventory reports. Defaults to the source bucket
         # under the /inventory prefix if not specified.
         destinationBucket: central-inventory-bucket

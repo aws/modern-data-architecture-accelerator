@@ -1,0 +1,145 @@
+{
+  "Description": "(SO0320-eventbridge) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-eventbridge-minimal/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-eventbridge) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "eventbridgeminimaleventbusbusD2ECBDC7": {
+      "Type": "AWS::Events::EventBus",
+      "Properties": {
+        "Name": "test-org-test-env-test-domain-test-even-6372d355",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "eventbridge"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-eventbridge-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "eventbridgeminimaleventbusbuseventbusminimaleventbusnamessm9FC7EE18": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-minimal/eventbus/minimal-event-bus/name",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "eventbridgeminimaleventbusbusD2ECBDC7"
+        }
+      }
+    },
+    "eventbridgeminimaleventbusbuseventbusminimaleventbusarnssmCB3B35A5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-minimal/eventbus/minimal-event-bus/arn",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "eventbridgeminimaleventbusbusD2ECBDC7",
+            "Arn"
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "eventbridgeminimaleventbusbuseventbusminimaleventbusnameoutDD6435F8": {
+      "Value": {
+        "Ref": "eventbridgeminimaleventbusbusD2ECBDC7"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-minimal:eventbus:minimaleventbus:name"
+      }
+    },
+    "eventbridgeminimaleventbusbuseventbusminimaleventbusarnout36FBF89F": {
+      "Value": {
+        "Fn::GetAtt": [
+          "eventbridgeminimaleventbusbusD2ECBDC7",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-minimal:eventbus:minimaleventbus:arn"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

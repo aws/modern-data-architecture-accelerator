@@ -161,6 +161,11 @@ export class MdaaLambdaFunction extends Function {
         ...props.environment,
         USER_AGENT_STRING: `AWSSOLUTION/${pjson.solution_id}/v${pjson.version}`,
       },
+      currentVersionOptions: {
+        ...props.currentVersionOptions,
+        // Ensures current version hash does not change across MDAA version bumps, avoiding unnecessary diff.
+        excludeEnvironment: { USER_AGENT_STRING: true },
+      },
     };
     return { ...props, ...overrideProps };
   }

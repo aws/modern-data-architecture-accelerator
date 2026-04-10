@@ -5,7 +5,7 @@
 
 // Unit test helpers (require Jest environment)
 export * from './test-app';
-export * from './snapshot-test';
+export * from './diff';
 export * from './mdaa-test-helpers';
 
 // Integration test helpers (no Jest dependency)

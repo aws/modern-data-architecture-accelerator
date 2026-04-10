@@ -9,7 +9,7 @@ projectName: test-project
 
 # SNS topic ARN for job notifications and workflow alerts.
 # Auto-resolved from project when projectName is set.
-notificationTopicArn: arn:test-partition:sns:test-region:test-acct:test-topic
+notificationTopicArn: arn:{{partition}}:sns:{{region}}:{{account}}:test-topic
 
 # DMS migration and replication configuration including instances,
 # endpoints, and tasks.

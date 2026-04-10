@@ -1,0 +1,2889 @@
+{
+  "Description": "(SO0320-sm-studio-domain) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuemlsmsgidC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/ml/sm/sg/id"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-sm-studio-domain) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "studioassetdeploymenttestingJupyterServerAwsCliLayer7F500B8E": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "/opt/awscli/aws"
+      }
+    },
+    "studioassetdeploymenttestingJupyterServerCustomResource512MiBF864FB9D": {
+      "Type": "Custom::CDKBucketDeployment",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiB6723FB92",
+            "Arn"
+          ]
+        },
+        "SourceBucketNames": [
+          "cdk-hnb659fds-assets-test-account-test-region"
+        ],
+        "SourceObjectKeys": [
+          "fb0e99533da615b589a39a8310f6cd1a2f8eb9c43a57f722215d4f7c46729f76.zip"
+        ],
+        "DestinationBucketName": "test-domain-bucket",
+        "DestinationBucketKeyPrefix": "lifecycle-assets/JupyterServer/testing",
+        "WaitForDistributionInvalidation": true,
+        "Extract": true,
+        "Prune": true,
+        "OutputObjectKeys": true
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "studiolifecycleconfigJupyterServercustomresource5659C3C0": {
+      "Type": "Custom::StudioLifecycleConfig",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customStudioLifecycleConfigproviderframeworkonEventDB56E9A5",
+            "Arn"
+          ]
+        },
+        "lifecycleConfigName": "test-org-test-env-test-domain-test-sagema-497b0fb9",
+        "lifecycleConfigContent": {
+          "Fn::Base64": "export ASSETS_DIR=/tmp/lifecycle-assets/JupyterServer\naws s3 cp --recursive s3://test-domain-bucket/lifecycle-assets/JupyterServer/ $ASSETS_DIR\necho \"testing jupyter\"\nsh $ASSETS_DIR/testing/test.sh"
+        },
+        "lifecycleConfigAppType": "JupyterServer"
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/studiolifecycleconfig/jupyterserver/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+            "StudioLifecycleConfigArn"
+          ]
+        }
+      }
+    },
+    "studioassetdeploymenttestingJupyterLabAwsCliLayerC624A6CD": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "/opt/awscli/aws"
+      }
+    },
+    "studioassetdeploymenttestingJupyterLabCustomResource512MiB4CECFEF6": {
+      "Type": "Custom::CDKBucketDeployment",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiB6723FB92",
+            "Arn"
+          ]
+        },
+        "SourceBucketNames": [
+          "cdk-hnb659fds-assets-test-account-test-region"
+        ],
+        "SourceObjectKeys": [
+          "fb0e99533da615b589a39a8310f6cd1a2f8eb9c43a57f722215d4f7c46729f76.zip"
+        ],
+        "DestinationBucketName": "test-domain-bucket",
+        "DestinationBucketKeyPrefix": "lifecycle-assets/JupyterLab/testing",
+        "WaitForDistributionInvalidation": true,
+        "Extract": true,
+        "Prune": true,
+        "OutputObjectKeys": true
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3": {
+      "Type": "Custom::StudioLifecycleConfig",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customStudioLifecycleConfigproviderframeworkonEventDB56E9A5",
+            "Arn"
+          ]
+        },
+        "lifecycleConfigName": "test-org-test-env-test-domain-test-sagema-313b84d7",
+        "lifecycleConfigContent": {
+          "Fn::Base64": "export ASSETS_DIR=/tmp/lifecycle-assets/JupyterLab\naws s3 cp --recursive s3://test-domain-bucket/lifecycle-assets/JupyterLab/ $ASSETS_DIR\necho \"testing jupyterlab (Studio Latest)\"\npip install --upgrade pandas numpy scikit-learn\nsh $ASSETS_DIR/testing/test.sh"
+        },
+        "lifecycleConfigAppType": "JupyterLab"
+      },
+      "DependsOn": [
+        "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+        "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "studiolifecycleconfigJupyterLabstudioLifecycleConfigJupyterLabarnssmE87C8F9F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/studiolifecycleconfig/jupyterlab/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+            "StudioLifecycleConfigArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+        "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122"
+      ]
+    },
+    "studioassetdeploymenttestingKernelGatewayAwsCliLayer12694F09": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "/opt/awscli/aws"
+      }
+    },
+    "studioassetdeploymenttestingKernelGatewayCustomResource512MiB7943136C": {
+      "Type": "Custom::CDKBucketDeployment",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiB6723FB92",
+            "Arn"
+          ]
+        },
+        "SourceBucketNames": [
+          "cdk-hnb659fds-assets-test-account-test-region"
+        ],
+        "SourceObjectKeys": [
+          "fb0e99533da615b589a39a8310f6cd1a2f8eb9c43a57f722215d4f7c46729f76.zip"
+        ],
+        "DestinationBucketName": "test-domain-bucket",
+        "DestinationBucketKeyPrefix": "lifecycle-assets/KernelGateway/testing",
+        "WaitForDistributionInvalidation": true,
+        "Extract": true,
+        "Prune": true,
+        "OutputObjectKeys": true
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC": {
+      "Type": "Custom::StudioLifecycleConfig",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customStudioLifecycleConfigproviderframeworkonEventDB56E9A5",
+            "Arn"
+          ]
+        },
+        "lifecycleConfigName": "test-org-test-env-test-domain-test-sagema-2adcb690",
+        "lifecycleConfigContent": {
+          "Fn::Base64": "export ASSETS_DIR=/tmp/lifecycle-assets/KernelGateway\naws s3 cp --recursive s3://test-domain-bucket/lifecycle-assets/KernelGateway/ $ASSETS_DIR\necho \"testing kernel\"\nsh $ASSETS_DIR/testing/test.sh"
+        },
+        "lifecycleConfigAppType": "KernelGateway"
+      },
+      "DependsOn": [
+        "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+        "studiolifecycleconfigJupyterLabstudioLifecycleConfigJupyterLabarnssmE87C8F9F",
+        "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+        "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "studiolifecycleconfigKernelGatewaystudioLifecycleConfigKernelGatewayarnssm336F5164": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/studiolifecycleconfig/kernelgateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC",
+            "StudioLifecycleConfigArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+        "studiolifecycleconfigJupyterLabstudioLifecycleConfigJupyterLabarnssmE87C8F9F",
+        "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+        "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122"
+      ]
+    },
+    "studiodomainF1B3BB3C": {
+      "Type": "AWS::SageMaker::Domain",
+      "Properties": {
+        "AppNetworkAccessType": "VpcOnly",
+        "AuthMode": "IAM",
+        "DefaultUserSettings": {
+          "ExecutionRole": {
+            "Fn::GetAtt": [
+              "RoleResexrole",
+              "arn"
+            ]
+          },
+          "SecurityGroups": [
+            "sg-test12345"
+          ]
+        },
+        "DomainName": "test-org-test-env-test-domain-test-sagemaker-studio-do-17e590b6",
+        "KmsKeyId": "test-efs-key",
+        "SubnetIds": [
+          "subnet-id"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-studio-domain"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-studio-domain-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-id"
+      },
+      "DependsOn": [
+        "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+        "studiolifecycleconfigJupyterLabstudioLifecycleConfigJupyterLabarnssmE87C8F9F",
+        "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+        "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122",
+        "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC",
+        "studiolifecycleconfigKernelGatewaystudioLifecycleConfigKernelGatewayarnssm336F5164"
+      ]
+    },
+    "studiodomainboto3layer3C1EF9B8": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "LayerName": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main-boto3"
+      },
+      "DependsOn": [
+        "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+        "studiolifecycleconfigJupyterLabstudioLifecycleConfigJupyterLabarnssmE87C8F9F",
+        "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+        "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122",
+        "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC",
+        "studiolifecycleconfigKernelGatewaystudioLifecycleConfigKernelGatewayarnssm336F5164"
+      ]
+    },
+    "studiodomainboto3layerlayerversionarnssm5A8A2C66": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/layer-version/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "studiodomainboto3layer3C1EF9B8"
+        }
+      },
+      "DependsOn": [
+        "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+        "studiolifecycleconfigJupyterLabstudioLifecycleConfigJupyterLabarnssmE87C8F9F",
+        "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+        "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122",
+        "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC",
+        "studiolifecycleconfigKernelGatewaystudioLifecycleConfigKernelGatewayarnssm336F5164"
+      ]
+    },
+    "studiodomainupdatedomaincrFFBD8D8D": {
+      "Type": "Custom::StudioDomainUpdate",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customStudioDomainUpdateproviderframeworkonEvent65473DC6",
+            "Arn"
+          ]
+        },
+        "DomainId": {
+          "Fn::GetAtt": [
+            "studiodomainF1B3BB3C",
+            "DomainId"
+          ]
+        },
+        "DefaultUserSettings": {
+          "JupyterServerAppSettings": {
+            "DefaultResourceSpec": {
+              "InstanceType": "system",
+              "SageMakerImageArn": "arn:test-partition:sagemaker:test-region:test-account:image/test-jupyter-image",
+              "SageMakerImageVersionArn": "arn:test-partition:sagemaker:test-region:test-account:image-version/test-jupyter-image/1",
+              "LifecycleConfigArn": {
+                "Fn::GetAtt": [
+                  "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+                  "StudioLifecycleConfigArn"
+                ]
+              }
+            },
+            "LifecycleConfigArns": [
+              "arn:test-partition:sagemaker:test-region:test-account:studio-lifecycle-config/test-jupyter-lcc",
+              {
+                "Fn::GetAtt": [
+                  "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+                  "StudioLifecycleConfigArn"
+                ]
+              }
+            ]
+          },
+          "JupyterLabAppSettings": {
+            "LifecycleConfigArns": [
+              "arn:test-partition:sagemaker:test-region:test-account:studio-lifecycle-config/test-jupyterlab-lcc",
+              {
+                "Fn::GetAtt": [
+                  "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+                  "StudioLifecycleConfigArn"
+                ]
+              }
+            ],
+            "AppLifecycleManagement": {
+              "IdleSettings": {
+                "IdleTimeoutInMinutes": 60,
+                "LifecycleManagement": "ENABLED",
+                "MaxIdleTimeoutInMinutes": 120,
+                "MinIdleTimeoutInMinutes": 30
+              }
+            },
+            "BuiltInLifecycleConfigArn": "arn:test-partition:sagemaker:test-region:test-account:studio-lifecycle-config/test-builtin-lcc",
+            "CodeRepositories": [
+              {
+                "RepositoryUrl": "https://github.com/example/test-repo.git"
+              }
+            ],
+            "CustomImages": [
+              {
+                "AppImageConfigName": "jupyterLabAppImageConfig",
+                "ImageName": "jupyterLabImage",
+                "ImageVersionNumber": 1
+              }
+            ],
+            "DefaultResourceSpec": {
+              "InstanceType": "ml.t3.medium",
+              "SageMakerImageArn": "arn:test-partition:sagemaker:test-region:test-account:image/test-jupyterlab-image",
+              "SageMakerImageVersionArn": "arn:test-partition:sagemaker:test-region:test-account:image-version/test-jupyterlab-image/1",
+              "LifecycleConfigArn": {
+                "Fn::GetAtt": [
+                  "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+                  "StudioLifecycleConfigArn"
+                ]
+              }
+            }
+          },
+          "KernelGatewayAppSettings": {
+            "DefaultResourceSpec": {
+              "InstanceType": "ml.t3.medium",
+              "SageMakerImageArn": "arn:test-partition:sagemaker:test-region:test-account:image/test-image",
+              "SageMakerImageVersionArn": "arn:test-partition:sagemaker:test-region:test-account:image-version/test-image/1",
+              "LifecycleConfigArn": {
+                "Fn::GetAtt": [
+                  "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC",
+                  "StudioLifecycleConfigArn"
+                ]
+              }
+            },
+            "LifecycleConfigArns": [
+              "arn:test-partition:sagemaker:test-region:test-account:studio-lifecycle-config/test-kernel-lcc",
+              {
+                "Fn::GetAtt": [
+                  "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC",
+                  "StudioLifecycleConfigArn"
+                ]
+              }
+            ],
+            "CustomImages": [
+              {
+                "AppImageConfigName": "appImageConfigName",
+                "ImageName": "imageName",
+                "ImageVersionNumber": 1
+              }
+            ]
+          },
+          "RSessionAppSettings": {
+            "CustomImages": [
+              {
+                "AppImageConfigName": "rSessionAppImageConfig",
+                "ImageName": "rSessionImage",
+                "ImageVersionNumber": 1
+              }
+            ],
+            "DefaultResourceSpec": {
+              "InstanceType": "ml.t3.medium",
+              "SageMakerImageArn": "arn:test-partition:sagemaker:test-region:test-account:image/test-rsession-image",
+              "SageMakerImageVersionArn": "arn:test-partition:sagemaker:test-region:test-account:image-version/test-rsession-image/1",
+              "LifecycleConfigArn": "arn:test-partition:sagemaker:test-region:test-account:studio-lifecycle-config/test-rsession-lcc"
+            }
+          },
+          "RStudioServerProAppSettings": {
+            "AccessStatus": "ENABLED",
+            "UserGroup": "Admin"
+          },
+          "SecurityGroups": [
+            "sg-test12345"
+          ],
+          "SharingSettings": {
+            "NotebookOutputOption": "Allowed",
+            "S3KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/test-sharing-key",
+            "S3OutputPath": "s3://test-sharing-bucket/notebook-output"
+          },
+          "StudioWebPortal": "ENABLED",
+          "ExecutionRole": {
+            "Fn::GetAtt": [
+              "RoleResexrole",
+              "arn"
+            ]
+          }
+        },
+        "DomainSettingsForUpdate": {
+          "ExecutionRoleIdentityConfig": "USER_PROFILE_NAME"
+        }
+      },
+      "DependsOn": [
+        "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+        "studiolifecycleconfigJupyterLabstudioLifecycleConfigJupyterLabarnssmE87C8F9F",
+        "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+        "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122",
+        "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC",
+        "studiolifecycleconfigKernelGatewaystudioLifecycleConfigKernelGatewayarnssm336F5164"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "studiodomaindomainidssmF221DE5A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/domain/id",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "studiodomainF1B3BB3C"
+        }
+      },
+      "DependsOn": [
+        "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+        "studiolifecycleconfigJupyterLabstudioLifecycleConfigJupyterLabarnssmE87C8F9F",
+        "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+        "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122",
+        "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC",
+        "studiolifecycleconfigKernelGatewaystudioLifecycleConfigKernelGatewayarnssm336F5164"
+      ]
+    },
+    "studiodomaindomainvpcidssm11F17386": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/domain/vpc-id",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "vpc-id"
+      },
+      "DependsOn": [
+        "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+        "studiolifecycleconfigJupyterLabstudioLifecycleConfigJupyterLabarnssmE87C8F9F",
+        "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+        "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122",
+        "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC",
+        "studiolifecycleconfigKernelGatewaystudioLifecycleConfigKernelGatewayarnssm336F5164"
+      ]
+    },
+    "studiodomaindomainsubnetidsssmF74821AF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/domain/subnet-ids",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "subnet-id"
+      },
+      "DependsOn": [
+        "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+        "studiolifecycleconfigJupyterLabstudioLifecycleConfigJupyterLabarnssmE87C8F9F",
+        "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+        "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnssmF97A2122",
+        "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC",
+        "studiolifecycleconfigKernelGatewaystudioLifecycleConfigKernelGatewayarnssm336F5164"
+      ]
+    },
+    "studiobasicexecutionpolicyB762C3C3": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-studio-do--39bebade",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:CreateGrant",
+                "kms:DescribeKey",
+                "kms:ListAliases"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/test-efs-key"
+            },
+            {
+              "Action": [
+                "sagemaker:CreateApp",
+                "sagemaker:DeleteApp",
+                "sagemaker:DescribeApp",
+                "sagemaker:CreateSpace",
+                "sagemaker:UpdateSpace",
+                "sagemaker:DeleteSpace",
+                "sagemaker:DescribeSpace"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:sagemaker:test-region:test-account:app/",
+                      {
+                        "Fn::GetAtt": [
+                          "studiodomainF1B3BB3C",
+                          "DomainId"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:sagemaker:test-region:test-account:space/",
+                      {
+                        "Fn::GetAtt": [
+                          "studiodomainF1B3BB3C",
+                          "DomainId"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "sagemaker:DescribeDomain",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:sagemaker:test-region:test-account:domain/",
+                    {
+                      "Fn::GetAtt": [
+                        "studiodomainF1B3BB3C",
+                        "DomainId"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "sagemaker:ListStudioLifecycleConfigs",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "sagemaker:DescribeStudioLifecycleConfig",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:sagemaker:test-region:test-account:studio-lifecycle-config/*"
+            },
+            {
+              "Action": [
+                "sagemaker:DescribeImage",
+                "sagemaker:DescribeImageVersion"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:sagemaker:test-region:test-account:image/*",
+                "arn:test-partition:sagemaker:test-region:test-account:image-version/*/*"
+              ]
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:DescribeLogGroups",
+                "logs:DescribeLogStreams"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/sagemaker/studio"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/sagemaker/studio:log-stream:*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResexrole",
+                              "arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts] User Profile and App names not known at deployment time. ListStudioLifecycleConfigs does not take resource. LogStream names not know at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "studiobasicexecutionpolicymanagedpolicybasicexecutionarnssmBB266BE0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/basic-execution/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "studiobasicexecutionpolicyB762C3C3"
+        }
+      }
+    },
+    "studiobasicexecutionpolicymanagedpolicybasicexecutionnamessmFB35028C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/basic-execution/name",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "studiobasicexecutionpolicyB762C3C3"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "studiouserprofileexampleuseridDF4A0094": {
+      "Type": "AWS::SageMaker::UserProfile",
+      "Properties": {
+        "DomainId": {
+          "Fn::GetAtt": [
+            "studiodomainF1B3BB3C",
+            "DomainId"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-studio-domain"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-studio-domain-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "userid",
+            "Value": "test-user-role-id:example-user-id"
+          }
+        ],
+        "UserProfileName": "example-user-id",
+        "UserSettings": {
+          "ExecutionRole": {
+            "Fn::GetAtt": [
+              "RoleResexrole",
+              "arn"
+            ]
+          },
+          "SharingSettings": {
+            "NotebookOutputOption": "Allowed",
+            "S3KmsKeyId": "test-efs-key",
+            "S3OutputPath": "s3://test-domain-bucket/testing"
+          }
+        }
+      }
+    },
+    "RoleResexrole": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "ex-role",
+          "id": "test-user-role-id"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "domainbucketdeploymentpolicy1CF186BE": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-studio-dom-1b3a5998",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:s3:::cdk-hnb659fds-assets-test-account-test-region",
+                "arn:test-partition:s3:::cdk-hnb659fds-assets-test-account-test-region/*"
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:s3:::test-domain-bucket",
+                "arn:test-partition:s3:::test-domain-bucket/*"
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          "test-asset-deploy-role"
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/"
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "domainbucketdeploymentpolicymanagedpolicydomainbucketdeployarnssm9E7E0859": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/domain-bucket-deploy/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "domainbucketdeploymentpolicy1CF186BE"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/"
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "domainbucketdeploymentpolicymanagedpolicydomainbucketdeploynamessm8854563B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/managed-policy/domain-bucket-deploy/name",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "domainbucketdeploymentpolicy1CF186BE"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "S3 permissions required for BucketDeployment to copy lifecycle assets.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::s3:GetObject*",
+                "Action::s3:GetBucket*",
+                "Action::s3:List*",
+                "Action::s3:DeleteObject*",
+                "Action::s3:PutObjectLegalHold",
+                "Action::s3:PutObjectRetention",
+                "Action::s3:PutObjectTagging",
+                "Action::s3:PutObjectVersionTagging",
+                "Action::s3:Abort*",
+                {
+                  "regex": "/^Resource::arn:.+:s3:::cdk-.+-assets-.+\\/\\*$/"
+                },
+                {
+                  "regex": "/^Resource::.*\\/\\*$/"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiB6723FB92": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+          }
+        },
+        "Handler": "index.handler",
+        "Layers": [
+          {
+            "Ref": "studioassetdeploymenttestingJupyterServerAwsCliLayer7F500B8E"
+          }
+        ],
+        "MemorySize": 512,
+        "Role": "arn:test-partition:iam::test-account:role/test-asset-deploy-role",
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-studio-domain"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-studio-domain-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioLifecycleConfighandlerrole095F64BB": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-studio-do--388f3fc4",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-studio-domain"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-studio-domain-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioLifecycleConfighandlerroleDefaultPolicy7FD30557": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-studio-do--388f3fc4*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-studio-do--388f3fc4*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customStudioLifecycleConfighandlerroleDefaultPolicy7FD30557",
+        "Roles": [
+          {
+            "Ref": "customStudioLifecycleConfighandlerrole095F64BB"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioLifecycleConfighandlerpolicy22B0A9CA": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sagemaker:CreateStudioLifecycleConfig",
+                "sagemaker:DeleteStudioLifecycleConfig"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:sagemaker:test-region:test-account:studio-lifecycle-config/*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "StudioLifecycleConfig-handler",
+        "Roles": [
+          {
+            "Ref": "customStudioLifecycleConfighandlerrole095F64BB"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lifecycle names not known at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioLifecycleConfighandlerfunction51FAA5E0": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-do--388f3fc4",
+        "Handler": "lifecycle.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "customStudioLifecycleConfighandlerrole095F64BB",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-studio-domain"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-studio-domain-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 120
+      },
+      "DependsOn": [
+        "customStudioLifecycleConfighandlerpolicy22B0A9CA",
+        "customStudioLifecycleConfighandlerroleDefaultPolicy7FD30557",
+        "customStudioLifecycleConfighandlerrole095F64BB"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioLifecycleConfighandlerfunctionlambdaStudioLifecycleConfighandlernamessm12C112EE": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/lambda/studiolifecycleconfig-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customStudioLifecycleConfighandlerfunction51FAA5E0"
+        }
+      },
+      "DependsOn": [
+        "customStudioLifecycleConfighandlerpolicy22B0A9CA"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioLifecycleConfighandlerfunctionlambdaStudioLifecycleConfighandlerarnssm6784149A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/lambda/studiolifecycleconfig-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customStudioLifecycleConfighandlerfunction51FAA5E0",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "customStudioLifecycleConfighandlerpolicy22B0A9CA"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioLifecycleConfighandlerfunctionlambdaStudioLifecycleConfighandlerloggroupssm00B35F47": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/lambda/studiolifecycleconfig-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customStudioLifecycleConfighandlerfunction51FAA5E0"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "customStudioLifecycleConfighandlerpolicy22B0A9CA"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioLifecycleConfigproviderrole48615364": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-studio-do--145444c1",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-studio-domain"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-studio-domain-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioLifecycleConfigproviderroleDefaultPolicyD736A00A": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-studio-do--145444c1*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-studio-do--145444c1*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customStudioLifecycleConfighandlerfunction51FAA5E0",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customStudioLifecycleConfighandlerfunction51FAA5E0",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customStudioLifecycleConfighandlerfunction51FAA5E0",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customStudioLifecycleConfigproviderroleDefaultPolicyD736A00A",
+        "Roles": [
+          {
+            "Ref": "customStudioLifecycleConfigproviderrole48615364"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioLifecycleConfigproviderframeworkonEventDB56E9A5": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-sagemaker-studio-domain-main/custom-StudioLifecycleConfig-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customStudioLifecycleConfighandlerfunction51FAA5E0",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-do--145444c1",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customStudioLifecycleConfigproviderrole48615364",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs18.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-studio-domain"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-studio-domain-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customStudioLifecycleConfigproviderroleDefaultPolicyD736A00A",
+        "customStudioLifecycleConfigproviderrole48615364"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioDomainUpdatehandlerrole96DE7F2D": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-studio-dom-2a52ca57",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-studio-domain"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-studio-domain-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioDomainUpdatehandlerroleDefaultPolicy43C78A1B": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-studio-dom-2a52ca57*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-studio-dom-2a52ca57*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customStudioDomainUpdatehandlerroleDefaultPolicy43C78A1B",
+        "Roles": [
+          {
+            "Ref": "customStudioDomainUpdatehandlerrole96DE7F2D"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioDomainUpdatehandlerpolicy75F89FE7": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sagemaker:UpdateDomain",
+                "sagemaker:DescribeDomain"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "studiodomainF1B3BB3C",
+                  "DomainArn"
+                ]
+              }
+            },
+            {
+              "Action": "iam:PassRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "RoleResexrole",
+                  "arn"
+                ]
+              }
+            },
+            {
+              "Action": "elasticfilesystem:CreateFileSystem",
+              "Condition": {
+                "Bool": {
+                  "elasticfilesystem:Encrypted": "true"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "StudioDomainUpdate-handler",
+        "Roles": [
+          {
+            "Ref": "customStudioDomainUpdatehandlerrole96DE7F2D"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/sagemaker-constructs/lib/domain.ts] EFS CreateFileSystem action requires wildcard resource as file system ARN is not known before creation. Permission is scoped with condition requiring encryption.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Resource::*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "customStudioDomainUpdatehandlerfunctionB2836073": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-dom-2a52ca57",
+        "Handler": "update_domain.lambda_handler",
+        "Layers": [
+          {
+            "Ref": "studiodomainboto3layer3C1EF9B8"
+          }
+        ],
+        "Role": {
+          "Fn::GetAtt": [
+            "customStudioDomainUpdatehandlerrole96DE7F2D",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-studio-domain"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-studio-domain-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 120
+      },
+      "DependsOn": [
+        "customStudioDomainUpdatehandlerpolicy75F89FE7",
+        "customStudioDomainUpdatehandlerroleDefaultPolicy43C78A1B",
+        "customStudioDomainUpdatehandlerrole96DE7F2D"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioDomainUpdatehandlerfunctionlambdaStudioDomainUpdatehandlernamessm73C28813": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/lambda/studiodomainupdate-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customStudioDomainUpdatehandlerfunctionB2836073"
+        }
+      },
+      "DependsOn": [
+        "customStudioDomainUpdatehandlerpolicy75F89FE7"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioDomainUpdatehandlerfunctionlambdaStudioDomainUpdatehandlerarnssmDA58C118": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/lambda/studiodomainupdate-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customStudioDomainUpdatehandlerfunctionB2836073",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "customStudioDomainUpdatehandlerpolicy75F89FE7"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioDomainUpdatehandlerfunctionlambdaStudioDomainUpdatehandlerloggroupssm518BE3A9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/lambda/studiodomainupdate-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customStudioDomainUpdatehandlerfunctionB2836073"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "customStudioDomainUpdatehandlerpolicy75F89FE7"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioDomainUpdateproviderrole62793BC5": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-studio-do--1af50b7c",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-studio-domain"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-studio-domain-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioDomainUpdateproviderroleDefaultPolicy3188200C": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-studio-do--1af50b7c*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-studio-do--1af50b7c*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customStudioDomainUpdatehandlerfunctionB2836073",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customStudioDomainUpdatehandlerfunctionB2836073",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customStudioDomainUpdatehandlerfunctionB2836073",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customStudioDomainUpdateproviderroleDefaultPolicy3188200C",
+        "Roles": [
+          {
+            "Ref": "customStudioDomainUpdateproviderrole62793BC5"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customStudioDomainUpdateproviderframeworkonEvent65473DC6": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-sagemaker-studio-domain-main/custom-StudioDomainUpdate-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customStudioDomainUpdatehandlerfunctionB2836073",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-do--1af50b7c",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customStudioDomainUpdateproviderrole62793BC5",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs18.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-studio-domain"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-studio-domain-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customStudioDomainUpdateproviderroleDefaultPolicy3188200C",
+        "customStudioDomainUpdateproviderrole62793BC5"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "studiolifecycleconfigJupyterServerstudioLifecycleConfigJupyterServerarnout77893F0F": {
+      "Value": {
+        "Fn::GetAtt": [
+          "studiolifecycleconfigJupyterServercustomresource5659C3C0",
+          "StudioLifecycleConfigArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:studiolifecycleconfig:jupyterserver:arn"
+      }
+    },
+    "studiolifecycleconfigJupyterLabstudioLifecycleConfigJupyterLabarnout223A8292": {
+      "Value": {
+        "Fn::GetAtt": [
+          "studiolifecycleconfigJupyterLabcustomresourceC12CF8D3",
+          "StudioLifecycleConfigArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:studiolifecycleconfig:jupyterlab:arn"
+      }
+    },
+    "studiolifecycleconfigKernelGatewaystudioLifecycleConfigKernelGatewayarnout19F6976C": {
+      "Value": {
+        "Fn::GetAtt": [
+          "studiolifecycleconfigKernelGatewaycustomresourceDA718FAC",
+          "StudioLifecycleConfigArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:studiolifecycleconfig:kernelgateway:arn"
+      }
+    },
+    "studiodomainboto3layerlayerversionarnout8E4FCB19": {
+      "Value": {
+        "Ref": "studiodomainboto3layer3C1EF9B8"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:layer-version:arn"
+      }
+    },
+    "studiodomaindomainidout44603234": {
+      "Value": {
+        "Ref": "studiodomainF1B3BB3C"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:domain:id"
+      }
+    },
+    "studiodomaindomainvpcidout5BA1DE18": {
+      "Value": "vpc-id",
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:domain:vpc-id"
+      }
+    },
+    "studiodomaindomainsubnetidsout6D37B8FE": {
+      "Value": "subnet-id",
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:domain:subnet-ids"
+      }
+    },
+    "studiobasicexecutionpolicymanagedpolicybasicexecutionarnout5D80C599": {
+      "Value": {
+        "Ref": "studiobasicexecutionpolicyB762C3C3"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:basicexecution:arn"
+      }
+    },
+    "studiobasicexecutionpolicymanagedpolicybasicexecutionnameout52B8CC83": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "studiobasicexecutionpolicyB762C3C3"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:basicexecution:name"
+      }
+    },
+    "domainbucketdeploymentpolicymanagedpolicydomainbucketdeployarnout77C4EF2A": {
+      "Value": {
+        "Ref": "domainbucketdeploymentpolicy1CF186BE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:domainbucketdeploy:arn"
+      }
+    },
+    "domainbucketdeploymentpolicymanagedpolicydomainbucketdeploynameout8031CCA8": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "domainbucketdeploymentpolicy1CF186BE"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:managed-policy:domainbucketdeploy:name"
+      }
+    },
+    "customStudioLifecycleConfighandlerfunctionlambdaStudioLifecycleConfighandlernameout6C37397F": {
+      "Value": {
+        "Ref": "customStudioLifecycleConfighandlerfunction51FAA5E0"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:lambda:studiolifecycleconfighandler:name"
+      }
+    },
+    "customStudioLifecycleConfighandlerfunctionlambdaStudioLifecycleConfighandlerarnoutF9F0C7FD": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customStudioLifecycleConfighandlerfunction51FAA5E0",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:lambda:studiolifecycleconfighandler:arn"
+      }
+    },
+    "customStudioLifecycleConfighandlerfunctionlambdaStudioLifecycleConfighandlerloggroupout4F2427B9": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customStudioLifecycleConfighandlerfunction51FAA5E0"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:lambda:studiolifecycleconfighandler:log-group"
+      }
+    },
+    "customStudioDomainUpdatehandlerfunctionlambdaStudioDomainUpdatehandlernameout615BFFFE": {
+      "Value": {
+        "Ref": "customStudioDomainUpdatehandlerfunctionB2836073"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:lambda:studiodomainupdatehandler:name"
+      }
+    },
+    "customStudioDomainUpdatehandlerfunctionlambdaStudioDomainUpdatehandlerarnout7F44D455": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customStudioDomainUpdatehandlerfunctionB2836073",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:lambda:studiodomainupdatehandler:arn"
+      }
+    },
+    "customStudioDomainUpdatehandlerfunctionlambdaStudioDomainUpdatehandlerloggroupout0C0AE438": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customStudioDomainUpdatehandlerfunctionB2836073"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:lambda:studiodomainupdatehandler:log-group"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

@@ -12,6 +12,8 @@ The Modern Data Architecture Accelerator (MDAA) helps organizations deploy secur
 
 - [Who Is This For?](#who-is-this-for)
 - [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Security](#security)
 - [Quick Start](#quick-start)
 - [Implementation Guide](#implementation-guide)
 - [Workshops and Learning Resources](#workshops-and-learning-resources)
@@ -21,14 +23,13 @@ The Modern Data Architecture Accelerator (MDAA) helps organizations deploy secur
 - [Using and Extending MDAA](#using-and-extending-mdaa)
 - [For Developers](#for-developers)
 - [Contributing](#contributing)
-- [Security](#security)
 - [License](#license)
 
 ## Who Is This For?
 
+- **Data and Cloud Architects**: Design and govern enterprise data platforms with standardized, compliance-ready building blocks.
 - **Data Engineers**: Build and manage data pipelines, lakes, and warehouses with pre-configured, compliant infrastructure.
-- **Platform Engineers**: Deploy and operate secure analytics platforms across multiple AWS accounts using configuration-driven automation.
-- **Data Scientists**: Get a ready-to-use SageMaker Unified Studio environment with governed data access so you can focus on models, not infrastructure.
+- **Data Scientists and ML Engineers**: Get a ready-to-use SageMaker Unified Studio environment with governed data access so you can focus on models, not infrastructure.
 - **Business Analysts**: Access governed data through Athena, QuickSight, and other analytics tools deployed by your platform team.
 - **Compliance Officers**: Gain confidence that deployed infrastructure aligns with NIST 800-53, HIPAA, and PCI-DSS security control requirements.
 
@@ -36,9 +37,27 @@ The Modern Data Architecture Accelerator (MDAA) helps organizations deploy secur
 
 - **Security compliance built in**: Modules are designed for compliance with AWS Solutions, NIST 800-53 Rev5, HIPAA, PCI-DSS, and ITSG-33 CDK Nag rulesets.
 - **Configuration-driven deployment**: Define your entire modern data and analytics environment in YAML files and deploy with a single CLI command. No custom code required.
-- **Multi-language support**: Reusable CDK L2 constructs available in TypeScript, Python, Java, and .NET via JSII (JavaScript Interop Interface). L3 constructs are currently TypeScript-only.
 - **Starter kits for common use cases**: Prepackaged configurations for data lakes, data science platforms, generative AI, governed lakehouses, and healthcare data.
 - **Multi-account and multi-region**: Deploy across multiple AWS accounts and regions with built-in cross-account trust and governance.
+- **Multi-language support**: Reusable CDK L2 constructs available in TypeScript, Python, Java, and .NET via JSII (JavaScript Interop Interface). L3 constructs are currently TypeScript-only.
+
+## Architecture
+
+MDAA is designed as a set of modules. Each module configures and deploys a set of resources which constitute the data analytics environment. Modules may have dependencies on each other, and may also leverage non-MDAA resources deployed within the environment.
+
+While MDAA can be used to implement a comprehensive, end-to-end modern data architecutre, it does not result in a closed system. MDAA may be freely integrated with non-MDAA deployed platform elements and data capabilities. Any individual module of MDAA can be replaced by a non-MDAA component, and the remaining modules will continue to function.
+
+![MDAA Architecture](docs/MDAA-Logical.png)
+
+### Code Architecture
+
+![MDAA Code Architecture](docs/MDAA-Code-Architecture.png)
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for details on MDAA's security design principles and compliance approach.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md#security-issue-notifications) for information on reporting security issues.
 
 ## Quick Start
 
@@ -150,12 +169,6 @@ Additional sample configurations are available in a [dedicated repository](https
 
 MDAA is implemented as a set of compliant modules deployed via a unified orchestration layer. For detailed module documentation, configuration schemas, and API references, see the [MDAA Documentation Site](https://aws.github.io/modern-data-architecture-accelerator/).
 
-- **MDAA CDK Modules**: Configuration-driven CDK Apps that deploy compliant data analytics components as CloudFormation stacks. Can be run independently via CDK CLI or composed via the MDAA CLI.
-- **MDAA CDK L2 and L3 Constructs**: Reusable CDK constructs designed for compliance with AWS Solutions, HIPAA, PCI-DSS, and NIST 800-53 R5 rulesets. L2 constructs are available in TypeScript, Python, Java, and .NET via JSII. L3 constructs are currently TypeScript-only.
-- **MDAA CLI**: A configuration-driven CLI that composes and orchestrates multiple MDAA modules to deploy compliant end-to-end analytics environments.
-
-![MDAA Code Architecture](docs/MDAA-Code-Architecture.png)
-
 ### Governance Modules
 
 - [**SageMaker Unified Studio**](packages/apps/governance/sagemaker-app/README.md) - Deploy SageMaker Unified Studio domains and associated resources.
@@ -217,12 +230,6 @@ MDAA is implemented as a set of compliant modules deployed via a unified orchest
 - [**EventBridge**](packages/apps/utility/eventbridge-app/README.md) - EventBridge resources such as event buses.
 - [**Machine to Machine API**](packages/apps/utility/m2m-api-app/README.md) - REST API for programmatic data lake interaction.
 
-### Reusable CDK L2 Constructs
-
-Compliant with AWS Solutions, HIPAA, PCI-DSS, and NIST 800-53 R5 CDK Nag rulesets:
-
-- [Athena Workgroup](packages/constructs/L2/athena-constructs/README.md) · [CloudWatch](packages/constructs/L2/cloudwatch-constructs/README.md) · [Custom Resource](packages/constructs/L2/custom-constructs/README.md) · [DataBrew](packages/constructs/L2/databrew-constructs/README.md) · [DataSync](packages/constructs/L2/datasync-constructs/README.md) · [DataZone](packages/constructs/L2/datazone-constructs/README.md) · [DMS](packages/constructs/L2/dms-constructs/README.md) · [DynamoDB](packages/constructs/L2/ddb-constructs/README.md) · [EC2](packages/constructs/L2/ec2-constructs/README.md) · [ECS](packages/constructs/L2/ecs-constructs/README.md) · [EKS](packages/constructs/L2/eks-constructs/README.md) · [EventBridge](packages/constructs/L2/eventbridge-constructs/README.md) · [Glue](packages/constructs/L2/glue-constructs/README.md) · [IAM Role](packages/constructs/L2/iam-constructs/README.md) · [KMS](packages/constructs/L2/kms-constructs/README.md) · [Lambda](packages/constructs/L2/lambda-constructs/README.md) · [OpenSearch](packages/constructs/L2/opensearch-constructs/README.md) · [QuickSight](packages/constructs/L2/quicksight-constructs/README.md) · [RDS Aurora](packages/constructs/L2/rds-constructs/README.md) · [Redshift](packages/constructs/L2/redshift-constructs/README.md) · [S3](packages/constructs/L2/s3-constructs/README.md) · [SageMaker](packages/constructs/L2/sagemaker-constructs/README.md) · [SFTP Transfer Family](packages/constructs/L2/transfer-family-constructs/README.md) · [SNS](packages/constructs/L2/sns-constructs/README.md) · [SQS](packages/constructs/L2/sqs-constructs/README.md)
-
 ## Using and Extending MDAA
 
 MDAA can be used and extended in three ways:
@@ -241,36 +248,11 @@ Independently developed workloads (CDK or CloudFormation) can leverage MDAA-depl
 
 ![MDAA Usage and Extension](docs/MDAA-Extending.png)
 
-### Logical Architecture
-
-MDAA is designed as a set of logical architectural layers, each constituted by a set of functional modules. Each module configures and deploys a set of resources which constitute the data analytics environment. Modules may have logical dependencies on each other, and may also leverage non-MDAA resources deployed within the environment.
-
-While MDAA can be used to implement a comprehensive, end-to-end data analytics platform, it does not result in a closed system. MDAA may be freely integrated with non-MDAA deployed platform elements and analytics capabilities. Any individual layer or module of MDAA can be replaced by a non-MDAA component, and the remaining layers and modules will continue to function (assuming basic functional parity with the replaced MDAA module or layer).
-
-![MDAA Logical Architecture](docs/MDAA-Logical.png)
-
-### Code Architecture
-
-![MDAA Code Architecture](docs/MDAA-Code-Architecture.png)
-
 ### Metrics Collection
 
 This solution collects anonymous operational metrics to help AWS improve quality and features. For more information, including how to disable this capability, see the [CDK version reporting documentation](https://docs.aws.amazon.com/cdk/latest/guide/cli.html#version_reporting).
 
 ## For Developers
-
-MDAA includes comprehensive testing for both TypeScript/CDK code and Python Lambda/Glue functions:
-
-```bash
-# Run all tests
-./scripts/test.sh
-
-# TypeScript tests only
-lerna run test --stream
-
-# Python tests only
-npm run test:python:all
-```
 
 For detailed guides, see:
 
@@ -283,12 +265,6 @@ Full documentation and module reference is available at [aws.github.io/modern-da
 ## Contributing
 
 We welcome contributions from the community. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to get started, set up your development environment, and submit pull requests.
-
-## Security
-
-See [CONTRIBUTING.md](CONTRIBUTING.md#security-issue-notifications) for information on reporting security issues.
-
-See [SECURITY.md](SECURITY.md) for details on MDAA's security design principles and compliance approach.
 
 ## License
 

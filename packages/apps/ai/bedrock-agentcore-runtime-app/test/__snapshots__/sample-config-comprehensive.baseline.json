@@ -1,0 +1,293 @@
+{
+  "Description": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "bedrockagentcoreruntimeRuntime84537D71": {
+      "Type": "AWS::BedrockAgentCore::Runtime",
+      "Properties": {
+        "AgentRuntimeName": "test_org_test_env_test_domain_test_bedr__82df822",
+        "AgentRuntimeArtifact": {
+          "ContainerConfiguration": {
+            "ContainerUri": "test-account.dkr.ecr.test-region.amazonaws.com/test-runtime:latest"
+          }
+        },
+        "RoleArn": "arn:test-partition:iam::test-account:role/test-runtime-role",
+        "NetworkConfiguration": {
+          "NetworkMode": "VPC",
+          "NetworkModeConfig": {
+            "SecurityGroups": [
+              "sg-12345678",
+              "sg-87654321"
+            ],
+            "Subnets": [
+              "subnet-12345678",
+              "subnet-87654321",
+              "subnet-abcdef12"
+            ]
+          }
+        },
+        "Description": "Test agent runtime for unit testing",
+        "EnvironmentVariables": {
+          "ENVIRONMENT": "test",
+          "LOG_LEVEL": "DEBUG"
+        },
+        "ProtocolConfiguration": "MCP",
+        "LifecycleConfiguration": {
+          "IdleRuntimeSessionTimeout": 3600,
+          "MaxLifetime": 7200
+        },
+        "AuthorizerConfiguration": {
+          "CustomJWTAuthorizer": {
+            "DiscoveryUrl": "https://cognito-idp.test-region.amazonaws.com/test-region_test/.well-known/openid-configuration",
+            "AllowedAudience": [
+              "test-client-id"
+            ],
+            "AllowedClients": [
+              "test-client-app-1",
+              "test-client-app-2"
+            ]
+          }
+        },
+        "RequestHeaderConfiguration": {
+          "RequestHeaderAllowlist": [
+            "X-Custom-Header",
+            "X-Request-Id"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeXRayResourcePolicyADC714BD": {
+      "Type": "AWS::Logs::ResourcePolicy",
+      "Properties": {
+        "PolicyDocument": "{\"Statement\":[{\"Action\":\"logs:PutLogEvents\",\"Condition\":{\"ArnLike\":{\"aws:SourceArn\":\"arn:test-partition:xray:test-region:test-account:*\"},\"StringEquals\":{\"aws:SourceAccount\":\"test-account\"}},\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"xray.amazonaws.com\"},\"Resource\":[\"arn:test-partition:logs:test-region:test-account:log-group:aws/spans:*\",\"arn:test-partition:logs:test-region:test-account:log-group:/aws/application-signals/data:*\"],\"Sid\":\"TransactionSearchXRayAccess\"}],\"Version\":\"2012-10-17\"}",
+        "PolicyName": "testorgtestenvtestdomaintestbedrockagentcoreruntimemainbedrockagentcoreruntimeXRayResourcePolicy0FD1A017"
+      }
+    },
+    "bedrockagentcoreruntimeTransactionSearchConfig2B8A09A6": {
+      "Type": "AWS::XRay::TransactionSearchConfig",
+      "Properties": {
+        "IndexingPercentage": 1
+      },
+      "DependsOn": [
+        "bedrockagentcoreruntimeXRayResourcePolicyADC714BD"
+      ]
+    },
+    "bedrockagentcoreruntimeRuntimeEndpoint04F7D8AD": {
+      "Type": "AWS::BedrockAgentCore::RuntimeEndpoint",
+      "Properties": {
+        "AgentRuntimeId": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntime84537D71",
+            "AgentRuntimeId"
+          ]
+        },
+        "Name": "test_org_test_env_test_domain_test_bedr_234a2cb0",
+        "Description": "Test runtime endpoint",
+        "AgentRuntimeVersion": "1.0.0"
+      },
+      "DependsOn": [
+        "bedrockagentcoreruntimeRuntime84537D71"
+      ]
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimearnssmBD5DB9C8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/agentruntime/testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntime84537D71",
+            "AgentRuntimeArn"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimeidssm74DFCF6E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/agentruntime/testagentruntime/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntime84537D71",
+            "AgentRuntimeId"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimenamessm299B449F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/agentruntime/testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-main-testagentruntime"
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimeEndpointtestAgentRuntimearnssm584B32FB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/agentruntimeendpoint/testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntimeEndpoint04F7D8AD",
+            "AgentRuntimeEndpointArn"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimeEndpointtestAgentRuntimeidssm2F81F3F1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/agentruntimeendpoint/testagentruntime/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntimeEndpoint04F7D8AD",
+            "Id"
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimearnoutA7A7C358": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntime84537D71",
+          "AgentRuntimeArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:agentruntime:testagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimeidout28FA5C57": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntime84537D71",
+          "AgentRuntimeId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:agentruntime:testagentruntime:id"
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimenameout5E164965": {
+      "Value": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-main-testagentruntime",
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:agentruntime:testagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimeEndpointtestAgentRuntimearnout823FAB11": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntimeEndpoint04F7D8AD",
+          "AgentRuntimeEndpointArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:agentruntimeendpoint:testagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimeEndpointtestAgentRuntimeidout551493F4": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntimeEndpoint04F7D8AD",
+          "Id"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:agentruntimeendpoint:testagentruntime:id"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

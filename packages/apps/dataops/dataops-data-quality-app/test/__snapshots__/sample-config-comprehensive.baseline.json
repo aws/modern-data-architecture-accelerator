@@ -1,0 +1,457 @@
+{
+  "Description": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNamecustomerdataC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-dataops-project/databaseName/customer-data"
+    },
+    "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNameorderdataC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-dataops-project/databaseName/order-data"
+    },
+    "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNameinventorydataC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-dataops-project/databaseName/inventory-data"
+    },
+    "SsmParameterValuetestorgtestdomaintestdataopsprojectconnectionsredshiftjdbcC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-dataops-project/connections/redshift-jdbc"
+    },
+    "SsmParameterValuetestorgtestdomaintestdataopsprojectsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-dataops-project/securityConfiguration/default"
+    },
+    "SsmParameterValuetestorgtestdomaintestdataopsprojectprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-dataops-project/projectBucket/default"
+    },
+    "SsmParameterValuetestorgtestdomaintestdataopsprojectdeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-dataops-project/deploymentRole/default"
+    },
+    "SsmParameterValuetestorgtestdomaintestdataopsprojectkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/test-dataops-project/kmsArn/default"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-data-quality-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructcustomerdataqualityrulesetC96C9640": {
+      "Type": "AWS::Glue::DataQualityRuleset",
+      "Properties": {
+        "Description": "Validate customer data completeness and uniqueness",
+        "Name": "customer-data-quality",
+        "Ruleset": "Rules = [\n    IsComplete \"customer_id\",\n    Uniqueness \"email\" > 0.95,\n    RowCount > 100,\n    ColumnValues \"status\" in [\"active\",\"inactive\",\"pending\"],\n    ColumnDataType \"created_at\" = \"DATE\",\n    DataFreshness \"updated_at\" <= 24 hours,\n    CustomSql \"SELECT COUNT(*) FROM customers WHERE customer_id IS NULL\" = 0,\n    IsComplete \"phone_number\" where \"country = 'US'\"\n]",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "TargetTable": {
+          "DatabaseName": {
+            "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNamecustomerdataC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
+          "TableName": "customers",
+          "CatalogId": "test-account"
+        }
+      }
+    },
+    "constructcustomerdataqualitynameparam51C0ECA4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Glue Data Quality Ruleset name for customer-data-quality",
+        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/customer-data-quality",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "customer-data-quality"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "Parameter stores non-sensitive configuration metadata.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructcustomerdataqualitytargetparam1BA3F45E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Target table for ruleset customer-data-quality",
+        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/customer-data-quality-target",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNamecustomerdataC96584B6F00A464EAD1953AFF4B05118Parameter"
+              },
+              ".customers"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "Parameter stores non-sensitive configuration metadata.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructorderdataqualityrulesetA1CF7F1C": {
+      "Type": "AWS::Glue::DataQualityRuleset",
+      "Properties": {
+        "Description": "Validate order data freshness and values",
+        "Name": "order-data-quality",
+        "Ruleset": "Rules = [\n  IsComplete \"order_id\",\n  ColumnValues \"status\" in [\"pending\", \"completed\", \"cancelled\"],\n  RowCount > 0\n]\n",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "TargetTable": {
+          "DatabaseName": {
+            "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNameorderdataC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
+          "TableName": "orders"
+        }
+      }
+    },
+    "constructorderdataqualitynameparam584C8345": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Glue Data Quality Ruleset name for order-data-quality",
+        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/order-data-quality",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "order-data-quality"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "Parameter stores non-sensitive configuration metadata.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructorderdataqualitytargetparam4542BFBB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Target table for ruleset order-data-quality",
+        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/order-data-quality-target",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNameorderdataC96584B6F00A464EAD1953AFF4B05118Parameter"
+              },
+              ".orders"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "Parameter stores non-sensitive configuration metadata.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructredshiftinventoryqualityrulesetD3A0CAE3": {
+      "Type": "AWS::Glue::DataQualityRuleset",
+      "Properties": {
+        "Description": "Validate inventory data from Redshift",
+        "Name": "redshift-inventory-quality",
+        "Ruleset": "Rules = [\n    IsComplete \"product_id\"\n]",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "TargetTable": {
+          "DatabaseName": {
+            "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNameinventorydataC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
+          "TableName": "inventory"
+        }
+      }
+    },
+    "constructredshiftinventoryqualitynameparamDA021615": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Glue Data Quality Ruleset name for redshift-inventory-quality",
+        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/redshift-inventory-quality",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "redshift-inventory-quality"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "Parameter stores non-sensitive configuration metadata.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructredshiftinventoryqualitytargetparamB2502878": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Target table for ruleset redshift-inventory-quality",
+        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/redshift-inventory-quality-target",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNameinventorydataC96584B6F00A464EAD1953AFF4B05118Parameter"
+              },
+              ".inventory"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "Parameter stores non-sensitive configuration metadata.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructredshiftinventoryqualitysourceparam35CDF26C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Source configuration for ruleset redshift-inventory-quality",
+        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/redshift-inventory-quality-source",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"sourceType\":\"redshift\",\"connectionName\":\"",
+              {
+                "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectconnectionsredshiftjdbcC96584B6F00A464EAD1953AFF4B05118Parameter"
+              },
+              "\",\"redshiftTable\":\"public.inventory\"}"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "Parameter stores non-sensitive configuration metadata.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructautorecommendedrulesrecommendationparam912609EF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Recommendation configuration for ruleset auto-recommended-rules",
+        "Name": "/test-org/test-domain/test-dataops-project/data-quality-ruleset/auto-recommended-rules-recommendation",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"recommendationRunId\":\"dqrun-abc-123-def\",\"targetTable\":{\"databaseName\":\"",
+              {
+                "Ref": "SsmParameterValuetestorgtestdomaintestdataopsprojectdatabaseNamecustomerdataC96584B6F00A464EAD1953AFF4B05118Parameter"
+              },
+              "\",\"tableName\":\"customers\"}}"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "Parameter stores non-sensitive configuration metadata.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructrawparquetdatadynamictargetparamBCF78495": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Dynamic discovery target configuration for raw-parquet-data",
+        "Name": "/test-org/test-domain/test-dataops-project/data-quality/dynamic-target/raw-parquet-data",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "{\"s3DirUri\":\"s3://my-data-lake/raw/parquet/\",\"source\":{\"sourceType\":\"s3\",\"s3Format\":\"parquet\"}}"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "Parameter stores non-sensitive configuration metadata.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructsmusconfigparamE587F07E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "SMUS publishing configuration for data quality",
+        "Name": "/test-org/test-domain/test-dataops-project/data-quality/smus-config",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "{\"domainId\":\"dzd_my_domain\",\"accountId\":\"test-account\",\"region\":\"test-region\"}"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,5099 @@
+{
+  "Description": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/sample-org/instance1/generated-role/lambda/arn"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityGroupIdtestsecuritygroupC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/securityGroupId/test-security-group"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/projectTopicArn/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/securityConfiguration/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/projectBucket/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestdeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/deploymentRole/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/kmsArn/default"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-lambda-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructec2testfunvpcsg850F67E1": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-lambda-main/construct/ec2/testfunvpc-sg",
+        "GroupName": "test-org-test-env-test-domain-test-lambda-main-testfunvpc-sg",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "some-vpc-id"
+      }
+    },
+    "constructec2testfunvpcsgto100008tcpPORT4436E01758D": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "CidrIp": "10.0.0.0/8",
+        "Description": "Allow HTTPS to internal network",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "constructec2testfunvpcsg850F67E1",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "constructec2testfunvpcsgto172160012tcpRANGE8080809096802891": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "CidrIp": "172.16.0.0/12",
+        "Description": "Allow custom port range to private network",
+        "FromPort": 8080,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "constructec2testfunvpcsg850F67E1",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 8090
+      }
+    },
+    "constructec2testfunvpcsgtosg12312412412tcpPORT4431C218137": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "Allow HTTPS to peer security group",
+        "DestinationSecurityGroupId": "sg-12312412412",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "constructec2testfunvpcsg850F67E1",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "constructec2testfunvpcsgtosomeprefixlistidtcpPORT44330DE5EF8": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "Allow HTTPS via prefix list",
+        "DestinationPrefixListId": "some-prefixlist-id",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "constructec2testfunvpcsg850F67E1",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "constructec2testfunvpcsgsecuritygrouptestfunvpcsgidssm19D2BA02": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/security-group/testfunvpc-sg/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructec2testfunvpcsg850F67E1",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "constructloggrouptestobservabilityfunction103BBFEE": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "LogGroupName": "/aws/lambda/test-org-test-env-test-domain-test-lambda-main-testobservabilityfunction",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction0MetricFilter0A2F323E3": {
+      "Type": "AWS::Logs::MetricFilter",
+      "Properties": {
+        "FilterName": "error-count",
+        "FilterPattern": "{ $.level = \"error\" }",
+        "LogGroupName": {
+          "Ref": "constructloggrouptestobservabilityfunction103BBFEE"
+        },
+        "MetricTransformations": [
+          {
+            "DefaultValue": 0,
+            "MetricName": "error-count",
+            "MetricNamespace": "TestObservability/Errors",
+            "MetricValue": "1",
+            "Unit": "Count"
+          }
+        ]
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction0metricfiltererrorcountnamessm0298009C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metric-filter/error-count/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "error-count"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric filter name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction0metricfiltererrorcountloggroupssm56DD7535": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metric-filter/error-count/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructloggrouptestobservabilityfunction103BBFEE"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (log group name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction0metricstestobservabilityfunctionerrorcountfilterNamessm7462AC4A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/error-count/filtername",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "error-count"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric filter name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction0metricstestobservabilityfunctionerrorcountnamespacessmFE84441A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/error-count/namespace",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "TestObservability/Errors"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric namespace); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction0metricstestobservabilityfunctionerrorcountnamessm05DF6F9F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/error-count/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "error-count"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction0metricstestobservabilityfunctionerrorcountunitssmDE5653FD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/error-count/unit",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "Count"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric unit); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1MetricFilter0729B0ED6": {
+      "Type": "AWS::Logs::MetricFilter",
+      "Properties": {
+        "FilterName": "processing-metrics-0",
+        "FilterPattern": "[timestamp, request_id, level, msg, duration_ms, memory_mb]",
+        "LogGroupName": {
+          "Ref": "constructloggrouptestobservabilityfunction103BBFEE"
+        },
+        "MetricTransformations": [
+          {
+            "MetricName": "processing-duration-ms",
+            "MetricNamespace": "TestObservability/Performance",
+            "MetricValue": "$duration_ms",
+            "Unit": "Milliseconds"
+          }
+        ]
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1MetricFilter195B2E165": {
+      "Type": "AWS::Logs::MetricFilter",
+      "Properties": {
+        "FilterName": "processing-metrics-1",
+        "FilterPattern": "[timestamp, request_id, level, msg, duration_ms, memory_mb]",
+        "LogGroupName": {
+          "Ref": "constructloggrouptestobservabilityfunction103BBFEE"
+        },
+        "MetricTransformations": [
+          {
+            "MetricName": "memory-usage-mb",
+            "MetricNamespace": "TestObservability/Performance",
+            "MetricValue": "$memory_mb",
+            "Unit": "Megabytes"
+          }
+        ]
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricfilterprocessingmetrics0namessm47CE9C06": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metric-filter/processing-metrics-0/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "processing-metrics-0"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric filter name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricfilterprocessingmetrics0loggroupssm1043E90B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metric-filter/processing-metrics-0/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructloggrouptestobservabilityfunction103BBFEE"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (log group name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricfilterprocessingmetrics1namessm53062B3B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metric-filter/processing-metrics-1/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "processing-metrics-1"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric filter name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricfilterprocessingmetrics1loggroupssm8AECCC95": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metric-filter/processing-metrics-1/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructloggrouptestobservabilityfunction103BBFEE"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (log group name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricstestobservabilityfunctionprocessingdurationmsfilterNamessmCFBAED42": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/processing-duration-ms/filtername",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "processing-metrics-0"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric filter name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricstestobservabilityfunctionprocessingdurationmsnamespacessm8087EA37": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/processing-duration-ms/namespace",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "TestObservability/Performance"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric namespace); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricstestobservabilityfunctionprocessingdurationmsnamessmD67038DF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/processing-duration-ms/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "processing-duration-ms"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricstestobservabilityfunctionprocessingdurationmsunitssmA3598E0F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/processing-duration-ms/unit",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "Milliseconds"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric unit); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricstestobservabilityfunctionmemoryusagembfilterNamessm288533F9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/memory-usage-mb/filtername",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "processing-metrics-0"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric filter name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricstestobservabilityfunctionmemoryusagembnamespacessmC414A7EC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/memory-usage-mb/namespace",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "TestObservability/Performance"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric namespace); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricstestobservabilityfunctionmemoryusagembnamessm6814AAA4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/memory-usage-mb/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "memory-usage-mb"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction1metricstestobservabilityfunctionmemoryusagembunitssm670C0BD0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/memory-usage-mb/unit",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "Megabytes"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric unit); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction2MetricFilter0177B9153": {
+      "Type": "AWS::Logs::MetricFilter",
+      "Properties": {
+        "FilterName": "error-count-with-dimensions",
+        "FilterPattern": "{ $.level = \"error\" }",
+        "LogGroupName": {
+          "Ref": "constructloggrouptestobservabilityfunction103BBFEE"
+        },
+        "MetricTransformations": [
+          {
+            "Dimensions": [
+              {
+                "Key": "Environment",
+                "Value": "test"
+              },
+              {
+                "Key": "Service",
+                "Value": "observability"
+              }
+            ],
+            "MetricName": "error-count-by-type",
+            "MetricNamespace": "TestObservability/Errors",
+            "MetricValue": "1",
+            "Unit": "Count"
+          }
+        ]
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction2metricfiltererrorcountwithdimensionsnamessm01C9075B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metric-filter/error-count-with-dimensions/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "error-count-with-dimensions"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric filter name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction2metricfiltererrorcountwithdimensionsloggroupssmA74797AC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metric-filter/error-count-with-dimensions/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructloggrouptestobservabilityfunction103BBFEE"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (log group name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction2metricstestobservabilityfunctionerrorcountbytypefilterNamessmF19D2181": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/error-count-by-type/filtername",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "error-count-with-dimensions"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric filter name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction2metricstestobservabilityfunctionerrorcountbytypenamespacessm76B94F16": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/error-count-by-type/namespace",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "TestObservability/Errors"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric namespace); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction2metricstestobservabilityfunctionerrorcountbytypenamessm0142D996": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/error-count-by-type/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "error-count-by-type"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructmetricfiltertestobservabilityfunction2metricstestobservabilityfunctionerrorcountbytypeunitssm3ABB1839": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/metrics/testobservabilityfunction/error-count-by-type/unit",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "Count"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (metric unit); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructalarmtestobservabilityfunction0Alarm5E6CDED0": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        ],
+        "AlarmDescription": "Alert when error count exceeds threshold",
+        "AlarmName": "high-error-rate",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "DatapointsToAlarm": 2,
+        "EvaluationPeriods": 3,
+        "MetricName": "error-count",
+        "Namespace": "TestObservability/Errors",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Threshold": 5,
+        "TreatMissingData": "notBreaching",
+        "Unit": "Count"
+      }
+    },
+    "constructalarmtestobservabilityfunction0alarmtestobservabilityfunctionhigherrorratearnssm1FFC272B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/alarm/testobservabilityfunction/high-error-rate/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructalarmtestobservabilityfunction0Alarm5E6CDED0",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm ARN); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructalarmtestobservabilityfunction0alarmtestobservabilityfunctionhigherrorratenamessm53C9946C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/alarm/testobservabilityfunction/high-error-rate/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "high-error-rate"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructalarmtestobservabilityfunction1Alarm27979757": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          "arn:test-partition:sns:test-region:test-account:test-alerts"
+        ],
+        "AlarmDescription": "Alert on Lambda function errors",
+        "AlarmName": "lambda-errors",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "testobservabilityfunction557C3A87"
+            }
+          }
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "OKActions": [
+          "arn:test-partition:sns:test-region:test-account:test-alerts"
+        ],
+        "Period": 60,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    "constructalarmtestobservabilityfunction1alarmtestobservabilityfunctionlambdaerrorsarnssm59CE0610": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/alarm/testobservabilityfunction/lambda-errors/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructalarmtestobservabilityfunction1Alarm27979757",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm ARN); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructalarmtestobservabilityfunction1alarmtestobservabilityfunctionlambdaerrorsnamessm5C2F7762": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/alarm/testobservabilityfunction/lambda-errors/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "lambda-errors"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructalarmtestobservabilityfunction2Alarm8050DB0D": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          "arn:test-partition:sns:test-region:test-account:test-alerts"
+        ],
+        "AlarmDescription": "Alert when total errors across all metrics exceed threshold",
+        "AlarmName": "total-errors-across-metrics",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "InsufficientDataActions": [
+          "arn:test-partition:sns:test-region:test-account:test-alerts"
+        ],
+        "Metrics": [
+          {
+            "Expression": "m1+m2",
+            "Id": "total",
+            "Label": "Total Errors",
+            "ReturnData": true
+          },
+          {
+            "Id": "m1",
+            "MetricStat": {
+              "Metric": {
+                "MetricName": "error-count",
+                "Namespace": "TestObservability/Errors"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "m2",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "Environment",
+                    "Value": "test"
+                  }
+                ],
+                "MetricName": "error-count-by-type",
+                "Namespace": "TestObservability/Errors"
+              },
+              "Period": 300,
+              "Stat": "Sum",
+              "Unit": "Count"
+            },
+            "ReturnData": false
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Threshold": 10,
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    "constructalarmtestobservabilityfunction2alarmtestobservabilityfunctiontotalerrorsacrossmetricsarnssm15EEE914": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/alarm/testobservabilityfunction/total-errors-across-metrics/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructalarmtestobservabilityfunction2Alarm8050DB0D",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm ARN); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructalarmtestobservabilityfunction2alarmtestobservabilityfunctiontotalerrorsacrossmetricsnamessmC9243F3B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/alarm/testobservabilityfunction/total-errors-across-metrics/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "total-errors-across-metrics"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructquerytestobservabilityfunction0QueryDefinitionD5B72087": {
+      "Type": "AWS::Logs::QueryDefinition",
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "testobservabilityfunction557C3A87"
+                }
+              ]
+            ]
+          }
+        ],
+        "Name": "testobservabilityfunction/errors",
+        "QueryString": "fields @timestamp, @message\n| filter @message like /ERROR/\n| sort @timestamp desc\n| limit 10000"
+      }
+    },
+    "constructquerytestobservabilityfunction0insightsquerytestobservabilityfunctiontestobservabilityfunctionerrorsidssm169CAE4F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/insights-query/testobservabilityfunction/testobservabilityfunction/errors/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructquerytestobservabilityfunction0QueryDefinitionD5B72087",
+            "QueryDefinitionId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (query ID); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructquerytestobservabilityfunction0insightsquerytestobservabilityfunctiontestobservabilityfunctionerrorsnamessm756693A9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/insights-query/testobservabilityfunction/testobservabilityfunction/errors/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "testobservabilityfunction/errors"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (query name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructquerytestobservabilityfunction1QueryDefinitionD152BB8B": {
+      "Type": "AWS::Logs::QueryDefinition",
+      "Properties": {
+        "LogGroupNames": [
+          "/aws/lambda/testobservabilityfunction",
+          "/aws/lambda/testfun"
+        ],
+        "Name": "testobservabilityfunction/performance",
+        "QueryString": "fields @timestamp, @duration, @billedDuration, @memorySize, @maxMemoryUsed\n| stats avg(@duration), max(@duration), min(@duration), avg(@maxMemoryUsed)\n| limit 10000"
+      }
+    },
+    "constructquerytestobservabilityfunction1insightsquerytestobservabilityfunctiontestobservabilityfunctionperformanceidssm2ACCD3FA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/insights-query/testobservabilityfunction/testobservabilityfunction/performance/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructquerytestobservabilityfunction1QueryDefinitionD152BB8B",
+            "QueryDefinitionId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (query ID); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructquerytestobservabilityfunction1insightsquerytestobservabilityfunctiontestobservabilityfunctionperformancenamessm0B916D60": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/insights-query/testobservabilityfunction/testobservabilityfunction/performance/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "testobservabilityfunction/performance"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (query name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructquerytestobservabilityfunction2QueryDefinition2D1C1CE8": {
+      "Type": "AWS::Logs::QueryDefinition",
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "testobservabilityfunction557C3A87"
+                }
+              ]
+            ]
+          }
+        ],
+        "Name": "testobservabilityfunction/recent-invocations",
+        "QueryString": "fields @timestamp, @requestId, @message\n| sort @timestamp desc\n| limit 10000"
+      }
+    },
+    "constructquerytestobservabilityfunction2insightsquerytestobservabilityfunctiontestobservabilityfunctionrecentinvocationsidssm1737BDD5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/insights-query/testobservabilityfunction/testobservabilityfunction/recent-invocations/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructquerytestobservabilityfunction2QueryDefinition2D1C1CE8",
+            "QueryDefinitionId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (query ID); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructquerytestobservabilityfunction2insightsquerytestobservabilityfunctiontestobservabilityfunctionrecentinvocationsnamessmE4CB8543": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/insights-query/testobservabilityfunction/testobservabilityfunction/recent-invocations/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "testobservabilityfunction/recent-invocations"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (query name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "layertestlayer3444C77B": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "test layer",
+        "LayerName": "test-org-test-env-test-domain-test-lambda-main-test-layer"
+      }
+    },
+    "dlqtestfun336F14E6": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfun-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunPolicy32D60293": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                }
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "dlqtestfun336F14E6"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunqueuetestfundlqnamessm77666A52": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestfun336F14E6",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunqueuetestfundlqarnssm68638973": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestfun336F14E6",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunqueuetestfundlqurlssm3576F649": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dlqtestfun336F14E6"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "testfunFF65A3D7": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "dlqtestfun336F14E6",
+              "Arn"
+            ]
+          }
+        },
+        "Description": "Function descriptions",
+        "Environment": {
+          "Variables": {
+            "env-var-name": "value",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "EphemeralStorage": {
+          "Size": 1024
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfun",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "MemorySize": 512,
+        "ReservedConcurrentExecutions": 100,
+        "Role": {
+          "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Runtime": "python3.8",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 10
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunEventInvokeConfig9BC1517D": {
+      "Type": "AWS::Lambda::EventInvokeConfig",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "testfunFF65A3D7"
+        },
+        "MaximumEventAgeInSeconds": 3600,
+        "MaximumRetryAttempts": 2,
+        "Qualifier": "$LATEST"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunlambdatestfunnamessm7172E6E6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfun/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "testfunFF65A3D7"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunlambdatestfunarnssmF91FDF7D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfun/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "testfunFF65A3D7",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunlambdatestfunloggroupssm24B58D1A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfun/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "testfunFF65A3D7"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunInvokeNwyI4oYxUZ9s40dbnCJyujtsAX0gdv1vauA9ALARI0BDD28A1": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "testfunFF65A3D7",
+            "Arn"
+          ]
+        },
+        "Principal": "arn:test-partition:iam::test-account:role/invoker-role"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunAllowS3Invoke7F66BCA4": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "testfunFF65A3D7",
+            "Arn"
+          ]
+        },
+        "Principal": "s3.amazonaws.com",
+        "SourceAccount": "test-account",
+        "SourceArn": "arn:test-partition:s3:::my-trigger-bucket"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunevents11612EB5": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfun-events-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfuneventsPolicy051162E2": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "eventruletestingeventbridge09AA772D",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "dlqtestfunevents11612EB5",
+                  "Arn"
+                ]
+              },
+              "Sid": "AllowEventRuletestorgtestenvtestdomaintestlambdamaineventruletestingeventbridgeE7B7B618"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "eventruletestingeventbridgeschedule5225694F",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "dlqtestfunevents11612EB5",
+                  "Arn"
+                ]
+              },
+              "Sid": "AllowEventRuletestorgtestenvtestdomaintestlambdamaineventruletestingeventbridgescheduleCD1D1F1F"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "eventruletestingeventbridges3A2425715",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "dlqtestfunevents11612EB5",
+                  "Arn"
+                ]
+              },
+              "Sid": "AllowEventRuletestorgtestenvtestdomaintestlambdamaineventruletestingeventbridges3A0E557DC"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "dlqtestfunevents11612EB5"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfuneventsqueuetestfuneventsdlqnamessm9956093C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-events-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestfunevents11612EB5",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfuneventsqueuetestfuneventsdlqarnssm1995F77C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-events-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestfunevents11612EB5",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfuneventsqueuetestfuneventsdlqurlssm93C2F548": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-events-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dlqtestfunevents11612EB5"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "eventruletestingeventbridge09AA772D": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "testing",
+        "EventBusName": "some-custom-name",
+        "EventPattern": {
+          "source": [
+            "glue.amazonaws.com"
+          ],
+          "detail": {
+            "some_event_key": "some_event_value"
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-lambda-main-testing--3a65ba03",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "testfunFF65A3D7",
+                "Arn"
+              ]
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "dlqtestfunevents11612EB5",
+                  "Arn"
+                ]
+              }
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10
+            }
+          }
+        ]
+      }
+    },
+    "eventruletestingeventbridgeAllowEventRuletestorgtestenvtestdomaintestlambdamaintestfun864CA59E0CF39BCF": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "testfunFF65A3D7",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "eventruletestingeventbridge09AA772D",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "eventruletestingeventbridgeschedule5225694F": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "testing",
+        "Name": "test-org-test-env-test-domain-test-lambda-main-testing-e-6263c67",
+        "ScheduleExpression": "cron(0 20 * * ? *)",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "testfunFF65A3D7",
+                "Arn"
+              ]
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "dlqtestfunevents11612EB5",
+                  "Arn"
+                ]
+              }
+            },
+            "Id": "Target0",
+            "Input": "{\"some-test-input-obj\":{\"some-test-input-key\":\"test-value\"}}",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10
+            }
+          }
+        ]
+      }
+    },
+    "eventruletestingeventbridgescheduleAllowEventRuletestorgtestenvtestdomaintestlambdamaintestfun864CA59E0597D4FA": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "testfunFF65A3D7",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "eventruletestingeventbridgeschedule5225694F",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "eventruletestingeventbridges3A2425715": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Event Rule for triggering testfun-testing-event-bridge-s3 with S3 events",
+        "EventBusName": "some-custom-name",
+        "EventPattern": {
+          "source": [
+            "aws.s3"
+          ],
+          "detail": {
+            "bucket": {
+              "name": [
+                "sample-org-dev-instance1-datalake-raw"
+              ]
+            },
+            "object": {
+              "key": [
+                {
+                  "prefix": "data/test-lambda/"
+                }
+              ]
+            }
+          },
+          "detail-type": [
+            "Object Created"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-lambda-main-testing--3bf753f0",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "testfunFF65A3D7",
+                "Arn"
+              ]
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "dlqtestfunevents11612EB5",
+                  "Arn"
+                ]
+              }
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10
+            }
+          }
+        ]
+      }
+    },
+    "eventruletestingeventbridges3AllowEventRuletestorgtestenvtestdomaintestlambdamaintestfun864CA59E01B55405": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "testfunFF65A3D7",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "eventruletestingeventbridges3A2425715",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "dlqtestfunvpc5C36155C": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfunvpc-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunvpcPolicy9BEDB0BA": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                }
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "dlqtestfunvpc5C36155C"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunvpcqueuetestfunvpcdlqnamessmBFE9BDDB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpc-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestfunvpc5C36155C",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunvpcqueuetestfunvpcdlqarnssm0E05D5C5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpc-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestfunvpc5C36155C",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunvpcqueuetestfunvpcdlqurlssm27EE074F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpc-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dlqtestfunvpc5C36155C"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "testfunvpcAF4DF40B": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "dlqtestfunvpc5C36155C",
+              "Arn"
+            ]
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfunvpc",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Role": {
+          "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Runtime": "python3.9",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcConfig": {
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "constructec2testfunvpcsg850F67E1",
+                "GroupId"
+              ]
+            }
+          ],
+          "SubnetIds": [
+            "some-subnet-id"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunvpclambdatestfunvpcnamessm48C6E442": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpc/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "testfunvpcAF4DF40B"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunvpclambdatestfunvpcarnssm09657A9E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpc/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "testfunvpcAF4DF40B",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunvpclambdatestfunvpcloggroupssm86BB5D46": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpc/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "testfunvpcAF4DF40B"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunvpcexistingsg3D11928F": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfunvpcexistingsg-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunvpcexistingsgPolicy13645CE6": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                }
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "dlqtestfunvpcexistingsg3D11928F"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunvpcexistingsgqueuetestfunvpcexistingsgdlqnamessm811CB2C7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpcexistingsg-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestfunvpcexistingsg3D11928F",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunvpcexistingsgqueuetestfunvpcexistingsgdlqarnssmBF33F56B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpcexistingsg-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestfunvpcexistingsg3D11928F",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestfunvpcexistingsgqueuetestfunvpcexistingsgdlqurlssm2D0750A5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpcexistingsg-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dlqtestfunvpcexistingsg3D11928F"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "testfunvpcexistingsg47E94502": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "dlqtestfunvpcexistingsg3D11928F",
+              "Arn"
+            ]
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfunv--8d6e081",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Role": {
+          "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Runtime": "python3.9",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcConfig": {
+          "SecurityGroupIds": [
+            {
+              "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityGroupIdtestsecuritygroupC96584B6F00A464EAD1953AFF4B05118Parameter"
+            }
+          ],
+          "SubnetIds": [
+            "some-subnet-id"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunvpcexistingsglambdatestfunvpcexistingsgnamessm90A676C7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpcexistingsg/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "testfunvpcexistingsg47E94502"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunvpcexistingsglambdatestfunvpcexistingsgarnssm7F59396B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpcexistingsg/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "testfunvpcexistingsg47E94502",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testfunvpcexistingsglambdatestfunvpcexistingsgloggroupssm8372D1DF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpcexistingsg/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "testfunvpcexistingsg47E94502"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestlayerfunction602B75A0": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testlayerfunction-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestlayerfunctionPolicyDC7F52F1": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                }
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "dlqtestlayerfunction602B75A0"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestlayerfunctionqueuetestlayerfunctiondlqnamessmC7EC934B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testlayerfunction-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestlayerfunction602B75A0",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestlayerfunctionqueuetestlayerfunctiondlqarnssm972F182C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testlayerfunction-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestlayerfunction602B75A0",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestlayerfunctionqueuetestlayerfunctiondlqurlssm9E2362C6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testlayerfunction-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dlqtestlayerfunction602B75A0"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "testlayerfunctionF1383831": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "dlqtestlayerfunction602B75A0",
+              "Arn"
+            ]
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testlaye-5fa26813",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Layers": [
+          {
+            "Ref": "layertestlayer3444C77B"
+          },
+          "some-existing-layer-arn"
+        ],
+        "Role": {
+          "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Runtime": "python3.9",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testlayerfunctionlambdatestlayerfunctionnamessm7EE84D7E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testlayerfunction/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "testlayerfunctionF1383831"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testlayerfunctionlambdatestlayerfunctionarnssm709D5CB5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testlayerfunction/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "testlayerfunctionF1383831",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testlayerfunctionlambdatestlayerfunctionloggroupssmFDBAB9C6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testlayerfunction/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "testlayerfunctionF1383831"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestdockerfunction67BD5E5D": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testdockerfunction-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestdockerfunctionPolicyD3668BA7": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                }
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "dlqtestdockerfunction67BD5E5D"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestdockerfunctionqueuetestdockerfunctiondlqnamessm04D6EF28": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testdockerfunction-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestdockerfunction67BD5E5D",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestdockerfunctionqueuetestdockerfunctiondlqarnssm78130A0A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testdockerfunction-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestdockerfunction67BD5E5D",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestdockerfunctionqueuetestdockerfunctiondlqurlssm320D3531": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testdockerfunction-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dlqtestdockerfunction67BD5E5D"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "testdockerfunction5F3312E3": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "ImageUri": "mock-image-uri"
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "dlqtestdockerfunction67BD5E5D",
+              "Arn"
+            ]
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testdock-5e6dbf4e",
+        "KmsKeyArn": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "PackageType": "Image",
+        "Role": {
+          "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testdockerfunctionlambdatestdockerfunctionnamessm15AE9FE1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testdockerfunction/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "testdockerfunction5F3312E3"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testdockerfunctionlambdatestdockerfunctionarnssm93DBF0F5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testdockerfunction/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "testdockerfunction5F3312E3",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testdockerfunctionlambdatestdockerfunctionloggroupssmB6CD5AA7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testdockerfunction/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "testdockerfunction5F3312E3"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestobservabilityfunction156DD84B": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testobservabilityfunction-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestobservabilityfunctionPolicy54DD9706": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                }
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "dlqtestobservabilityfunction156DD84B"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestobservabilityfunctionqueuetestobservabilityfunctiondlqnamessm86703DA0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testobservabilityfunction-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestobservabilityfunction156DD84B",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestobservabilityfunctionqueuetestobservabilityfunctiondlqarnssm0F3762B9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testobservabilityfunction-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqtestobservabilityfunction156DD84B",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqtestobservabilityfunctionqueuetestobservabilityfunctiondlqurlssmBF1FD56F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testobservabilityfunction-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dlqtestobservabilityfunction156DD84B"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "testobservabilityfunction557C3A87": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "dlqtestobservabilityfunction156DD84B",
+              "Arn"
+            ]
+          }
+        },
+        "Description": "Function with CloudWatch observability features",
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testobse--afa669d",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Role": {
+          "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Runtime": "python3.9",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testobservabilityfunctionlambdatestobservabilityfunctionnamessm348C6990": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testobservabilityfunction/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "testobservabilityfunction557C3A87"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testobservabilityfunctionlambdatestobservabilityfunctionarnssm8A343772": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testobservabilityfunction/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "testobservabilityfunction557C3A87",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "testobservabilityfunctionlambdatestobservabilityfunctionloggroupssmA25A256F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testobservabilityfunction/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "testobservabilityfunction557C3A87"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "constructec2testfunvpcsgsecuritygrouptestfunvpcsgidout7CA19329": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructec2testfunvpcsg850F67E1",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:security-group:testfunvpcsg:id"
+      }
+    },
+    "dlqtestfunqueuetestfundlqnameout53FE1560": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestfun336F14E6",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfundlq:name"
+      }
+    },
+    "dlqtestfunqueuetestfundlqarnoutBA350250": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestfun336F14E6",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfundlq:arn"
+      }
+    },
+    "dlqtestfunqueuetestfundlqurlout712CC4F3": {
+      "Value": {
+        "Ref": "dlqtestfun336F14E6"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfundlq:url"
+      }
+    },
+    "testfunlambdatestfunnameout792208E0": {
+      "Value": {
+        "Ref": "testfunFF65A3D7"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfun:name"
+      }
+    },
+    "testfunlambdatestfunarnout2E281B65": {
+      "Value": {
+        "Fn::GetAtt": [
+          "testfunFF65A3D7",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfun:arn"
+      }
+    },
+    "testfunlambdatestfunloggroupout5AE5A5C2": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "testfunFF65A3D7"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfun:log-group"
+      }
+    },
+    "dlqtestfuneventsqueuetestfuneventsdlqnameout3148C9CE": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestfunevents11612EB5",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfuneventsdlq:name"
+      }
+    },
+    "dlqtestfuneventsqueuetestfuneventsdlqarnout194B9F6F": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestfunevents11612EB5",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfuneventsdlq:arn"
+      }
+    },
+    "dlqtestfuneventsqueuetestfuneventsdlqurlout2CEFB17A": {
+      "Value": {
+        "Ref": "dlqtestfunevents11612EB5"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfuneventsdlq:url"
+      }
+    },
+    "dlqtestfunvpcqueuetestfunvpcdlqnameoutEC5BD96B": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestfunvpc5C36155C",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcdlq:name"
+      }
+    },
+    "dlqtestfunvpcqueuetestfunvpcdlqarnout1FA47490": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestfunvpc5C36155C",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcdlq:arn"
+      }
+    },
+    "dlqtestfunvpcqueuetestfunvpcdlqurloutC438F5A7": {
+      "Value": {
+        "Ref": "dlqtestfunvpc5C36155C"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcdlq:url"
+      }
+    },
+    "testfunvpclambdatestfunvpcnameout3BD7C34C": {
+      "Value": {
+        "Ref": "testfunvpcAF4DF40B"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpc:name"
+      }
+    },
+    "testfunvpclambdatestfunvpcarnoutCF9A51DB": {
+      "Value": {
+        "Fn::GetAtt": [
+          "testfunvpcAF4DF40B",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpc:arn"
+      }
+    },
+    "testfunvpclambdatestfunvpcloggroupoutECCB8338": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "testfunvpcAF4DF40B"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpc:log-group"
+      }
+    },
+    "dlqtestfunvpcexistingsgqueuetestfunvpcexistingsgdlqnameoutD045D0BD": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestfunvpcexistingsg3D11928F",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcexistingsgdlq:name"
+      }
+    },
+    "dlqtestfunvpcexistingsgqueuetestfunvpcexistingsgdlqarnout3A1F96F7": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestfunvpcexistingsg3D11928F",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcexistingsgdlq:arn"
+      }
+    },
+    "dlqtestfunvpcexistingsgqueuetestfunvpcexistingsgdlqurlout6BDF92A8": {
+      "Value": {
+        "Ref": "dlqtestfunvpcexistingsg3D11928F"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcexistingsgdlq:url"
+      }
+    },
+    "testfunvpcexistingsglambdatestfunvpcexistingsgnameout8C37F164": {
+      "Value": {
+        "Ref": "testfunvpcexistingsg47E94502"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpcexistingsg:name"
+      }
+    },
+    "testfunvpcexistingsglambdatestfunvpcexistingsgarnout346DED36": {
+      "Value": {
+        "Fn::GetAtt": [
+          "testfunvpcexistingsg47E94502",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpcexistingsg:arn"
+      }
+    },
+    "testfunvpcexistingsglambdatestfunvpcexistingsgloggroupout042D9D7B": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "testfunvpcexistingsg47E94502"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpcexistingsg:log-group"
+      }
+    },
+    "dlqtestlayerfunctionqueuetestlayerfunctiondlqnameoutAB1FFAAD": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestlayerfunction602B75A0",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testlayerfunctiondlq:name"
+      }
+    },
+    "dlqtestlayerfunctionqueuetestlayerfunctiondlqarnout8A4B3CB7": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestlayerfunction602B75A0",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testlayerfunctiondlq:arn"
+      }
+    },
+    "dlqtestlayerfunctionqueuetestlayerfunctiondlqurlout80271297": {
+      "Value": {
+        "Ref": "dlqtestlayerfunction602B75A0"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testlayerfunctiondlq:url"
+      }
+    },
+    "testlayerfunctionlambdatestlayerfunctionnameoutE465F967": {
+      "Value": {
+        "Ref": "testlayerfunctionF1383831"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testlayerfunction:name"
+      }
+    },
+    "testlayerfunctionlambdatestlayerfunctionarnout83011A5F": {
+      "Value": {
+        "Fn::GetAtt": [
+          "testlayerfunctionF1383831",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testlayerfunction:arn"
+      }
+    },
+    "testlayerfunctionlambdatestlayerfunctionloggroupout60708485": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "testlayerfunctionF1383831"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testlayerfunction:log-group"
+      }
+    },
+    "dlqtestdockerfunctionqueuetestdockerfunctiondlqnameoutE3FDAAD9": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestdockerfunction67BD5E5D",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testdockerfunctiondlq:name"
+      }
+    },
+    "dlqtestdockerfunctionqueuetestdockerfunctiondlqarnoutE53FE830": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestdockerfunction67BD5E5D",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testdockerfunctiondlq:arn"
+      }
+    },
+    "dlqtestdockerfunctionqueuetestdockerfunctiondlqurloutB9773CBC": {
+      "Value": {
+        "Ref": "dlqtestdockerfunction67BD5E5D"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testdockerfunctiondlq:url"
+      }
+    },
+    "testdockerfunctionlambdatestdockerfunctionnameoutC0AC910F": {
+      "Value": {
+        "Ref": "testdockerfunction5F3312E3"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testdockerfunction:name"
+      }
+    },
+    "testdockerfunctionlambdatestdockerfunctionarnoutAB5D18CD": {
+      "Value": {
+        "Fn::GetAtt": [
+          "testdockerfunction5F3312E3",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testdockerfunction:arn"
+      }
+    },
+    "testdockerfunctionlambdatestdockerfunctionloggroupout8F3B0483": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "testdockerfunction5F3312E3"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testdockerfunction:log-group"
+      }
+    },
+    "dlqtestobservabilityfunctionqueuetestobservabilityfunctiondlqnameout9004EDC6": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestobservabilityfunction156DD84B",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testobservabilityfunctiondlq:name"
+      }
+    },
+    "dlqtestobservabilityfunctionqueuetestobservabilityfunctiondlqarnout57B143AD": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqtestobservabilityfunction156DD84B",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testobservabilityfunctiondlq:arn"
+      }
+    },
+    "dlqtestobservabilityfunctionqueuetestobservabilityfunctiondlqurlout39B3DABC": {
+      "Value": {
+        "Ref": "dlqtestobservabilityfunction156DD84B"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testobservabilityfunctiondlq:url"
+      }
+    },
+    "testobservabilityfunctionlambdatestobservabilityfunctionnameout1C9F8584": {
+      "Value": {
+        "Ref": "testobservabilityfunction557C3A87"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testobservabilityfunction:name"
+      }
+    },
+    "testobservabilityfunctionlambdatestobservabilityfunctionarnoutBD250F9A": {
+      "Value": {
+        "Fn::GetAtt": [
+          "testobservabilityfunction557C3A87",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testobservabilityfunction:arn"
+      }
+    },
+    "testobservabilityfunctionlambdatestobservabilityfunctionloggroupoutCF670F7D": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "testobservabilityfunction557C3A87"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testobservabilityfunction:log-group"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

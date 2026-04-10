@@ -1,0 +1,504 @@
+{
+  "Description": "(SO0320-eventbridge) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-eventbridge-comprehensive/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-eventbridge) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "eventbridgefullfeaturedbusbusAA24E1F5": {
+      "Type": "AWS::Events::EventBus",
+      "Properties": {
+        "Name": "test-org-test-env-test-domain-test-even--89f437a",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "eventbridge"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-eventbridge-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "eventbridgefullfeaturedbusbusarchiveArchiveAA9CCDB1": {
+      "Type": "AWS::Events::Archive",
+      "Properties": {
+        "ArchiveName": "test-org-test-env-test-domain-test-eve--754b6585",
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Archive for ",
+              {
+                "Ref": "eventbridgefullfeaturedbusbusAA24E1F5"
+              }
+            ]
+          ]
+        },
+        "EventPattern": {
+          "account": [
+            "test-account"
+          ]
+        },
+        "KmsKeyIdentifier": "",
+        "RetentionDays": 365,
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "eventbridgefullfeaturedbusbusAA24E1F5",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "eventbridgefullfeaturedbusbuscdkfullfeaturedbusputeventsEED0338A": {
+      "Type": "AWS::Events::EventBusPolicy",
+      "Properties": {
+        "EventBusName": {
+          "Ref": "eventbridgefullfeaturedbusbusAA24E1F5"
+        },
+        "Statement": {
+          "Action": "events:PutEvents",
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "arn:test-partition:iam::test-account:root",
+            "Service": "events.amazonaws.com"
+          },
+          "Resource": {
+            "Fn::GetAtt": [
+              "eventbridgefullfeaturedbusbusAA24E1F5",
+              "Arn"
+            ]
+          },
+          "Sid": "cdk-full-featured-bus-put-events"
+        },
+        "StatementId": "cdk-full-featured-bus-put-events"
+      }
+    },
+    "eventbridgefullfeaturedbusbuseventbusfullfeaturedbusnamessm32E32AC4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-comprehensive/eventbus/full-featured-bus/name",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "eventbridgefullfeaturedbusbusAA24E1F5"
+        }
+      }
+    },
+    "eventbridgefullfeaturedbusbuseventbusfullfeaturedbusarnssmABC0697C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-comprehensive/eventbus/full-featured-bus/arn",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "eventbridgefullfeaturedbusbusAA24E1F5",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "eventbridgearchiveonlybusbus1FAE70ED": {
+      "Type": "AWS::Events::EventBus",
+      "Properties": {
+        "Name": "test-org-test-env-test-domain-test-eve--10cb60fd",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "eventbridge"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-eventbridge-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "eventbridgearchiveonlybusbusarchiveArchive1E8114EE": {
+      "Type": "AWS::Events::Archive",
+      "Properties": {
+        "ArchiveName": "test-org-test-env-test-domain-test-eve--310f5008",
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Archive for ",
+              {
+                "Ref": "eventbridgearchiveonlybusbus1FAE70ED"
+              }
+            ]
+          ]
+        },
+        "EventPattern": {
+          "account": [
+            "test-account"
+          ]
+        },
+        "KmsKeyIdentifier": "",
+        "RetentionDays": 30,
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "eventbridgearchiveonlybusbus1FAE70ED",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "eventbridgearchiveonlybusbuseventbusarchiveonlybusnamessmA024C07E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-comprehensive/eventbus/archive-only-bus/name",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "eventbridgearchiveonlybusbus1FAE70ED"
+        }
+      }
+    },
+    "eventbridgearchiveonlybusbuseventbusarchiveonlybusarnssmA70DDB04": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-comprehensive/eventbus/archive-only-bus/arn",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "eventbridgearchiveonlybusbus1FAE70ED",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "eventbridgeprincipalsonlybusbus3F1D43A5": {
+      "Type": "AWS::Events::EventBus",
+      "Properties": {
+        "Name": "test-org-test-env-test-domain-test-event-e033b8e",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "eventbridge"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-eventbridge-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "eventbridgeprincipalsonlybusbuscdkprincipalsonlybusputevents8BDEA3C1": {
+      "Type": "AWS::Events::EventBusPolicy",
+      "Properties": {
+        "EventBusName": {
+          "Ref": "eventbridgeprincipalsonlybusbus3F1D43A5"
+        },
+        "Statement": {
+          "Action": "events:PutEvents",
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "logs.amazonaws.com"
+          },
+          "Resource": {
+            "Fn::GetAtt": [
+              "eventbridgeprincipalsonlybusbus3F1D43A5",
+              "Arn"
+            ]
+          },
+          "Sid": "cdk-principals-only-bus-put-events"
+        },
+        "StatementId": "cdk-principals-only-bus-put-events"
+      }
+    },
+    "eventbridgeprincipalsonlybusbuseventbusprincipalsonlybusnamessm26710459": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-comprehensive/eventbus/principals-only-bus/name",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "eventbridgeprincipalsonlybusbus3F1D43A5"
+        }
+      }
+    },
+    "eventbridgeprincipalsonlybusbuseventbusprincipalsonlybusarnssm47420CEF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-comprehensive/eventbus/principals-only-bus/arn",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "eventbridgeprincipalsonlybusbus3F1D43A5",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "eventbridgeminimalbusbus22E64B50": {
+      "Type": "AWS::Events::EventBus",
+      "Properties": {
+        "Name": "test-org-test-env-test-domain-test-even-55a29b3b",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "eventbridge"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-eventbridge-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "eventbridgeminimalbusbuseventbusminimalbusnamessm9263C818": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-comprehensive/eventbus/minimal-bus/name",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "eventbridgeminimalbusbus22E64B50"
+        }
+      }
+    },
+    "eventbridgeminimalbusbuseventbusminimalbusarnssmECB5E971": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-comprehensive/eventbus/minimal-bus/arn",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "eventbridgeminimalbusbus22E64B50",
+            "Arn"
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "eventbridgefullfeaturedbusbuseventbusfullfeaturedbusnameout1D38C22D": {
+      "Value": {
+        "Ref": "eventbridgefullfeaturedbusbusAA24E1F5"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-comprehensive:eventbus:fullfeaturedbus:name"
+      }
+    },
+    "eventbridgefullfeaturedbusbuseventbusfullfeaturedbusarnout035605A3": {
+      "Value": {
+        "Fn::GetAtt": [
+          "eventbridgefullfeaturedbusbusAA24E1F5",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-comprehensive:eventbus:fullfeaturedbus:arn"
+      }
+    },
+    "eventbridgearchiveonlybusbuseventbusarchiveonlybusnameoutB1C38900": {
+      "Value": {
+        "Ref": "eventbridgearchiveonlybusbus1FAE70ED"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-comprehensive:eventbus:archiveonlybus:name"
+      }
+    },
+    "eventbridgearchiveonlybusbuseventbusarchiveonlybusarnout90F1F69F": {
+      "Value": {
+        "Fn::GetAtt": [
+          "eventbridgearchiveonlybusbus1FAE70ED",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-comprehensive:eventbus:archiveonlybus:arn"
+      }
+    },
+    "eventbridgeprincipalsonlybusbuseventbusprincipalsonlybusnameout533B96CC": {
+      "Value": {
+        "Ref": "eventbridgeprincipalsonlybusbus3F1D43A5"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-comprehensive:eventbus:principalsonlybus:name"
+      }
+    },
+    "eventbridgeprincipalsonlybusbuseventbusprincipalsonlybusarnout88AD5B2C": {
+      "Value": {
+        "Fn::GetAtt": [
+          "eventbridgeprincipalsonlybusbus3F1D43A5",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-comprehensive:eventbus:principalsonlybus:arn"
+      }
+    },
+    "eventbridgeminimalbusbuseventbusminimalbusnameoutC690A4E0": {
+      "Value": {
+        "Ref": "eventbridgeminimalbusbus22E64B50"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-comprehensive:eventbus:minimalbus:name"
+      }
+    },
+    "eventbridgeminimalbusbuseventbusminimalbusarnout8825C807": {
+      "Value": {
+        "Fn::GetAtt": [
+          "eventbridgeminimalbusbus22E64B50",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-comprehensive:eventbus:minimalbus:arn"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

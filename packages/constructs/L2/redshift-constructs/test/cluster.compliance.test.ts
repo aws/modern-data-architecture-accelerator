@@ -172,7 +172,7 @@ describe('MDAA Construct Compliance Tests 2', () => {
     },
     redshiftManageMasterPassword: true,
     snapshotIdentifier: '123',
-    ownerAccount: 123456,
+    ownerAccount: '123456',
   };
 
   new MdaaRedshiftCluster(testApp.testStack, 'test-construct', testContstructProps);

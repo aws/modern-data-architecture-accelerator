@@ -1,0 +1,1439 @@
+{
+  "Description": "(SO0320-datasync) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuepathtosubnetidssmC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path/to/subnet-id-ssm"
+    },
+    "SsmParameterValuepathtovpcessmC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path/to/vpce-ssm"
+    },
+    "SsmParameterValuepathtorolearnssmC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path/to/role-arn-ssm"
+    },
+    "SsmParameterValuepathtosourcelocationarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path/to/source/location/arn"
+    },
+    "SsmParameterValuepathtodestinationlocationarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/path/to/destination/location/arn"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-datasync-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-datasync) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "datasyncvpcedatasyncsg2388C782": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-datasync-main/datasync/vpce-datasync-sg",
+        "GroupName": "test-org-test-env-test-domain-test-datasync-main-datasync-vpce-sg",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "1.1.1.1/32",
+            "Description": "Allow DataSync data transfer HTTPS traffic from agents",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443
+          },
+          {
+            "CidrIp": "1.1.1.1/32",
+            "Description": "Allow DataSync control traffic from agents",
+            "FromPort": 1024,
+            "IpProtocol": "tcp",
+            "ToPort": 1064
+          },
+          {
+            "CidrIp": "1.1.1.2/32",
+            "Description": "Allow DataSync data transfer HTTPS traffic from agents",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443
+          },
+          {
+            "CidrIp": "1.1.1.2/32",
+            "Description": "Allow DataSync control traffic from agents",
+            "FromPort": 1024,
+            "IpProtocol": "tcp",
+            "ToPort": 1064
+          },
+          {
+            "CidrIp": "1.1.1.3/32",
+            "Description": "Allow DataSync data transfer HTTPS traffic from agents",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443
+          },
+          {
+            "CidrIp": "1.1.1.3/32",
+            "Description": "Allow DataSync control traffic from agents",
+            "FromPort": 1024,
+            "IpProtocol": "tcp",
+            "ToPort": 1064
+          },
+          {
+            "CidrIp": "10.0.0.0/8",
+            "Description": "from 10.0.0.0/8:443",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-009ce5ec1cff75fx6"
+      }
+    },
+    "datasyncvpcedatasyncsgsecuritygroupdatasyncvpcesgidssmC3A726C1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/security-group/datasync-vpce-sg/id",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datasyncvpcedatasyncsg2388C782",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "datasyncdatasyncendpoint05D1A1B5": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PrivateDnsEnabled": false,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "datasyncvpcedatasyncsg2388C782",
+              "GroupId"
+            ]
+          }
+        ],
+        "ServiceName": "com.amazonaws.test-region.datasync",
+        "SubnetIds": [
+          "subnet-0c27f330c0ea98xx5",
+          "example-subnet"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": "vpc-009ce5ec1cff75fx6"
+      }
+    },
+    "datasyncvpcendpointdatasyncserviceidssm734C2C4B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/vpc-endpoint/datasync-service/id",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "datasyncdatasyncendpoint05D1A1B5"
+        }
+      }
+    },
+    "datasynckmskeyC663AA60": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Encrypt*",
+                "kms:Decrypt*",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:Describe*"
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "kms:EncryptionContext:aws:logs:arn": "arn:test-partition:logs:test-region:test-account:log-group:/aws/datasync/task/test-org-test-env-test-domain-test-datasync-main"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "logs.test-region.amazonaws.com"
+              },
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "datasynckmskeyAlias73C4F914": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-datasync-main",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "datasynckmskeyC663AA60",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "datasynckmskeykmsarnssm78D2485C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/kms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datasynckmskeyC663AA60",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "datasynckmskeykmsidssmD7219C2F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/kms/id",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "datasynckmskeyC663AA60"
+        }
+      }
+    },
+    "datasyncagent2agentF16C2996": {
+      "Type": "AWS::DataSync::Agent",
+      "Properties": {
+        "ActivationKey": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX",
+        "AgentName": "test-org-test-env-test-domain-test-datasync-main-agent2",
+        "SecurityGroupArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:test-partition:ec2:test-region:test-account:security-group/",
+                {
+                  "Fn::GetAtt": [
+                    "datasyncvpcedatasyncsg2388C782",
+                    "GroupId"
+                  ]
+                }
+              ]
+            ]
+          }
+        ],
+        "SubnetArns": [
+          "arn:test-partition:ec2:test-region:test-account:subnet/example-subnet"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointId": {
+          "Ref": "datasyncdatasyncendpoint05D1A1B5"
+        }
+      }
+    },
+    "datasyncagent2agentagentagent2arnssm96E1B828": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/agent/agent2/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datasyncagent2agentF16C2996",
+            "AgentArn"
+          ]
+        }
+      }
+    },
+    "datasyncagentagent2ipssm96A03F73": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/agent/agent2/ip",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "1.1.1.2"
+      }
+    },
+    "datasyncagent3agent1F45475F": {
+      "Type": "AWS::DataSync::Agent",
+      "Properties": {
+        "ActivationKey": "XXXXX-YYYYY-XXXXX-YYYYY-XXXXX",
+        "AgentName": "test-org-test-env-test-domain-test-datasync-main-agent3",
+        "SecurityGroupArns": [
+          "arn:test-partition:ec2:test-region:test-account:security-group/sg-123456"
+        ],
+        "SubnetArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:test-partition:ec2:test-region:test-account:subnet/",
+                {
+                  "Ref": "SsmParameterValuepathtosubnetidssmC96584B6F00A464EAD1953AFF4B05118Parameter"
+                }
+              ]
+            ]
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointId": {
+          "Ref": "SsmParameterValuepathtovpcessmC96584B6F00A464EAD1953AFF4B05118Parameter"
+        }
+      }
+    },
+    "datasyncagent3agentagentagent3arnssm29463428": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/agent/agent3/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datasyncagent3agent1F45475F",
+            "AgentArn"
+          ]
+        }
+      }
+    },
+    "datasyncagentagent3ipssmC1A1EB6F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/agent/agent3/ip",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "1.1.1.3"
+      }
+    },
+    "datasyncs3location1s3location7E5E72CA": {
+      "Type": "AWS::DataSync::LocationS3",
+      "Properties": {
+        "S3BucketArn": "example-bucket-name1",
+        "S3Config": {
+          "BucketAccessRoleArn": {
+            "Ref": "SsmParameterValuepathtorolearnssmC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        },
+        "Subdirectory": "/some/prefix",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "datasyncs3location1s3locationlocations3s3location1arnssmEA397704": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-s3/s3location1/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datasyncs3location1s3location7E5E72CA",
+            "LocationArn"
+          ]
+        }
+      }
+    },
+    "datasyncs3location2s3location1EAC0245": {
+      "Type": "AWS::DataSync::LocationS3",
+      "Properties": {
+        "S3BucketArn": "example-bucket-name2",
+        "S3Config": {
+          "BucketAccessRoleArn": "some-role-arn"
+        },
+        "S3StorageClass": "INTELLIGENT_TIERING",
+        "Subdirectory": "/some/prefix",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "datasyncs3location2s3locationlocations3s3location2arnssm25040A09": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-s3/s3location2/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datasyncs3location2s3location1EAC0245",
+            "LocationArn"
+          ]
+        }
+      }
+    },
+    "datasyncsmbloc1smblocationA9DFD857": {
+      "Type": "AWS::DataSync::LocationSMB",
+      "Properties": {
+        "AgentArns": [
+          {
+            "Fn::GetAtt": [
+              "datasyncagent2agentF16C2996",
+              "AgentArn"
+            ]
+          }
+        ],
+        "Domain": "some-ad-domain-name",
+        "MountOptions": {
+          "Version": "AUTOMATIC"
+        },
+        "Password": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:some-secret-name:SecretString:password::}}",
+        "ServerHostname": "some.smbserver.hostname",
+        "Subdirectory": "/some/subdirectory",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "User": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:some-secret-name:SecretString:user::}}"
+      }
+    },
+    "datasyncsmbloc1smblocationlocationsmbsmbloc1serverhostnamessm3F60791D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-smb/smb-loc1/server-hostname",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "some.smbserver.hostname"
+      }
+    },
+    "datasyncsmbloc1smblocationlocationsmbsmbloc1arnssmB94BC903": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-smb/smb-loc1/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datasyncsmbloc1smblocationA9DFD857",
+            "LocationArn"
+          ]
+        }
+      }
+    },
+    "datasyncsmbloc2smblocationB1E02D55": {
+      "Type": "AWS::DataSync::LocationSMB",
+      "Properties": {
+        "AgentArns": [
+          "arn:test-partition:datasync:test-region:test-account:agent/existing-agent-id"
+        ],
+        "Domain": "some-ad-domain-name",
+        "Password": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:some-secret-name:SecretString:password::}}",
+        "ServerHostname": "some.smbserver.hostname",
+        "Subdirectory": "/some/subdirectory",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "User": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:some-secret-name:SecretString:user::}}"
+      }
+    },
+    "datasyncsmbloc2smblocationlocationsmbsmbloc2serverhostnamessm23CF61BA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-smb/smb-loc2/server-hostname",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "some.smbserver.hostname"
+      }
+    },
+    "datasyncsmbloc2smblocationlocationsmbsmbloc2arnssm8079EE0B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-smb/smb-loc2/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datasyncsmbloc2smblocationB1E02D55",
+            "LocationArn"
+          ]
+        }
+      }
+    },
+    "datasynclocationnfsnfsloc1serverhostnamessm5D567184": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-nfs/nfs_loc1/server-hostname",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "some.nfsserver.hostname"
+      }
+    },
+    "datasyncnfsloc1nfslocation10CB78D8": {
+      "Type": "AWS::DataSync::LocationNFS",
+      "Properties": {
+        "MountOptions": {
+          "Version": "NFSv4_0"
+        },
+        "OnPremConfig": {
+          "AgentArns": [
+            {
+              "Fn::GetAtt": [
+                "datasyncagent2agentF16C2996",
+                "AgentArn"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "datasyncagent3agent1F45475F",
+                "AgentArn"
+              ]
+            }
+          ]
+        },
+        "ServerHostname": "some.nfsserver.hostname",
+        "Subdirectory": "/some/subdirectory",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "datasynclocationnfsnfsloc2serverhostnamessm103080B9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-nfs/nfs_loc2/server-hostname",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "another.nfsserver.hostname"
+      }
+    },
+    "datasyncnfsloc2nfslocation79553E6F": {
+      "Type": "AWS::DataSync::LocationNFS",
+      "Properties": {
+        "OnPremConfig": {
+          "AgentArns": [
+            "arn:test-partition:datasync:test-region:test-account:agent/existing-agent-id"
+          ]
+        },
+        "ServerHostname": "another.nfsserver.hostname",
+        "Subdirectory": "/another/subdirectory",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "datasyncgcp1objectstoragelocation8F4E66CA": {
+      "Type": "AWS::DataSync::LocationObjectStorage",
+      "Properties": {
+        "AccessKey": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:some-secret-name:SecretString:accessKey::}}",
+        "AgentArns": [
+          {
+            "Fn::GetAtt": [
+              "datasyncagent2agentF16C2996",
+              "AgentArn"
+            ]
+          }
+        ],
+        "BucketName": "some-object-storage-name",
+        "SecretKey": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:some-secret-name:SecretString:secretKey::}}",
+        "ServerHostname": "some-object-storage.endpoint.hostname",
+        "ServerPort": 443,
+        "ServerProtocol": "HTTPS",
+        "Subdirectory": "/some/prefix",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "datasyncgcp1objectstoragelocationlocationobjectstoragegcp1serverhostnamessm9DE7A78D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-object-storage/gcp1/server-hostname",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "some-object-storage.endpoint.hostname"
+      }
+    },
+    "datasyncgcp1objectstoragelocationlocationobjectstoragegcp1arnssm28783CC0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-object-storage/gcp1/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datasyncgcp1objectstoragelocation8F4E66CA",
+            "LocationArn"
+          ]
+        }
+      }
+    },
+    "datasyncgcp2objectstoragelocation5928CF23": {
+      "Type": "AWS::DataSync::LocationObjectStorage",
+      "Properties": {
+        "AccessKey": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:another-secret-name:SecretString:accessKey::}}",
+        "AgentArns": [
+          "arn:test-partition:datasync:test-region:test-account:agent/existing-agent-id"
+        ],
+        "BucketName": "another-object-storage",
+        "SecretKey": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:another-secret-name:SecretString:secretKey::}}",
+        "ServerHostname": "another.endpoint.hostname",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "datasyncgcp2objectstoragelocationlocationobjectstoragegcp2serverhostnamessm4C697183": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-object-storage/gcp2/server-hostname",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "another.endpoint.hostname"
+      }
+    },
+    "datasyncgcp2objectstoragelocationlocationobjectstoragegcp2arnssm4F90825D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/location-object-storage/gcp2/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datasyncgcp2objectstoragelocation5928CF23",
+            "LocationArn"
+          ]
+        }
+      }
+    },
+    "datasynctaskloggroup748A75F6": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "datasynckmskeyC663AA60",
+            "Arn"
+          ]
+        },
+        "LogGroupName": "/aws/datasync/task/test-org-test-env-test-domain-test-datasync-main",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod"
+            }
+          ]
+        }
+      }
+    },
+    "datasynctaskloggrouploggroupnamessmD0F70C31": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datasync-main/loggroup/name",
+        "Tags": {
+          "mdaa_cdk_app": "datasync",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datasync-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "/aws/datasync/task/test-org-test-env-test-domain-test-datasync-main"
+      }
+    },
+    "datasynctaskloggroupPolicyResourcePolicyC3008EBB": {
+      "Type": "AWS::Logs::ResourcePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"Statement\":[{\"Action\":[\"logs:CreateLogStream\",\"logs:PutLogEvents\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"datasync.amazonaws.com\"},\"Resource\":\"",
+              {
+                "Fn::GetAtt": [
+                  "datasynctaskloggroup748A75F6",
+                  "Arn"
+                ]
+              },
+              "\"}],\"Version\":\"2012-10-17\"}"
+            ]
+          ]
+        },
+        "PolicyName": "testorgtestenvtestdomaintestdatasyncmaindatasynctaskloggroupPolicy9254E85E"
+      }
+    },
+    "datasyncmytask1task7A92EB43": {
+      "Type": "AWS::DataSync::Task",
+      "Properties": {
+        "CloudWatchLogGroupArn": {
+          "Fn::GetAtt": [
+            "datasynctaskloggroup748A75F6",
+            "Arn"
+          ]
+        },
+        "DestinationLocationArn": {
+          "Fn::GetAtt": [
+            "datasyncs3location2s3location1EAC0245",
+            "LocationArn"
+          ]
+        },
+        "Includes": [
+          {
+            "FilterType": "SIMPLE_PATTERN",
+            "Value": "/data*|/ingestion*"
+          }
+        ],
+        "Name": "test-org-test-env-test-domain-test-datasync-main-mytask1",
+        "Options": {
+          "Atime": "BEST_EFFORT",
+          "BytesPerSecond": 1048576,
+          "Gid": "INT_VALUE",
+          "LogLevel": "TRANSFER",
+          "Mtime": "PRESERVE",
+          "ObjectTags": "PRESERVE",
+          "OverwriteMode": "ALWAYS",
+          "PosixPermissions": "PRESERVE",
+          "PreserveDeletedFiles": "PRESERVE",
+          "PreserveDevices": "NONE",
+          "SecurityDescriptorCopyFlags": "OWNER_DACL",
+          "TaskQueueing": "ENABLED",
+          "TransferMode": "CHANGED",
+          "Uid": "INT_VALUE",
+          "VerifyMode": "ONLY_FILES_TRANSFERRED"
+        },
+        "Schedule": {
+          "ScheduleExpression": "cron(0 * * * ? *)",
+          "Status": "ENABLED"
+        },
+        "SourceLocationArn": {
+          "Fn::GetAtt": [
+            "datasyncs3location1s3location7E5E72CA",
+            "LocationArn"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "datasyncmytask2task13CD5096": {
+      "Type": "AWS::DataSync::Task",
+      "Properties": {
+        "CloudWatchLogGroupArn": {
+          "Fn::GetAtt": [
+            "datasynctaskloggroup748A75F6",
+            "Arn"
+          ]
+        },
+        "DestinationLocationArn": {
+          "Ref": "SsmParameterValuepathtodestinationlocationarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Excludes": [
+          {
+            "FilterType": "SIMPLE_PATTERN",
+            "Value": "*.tmp|*.temp"
+          }
+        ],
+        "Name": "test-org-test-env-test-domain-test-datasync-main-mytask2",
+        "Options": {
+          "LogLevel": "TRANSFER",
+          "TransferMode": "CHANGED",
+          "VerifyMode": "ONLY_FILES_TRANSFERRED"
+        },
+        "SourceLocationArn": {
+          "Ref": "SsmParameterValuepathtosourcelocationarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datasync"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datasync-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "datasyncvpcedatasyncsgsecuritygroupdatasyncvpcesgidout6CF88163": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datasyncvpcedatasyncsg2388C782",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:security-group:datasyncvpcesg:id"
+      }
+    },
+    "datasyncvpcendpointdatasyncserviceidout3657FB22": {
+      "Value": {
+        "Ref": "datasyncdatasyncendpoint05D1A1B5"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:vpc-endpoint:datasyncservice:id"
+      }
+    },
+    "datasynckmskeykmsarnoutB5F1D779": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datasynckmskeyC663AA60",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:kms:arn"
+      }
+    },
+    "datasynckmskeykmsidoutBBE70318": {
+      "Value": {
+        "Ref": "datasynckmskeyC663AA60"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:kms:id"
+      }
+    },
+    "datasyncagent2agentagentagent2arnoutD6010CBC": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datasyncagent2agentF16C2996",
+          "AgentArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:agent:agent2:arn"
+      }
+    },
+    "datasyncagentagent2ipoutF325069B": {
+      "Value": "1.1.1.2",
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:agent:agent2:ip"
+      }
+    },
+    "datasyncagent3agentagentagent3arnoutE6272D4A": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datasyncagent3agent1F45475F",
+          "AgentArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:agent:agent3:arn"
+      }
+    },
+    "datasyncagentagent3ipout1529F9D2": {
+      "Value": "1.1.1.3",
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:agent:agent3:ip"
+      }
+    },
+    "datasyncs3location1s3locationlocations3s3location1arnout2549D3FF": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datasyncs3location1s3location7E5E72CA",
+          "LocationArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-s3:s3location1:arn"
+      }
+    },
+    "datasyncs3location2s3locationlocations3s3location2arnout7FF89CFB": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datasyncs3location2s3location1EAC0245",
+          "LocationArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-s3:s3location2:arn"
+      }
+    },
+    "datasyncsmbloc1smblocationlocationsmbsmbloc1serverhostnameout71F0A642": {
+      "Value": "some.smbserver.hostname",
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-smb:smbloc1:server-hostname"
+      }
+    },
+    "datasyncsmbloc1smblocationlocationsmbsmbloc1arnout8B374967": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datasyncsmbloc1smblocationA9DFD857",
+          "LocationArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-smb:smbloc1:arn"
+      }
+    },
+    "datasyncsmbloc2smblocationlocationsmbsmbloc2serverhostnameout39329CEF": {
+      "Value": "some.smbserver.hostname",
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-smb:smbloc2:server-hostname"
+      }
+    },
+    "datasyncsmbloc2smblocationlocationsmbsmbloc2arnoutBFCB1C20": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datasyncsmbloc2smblocationB1E02D55",
+          "LocationArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-smb:smbloc2:arn"
+      }
+    },
+    "datasynclocationnfsnfsloc1serverhostnameoutDDED6C38": {
+      "Value": "some.nfsserver.hostname",
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-nfs:nfs-loc1:server-hostname"
+      }
+    },
+    "datasynclocationnfsnfsloc2serverhostnameout29CAFEC5": {
+      "Value": "another.nfsserver.hostname",
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-nfs:nfs-loc2:server-hostname"
+      }
+    },
+    "datasyncgcp1objectstoragelocationlocationobjectstoragegcp1serverhostnameout6C49DCBD": {
+      "Value": "some-object-storage.endpoint.hostname",
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-object-storage:gcp1:server-hostname"
+      }
+    },
+    "datasyncgcp1objectstoragelocationlocationobjectstoragegcp1arnout36D3267D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datasyncgcp1objectstoragelocation8F4E66CA",
+          "LocationArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-object-storage:gcp1:arn"
+      }
+    },
+    "datasyncgcp2objectstoragelocationlocationobjectstoragegcp2serverhostnameoutCE519F58": {
+      "Value": "another.endpoint.hostname",
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-object-storage:gcp2:server-hostname"
+      }
+    },
+    "datasyncgcp2objectstoragelocationlocationobjectstoragegcp2arnout77DE0323": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datasyncgcp2objectstoragelocation5928CF23",
+          "LocationArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:location-object-storage:gcp2:arn"
+      }
+    },
+    "datasynctaskloggrouploggroupnameoutCDF64D90": {
+      "Value": "/aws/datasync/task/test-org-test-env-test-domain-test-datasync-main",
+      "Export": {
+        "Name": "test-org:test-domain:test-datasync-main:loggroup:name"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

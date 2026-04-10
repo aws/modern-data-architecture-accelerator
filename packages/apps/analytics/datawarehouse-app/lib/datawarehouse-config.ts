@@ -291,7 +291,7 @@ export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
    * ownerAccount Refers to snapshot owner account. Applicable if restoring the cluster from snapshot and snapshot belongs to another account
    * Optional - By default, snapshots are searched within current account
    */
-  readonly snapshotOwnerAccount?: number;
+  readonly snapshotOwnerAccount?: string | number;
 
   readonly redshiftManageMasterPassword?: boolean;
   /**
@@ -344,7 +344,7 @@ export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouse
   public readonly eventNotifications?: EventNotificationsProps;
   public readonly dbName?: string;
   public readonly snapshotIdentifier?: string;
-  public readonly snapshotOwnerAccount?: number;
+  public readonly snapshotOwnerAccount?: string;
   public readonly redshiftManageMasterPassword?: boolean;
   public readonly multiAz?: boolean;
   public readonly backupRegion?: string;
@@ -381,7 +381,9 @@ export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouse
     this.eventNotifications = this.configContents.eventNotifications;
     this.dbName = this.configContents.dbName;
     this.snapshotIdentifier = this.configContents.snapshotIdentifier;
-    this.snapshotOwnerAccount = this.configContents.snapshotOwnerAccount;
+    this.snapshotOwnerAccount = this.configContents.snapshotOwnerAccount
+      ? String(this.configContents.snapshotOwnerAccount)
+      : undefined;
     this.redshiftManageMasterPassword = this.configContents.redshiftManageMasterPassword;
     this.multiAz = this.configContents.multiAz;
     this.backupRegion = this.configContents.backupRegion;

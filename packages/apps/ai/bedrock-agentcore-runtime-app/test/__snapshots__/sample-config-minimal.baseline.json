@@ -1,0 +1,490 @@
+{
+  "Description": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeManagedPolicyC84DC486": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Managed policy for Bedrock AgentCore Runtime: testAgentRuntime",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-minimal-bedrock-agentcore-runtime-testagentruntime",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "ECRTokenAccess"
+            },
+            {
+              "Action": [
+                "logs:DescribeLogStreams",
+                "logs:CreateLogGroup"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*"
+            },
+            {
+              "Action": "logs:DescribeLogGroups",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:*"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*:log-stream:*"
+            },
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "cloudwatch:PutMetricData",
+              "Condition": {
+                "StringEquals": {
+                  "cloudwatch:namespace": "bedrock-agentcore"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:GetWorkloadAccessToken",
+                "bedrock-agentcore:GetWorkloadAccessTokenForJWT",
+                "bedrock-agentcore:GetWorkloadAccessTokenForUserId"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default",
+                "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default/workload-identity/hosted_agent_*"
+              ],
+              "Sid": "GetAgentAccessToken"
+            },
+            {
+              "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:InvokeModelWithResponseStream"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:bedrock:*::foundation-model/*",
+                "arn:test-partition:bedrock:test-region:test-account:*"
+              ],
+              "Sid": "BedrockModelInvocation"
+            },
+            {
+              "Action": [
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:ecr:test-region:test-account:repository/test-runtime",
+              "Sid": "ECRRepositoryAccess"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRole7820E6C7": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:bedrock-agentcore:test-region:test-account:*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock-agentcore.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "IAM role for Bedrock AgentCore Runtime: testAgentRuntime",
+        "ManagedPolicyArns": [
+          {
+            "Ref": "bedrockagentcoreruntimeRuntimeManagedPolicyC84DC486"
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-agentcore-r--7147ac4f",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimearnssm13190A0D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/role/bedrock-agentcore-runtime-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimeidssm3573B392": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/role/bedrock-agentcore-runtime-testagentruntime/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimenamessmBF3B2D5B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/role/bedrock-agentcore-runtime-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeRuntimeRole7820E6C7"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeRuntime84537D71": {
+      "Type": "AWS::BedrockAgentCore::Runtime",
+      "Properties": {
+        "AgentRuntimeName": "test_org_test_env_test_domain_test_bedr_745873cc",
+        "AgentRuntimeArtifact": {
+          "ContainerConfiguration": {
+            "ContainerUri": "test-account.dkr.ecr.test-region.amazonaws.com/test-runtime:latest"
+          }
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+            "Arn"
+          ]
+        },
+        "NetworkConfiguration": {
+          "NetworkMode": "VPC",
+          "NetworkModeConfig": {
+            "SecurityGroups": [
+              "sg-12345678"
+            ],
+            "Subnets": [
+              "subnet-12345678"
+            ]
+          }
+        },
+        "ProtocolConfiguration": "HTTP"
+      }
+    },
+    "bedrockagentcoreruntimeXRayResourcePolicyADC714BD": {
+      "Type": "AWS::Logs::ResourcePolicy",
+      "Properties": {
+        "PolicyDocument": "{\"Statement\":[{\"Action\":\"logs:PutLogEvents\",\"Condition\":{\"ArnLike\":{\"aws:SourceArn\":\"arn:test-partition:xray:test-region:test-account:*\"},\"StringEquals\":{\"aws:SourceAccount\":\"test-account\"}},\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"xray.amazonaws.com\"},\"Resource\":[\"arn:test-partition:logs:test-region:test-account:log-group:aws/spans:*\",\"arn:test-partition:logs:test-region:test-account:log-group:/aws/application-signals/data:*\"],\"Sid\":\"TransactionSearchXRayAccess\"}],\"Version\":\"2012-10-17\"}",
+        "PolicyName": "testorgtestenvtestdomaintestbedrockagentcoreruntimeminimalbedrockagentcoreruntimeXRayResourcePolicy90009C5A"
+      }
+    },
+    "bedrockagentcoreruntimeTransactionSearchConfig2B8A09A6": {
+      "Type": "AWS::XRay::TransactionSearchConfig",
+      "Properties": {
+        "IndexingPercentage": 1
+      },
+      "DependsOn": [
+        "bedrockagentcoreruntimeXRayResourcePolicyADC714BD"
+      ]
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimearnssmBD5DB9C8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/agentruntime/testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntime84537D71",
+            "AgentRuntimeArn"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimeidssm74DFCF6E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/agentruntime/testagentruntime/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntime84537D71",
+            "AgentRuntimeId"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimenamessm299B449F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/agentruntime/testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-minimal-testagentruntime"
+      }
+    }
+  },
+  "Outputs": {
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimearnoutDCD6E14D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:role:bedrockagentcoreruntimetestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimeidout2448B0F0": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:role:bedrockagentcoreruntimetestagentruntime:id"
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimenameout2A76137F": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeRuntimeRole7820E6C7"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:role:bedrockagentcoreruntimetestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimearnoutA7A7C358": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntime84537D71",
+          "AgentRuntimeArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:agentruntime:testagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimeidout28FA5C57": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntime84537D71",
+          "AgentRuntimeId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:agentruntime:testagentruntime:id"
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimenameout5E164965": {
+      "Value": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-minimal-testagentruntime",
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:agentruntime:testagentruntime:name"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

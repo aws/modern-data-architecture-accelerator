@@ -1,0 +1,5 @@
+# Packages excluded from Property 6 (comprehensive baseline coverage check).
+# These core packages do not follow the standard app pattern.
+packages/apps/core/app
+packages/apps/core/bootstrap
+packages/apps/core/devops

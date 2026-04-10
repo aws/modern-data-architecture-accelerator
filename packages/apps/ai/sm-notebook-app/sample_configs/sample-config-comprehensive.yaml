@@ -238,29 +238,3 @@ notebooks:
     # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
     notebookRole:
       name: notebook-execution-role
-
-  # Example notebook using a Cfn Param input for the name.
-  # Suitable for use as a Service Catalog product.
-  sc-notebook:
-    # (Optional) Custom notebook instance name. Supports
-    # {{param:name}} syntax for Service Catalog parameters.
-    notebookName: '{{param:notebook_name}}'
-    # VPC ID for notebook deployment
-    # Often created by your VPC/networking stack.
-    # Example SSM: ssm:/path/to/vpc/id
-    vpcId: vpc-id
-    # Subnet ID for notebook placement
-    # Often created by your VPC/networking stack.
-    # Example SSM: ssm:/path/to/subnet/id
-    subnetId: subnet-id
-    # EC2 instance type for the notebook
-    instanceType: ml.t3.large
-    # (Optional) ID of an existing security group
-    securityGroupId: sg-12312412421
-    # (Optional) Size of the root volume in GB
-    volumeSizeInGb: 5
-    # IAM role for notebook instance
-    # Often created by the Roles module.
-    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module_name>/role/<role_name>/arn
-    notebookRole:
-      name: sagemaker-role

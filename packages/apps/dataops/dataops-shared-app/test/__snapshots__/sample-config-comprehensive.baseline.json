@@ -1,0 +1,185 @@
+{
+  "Description": "(SO0320-dataops-shared) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuetestorgtestdomainanalyticsmlpipelinesecurityConfigurationmlpipelineC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/analytics-ml-pipeline/securityConfiguration/ml-pipeline"
+    },
+    "SsmParameterValuetestorgtestdomainanalyticsmlpipelineprojectBucketanalyticsdataC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/analytics-ml-pipeline/projectBucket/analytics-data"
+    },
+    "SsmParameterValuetestorgtestdomainanalyticsmlpipelineprojectTopicArnmlnotificationsC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/analytics-ml-pipeline/projectTopicArn/ml-notifications"
+    },
+    "SsmParameterValuetestorgtestdomainanalyticsmlpipelinedeploymentRolemlpipelineC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/analytics-ml-pipeline/deploymentRole/ml-pipeline"
+    },
+    "SsmParameterValuetestorgtestdomainanalyticsmlpipelinekmsArnanalyticsencryptionC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/analytics-ml-pipeline/kmsArn/analytics-encryption"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-dataops-shared-app/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-shared",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-shared-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-shared) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "SecurityConfigParamE271DE67": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "DataOps security configuration name",
+        "Name": "/test-org/test-domain/test-dataops-shared-app/security-config-name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-shared",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-shared-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "SsmParameterValuetestorgtestdomainanalyticsmlpipelinesecurityConfigurationmlpipelineC96584B6F00A464EAD1953AFF4B05118Parameter"
+        }
+      }
+    },
+    "ProjectNameParamC068EF08": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "DataOps project name",
+        "Name": "/test-org/test-domain/test-dataops-shared-app/project-name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-shared",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-shared-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "analytics-ml-pipeline"
+      }
+    },
+    "ProjectBucketParamFD5AE1D5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "DataOps project bucket reference",
+        "Name": "/test-org/test-domain/test-dataops-shared-app/project-bucket",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-shared",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-shared-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "SsmParameterValuetestorgtestdomainanalyticsmlpipelineprojectBucketanalyticsdataC96584B6F00A464EAD1953AFF4B05118Parameter"
+        }
+      }
+    },
+    "ProjectTopicParamB99666E9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "DataOps project topic ARN reference",
+        "Name": "/test-org/test-domain/test-dataops-shared-app/project-topic-arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-shared",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-shared-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "SsmParameterValuetestorgtestdomainanalyticsmlpipelineprojectTopicArnmlnotificationsC96584B6F00A464EAD1953AFF4B05118Parameter"
+        }
+      }
+    },
+    "DeploymentRoleParam1A5E4B68": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "DataOps deployment role reference",
+        "Name": "/test-org/test-domain/test-dataops-shared-app/deployment-role",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-shared",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-shared-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "SsmParameterValuetestorgtestdomainanalyticsmlpipelinedeploymentRolemlpipelineC96584B6F00A464EAD1953AFF4B05118Parameter"
+        }
+      }
+    },
+    "KmsArnParam6B471FCB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "DataOps KMS ARN reference",
+        "Name": "/test-org/test-domain/test-dataops-shared-app/kms-arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-shared",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-shared-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "SsmParameterValuetestorgtestdomainanalyticsmlpipelinekmsArnanalyticsencryptionC96584B6F00A464EAD1953AFF4B05118Parameter"
+        }
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

@@ -52,7 +52,7 @@ team:
       destinationPrefix: 'inventory-reports/'
       # (Optional) AWS account ID owning the destination bucket
       # for cross-account inventory delivery
-      destinationAccount: '222222222222'
+      destinationAccount: '{{context:account-2}}'
   # (Optional) SageMaker Studio domain configuration for the team's
   # collaborative ML development environment.
   studioDomainConfig:

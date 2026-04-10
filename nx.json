@@ -35,37 +35,22 @@
         "{projectRoot}/test/**/*.json",
         "{projectRoot}/sample_configs/**/*.yaml"
       ],
-      "options": {
-        "retry": 2
-      },
-      "cache": true
-    },
-    "test:coverage": {
-      "dependsOn": ["build"],
-      "inputs": [
-        "{projectRoot}/bin/*.ts",
-        "{projectRoot}/lib/*.ts",
-        "{projectRoot}/test/*.ts",
-        "{projectRoot}/test/**/*.yaml",
-        "{projectRoot}/sample_configs/**/*.yaml"
-      ],
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "retry": 2
       },
       "cache": true
     },
-    "test:snapshots": {
+    "test:update-baselines": {
       "dependsOn": ["build"],
       "inputs": [
         "{projectRoot}/bin/*.ts",
         "{projectRoot}/lib/*.ts",
         "{projectRoot}/test/*.ts",
-        "{projectRoot}/test/**/*.yaml",
-        "{projectRoot}/test/**/*.snap",
+        "{projectRoot}/test/**/*.json",
         "{projectRoot}/sample_configs/**/*.yaml"
       ],
-      "cache": true
+      "cache": false
     }
   }
 }

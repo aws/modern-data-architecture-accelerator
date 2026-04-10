@@ -4,20 +4,20 @@
 
 # (Optional) KMS key ARN for encrypting DataOps resources and data.
 # Auto-resolved from project when projectName is set.
-kmsArn: arn:test-partition:kms:test-region:test-acct:key/test-key-id
+kmsArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id
 # (Optional) S3 bucket name for project storage (scripts, artifacts,
 # temp files). Auto-resolved from project when projectName is set.
 bucketName: test-dms-bucket
 # (Optional) IAM role ARN for deployment operations and resource
 # management. Auto-resolved from project when projectName is set.
-deploymentRoleArn: arn:test-partition:iam::test-acct:role/test-deploy-role
+deploymentRoleArn: arn:{{partition}}:iam::{{account}}:role/test-deploy-role
 # (Optional) Glue security configuration name for job encryption
 # (at rest, in transit, CloudWatch logs). Auto-resolved from project
 # when projectName is set.
 securityConfigurationName: test-security-config
 # (Optional) SNS topic ARN for job notifications and workflow alerts.
 # Auto-resolved from project when projectName is set.
-notificationTopicArn: arn:test-partition:sns:test-region:test-acct:test-topic
+notificationTopicArn: arn:{{partition}}:sns:{{region}}:{{account}}:test-topic
 
 # DMS migration and replication configuration including instances,
 # endpoints, and tasks.

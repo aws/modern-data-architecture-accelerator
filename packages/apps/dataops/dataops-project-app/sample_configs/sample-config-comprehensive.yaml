@@ -267,7 +267,7 @@ databases:
       createReadWriteGrantsForProjectExecutionRoles: true
       # Target account numbers for cross-account resource link creation
       createCrossAccountResourceLinkAccounts:
-        - '222222222222'
+        - '{{context:account-2}}'
       # Custom name for cross-account resource links
       createCrossAccountResourceLinkName: 'testing'
       # Named Lake Formation grant configurations
@@ -298,7 +298,7 @@ databases:
               role:
                 name: some-role-name
               # AWS account ID for cross-account principal resolution
-              account: '222222222222'
+              account: '{{context:account-2}}'
           # Direct principal ARN mapping
           principalArns:
             principalD: some-other-role-arn

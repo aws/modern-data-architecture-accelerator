@@ -121,7 +121,7 @@ snapshotIdentifier: test-snapshot-id
 # (Optional) Snapshot owner account. Applicable if restoring the
 # cluster from a snapshot that belongs to another account.
 # By default, snapshots are searched within the current account.
-snapshotOwnerAccount: 222222222222
+snapshotOwnerAccount: '{{context:account-2}}'
 
 # (Optional) Database users created in Redshift with credentials
 # stored in Secrets Manager. Supports automated secret rotation.

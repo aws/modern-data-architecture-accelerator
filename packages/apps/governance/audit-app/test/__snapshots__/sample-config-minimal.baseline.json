@@ -1,0 +1,840 @@
+{
+  "Description": "(SO0320-audit) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-audit-minimal/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "audit",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-audit-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-audit) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "auditkmscmk05D41C17": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResRead0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-audit-minimal-usage-stmt"
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "cloudtrail.amazonaws.com",
+                  "s3.amazonaws.com"
+                ]
+              },
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "audit"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-audit-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "auditkmscmkAlias194B707D": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-audit-minimal",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "auditkmscmk05D41C17",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "auditkmscmkkmsarnssm1C46148F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-audit-minimal/kms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "audit",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-audit-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "auditkmscmk05D41C17",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "auditkmscmkkmsidssm6C86F4DA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-audit-minimal/kms/id",
+        "Tags": {
+          "mdaa_cdk_app": "audit",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-audit-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "auditkmscmk05D41C17"
+        }
+      }
+    },
+    "auditbucketD20203B1": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "BucketKeyEnabled": true,
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "auditkmscmk05D41C17",
+                    "Arn"
+                  ]
+                },
+                "SSEAlgorithm": "aws:kms"
+              }
+            }
+          ]
+        },
+        "BucketName": "test-org-test-env-test-domain-test-audit-minimal",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "audit"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-audit-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target of cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "auditbucketPolicy88AB338D": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "auditbucketD20203B1"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "auditbucketD20203B1",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "auditbucketD20203B1",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "s3:GetBucketAcl",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "auditbucketD20203B1",
+                  "Arn"
+                ]
+              },
+              "Sid": "AWSCloudTrailAclCheck20150319"
+            },
+            {
+              "Action": "s3:GetObject*",
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResRead0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "auditbucketD20203B1",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "/_Read"
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-acl": "bucket-owner-full-control"
+                },
+                "StringLike": {
+                  "aws:SourceArn": "arn:test-partition:cloudtrail:*:test-account:trail/*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "auditbucketD20203B1",
+                        "Arn"
+                      ]
+                    },
+                    "/AWSLogs/test-account/*"
+                  ]
+                ]
+              },
+              "Sid": "AWSCloudTrailWrite20150319-test-account"
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account",
+                  "s3:x-amz-acl": "bucket-owner-full-control"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "s3.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "auditbucketD20203B1",
+                        "Arn"
+                      ]
+                    },
+                    "/inventory/*"
+                  ]
+                ]
+              },
+              "Sid": "AllowS3Inventory"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target of cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "auditbucketbucketnamessmBCBC544E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-audit-minimal/bucket/name",
+        "Tags": {
+          "mdaa_cdk_app": "audit",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-audit-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "auditbucketD20203B1"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target of cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "auditbucketbucketarnssm433DEBE2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-audit-minimal/bucket/arn",
+        "Tags": {
+          "mdaa_cdk_app": "audit",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-audit-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "auditbucketD20203B1",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target of cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "auditdatabase1479285B": {
+      "Type": "AWS::Glue::Database",
+      "Properties": {
+        "CatalogId": "test-account",
+        "DatabaseInput": {
+          "Name": "test_org_test_env_test_domain_test_audit_minimal"
+        }
+      }
+    },
+    "auditCloudTrailGlueTableC0417755": {
+      "Type": "AWS::Glue::Table",
+      "Properties": {
+        "CatalogId": "test-account",
+        "DatabaseName": {
+          "Ref": "auditdatabase1479285B"
+        },
+        "TableInput": {
+          "Description": "CloudTrail Glue table",
+          "Name": "cloudtrail_audit",
+          "Parameters": {
+            "has_encrypted_data": true,
+            "EXTERNAL": "TRUE",
+            "projection.enabled": "true",
+            "projection.timestamp.type": "date",
+            "projection.timestamp.range": "2021/01/01,NOW",
+            "projection.timestamp.format": "yyyy/MM/dd",
+            "projection.timestamp.interval": "1",
+            "projection.timestamp.interval.unit": "DAYS",
+            "projection.account.type": "enum",
+            "projection.account.values": "test-account",
+            "projection.region.type": "enum",
+            "projection.region.values": "test-region",
+            "storage.location.template": {
+              "Fn::Join": [
+                "",
+                [
+                  "s3://",
+                  {
+                    "Ref": "auditbucketD20203B1"
+                  },
+                  "/AWSLogs/${account}/CloudTrail/${region}/${timestamp}"
+                ]
+              ]
+            }
+          },
+          "PartitionKeys": [
+            {
+              "Name": "timestamp",
+              "Type": "string"
+            },
+            {
+              "Name": "region",
+              "Type": "string"
+            },
+            {
+              "Name": "account",
+              "Type": "string"
+            }
+          ],
+          "StorageDescriptor": {
+            "Columns": [
+              {
+                "Name": "eventversion",
+                "Type": "string"
+              },
+              {
+                "Name": "useridentity",
+                "Type": "struct<type:string,principalid:string,arn:string,accountid:string,invokedby:string,accesskeyid:string,userName:string,sessioncontext:struct<attributes:struct<mfaauthenticated:string,creationdate:string>,sessionissuer:struct<type:string,principalId:string,arn:string,accountId:string,userName:string>>>"
+              },
+              {
+                "Name": "eventtime",
+                "Type": "string"
+              },
+              {
+                "Name": "eventsource",
+                "Type": "string"
+              },
+              {
+                "Name": "eventname",
+                "Type": "string"
+              },
+              {
+                "Name": "awsregion",
+                "Type": "string"
+              },
+              {
+                "Name": "sourceipaddress",
+                "Type": "string"
+              },
+              {
+                "Name": "useragent",
+                "Type": "string"
+              },
+              {
+                "Name": "errorcode",
+                "Type": "string"
+              },
+              {
+                "Name": "errormessage",
+                "Type": "string"
+              },
+              {
+                "Name": "requestparameters",
+                "Type": "string"
+              },
+              {
+                "Name": "responseelements",
+                "Type": "string"
+              },
+              {
+                "Name": "additionaleventdata",
+                "Type": "string"
+              },
+              {
+                "Name": "requestid",
+                "Type": "string"
+              },
+              {
+                "Name": "eventid",
+                "Type": "string"
+              },
+              {
+                "Name": "resources",
+                "Type": "array<struct<ARN:string,accountId:string,type:string>>"
+              },
+              {
+                "Name": "eventtype",
+                "Type": "string"
+              },
+              {
+                "Name": "apiversion",
+                "Type": "string"
+              },
+              {
+                "Name": "readonly",
+                "Type": "string"
+              },
+              {
+                "Name": "recipientaccountid",
+                "Type": "string"
+              },
+              {
+                "Name": "serviceeventdetails",
+                "Type": "string"
+              },
+              {
+                "Name": "sharedeventid",
+                "Type": "string"
+              },
+              {
+                "Name": "vpcendpointid",
+                "Type": "string"
+              }
+            ],
+            "Compressed": false,
+            "InputFormat": "com.amazon.emr.cloudtrail.CloudTrailInputFormat",
+            "Location": {
+              "Fn::Join": [
+                "",
+                [
+                  "s3://",
+                  {
+                    "Ref": "auditbucketD20203B1"
+                  },
+                  "/AWSLogs"
+                ]
+              ]
+            },
+            "OutputFormat": "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat",
+            "SerdeInfo": {
+              "SerializationLibrary": "com.amazon.emr.hive.serde.CloudTrailSerde"
+            },
+            "StoredAsSubDirectories": false
+          },
+          "TableType": "EXTERNAL_TABLE"
+        }
+      }
+    },
+    "RoleResRead0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "Read-0",
+          "arn": "arn:test-partition:iam::test-account:role/Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    }
+  },
+  "Outputs": {
+    "auditkmscmkkmsarnout6667841A": {
+      "Value": {
+        "Fn::GetAtt": [
+          "auditkmscmk05D41C17",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-audit-minimal:kms:arn"
+      }
+    },
+    "auditkmscmkkmsidout03374062": {
+      "Value": {
+        "Ref": "auditkmscmk05D41C17"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-audit-minimal:kms:id"
+      }
+    },
+    "auditbucketbucketnameout27DE0AB6": {
+      "Value": {
+        "Ref": "auditbucketD20203B1"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-audit-minimal:bucket:name"
+      }
+    },
+    "auditbucketbucketarnout7772DB67": {
+      "Value": {
+        "Fn::GetAtt": [
+          "auditbucketD20203B1",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-audit-minimal:bucket:arn"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

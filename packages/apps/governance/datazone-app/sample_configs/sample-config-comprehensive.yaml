@@ -174,7 +174,7 @@ domains:
     associatedAccounts:
       associated-account-name1:
         # (Required) AWS account ID
-        account: '222222222222'
+        account: '{{context:account-2}}'
         # (Optional) KMS key ARN for Glue catalog encryption
         glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
         # (Optional) Create a DataZone domain user for CDK deployments
@@ -182,10 +182,10 @@ domains:
         # (Optional) IAM role ARN for Lake Formation access management
         lakeformationManageAccessRoleArn: 'arn:{{partition}}:iam::{{account}}:role/test-role'
         # (Optional) CDK deployment role ARN for cross-account provisioning
-        cdkRoleArn: 'arn:{{partition}}:iam::222222222222:role/test-cdk-role'
+        cdkRoleArn: 'arn:{{partition}}:iam::{{context:account-2}}:role/test-cdk-role'
         # (Optional) AWS region for the associated account resources
-        region: test-region
+        region: '{{region}}'
       associated-account-name2:
-        account: '333333333333'
+        account: '{{context:account-3}}'
         createCdkUser: true
         lakeformationManageAccessRoleArn: 'arn:{{partition}}:iam::{{account}}:role/test-role'

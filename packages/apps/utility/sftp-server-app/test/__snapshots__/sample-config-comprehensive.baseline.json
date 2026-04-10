@@ -1,0 +1,366 @@
+{
+  "Description": "(SO0320-sftp-server) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-sftp-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "sftp-server",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sftp-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-sftp-server) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "serverSFTPSecurityGroupF01C0D8E": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "SFTP Transfer Service port 22",
+        "GroupName": "test-org-test-env-test-domain-test-sftp-main-security-group",
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "10.0.0.0/8",
+            "FromPort": 22,
+            "IpProtocol": "tcp",
+            "ToPort": 22
+          },
+          {
+            "CidrIp": "192.168.0.0/16",
+            "FromPort": 22,
+            "IpProtocol": "tcp",
+            "ToPort": 22
+          },
+          {
+            "CidrIp": "172.16.0.0/12",
+            "FromPort": 22,
+            "IpProtocol": "tcp",
+            "ToPort": 22
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sftp-server"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sftp-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "some-vpc-id"
+      }
+    },
+    "serverTransferServerSFTPLoggingRole954BF8C6": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "transfer.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-sftp-main-logging-role",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sftp-server"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sftp-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts] Wildcard is for log stream names, which are not known at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts] Role is specific to this server. Inline policy is appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts] Role is specific to this server. Inline policy is appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts] Role is specific to this server. Inline policy is appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "serverTransferServerSFTPLoggingRoleDefaultPolicyCF6E2C32": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:DescribeLogStreams",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/transfer/",
+                      {
+                        "Fn::GetAtt": [
+                          "serverSFTPServerD200268E",
+                          "ServerId"
+                        ]
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/transfer/",
+                      {
+                        "Fn::GetAtt": [
+                          "serverSFTPServerD200268E",
+                          "ServerId"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "serverTransferServerSFTPLoggingRoleDefaultPolicyCF6E2C32",
+        "Roles": [
+          {
+            "Ref": "serverTransferServerSFTPLoggingRole954BF8C6"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts] Wildcard is for log stream names, which are not known at deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts] Role is specific to this server. Inline policy is appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts] Role is specific to this server. Inline policy is appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts] Role is specific to this server. Inline policy is appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "serverSFTPServerD200268E": {
+      "Type": "AWS::Transfer::Server",
+      "Properties": {
+        "EndpointDetails": {
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "serverSFTPSecurityGroupF01C0D8E",
+                "GroupId"
+              ]
+            }
+          ],
+          "SubnetIds": [
+            "some-subnet-id1",
+            "some-subnet-id2"
+          ],
+          "VpcId": "some-vpc-id"
+        },
+        "EndpointType": "VPC",
+        "LoggingRole": {
+          "Fn::GetAtt": [
+            "serverTransferServerSFTPLoggingRole954BF8C6",
+            "Arn"
+          ]
+        },
+        "Protocols": [
+          "SFTP"
+        ],
+        "SecurityPolicyName": "TransferSecurityPolicy-2024-01",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sftp-server"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sftp-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "serverSFTPServerserverarnssm1262C9A3": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sftp-main/server/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sftp-server",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sftp-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "serverSFTPServerD200268E",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "serverSFTPServerserveridssm9A1E07BC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sftp-main/server/id",
+        "Tags": {
+          "mdaa_cdk_app": "sftp-server",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sftp-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "serverSFTPServerD200268E",
+            "ServerId"
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "serverSFTPServerserverarnoutB68D9577": {
+      "Value": {
+        "Fn::GetAtt": [
+          "serverSFTPServerD200268E",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sftp-main:server:arn"
+      }
+    },
+    "serverSFTPServerserveridout45A7A6C8": {
+      "Value": {
+        "Fn::GetAtt": [
+          "serverSFTPServerD200268E",
+          "ServerId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sftp-main:server:id"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

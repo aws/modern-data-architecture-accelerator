@@ -9,7 +9,7 @@ projectName: dataops-project-test
 
 # (Optional) SNS topic ARN for job notifications and workflow alerts.
 # Auto-resolved from project when projectName is set.
-notificationTopicArn: arn:test-partition:sns:test-region:test-acct:test-topic
+notificationTopicArn: arn:{{partition}}:sns:{{region}}:{{account}}:test-topic
 
 # (Optional) Lambda layer definitions for shared code and
 # dependencies across functions.

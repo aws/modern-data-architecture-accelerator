@@ -47,7 +47,7 @@ api:
     - 172.16.0.0/12
   # (Optional) This role will be used to execute the API integration Lambdas.
   # If not specified, one will be created automatically.
-  integrationLambdaRoleArn: arn:{{partition}}:iam::test-account:role/some-lambda-role-arn
+  integrationLambdaRoleArn: arn:{{partition}}:iam::{{account}}:role/some-lambda-role-arn
 
   # (Optional) List of app clients to be added to the Cognito User Pool.
   # A Client ID and Secret will be generated for each.

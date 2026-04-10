@@ -1,0 +1,770 @@
+{
+  "Description": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuemlsmsgidC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/ml/sm/sg/id"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-app/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "notebooksassetdeploymenttestingonStartAwsCliLayer2C5E1500": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "/opt/awscli/aws"
+      }
+    },
+    "notebooksassetdeploymenttestingonStartCustomResource512MiBA3A884E1": {
+      "Type": "Custom::CDKBucketDeployment",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiB6723FB92",
+            "Arn"
+          ]
+        },
+        "SourceBucketNames": [
+          "cdk-hnb659fds-assets-test-account-test-region"
+        ],
+        "SourceObjectKeys": [
+          "d53a771957ba209dbd6fbbb490b088422aafc9c43ca0c4b6dbefc8142f6d9ab0.zip"
+        ],
+        "DestinationBucketName": "some-bucket-name",
+        "DestinationBucketKeyPrefix": "sagemaker/assets/onStart/testing",
+        "WaitForDistributionInvalidation": true,
+        "Extract": true,
+        "Prune": true,
+        "OutputObjectKeys": true
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "notebooksassetdeploymentsetupscriptsonCreateAwsCliLayer8CDE3A17": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "/opt/awscli/aws"
+      }
+    },
+    "notebooksassetdeploymentsetupscriptsonCreateCustomResource512MiB62B0FDA5": {
+      "Type": "Custom::CDKBucketDeployment",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiB6723FB92",
+            "Arn"
+          ]
+        },
+        "SourceBucketNames": [
+          "cdk-hnb659fds-assets-test-account-test-region"
+        ],
+        "SourceObjectKeys": [
+          "d53a771957ba209dbd6fbbb490b088422aafc9c43ca0c4b6dbefc8142f6d9ab0.zip"
+        ],
+        "DestinationBucketName": "some-bucket-name",
+        "DestinationBucketKeyPrefix": "sagemaker/assets/onCreate/setup-scripts",
+        "WaitForDistributionInvalidation": true,
+        "Extract": true,
+        "Prune": true,
+        "OutputObjectKeys": true
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "notebooksexamplelifecycleconfiglifecycle866EF51F": {
+      "Type": "AWS::SageMaker::NotebookInstanceLifecycleConfig",
+      "Properties": {
+        "NotebookInstanceLifecycleConfigName": "test-org-test-env-test-domain-test-sagemaker-notebook-app-example-lifecycle-config",
+        "OnCreate": [
+          {
+            "Content": {
+              "Fn::Base64": "export ASSETS_DIR=/tmp/lifecycle-assets/onCreate\naws s3 cp --recursive s3://some-bucket-name/sagemaker/assets/onCreate/ $ASSETS_DIR\necho \"Testing onCreate\""
+            }
+          }
+        ],
+        "OnStart": [
+          {
+            "Content": {
+              "Fn::Base64": "export ASSETS_DIR=/tmp/lifecycle-assets/onStart\naws s3 cp --recursive s3://some-bucket-name/sagemaker/assets/onStart/ $ASSETS_DIR\necho \"testing onStart\"\nsh $ASSETS_DIR/testing/test.sh"
+            }
+          }
+        ]
+      }
+    },
+    "notebookslifecycleconfigexamplelifecycleconfignamessm47295EA6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-app/lifecycle-config/example-lifecycle-config/name",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "notebooksexamplelifecycleconfiglifecycle866EF51F",
+            "NotebookInstanceLifecycleConfigName"
+          ]
+        }
+      }
+    },
+    "notebooksnotebook1sgFFDDE2A3": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-sagemaker-notebook-app/notebooks/notebook-1-sg",
+        "GroupName": "test-org-test-env-test-domain-test-sagemaker-notebook-app-notebook-1",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-notebook"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-notebook-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-id"
+      }
+    },
+    "notebooksnotebook1sgfrom1000028tcpPORT443A60F139F": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "CidrIp": "10.0.0.0/28",
+        "Description": "Allow HTTPS from internal network",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "notebooksnotebook1sgFFDDE2A3",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "notebooksnotebook1sgfromsgingresstesttcpPORT4437C43FE48": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "Allow HTTPS from peer security group",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "notebooksnotebook1sgFFDDE2A3",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": "sg-ingresstest",
+        "ToPort": 443
+      }
+    },
+    "notebooksnotebook1sgfrompltestingresstcpPORT4436B037296": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "Allow HTTPS from managed prefix list",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "notebooksnotebook1sgFFDDE2A3",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "SourcePrefixListId": "pl-test-ingress",
+        "ToPort": 443
+      }
+    },
+    "notebooksnotebook1sgto00000tcpPORT44354E56898": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "CidrIp": "0.0.0.0/0",
+        "Description": "Allow HTTPS egress",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "notebooksnotebook1sgFFDDE2A3",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "notebooksnotebook1sgtoIndirectPeertcpPORT4436AA40D20": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "Allow HTTPS to peer security group",
+        "DestinationSecurityGroupId": {
+          "Ref": "SsmParameterValuemlsmsgidC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "notebooksnotebook1sgFFDDE2A3",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "notebooksnotebook1sgtopl4ea54027tcpPORT443BDA1E3A9": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "prefix list for com.amazonaws.test-region.dynamodb",
+        "DestinationPrefixListId": "pl-4ea54027",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "notebooksnotebook1sgFFDDE2A3",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "notebooksnotebook1sgtopl7da54014tcpPORT443814AC834": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "prefix list for com.amazonaws.test-region.s3",
+        "DestinationPrefixListId": "pl-7da54014",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "notebooksnotebook1sgFFDDE2A3",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "notebooksnotebook1sgsecuritygroupnotebook1idssm7B7673B5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-app/security-group/notebook-1/id",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "notebooksnotebook1sgFFDDE2A3",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "notebooksnotebook17534A2F6": {
+      "Type": "AWS::SageMaker::NotebookInstance",
+      "Properties": {
+        "AcceleratorTypes": [
+          "ml.eia2.medium"
+        ],
+        "AdditionalCodeRepositories": [
+          "https://github.com/example/repo2.git"
+        ],
+        "DefaultCodeRepository": "https://github.com/example/repo.git",
+        "DirectInternetAccess": "Disabled",
+        "InstanceMetadataServiceConfiguration": {
+          "MinimumInstanceMetadataServiceVersion": "2"
+        },
+        "InstanceType": "ml.t3.medium",
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/test-notebook-key",
+        "LifecycleConfigName": "test-org-test-env-test-domain-test-sagemaker-notebook-app-example-lifecycle-config",
+        "NotebookInstanceName": "test-org-test-env-test-domain-test-sagemaker-notebook-595e368b",
+        "PlatformIdentifier": "notebook-al2-v2",
+        "RoleArn": "arn:test-partition:iam::test-account:role/sagemaker-role",
+        "RootAccess": "Disabled",
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "notebooksnotebook1sgFFDDE2A3",
+              "GroupId"
+            ]
+          }
+        ],
+        "SubnetId": "subnet-id",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-notebook"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-notebook-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VolumeSizeInGB": 10
+      }
+    },
+    "notebooksnotebook1notebookidnotebook1ssm47366D31": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-app/notebook/id-test-notebook-name",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "notebooksnotebook17534A2F6"
+        }
+      }
+    },
+    "notebooksnotebook1notebooksubnetnotebook1ssmBF318ABB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-app/notebook/subnetid-test-notebook-name",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "subnet-id"
+      }
+    },
+    "notebooksnotebook279D03688": {
+      "Type": "AWS::SageMaker::NotebookInstance",
+      "Properties": {
+        "DirectInternetAccess": "Disabled",
+        "InstanceType": "ml.t3.large",
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/test-notebook-key",
+        "LifecycleConfigName": "existing-lifecycle-config",
+        "NotebookInstanceName": "test-org-test-env-test-domain-test-sagemaker-notebook-3e22f00d",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "RoleResnotebook2",
+            "arn"
+          ]
+        },
+        "RootAccess": "Disabled",
+        "SecurityGroupIds": [
+          "sg-123124124"
+        ],
+        "SubnetId": "subnet-id",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-notebook"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-notebook-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VolumeSizeInGB": 5
+      }
+    },
+    "notebooksnotebook2notebookidnotebook2ssm4D37CAA7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-app/notebook/id-notebook-2",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "notebooksnotebook279D03688"
+        }
+      }
+    },
+    "notebooksnotebook2notebooksubnetnotebook2ssm72222EA2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-app/notebook/subnetid-notebook-2",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "subnet-id"
+      }
+    },
+    "notebooksnotebook3E496925E": {
+      "Type": "AWS::SageMaker::NotebookInstance",
+      "Properties": {
+        "DirectInternetAccess": "Disabled",
+        "InstanceType": "ml.t3.xlarge",
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/test-notebook-key",
+        "NotebookInstanceName": "test-org-test-env-test-domain-test-sagemaker-notebook-3e22f00c",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "RoleResnotebook3",
+            "arn"
+          ]
+        },
+        "RootAccess": "Disabled",
+        "SecurityGroupIds": [
+          "sg-test-id-ref"
+        ],
+        "SubnetId": "subnet-id",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-notebook"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-notebook-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VolumeSizeInGB": 10
+      }
+    },
+    "notebooksnotebook3notebookidnotebook3ssm2FE60285": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-app/notebook/id-notebook-3",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "notebooksnotebook3E496925E"
+        }
+      }
+    },
+    "notebooksnotebook3notebooksubnetnotebook3ssmA381E1EE": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-notebook-app/notebook/subnetid-notebook-3",
+        "Tags": {
+          "mdaa_cdk_app": "sm-notebook",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-notebook-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "subnet-id"
+      }
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiB6723FB92": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+          }
+        },
+        "Handler": "index.handler",
+        "Layers": [
+          {
+            "Ref": "notebooksassetdeploymenttestingonStartAwsCliLayer2C5E1500"
+          }
+        ],
+        "MemorySize": 512,
+        "Role": "arn:test-partition:iam::test-account:role/example_deployment_role",
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-notebook"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-notebook-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            }
+          ]
+        }
+      }
+    },
+    "RoleResnotebook2": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "notebook-2",
+          "name": "sagemaker-role"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResnotebook3": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "notebook-3",
+          "name": "notebook-execution-role"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    }
+  },
+  "Outputs": {
+    "notebookslifecycleconfigexamplelifecycleconfignameout271B7666": {
+      "Value": {
+        "Fn::GetAtt": [
+          "notebooksexamplelifecycleconfiglifecycle866EF51F",
+          "NotebookInstanceLifecycleConfigName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-app:lifecycle-config:examplelifecycleconfig:name"
+      }
+    },
+    "notebooksnotebook1sgsecuritygroupnotebook1idout0A110E2B": {
+      "Value": {
+        "Fn::GetAtt": [
+          "notebooksnotebook1sgFFDDE2A3",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-app:security-group:notebook1:id"
+      }
+    },
+    "notebooksnotebook1notebookidnotebook1out9B6204AD": {
+      "Value": {
+        "Ref": "notebooksnotebook17534A2F6"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-app:notebook:id-test-notebook-name"
+      }
+    },
+    "notebooksnotebook1notebooksubnetnotebook1outECF718B5": {
+      "Value": "subnet-id",
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-app:notebook:subnetid-test-notebook-name"
+      }
+    },
+    "notebooksnotebook2notebookidnotebook2out11564BCE": {
+      "Value": {
+        "Ref": "notebooksnotebook279D03688"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-app:notebook:id-notebook-2"
+      }
+    },
+    "notebooksnotebook2notebooksubnetnotebook2outD85EE61B": {
+      "Value": "subnet-id",
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-app:notebook:subnetid-notebook-2"
+      }
+    },
+    "notebooksnotebook3notebookidnotebook3outBFED5039": {
+      "Value": {
+        "Ref": "notebooksnotebook3E496925E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-app:notebook:id-notebook-3"
+      }
+    },
+    "notebooksnotebook3notebooksubnetnotebook3outF6A7309D": {
+      "Value": "subnet-id",
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-notebook-app:notebook:subnetid-notebook-3"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

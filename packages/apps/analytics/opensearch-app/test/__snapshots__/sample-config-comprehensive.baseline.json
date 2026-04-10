@@ -1,0 +1,1439 @@
+{
+  "Description": "(SO0320-opensearch) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-opensearch-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "opensearch",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-opensearch-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-opensearch) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructdomainsgB7AC0900": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-opensearch-main/construct/domain-sg",
+        "GroupName": "test-org-test-env-test-domain-test-opensearch-main",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "opensearch"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-opensearch-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-a1b2c3d4"
+      }
+    },
+    "constructdomainsgfrom1000028tcpPORT443916D4F8A": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "CidrIp": "10.0.0.0/28",
+        "Description": "https Ingress for IPV4 CIDR 10.0.0.0/28",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "constructdomainsgB7AC0900",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "constructdomainsgfromsgu5x6y7z8tcpPORT443E9F5235C": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "https Ingress for SG sg-u5x6y7z8",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "constructdomainsgB7AC0900",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": "sg-u5x6y7z8",
+        "ToPort": 443
+      }
+    },
+    "constructdomainsgsecuritygroupidssmE9BF6481": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-opensearch-main/security-group/id",
+        "Tags": {
+          "mdaa_cdk_app": "opensearch",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-opensearch-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructdomainsgB7AC0900",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "RoleResDataAdmin": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataAdmin",
+          "arn": "arn:test-partition:iam::test-account:role/test-admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "opensearchdomainkey4FC01EF0": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataAdmin",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-opensearch-main-usage-stmt"
+            },
+            {
+              "Action": [
+                "kms:Encrypt*",
+                "kms:Decrypt*",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:Describe*"
+              ],
+              "Condition": {
+                "ArnLike": {
+                  "kms:EncryptionContext:aws:logs:arn": "arn:test-partition:logs:test-region:test-account:*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "logs.test-region.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowOpensearchLogGroupEncryption"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "opensearch"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-opensearch-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "opensearchdomainkeyAlias334747A3": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-opensearch-main-opensearch-domain",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "opensearchdomainkey4FC01EF0",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "opensearchdomainkeykmsopensearchdomainarnssmE43F046B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-opensearch-main/kms/opensearch-domain/arn",
+        "Tags": {
+          "mdaa_cdk_app": "opensearch",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-opensearch-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "opensearchdomainkey4FC01EF0",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "opensearchdomainkeykmsopensearchdomainidssmF270CD24": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-opensearch-main/kms/opensearch-domain/id",
+        "Tags": {
+          "mdaa_cdk_app": "opensearch",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-opensearch-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "opensearchdomainkey4FC01EF0"
+        }
+      }
+    },
+    "cloudwatchloggrouposdomainAC2A53BD": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "opensearchdomainkey4FC01EF0",
+            "Arn"
+          ]
+        },
+        "LogGroupName": "/aws/opensearch-logs/test-org-test-env-test-domain-test-opensearch-main-osdomain",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "opensearch"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-opensearch-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod"
+            }
+          ]
+        }
+      }
+    },
+    "cloudwatchloggrouposdomainloggrouposdomainnamessm8193444C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-opensearch-main/loggroup/osdomain/name",
+        "Tags": {
+          "mdaa_cdk_app": "opensearch",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-opensearch-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "/aws/opensearch-logs/test-org-test-env-test-domain-test-opensearch-main-osdomain"
+      }
+    },
+    "opensearchdomainosdomainESLogGroupPolicyc8be272668834a873ac1b847c092bf80e1b41d5bbd91402257": {
+      "Type": "Custom::CloudwatchLogResourcePolicy",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn"
+          ]
+        },
+        "Create": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"service\":\"CloudWatchLogs\",\"action\":\"putResourcePolicy\",\"parameters\":{\"policyName\":\"ESLogPolicyc8be272668834a873ac1b847c092bf80e1b41d5bbd\",\"policyDocument\":\"{\\\"Statement\\\":[{\\\"Action\\\":[\\\"logs:PutLogEvents\\\",\\\"logs:CreateLogStream\\\"],\\\"Effect\\\":\\\"Allow\\\",\\\"Principal\\\":{\\\"Service\\\":\\\"es.amazonaws.com\\\"},\\\"Resource\\\":\\\"",
+              {
+                "Fn::GetAtt": [
+                  "cloudwatchloggrouposdomainAC2A53BD",
+                  "Arn"
+                ]
+              },
+              "\\\"}],\\\"Version\\\":\\\"2012-10-17\\\"}\"},\"physicalResourceId\":{\"id\":\"ESLogGroupPolicyc8be272668834a873ac1b847c092bf80e1b41d5bbd\"}}"
+            ]
+          ]
+        },
+        "Update": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"service\":\"CloudWatchLogs\",\"action\":\"putResourcePolicy\",\"parameters\":{\"policyName\":\"ESLogPolicyc8be272668834a873ac1b847c092bf80e1b41d5bbd\",\"policyDocument\":\"{\\\"Statement\\\":[{\\\"Action\\\":[\\\"logs:PutLogEvents\\\",\\\"logs:CreateLogStream\\\"],\\\"Effect\\\":\\\"Allow\\\",\\\"Principal\\\":{\\\"Service\\\":\\\"es.amazonaws.com\\\"},\\\"Resource\\\":\\\"",
+              {
+                "Fn::GetAtt": [
+                  "cloudwatchloggrouposdomainAC2A53BD",
+                  "Arn"
+                ]
+              },
+              "\\\"}],\\\"Version\\\":\\\"2012-10-17\\\"}\"},\"physicalResourceId\":{\"id\":\"ESLogGroupPolicyc8be272668834a873ac1b847c092bf80e1b41d5bbd\"}}"
+            ]
+          ]
+        },
+        "Delete": "{\"service\":\"CloudWatchLogs\",\"action\":\"deleteResourcePolicy\",\"parameters\":{\"policyName\":\"ESLogPolicyc8be272668834a873ac1b847c092bf80e1b41d5bbd\"},\"ignoreErrorCodesMatching\":\"ResourceNotFoundException\"}",
+        "InstallLatestAwsSdk": true
+      },
+      "DependsOn": [
+        "opensearchdomainosdomainESLogGroupPolicyc8be272668834a873ac1b847c092bf80e1b41d5bbdCustomResourcePolicy2186C100"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "opensearchdomainosdomainESLogGroupPolicyc8be272668834a873ac1b847c092bf80e1b41d5bbdCustomResourcePolicy2186C100": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "logs:PutResourcePolicy",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "logs:DeleteResourcePolicy",
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "opensearchdomainosdomainESLogGroupPolicyc8be272668834a873ac1b847c092bf80e1b41d5bbdCustomResourcePolicy2186C100",
+        "Roles": [
+          {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/encryption-at-rest.html",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "opensearchdomainosdomain6F52CDEB": {
+      "Type": "AWS::OpenSearchService::Domain",
+      "Properties": {
+        "AdvancedSecurityOptions": {
+          "Enabled": true,
+          "InternalUserDatabaseEnabled": false,
+          "MasterUserOptions": {
+            "MasterUserARN": "arn:test-partition:iam::test-account:role/test-admin"
+          },
+          "SAMLOptions": {
+            "Enabled": true,
+            "Idp": {
+              "EntityId": "https://portal.sso.test-region.amazonaws.com/saml/assertion/ABC123",
+              "MetadataContent": "<?xml version=\"1.0\"?>\n<EntityDescriptor xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\" entityID=\"test-idp\">\n  <IDPSSODescriptor protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\n  </IDPSSODescriptor>\n</EntityDescriptor>\n"
+            },
+            "RolesKey": "roles",
+            "SessionTimeoutMinutes": 60
+          }
+        },
+        "ClusterConfig": {
+          "DedicatedMasterCount": 3,
+          "DedicatedMasterEnabled": true,
+          "DedicatedMasterType": "c5.large.search",
+          "InstanceCount": 6,
+          "InstanceType": "c5.large.search",
+          "MultiAZWithStandbyEnabled": false,
+          "NodeOptions": [
+            {
+              "NodeConfig": {
+                "Count": 2,
+                "Enabled": true,
+                "Type": "m5.large.search"
+              },
+              "NodeType": "coordinator"
+            }
+          ],
+          "WarmCount": 2,
+          "WarmEnabled": true,
+          "WarmType": "ultrawarm1.medium.search",
+          "ZoneAwarenessConfig": {
+            "AvailabilityZoneCount": 2
+          },
+          "ZoneAwarenessEnabled": true
+        },
+        "DomainEndpointOptions": {
+          "CustomEndpoint": "abc.xyz.com",
+          "CustomEndpointCertificateArn": "arn:test-partition:acm:test-region:test-account:certificate/018bb092-7e2c-4f4e-87ae-08611a424e02",
+          "CustomEndpointEnabled": true,
+          "EnforceHTTPS": true,
+          "TLSSecurityPolicy": "Policy-Min-TLS-1-2-2019-07"
+        },
+        "DomainName": "test-org-test-env-t-46d0f028",
+        "EBSOptions": {
+          "EBSEnabled": true,
+          "Iops": 3000,
+          "Throughput": 125,
+          "VolumeSize": 20,
+          "VolumeType": "gp3"
+        },
+        "EncryptionAtRestOptions": {
+          "Enabled": true,
+          "KmsKeyId": {
+            "Ref": "opensearchdomainkey4FC01EF0"
+          }
+        },
+        "EngineVersion": "OpenSearch_2.3",
+        "LogPublishingOptions": {
+          "SEARCH_SLOW_LOGS": {
+            "CloudWatchLogsLogGroupArn": {
+              "Fn::GetAtt": [
+                "cloudwatchloggrouposdomainAC2A53BD",
+                "Arn"
+              ]
+            },
+            "Enabled": true
+          },
+          "INDEX_SLOW_LOGS": {
+            "CloudWatchLogsLogGroupArn": {
+              "Fn::GetAtt": [
+                "cloudwatchloggrouposdomainAC2A53BD",
+                "Arn"
+              ]
+            },
+            "Enabled": true
+          },
+          "ES_APPLICATION_LOGS": {
+            "CloudWatchLogsLogGroupArn": {
+              "Fn::GetAtt": [
+                "cloudwatchloggrouposdomainAC2A53BD",
+                "Arn"
+              ]
+            },
+            "Enabled": true
+          },
+          "AUDIT_LOGS": {
+            "CloudWatchLogsLogGroupArn": {
+              "Fn::GetAtt": [
+                "cloudwatchloggrouposdomainAC2A53BD",
+                "Arn"
+              ]
+            },
+            "Enabled": true
+          }
+        },
+        "NodeToNodeEncryptionOptions": {
+          "Enabled": true
+        },
+        "SnapshotOptions": {
+          "AutomatedSnapshotStartHour": 23
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "opensearch"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-opensearch-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VPCOptions": {
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "constructdomainsgB7AC0900",
+                "GroupId"
+              ]
+            }
+          ],
+          "SubnetIds": [
+            "subnet-1a2b3c4d",
+            "subnet-9p0q1r2s"
+          ]
+        }
+      },
+      "DependsOn": [
+        "opensearchdomainosdomainESLogGroupPolicyc8be272668834a873ac1b847c092bf80e1b41d5bbdCustomResourcePolicy2186C100",
+        "opensearchdomainosdomainESLogGroupPolicyc8be272668834a873ac1b847c092bf80e1b41d5bbd91402257"
+      ],
+      "UpdatePolicy": {
+        "EnableVersionUpgrade": true
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] The Opensearch domain is deployed within VPC. IP based access policies cannot be applied to domains that reside within VPC because security groups already enforce IP-based access policy. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/vpc.html#vpc-security",
+              "id": "AwsSolutions-OS3"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] CDK Construct applies Domain Access Policy immedietely after the domain is created. Zero Trust is still applied, not as part of domain properties in CDK generated cloudformation template, but immediately after domain deployment via custom resource",
+              "id": "AwsSolutions-OS5"
+            }
+          ]
+        }
+      }
+    },
+    "opensearchdomainosdomainAccessPolicyDAC3D0DA": {
+      "Type": "Custom::OpenSearchAccessPolicy",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn"
+          ]
+        },
+        "Create": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"action\":\"updateDomainConfig\",\"service\":\"OpenSearch\",\"parameters\":{\"DomainName\":\"",
+              {
+                "Ref": "opensearchdomainosdomain6F52CDEB"
+              },
+              "\",\"AccessPolicies\":\"{\\\"Statement\\\":[{\\\"Action\\\":\\\"es:*\\\",\\\"Effect\\\":\\\"Allow\\\",\\\"Principal\\\":{\\\"AWS\\\":\\\"arn:test-partition:iam::test-account:root\\\"},\\\"Resource\\\":\\\"arn:test-partition:es:test-region:test-account:domain/test-domain/*\\\"}],\\\"Version\\\":\\\"2012-10-17\\\"}\"},\"outputPaths\":[\"DomainConfig.AccessPolicies\"],\"physicalResourceId\":{\"id\":\"",
+              {
+                "Ref": "opensearchdomainosdomain6F52CDEB"
+              },
+              "AccessPolicy\"}}"
+            ]
+          ]
+        },
+        "Update": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"action\":\"updateDomainConfig\",\"service\":\"OpenSearch\",\"parameters\":{\"DomainName\":\"",
+              {
+                "Ref": "opensearchdomainosdomain6F52CDEB"
+              },
+              "\",\"AccessPolicies\":\"{\\\"Statement\\\":[{\\\"Action\\\":\\\"es:*\\\",\\\"Effect\\\":\\\"Allow\\\",\\\"Principal\\\":{\\\"AWS\\\":\\\"arn:test-partition:iam::test-account:root\\\"},\\\"Resource\\\":\\\"arn:test-partition:es:test-region:test-account:domain/test-domain/*\\\"}],\\\"Version\\\":\\\"2012-10-17\\\"}\"},\"outputPaths\":[\"DomainConfig.AccessPolicies\"],\"physicalResourceId\":{\"id\":\"",
+              {
+                "Ref": "opensearchdomainosdomain6F52CDEB"
+              },
+              "AccessPolicy\"}}"
+            ]
+          ]
+        },
+        "InstallLatestAwsSdk": false
+      },
+      "DependsOn": [
+        "opensearchdomainosdomainAccessPolicyCustomResourcePolicy60C24EFA"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "opensearchdomainosdomainAccessPolicyCustomResourcePolicy60C24EFA": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "es:UpdateDomainConfig",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "opensearchdomainosdomain6F52CDEB",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "opensearchdomainosdomainAccessPolicyCustomResourcePolicy60C24EFA",
+        "Roles": [
+          {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "opensearch"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-opensearch-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider Lambda Function. AWS Managed policy AWSLambdaBasicExecutionRole provides least privilege permissions.",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleDefaultPolicyD28E1A5E": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:List*",
+                "kms:Describe*",
+                "kms:CreateGrant"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "opensearchdomainkey4FC01EF0",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleDefaultPolicyD28E1A5E",
+        "Roles": [
+          {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider Lambda Function. KMS policy added is least privilege.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "AWS679f53fac002430cb0da5b7982bd22872D164C4C": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs18.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "opensearch"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-opensearch-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 120
+      },
+      "DependsOn": [
+        "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleDefaultPolicyD28E1A5E",
+        "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Function is for custom resource and will interact only with IAM.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Function is for custom resource and will interact only with IAM.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Function is for custom resource and will interact only with IAM.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "eventruleosdomainopensearchevents620ADBD4": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Matches OpenSearch events for domain osdomain",
+        "EventPattern": {
+          "source": [
+            "aws.es"
+          ],
+          "resources": [
+            {
+              "Fn::GetAtt": [
+                "opensearchdomainosdomain6F52CDEB",
+                "Arn"
+              ]
+            }
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-opensearch-main-osdo-1710e5de",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "opensearch"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-opensearch-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "domaineventstopic44704217"
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "dlqosdomainopensearcheventsD35B8F45",
+                  "Arn"
+                ]
+              }
+            },
+            "Id": "Target0"
+          }
+        ]
+      }
+    },
+    "domaineventstopic44704217": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "opensearchdomainkey4FC01EF0",
+            "Arn"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "opensearch"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-opensearch-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TopicName": "test-org-test-env-test-domain-test-opensearch-main-osdomain-opensearch-events"
+      }
+    },
+    "domaineventstopicPolicy7505D82A": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sns:Publish",
+                "sns:RemovePermission",
+                "sns:SetTopicAttributes",
+                "sns:DeleteTopic",
+                "sns:ListSubscriptionsByTopic",
+                "sns:GetTopicAttributes",
+                "sns:Receive",
+                "sns:AddPermission",
+                "sns:Subscribe"
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sns:Publish",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Ref": "domaineventstopic44704217"
+              },
+              "Sid": "1"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Topics": [
+          {
+            "Ref": "domaineventstopic44704217"
+          }
+        ]
+      }
+    },
+    "domaineventstopicTopicosdomainopensearcheventsnamessm847B30B2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-opensearch-main/topic/osdomain-opensearch-events/name",
+        "Tags": {
+          "mdaa_cdk_app": "opensearch",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-opensearch-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "domaineventstopic44704217",
+            "TopicName"
+          ]
+        }
+      }
+    },
+    "domaineventstopicTopicosdomainopensearcheventsarnssm3BE12BD7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-opensearch-main/topic/osdomain-opensearch-events/arn",
+        "Tags": {
+          "mdaa_cdk_app": "opensearch",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-opensearch-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "domaineventstopic44704217"
+        }
+      }
+    },
+    "domaineventstopicexampleexamplecom3B6D0B21": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "Endpoint": "example@example.com",
+        "Protocol": "email",
+        "TopicArn": {
+          "Ref": "domaineventstopic44704217"
+        }
+      }
+    },
+    "dlqosdomainopensearcheventsD35B8F45": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "opensearchdomainkey4FC01EF0",
+            "Arn"
+          ]
+        },
+        "QueueName": "test-org-test-env-test-domain-test-opensearch-main-osdomain-opensearch--499b3f86",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "opensearch"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-opensearch-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqosdomainopensearcheventsPolicyA0B6C072": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "eventruleosdomainopensearchevents620ADBD4",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "dlqosdomainopensearcheventsD35B8F45",
+                  "Arn"
+                ]
+              },
+              "Sid": "AllowEventRuletestorgtestenvtestdomaintestopensearchmaineventruleosdomainopensearcheventsC51217AC"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "dlqosdomainopensearcheventsD35B8F45"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqosdomainopensearcheventsqueueosdomainopensearcheventsdlqnamessm46E68B3A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-opensearch-main/queue/osdomain-opensearch-events-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "opensearch",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-opensearch-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqosdomainopensearcheventsD35B8F45",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqosdomainopensearcheventsqueueosdomainopensearcheventsdlqarnssm9F8265A8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-opensearch-main/queue/osdomain-opensearch-events-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "opensearch",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-opensearch-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "dlqosdomainopensearcheventsD35B8F45",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "dlqosdomainopensearcheventsqueueosdomainopensearcheventsdlqurlssm9890EBF9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-opensearch-main/queue/osdomain-opensearch-events-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "opensearch",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-opensearch-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "dlqosdomainopensearcheventsD35B8F45"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "constructdomainsgsecuritygroupidout7364B6B2": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructdomainsgB7AC0900",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-opensearch-main:security-group:id"
+      }
+    },
+    "opensearchdomainkeykmsopensearchdomainarnout64F03803": {
+      "Value": {
+        "Fn::GetAtt": [
+          "opensearchdomainkey4FC01EF0",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-opensearch-main:kms:opensearchdomain:arn"
+      }
+    },
+    "opensearchdomainkeykmsopensearchdomainidoutD8E77E42": {
+      "Value": {
+        "Ref": "opensearchdomainkey4FC01EF0"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-opensearch-main:kms:opensearchdomain:id"
+      }
+    },
+    "cloudwatchloggrouposdomainloggrouposdomainnameout1CC2C43B": {
+      "Value": "/aws/opensearch-logs/test-org-test-env-test-domain-test-opensearch-main-osdomain",
+      "Export": {
+        "Name": "test-org:test-domain:test-opensearch-main:loggroup:osdomain:name"
+      }
+    },
+    "domaineventstopicTopicosdomainopensearcheventsnameout5C44120D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "domaineventstopic44704217",
+          "TopicName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-opensearch-main:topic:osdomainopensearchevents:name"
+      }
+    },
+    "domaineventstopicTopicosdomainopensearcheventsarnout5BBC7834": {
+      "Value": {
+        "Ref": "domaineventstopic44704217"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-opensearch-main:topic:osdomainopensearchevents:arn"
+      }
+    },
+    "dlqosdomainopensearcheventsqueueosdomainopensearcheventsdlqnameout225AA7D9": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqosdomainopensearcheventsD35B8F45",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-opensearch-main:queue:osdomainopensearcheventsdlq:name"
+      }
+    },
+    "dlqosdomainopensearcheventsqueueosdomainopensearcheventsdlqarnoutF6A8BFAB": {
+      "Value": {
+        "Fn::GetAtt": [
+          "dlqosdomainopensearcheventsD35B8F45",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-opensearch-main:queue:osdomainopensearcheventsdlq:arn"
+      }
+    },
+    "dlqosdomainopensearcheventsqueueosdomainopensearcheventsdlqurlout18B72F49": {
+      "Value": {
+        "Ref": "dlqosdomainopensearcheventsD35B8F45"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-opensearch-main:queue:osdomainopensearcheventsdlq:url"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

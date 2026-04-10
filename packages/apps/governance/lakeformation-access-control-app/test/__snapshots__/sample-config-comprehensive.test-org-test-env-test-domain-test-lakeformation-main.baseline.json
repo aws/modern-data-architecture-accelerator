@@ -1,0 +1,801 @@
+{
+  "Description": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-lakeformation-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "lakeformation-access-control",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lakeformation-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "accesslocalresourcelinkresourcelink37B4EDF6": {
+      "Type": "AWS::Glue::Database",
+      "Properties": {
+        "CatalogId": "test-account",
+        "DatabaseInput": {
+          "Name": "local_resource_link",
+          "TargetDatabase": {
+            "CatalogId": "test-account",
+            "DatabaseName": "example_database"
+          }
+        }
+      }
+    },
+    "accessgrantRESOURCELINKlocalresourcelinkroleByNamePrincipal02222F61": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResroleByNamePrincipal",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": {
+              "Fn::Select": [
+                4,
+                {
+                  "Fn::Split": [
+                    ":",
+                    {
+                      "Fn::GetAtt": [
+                        "RoleResroleByNamePrincipal",
+                        "arn"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "Name": "local_resource_link"
+          }
+        }
+      },
+      "DependsOn": [
+        "accesslocalresourcelinkresourcelink37B4EDF6"
+      ]
+    },
+    "accessgrantRESOURCELINKlocalresourcelinkfedGroupPrincipal31374526": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/test-provider:group/test-group1"
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "local_resource_link"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantRESOURCELINKlocalresourcelinkroleByNamePrincipal02222F61",
+        "accesslocalresourcelinkresourcelink37B4EDF6"
+      ]
+    },
+    "accesscrossaccountresourcelinkresourcelink540528E0": {
+      "Type": "AWS::Glue::Database",
+      "Properties": {
+        "CatalogId": "test-account",
+        "DatabaseInput": {
+          "Name": "cross_account_resource_link",
+          "TargetDatabase": {
+            "CatalogId": "test-account-2",
+            "DatabaseName": "remote_database"
+          }
+        }
+      }
+    },
+    "accessgrantRESOURCELINKcrossaccountresourcelinkroleByArnPrincipal39A429F8": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:role/Admin"
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "cross_account_resource_link"
+          }
+        }
+      },
+      "DependsOn": [
+        "accesscrossaccountresourcelinkresourcelink540528E0",
+        "accessgrantRESOURCELINKlocalresourcelinkfedGroupPrincipal31374526"
+      ]
+    },
+    "accessminimalresourcelinkresourcelinkBF0D9D11": {
+      "Type": "AWS::Glue::Database",
+      "Properties": {
+        "CatalogId": "test-account",
+        "DatabaseInput": {
+          "Name": "minimal_resource_link",
+          "TargetDatabase": {
+            "CatalogId": "test-account",
+            "DatabaseName": "minimal_target_database"
+          }
+        }
+      }
+    },
+    "accessgrantDATABASEreadgrantfedGroupPrincipal0B36E2F4": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/test-provider:group/test-group1"
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "example_database"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantRESOURCELINKcrossaccountresourcelinkroleByArnPrincipal39A429F8"
+      ]
+    },
+    "accessgrantexampletable1readgrantfedGroupPrincipalF5022B56": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/test-provider:group/test-group1"
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "example_database",
+            "Name": "example_table1"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantDATABASEreadgrantfedGroupPrincipal0B36E2F4"
+      ]
+    },
+    "accessgrantDATABASEreadgrantfedUserPrincipal55493509": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/test-provider:user/test-user@example.com"
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "example_database"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantexampletable1readgrantfedGroupPrincipalF5022B56"
+      ]
+    },
+    "accessgrantexampletable1readgrantfedUserPrincipalC7ACC64A": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/test-provider:user/test-user@example.com"
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "example_database",
+            "Name": "example_table1"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantDATABASEreadgrantfedUserPrincipal55493509"
+      ]
+    },
+    "accessgrantDATABASEwritegrantroleByNamePrincipal7D751E1B": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResroleByNamePrincipal",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "example_database"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantexampletable1readgrantfedUserPrincipalC7ACC64A"
+      ]
+    },
+    "accessgrantexampletable2writegrantroleByNamePrincipalA3BBF797": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResroleByNamePrincipal",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "example_database",
+            "Name": "example_table2"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantDATABASEwritegrantroleByNamePrincipal7D751E1B"
+      ]
+    },
+    "accessgrantDATABASEsupergrantroleByArnPrincipalD5DE5219": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER",
+          "DROP"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:role/Admin"
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "admin_database"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantexampletable2writegrantroleByNamePrincipalA3BBF797"
+      ]
+    },
+    "accessgrantsupergrantroleByArnPrincipalD48588FE": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE",
+          "ALTER",
+          "DROP"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:role/Admin"
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "admin_database",
+            "Name": "*"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantDATABASEsupergrantroleByArnPrincipalD5DE5219"
+      ]
+    },
+    "accessgrantDATABASEsupergrantimmutableRolePrincipalD769E42E": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER",
+          "DROP"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResimmutableRolePrincipal",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "admin_database"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantsupergrantroleByArnPrincipalD48588FE"
+      ]
+    },
+    "accessgrantsupergrantimmutableRolePrincipal661CC545": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE",
+          "ALTER",
+          "DROP"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResimmutableRolePrincipal",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "admin_database",
+            "Name": "*"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantDATABASEsupergrantimmutableRolePrincipalD769E42E"
+      ]
+    },
+    "accessgrantDATABASEdatabaseonlygrantsecondaryGroupPrincipalE03D4306": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/secondary-provider:group/secondary-group"
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "metadata_database"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantsupergrantimmutableRolePrincipal661CC545"
+      ]
+    },
+    "accessgrantALLTABLESdatabaseonlygrantsecondaryGroupPrincipal32833A9C": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/secondary-provider:group/secondary-group"
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "metadata_database",
+            "TableWildcard": {}
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantDATABASEdatabaseonlygrantsecondaryGroupPrincipalE03D4306"
+      ]
+    },
+    "accessgrantDATABASEdatabaseonlygrantssoRolePrincipal46ED91ED": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResssoRolePrincipal",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "metadata_database"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantALLTABLESdatabaseonlygrantsecondaryGroupPrincipal32833A9C"
+      ]
+    },
+    "accessgrantALLTABLESdatabaseonlygrantssoRolePrincipal6231EA2E": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResssoRolePrincipal",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "metadata_database",
+            "TableWildcard": {}
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantDATABASEdatabaseonlygrantssoRolePrincipal46ED91ED"
+      ]
+    },
+    "accessgrantDATABASEmultiprincipalgrantfedGroupPrincipal13758FB3": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/test-provider:group/test-group1"
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "shared_database"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantALLTABLESdatabaseonlygrantssoRolePrincipal6231EA2E"
+      ]
+    },
+    "accessgrantsharedtablemultiprincipalgrantfedGroupPrincipalFCEDF2FC": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/test-provider:group/test-group1"
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "shared_database",
+            "Name": "shared_table"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantDATABASEmultiprincipalgrantfedGroupPrincipal13758FB3"
+      ]
+    },
+    "accessgrantDATABASEmultiprincipalgrantfedUserPrincipalF6F60C7E": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/test-provider:user/test-user@example.com"
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "shared_database"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantsharedtablemultiprincipalgrantfedGroupPrincipalFCEDF2FC"
+      ]
+    },
+    "accessgrantsharedtablemultiprincipalgrantfedUserPrincipal2677F0FA": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": "arn:test-partition:iam::test-account:saml-provider/test-provider:user/test-user@example.com"
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "shared_database",
+            "Name": "shared_table"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantDATABASEmultiprincipalgrantfedUserPrincipalF6F60C7E"
+      ]
+    },
+    "accessgrantDATABASEmultiprincipalgrantroleByNamePrincipalB7C291FC": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResroleByNamePrincipal",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "shared_database"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantsharedtablemultiprincipalgrantfedUserPrincipal2677F0FA"
+      ]
+    },
+    "accessgrantsharedtablemultiprincipalgrantroleByNamePrincipal650010F7": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResroleByNamePrincipal",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "shared_database",
+            "Name": "shared_table"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantDATABASEmultiprincipalgrantroleByNamePrincipalB7C291FC"
+      ]
+    },
+    "accessgrantDATABASEmultiprincipalgrantroleByIdPrincipalD0B02212": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResroleByIdPrincipal",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": "test-account",
+            "Name": "shared_database"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantsharedtablemultiprincipalgrantroleByNamePrincipal650010F7"
+      ]
+    },
+    "accessgrantsharedtablemultiprincipalgrantroleByIdPrincipal527B111A": {
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE"
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResroleByIdPrincipal",
+              "arn"
+            ]
+          }
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": "test-account",
+            "DatabaseName": "shared_database",
+            "Name": "shared_table"
+          }
+        }
+      },
+      "DependsOn": [
+        "accessgrantDATABASEmultiprincipalgrantroleByIdPrincipalD0B02212"
+      ]
+    },
+    "RoleResroleByNamePrincipal": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "roleByNamePrincipal",
+          "name": "Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResimmutableRolePrincipal": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "immutableRolePrincipal",
+          "name": "ExternallyManagedRole",
+          "immutable": true
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResssoRolePrincipal": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "ssoRolePrincipal",
+          "name": "AWSReservedSSO_ReadOnlyAccess",
+          "sso": true
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResroleByIdPrincipal": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "roleByIdPrincipal",
+          "id": "AROAEXAMPLEID12345"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

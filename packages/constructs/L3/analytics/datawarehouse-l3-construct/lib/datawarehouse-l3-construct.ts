@@ -277,7 +277,7 @@ export interface DataWarehouseL3ConstructProps extends MdaaL3ConstructProps {
   // Snapshot ID for cluster restoration
   readonly snapshotIdentifier?: string;
   // Snapshot owner account for cross-account restoration
-  readonly snapshotOwnerAccount?: number;
+  readonly snapshotOwnerAccount?: string;
   // Enable multi-AZ deployment for high availability
   readonly multiAz?: boolean;
   // Target region for cross-region snapshot copies. Must differ from the deployment region.
@@ -512,7 +512,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
     const dbName = this.props.dbName || 'default_db';
     // if snapshotIdentifier is provided, add to the cluster props
     // if snapshotOwnerAccount is provided add it to cluster props
-    const snapshotProps: { snapshotIdentifier?: string; ownerAccount?: number } = {};
+    const snapshotProps: { snapshotIdentifier?: string; ownerAccount?: string } = {};
     if (this.props.snapshotIdentifier) {
       snapshotProps.snapshotIdentifier = this.props.snapshotIdentifier;
     }

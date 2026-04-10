@@ -1,0 +1,2827 @@
+{
+  "Description": "(SO0320-datazone) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuelakeformationsettingsdatazonemanageaccessrolearnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/lakeformation-settings/datazone-manage-access-role-arn"
+    },
+    "SsmParameterValuegluecatalogsettingscatalogkmskeyC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/glue-catalog-settings/catalog-kms-key"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-datazone-minimal/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-datazone) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "datazonetestdomaincmkE950F0CB": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResadmin",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-datazone-minimal-usage-stmt"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey",
+                "kms:CreateGrant"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:CallerAccount": "test-account",
+                  "kms:ViaService": "datazone.test-region.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey",
+                "kms:CreateGrant"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:CallerAccount": "test-account",
+                  "kms:ViaService": "s3.test-region.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datazone"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datazone-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "datazonetestdomaincmkAlias1E0485DB": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-datazone-minimal-test-domain",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "datazonetestdomaincmkE950F0CB",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "datazonetestdomaincmkkmstestdomainarnssm0D40C10F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/kms/test-domain/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datazonetestdomaincmkE950F0CB",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "datazonetestdomaincmkkmstestdomainidssm1065B289": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/kms/test-domain/id",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "datazonetestdomaincmkE950F0CB"
+        }
+      }
+    },
+    "datazonetestdomainexecutionroleE1DA2B17": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ForAllValues:StringLike": {
+                  "aws:TagKeys": "datazone*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "datazone.amazonaws.com"
+              }
+            },
+            {
+              "Action": "sts:TagSession",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ForAllValues:StringLike": {
+                  "aws:TagKeys": "datazone*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "datazone.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AmazonDataZoneDomainExecutionRolePolicy"
+              ]
+            ]
+          },
+          {
+            "Ref": "datazonedomainbucketmanagedpolicytestdomainC3171E05"
+          },
+          {
+            "Ref": "datazonedomainkmsmanagedpolicytestdomainDBE6529E"
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-datazone-minimal-te--157c123a",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datazone"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datazone-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] S3 object names not known at deployment time. Access limited to domain bucket.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "datazonetestdomainexecutionroleroletestdomainexecutionrolearnssm4D2D9614": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/role/test-domain-execution-role/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datazonetestdomainexecutionroleE1DA2B17",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] S3 object names not known at deployment time. Access limited to domain bucket.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "datazonetestdomainexecutionroleroletestdomainexecutionroleidssmEF600956": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/role/test-domain-execution-role/id",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datazonetestdomainexecutionroleE1DA2B17",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] S3 object names not known at deployment time. Access limited to domain bucket.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "datazonetestdomainexecutionroleroletestdomainexecutionrolenamessmDA2F7AEE": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/role/test-domain-execution-role/name",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "datazonetestdomainexecutionroleE1DA2B17"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] S3 object names not known at deployment time. Access limited to domain bucket.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "datazonetestdomainexecutionroleDefaultPolicy3696ABF2": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "datazonetestdomaincmkE950F0CB",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:CreateAccessGrantsLocation",
+                "s3:DeleteAccessGrantsLocation",
+                "s3:GetAccessGrantsLocation",
+                "s3:ListAccessGrantsLocations"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "datazonetestdomainexecutionroleDefaultPolicy3696ABF2",
+        "Roles": [
+          {
+            "Ref": "datazonetestdomainexecutionroleE1DA2B17"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] S3 object names not known at deployment time. Access limited to domain bucket.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] Permission to use Key for DataZone. No other role requires this.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "datazonetestdomaindomainFE7E29F0": {
+      "Type": "AWS::DataZone::Domain",
+      "Properties": {
+        "DomainExecutionRole": {
+          "Fn::GetAtt": [
+            "datazonetestdomainexecutionroleE1DA2B17",
+            "Arn"
+          ]
+        },
+        "KmsKeyIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaincmkE950F0CB",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-datazone-minimal-test-domain",
+        "SingleSignOn": {
+          "Type": "DISABLED",
+          "UserAssignment": "MANUAL"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datazone"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datazone-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "datazonetestdomaindomainowneruserdataadmin18C198D0": {
+      "Type": "AWS::DataZone::Owner",
+      "Properties": {
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "Owner": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomainadminuserprofile68332B36",
+                "Id"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "datazonetestdomaindomaindomainbucket6FF3AD26": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "BucketKeyEnabled": true,
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "datazonetestdomaincmkE950F0CB",
+                    "Arn"
+                  ]
+                },
+                "SSEAlgorithm": "aws:kms"
+              }
+            }
+          ]
+        },
+        "BucketName": "test-org-test-env-test-domain-test-datazone-minimal-te-1657f372",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datazone"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datazone-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "datazonetestdomaindomaindomainbucketPolicy2789A71D": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "datazonetestdomaindomaindomainbucket6FF3AD26"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "datazonetestdomaindomaindomainbucket6FF3AD26",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "datazonetestdomaindomaindomainbucket6FF3AD26",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-server-side-encryption": "AES256"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "datazonetestdomaindomaindomainbucket6FF3AD26",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "DenyAES"
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringNotLikeIfExists": {
+                  "s3:x-amz-server-side-encryption-aws-kms-key-id": {
+                    "Fn::GetAtt": [
+                      "datazonetestdomaincmkE950F0CB",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "datazonetestdomaindomaindomainbucket6FF3AD26",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "ForceKMS"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "datazonetestdomaindomaindomainbucketbuckettestdomainnamessmAC5778B1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/bucket/test-domain/name",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "datazonetestdomaindomaindomainbucket6FF3AD26"
+        }
+      }
+    },
+    "datazonetestdomaindomaindomainbucketbuckettestdomainarnssmE83FECD6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/bucket/test-domain/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainbucket6FF3AD26",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "datazonetestdomaindomainenvblueprintconfigtestdomainCustomAwsService7CDA27A2": {
+      "Type": "AWS::DataZone::EnvironmentBlueprintConfiguration",
+      "Properties": {
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EnabledRegions": [
+          "test-region"
+        ],
+        "EnvironmentBlueprintIdentifier": "CustomAwsService",
+        "ManageAccessRoleArn": {
+          "Ref": "SsmParameterValuelakeformationsettingsdatazonemanageaccessrolearnC96584B6F00A464EAD1953AFF4B05118Parameter"
+        }
+      }
+    },
+    "datazonetestdomaindomaincustomresourcerole734D1AEE": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-datazone-minimal-te--7df12571",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datazone"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datazone-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "datazonetestdomaindomaincustomresourceroleroletestorgtestenvtestdomaintestdatazoneminimalte7df12571arnssmD7C55C89": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/role/test-org-test-env-test-domain-test-datazone-minimal-te--7df12571/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaincustomresourcerole734D1AEE",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "datazonetestdomaindomaincustomresourceroleroletestorgtestenvtestdomaintestdatazoneminimalte7df12571idssm0CF1C417": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/role/test-org-test-env-test-domain-test-datazone-minimal-te--7df12571/id",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaincustomresourcerole734D1AEE",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "datazonetestdomaindomaincustomresourceroleroletestorgtestenvtestdomaintestdatazoneminimalte7df12571namessmA5729C59": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/role/test-org-test-env-test-domain-test-datazone-minimal-te--7df12571/name",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "datazonetestdomaindomaincustomresourcerole734D1AEE"
+        }
+      }
+    },
+    "datazonetestdomaindomaincustomresourcepolicytestdomain3F0F62C7": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-datazone-minimal-cu--3cfb84f1",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "datazone:GetDomain",
+                "datazone:ListEnvironments",
+                "datazone:GetEnvironment",
+                "datazone:ListConnections",
+                "datazone:GetUserProfile"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "iam:GetRole",
+              "Condition": {
+                "Bool": {
+                  "aws:ViaAWSService": "true"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "iam:AttachRolePolicy",
+              "Condition": {
+                "ArnLike": {
+                  "iam:PolicyARN": [
+                    {
+                      "Ref": "datazonedomainkmsmanagedpolicytestdomainDBE6529E"
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:iam::test-account:role/datazone_usr_role_*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "datazonetestdomaindomaincustomresourcerole734D1AEE"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] datazone:Get*/List* do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). iam:GetRole does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) and is further scoped via aws:ViaAWSService condition.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "datazonetestdomaindomaincustomresourcepolicytestdomainmanagedpolicycustomresourcetestdomainarnssm5DD75BE2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/managed-policy/custom-resource-test-domain/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "datazonetestdomaindomaincustomresourcepolicytestdomain3F0F62C7"
+        }
+      }
+    },
+    "datazonetestdomaindomaincustomresourcepolicytestdomainmanagedpolicycustomresourcetestdomainnamessm3DA0CA14": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/managed-policy/custom-resource-test-domain/name",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "datazonetestdomaindomaincustomresourcepolicytestdomain3F0F62C7"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "datazonetestdomaindomaincustomresourceuserprofileF4BA77BF": {
+      "Type": "AWS::DataZone::UserProfile",
+      "Properties": {
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "Status": "ACTIVATED",
+        "UserIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaincustomresourcerole734D1AEE",
+            "Arn"
+          ]
+        },
+        "UserType": "IAM_ROLE"
+      }
+    },
+    "datazonetestdomaindomaincustomresourceroleauthpolicygrantcustomresourceroleauthcustomresourceuser856E42C9": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomaindomaincustomresourceuserprofileF4BA77BF",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "custom-resource-role-auth",
+        "PrincipalName": "custom-resource-user"
+      }
+    },
+    "datazonetestdomainadminuserprofile68332B36": {
+      "Type": "AWS::DataZone::UserProfile",
+      "Properties": {
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "Status": "ACTIVATED",
+        "UserIdentifier": {
+          "Fn::GetAtt": [
+            "RoleResadmin",
+            "arn"
+          ]
+        },
+        "UserType": "IAM_ROLE"
+      }
+    },
+    "datazonedomainkmsmanagedpolicytestdomainDBE6529E": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-datazone-minimal-domain-kms-use-test-domain",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "datazonetestdomaincmkE950F0CB",
+                  "Arn"
+                ]
+              },
+              "Sid": "DomainKmsUsage"
+            },
+            {
+              "Action": "kms:DescribeKey",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "SsmParameterValuegluecatalogsettingscatalogkmskeyC96584B6F00A464EAD1953AFF4B05118Parameter"
+              },
+              "Sid": "GlueKmsDescribe"
+            },
+            {
+              "Action": "kms:Decrypt",
+              "Condition": {
+                "StringEquals": {
+                  "kms:EncryptionContext:glue_catalog_id": [
+                    "test-account"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "SsmParameterValuegluecatalogsettingscatalogkmskeyC96584B6F00A464EAD1953AFF4B05118Parameter"
+              },
+              "Sid": "GlueKmsDecrypt"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "SsmParameterValuelakeformationsettingsdatazonemanageaccessrolearnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "Ref": "datazonetestdomaindomaincustomresourcerole734D1AEE"
+          }
+        ]
+      }
+    },
+    "datazonedomainkmsmanagedpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainkmsusetestdomainarnssmC3821D7D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/managed-policy/test-org-test-env-test-domain-test-datazone-minimal-domain-kms-use-test-domain/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "datazonedomainkmsmanagedpolicytestdomainDBE6529E"
+        }
+      }
+    },
+    "datazonedomainkmsmanagedpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainkmsusetestdomainnamessmDF9662CF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/managed-policy/test-org-test-env-test-domain-test-datazone-minimal-domain-kms-use-test-domain/name",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "datazonedomainkmsmanagedpolicytestdomainDBE6529E"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "datazonedomainkmsadminpolicytestdomain95C34EBC": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-datazone-minimal-domain-kms-admin-test-domain",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "kms:CreateGrant",
+              "Condition": {
+                "StringLike": {
+                  "kms:CallerAccount": "test-account",
+                  "kms:ViaService": "datazone.test-region.amazonaws.com"
+                },
+                "Bool": {
+                  "kms:GrantIsForAWSResource": "true"
+                },
+                "ForAnyValue:StringEquals": {
+                  "kms:EncryptionContextKeys": "aws:datazone:domainId"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "datazonetestdomaincmkE950F0CB",
+                  "Arn"
+                ]
+              },
+              "Sid": "DomainKmsCreateGrant"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      }
+    },
+    "datazonedomainkmsadminpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainkmsadmintestdomainarnssm64CEFE65": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/managed-policy/test-org-test-env-test-domain-test-datazone-minimal-domain-kms-admin-test-domain/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "datazonedomainkmsadminpolicytestdomain95C34EBC"
+        }
+      }
+    },
+    "datazonedomainkmsadminpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainkmsadmintestdomainnamessm4036EA65": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/managed-policy/test-org-test-env-test-domain-test-datazone-minimal-domain-kms-admin-test-domain/name",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "datazonedomainkmsadminpolicytestdomain95C34EBC"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "datazonedomainbucketmanagedpolicytestdomainC3171E05": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-datazone-minimal-domain-bucket-use-test-domain",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "datazonetestdomaindomaindomainbucket6FF3AD26",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "datazonetestdomaindomaindomainbucket6FF3AD26",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ],
+              "Sid": "DomainBucketRead"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] S3 object names not known at deployment time. Access limited to domain bucket.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "datazonedomainbucketmanagedpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainbucketusetestdomainarnssm805907A8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/managed-policy/test-org-test-env-test-domain-test-datazone-minimal-domain-bucket-use-test-domain/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "datazonedomainbucketmanagedpolicytestdomainC3171E05"
+        }
+      }
+    },
+    "datazonedomainbucketmanagedpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainbucketusetestdomainnamessm875FE49D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/managed-policy/test-org-test-env-test-domain-test-datazone-minimal-domain-bucket-use-test-domain/name",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "datazonedomainbucketmanagedpolicytestdomainC3171E05"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "datazonedomainconfigtestdomaindomainConfigcr941A025B": {
+      "Type": "Custom::DomainConfig",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDomainConfigproviderframeworkonEvent5699DE11",
+            "Arn"
+          ]
+        },
+        "domain_id": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "datazonedomainconfigtestdomainssmid2C36DAAD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/domain/test-domain/config/id",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        }
+      }
+    },
+    "datazonedomainconfigtestdomainssmarnC23330FA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/domain/test-domain/config/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "datazonedomainconfigtestdomainssmkmsarn3965621E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/domain/test-domain/config/kms_arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datazonetestdomaincmkE950F0CB",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "datazonedomainconfigtestdomainssmbucketarn5CD7DA21": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/domain/test-domain/config/bucket_arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainbucket6FF3AD26",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "datazonedomainconfigtestdomainssmkmsusagepolicyname6E31CF84": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/domain/test-domain/config/kms_usage_policy_name",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "datazonedomainkmsmanagedpolicytestdomainDBE6529E"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "datazonedomainconfigtestdomainssmbucketusagepolicynameEB2DA557": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/domain/test-domain/config/bucket_usage_policy_name",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "datazonedomainbucketmanagedpolicytestdomainC3171E05"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "datazonedomainconfigtestdomainssmcustomresourceroleE2DF09DD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/domain/test-domain/config/custom_resource_role",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-datazone-minimal-te--7df12571"
+      }
+    },
+    "datazonedomainconfigtestdomainssmgluecatalogkmskeyarnsAFCA7FCB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/domain/test-domain/config/glue_catalog_kms_key_arns",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "StringList",
+        "Value": {
+          "Ref": "SsmParameterValuegluecatalogsettingscatalogkmskeyC96584B6F00A464EAD1953AFF4B05118Parameter"
+        }
+      }
+    },
+    "datazonedomainconfigtestdomainssmgluecatalogresourcearnsF12998E4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/domain/test-domain/config/glue_catalog_resource_arns",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "StringList",
+        "Value": "arn:test-partition:glue:test-region:test-account:catalog,arn:test-partition:glue:test-region:test-account:database/*,arn:test-partition:glue:test-region:test-account:table/*,arn:test-partition:glue:test-region:test-account:tableVersion/*"
+      }
+    },
+    "RoleResadmin": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "admin",
+          "name": "Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "customDomainConfighandlerrole74F440EA": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-datazone-minimal-dom-2bd52dd0",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datazone"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datazone-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerroleDefaultPolicyAAC574D5": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-datazone-minimal-dom-2bd52dd0*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-datazone-minimal-dom-2bd52dd0*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customDomainConfighandlerroleDefaultPolicyAAC574D5",
+        "Roles": [
+          {
+            "Ref": "customDomainConfighandlerrole74F440EA"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerpolicy737179DC": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "datazone:GetDomain",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "datazonetestdomaindomainFE7E29F0",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "datazone:ListDomainUnitsForParent",
+                "datazone:ListProjectProfiles",
+                "datazone:ListProjects",
+                "datazone:ListEnvironmentBlueprints"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "kms:Decrypt",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "datazonetestdomaincmkE950F0CB",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "DomainConfig-handler",
+        "Roles": [
+          {
+            "Ref": "customDomainConfighandlerrole74F440EA"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] DataZone List operations (ListDomainUnitsForParent, ListProjectProfiles, ListProjects, ListEnvironmentBlueprints) do not support resource-level permissions.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunction0598741F": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-datazone-minimal-dom-2bd52dd0",
+        "Handler": "domain_config.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "customDomainConfighandlerrole74F440EA",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datazone"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datazone-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC",
+        "customDomainConfighandlerroleDefaultPolicyAAC574D5",
+        "customDomainConfighandlerrole74F440EA"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlernamessmEF46C3A7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/lambda/domainconfig-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customDomainConfighandlerfunction0598741F"
+        }
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerarnssm57D2852A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/lambda/domainconfig-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customDomainConfighandlerfunction0598741F",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerloggroupssmBE855158": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datazone-minimal/lambda/domainconfig-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "datazone",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datazone-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customDomainConfighandlerfunction0598741F"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "customDomainConfighandlerpolicy737179DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfigproviderroleA82661DC": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-datazone-minimal-dom-13d5002b",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datazone"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datazone-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfigproviderroleDefaultPolicy1BCABDD9": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-datazone-minimal-dom-13d5002b*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-datazone-minimal-dom-13d5002b*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customDomainConfighandlerfunction0598741F",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customDomainConfighandlerfunction0598741F",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customDomainConfighandlerfunction0598741F",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customDomainConfigproviderroleDefaultPolicy1BCABDD9",
+        "Roles": [
+          {
+            "Ref": "customDomainConfigproviderroleA82661DC"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDomainConfigproviderframeworkonEvent5699DE11": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-datazone-minimal/custom-DomainConfig-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customDomainConfighandlerfunction0598741F",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-datazone-minimal-dom-13d5002b",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customDomainConfigproviderroleA82661DC",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs18.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datazone"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datazone-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customDomainConfigproviderroleDefaultPolicy1BCABDD9",
+        "customDomainConfigproviderroleA82661DC"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "datazonetestdomaincmkkmstestdomainarnout3FC66B5C": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datazonetestdomaincmkE950F0CB",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:kms:testdomain:arn"
+      }
+    },
+    "datazonetestdomaincmkkmstestdomainidout00183891": {
+      "Value": {
+        "Ref": "datazonetestdomaincmkE950F0CB"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:kms:testdomain:id"
+      }
+    },
+    "datazonetestdomainexecutionroleroletestdomainexecutionrolearnoutDBAB2EDC": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datazonetestdomainexecutionroleE1DA2B17",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:role:testdomainexecutionrole:arn"
+      }
+    },
+    "datazonetestdomainexecutionroleroletestdomainexecutionroleidout5BDAE1C8": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datazonetestdomainexecutionroleE1DA2B17",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:role:testdomainexecutionrole:id"
+      }
+    },
+    "datazonetestdomainexecutionroleroletestdomainexecutionrolenameoutD2BFD58D": {
+      "Value": {
+        "Ref": "datazonetestdomainexecutionroleE1DA2B17"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:role:testdomainexecutionrole:name"
+      }
+    },
+    "datazonetestdomaindomaindomainbucketbuckettestdomainnameout4278C6AF": {
+      "Value": {
+        "Ref": "datazonetestdomaindomaindomainbucket6FF3AD26"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:bucket:testdomain:name"
+      }
+    },
+    "datazonetestdomaindomaindomainbucketbuckettestdomainarnoutCFF81DC8": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datazonetestdomaindomaindomainbucket6FF3AD26",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:bucket:testdomain:arn"
+      }
+    },
+    "datazonetestdomaindomaincustomresourceroleroletestorgtestenvtestdomaintestdatazoneminimalte7df12571arnoutC70783A5": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datazonetestdomaindomaincustomresourcerole734D1AEE",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:role:testorgtestenvtestdomaintestdatazoneminimalte7df12571:arn"
+      }
+    },
+    "datazonetestdomaindomaincustomresourceroleroletestorgtestenvtestdomaintestdatazoneminimalte7df12571idout14950D3D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "datazonetestdomaindomaincustomresourcerole734D1AEE",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:role:testorgtestenvtestdomaintestdatazoneminimalte7df12571:id"
+      }
+    },
+    "datazonetestdomaindomaincustomresourceroleroletestorgtestenvtestdomaintestdatazoneminimalte7df12571nameoutA48A0519": {
+      "Value": {
+        "Ref": "datazonetestdomaindomaincustomresourcerole734D1AEE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:role:testorgtestenvtestdomaintestdatazoneminimalte7df12571:name"
+      }
+    },
+    "datazonetestdomaindomaincustomresourcepolicytestdomainmanagedpolicycustomresourcetestdomainarnout9BDB1AA8": {
+      "Value": {
+        "Ref": "datazonetestdomaindomaincustomresourcepolicytestdomain3F0F62C7"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:managed-policy:customresourcetestdomain:arn"
+      }
+    },
+    "datazonetestdomaindomaincustomresourcepolicytestdomainmanagedpolicycustomresourcetestdomainnameout5E31190B": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "datazonetestdomaindomaincustomresourcepolicytestdomain3F0F62C7"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:managed-policy:customresourcetestdomain:name"
+      }
+    },
+    "datazonedomainkmsmanagedpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainkmsusetestdomainarnoutF86D1A63": {
+      "Value": {
+        "Ref": "datazonedomainkmsmanagedpolicytestdomainDBE6529E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:managed-policy:testorgtestenvtestdomaintestdatazoneminimaldomainkmsusetestdomain:arn"
+      }
+    },
+    "datazonedomainkmsmanagedpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainkmsusetestdomainnameoutB78579EC": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "datazonedomainkmsmanagedpolicytestdomainDBE6529E"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:managed-policy:testorgtestenvtestdomaintestdatazoneminimaldomainkmsusetestdomain:name"
+      }
+    },
+    "datazonedomainkmsadminpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainkmsadmintestdomainarnout34CF63D8": {
+      "Value": {
+        "Ref": "datazonedomainkmsadminpolicytestdomain95C34EBC"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:managed-policy:testorgtestenvtestdomaintestdatazoneminimaldomainkmsadmintestdomain:arn"
+      }
+    },
+    "datazonedomainkmsadminpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainkmsadmintestdomainnameout5025949D": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "datazonedomainkmsadminpolicytestdomain95C34EBC"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:managed-policy:testorgtestenvtestdomaintestdatazoneminimaldomainkmsadmintestdomain:name"
+      }
+    },
+    "datazonedomainbucketmanagedpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainbucketusetestdomainarnout8789D8D5": {
+      "Value": {
+        "Ref": "datazonedomainbucketmanagedpolicytestdomainC3171E05"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:managed-policy:testorgtestenvtestdomaintestdatazoneminimaldomainbucketusetestdomain:arn"
+      }
+    },
+    "datazonedomainbucketmanagedpolicytestdomainmanagedpolicytestorgtestenvtestdomaintestdatazoneminimaldomainbucketusetestdomainnameout88726E1C": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "datazonedomainbucketmanagedpolicytestdomainC3171E05"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:managed-policy:testorgtestenvtestdomaintestdatazoneminimaldomainbucketusetestdomain:name"
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlernameout4B81B055": {
+      "Value": {
+        "Ref": "customDomainConfighandlerfunction0598741F"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:lambda:domainconfighandler:name"
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerarnout36F1978E": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customDomainConfighandlerfunction0598741F",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:lambda:domainconfighandler:arn"
+      }
+    },
+    "customDomainConfighandlerfunctionlambdaDomainConfighandlerloggroupoutC16C694A": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customDomainConfighandlerfunction0598741F"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datazone-minimal:lambda:domainconfighandler:log-group"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

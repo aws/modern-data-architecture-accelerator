@@ -1,0 +1,97 @@
+{
+  "Description": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-data-quality-noproject/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructcustomerdataqualityrulesetC96C9640": {
+      "Type": "AWS::Glue::DataQualityRuleset",
+      "Properties": {
+        "Description": "Validate customer data completeness and uniqueness",
+        "Name": "customer-data-quality",
+        "Ruleset": "Rules = [\n    IsComplete \"customer_id\",\n    Uniqueness \"email\" > 0.95,\n    RowCount > 100\n]",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-noproject",
+          "mdaa_org": "test-org"
+        },
+        "TargetTable": {
+          "DatabaseName": "project:databaseName/customer-data",
+          "TableName": "customers"
+        }
+      }
+    },
+    "constructorderdataqualityrulesetA1CF7F1C": {
+      "Type": "AWS::Glue::DataQualityRuleset",
+      "Properties": {
+        "Description": "Validate order data freshness and values",
+        "Name": "order-data-quality",
+        "Ruleset": "Rules = [\n  IsComplete \"order_id\",\n  ColumnValues \"status\" in [\"pending\", \"completed\", \"cancelled\"],\n  RowCount > 0\n]\n",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-data-quality",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-data-quality-noproject",
+          "mdaa_org": "test-org"
+        },
+        "TargetTable": {
+          "DatabaseName": "project:databaseName/order-data",
+          "TableName": "orders"
+        }
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

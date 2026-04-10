@@ -5,7 +5,7 @@
 # directly rather than autowired from a project.
 
 # (Optional) KMS key ARN for encrypting DataOps resources and data.
-kmsArn: arn:test-partition:kms:test-region:test-acct:key/test-key-id
+kmsArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id
 # (Optional) Glue security configuration name for crawler encryption
 # (at rest, in transit, CloudWatch logs).
 securityConfigurationName: test-security-config

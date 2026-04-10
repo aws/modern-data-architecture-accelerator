@@ -1,0 +1,182 @@
+{
+  "Description": "(SO0320-service-catalog) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-service-catalog-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "service-catalog",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-service-catalog-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-service-catalog) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructTestPortfolioportfolio3D034EF9": {
+      "Type": "AWS::ServiceCatalog::Portfolio",
+      "Properties": {
+        "Description": "testing description",
+        "DisplayName": "TestPortfolio",
+        "ProviderName": "test-provider",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "service-catalog"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-service-catalog-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "constructTestPortfolioTestPortfolio0access3820CA88": {
+      "Type": "AWS::ServiceCatalog::PortfolioPrincipalAssociation",
+      "Properties": {
+        "PortfolioId": {
+          "Ref": "constructTestPortfolioportfolio3D034EF9"
+        },
+        "PrincipalARN": {
+          "Fn::GetAtt": [
+            "RoleResTestPortfolio0",
+            "arn"
+          ]
+        },
+        "PrincipalType": "IAM"
+      }
+    },
+    "constructTestPortfolioTestPortfolio1accessDA755F1F": {
+      "Type": "AWS::ServiceCatalog::PortfolioPrincipalAssociation",
+      "Properties": {
+        "PortfolioId": {
+          "Ref": "constructTestPortfolioportfolio3D034EF9"
+        },
+        "PrincipalARN": "arn:test-partition:iam::test-account:role/TestRole",
+        "PrincipalType": "IAM"
+      }
+    },
+    "constructTestPortfolioTestPortfolio2access50D7D2B0": {
+      "Type": "AWS::ServiceCatalog::PortfolioPrincipalAssociation",
+      "Properties": {
+        "PortfolioId": {
+          "Ref": "constructTestPortfolioportfolio3D034EF9"
+        },
+        "PrincipalARN": {
+          "Fn::GetAtt": [
+            "RoleResTestPortfolio2",
+            "arn"
+          ]
+        },
+        "PrincipalType": "IAM"
+      }
+    },
+    "RoleResTestPortfolio0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "TestPortfolio-0",
+          "name": "Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResTestPortfolio2": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "TestPortfolio-2",
+          "name": "ServiceCatalogUser"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "ssmportfolioTestPortfolioarn9F8D75E3": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-service-catalog-main/portfolio/arn",
+        "Tags": {
+          "mdaa_cdk_app": "service-catalog",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-service-catalog-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:catalog:test-region:test-account:portfolio/",
+              {
+                "Ref": "constructTestPortfolioportfolio3D034EF9"
+              }
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}
