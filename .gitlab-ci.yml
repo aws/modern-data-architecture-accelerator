@@ -1,3 +1,18 @@
+# =============================================================================
+# GitLab CI/CD Configuration
+# =============================================================================
+# Pipelines:
+#   1. Feature Merge Pipeline  - Runs on merge requests (feature_merge_*)
+#   2. Feature Branch Pipeline - Runs on feature branches when RUN_FEATURE_PIPELINE=true (feature_*)
+#   3. Prerelease Pipeline     - Runs on main branch commits (prerelease_*)
+#   4. Release Pipeline        - Manually triggered on main branch (release_*)
+#   5. Cornerstone Pipeline    - Manually triggered on main for distribution builds (cornerstone_*)
+# =============================================================================
+
+workflow:
+  auto_cancel:
+    on_new_commit: conservative
+
 stages:
   - base_image
   - prebuild
@@ -10,8 +25,32 @@ stages:
   - release_publish
   - post_release
 
-base_image:
+image: ${CI_REGISTRY_IMAGE}:base-latest
+
+variables:
+  VERSION_BUMP_LEVEL: minor
+  RELEASE_TYPE: release
+  GIT_SUBMODULE_STRATEGY: recursive
+  # Set to 'true' to run the non-merge feature pipeline (build/test/package/publish on feature branches).
+  # When 'true', the merge request pipeline is skipped, which blocks merging to main.
+  # Set back to 'false' (or remove override) to re-enable the merge pipeline before merging.
+  RUN_FEATURE_PIPELINE: 'false'
+
+before_script:
+  - git config advice.addIgnoredFile false
+  - git config --global user.name "CICD"
+  - git config --global user.email "ci@example.com"
+
+# =============================================================================
+# Shared Templates
+# =============================================================================
+
+# Template: Kaniko-based Docker image build
+.base_image_template:
   stage: base_image
+  tags:
+    - arch:amd64
+    - size:2xlarge
   cache: {} # This disables cache for this job
   before_script: [] # Disable global before_script
   image:
@@ -19,22 +58,21 @@ base_image:
     entrypoint: ['']
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    KANIKO_DOCKERFILE: '${CI_PROJECT_DIR}/.pipeline/Dockerfile'
+    KANIKO_DESTINATION_TAG: 'base'
   script:
-    # This unreadable echo command is recommended in kanito docs: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
+    # This unreadable echo command is recommended in kaniko docs: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"},\"$(echo -n $CI_DEPENDENCY_PROXY_SERVER | awk -F[:] '{print $1}')\":{\"auth\":\"$(printf "%s:%s" ${CI_DEPENDENCY_PROXY_USER} "${CI_DEPENDENCY_PROXY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/.pipeline/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}:base-latest"
-      --destination "${CI_REGISTRY_IMAGE}:base-${CI_COMMIT_SHA:0:8}"
+      --dockerfile "${KANIKO_DOCKERFILE}"
+      --destination "${CI_REGISTRY_IMAGE}:${KANIKO_DESTINATION_TAG}-latest"
+      --destination "${CI_REGISTRY_IMAGE}:${KANIKO_DESTINATION_TAG}-${CI_COMMIT_SHA:0:8}"
       --cache=true --cache-repo="${CI_REGISTRY_IMAGE}/cache" --cleanup --cache-ttl 72h0m0s
-  tags:
-    - arch:amd64
-    - size:2xlarge
-  rules:
-    - when: always
 
-image: ${CI_REGISTRY_IMAGE}:base-latest
+# =============================================================================
+# Shared Jobs (SAST / Security Scanning)
+# =============================================================================
 
 include:
   # Gitlab built-in SAST
@@ -42,8 +80,10 @@ include:
   - template: Jobs/SAST.latest.gitlab-ci.yml
   - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
 
+# SAST scan
 sast:
   stage: prebuild
+  interruptible: true
   after_script:
     - mkdir reports
     - cp gl-sast-report.json reports/$CI_JOB_NAME.json
@@ -51,10 +91,11 @@ sast:
     paths:
       - reports/
 
-# Exclude bulk of CDK TS under **/lib from semgrep, as it is not application code.
+# Semgrep SAST scan (excludes CDK TS under **/lib as it is not application code)
 # Other code (such as Lambda, application code) should typically be
 # under ./src and will be included.
 semgrep-sast:
+  interruptible: true
   stage: prebuild
   variables:
     SAST_EXCLUDED_PATHS: 'spec, test, tests, tmp, scripts, **/lib/*.ts'
@@ -62,34 +103,31 @@ semgrep-sast:
     - echo "Analyzing GitLab SAST reports"
     - python3 ./scripts/analyze_sast_reports.py
 
+# Secret detection scan
 secret_detection:
+  interruptible: true
   stage: prebuild
 
-variables:
-  VERSION_BUMP_LEVEL: minor
-  RELEASE_TYPE: release
-  GIT_SUBMODULE_STRATEGY: recursive
+# =============================================================================
+# Pipeline 1: Feature Merge Pipeline (merge requests)
+# =============================================================================
+# Triggered on merge request events. Validates, builds, tests, and analyzes
+# changes before they are merged to main.
+# Stage order: base_image -> prebuild -> build -> test -> analyze
+# =============================================================================
 
-before_script:
-  - git config advice.addIgnoredFile false
-  - git config --global user.name "CICD"
-  - git config --global user.email "ci@example.com"
-
-feature_validate_dependencies:
-  tags:
-    - arch:amd64
-    - size:medium
+# Build the base Docker image for merge request pipelines
+feature_merge_base_image:
+  extends: .base_image_template
+  interruptible: true
   only:
     - merge_requests
-  stage: build
-  dependencies:
-    - feature_merge_main
-  needs:
-    - feature_merge_main
-  script:
-    - ./scripts/validate_dependencies.sh
 
+# --- prebuild stage ---
+
+# Validate package configurations
 feature_validate_packages:
+  interruptible: true
   tags:
     - arch:amd64
     - size:medium
@@ -102,7 +140,9 @@ feature_validate_packages:
   script:
     - ./scripts/validate_packages.sh
 
+# Lint TypeScript/JavaScript source
 feature_merge_lint:
+  interruptible: true
   tags:
     - arch:amd64
     - size:large
@@ -120,7 +160,9 @@ feature_merge_lint:
     - echo "Executing lint.sh script"
     - ./scripts/lint.sh
 
+# Lint Python source
 feature_merge_lint_python:
+  interruptible: true
   tags:
     - arch:amd64
     - size:medium
@@ -131,7 +173,9 @@ feature_merge_lint_python:
   script:
     - ./scripts/lint_python.sh
 
+# Merge main into the feature branch to validate compatibility
 feature_merge_main:
+  interruptible: true
   tags:
     - arch:amd64
     - size:medium
@@ -151,7 +195,27 @@ feature_merge_main:
   script:
     - ./scripts/merge_main.sh
 
+# --- build stage ---
+
+# Validate dependency tree after merge
+feature_validate_dependencies:
+  interruptible: true
+  tags:
+    - arch:amd64
+    - size:medium
+  only:
+    - merge_requests
+  stage: build
+  dependencies:
+    - feature_merge_main
+  needs:
+    - feature_merge_main
+  script:
+    - ./scripts/validate_dependencies.sh
+
+# Build and run TypeScript/JavaScript tests
 feature_merge_build_test:
+  interruptible: true
   tags:
     - arch:amd64
     - size:3xlarge
@@ -185,7 +249,9 @@ feature_merge_build_test:
     - ./scripts/build.sh
     - ./scripts/test_ci.sh
 
+# Run Python tests (parallel with build_test)
 feature_merge_python_test:
+  interruptible: true
   stage: build # Same stage = parallel execution
   tags:
     - arch:amd64
@@ -213,38 +279,11 @@ feature_merge_python_test:
     - echo "Running Python tests with coverage..."
     - npm run test:python:all
 
-feature_merge_baseline_review:
-  tags:
-    - arch:amd64
-    - size:medium
-  only:
-    - merge_requests
-  stage: analyze
-  dependencies:
-    - feature_merge_build_test
-  needs:
-    - feature_merge_build_test
-  cache:
-    key: feature-merge-build-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-      - .nx/
-    policy: pull
-  allow_failure: true
-  variables:
-    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
-    GIT_DEPTH: '0'
-  script:
-    - python3 ./scripts/baseline_review.py --output-dir baseline-review
-  artifacts:
-    paths:
-      - baseline-review/report.json
-    reports:
-      junit: baseline-review/junit-report.xml
-    when: always
+# --- test stage ---
 
+# Build and validate documentation
 feature_merge_test_docs:
+  interruptible: true
   tags:
     - arch:amd64
     - size:large
@@ -277,10 +316,105 @@ feature_merge_test_docs:
     - ./scripts/generate_docs/mkdocs.sh
     - echo -e "\e[0Ksection_end:$(date +%s):mkdocs\r\e[0K"
 
-feature_merge_sonarqube:
+# Template: Integration test base configuration (used by feature_merge_integ_split_* jobs)
+.integ_test_template: &integ_test_template
+  interruptible: true
   tags:
     - arch:amd64
     - size:3xlarge
+  only:
+    - merge_requests
+  stage: test
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+  cache:
+    key: feature-merge-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+      - .nx/
+    policy: pull
+  allow_failure: true
+
+# Integration test split 0 (us-east-2)
+feature_merge_integ_split_0:
+  <<: *integ_test_template
+  script:
+    - ./scripts/bootstrap-integ.sh
+    - python3 ./scripts/run-integ-tests.py split_0
+    # - ./scripts/bootstrap-integ.sh --teardown
+  resource_group: integ-us-east-2
+  variables:
+    AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
+    AWS_REGION: us-east-2
+
+# Integration test split 1 (us-west-1)
+feature_merge_integ_split_1:
+  <<: *integ_test_template
+  script:
+    - ./scripts/bootstrap-integ.sh
+    - python3 ./scripts/run-integ-tests.py split_1
+    # - ./scripts/bootstrap-integ.sh --teardown
+  resource_group: integ-us-west-1
+  variables:
+    AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
+    AWS_REGION: us-west-1
+
+# Integration test split 2 (us-west-2)
+feature_merge_integ_split_2:
+  <<: *integ_test_template
+  script:
+    - ./scripts/bootstrap-integ.sh
+    - python3 ./scripts/run-integ-tests.py split_2
+    # - ./scripts/bootstrap-integ.sh --teardown
+  resource_group: integ-us-west-2
+  variables:
+    AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
+    AWS_REGION: us-west-2
+
+# --- analyze stage ---
+
+# Run baseline review against previous release
+feature_merge_baseline_review:
+  interruptible: true
+  tags:
+    - arch:amd64
+    - size:medium
+  only:
+    - merge_requests
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+  cache:
+    key: feature-merge-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+      - .nx/
+    policy: pull
+  allow_failure: true
+  variables:
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    GIT_DEPTH: '0'
+  script:
+    - python3 ./scripts/baseline_review.py --output-dir baseline-review
+  artifacts:
+    paths:
+      - baseline-review/report.json
+    reports:
+      junit: baseline-review/junit-report.xml
+    when: always
+
+# Run SonarQube analysis
+feature_merge_sonarqube:
+  interruptible: true
+  tags:
+    - arch:amd64
+    - size:large
   only:
     - merge_requests
   stage: analyze
@@ -301,7 +435,9 @@ feature_merge_sonarqube:
   script:
     - ./scripts/sonarqube.sh
 
+# Risk assessment (currently disabled)
 feature_merge_risk_assessment:
+  interruptible: true
   rules:
     - when: never
   tags:
@@ -334,69 +470,34 @@ feature_merge_risk_assessment:
       - diff-output/
     when: always
 
-.integ_test_template: &integ_test_template
-  tags:
-    - arch:amd64
-    - size:3xlarge
-  only:
-    - merge_requests
-  stage: test
-  dependencies:
-    - feature_merge_build_test
-  needs:
-    - feature_merge_build_test
-  cache:
-    key: feature-merge-build-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-      - .nx/
-    policy: pull
-  allow_failure: true
+# =============================================================================
+# Pipeline 2: Feature Branch Pipeline (non-merge feature branches)
+# =============================================================================
+# Triggered when RUN_FEATURE_PIPELINE=true on non-main, non-tag, non-MR branches.
+# Builds, tests, packages, and publishes prerelease artifacts for the feature branch.
+# Stage order: base_image -> prebuild -> build -> package -> prerelease_publish
+# =============================================================================
 
-# --- Integration test jobs (bootstrap + test + teardown) ---
+# Template: Feature branch pipeline rules (non-merge)
+.feature_branch_template:
+  interruptible: true
+  rules:
+    - if: '$RUN_FEATURE_PIPELINE == "true" && $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_TAG == null'
 
-feature_merge_integ_split_0:
-  <<: *integ_test_template
-  script:
-    - ./scripts/bootstrap-integ.sh
-    - python3 ./scripts/run-integ-tests.py split_0
-    # - ./scripts/bootstrap-integ.sh --teardown
-  resource_group: integ-us-east-2
-  variables:
-    AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
-    AWS_REGION: us-east-2
+# Build the base Docker image for feature branch pipelines
+feature_base_image:
+  extends:
+    - .base_image_template
+    - .feature_branch_template
 
-feature_merge_integ_split_1:
-  <<: *integ_test_template
-  script:
-    - ./scripts/bootstrap-integ.sh
-    - python3 ./scripts/run-integ-tests.py split_1
-    # - ./scripts/bootstrap-integ.sh --teardown
-  resource_group: integ-us-west-1
-  variables:
-    AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
-    AWS_REGION: us-west-1
+# --- prebuild stage ---
 
-feature_merge_integ_split_2:
-  <<: *integ_test_template
-  script:
-    - ./scripts/bootstrap-integ.sh
-    - python3 ./scripts/run-integ-tests.py split_2
-    # - ./scripts/bootstrap-integ.sh --teardown
-  resource_group: integ-us-west-2
-  variables:
-    AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
-    AWS_REGION: us-west-2
-
+# Version bump and install dependencies
 feature_version:
+  extends: .feature_branch_template
   tags:
     - arch:amd64
     - size:large
-  except:
-    refs:
-      - main
-      - tags
   stage: prebuild
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -422,14 +523,14 @@ feature_version:
     - ./scripts/version_prerelease.sh
     - ./scripts/npm_install.sh
 
+# --- build stage ---
+
+# Build and run TypeScript/JavaScript tests
 feature_build_test:
+  extends: .feature_branch_template
   tags:
     - arch:amd64
     - size:3xlarge
-  except:
-    refs:
-      - main
-      - tags
   stage: build
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -457,15 +558,13 @@ feature_build_test:
     - ./scripts/build.sh
     - ./scripts/test_ci.sh
 
+# Run Python tests (parallel with build_test)
 feature_python_test:
+  extends: .feature_branch_template
   stage: build # Same stage = parallel execution
   tags:
     - arch:amd64
     - size:large
-  except:
-    refs:
-      - main
-      - tags
   needs:
     - feature_version # Same dependency as feature_build_test
   cache:
@@ -487,14 +586,14 @@ feature_python_test:
     - echo "Running Python tests with coverage..."
     - npm run test:python:all
 
+# --- package stage ---
+
+# Package JSII distributions
 feature_package:
+  extends: .feature_branch_template
   tags:
     - arch:amd64
     - size:large
-  except:
-    refs:
-      - main
-      - tags
   stage: package
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -518,14 +617,14 @@ feature_package:
   script:
     - ./scripts/package.sh
 
+# --- prerelease_publish stage ---
+
+# Publish NPM packages to prerelease CodeArtifact repo
 feature_publish_npm:
+  extends: .feature_branch_template
   tags:
     - arch:amd64
     - size:medium
-  except:
-    refs:
-      - main
-      - tags
   stage: prerelease_publish
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -543,14 +642,12 @@ feature_publish_npm:
   script:
     - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
 
+# Verify published NPM packages are installable
 feature_test_published_npm:
+  extends: .feature_branch_template
   tags:
     - arch:amd64
     - size:medium
-  except:
-    refs:
-      - main
-      - tags
   stage: prerelease_publish
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -572,14 +669,12 @@ feature_test_published_npm:
     - echo 'Testing published artifacts for version:' $SNAPSHOT_VERSION
     - ./scripts/test_published_artifacts.sh $SNAPSHOT_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
 
+# Publish Python packages to prerelease CodeArtifact repo
 feature_publish_pip:
+  extends: .feature_branch_template
   tags:
     - arch:amd64
     - size:medium
-  except:
-    refs:
-      - main
-      - tags
   stage: prerelease_publish
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -597,6 +692,27 @@ feature_publish_pip:
   script:
     - ./scripts/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
 
+# =============================================================================
+# Pipeline 3: Prerelease Pipeline (main branch)
+# =============================================================================
+# Triggered on commits to main (excluding tags). Versions, builds, tests,
+# analyzes, packages, and publishes prerelease artifacts.
+# Stage order: base_image -> prebuild -> build -> analyze -> package -> prerelease_publish
+# =============================================================================
+
+# Build the base Docker image for prerelease pipelines
+prerelease_base_image:
+  extends: .base_image_template
+  only:
+    refs:
+      - main
+  except:
+    refs:
+      - tags
+
+# --- prebuild stage ---
+
+# Version bump, secret scan, and install dependencies
 prerelease_version:
   tags:
     - arch:amd64
@@ -633,6 +749,9 @@ prerelease_version:
     - ./scripts/version_prerelease.sh
     - ./scripts/npm_install.sh
 
+# --- build stage ---
+
+# Build and run TypeScript/JavaScript tests
 prerelease_build_test:
   tags:
     - arch:amd64
@@ -671,6 +790,9 @@ prerelease_build_test:
     - ./scripts/build.sh
     - ./scripts/test_ci.sh
 
+# --- analyze stage ---
+
+# Run baseline review against previous release
 prerelease_baseline_review:
   tags:
     - arch:amd64
@@ -704,6 +826,7 @@ prerelease_baseline_review:
       junit: baseline-review/junit-report.xml
     when: always
 
+# Run SonarQube analysis
 prerelease_analyze:
   tags:
     - arch:amd64
@@ -743,6 +866,9 @@ prerelease_analyze:
   script:
     - ./scripts/sonarqube.sh
 
+# --- package stage ---
+
+# Package JSII distributions
 prerelease_package:
   tags:
     - arch:amd64
@@ -780,7 +906,11 @@ prerelease_package:
   script:
     - ./scripts/package.sh
 
+# --- prerelease_publish stage ---
+
+# Generate and deploy HTML documentation to GitLab Pages
 prerelease_generate_html_docs:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -820,7 +950,9 @@ prerelease_generate_html_docs:
     - ./scripts/generate_docs/mkdocs.sh
     - ./scripts/generate_docs/deploy_gitlab.sh docs_prerelease
 
+# Publish NPM packages to prerelease CodeArtifact repo
 prerelease_publish_npm:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -853,7 +985,9 @@ prerelease_publish_npm:
     - ./scripts/delete_codeartifact_version.sh $PRERELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE || true
     - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT prerelease
 
+# Publish Python packages to prerelease CodeArtifact repo
 prerelease_publish_pip:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -883,7 +1017,9 @@ prerelease_publish_pip:
   script:
     - ./scripts/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
 
+# Publish packaged artifacts to S3
 prerelease_publish_s3:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -926,7 +1062,32 @@ prerelease_publish_s3:
   script:
     - ./scripts/publish_s3.sh $MDAA_PRERELEASE_PACKAGE_BUCKET
 
+# =============================================================================
+# Pipeline 4: Release Pipeline (main branch, manual trigger)
+# =============================================================================
+# Manually triggered on main. Versions, builds, tests, packages, and publishes
+# release artifacts to production CodeArtifact repos and S3. Includes git push
+# and rollback capabilities.
+# Stage order: pre_release -> release_publish -> post_release
+# =============================================================================
+
+# Build the base Docker image for release pipelines
+release_base_image:
+  extends: .base_image_template
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+
+# --- pre_release stage ---
+
+# Version, build, test, and package the release (manual trigger)
 release_version_package:
+  interruptible: false
   when: manual
   environment: release
   tags:
@@ -973,7 +1134,9 @@ release_version_package:
     - ./scripts/test_ci.sh
     - ./scripts/package.sh
 
+# Manual confirmation gate to proceed with the release
 release:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -996,8 +1159,11 @@ release:
   script:
     - echo "Releasing "
 
-# Publishes latest release version back to prerelease
+# --- release_publish stage ---
+
+# Publish NPM packages back to prerelease repo as 'latest'
 release_publish_npm_prerelease:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1040,7 +1206,9 @@ release_publish_npm_prerelease:
   script:
     - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest
 
+# Verify published NPM packages pass readiness checks
 release_npm_readiness_check:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1077,7 +1245,9 @@ release_npm_readiness_check:
     - ./scripts/validate_dependencies.sh --npm-ready
     - ./scripts/test_npm_readiness.sh
 
+# Publish NPM packages to production CodeArtifact repo
 release_publish_npm:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1122,7 +1292,9 @@ release_publish_npm:
   script:
     - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT latest
 
+# Publish Python packages to production CodeArtifact repo
 release_publish_pip:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1166,7 +1338,9 @@ release_publish_pip:
   script:
     - ./scripts/publish_pip.sh $MDAA_CODEARTIFACT_RELEASE_PIP_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT
 
+# Publish packaged artifacts to production S3 bucket
 release_publish_s3:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1210,7 +1384,9 @@ release_publish_s3:
   script:
     - ./scripts/publish_s3.sh $MDAA_RELEASE_PACKAGE_BUCKET
 
+# Generate and deploy release HTML documentation
 release_generate_html_docs:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1252,7 +1428,11 @@ release_generate_html_docs:
     - ./scripts/generate_docs/deploy_gitlab.sh docs_prerelease
     - ./scripts/generate_docs/deploy_gitlab.sh docs_release
 
+# --- post_release stage ---
+
+# Manual confirmation gate to push version changes to git
 confirm_push_to_git:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1280,7 +1460,9 @@ confirm_push_to_git:
   script:
     - echo "User confirmed - proceeding with git push"
 
+# Push prerelease version changes to git
 prerelease_push_git:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1323,7 +1505,9 @@ prerelease_push_git:
   script:
     - ./scripts/push_git_prerelease.sh
 
+# Push release version changes and tags to git
 release_push_git:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1366,7 +1550,11 @@ release_push_git:
   script:
     - ./scripts/push_git_release.sh
 
+# --- Rollback jobs (post_release stage) ---
+
+# Manual trigger to initiate rollback of published packages
 rollback_release:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1394,7 +1582,9 @@ rollback_release:
   script:
     - echo "User initiated rollback - will delete published packages"
 
+# Delete prerelease packages from CodeArtifact (rollback)
 rollback_delete_prerelease_packages:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1427,7 +1617,9 @@ rollback_delete_prerelease_packages:
     - echo "Rolling back prerelease packages for version $RELEASE_VERSION"
     - ./scripts/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE
 
+# Delete release packages from CodeArtifact (rollback)
 rollback_delete_release_packages:
+  interruptible: false
   tags:
     - arch:amd64
     - size:medium
@@ -1460,7 +1652,17 @@ rollback_delete_release_packages:
     - echo "Rolling back release packages for version $RELEASE_VERSION"
     - ./scripts/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT $MDAA_CODEARTIFACT_RELEASE_REGION $MDAA_CODEARTIFACT_RELEASE_NAMESPACE
 
+# =============================================================================
+# Pipeline 5: Cornerstone Pipeline (main branch, manual trigger)
+# =============================================================================
+# Manually triggered on main. Builds the Cornerstone solution distribution,
+# packages it as a zip artifact, and uploads it to S3.
+# Stage order: post_release (build -> package -> upload)
+# =============================================================================
+
+# Build Cornerstone solution distributions (manual trigger)
 cornerstone_build_distributions:
+  interruptible: false
   when: manual
   manual_confirmation: 'This will build, package, and upload the Cornerstone distribution. Continue?'
   tags:
@@ -1500,7 +1702,9 @@ cornerstone_build_distributions:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
 
+# Package Cornerstone artifact as a zip archive
 cornerstone_package_artifact:
+  interruptible: false
   tags:
     - arch:amd64
     - size:large
@@ -1556,7 +1760,9 @@ cornerstone_package_artifact:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
 
+# Upload Cornerstone artifact to S3
 cornerstone_upload:
+  interruptible: false
   tags:
     - arch:amd64
     - size:large
