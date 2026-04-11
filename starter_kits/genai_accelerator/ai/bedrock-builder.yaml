@@ -7,7 +7,6 @@ lambdaFunctions:
     - layerName: customer-support-layer
       src: ../lambda/layer
       description: 'Common libraries for customer support functions'
-      dockerBuild: true
 
   functions:
     - functionName: customer-support-agent-lambda
