@@ -1,0 +1,40 @@
+# Sample config for the Data Science Team module with MLflow and JupyterLab.
+# Demonstrates enabling MLflow tracking server and auto-creating
+# JupyterLab spaces for all user profiles.
+
+team:
+  dataAdminRoles:
+    - name: Admin
+
+  teamExecutionRole:
+    name: team-execution-role
+
+  teamUserRoles:
+    - name: data-scientist-role
+
+  studioDomainConfig:
+    authMode: IAM
+    vpcId: vpc-id
+    subnetIds:
+      - subnet-id
+    dataAdminRoles:
+      - name: Admin
+    userProfiles:
+      lead-ds:
+        userRole:
+          name: team-execution-role
+      ds-user-1:
+        userRole:
+          name: data-scientist-role
+
+  # MLflow tracking server for experiment tracking and artifact management.
+  mlflow:
+    enabled: true
+    serverSize: Small
+    artifactStorePrefix: mlflow-artifacts/
+
+  # Auto-create JupyterLab spaces for all user profiles defined above.
+  jupyterLab:
+    enabled: true
+    defaultInstanceType: ml.t3.medium
+    defaultSharingType: Private

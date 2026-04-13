@@ -17,7 +17,12 @@ import {
   MdaaStudioLifecycleConfig,
   MdaaStudioLifecycleConfigProps,
 } from '@aws-mdaa/sagemaker-constructs';
-import { AssetDeploymentProps, LifeCycleConfigHelper, LifecycleScriptProps } from '@aws-mdaa/sm-shared';
+import {
+  AssetDeploymentProps,
+  deriveUserProfileName,
+  LifeCycleConfigHelper,
+  LifecycleScriptProps,
+} from '@aws-mdaa/sm-shared';
 import { BOOTSTRAP_QUALIFIER_CONTEXT, CfnTag, DefaultStackSynthesizer } from 'aws-cdk-lib';
 import { ISecurityGroup, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Effect, IRole, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
@@ -660,8 +665,7 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
       const userid = userProfileEntry[0];
       const userProfileProps = userProfileEntry[1];
 
-      // Transform userid to userProfileName (same transformation as before)
-      const userProfileName = userid.replace(/\W/g, '-');
+      const userProfileName = deriveUserProfileName(userid);
 
       // Validate the transformed name against AWS SageMaker UserProfile naming requirements
       if (!userProfileNamePattern.test(userProfileName)) {

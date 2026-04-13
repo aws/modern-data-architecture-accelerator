@@ -4,3 +4,4 @@
  */
 
 export * from './sm-shared';
+export * from './user-profile';

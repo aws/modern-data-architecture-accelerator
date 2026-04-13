@@ -827,6 +827,14 @@
                     "description": "S3 inventory configurations for team data lake bucket content analysis and governance.\n\nUse cases: Data governance, cost analysis, content reporting, bucket management\n\nAWS: S3 inventory configurations\n\nValidation: Optional; Map of string keys to InventoryDefinition",
                     "type": "object"
                 },
+                "jupyterLab": {
+                    "$ref": "#/definitions/JupyterLabConfig",
+                    "description": "JupyterLab space configuration for the team.\nWhen enabled, auto-creates a private JupyterLab space for each user profile in the team's Studio domain.\n\nUse cases: Per-user JupyterLab development environment, team-wide IDE provisioning\n\nAWS: SageMaker Space (JupyterLab app type)\n\nValidation: Optional; JupyterLabConfig. No breaking change if omitted."
+                },
+                "mlflow": {
+                    "$ref": "#/definitions/MlflowConfig",
+                    "description": "MLflow tracking server configuration.\nWhen enabled, creates a SageMaker-managed MLflow tracking server for experiment tracking\nusing the team's S3 bucket for artifact storage and KMS key for encryption.\n\nUse cases: ML experiment tracking, model versioning, metric logging, artifact management\n\nAWS: SageMaker MLflow Tracking Server\n\nValidation: Optional; MlflowConfig. No breaking change if omitted."
+                },
                 "studioDomainConfig": {
                     "$ref": "#/definitions/DomainProps",
                     "description": "SageMaker Studio domain configuration for the team's collaborative ML development environment.\nSupports IAM and SSO auth modes, VPC config, lifecycle configs, custom images, and notebook sharing.\n\nUse cases: Collaborative ML development, team Studio environment, shared ML resources\n\nAWS: SageMaker Studio Domain\n\nValidation: Optional; DomainProps"
@@ -1989,6 +1997,34 @@
             ],
             "type": "object"
         },
+        "JupyterLabConfig": {
+            "additionalProperties": false,
+            "description": "Team-level JupyterLab space configuration.\nWhen enabled, a JupyterLab space is auto-created for every user profile in the team's Studio domain.",
+            "properties": {
+                "defaultInstanceType": {
+                    "description": "Default instance type for JupyterLab spaces (e.g. \"ml.t3.medium\").\nIf not specified, SageMaker uses its default instance type.\n\nValidation: Optional; must be a valid SageMaker instance type",
+                    "type": "string"
+                },
+                "defaultSharingType": {
+                    "default": "Private",
+                    "description": "Default space sharing mode: \"Private\" or \"Shared\".\nPrivate spaces are accessible only to the owning user.\nShared spaces allow collaboration with other team members.",
+                    "enum": [
+                        "Private",
+                        "Shared"
+                    ],
+                    "type": "string"
+                },
+                "enabled": {
+                    "default": false,
+                    "description": "Enable auto-creation of JupyterLab spaces for all user profiles.",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "enabled"
+            ],
+            "type": "object"
+        },
         "KeyReference": {
             "additionalProperties": false,
             "description": "A reference to a Key resource.",
@@ -2819,6 +2855,49 @@
             "required": [
                 "data",
                 "type"
+            ],
+            "type": "object"
+        },
+        "MlflowConfig": {
+            "additionalProperties": false,
+            "description": "MLflow tracking server configuration.",
+            "properties": {
+                "artifactStorePrefix": {
+                    "default": "mlflow-artifacts/",
+                    "description": "S3 prefix under the team bucket for MLflow artifacts.",
+                    "type": "string"
+                },
+                "automaticModelRegistration": {
+                    "default": false,
+                    "description": "Enable automatic model registration with SageMaker Model Registry.\nWhen false, model registration is handled explicitly via SageMaker Model Package Groups\n(e.g., in an MLOps pipeline).",
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "default": false,
+                    "description": "Enable the MLflow tracking server.",
+                    "type": "boolean"
+                },
+                "serverName": {
+                    "description": "Custom tracking server name. If not specified, auto-generated from MDAA naming.\n\nValidation: Optional; 1-256 characters, alphanumeric, hyphens, and underscores",
+                    "type": "string"
+                },
+                "serverSize": {
+                    "default": "Small",
+                    "description": "Tracking server size: \"Small\", \"Medium\", or \"Large\".",
+                    "enum": [
+                        "Large",
+                        "Medium",
+                        "Small"
+                    ],
+                    "type": "string"
+                },
+                "serverVersion": {
+                    "description": "MLflow version (e.g. \"2.16.2\"). If not specified, SageMaker uses the latest supported version.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "enabled"
             ],
             "type": "object"
         },

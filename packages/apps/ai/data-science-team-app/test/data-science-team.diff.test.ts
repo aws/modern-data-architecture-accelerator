@@ -74,4 +74,26 @@ describe('DataScience Team Baseline Diff Tests', () => {
       },
     ),
   );
+
+  baselineDiffTestApp(
+    'DataScience Team MLflow and JupyterLab',
+    Create.appProvider(
+      context => {
+        const moduleApp = new DataScienceTeamApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-mlflow-jupyterlab.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-data-science-team-mlflow-jupyterlab',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
 });

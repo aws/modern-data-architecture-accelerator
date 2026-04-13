@@ -11,7 +11,7 @@ import {
   InventoryDefinition,
   S3DatalakeBucketL3Construct,
 } from '@aws-mdaa/datalake-l3-construct';
-import { MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
+import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
@@ -19,14 +19,20 @@ import {
   DomainProps,
   SagemakerStudioDomainL3Construct,
   SagemakerStudioDomainL3ConstructProps,
+  UserProfileProps,
 } from '@aws-mdaa/sm-studio-domain-l3-construct';
 
-import { Effect, IRole, ManagedPolicy, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
+import { Aws } from 'aws-cdk-lib';
+import { Effect, IRole, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
+import { CfnMlflowTrackingServer, CfnSpace } from 'aws-cdk-lib/aws-sagemaker';
+import { MdaaParamAndOutput, MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
+import { deriveUserProfileName } from '@aws-mdaa/sm-shared';
 import { Construct } from 'constructs';
 
+// AWS SageMaker-managed ECR account hosting pre-built SageMaker container images.
+// See: https://docs.aws.amazon.com/sagemaker/latest/dg-ecr-paths/sagemaker-algo-docker-registry-paths.html
 export const CENTRAL_SM_REPO_ACCT = '341280168497';
 
 /**
@@ -103,6 +109,99 @@ export interface DataScienceTeamProps {
    * Validation: Optional; String
    **/
   readonly verbatimPolicyNamePrefix?: string;
+  /**
+   * MLflow tracking server configuration.
+   * When enabled, creates a SageMaker-managed MLflow tracking server for experiment tracking
+   * using the team's S3 bucket for artifact storage and KMS key for encryption.
+   *
+   * Use cases: ML experiment tracking, model versioning, metric logging, artifact management
+   *
+   * AWS: SageMaker MLflow Tracking Server
+   *
+   * Validation: Optional; MlflowConfig. No breaking change if omitted.
+   */
+  readonly mlflow?: MlflowConfig;
+  /**
+   * JupyterLab space configuration for the team.
+   * When enabled, auto-creates a private JupyterLab space for each user profile in the team's Studio domain.
+   *
+   * Use cases: Per-user JupyterLab development environment, team-wide IDE provisioning
+   *
+   * AWS: SageMaker Space (JupyterLab app type)
+   *
+   * Validation: Optional; JupyterLabConfig. No breaking change if omitted.
+   */
+  readonly jupyterLab?: JupyterLabConfig;
+}
+
+/**
+ * Team-level JupyterLab space configuration.
+ * When enabled, a JupyterLab space is auto-created for every user profile in the team's Studio domain.
+ */
+export interface JupyterLabConfig {
+  /**
+   * Enable auto-creation of JupyterLab spaces for all user profiles.
+   *
+   * @default false
+   */
+  readonly enabled: boolean;
+  /**
+   * Default instance type for JupyterLab spaces (e.g. "ml.t3.medium").
+   * If not specified, SageMaker uses its default instance type.
+   *
+   * Validation: Optional; must be a valid SageMaker instance type
+   */
+  readonly defaultInstanceType?: string;
+  /**
+   * Default space sharing mode: "Private" or "Shared".
+   * Private spaces are accessible only to the owning user.
+   * Shared spaces allow collaboration with other team members.
+   *
+   * @default "Private"
+   */
+  readonly defaultSharingType?: 'Private' | 'Shared';
+}
+
+/**
+ * MLflow tracking server configuration.
+ */
+export interface MlflowConfig {
+  /**
+   * Enable the MLflow tracking server.
+   *
+   * @default false
+   */
+  readonly enabled: boolean;
+  /**
+   * Custom tracking server name. If not specified, auto-generated from MDAA naming.
+   *
+   * Validation: Optional; 1-256 characters, alphanumeric, hyphens, and underscores
+   */
+  readonly serverName?: string;
+  /**
+   * MLflow version (e.g. "2.16.2"). If not specified, SageMaker uses the latest supported version.
+   */
+  readonly serverVersion?: string;
+  /**
+   * Tracking server size: "Small", "Medium", or "Large".
+   *
+   * @default "Small"
+   */
+  readonly serverSize?: 'Small' | 'Medium' | 'Large';
+  /**
+   * Enable automatic model registration with SageMaker Model Registry.
+   * When false, model registration is handled explicitly via SageMaker Model Package Groups
+   * (e.g., in an MLOps pipeline).
+   *
+   * @default false
+   */
+  readonly automaticModelRegistration?: boolean;
+  /**
+   * S3 prefix under the team bucket for MLflow artifacts.
+   *
+   * @default "mlflow-artifacts/"
+   */
+  readonly artifactStorePrefix?: string;
 }
 
 export interface DataScienceTeamL3ConstructProps extends MdaaL3ConstructProps {
@@ -149,6 +248,16 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
         teamAssetsDeploymentRole,
       );
       if (teamBucket.policy) domain.node.addDependency(teamBucket.policy);
+
+      // Auto-create JupyterLab spaces for all user profiles
+      if (props.team.jupyterLab?.enabled && props.team.studioDomainConfig.userProfiles) {
+        this.createJupyterLabSpaces(
+          domain.domain.attrDomainId,
+          props.team.studioDomainConfig.userProfiles,
+          props.team.jupyterLab,
+          domain,
+        );
+      }
     }
 
     this.createAthenaWorkgroup(teamExecutionRole, teamKmsKey, teamBucket);
@@ -156,6 +265,8 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
     const resolvedMutableTeamUserRoles = this.props.roleHelper
       .resolveRoleRefsWithOrdinals(this.props.team.teamUserRoles || [], 'TeamUser')
       .filter(x => !x.immutable())
+      // Exclude roles already imported as teamExecutionRole to avoid CDK construct name collisions
+      .filter(x => x.arn() !== teamExecutionRoleResolved.arn())
       .map(x => Role.fromRoleArn(this, x.refId(), x.arn()));
 
     const teamPolicy = this.createTeamPolicy(teamExecutionRole, teamBucket);
@@ -177,6 +288,17 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
     const sagemakerGuardrailManagedPolicy = this.createSageMakerGuardrailPolicy(minilakeL3Construct.kmsKey);
     sagemakerGuardrailManagedPolicy.attachToRole(teamExecutionRole);
     resolvedMutableTeamUserRoles.forEach(x => sagemakerGuardrailManagedPolicy.attachToRole(x));
+
+    // MLflow tracking server (optional)
+    if (props.team.mlflow?.enabled) {
+      this.createMlflowTrackingServer(
+        props.team.mlflow,
+        teamKmsKey,
+        teamBucket,
+        teamExecutionRole,
+        resolvedMutableTeamUserRoles,
+      );
+    }
 
     return this;
   }
@@ -1028,6 +1150,181 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
     sagemakerWriteManagedPolicy1.checkPolicyLength(true);
     sagemakerWriteManagedPolicy2.checkPolicyLength(true);
     return [sagemakerWriteManagedPolicy1, sagemakerWriteManagedPolicy2];
+  }
+
+  private createJupyterLabSpaces(
+    domainId: string,
+    userProfiles: Record<string, UserProfileProps>,
+    jupyterLabConfig: JupyterLabConfig,
+    domain: SagemakerStudioDomainL3Construct,
+  ): void {
+    if (jupyterLabConfig.defaultInstanceType && !jupyterLabConfig.defaultInstanceType.startsWith('ml.')) {
+      throw new Error(
+        `Invalid JupyterLab instance type "${jupyterLabConfig.defaultInstanceType}". ` +
+          'SageMaker instance types must start with "ml." (e.g., "ml.t3.medium").',
+      );
+    }
+
+    const sharingType = jupyterLabConfig.defaultSharingType || 'Private';
+
+    Object.keys(userProfiles).forEach(userid => {
+      const userProfileName = deriveUserProfileName(userid);
+      const spaceName = `${userProfileName}-JupyterLab-space`;
+
+      const space = new CfnSpace(this, `jupyterlab-space-${userProfileName}`, {
+        domainId,
+        spaceName,
+        spaceDisplayName: spaceName,
+        spaceSettings: {
+          appType: 'JupyterLab',
+          jupyterLabAppSettings: jupyterLabConfig.defaultInstanceType
+            ? {
+                defaultResourceSpec: {
+                  instanceType: jupyterLabConfig.defaultInstanceType,
+                },
+              }
+            : undefined,
+        },
+        ownershipSettings: {
+          ownerUserProfileName: userProfileName,
+        },
+        spaceSharingSettings: {
+          sharingType,
+        },
+      });
+      // Space depends on domain (which contains user profiles)
+      space.node.addDependency(domain);
+
+      new MdaaParamAndOutput(this, {
+        ...this.props,
+        resourceType: 'jupyterlab',
+        resourceId: `space-${userProfileName}`,
+        name: 'name',
+        value: spaceName,
+      });
+    });
+  }
+
+  private createMlflowTrackingServer(
+    mlflowConfig: MlflowConfig,
+    teamKmsKey: IKey,
+    teamBucket: IBucket,
+    teamExecutionRole: IRole,
+    resolvedMutableTeamUserRoles: IRole[],
+  ): CfnMlflowTrackingServer {
+    // Validate MLflow config
+    if (mlflowConfig.serverName && !/^[a-zA-Z0-9][\w-]{0,255}$/.test(mlflowConfig.serverName)) {
+      throw new Error(
+        `Invalid MLflow server name '${mlflowConfig.serverName}'. ` +
+          `Must be 1-256 characters, alphanumeric, hyphens, and underscores, starting with alphanumeric.`,
+      );
+    }
+
+    const serverName = mlflowConfig.serverName || this.props.naming.resourceName('mlflow-tracking', 256);
+    const artifactPrefix = mlflowConfig.artifactStorePrefix ?? 'mlflow-artifacts/';
+    // Ensure artifact prefix ends with '/' for proper S3 prefix scoping
+    const normalizedArtifactPrefix = artifactPrefix.endsWith('/') ? artifactPrefix : `${artifactPrefix}/`;
+    if (normalizedArtifactPrefix === '/') {
+      throw new Error(
+        'MLflow artifactStorePrefix cannot be empty or root ("/"). ' +
+          'Provide a non-empty prefix to scope MLflow artifact storage within the team bucket.',
+      );
+    }
+    const artifactStoreUri = `s3://${teamBucket.bucketName}/${normalizedArtifactPrefix}`;
+
+    // Create IAM role for MLflow tracking server
+    const mlflowRole = new MdaaRole(this, 'mlflow-role', {
+      naming: this.props.naming,
+      roleName: 'mlflow',
+      assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
+    });
+
+    // Managed policy for MLflow S3 and KMS access (avoids inline DefaultPolicy + Nag suppressions)
+    const mlflowManagedPolicy = new MdaaManagedPolicy(this, 'mlflow-managed-pol', {
+      naming: this.props.naming,
+    });
+    mlflowManagedPolicy.addStatements(
+      new PolicyStatement({
+        sid: 'MlflowS3Access',
+        effect: Effect.ALLOW,
+        resources: [teamBucket.bucketArn, `${teamBucket.bucketArn}/${normalizedArtifactPrefix}*`],
+        actions: ['s3:GetObject', 's3:PutObject', 's3:DeleteObject', 's3:ListBucket', 's3:GetBucketLocation'],
+      }),
+      new PolicyStatement({
+        sid: 'MlflowKmsAccess',
+        effect: Effect.ALLOW,
+        resources: [teamKmsKey.keyArn],
+        actions: [
+          'kms:Decrypt',
+          'kms:DescribeKey',
+          'kms:Encrypt',
+          'kms:GenerateDataKey',
+          'kms:GenerateDataKeyWithoutPlaintext',
+          'kms:ReEncryptFrom',
+          'kms:ReEncryptTo',
+        ],
+      }),
+    );
+    mlflowRole.addManagedPolicy(mlflowManagedPolicy);
+    MdaaNagSuppressions.addCodeResourceSuppressions(
+      mlflowManagedPolicy,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'MLflow artifacts stored under a prefix in the team bucket; prefix-scoped wildcard required.',
+        },
+      ],
+      true,
+    );
+
+    const trackingServer = new CfnMlflowTrackingServer(this, 'mlflow-tracking-server', {
+      trackingServerName: serverName,
+      roleArn: mlflowRole.roleArn,
+      artifactStoreUri,
+      mlflowVersion: mlflowConfig.serverVersion,
+      trackingServerSize: mlflowConfig.serverSize || 'Small',
+      automaticModelRegistration: mlflowConfig.automaticModelRegistration ?? false,
+    });
+
+    // Grant execution role access to MLflow tracking server via managed policy
+    const mlflowAccessPolicy = new MdaaManagedPolicy(this, 'mlflow-access-managed-pol', {
+      naming: this.props.naming,
+    });
+    mlflowAccessPolicy.addStatements(
+      new PolicyStatement({
+        sid: 'MlflowTrackingAccess',
+        effect: Effect.ALLOW,
+        resources: [
+          `arn:${Aws.PARTITION}:sagemaker:${Aws.REGION}:${Aws.ACCOUNT_ID}:mlflow-tracking-server/${serverName}`,
+        ],
+        actions: [
+          'sagemaker:CreatePresignedMlflowTrackingServerUrl',
+          'sagemaker:DescribeMlflowTrackingServer',
+          'sagemaker:StartMlflowTrackingServer',
+          'sagemaker:StopMlflowTrackingServer',
+        ],
+      }),
+    );
+    teamExecutionRole.addManagedPolicy(mlflowAccessPolicy);
+    resolvedMutableTeamUserRoles.forEach(role => role.addManagedPolicy(mlflowAccessPolicy));
+
+    // Publish SSM params
+    new MdaaParamAndOutput(this, {
+      ...this.props,
+      resourceType: 'mlflow',
+      resourceId: 'tracking-server',
+      name: 'name',
+      value: serverName,
+    });
+    new MdaaParamAndOutput(this, {
+      ...this.props,
+      resourceType: 'mlflow',
+      resourceId: 'tracking-server',
+      name: 'arn',
+      value: trackingServer.attrTrackingServerArn,
+    });
+
+    return trackingServer;
   }
 
   private createSageMakerGuardrailPolicy(teamKey: IKey): ManagedPolicy {

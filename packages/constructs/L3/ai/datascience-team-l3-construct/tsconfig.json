@@ -74,6 +74,9 @@
       "path": "../../../L2/sagemaker-constructs"
     },
     {
+      "path": "../sm-shared"
+    },
+    {
       "path": "../sm-studio-domain-l3-construct"
     },
     {
