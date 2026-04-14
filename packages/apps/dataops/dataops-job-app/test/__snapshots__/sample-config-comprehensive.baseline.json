@@ -2627,6 +2627,46 @@
             {
               "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts] Bookmark encryption configured via SecurityConfiguration",
               "id": "AwsSolutions-GL3"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
             }
           ]
         }
@@ -2645,6 +2685,52 @@
         },
         "Type": "String",
         "Value": "test-org-test-env-test-domain-test-gluejob-main-pythonshelljob"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            }
+          ]
+        }
       }
     },
     "eventrulePythonShellJobmonitorD6232C3E": {
@@ -2667,6 +2753,533 @@
           }
         },
         "Name": "test-org-test-env-test-domain-test-gluejob-main-pythons-382b35af",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-job"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-gluejob-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": "arn:test-partition:sns:test-region:test-account:test-topic",
+            "Id": "Target0"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            }
+          ]
+        }
+      }
+    },
+    "jobdeploymentDqEvaluationJobAwsCliLayerEF284117": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "/opt/awscli/aws"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            }
+          ]
+        }
+      }
+    },
+    "jobdeploymentDqEvaluationJobCustomResource639C767A": {
+      "Type": "Custom::CDKBucketDeployment",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn"
+          ]
+        },
+        "SourceBucketNames": [
+          "cdk-hnb659fds-assets-test-account-test-region"
+        ],
+        "SourceObjectKeys": [
+          "6ebb436e2e45b7eadc7e5d10d687215f423a3ae3132aa232d870229d403ceb86.zip"
+        ],
+        "DestinationBucketName": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "DestinationBucketKeyPrefix": "deployment/jobs/DqEvaluationJob",
+        "WaitForDistributionInvalidation": true,
+        "Extract": true,
+        "Prune": true,
+        "OutputObjectKeys": true,
+        "DestinationBucketArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:s3:::",
+              {
+                "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+              }
+            ]
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            }
+          ]
+        }
+      }
+    },
+    "jobdeploymentDqEvaluationJobadditionalscriptAwsCliLayer15408238": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "/opt/awscli/aws"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            }
+          ]
+        }
+      }
+    },
+    "jobdeploymentDqEvaluationJobadditionalscriptCustomResourceACFEB0E4": {
+      "Type": "Custom::CDKBucketDeployment",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn"
+          ]
+        },
+        "SourceBucketNames": [
+          "cdk-hnb659fds-assets-test-account-test-region"
+        ],
+        "SourceObjectKeys": [
+          "7fba5d8e8d87c2a5d525862c094dd565bd017fff70f4b46aaf33ab140be31f75.zip"
+        ],
+        "DestinationBucketName": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "DestinationBucketKeyPrefix": "deployment/libs/DqEvaluationJob",
+        "WaitForDistributionInvalidation": true,
+        "Extract": false,
+        "Prune": true,
+        "OutputObjectKeys": true,
+        "DestinationBucketArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:s3:::",
+              {
+                "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+              }
+            ]
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-job-l3-construct/lib/dataops-job-l3-construct.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            }
+          ]
+        }
+      }
+    },
+    "DqEvaluationJobjob": {
+      "Type": "AWS::Glue::Job",
+      "Properties": {
+        "Command": {
+          "Name": "glueetl",
+          "ScriptLocation": {
+            "Fn::Join": [
+              "",
+              [
+                "s3://",
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "/",
+                        {
+                          "Fn::Select": [
+                            5,
+                            {
+                              "Fn::Split": [
+                                ":",
+                                {
+                                  "Fn::GetAtt": [
+                                    "jobdeploymentDqEvaluationJobCustomResource639C767A",
+                                    "DestinationBucketArn"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "/deployment/jobs/DqEvaluationJob/dq-main.py"
+              ]
+            ]
+          }
+        },
+        "DefaultArguments": {
+          "--application_opts": "{\"table\": {\"name\": \"my_table\", \"source\": {\"database\": \"my_db\", \"table_name\": \"my_table\"}, \"rulesets\": {\"basic\": {\"type\": \"dqdl\", \"value\": \"Rules = [IsComplete \\\"id\\\"]\"}}}}",
+          "--extra-py-files": {
+            "Fn::Join": [
+              "",
+              [
+                "s3://",
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "/",
+                        {
+                          "Fn::Select": [
+                            5,
+                            {
+                              "Fn::Split": [
+                                ":",
+                                {
+                                  "Fn::GetAtt": [
+                                    "jobdeploymentDqEvaluationJobadditionalscriptCustomResourceACFEB0E4",
+                                    "DestinationBucketArn"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "/deployment/libs/DqEvaluationJob/",
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::GetAtt": [
+                        "jobdeploymentDqEvaluationJobadditionalscriptCustomResourceACFEB0E4",
+                        "SourceObjectKeys"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          },
+          "--TempDir": {
+            "Fn::Join": [
+              "",
+              [
+                "s3://",
+                {
+                  "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                },
+                "/temp/jobs/DqEvaluationJob"
+              ]
+            ]
+          }
+        },
+        "Description": "Run Glue Data Quality evaluations with optional SMUS publishing",
+        "GlueVersion": "4.0",
+        "Name": "test-org-test-env-test-domain-test-gluejob-main-dqevaluationjob",
+        "NumberOfWorkers": 2,
+        "Role": "some-arn",
+        "SecurityConfiguration": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Tags": {
+          "mdaa_cdk_app": "dataops-job",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-gluejob-main",
+          "mdaa_org": "test-org"
+        },
+        "Timeout": 60,
+        "WorkerType": "G.1X"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts] Log encryption configured via SecurityConfiguration",
+              "id": "AwsSolutions-GL1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts] Bookmark encryption configured via SecurityConfiguration",
+              "id": "AwsSolutions-GL3"
+            }
+          ]
+        }
+      }
+    },
+    "dataopsprojecttestjobnameDqEvaluationJobFC1931E6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/dataops-project-test/job/name/DqEvaluationJob",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-job",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-gluejob-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-gluejob-main-dqevaluationjob"
+      }
+    },
+    "eventruleDqEvaluationJobmonitor4E3F5F4C": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Workflow Job failure events",
+        "EventPattern": {
+          "source": [
+            "aws.glue"
+          ],
+          "detail": {
+            "jobName": [
+              "test-org-test-env-test-domain-test-gluejob-main-dqevaluationjob"
+            ],
+            "state": [
+              "FAILED",
+              "TIMEOUT",
+              "STOPPED"
+            ]
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-gluejob-main-dqevalu-145dd588",
         "State": "ENABLED",
         "Tags": [
           {

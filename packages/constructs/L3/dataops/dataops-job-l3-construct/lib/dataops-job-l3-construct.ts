@@ -57,7 +57,7 @@ export interface JobCommand {
   readonly name: JobCommandName;
   /** Python version for job runtime ('2' or '3'). */
   readonly pythonVersion?: JobCommandPythonVersion;
-  /** Relative path to the Glue script for job execution. */
+  /** Relative path to the Glue script for job execution, or `asset:<filename>` to use a pre-built script from the app's assets directory. Available assets: dq-main.py (DQ evaluation, with utils/ as additionalScripts). */
   readonly scriptLocation: string;
 }
 
@@ -144,6 +144,13 @@ export interface GlueJobL3ConstructProps extends MdaaL3ConstructProps {
    * Dataops project KMS key ARN.
    */
   readonly kmsArn?: string;
+
+  /**
+   * Base path for resolving `asset:` prefixed script locations.
+   * When a job's scriptLocation starts with `asset:`, it is resolved
+   * relative to this directory.
+   */
+  readonly assetBasePath?: string;
 }
 
 export class GlueJobL3Construct extends MdaaL3Construct {
@@ -347,10 +354,26 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     }
   }
 
+  private resolveAssetPath(jobName: string, location: string): string {
+    if (location.startsWith('asset:')) {
+      const assetName = location.substring('asset:'.length);
+      if (!this.props.assetBasePath) {
+        throw new Error(
+          `Job '${jobName}' uses asset: prefix but no assetBasePath is configured. ` +
+            `Set assetBasePath in the construct props.`,
+        );
+      }
+      return path.join(this.props.assetBasePath, assetName);
+    }
+    return location;
+  }
+
   private createJob(jobName: string, jobConfig: JobConfig, deploymentRole: IRole, bucket: IBucket) {
     const defaultArguments = jobConfig.defaultArguments ? jobConfig.defaultArguments : {};
-    const scriptPath = path.dirname(jobConfig.command.scriptLocation.trim());
-    const scriptName = path.basename(jobConfig.command.scriptLocation.trim());
+    let scriptLocation = this.resolveAssetPath(jobName, jobConfig.command.scriptLocation.trim());
+
+    const scriptPath = path.dirname(scriptLocation);
+    const scriptName = path.basename(scriptLocation);
     const scriptSource = Source.asset(scriptPath, { exclude: ['**', `!${scriptName}`] });
 
     const scriptDeploymentPath = `deployment/jobs/${jobName}`;
@@ -361,6 +384,14 @@ export class GlueJobL3Construct extends MdaaL3Construct {
       role: deploymentRole,
       extract: true,
     });
+
+    // Resolve asset: prefixes in additionalScripts before processing
+    if (jobConfig.additionalScripts) {
+      jobConfig = {
+        ...jobConfig,
+        additionalScripts: jobConfig.additionalScripts.map(s => this.resolveAssetPath(jobName, s.trim())),
+      };
+    }
 
     this.addAdditionalScripts(jobName, jobConfig, bucket, deploymentRole, defaultArguments);
     this.addAdditionalJars(jobName, jobConfig, bucket, deploymentRole, defaultArguments);
@@ -464,6 +495,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
       workerType: jobConfig.workerType,
       naming: this.props.naming,
     });
+
     if (job.name && this.props.projectName) {
       DataOpsProjectUtils.createProjectSSMParam(
         this.scope,

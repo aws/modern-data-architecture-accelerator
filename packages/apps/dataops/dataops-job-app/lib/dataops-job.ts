@@ -28,6 +28,7 @@ export class GlueJobCDKApp extends MdaaCdkApp {
         securityConfigurationName: appConfig.securityConfigurationName,
         projectName: appConfig.projectName,
         notificationTopicArn: appConfig.notificationTopicArn,
+        assetBasePath: `${__dirname}/../assets`,
       },
       ...l3ConstructProps,
     };

@@ -6,6 +6,31 @@ Deploys Glue ETL jobs with automatic script deployment, job templates for config
 
 ---
 
+## Pre-built Data Quality Script
+
+The module includes a pre-built Glue ETL script for data quality evaluation in the `assets/` directory. Reference it using the `asset:` prefix in `scriptLocation` and `additionalScripts`:
+
+### dq-main.py — DQ evaluation
+
+Evaluates data quality rulesets against a single table. Supports inline DQDL, S3-stored DQDL, and Glue recommendation rulesets. Optionally publishes results to SageMaker Unified Studio (DataZone). For multi-table fan-out, use `dataops-stepfunction-app` with a Distributed Map that starts one `dq-main.py` job run per table.
+
+```yaml
+DqEvaluation:
+  command:
+    name: glueetl
+    scriptLocation: "asset:dq-main.py"
+  additionalScripts:
+    - "asset:dq_config.py"
+    - "asset:smus.py"
+```
+
+### Shared utilities
+
+- `asset:dq_config.py` — Configuration utilities. Loads rulesets and source data frames from Glue catalog or connection options.
+- `asset:smus.py` — SMUS publishing. Posts DQ evaluation results to DataZone via `post_time_series_data_points`.
+
+---
+
 ## Deployed Resources
 
 This module deploys and integrates the following resources:

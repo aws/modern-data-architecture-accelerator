@@ -1457,7 +1457,7 @@
                     "description": "Python version for job runtime ('2' or '3')."
                 },
                 "scriptLocation": {
-                    "description": "Relative path to the Glue script for job execution.",
+                    "description": "Relative path to the Glue script for job execution, or `asset:<filename>` to use a pre-built script from the app's assets directory. Available assets: dq-main.py (DQ evaluation, with utils/ as additionalScripts).",
                     "type": "string"
                 }
             },

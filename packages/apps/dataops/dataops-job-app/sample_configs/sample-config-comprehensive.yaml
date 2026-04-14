@@ -143,3 +143,24 @@ jobs:
     maxRetries: 0
     # (Optional) Job timeout in minutes.
     timeout: 30
+
+  # Data Quality evaluation job using the pre-built DQ script from DF.
+  # Use the `asset:` prefix to reference bundled scripts instead of
+  # providing a local file path.
+  DqEvaluationJob:
+    executionRoleArn: some-arn
+    description: Run Glue Data Quality evaluations with optional SMUS publishing
+    command:
+      name: 'glueetl'
+      # Use asset: prefix to reference the pre-built DQ main script
+      scriptLocation: "asset:dq-main.py"
+    glueVersion: '4.0'
+    numberOfWorkers: 2
+    workerType: 'G.1X'
+    timeout: 60
+    # Deploy the utils package alongside the main script
+    additionalScripts:
+      - "asset:dq_config.py"
+      - "asset:smus.py"
+    defaultArguments:
+      --application_opts: '{"table": {"name": "my_table", "source": {"database": "my_db", "table_name": "my_table"}, "rulesets": {"basic": {"type": "dqdl", "value": "Rules = [IsComplete \"id\"]"}}}}'

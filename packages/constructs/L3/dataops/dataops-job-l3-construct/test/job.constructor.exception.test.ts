@@ -131,3 +131,58 @@ describe('GlueJobL3Construct Constructor Exception Tests', () => {
     }).not.toThrow();
   });
 });
+
+describe('Asset script resolution', () => {
+  let testApp: MdaaTestApp;
+  let stack: Stack;
+
+  beforeEach(() => {
+    testApp = new MdaaTestApp();
+    stack = testApp.testStack;
+  });
+
+  test('should throw when asset: prefix used without assetBasePath', () => {
+    const props: GlueJobL3ConstructProps = {
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+      projectName: 'test-project',
+      deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/deployment-role',
+      bucketName: 'test-bucket',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      securityConfigurationName: 'test-security-config',
+      notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:test-topic',
+      jobConfigs: {
+        assetJob: {
+          executionRoleArn: 'arn:test-partition:iam:test-region:test-account:role/exec-role',
+          command: { name: 'pythonshell', scriptLocation: 'asset:dq-evaluation.py' },
+          description: 'test asset job',
+        },
+      },
+    };
+
+    expect(() => new GlueJobL3Construct(stack, 'test-construct', props)).toThrow(/assetBasePath/);
+  });
+
+  test('should resolve asset: prefix when assetBasePath is set', () => {
+    const props: GlueJobL3ConstructProps = {
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+      projectName: 'test-project',
+      deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/deployment-role',
+      bucketName: 'test-bucket',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      securityConfigurationName: 'test-security-config',
+      notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:test-topic',
+      assetBasePath: `${__dirname}/src/glue/python`,
+      jobConfigs: {
+        assetJob: {
+          executionRoleArn: 'arn:test-partition:iam:test-region:test-account:role/exec-role',
+          command: { name: 'pythonshell', scriptLocation: 'asset:job.py' },
+          description: 'test asset job',
+        },
+      },
+    };
+
+    expect(() => new GlueJobL3Construct(stack, 'test-construct', props)).not.toThrow();
+  });
+});
