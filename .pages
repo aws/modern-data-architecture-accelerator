@@ -7,7 +7,7 @@ nav:
                   - (Optional) Customization: CUSTOMIZATION.md
                   - Predeployment Preparation: PREDEPLOYMENT.md
                   - DEPLOYMENT.md
-        - Sample Architectures and Configurations: sample_configs
+        - Starter Kits: starter_kits
         - Sample DataOps Blueprints: sample_blueprints
         - packages
         - Development:

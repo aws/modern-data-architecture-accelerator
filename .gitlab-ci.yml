@@ -316,6 +316,51 @@ feature_merge_test_docs:
     - ./scripts/generate_docs/mkdocs.sh
     - echo -e "\e[0Ksection_end:$(date +%s):mkdocs\r\e[0K"
 
+
+# =============================================================================
+# GitLab Pages (serves docs directly from this repo)
+# =============================================================================
+
+pages:
+  interruptible: false
+  tags:
+    - arch:amd64
+    - size:medium
+  only:
+    refs:
+      - main
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  stage: prerelease_publish
+  pages:
+    publish: internal
+  cache:
+    key: prerelease-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+      - .nx/
+    policy: pull
+  needs:
+    - prerelease_version
+    - prerelease_analyze
+  dependencies:
+    - prerelease_version
+    - prerelease_analyze
+  allow_failure: false
+  script:
+    - source ./scripts/generate_docs/prepare.sh
+    - ./scripts/generate_docs/schema_docs.sh
+    - ./scripts/generate_docs/typedocs.sh
+    - ./scripts/generate_docs/mkdocs.sh
+    - mv target/docs_site internal
+  artifacts:
+    paths:
+      - internal
+
 # Template: Integration test base configuration (used by feature_merge_integ_split_* jobs)
 .integ_test_template: &integ_test_template
   interruptible: true
