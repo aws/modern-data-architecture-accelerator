@@ -8,7 +8,7 @@ mkdir -p $CI_PROJECT_DIR/target/package-build
 # because they are hoisted by npm install and not under 
 # nodule_modules in the individual packages. This script
 # will link them so they are included in the packages.
-npx lerna exec "$CI_PROJECT_DIR/scripts/link_bundled_deps.sh $CI_PROJECT_DIR/node_modules" --stream
+npx lerna exec "$CI_PROJECT_DIR/scripts/build/link_bundled_deps.sh $CI_PROJECT_DIR/node_modules" --stream
 
 # Build npm packages (skip private packages)
 npx lerna exec "if [ \"\$(jq -r '.private // false' package.json)\" != 'true' ]; then npm pack --pack-destination $CI_PROJECT_DIR/target/package-build; else echo 'Skipping private package'; fi" --stream

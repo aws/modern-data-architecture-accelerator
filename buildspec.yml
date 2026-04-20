@@ -12,7 +12,8 @@ phases:
     commands:
       - echo "Installing dependencies and executing unit tests in - `pwd`"
       - npm install
-      - chmod +x ./scripts/build_test.sh && ./scripts/build_test.sh
+      - chmod +x ./scripts/build/build.sh && ./scripts/build/build.sh
+      - chmod +x ./scripts/ci/test_ci.sh && ./scripts/ci/test_ci.sh
       - echo "Installing dependencies and executing unit tests completed `date`"
   build:
     commands:
