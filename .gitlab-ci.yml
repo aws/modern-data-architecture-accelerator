@@ -25,16 +25,17 @@ stages:
   - release_publish
   - post_release
 
-image: ${CI_REGISTRY_IMAGE}:base-latest
-
 variables:
   VERSION_BUMP_LEVEL: minor
   RELEASE_TYPE: release
   GIT_SUBMODULE_STRATEGY: recursive
+  BASE_IMAGE_TAG: "${CI_REGISTRY_IMAGE}:base-${CI_COMMIT_SHORT_SHA}"
   # Set to 'true' to run the non-merge feature pipeline (build/test/package/publish on feature branches).
   # When 'true', the merge request pipeline is skipped, which blocks merging to main.
   # Set back to 'false' (or remove override) to re-enable the merge pipeline before merging.
   RUN_FEATURE_PIPELINE: 'false'
+  
+image: ${BASE_IMAGE_TAG}
 
 before_script:
   - git config advice.addIgnoredFile false
@@ -56,18 +57,13 @@ before_script:
   image:
     name: ${MDAA_BASE_IMAGE}
     entrypoint: ['']
-  variables:
-    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
-    KANIKO_DOCKERFILE: '${CI_PROJECT_DIR}/.pipeline/Dockerfile'
-    KANIKO_DESTINATION_TAG: 'base'
   script:
     # This unreadable echo command is recommended in kaniko docs: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"},\"$(echo -n $CI_DEPENDENCY_PROXY_SERVER | awk -F[:] '{print $1}')\":{\"auth\":\"$(printf "%s:%s" ${CI_DEPENDENCY_PROXY_USER} "${CI_DEPENDENCY_PROXY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
-      --dockerfile "${KANIKO_DOCKERFILE}"
-      --destination "${CI_REGISTRY_IMAGE}:${KANIKO_DESTINATION_TAG}-latest"
-      --destination "${CI_REGISTRY_IMAGE}:${KANIKO_DESTINATION_TAG}-${CI_COMMIT_SHA:0:8}"
+      --dockerfile "${CI_PROJECT_DIR}/.pipeline/Dockerfile"
+      --destination "${BASE_IMAGE_TAG}"
       --cache=true --cache-repo="${CI_REGISTRY_IMAGE}/cache" --cleanup --cache-ttl 72h0m0s
 
 # =============================================================================
