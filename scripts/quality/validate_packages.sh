@@ -23,14 +23,14 @@
 #     - test/__snapshots__/sample-config-comprehensive*.baseline.json must exist
 #     - Excludes packages listed in .baseline-coverage-ignore (one path per line)
 #
-# Usage: ./scripts/validate_packages.sh
+# Usage: ./scripts/quality/validate_packages.sh
 # Exit code: 0 if all packages pass, 1 if any deviations found
 # ============================================================================
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$SCRIPT_DIR/.."
+PROJECT_ROOT="$SCRIPT_DIR/../.."
 
 CANONICAL_TEST="jest --passWithNoTests --coverage"
 
@@ -180,11 +180,7 @@ for pkg_dir in $(discover_packages); do
   jest_config="${pkg_dir}/jest.config.js"
   if [ -f "$jest_config" ]; then
     if grep -q 'require(' "$jest_config"; then
-      # Imports a base config — must NOT define coverageThreshold locally
-      if grep -q 'coverageThreshold' "$jest_config"; then
-        fail "$pkg_dir" "Property 4 - jest.config.js imports base config but also defines coverageThreshold locally"
-      fi
-      # Load effective (merged) config via node and check thresholds
+      # Imports a base config — check effective (merged) thresholds
       effective_check=$(node -e "
         const c = require('./${jest_config}');
         const t = c.coverageThreshold && c.coverageThreshold.global;

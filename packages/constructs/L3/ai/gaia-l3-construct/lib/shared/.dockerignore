@@ -1,0 +1,12 @@
+# Exclude files not needed by the Docker build from the CDK asset hash.
+# The Dockerfile only needs: file-import-batch-job/, layers/python-sdk/python/
+python-tests/
+__pycache__/
+*.pyc
+*.egg-info/
+*.d.ts
+*.js
+*.ts
+uv.lock
+pyproject.toml
+secrets-rotation-function/

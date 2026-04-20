@@ -6110,7 +6110,7 @@
             ]
           },
           "Image": {
-            "Fn::Sub": "test-account.dkr.ecr.test-region.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-test-account-test-region:89b1efb24540cb0e6c8ca7da10b06b116b4271f44371657d5bab2a36e3077176"
+            "Fn::Sub": "test-account.dkr.ecr.test-region.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-test-account-test-region:754445771960bf86c1d97d65e2f09b69c0df7ca580ace66683115d48709c1651"
           },
           "JobRoleArn": {
             "Fn::GetAtt": [

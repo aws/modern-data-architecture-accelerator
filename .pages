@@ -14,6 +14,7 @@ nav:
                   - CONTRIBUTING.md
                   - CODE_OF_CONDUCT.md
                   - DEVELOPMENT.md
+                  - TESTING.md
         - CHANGELOG.md
         - THIRD-PARTY-NOTICE.md
         - TypeScript Docs: "./typedocs/index.html"

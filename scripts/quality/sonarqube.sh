@@ -2,7 +2,7 @@
 set -e
 
 echo "Merging coverage reports"
-python3 ./scripts/mergelcov.py
+python3 ./scripts/test/mergelcov.py
 
 echo "Running Sonar Scanner"
 export SONAR_SCANNER_JAVA_OPTS="-Xmx1024m"
@@ -30,7 +30,7 @@ if [ "${CI_PIPELINE_SOURCE}" = "merge_request_event" ] || [ -n "${CI_MERGE_REQUE
   # Scope the scanner to only affected packages so we don't need full-repo
   # coverage. Each MR project is independent, so partial analysis is fine.
   SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-  source "$SCRIPT_DIR/nx/affected-base.sh"
+  source "$SCRIPT_DIR/../nx/affected-base.sh"
 
   echo "Computing directly changed packages (base: $NX_BASE)"
   CHANGED_PROJECTS=$(python3 ./scripts/nx/changed-only.py "$NX_BASE" "$NX_HEAD")

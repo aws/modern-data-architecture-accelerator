@@ -45,7 +45,7 @@ import yaml
 # ---- Configuration ----
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
-PROJECT_ROOT = SCRIPT_DIR.parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent
 SPLITS_CONFIG = PROJECT_ROOT / "integ" / "constructs" / "splits.yaml"
 FIXTURE_STACK_NAME = "MdaaIntegInfraFixtureStack"
 ENV_VARS_MAP = [

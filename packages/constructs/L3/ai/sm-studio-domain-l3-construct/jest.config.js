@@ -1,12 +1,10 @@
+const baseConfig = require("../../../../../jest.config");
+
 /**
  * Jest configuration
  */
 module.exports = {
-  roots: ['<rootDir>/test'],
-  testMatch: ['**/*.test.ts'],
-  transform: {
-    '^.+.tsx?$': 'ts-jest',
-  },
+  ...baseConfig,
   coverageThreshold: {
     global: {
       branches: 65,

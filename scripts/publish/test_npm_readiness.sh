@@ -52,7 +52,7 @@ parse_arguments() {
 validate_prerequisites() {
     if [ ! -d "$PACKAGE_DIR" ]; then
         echo "Package directory not found: $PACKAGE_DIR"
-        echo "Run: ./scripts/test_published_artifacts.sh <version> <repo> <domain> <account> <branch> --download"
+        echo "Run: ./scripts/publish/test_published_artifacts.sh <version> <repo> <domain> <account> <branch> --download"
         exit 1
     fi
     
@@ -222,7 +222,7 @@ handle_publish_error() {
         echo "To continue publishing:"
         echo "1. Get a new 6-digit code from your authenticator app"
         echo "2. Re-run the command with the new OTP:"
-        echo "   ./scripts/test_npm_readiness.sh --publish --limit $LIMIT --otp <NEW_CODE>"
+        echo "   ./scripts/publish/test_npm_readiness.sh --publish --limit $LIMIT --otp <NEW_CODE>"
         echo ""
         echo "The script will automatically skip the $published_count already published packages"
         echo "and continue from where it left off."

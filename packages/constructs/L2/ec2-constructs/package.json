@@ -19,7 +19,7 @@
     "package": "jsii-pacmak --npmignore=false",
     "test": "jest --passWithNoTests --coverage",
     "lint": "eslint --max-warnings 0 -c ../../../../eslint.config.mjs",
-    "test:python": "cd python-tests && uv run pytest",
+    "test:python": "bash ../../../../scripts/test/test_python_package.sh",
     "test:python:coverage": "cd python-tests && uv run pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html"
   },
   "devDependencies": {

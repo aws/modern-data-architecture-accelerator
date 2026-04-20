@@ -29,8 +29,8 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom.minidom import parseString
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent
-DIFF_HELPER = SCRIPT_DIR / "baseline-diff-helper.mjs"
+PROJECT_ROOT = SCRIPT_DIR.parent.parent
+DIFF_HELPER = PROJECT_ROOT / "scripts" / "test" / "baseline-diff-helper.mjs"
 
 COVERAGE_IGNORE_FILE = PROJECT_ROOT / ".baseline-coverage-ignore"
 # App packages that don't follow the standard sample_configs / diff-test pattern
@@ -71,8 +71,8 @@ def run_cdk_diff(old_file: str, new_file: str) -> str:
         timeout=60,
     )
     output = result.stdout.strip()
-    if result.stderr.strip():
-        output += "\n" + result.stderr.strip()
+    if not output and result.stderr.strip():
+        output = result.stderr.strip()
     return output or "No diff output captured"
 
 

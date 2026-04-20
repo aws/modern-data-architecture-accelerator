@@ -9,6 +9,14 @@ import { GAIAApp } from '../lib/gaia';
 import * as path from 'path';
 
 describe('GAIA Baseline Diff Tests', () => {
+  const gaiaIgnorePatterns = {
+    // The FileImportBatchJob Docker image hash is derived from the lib/shared/ directory
+    // contents, which vary between local dev and CI due to generated artifacts (.js, .d.ts,
+    // __pycache__, .venv). Ignore this resource in diff tests since the image content is
+    // validated by the Dockerfile and Python tests, not the CDK template diff.
+    ignoreResourcePatterns: ['FileImportBatchJob'],
+  };
+
   baselineDiffTestApp(
     'GAIA Comprehensive',
     Create.appProvider(
@@ -29,6 +37,7 @@ describe('GAIA Baseline Diff Tests', () => {
         domain: 'test-domain',
       },
     ),
+    gaiaIgnorePatterns,
   );
 
   baselineDiffTestApp(
@@ -73,6 +82,7 @@ describe('GAIA Baseline Diff Tests', () => {
         domain: 'test-domain',
       },
     ),
+    gaiaIgnorePatterns,
   );
 
   baselineDiffTestApp(
@@ -95,5 +105,6 @@ describe('GAIA Baseline Diff Tests', () => {
         domain: 'test-domain',
       },
     ),
+    gaiaIgnorePatterns,
   );
 });

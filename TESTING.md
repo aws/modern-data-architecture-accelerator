@@ -4,40 +4,87 @@ MDAA employs a layered testing strategy that mirrors the construct architecture.
 
 ## Standards
 
-- All packages require 80% branch and 80% statement coverage, enforced via Jest configuration
+- All packages require 80% branch and 80% statement coverage, enforced via the root `jest.config.js`
+- App packages inherit a lower branch threshold (0%) via `packages/apps/jest.config.js` due to an Istanbul/ts-jest quirk with default constructor parameters
 - All compliance controls must have explicit test assertions, not just coverage
 - CDK Nag rulesets (AwsSolutions, NIST 800-53 R5, HIPAA Security, PCI DSS 3.2.1) are validated in construct tests via `MdaaTestApp.checkCdkNagCompliance()`
 - Tests run with `jest --passWithNoTests --coverage` as a single unified command
 - Diff baselines are committed to the repository and reviewed as part of code changes
 - Non-deterministic test values use `test-account`, `test-region`, `test-partition` for stable, reproducible output
 
-## Architecture Overview
+## Quick Reference
 
-- **L2 Constructs**: Wrap CDK L1/L2 constructs with compliance controls, standardized props typing, and MDAA naming conventions. Available in TypeScript, Python, Java, and .NET via JSII. Tested with CDK Assertions to verify every compliance control and resource property.
-
-- **L3 Constructs**: Implement architectural patterns and multi-resource integrations. Compose L2 constructs into higher-level abstractions and implement compliance controls where reusable L2 constructs have not been authored. TypeScript-only. Tested with CDK Assertions for compliance, plus unit tests for input validation and edge cases.
-
-- **Apps / Modules**: Configuration-driven CDK apps that translate user-provided YAML configuration into L3 construct props, applying schema validation and deploying compliant infrastructure as CloudFormation stacks. Tested with CDK diff-based baselines that detect resource and output drift across versions, exercising every config schema property through sample configs.
-
-![MDAA Code Architecture](docs/MDAA-Code-Architecture.png)
-
-## Running Tests
+### Running Tests
 
 ```bash
-# Full Repo Testing
-# Run all tests across the monorepo
-npx lerna run test
+# From the repository root:
+npm test                       # Affected TS tests + all Python tests
+npm run test:all               # All TS tests, no cache
+npm run test:python            # Python tests on affected packages
+npm run test:python:all        # Python tests on all packages
+npm run test:update-baselines  # Regenerate diff baselines after intentional changes
 
-# Update baselines across all modules
-npx lerna run test:update-baselines
-
-# Per Package Testing
-# Run all package-level tests with coverage (from any package directory)
-npm run test
-
-# Update diff baselines after intentional infrastructure changes
-npm run test:update-baselines
+# From any package directory:
+npm test                       # Run that package's tests with coverage
 ```
+
+### Pre-push Validation
+
+Run the MR pipeline checks locally before pushing:
+
+```bash
+npm run prepush                # Affected only, uses Nx cache (fast)
+npm run prepush:all            # All packages, no cache (thorough)
+```
+
+Both run the same 6 steps, differing only in scope:
+
+1. Validate package structure (`validate_packages.sh`)
+2. Validate dependency lock file (`validate_dependencies.sh`)
+3. Lint TypeScript
+4. Lint Python
+5. Prettier
+6. Build + test
+
+### Force Commands (no Nx affected, no cache)
+
+```bash
+npm run build:all              # Build all packages
+npm run test:all               # Test all packages
+npm run lint:all               # Lint all packages
+npm run prettier:all           # Prettier all packages
+```
+
+## Jest Configuration
+
+All 132 package jest configs inherit from the root `jest.config.js`:
+
+```
+jest.config.js (root)                    ← shared defaults + setupFiles
+├── packages/apps/jest.config.js         ← apps base (branch threshold: 0%)
+│   └── ~30 app package configs          ← inherit from apps base
+└── ~102 construct/utility/cli configs   ← inherit from root directly
+```
+
+The root config provides:
+- `roots`, `testMatch`, `transform` (ts-jest), `coverageReporters`
+- `setupFiles` → `jest.setup.js` (mocks Docker/pip builds globally)
+- `coverageThreshold`: 80% branches, 80% statements
+
+Per-package configs only override what differs (typically `coverageThreshold`). No standalone configs exist.
+
+### Global Test Mocks (`jest.setup.js`)
+
+The root `jest.setup.js` runs before every test file in every package. It prevents Docker and pip builds during tests:
+
+- Mocks `command-exists` → `sync` returns `false` (no Docker/finch detection)
+- Stubs `Code.fromDockerBuild` and `Code.fromCustomCommand` → return mock code objects
+- Preserves all other `Code` static methods (`fromAsset`, `fromInline`, etc.)
+
+This eliminates the need for per-test-file Docker mocks. Three test files retain their own `command-exists` mocks because they test behavior that depends on it:
+- `code-asset.compliance.test.ts` — tests the Docker vs pip branching logic
+- `mdaa-cli.test.ts` / `mdaa-cli-sanity.test.ts` — CLI tests that simulate Docker availability
+
 
 ## L2 Constructs
 
@@ -91,13 +138,11 @@ describe('MDAA Compliance Tests', () => {
 
 ### Coverage
 
-L2 constructs require 80% branch and statement coverage (enforced via `jest.config.js`). All compliance controls must have explicit test assertions.
+L2 constructs require 80% branch and statement coverage. All compliance controls must have explicit test assertions.
 
 ## L3 Constructs
 
 L3 constructs implement architectural patterns and multi-resource integrations. They compose L2 constructs and CDK resources into higher-level abstractions (e.g., a data lake with buckets, encryption, access controls, and Lake Formation permissions).
-
-L3 constructs also implement compliance controls where reusable L2 constructs have not been authored for a particular resource type.
 
 ### What to Test
 
@@ -226,10 +271,14 @@ Baselines are stored as JSON in `test/__snapshots__/`:
 - Single-stack: `{configBaseName}.baseline.json`
 - Multi-stack: `{configBaseName}.{stackName}.baseline.json`
 
-Baselines are committed to the repository. When infrastructure changes are intentional, update baselines with:
+Baselines are committed to the repository. When infrastructure changes are intentional:
 
 ```bash
+# From the repo root — update baselines for affected packages
 npm run test:update-baselines
+
+# From a specific package directory
+UPDATE_BASELINES=true npm test
 ```
 
 Review the diff output before committing updated baselines to confirm changes are intentional.
@@ -251,24 +300,109 @@ baselineDiffTestApp('MyModule Comprehensive', appProvider, {
 
 ### Coverage
 
-App modules require 80% branch and statement coverage. Diff tests exercise the full config parsing and construct instantiation pipeline, contributing to coverage alongside any additional unit tests.
+App modules require 80% statement coverage. Branch coverage is set to 0% at the apps base level due to an Istanbul/ts-jest quirk where default constructor parameters (`props: AppProps = {}`) count as uncovered branches even when all real logic is tested.
+
+## Testing Python Code
+
+MDAA includes Python testing for Lambda functions, Glue jobs, and other Python components.
+
+### Python Test Structure
+
+```
+package-name/
+├── python-tests/              # Python testing directory
+│   ├── pyproject.toml        # Modern Python project config
+│   ├── conftest.py           # Shared test fixtures
+│   ├── .venv/               # Virtual environment (auto-managed by uv)
+│   └── test_*.py            # Test files
+├── src/ or lib/              # Python source code being tested
+└── package.json              # npm scripts including test:python
+```
+
+### Running Python Tests
+
+**Prerequisites: Install uv**
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# or: brew install uv
+```
+
+```bash
+# From the repo root
+npm run test:python            # Affected packages only
+npm run test:python:all        # All packages
+
+# From any package with python-tests/
+npm run test:python            # Runs via scripts/test/test_python_package.sh
+
+# Direct uv commands (from a python-tests/ directory)
+uv run pytest                  # Run all tests
+uv run pytest --cov            # Run with coverage
+uv run pytest -v               # Verbose output
+```
+
+### Adding Python Tests to New Packages
+
+1. Create a `python-tests/` directory with `pyproject.toml`, `conftest.py`, and `test_*.py` files
+2. Add `"test:python": "bash ../../../../scripts/test/test_python_package.sh"` to the package's `package.json` scripts (adjust the relative path depth as needed)
+3. The centralized runner (`scripts/test/test_python_package.sh`) no-ops gracefully if `python-tests/` doesn't exist
+
+For detailed Python testing documentation, see [PYTHON_TESTING.md](PYTHON_TESTING.md).
 
 ## Integration Tests
 
-Integration tests deploy actual infrastructure to AWS accounts and validate end-to-end behavior. These are located under `packages/constructs/*/test/integ/` and use the CDK integration test framework.
+Integration tests deploy actual infrastructure to AWS accounts and validate end-to-end behavior. Tests are located under `packages/constructs/*/test/integ/` and organized into splits for parallel CI execution.
 
-Integration tests run in CI against dedicated test accounts and are split across multiple parallel jobs for performance.
+See [integ/constructs/README.md](integ/constructs/README.md) for full documentation.
+
+### Testing Apps Locally
+
+MDAA Apps can be tested like any CDK app using `cdk synth/diff/deploy` from the app directory, providing the necessary context values:
+
+```bash
+cdk synth --require-approval never \
+  -c org="<org>" \
+  -c env="<env>" \
+  -c domain="<domain>" \
+  -c module_configs="<path/to/config/file>" \
+  -c module_name="<module_name>" \
+  --all
+```
+
+Any changes to underlying dependencies (stacks, constructs) require rebuilding those packages first (`npm run build:all` from the repo root, or `npm run build` in each modified package).
+
+### Running Integration Tests
+
+```bash
+# Bootstrap shared resources (VPC, KMS, KeyPair)
+./scripts/test/bootstrap-integ.sh
+
+# Run tests for a specific package
+python3 ./scripts/test/run-integ-tests.py packages/constructs/L2/s3-constructs
+
+# Run a CI split
+python3 ./scripts/test/run-integ-tests.py split_0
+
+# Teardown
+./scripts/test/bootstrap-integ.sh --teardown
+```
+
+Prerequisites: AWS credentials configured, `AWS_REGION` or `AWS_DEFAULT_REGION` set.
 
 ## CI Pipeline
 
 The CI pipeline runs tests at multiple stages:
 
-| Stage       | Job                           | What Runs                               |
-| ----------- | ----------------------------- | --------------------------------------- |
-| build       | `feature_merge_build_test`    | Unit tests and diff tests with coverage |
-| analyze     | `feature_merge_test`          | Full test suite across all modules      |
-| test        | `feature_merge_integ_split_*` | Integration tests against AWS accounts  |
-| pre_release | `release_version_package`     | Baseline update for new version         |
+| Stage    | Job                          | What Runs |
+| -------- | ---------------------------- | --------- |
+| prebuild | `feature_merge_lint`         | ESLint on affected packages |
+| prebuild | `feature_merge_lint_python`  | Ruff on Python tools |
+| prebuild | `feature_validate_packages`  | Package structure validation |
+| build    | `feature_merge_build_test`   | Build + unit tests + diff tests with coverage |
+| test     | `feature_merge_python_test`  | Python tests (reuses build cache) |
+| test     | `feature_merge_test_docs`    | Documentation build validation |
+| test     | `feature_merge_integ_split_*`| Integration tests against AWS accounts |
+| analyze  | `feature_merge_sonarqube`    | SonarQube analysis |
 
 ## Adding Tests
 
@@ -291,16 +425,15 @@ The CI pipeline runs tests at multiple stages:
 
 1. Create sample configs under `sample_configs/` (minimal + comprehensive + variants)
 2. Create `test/{module}.diff.test.ts` with one `baselineDiffTestApp` per sample config
-3. Add `test:update-baselines` script to `package.json`
-4. Run `npm run test:update-baselines` to generate initial baselines
-5. Commit the baseline JSON files
-6. Ensure 80% branch and statement coverage
+3. Run `UPDATE_BASELINES=true npm test` to generate initial baselines
+4. Commit the baseline JSON files
+5. Ensure 80% statement coverage
 
 ### Updating Infrastructure
 
 When a construct change intentionally modifies CloudFormation output:
 
-1. Run `npm run test` and review the diff failures
+1. Run `npm test` and review the diff failures
 2. Confirm the changes are expected
 3. Run `npm run test:update-baselines` to accept the new baselines
 4. Commit the updated baseline files alongside the code change

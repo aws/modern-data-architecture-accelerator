@@ -47,12 +47,10 @@ fs.writeFileSync(path.join(tmpDir, 'manifest.json'), JSON.stringify(manifest));
 // Capture IO host output
 const lines = [];
 const ioHost = new NonInteractiveIoHost({ isCI: true });
-const origNotify = ioHost.notify.bind(ioHost);
 ioHost.notify = async msg => {
   if (msg.message) {
     lines.push(msg.message);
   }
-  return origNotify(msg);
 };
 
 const toolkit = new Toolkit({ ioHost });

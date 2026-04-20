@@ -3,29 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// Mock aws-cdk-lib/aws-lambda to avoid Docker build during tests
-jest.mock('aws-cdk-lib/aws-lambda', () => {
-  const actual = jest.requireActual('aws-cdk-lib/aws-lambda');
-  const mockCode = {
-    bind: jest.fn().mockReturnValue({ s3Location: { bucketName: 'mock-bucket', objectKey: 'mock-key' } }),
-    bindToResource: jest.fn(),
-  };
-  return {
-    ...actual,
-    Code: {
-      ...actual.Code,
-      fromAsset: jest.fn().mockReturnValue(mockCode),
-      fromDockerBuild: jest.fn().mockReturnValue(mockCode),
-      fromCustomCommand: jest.fn().mockReturnValue(mockCode),
-    },
-  };
-});
-
-// Mock command-exists to simulate Docker not available
-jest.mock('command-exists', () => ({
-  sync: jest.fn().mockReturnValue(false),
-}));
-
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Template } from 'aws-cdk-lib/assertions';
 import { Bucket } from 'aws-cdk-lib/aws-s3';

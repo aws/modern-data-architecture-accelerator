@@ -97,7 +97,7 @@ semgrep-sast:
     SAST_EXCLUDED_PATHS: 'spec, test, tests, tmp, scripts, **/lib/*.ts'
   after_script:
     - echo "Analyzing GitLab SAST reports"
-    - python3 ./scripts/analyze_sast_reports.py
+    - python3 ./scripts/quality/analyze_sast_reports.py
 
 # Secret detection scan
 secret_detection:
@@ -134,7 +134,7 @@ feature_validate_packages:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/validate_packages.sh
+    - ./scripts/quality/validate_packages.sh
 
 # Lint TypeScript/JavaScript source
 feature_merge_lint:
@@ -151,10 +151,10 @@ feature_merge_lint:
     GIT_DEPTH: '0'
   script:
     - echo "Running npm_install.sh script"
-    - ./scripts/npm_install.sh
+    - ./scripts/build/npm_install.sh
     - echo "Completed npm_install.sh"
     - echo "Executing lint.sh script"
-    - ./scripts/lint.sh
+    - ./scripts/quality/lint.sh
 
 # Lint Python source
 feature_merge_lint_python:
@@ -167,7 +167,7 @@ feature_merge_lint_python:
   stage: prebuild
   allow_failure: false
   script:
-    - ./scripts/lint_python.sh
+    - ./scripts/quality/lint_python.sh
 
 # Merge main into the feature branch to validate compatibility
 feature_merge_main:
@@ -189,7 +189,7 @@ feature_merge_main:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/merge_main.sh
+    - ./scripts/ci/merge_main.sh
 
 # --- build stage ---
 
@@ -207,7 +207,7 @@ feature_validate_dependencies:
   needs:
     - feature_merge_main
   script:
-    - ./scripts/validate_dependencies.sh
+    - ./scripts/quality/validate_dependencies.sh
 
 # Build and run TypeScript/JavaScript tests
 feature_merge_build_test:
@@ -240,28 +240,36 @@ feature_merge_build_test:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     GIT_DEPTH: '0'
   script:
-    - ./scripts/git_secrets.sh
-    - ./scripts/npm_install.sh
-    - ./scripts/build.sh
-    - ./scripts/test_ci.sh
+    - ./scripts/quality/git_secrets.sh
+    - ./scripts/build/npm_install.sh
+    - ./scripts/build/build.sh
+    - ./scripts/ci/test_ci.sh
 
-# Run Python tests (parallel with build_test)
+# Run Python tests (after build_test to reuse node_modules cache)
 feature_merge_python_test:
   interruptible: true
-  stage: build # Same stage = parallel execution
+  stage: test
   tags:
     - arch:amd64
     - size:large
   only:
     - merge_requests
+  dependencies:
+    - feature_merge_build_test
   needs:
-    - feature_merge_main # Same dependency as build_test
+    - feature_merge_build_test
   cache:
-    key: feature-merge-python-$CI_COMMIT_SHA
-    paths:
-      - '**/python-tests/.venv/'
-      - '**/python-tests/uv.lock'
-    policy: pull-push
+    - key: feature-merge-build-$CI_COMMIT_SHA
+      paths:
+        - node_modules/
+        - packages/**/node_modules/
+        - .nx/
+      policy: pull
+    - key: feature-merge-python-$CI_COMMIT_SHA
+      paths:
+        - '**/python-tests/.venv/'
+        - '**/python-tests/uv.lock'
+      policy: pull-push
   artifacts:
     reports:
       coverage_report:
@@ -383,9 +391,9 @@ pages:
 feature_merge_integ_split_0:
   <<: *integ_test_template
   script:
-    - ./scripts/bootstrap-integ.sh
-    - python3 ./scripts/run-integ-tests.py split_0
-    # - ./scripts/bootstrap-integ.sh --teardown
+    - ./scripts/test/bootstrap-integ.sh
+    - python3 ./scripts/test/run-integ-tests.py split_0
+    # - ./scripts/test/bootstrap-integ.sh --teardown
   resource_group: integ-us-east-2
   variables:
     AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
@@ -395,9 +403,9 @@ feature_merge_integ_split_0:
 feature_merge_integ_split_1:
   <<: *integ_test_template
   script:
-    - ./scripts/bootstrap-integ.sh
-    - python3 ./scripts/run-integ-tests.py split_1
-    # - ./scripts/bootstrap-integ.sh --teardown
+    - ./scripts/test/bootstrap-integ.sh
+    - python3 ./scripts/test/run-integ-tests.py split_1
+    # - ./scripts/test/bootstrap-integ.sh --teardown
   resource_group: integ-us-west-1
   variables:
     AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
@@ -407,9 +415,9 @@ feature_merge_integ_split_1:
 feature_merge_integ_split_2:
   <<: *integ_test_template
   script:
-    - ./scripts/bootstrap-integ.sh
-    - python3 ./scripts/run-integ-tests.py split_2
-    # - ./scripts/bootstrap-integ.sh --teardown
+    - ./scripts/test/bootstrap-integ.sh
+    - python3 ./scripts/test/run-integ-tests.py split_2
+    # - ./scripts/test/bootstrap-integ.sh --teardown
   resource_group: integ-us-west-2
   variables:
     AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
@@ -442,7 +450,8 @@ feature_merge_baseline_review:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     GIT_DEPTH: '0'
   script:
-    - python3 ./scripts/baseline_review.py --output-dir baseline-review
+    - python3 ./scripts/quality/baseline_review.py --output-dir baseline-review
+    - python3 ./scripts/quality/post_baseline_threads.py --report baseline-review/report.json
   artifacts:
     paths:
       - baseline-review/report.json
@@ -474,7 +483,7 @@ feature_merge_sonarqube:
     GIT_DEPTH: '0'
   allow_failure: false
   script:
-    - ./scripts/sonarqube.sh
+    - ./scripts/quality/sonarqube.sh
 
 # Risk assessment (currently disabled)
 feature_merge_risk_assessment:
@@ -505,7 +514,7 @@ feature_merge_risk_assessment:
     BASELINE_BUCKET_REGION: 'us-east-1'
     AWS_CREDS_TARGET_ROLE: '${TESTING_ROLE_ARN}'
   script:
-    - ./scripts/risk_assessment.sh
+    - ./scripts/quality/risk_assessment.sh
   artifacts:
     paths:
       - diff-output/
@@ -561,8 +570,8 @@ feature_version:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/version_prerelease.sh
-    - ./scripts/npm_install.sh
+    - ./scripts/publish/version_prerelease.sh
+    - ./scripts/build/npm_install.sh
 
 # --- build stage ---
 
@@ -596,24 +605,31 @@ feature_build_test:
       - '**/node_modules/**'
   allow_failure: false
   script:
-    - ./scripts/build.sh
-    - ./scripts/test_ci.sh
+    - ./scripts/build/build.sh
+    - ./scripts/ci/test_ci.sh
 
-# Run Python tests (parallel with build_test)
+# Run Python tests (after build_test to reuse node_modules cache)
 feature_python_test:
   extends: .feature_branch_template
-  stage: build # Same stage = parallel execution
+  stage: test
   tags:
     - arch:amd64
     - size:large
+  dependencies:
+    - feature_build_test
   needs:
-    - feature_version # Same dependency as feature_build_test
+    - feature_build_test
   cache:
-    key: feature-python-$CI_COMMIT_SHA
-    paths:
-      - '**/python-tests/.venv/'
-      - '**/python-tests/uv.lock'
-    policy: pull-push
+    - key: feature-build-$CI_COMMIT_SHA
+      paths:
+        - node_modules/
+        - packages/**/node_modules/
+      policy: pull
+    - key: feature-python-$CI_COMMIT_SHA
+      paths:
+        - '**/python-tests/.venv/'
+        - '**/python-tests/uv.lock'
+      policy: pull-push
   artifacts:
     reports:
       coverage_report:
@@ -656,7 +672,7 @@ feature_package:
     - feature_build_test
   allow_failure: false
   script:
-    - ./scripts/package.sh
+    - ./scripts/build/package.sh
 
 # --- prerelease_publish stage ---
 
@@ -681,7 +697,7 @@ feature_publish_npm:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
+    - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
 
 # Verify published NPM packages are installable
 feature_test_published_npm:
@@ -708,7 +724,7 @@ feature_test_published_npm:
   script:
     - SNAPSHOT_VERSION=$(jq -r .version < lerna.json)
     - echo 'Testing published artifacts for version:' $SNAPSHOT_VERSION
-    - ./scripts/test_published_artifacts.sh $SNAPSHOT_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
+    - ./scripts/publish/test_published_artifacts.sh $SNAPSHOT_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
 
 # Publish Python packages to prerelease CodeArtifact repo
 feature_publish_pip:
@@ -731,7 +747,7 @@ feature_publish_pip:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
+    - ./scripts/publish/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
 
 # =============================================================================
 # Pipeline 3: Prerelease Pipeline (main branch)
@@ -786,9 +802,9 @@ prerelease_version:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/git_secrets.sh
-    - ./scripts/version_prerelease.sh
-    - ./scripts/npm_install.sh
+    - ./scripts/quality/git_secrets.sh
+    - ./scripts/publish/version_prerelease.sh
+    - ./scripts/build/npm_install.sh
 
 # --- build stage ---
 
@@ -828,8 +844,8 @@ prerelease_build_test:
     - prerelease_version
   allow_failure: false
   script:
-    - ./scripts/build.sh
-    - ./scripts/test_ci.sh
+    - ./scripts/build/build.sh
+    - ./scripts/ci/test_ci.sh
 
 # --- analyze stage ---
 
@@ -859,7 +875,7 @@ prerelease_baseline_review:
   variables:
     GIT_DEPTH: '0'
   script:
-    - python3 ./scripts/baseline_review.py --output-dir baseline-review
+    - python3 ./scripts/quality/baseline_review.py --output-dir baseline-review
   artifacts:
     paths:
       - baseline-review/report.json
@@ -905,7 +921,7 @@ prerelease_analyze:
     GIT_DEPTH: '0'
   allow_failure: false
   script:
-    - ./scripts/sonarqube.sh
+    - ./scripts/quality/sonarqube.sh
 
 # --- package stage ---
 
@@ -945,7 +961,7 @@ prerelease_package:
   stage: package
   allow_failure: false
   script:
-    - ./scripts/package.sh
+    - ./scripts/build/package.sh
 
 # --- prerelease_publish stage ---
 
@@ -1023,8 +1039,8 @@ prerelease_publish_npm:
   script:
     - PRERELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo "Deleting existing version $PRERELEASE_VERSION from CodeArtifact for idempotency"
-    - ./scripts/delete_codeartifact_version.sh $PRERELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE || true
-    - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT prerelease
+    - ./scripts/publish/delete_codeartifact_version.sh $PRERELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE || true
+    - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT prerelease
 
 # Publish Python packages to prerelease CodeArtifact repo
 prerelease_publish_pip:
@@ -1056,7 +1072,7 @@ prerelease_publish_pip:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
+    - ./scripts/publish/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
 
 # Publish packaged artifacts to S3
 prerelease_publish_s3:
@@ -1101,7 +1117,7 @@ prerelease_publish_s3:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/publish_s3.sh $MDAA_PRERELEASE_PACKAGE_BUCKET
+    - ./scripts/publish/publish_s3.sh $MDAA_PRERELEASE_PACKAGE_BUCKET
 
 # =============================================================================
 # Pipeline 4: Release Pipeline (main branch, manual trigger)
@@ -1168,12 +1184,12 @@ release_version_package:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/git_secrets.sh
-    - ./scripts/npm_install.sh
-    - ./scripts/version_release.sh
-    - ./scripts/build.sh
-    - ./scripts/test_ci.sh
-    - ./scripts/package.sh
+    - ./scripts/quality/git_secrets.sh
+    - ./scripts/build/npm_install.sh
+    - ./scripts/publish/version_release.sh
+    - ./scripts/build/build.sh
+    - ./scripts/ci/test_ci.sh
+    - ./scripts/build/package.sh
 
 # Manual confirmation gate to proceed with the release
 release:
@@ -1245,7 +1261,7 @@ release_publish_npm_prerelease:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest
+    - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest
 
 # Verify published NPM packages pass readiness checks
 release_npm_readiness_check:
@@ -1282,9 +1298,9 @@ release_npm_readiness_check:
   script:
     - RELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo 'Testing NPM readiness for version:' $RELEASE_VERSION
-    - ./scripts/test_published_artifacts.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest --download
-    - ./scripts/validate_dependencies.sh --npm-ready
-    - ./scripts/test_npm_readiness.sh
+    - ./scripts/publish/test_published_artifacts.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest --download
+    - ./scripts/quality/validate_dependencies.sh --npm-ready
+    - ./scripts/publish/test_npm_readiness.sh
 
 # Publish NPM packages to production CodeArtifact repo
 release_publish_npm:
@@ -1331,7 +1347,7 @@ release_publish_npm:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
   script:
-    - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT latest
+    - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT latest
 
 # Publish Python packages to production CodeArtifact repo
 release_publish_pip:
@@ -1377,7 +1393,7 @@ release_publish_pip:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
   script:
-    - ./scripts/publish_pip.sh $MDAA_CODEARTIFACT_RELEASE_PIP_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT
+    - ./scripts/publish/publish_pip.sh $MDAA_CODEARTIFACT_RELEASE_PIP_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT
 
 # Publish packaged artifacts to production S3 bucket
 release_publish_s3:
@@ -1423,7 +1439,7 @@ release_publish_s3:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
   script:
-    - ./scripts/publish_s3.sh $MDAA_RELEASE_PACKAGE_BUCKET
+    - ./scripts/publish/publish_s3.sh $MDAA_RELEASE_PACKAGE_BUCKET
 
 # Generate and deploy release HTML documentation
 release_generate_html_docs:
@@ -1544,7 +1560,7 @@ prerelease_push_git:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/push_git_prerelease.sh
+    - ./scripts/publish/push_git_prerelease.sh
 
 # Push release version changes and tags to git
 release_push_git:
@@ -1589,7 +1605,7 @@ release_push_git:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
   script:
-    - ./scripts/push_git_release.sh
+    - ./scripts/publish/push_git_release.sh
 
 # --- Rollback jobs (post_release stage) ---
 
@@ -1656,7 +1672,7 @@ rollback_delete_prerelease_packages:
   script:
     - RELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo "Rolling back prerelease packages for version $RELEASE_VERSION"
-    - ./scripts/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE
+    - ./scripts/publish/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE
 
 # Delete release packages from CodeArtifact (rollback)
 rollback_delete_release_packages:
@@ -1691,7 +1707,7 @@ rollback_delete_release_packages:
   script:
     - RELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo "Rolling back release packages for version $RELEASE_VERSION"
-    - ./scripts/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT $MDAA_CODEARTIFACT_RELEASE_REGION $MDAA_CODEARTIFACT_RELEASE_NAMESPACE
+    - ./scripts/publish/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT $MDAA_CODEARTIFACT_RELEASE_REGION $MDAA_CODEARTIFACT_RELEASE_NAMESPACE
 
 # =============================================================================
 # Pipeline 5: Cornerstone Pipeline (main branch, manual trigger)

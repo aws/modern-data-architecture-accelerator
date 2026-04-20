@@ -6,6 +6,7 @@ codescan*
 .DS_Store
 *.js
 !jest.config.js
+!jest.setup.js
 !eslint.config.js
 *.d.ts
 *.d.ts.map
@@ -59,6 +60,7 @@ uv.lock
 *.egg-info/
 build/
 dist/
+!scripts/build/
 
 .kiro/*
 !.kiro/steering/

@@ -13,7 +13,7 @@
     "build": "tsc && typescript-json-schema --required tsconfig.json MdaaBaseConfigContents --include 'lib/*.ts' --include '../../../../node_modules/@types/**/*.ts' --include 'lib/config-schema.json' > lib/config-schema.json",
     "watch": "tsc -w",
     "test": "jest --passWithNoTests --coverage",
-    "test:python": "cd python-tests && uv run pytest",
+    "test:python": "bash ../../../../scripts/test/test_python_package.sh",
     "lint": "eslint --max-warnings 0 -c ../../../../eslint.config.mjs"
   },
   "main": "lib/index.js",

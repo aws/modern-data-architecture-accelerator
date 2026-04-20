@@ -12,9 +12,9 @@
 #   INTEG_AZS             - Comma-separated availability zones
 #
 # Usage:
-#   ./scripts/bootstrap-integ.sh             # Bootstrap + deploy fixture
-#   ./scripts/bootstrap-integ.sh --teardown  # Destroy fixture
-#   source ./scripts/bootstrap-integ.sh      # Bootstrap + export env vars to current shell
+#   ./scripts/test/bootstrap-integ.sh             # Bootstrap + deploy fixture
+#   ./scripts/test/bootstrap-integ.sh --teardown  # Destroy fixture
+#   source ./scripts/test/bootstrap-integ.sh      # Bootstrap + export env vars to current shell
 
 set -eo pipefail
 
@@ -48,7 +48,7 @@ echo "Account: $ACCOUNT_ID"
 echo "Region:  $REGION"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 INTEG_DIR="$PROJECT_ROOT/integ/constructs"
 FIXTURE_APP="npx ts-node $INTEG_DIR/fixture.ts"
 STACK_NAME="MdaaIntegInfraFixtureStack"

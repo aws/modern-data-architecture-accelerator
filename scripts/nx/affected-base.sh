@@ -23,11 +23,11 @@ echo "NX_BASE (merge-base): $NX_BASE"
 echo "HEAD: $(git rev-parse HEAD)"
 echo ""
 echo "git status (short):"
-git status --short | head -20
+git --no-pager status --short | head -20
 echo ""
 echo "Changed files (base..HEAD):"
-git diff --name-only "$NX_BASE"..."$NX_HEAD"
-echo "(total: $(git diff --name-only "$NX_BASE"..."$NX_HEAD" | wc -l))"
+git --no-pager diff --name-only "$NX_BASE"..."$NX_HEAD"
+echo "(total: $(git --no-pager diff --name-only "$NX_BASE"..."$NX_HEAD" | wc -l))"
 echo ""
 python3 "$(dirname "${BASH_SOURCE[0]}")/affected-tree.py" "$NX_BASE" "$NX_HEAD" 2>/dev/null || true
 echo "--- End Nx affected debug ---"

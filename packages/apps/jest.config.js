@@ -1,3 +1,5 @@
+const path = require('path');
+
 /**
  * Shared Jest configuration for all app packages
  */
@@ -7,6 +9,7 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
+  setupFiles: [path.resolve(__dirname, '../../jest.setup.js')],
   coverageReporters: ['lcov', 'text'],
   coverageThreshold: {
     global: {

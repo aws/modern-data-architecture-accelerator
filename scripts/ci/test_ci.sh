@@ -2,7 +2,7 @@
 set -e
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT="$SCRIPT_DIR/.."
+PROJECT_ROOT="$SCRIPT_DIR/../.."
 cd "$PROJECT_ROOT"
 
 # Set concurrency defaults based on environment.
@@ -27,7 +27,7 @@ if [ "${CI_COMMIT_BRANCH:-}" = "main" ]; then
   echo "Running full test suite on main (seeds Nx cache)"
   npx nx run-many -t test --all --parallel="$CONCURRENCY" -- --silent --maxWorkers="$MAX_WORKERS"
 else
-  source "$SCRIPT_DIR/nx/affected-base.sh"
+  source "$SCRIPT_DIR/../nx/affected-base.sh"
   echo "Running affected tests (base: $NX_BASE)"
 
   npx nx affected -t test --base="$NX_BASE" --head="$NX_HEAD" --parallel="$CONCURRENCY" -- --silent --maxWorkers="$MAX_WORKERS"

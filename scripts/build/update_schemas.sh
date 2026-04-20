@@ -8,9 +8,9 @@ set -e
 #   path: Optional path to search for schemas (default: ./packages/)
 #
 # Examples:
-#   ./scripts/update_schemas.sh                           # Update all schemas in ./packages/
-#   ./scripts/update_schemas.sh ./packages/apps/dataops/  # Update only dataops schemas
-#   ./scripts/update_schemas.sh ./packages/cli/           # Update only CLI schemas
+#   ./scripts/build/update_schemas.sh                           # Update all schemas in ./packages/
+#   ./scripts/build/update_schemas.sh ./packages/apps/dataops/  # Update only dataops schemas
+#   ./scripts/build/update_schemas.sh ./packages/cli/           # Update only CLI schemas
 #
 # Prerequisites:
 #   - Python 3 with pip
@@ -38,7 +38,7 @@ fi
 
 # Get the script directory and project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 # Change to project root
 cd "$PROJECT_ROOT"
