@@ -996,6 +996,28 @@
           ]
         },
         "BucketName": "test-org-test-env-test-domain-test-datalake-main-curated",
+        "CorsConfiguration": {
+          "CorsRules": [
+            {
+              "AllowedHeaders": [
+                "*"
+              ],
+              "AllowedMethods": [
+                "GET",
+                "PUT",
+                "POST"
+              ],
+              "AllowedOrigins": [
+                "https://sagemaker.*.amazonaws.com"
+              ],
+              "ExposedHeaders": [
+                "ETag"
+              ],
+              "Id": "sagemaker-ground-truth",
+              "MaxAge": 3000
+            }
+          ]
+        },
         "LifecycleConfiguration": {
           "Rules": [
             {

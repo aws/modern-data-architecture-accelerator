@@ -115,6 +115,13 @@
                     },
                     "type": "array"
                 },
+                "corsRules": {
+                    "description": "Cross-origin resource sharing rules for this bucket.\nRequired when web browsers or AWS services need cross-origin access.\n\nUse cases: SageMaker Ground Truth labeling; Web-based data applications; AWS service integrations\n\nAWS: S3 CORS configuration\n\nValidation: Optional; array of CorsRuleConfig",
+                    "items": {
+                        "$ref": "#/definitions/CorsRuleConfig"
+                    },
+                    "type": "array"
+                },
                 "createFolderSkeleton": {
                     "default": true,
                     "description": "Create folder placeholder objects for each access policy prefix.\n\nUse cases: Pre-populated folder structure; Console navigation\n\nAWS: S3 zero-byte objects as folder markers\n\nValidation: Optional; boolean",
@@ -553,6 +560,53 @@
             ],
             "type": "object"
         },
+        "CorsRuleConfig": {
+            "additionalProperties": false,
+            "description": "Cross-origin resource sharing rule for an S3 bucket. Allows web browsers\nto make cross-origin requests to the bucket.\n\nUse cases: SageMaker Ground Truth labeling; Web-based data applications; AWS service integrations\n\nAWS: S3 CORS configuration\n\nValidation: allowedMethods and allowedOrigins required",
+            "properties": {
+                "allowedHeaders": {
+                    "description": "Headers allowed in cross-origin requests.\n\nValidation: Optional; array of strings; use ['*'] to allow all headers",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "allowedMethods": {
+                    "description": "HTTP methods allowed for cross-origin requests.\n\nValidation: Required; array of HttpMethod (enum: GET, PUT, HEAD, POST, DELETE)",
+                    "items": {
+                        "$ref": "#/definitions/HttpMethod"
+                    },
+                    "type": "array"
+                },
+                "allowedOrigins": {
+                    "description": "Origins allowed to make cross-origin requests to the bucket.\n\nValidation: Required; array of origin URLs or ['*'] for all origins",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "exposedHeaders": {
+                    "description": "Response headers exposed to the browser.\n\nValidation: Optional; array of strings",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "A unique identifier for this CORS rule.\n\nValidation: Optional; string",
+                    "type": "string"
+                },
+                "maxAge": {
+                    "description": "Time in seconds the browser caches the preflight response.\n\nValidation: Optional; non-negative integer",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "allowedMethods",
+                "allowedOrigins"
+            ],
+            "type": "object"
+        },
         "DockerImage": {
             "additionalProperties": false,
             "description": "A Docker image",
@@ -805,6 +859,17 @@
                 "functionName"
             ],
             "type": "object"
+        },
+        "HttpMethod": {
+            "description": "HTTP method permitted in a CORS rule.",
+            "enum": [
+                "DELETE",
+                "GET",
+                "HEAD",
+                "POST",
+                "PUT"
+            ],
+            "type": "string"
         },
         "ICfnConditionExpression": {
             "additionalProperties": false,

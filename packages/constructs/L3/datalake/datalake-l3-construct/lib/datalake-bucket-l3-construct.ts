@@ -22,6 +22,7 @@ import {
   Bucket,
   CfnBucket,
   CfnStorageLens,
+  CorsRule,
   IBucket,
   LifecycleRule,
   NoncurrentVersionTransition,
@@ -109,6 +110,8 @@ export interface BucketDefinition {
   readonly createFolderSkeleton?: boolean;
   /** Deny access to roles not listed in access policies. */
   readonly defaultDeny?: boolean;
+  /** Cross-origin resource sharing rules for the bucket. */
+  readonly corsRules?: CorsRule[];
 }
 
 export interface AccessPolicyProps {
@@ -345,6 +348,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
       encryptionKey: encryptionKey,
       bucketName: bucketDefinition.bucketZone,
       naming: naming,
+      corsRules: bucketDefinition.corsRules,
     });
 
     this.createBucketInventories(bucketDefinition, bucket, glueUtilDatabase);

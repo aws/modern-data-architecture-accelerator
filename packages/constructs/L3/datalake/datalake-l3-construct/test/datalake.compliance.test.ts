@@ -5,8 +5,8 @@
 
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Match } from 'aws-cdk-lib/assertions';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import {
   AccessPolicyProps,
   BucketDefinition,
@@ -483,5 +483,69 @@ describe('DataLake with createFolderSkeleton disabled', () => {
 
   test('Bucket still created', () => {
     template.resourceCountIs('AWS::S3::Bucket', 1);
+  });
+});
+
+describe('CORS Configuration', () => {
+  const testApp = new MdaaTestApp();
+
+  const testAccessPolicy: AccessPolicyProps = {
+    name: 'test-policy',
+    s3Prefix: '/',
+    readRoleRefs: [{ id: 'test-read-role-id' }],
+  };
+
+  const corsBucketProps: BucketDefinition = {
+    bucketZone: 'cors-zone',
+    accessPolicies: [testAccessPolicy],
+    corsRules: [
+      {
+        id: 'sagemaker-rule',
+        allowedMethods: [HttpMethods.GET, HttpMethods.PUT, HttpMethods.POST],
+        allowedOrigins: ['https://sagemaker.*.amazonaws.com'],
+        allowedHeaders: ['*'],
+        exposedHeaders: ['ETag'],
+        maxAge: 3000,
+      },
+    ],
+  };
+
+  const noCorsProps: BucketDefinition = {
+    bucketZone: 'no-cors-zone',
+    accessPolicies: [testAccessPolicy],
+  };
+
+  const constructProps: DataLakeL3ConstructProps = {
+    buckets: [corsBucketProps, noCorsProps],
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+  };
+
+  new S3DatalakeBucketL3Construct(testApp.testStack, 'test-cors-stack', constructProps);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Bucket with CORS rules has CorsConfiguration', () => {
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketName: Match.stringLikeRegexp('cors-zone'),
+      CorsConfiguration: {
+        CorsRules: [
+          {
+            Id: 'sagemaker-rule',
+            AllowedMethods: ['GET', 'PUT', 'POST'],
+            AllowedOrigins: ['https://sagemaker.*.amazonaws.com'],
+            AllowedHeaders: ['*'],
+            ExposedHeaders: ['ETag'],
+            MaxAge: 3000,
+          },
+        ],
+      },
+    });
+  });
+
+  test('Bucket without CORS rules has no CorsConfiguration', () => {
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketName: Match.stringLikeRegexp('no-cors-zone'),
+      CorsConfiguration: Match.absent(),
+    });
   });
 });

@@ -226,6 +226,28 @@ buckets:
       - Root
       - Data
     lifecycleConfiguration: SampleConfiguration2
+    # (Optional) Cross-origin resource sharing rules for this bucket.
+    # Required when web browsers or AWS services need cross-origin access.
+    corsRules:
+      # CORS rule for SageMaker Ground Truth labeling workflows
+      - id: sagemaker-ground-truth
+        # Origins allowed to make cross-origin requests to the bucket.
+        allowedOrigins:
+          - 'https://sagemaker.*.amazonaws.com'
+        # HTTP methods allowed for cross-origin requests.
+        # (enum: GET, PUT, HEAD, POST, DELETE)
+        allowedMethods:
+          - GET
+          - PUT
+          - POST
+        # (Optional) Headers allowed in cross-origin requests.
+        allowedHeaders:
+          - '*'
+        # (Optional) Response headers exposed to the browser.
+        exposedHeaders:
+          - ETag
+        # (Optional) Time in seconds the browser caches the preflight response.
+        maxAge: 3000
 
 # (Optional) Enable S3 Storage Lens for storage analytics
 # covering all buckets defined in this app's config.

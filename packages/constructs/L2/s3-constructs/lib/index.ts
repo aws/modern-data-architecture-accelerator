@@ -12,6 +12,7 @@ import {
   Bucket,
   BucketEncryption,
   BucketProps,
+  CorsRule,
   IBucket,
   IntelligentTieringConfiguration,
   Inventory,
@@ -35,6 +36,9 @@ export interface MdaaBucketProps extends mdaa_construct.MdaaConstructProps {
   readonly transferAcceleration?: boolean;
 
   readonly intelligentTieringConfigurations?: IntelligentTieringConfiguration[];
+
+  /** Cross-origin resource sharing rules for the bucket */
+  readonly corsRules?: CorsRule[];
 
   readonly uniqueBucketName?: boolean;
 }
@@ -78,6 +82,7 @@ export class MdaaBucket extends Bucket implements IMdaaBucket {
       removalPolicy: RemovalPolicy.RETAIN,
       enforceSSL: true,
       bucketKeyEnabled: true,
+      cors: props.corsRules,
     };
     return { ...props, ...overrideProps };
   }

@@ -1,0 +1,19 @@
+# Test fixture: invalid CORS method to verify schema validation rejects it
+roles:
+  reader:
+    - name: test-role
+accessPolicies:
+  default:
+    rule:
+      prefix: /
+      ReadRoles:
+        - reader
+buckets:
+  test-zone:
+    accessPolicies:
+      - default
+    corsRules:
+      - allowedOrigins:
+          - '*'
+        allowedMethods:
+          - PATCH

@@ -13,7 +13,9 @@
   - Added `smusPublishing` configuration for publishing data quality metrics to SageMaker Unified Studio (DataZone)
 - Agentcore Runtime app: added enableTransactionSearch(boolean) config param to optionally prevent creation of X-Ray Transaction Search Config if it already exists
 - Dataops Job app: added pre-built data quality evaluation scripts enabling users to deploy a working DQ evaluation Glue job without writing any code
-- Datalake app: added optional S3 Storage Lens support — enable via storageLensEnabled: true
+- Datalake app:
+  - Added optional S3 Storage Lens support — enable via storageLensEnabled: true
+  - Added optional CORS support - enable via corsRules property
 - Data Warehouse app: Added `multiAz` (multi-AZ high availability) and `backupRegion` (cross-region snapshot copy) config options
 - Roles app: added an optional `additionalTrustedActions` for the role primary principal, allowing additional actions like 
 `sts:TagSession` to be added to the trust policy;

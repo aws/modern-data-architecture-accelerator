@@ -8,6 +8,7 @@ import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Arn } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { MdaaBucket, MdaaBucketProps } from '../lib';
+import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 
 describe('MDAA Construct Mandatory Prop Compliance Tests', () => {
   const testApp = new MdaaTestApp();
@@ -314,5 +315,70 @@ describe('Public Methods', () => {
     expect(MdaaBucket.formatS3Prefix('test', true, true)).toBe('/test/');
     expect(MdaaBucket.formatS3Prefix('test/', true, true)).toBe('/test/');
     expect(MdaaBucket.formatS3Prefix('/test', true, true)).toBe('/test/');
+  });
+});
+
+describe('CORS Configuration', () => {
+  const testApp = new MdaaTestApp();
+
+  const testKey = MdaaKmsKey.fromKeyArn(
+    testApp.testStack,
+    'cors-test-key',
+    'arn:test-partition:kms:test-region:test-account:key/test-key',
+  );
+
+  test('Bucket with CORS rules synthesizes CorsConfiguration', () => {
+    const corsApp = new MdaaTestApp();
+    const corsKey = MdaaKmsKey.fromKeyArn(
+      corsApp.testStack,
+      'cors-key',
+      'arn:test-partition:kms:test-region:test-account:key/test-key',
+    );
+
+    new MdaaBucket(corsApp.testStack, 'cors-bucket', {
+      naming: corsApp.naming,
+      bucketName: 'cors-test',
+      encryptionKey: corsKey,
+      corsRules: [
+        {
+          id: 'test-rule',
+          allowedMethods: [HttpMethods.GET, HttpMethods.PUT],
+          allowedOrigins: ['https://example.com'],
+          allowedHeaders: ['*'],
+          exposedHeaders: ['ETag'],
+          maxAge: 3600,
+        },
+      ],
+    });
+
+    const template = Template.fromStack(corsApp.testStack);
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      CorsConfiguration: {
+        CorsRules: [
+          {
+            Id: 'test-rule',
+            AllowedMethods: ['GET', 'PUT'],
+            AllowedOrigins: ['https://example.com'],
+            AllowedHeaders: ['*'],
+            ExposedHeaders: ['ETag'],
+            MaxAge: 3600,
+          },
+        ],
+      },
+    });
+  });
+
+  test('Bucket without CORS rules has no CorsConfiguration', () => {
+    new MdaaBucket(testApp.testStack, 'no-cors-bucket', {
+      naming: testApp.naming,
+      bucketName: 'no-cors-test',
+      encryptionKey: testKey,
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketName: Match.anyValue(),
+      CorsConfiguration: Match.absent(),
+    });
   });
 });

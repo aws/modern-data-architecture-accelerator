@@ -15,6 +15,7 @@ import {
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
+import { CorsRule, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import * as configSchema from './config-schema.json';
 
 /**
@@ -104,6 +105,17 @@ export interface BucketConfig {
    * @default true
    */
   readonly defaultDeny?: boolean;
+  /**
+   * Cross-origin resource sharing rules for this bucket.
+   * Required when web browsers or AWS services need cross-origin access.
+   *
+   * Use cases: SageMaker Ground Truth labeling; Web-based data applications; AWS service integrations
+   *
+   * AWS: S3 CORS configuration
+   *
+   * Validation: Optional; array of CorsRuleConfig
+   */
+  readonly corsRules?: CorsRuleConfig[];
 }
 
 /**
@@ -138,6 +150,60 @@ export interface LakeFormationLocationConfig {
    * @default false
    */
   readonly write?: boolean;
+}
+
+/**
+ * HTTP method permitted in a CORS rule.
+ */
+export type HttpMethod = 'GET' | 'PUT' | 'HEAD' | 'POST' | 'DELETE';
+
+/**
+ * Cross-origin resource sharing rule for an S3 bucket. Allows web browsers
+ * to make cross-origin requests to the bucket.
+ *
+ * Use cases: SageMaker Ground Truth labeling; Web-based data applications; AWS service integrations
+ *
+ * AWS: S3 CORS configuration
+ *
+ * Validation: allowedMethods and allowedOrigins required
+ */
+export interface CorsRuleConfig {
+  /**
+   * A unique identifier for this CORS rule.
+   *
+   * Validation: Optional; string
+   */
+  readonly id?: string;
+  /**
+   * Time in seconds the browser caches the preflight response.
+   *
+   * Validation: Optional; non-negative integer
+   */
+  readonly maxAge?: number;
+  /**
+   * Headers allowed in cross-origin requests.
+   *
+   * Validation: Optional; array of strings; use ['*'] to allow all headers
+   */
+  readonly allowedHeaders?: string[];
+  /**
+   * HTTP methods allowed for cross-origin requests.
+   *
+   * Validation: Required; array of HttpMethod (enum: GET, PUT, HEAD, POST, DELETE)
+   */
+  readonly allowedMethods: HttpMethod[];
+  /**
+   * Origins allowed to make cross-origin requests to the bucket.
+   *
+   * Validation: Required; array of origin URLs or ['*'] for all origins
+   */
+  readonly allowedOrigins: string[];
+  /**
+   * Response headers exposed to the browser.
+   *
+   * Validation: Optional; array of strings
+   */
+  readonly exposedHeaders?: string[];
 }
 
 /**
@@ -512,6 +578,9 @@ export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigCont
           accessPolicies: accessPolicies,
           lakeFormationLocations: lakeFormationLocations,
           lifecycleConfiguration: lifecycleConfiguration,
+          corsRules: configBucketProps.corsRules
+            ? DataLakeConfigParser.buildCorsRules(configBucketProps.corsRules)
+            : undefined,
         },
       };
     });
@@ -592,5 +661,16 @@ export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigCont
       );
     });
     return lifecycleConfigurationProps;
+  }
+
+  private static buildCorsRules(corsRuleConfigs: CorsRuleConfig[]): CorsRule[] {
+    return corsRuleConfigs.map(config => ({
+      id: config.id,
+      maxAge: config.maxAge,
+      allowedHeaders: config.allowedHeaders,
+      allowedMethods: config.allowedMethods.map(method => HttpMethods[method]),
+      allowedOrigins: config.allowedOrigins,
+      exposedHeaders: config.exposedHeaders,
+    }));
   }
 }
