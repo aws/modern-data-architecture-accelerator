@@ -1,0 +1,31 @@
+jobs:
+  - jobName: image-labeling
+    taskType: image_bounding_box
+    labelingTaskConfig:
+      taskTitle: "Label bounding boxes"
+      taskDescription: "Draw bounding boxes around objects in the image"
+      taskKeywords:
+        - "image"
+        - "bounding box"
+      workteamArn: "arn:aws:sagemaker:us-east-1:123456789012:workteam/private-crowd/test-team"
+      categoriesS3Uri: "s3://test-bucket/categories.json"
+      templateS3Uri: "s3://test-bucket/bounding-box-template.liquid.html"
+
+  - jobName: text-classify
+    taskType: text_single_label_classification
+    labelingTaskConfig:
+      taskTitle: "Classify text"
+      taskDescription: "Classify the text into a category"
+      taskKeywords:
+        - "text"
+        - "classification"
+      workteamArn: "arn:aws:sagemaker:us-east-1:123456789012:workteam/private-crowd/test-team"
+      categoriesS3Uri: "s3://test-bucket/text-categories.json"
+    verification:
+      workteamArn: "arn:aws:sagemaker:us-east-1:123456789012:workteam/private-crowd/verify-team"
+      taskTitle: "Verify text classification"
+      taskDescription: "Verify the text classification is correct"
+    workflowSchedule: "rate(6 hours)"
+    additionalFeatureDefinitions:
+      - featureName: confidence
+        featureType: Fractional

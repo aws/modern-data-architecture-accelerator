@@ -4,6 +4,17 @@
 
 ### New Features
 
+- **SageMaker Ground Truth App** (`@aws-mdaa/sagemaker-ground-truth`): Automated, continuous data labeling pipeline
+  - EventBridge + SQS + Step Functions architecture for continuous S3 ingestion → batched labeling
+  - Upload/Output S3 buckets with KMS encryption and EventBridge notifications
+  - SQS queue with DLQ and CloudWatch alarms for failed items
+  - Step Functions state machine orchestrating: poll SQS → create labeling job → wait for completion → (optional) verification job → update Feature Store → return rejected items to queue
+  - 5-6 Lambda functions powering the state machine steps
+  - SageMaker Feature Group integration for persisting labeled data
+  - EventBridge Scheduler for configurable workflow triggers
+  - Optional verification labeling job with automatic re-queue of rejected items
+  - Full MDAA compliance: MdaaRole, MdaaKmsKey, MdaaBucket, MdaaManagedPolicy, CDK Nag, SSM parameter exports
+  - Comprehensive and minimal sample configs with inline documentation
 - Added SageMaker L2 constructs: `MdaaSageMakerProjectTemplate`, `MdaaGroundTruth`, and `MdaaModelMonitor` for ML lifecycle management (project templates, data labeling, model monitoring)
 - Data Quality App:
   - Added multi-source support for data quality rulesets — each ruleset can now specify a `source` block with `sourceType` (glue, s3, redshift), connection details, and S3 paths. Source metadata is published to SSM for downstream DQ evaluation jobs.

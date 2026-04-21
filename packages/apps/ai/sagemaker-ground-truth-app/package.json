@@ -1,0 +1,51 @@
+{
+  "name": "@aws-mdaa/sagemaker-ground-truth",
+  "description": "MDAA SageMaker Ground Truth module",
+  "author": {
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com/solutions"
+  },
+  "bin": {
+    "sagemaker-ground-truth-cdk": "bin/sagemaker-ground-truth.js"
+  },
+  "version": "1.5.0",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc && typescript-json-schema --required --noExtraProps tsconfig.json SageMakerGroundTruthConfigContents --include 'lib/*.ts' --include '../../../../node_modules/@types/**/*.ts' > lib/config-schema.json && cp lib/config-schema.json ../../../../schemas/${npm_package_name}.json",
+    "cdk": "cdk",
+    "lint": "eslint --max-warnings 0 -c ../../../../eslint.config.mjs",
+    "test": "jest --passWithNoTests --coverage",
+    "test:coverage": "jest --passWithNoTests --coverage --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
+    "test:update-baselines": "UPDATE_BASELINES=true jest --passWithNoTests --testPathPattern='.*\\.diff\\.test\\.ts'",
+    "watch": "tsc -w"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "devDependencies": {
+    "@aws-mdaa/testing": "1.5.0",
+    "@types/jest": "29.5.14",
+    "@types/node": "22.9.0",
+    "jest": "29.7.0",
+    "ts-jest": "29.4.6",
+    "ts-node": "10.9.2",
+    "typescript": "5.9.3",
+    "typescript-json-schema": "0.67.1"
+  },
+  "dependencies": {
+    "@aws-mdaa/app": "1.5.0",
+    "@aws-mdaa/config": "1.5.0",
+    "@aws-mdaa/iam-role-helper": "1.5.0",
+    "@aws-mdaa/l3-construct": "1.5.0",
+    "@aws-mdaa/sagemaker-ground-truth-l3-construct": "1.5.0",
+    "ajv": "8.17.1",
+    "aws-cdk-lib": "2.220.0",
+    "cdk-nag": "2.37.55",
+    "constructs": "10.0.96",
+    "source-map-support": "0.5.21",
+    "yaml": "1.10.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws/modern-data-architecture-accelerator"
+  }
+}

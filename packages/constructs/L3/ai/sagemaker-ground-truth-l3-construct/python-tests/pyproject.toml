@@ -1,0 +1,34 @@
+[project]
+name = "sagemaker-ground-truth-l3-construct-tests"
+version = "0.1.0"
+description = "Python tests for Ground Truth Lambda functions"
+requires-python = ">=3.12"
+dependencies = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.1",
+    "boto3>=1.28.0",
+    "botocore>=1.31.0",
+    "moto[s3,sqs,sagemaker]>=5.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = []
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = ["-v", "--tb=short", "--strict-markers", "--disable-warnings"]
+markers = [
+    "unit: Unit tests",
+    "lambda: Lambda function tests",
+]
+
+[tool.coverage.run]
+source = ["../assets/lambda"]
+omit = ["test_*", "conftest.py", ".venv/*"]

@@ -1,0 +1,56 @@
+# Prerequisites — external resources that must exist before deployment:
+#
+# Required:
+#   1. SageMaker Workteam — create via SageMaker console or `aws sagemaker create-workteam`.
+#      Private workteams require a Cognito user pool.
+#      See: https://docs.aws.amazon.com/sagemaker/latest/dg/sms-workforce-management.html
+#   2. Label Categories File — upload a JSON categories file to S3.
+#      See: https://docs.aws.amazon.com/sagemaker/latest/dg/sms-label-cat.html
+#
+# Optional:
+#   3. Labeling UI Template — custom Liquid HTML template in S3.
+#      REQUIRED for image_bounding_box and image_semantic_segmentation
+#      (SageMaker does not support built-in HumanTaskUiArn for these task types).
+#      Optional for classification and NER tasks (AWS-managed templates used automatically).
+#      See: https://docs.aws.amazon.com/sagemaker/latest/dg/sms-custom-templates.html
+#   4. Verification Workteam — separate workteam for verification step (only if verification is enabled).
+#   5. Verification UI Template — custom template for verification UI.
+#   6. Verification Categories File — first label = pass, others = fail.
+#   7. Ground Truth Role — externally-created IAM role with sagemaker.amazonaws.com trust.
+#      Use when the role needs access to S3 buckets from other MDAA modules (e.g., datalake).
+#      The external module grants bucket access to this role; Ground Truth attaches its own permissions.
+#      If omitted, the construct creates a new role automatically.
+jobs:
+  - jobName: image-labeling
+    taskType: image_bounding_box
+    labelingTaskConfig:
+      taskTitle: "Label bounding boxes"
+      taskDescription: "Draw bounding boxes around objects in the image"
+      taskKeywords:
+        - "image"
+        - "bounding box"
+      workteamArn: "arn:aws:sagemaker:us-east-1:123456789012:workteam/private-crowd/test-team" # prerequisite 1
+      categoriesS3Uri: "s3://test-bucket/categories.json" # prerequisite 2
+      templateS3Uri: "s3://test-bucket/bounding-box-template.liquid.html" # prerequisite 3 (REQUIRED for bounding box)
+    # groundTruthRole:                                                     # prerequisite 7 (optional)
+    #   arn: "arn:aws:iam::123456789012:role/my-gt-execution-role"         # OR use name: "my-gt-execution-role"
+
+  - jobName: text-classify
+    taskType: text_single_label_classification
+    labelingTaskConfig:
+      taskTitle: "Classify text"
+      taskDescription: "Classify the text into a category"
+      taskKeywords:
+        - "text"
+        - "classification"
+      workteamArn: "arn:aws:sagemaker:us-east-1:123456789012:workteam/private-crowd/test-team" # prerequisite 1
+      categoriesS3Uri: "s3://test-bucket/text-categories.json" # prerequisite 2
+    verification:
+      workteamArn: "arn:aws:sagemaker:us-east-1:123456789012:workteam/private-crowd/verify-team" # prerequisite 4
+      # categoriesS3Uri: "s3://test-bucket/verify-categories.json" # prerequisite 6 (optional)
+      taskTitle: "Verify text classification"
+      taskDescription: "Verify the text classification is correct"
+    workflowSchedule: "rate(6 hours)"
+    additionalFeatureDefinitions:
+      - featureName: confidence
+        featureType: Fractional
