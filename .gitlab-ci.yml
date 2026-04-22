@@ -29,12 +29,16 @@ variables:
   VERSION_BUMP_LEVEL: minor
   RELEASE_TYPE: release
   GIT_SUBMODULE_STRATEGY: recursive
-  BASE_IMAGE_TAG: "${CI_REGISTRY_IMAGE}:base-${CI_COMMIT_SHORT_SHA}"
+  BASE_IMAGE_TAG: '${CI_REGISTRY_IMAGE}:base-${CI_COMMIT_SHORT_SHA}'
   # Set to 'true' to run the non-merge feature pipeline (build/test/package/publish on feature branches).
   # When 'true', the merge request pipeline is skipped, which blocks merging to main.
   # Set back to 'false' (or remove override) to re-enable the merge pipeline before merging.
   RUN_FEATURE_PIPELINE: 'false'
-  
+  # Set to 'true' to run all jobs against every package (lint, test, sonar, etc.)
+  # instead of only affected/changed packages. The pre-merge gate will block merge
+  # while this is set, so remember to set it back to 'false' before merging.
+  MERGE_PIPELINE_RUN_ALL: 'false'
+
 image: ${BASE_IMAGE_TAG}
 
 before_script:
@@ -150,11 +154,11 @@ feature_merge_lint:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     GIT_DEPTH: '0'
   script:
-    - echo "Running npm_install.sh script"
-    - ./scripts/build/npm_install.sh
-    - echo "Completed npm_install.sh"
-    - echo "Executing lint.sh script"
-    - ./scripts/quality/lint.sh
+    - echo "Running npm_install_repo.sh script"
+    - ./scripts/build/npm_install_repo.sh
+    - echo "Completed npm_install_repo.sh"
+    - echo "Executing npm run lint"
+    - npm run lint
 
 # Lint Python source
 feature_merge_lint_python:
@@ -241,9 +245,10 @@ feature_merge_build_test:
     GIT_DEPTH: '0'
   script:
     - ./scripts/quality/git_secrets.sh
-    - ./scripts/build/npm_install.sh
-    - ./scripts/build/build.sh
-    - ./scripts/ci/test_ci.sh
+    - ./scripts/build/npm_install_repo.sh
+    - npm run build
+    - ./scripts/ci/check_schema_drift.sh
+    - npm run test
 
 # Run Python tests (after build_test to reuse node_modules cache)
 feature_merge_python_test:
@@ -281,7 +286,7 @@ feature_merge_python_test:
     expire_in: 1 week
   script:
     - echo "Running Python tests with coverage..."
-    - npm run test:python:all
+    - npm run test:python
 
 # --- test stage ---
 
@@ -310,16 +315,12 @@ feature_merge_test_docs:
     - echo -e "\e[0Ksection_start:$(date +%s):prepare\r\e[0KPrepare docs output"
     - source ./scripts/generate_docs/prepare.sh
     - echo -e "\e[0Ksection_end:$(date +%s):prepare\r\e[0K"
-    - echo -e "\e[0Ksection_start:$(date +%s):schema_docs\r\e[0KGenerate Schema Docs"
-    - ./scripts/generate_docs/schema_docs.sh
-    - echo -e "\e[0Ksection_end:$(date +%s):schema_docs\r\e[0K"
     - echo -e "\e[0Ksection_start:$(date +%s):typedocs\r\e[0KGenerate TypeDocs"
     - ./scripts/generate_docs/typedocs.sh
     - echo -e "\e[0Ksection_end:$(date +%s):typedocs\r\e[0K"
     - echo -e "\e[0Ksection_start:$(date +%s):mkdocs\r\e[0KBuild MkDocs Site"
     - ./scripts/generate_docs/mkdocs.sh
     - echo -e "\e[0Ksection_end:$(date +%s):mkdocs\r\e[0K"
-
 
 # =============================================================================
 # GitLab Pages (serves docs directly from this repo)
@@ -357,7 +358,6 @@ pages:
   allow_failure: false
   script:
     - source ./scripts/generate_docs/prepare.sh
-    - ./scripts/generate_docs/schema_docs.sh
     - ./scripts/generate_docs/typedocs.sh
     - ./scripts/generate_docs/mkdocs.sh
     - mv target/docs_site internal
@@ -485,6 +485,32 @@ feature_merge_sonarqube:
   script:
     - ./scripts/quality/sonarqube.sh
 
+# Pre-merge gate: blocks merge when MERGE_PIPELINE_RUN_ALL=true.
+# All other jobs run and succeed normally so you get full results;
+# only this lightweight gate fails to prevent an accidental merge.
+feature_merge_pre_merge_check:
+  interruptible: true
+  tags:
+    - arch:amd64
+    - size:small
+  only:
+    - merge_requests
+  stage: analyze
+  needs:
+    - feature_merge_sonarqube
+  allow_failure: false
+  script:
+    - |
+      if [ "${MERGE_PIPELINE_RUN_ALL}" = "true" ]; then
+        echo "============================================================"
+        echo "MERGE_PIPELINE_RUN_ALL=true — full-repo analysis completed successfully."
+        echo "Failing this gate to prevent merge."
+        echo "Set MERGE_PIPELINE_RUN_ALL to 'false' and re-run the pipeline to unblock."
+        echo "============================================================"
+        exit 1
+      fi
+      echo "MERGE_PIPELINE_RUN_ALL is not set — merge is allowed."
+
 # Risk assessment (currently disabled)
 feature_merge_risk_assessment:
   interruptible: true
@@ -571,7 +597,7 @@ feature_version:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/publish/version_prerelease.sh
-    - ./scripts/build/npm_install.sh
+    - ./scripts/build/npm_install_repo.sh
 
 # --- build stage ---
 
@@ -605,8 +631,9 @@ feature_build_test:
       - '**/node_modules/**'
   allow_failure: false
   script:
-    - ./scripts/build/build.sh
-    - ./scripts/ci/test_ci.sh
+    - npm run build
+    - ./scripts/ci/check_schema_drift.sh
+    - npm run test
 
 # Run Python tests (after build_test to reuse node_modules cache)
 feature_python_test:
@@ -641,7 +668,7 @@ feature_python_test:
     expire_in: 1 week
   script:
     - echo "Running Python tests with coverage..."
-    - npm run test:python:all
+    - npm run test:python
 
 # --- package stage ---
 
@@ -672,7 +699,7 @@ feature_package:
     - feature_build_test
   allow_failure: false
   script:
-    - ./scripts/build/package.sh
+    - ./scripts/build/package_repo.sh
 
 # --- prerelease_publish stage ---
 
@@ -804,7 +831,7 @@ prerelease_version:
   script:
     - ./scripts/quality/git_secrets.sh
     - ./scripts/publish/version_prerelease.sh
-    - ./scripts/build/npm_install.sh
+    - ./scripts/build/npm_install_repo.sh
 
 # --- build stage ---
 
@@ -844,8 +871,9 @@ prerelease_build_test:
     - prerelease_version
   allow_failure: false
   script:
-    - ./scripts/build/build.sh
-    - ./scripts/ci/test_ci.sh
+    - npm run build
+    - ./scripts/ci/check_schema_drift.sh
+    - npm run test
 
 # --- analyze stage ---
 
@@ -961,7 +989,7 @@ prerelease_package:
   stage: package
   allow_failure: false
   script:
-    - ./scripts/build/package.sh
+    - ./scripts/build/package_repo.sh
 
 # --- prerelease_publish stage ---
 
@@ -1002,7 +1030,6 @@ prerelease_generate_html_docs:
   allow_failure: false
   script:
     - source ./scripts/generate_docs/prepare.sh
-    - ./scripts/generate_docs/schema_docs.sh
     - ./scripts/generate_docs/typedocs.sh
     - ./scripts/generate_docs/mkdocs.sh
     - ./scripts/generate_docs/deploy_gitlab.sh docs_prerelease
@@ -1185,11 +1212,12 @@ release_version_package:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/quality/git_secrets.sh
-    - ./scripts/build/npm_install.sh
+    - ./scripts/build/npm_install_repo.sh
     - ./scripts/publish/version_release.sh
-    - ./scripts/build/build.sh
-    - ./scripts/ci/test_ci.sh
-    - ./scripts/build/package.sh
+    - npm run build
+    - ./scripts/ci/check_schema_drift.sh
+    - npm run test
+    - ./scripts/build/package_repo.sh
 
 # Manual confirmation gate to proceed with the release
 release:
@@ -1479,7 +1507,6 @@ release_generate_html_docs:
   allow_failure: false
   script:
     - source ./scripts/generate_docs/prepare.sh
-    - ./scripts/generate_docs/schema_docs.sh
     - ./scripts/generate_docs/typedocs.sh
     - ./scripts/generate_docs/mkdocs.sh
     - ./scripts/generate_docs/deploy_gitlab.sh docs_prerelease

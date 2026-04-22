@@ -29,6 +29,7 @@ MDAA development follows a working-backwards process, starting from the user exp
 ### Prerequisites
 
 - **Node.js 22.x** and **npm 10.x** — See the [Node.js downloads page](https://nodejs.org/).
+- **Python 3** and **pip** — Required for schema doc generation and MkDocs.
 - **uv** — Required for Python tests. See the [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/).
 
 ### Quick Start
@@ -43,7 +44,7 @@ MDAA development follows a working-backwards process, starting from the user exp
 2. **Install dependencies**
 
    ```bash
-   npm install
+   npm run install:all
    ```
 
 3. **Build all packages**
@@ -66,7 +67,7 @@ All commands are run from the repository root.
 
 ```bash
 npm run build:all              # Build all packages (no cache)
-./scripts/build/build.sh       # Build via lerna (uses cache)
+./scripts/build/build_repo.sh       # Build via lerna (uses cache)
 ```
 
 ### Linting and Formatting
@@ -139,8 +140,8 @@ Scripts are organized by purpose under `scripts/`:
 
 | Directory | Purpose |
 |---|---|
-| `scripts/build/` | Build, install, packaging, license headers, schema updates |
-| `scripts/ci/` | CI-specific orchestration (merge_main, test_ci, python_test_ci) |
+| `scripts/build/` | Build, install, packaging, license headers |
+| `scripts/ci/` | CI-specific orchestration (merge_main, schema drift check, python_test_ci) |
 | `scripts/quality/` | Linting, SAST, SonarQube, validation, pre-push checks |
 | `scripts/test/` | Test runners — unit, snapshot, integration, Python, baselines |
 | `scripts/publish/` | Artifact publishing, versioning, CodeArtifact management |

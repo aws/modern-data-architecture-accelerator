@@ -10,17 +10,22 @@
         "{projectRoot}/lib/*.sh",
         "{projectRoot}/src/*.py",
         "{projectRoot}/src/*.sh",
-        "{projectRoot}/test/*.ts"
+        "{projectRoot}/test/*.ts",
+        "{workspaceRoot}/scripts/build/build_package.sh",
+        "{workspaceRoot}/scripts/generate_docs/jsfh-conf.yaml",
+        "{workspaceRoot}/requirements-dev.txt"
       ],
       "outputs": [
         "{projectRoot}/bin/*.d.ts",
         "{projectRoot}/bin/*.js",
         "{projectRoot}/lib/*.d.ts",
         "{projectRoot}/lib/*.js",
+        "{projectRoot}/lib/config-schema.json",
         "{projectRoot}/test/*.d.ts",
         "{projectRoot}/test/*.js",
         "{projectRoot}/lib/*.zip",
-        "{projectRoot}/src/*.zip"
+        "{projectRoot}/src/*.zip",
+        "{projectRoot}/SCHEMA.md"
       ],
       "cache": true
     },

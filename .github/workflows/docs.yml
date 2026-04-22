@@ -41,13 +41,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install \
-            mkdocs-material \
-            mike \
-            mdx_truly_sane_lists \
-            mkdocs-awesome-pages-plugin \
-            pymdown-extensions \
-            json-schema-for-humans
+          pip install -r requirements-dev.txt
           npm ci
           npm install -g typedoc
 

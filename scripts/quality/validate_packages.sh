@@ -22,6 +22,9 @@
 #     - The diff test must reference the comprehensive config
 #     - test/__snapshots__/sample-config-comprehensive*.baseline.json must exist
 #     - Excludes packages listed in .baseline-coverage-ignore (one path per line)
+#   Property 7: App packages with config schemas must use build_package.sh
+#     - build script must call scripts/build/build_package.sh with a config class name
+#     - Excludes special-case packages (core/app, core/bootstrap, shared apps, test fixtures)
 #
 # Usage: ./scripts/quality/validate_packages.sh
 # Exit code: 0 if all packages pass, 1 if any deviations found
@@ -251,6 +254,24 @@ for pkg_dir in $(discover_packages); do
       # 6d: comprehensive baseline snapshot exists
       if ! ls "${pkg_dir}"/test/__snapshots__/sample-config-comprehensive*.baseline.json &>/dev/null; then
         fail "$pkg_dir" "Property 6 - missing comprehensive baseline (run test:update-baselines)"
+      fi
+    fi
+  fi
+
+  # Property 7: App packages with config schemas must use build_package.sh
+  # Skip special-case packages that don't generate config schemas
+  if [[ "$pkg_dir" == packages/apps/* ]] && ! is_jsii_package "$pkg_json"; then
+    _skip_p7=false
+    case "$pkg_dir" in
+      packages/apps/core/app|packages/apps/core/app/test/*|packages/apps/core/bootstrap|packages/apps/dataops/dataops-shared-app)
+        _skip_p7=true
+        ;;
+    esac
+
+    if [ "$_skip_p7" = false ]; then
+      build_val=$(read_script "$pkg_json" "build")
+      if ! echo "$build_val" | grep -q 'build_package\.sh'; then
+        fail "$pkg_dir" "Property 7 - build script must use scripts/build/build_package.sh"
       fi
     fi
   fi

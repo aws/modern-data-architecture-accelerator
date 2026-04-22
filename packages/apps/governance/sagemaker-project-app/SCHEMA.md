@@ -6,16 +6,16 @@
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                       | Pattern | Type   | Deprecated | Definition                                       | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| ------------------------------------------------------------------------------ | ------- | ------ | ---------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [domainConfig](#domainConfig )                                               | No      | object | No         | In #/definitions/DomainConfig                    | Q-ENHANCED-PROPERTY<br />Optional direct domain configuration for DataZone project setup enabling inline domain configuration management. Provides direct domain configuration object for DataZone project setup and governance configuration without external parameter references.<br /><br />Use cases: Direct configuration; Inline setup; Domain configuration; Governance setup<br /><br />AWS: DataZone domain configuration for project setup and governance management<br /><br />Validation: Must be valid DomainConfig object if provided; enables direct domain configuration when specified<br />  *                                                                       |
-| - [domainConfigSSMParam](#domainConfigSSMParam )                               | No      | string | No         | -                                                | Q-ENHANCED-PROPERTY<br />Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.<br /><br />Use cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup<br /><br />AWS: AWS Systems Manager parameter for DataZone domain configuration reference<br /><br />Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration                                                                                           |
-| - [nag_suppressions](#nag_suppressions )                                       | No      | object | No         | In #/definitions/MdaaNagSuppressionConfigs       | Q-ENHANCED-PROPERTY<br />Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.<br /><br />Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions<br /><br />AWS: CDK Nag suppressions for compliance rule management and security exception documentation<br /><br />Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management          |
-| - [projectProfileEnvironmentsTemplates](#projectProfileEnvironmentsTemplates ) | No      | object | No         | -                                                | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| - [projectProfiles](#projectProfiles )                                         | No      | object | No         | In #/definitions/NamedProjectProfiles            | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| - [projects](#projects )                                                       | No      | object | No         | In #/definitions/NamedSageMakerProjects          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| - [sagemakerBlueprint](#sagemakerBlueprint )                                   | No      | object | No         | In #/definitions/MdaaSageMakerBluePrintConfig    | Q-ENHANCED-PROPERTY<br />Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access<br /><br />AWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode                         |
-| - [service_catalog_product_config](#service_catalog_product_config )           | No      | object | No         | In #/definitions/MdaaServiceCatalogProductConfig | Q-ENHANCED-PROPERTY<br />Optional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access<br /><br />AWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode |
+| Property                                                                       | Pattern | Type   | Deprecated | Definition                                          | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------ | ------- | ------ | ---------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [domainConfig](#domainConfig )                                               | No      | object | No         | In #/definitions/DomainConfig                       | Direct domain configuration object for SageMaker project setup. Use this<br />when SSM-based config resolution is not desired. Mutually exclusive with<br />domainConfigSSMParam.<br /><br />Use cases: Inline domain config; Testing; Single-stack deployments<br /><br />AWS: SageMaker (DataZone V2) domain configuration<br /><br />Validation: Optional; valid DomainConfig; mutually exclusive with domainConfigSSMParam                                                                                                                                                                                                                                                          |
+| - [domainConfigSSMParam](#domainConfigSSMParam )                               | No      | string | No         | -                                                   | SSM parameter base name containing SageMaker domain configuration. Allows<br />all required domain config (domain ID, blueprint IDs, domain unit IDs) to be<br />pulled from SSM and APIs. If omitted, the full domainConfig object must be<br />provided instead.<br /><br />Use cases: Dynamic domain config resolution; Decoupled domain/project deployments<br /><br />AWS: SSM Parameter Store for SageMaker domain configuration<br /><br />Validation: Optional; valid SSM parameter name; mutually exclusive with domainConfig                                                                                                                                                  |
+| - [nag_suppressions](#nag_suppressions )                                       | No      | object | No         | In #/definitions/MdaaNagSuppressionConfigs          | Q-ENHANCED-PROPERTY<br />Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.<br /><br />Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions<br /><br />AWS: CDK Nag suppressions for compliance rule management and security exception documentation<br /><br />Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management          |
+| - [projectProfileEnvironmentsTemplates](#projectProfileEnvironmentsTemplates ) | No      | object | No         | -                                                   | Reusable environment templates that can be referenced by project profiles<br />via the environmentsTemplate property. Template environments are merged<br />with profile-specific environments.<br /><br />Use cases: Shared environment definitions; DRY profile configuration<br /><br />AWS: DataZone project profile environment templates<br /><br />Validation: Optional; map of template name to NamedProfileEnvironmentConfigs                                                                                                                                                                                                                                                  |
+| - [projectProfiles](#projectProfiles )                                         | No      | object | No         | In #/definitions/NamedProjectProfiles               | Project profiles defining environment blueprints and deployment configurations.<br />Profiles are reusable templates that determine which environments are provisioned<br />when a project is created.<br /><br />Use cases: Standardized project templates; Blueprint environment bundling<br /><br />AWS: DataZone project profiles with environment configurations<br /><br />Validation: Optional; valid NamedProjectProfiles                                                                                                                                                                                                                                                       |
+| - [projects](#projects )                                                       | No      | object | No         | In #/definitions/NamedSageMakerProjects             | SageMaker projects to create in the domain. Each project references a<br />project profile and can include data sources and membership assignments.<br /><br />Use cases: Project deployment; Data source registration; Team membership<br /><br />AWS: DataZone projects with profile-based environment provisioning<br /><br />Validation: Optional; valid NamedSageMakerProjects                                                                                                                                                                                                                                                                                                     |
+| - [sagemakerBlueprint](#sagemakerBlueprint )                                   | No      | object | No         | In #/definitions/MdaaSageMakerCustomBluePrintConfig | Q-ENHANCED-PROPERTY<br />Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access<br /><br />AWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode                         |
+| - [service_catalog_product_config](#service_catalog_product_config )           | No      | object | No         | In #/definitions/MdaaServiceCatalogProductConfig    | Q-ENHANCED-PROPERTY<br />Optional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access<br /><br />AWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode |
 
 ## <a name="domainConfig"></a>1. Property `root > domainConfig`
 
@@ -26,37 +26,37 @@
 | **Additional properties** | Not allowed                |
 | **Defined in**            | #/definitions/DomainConfig |
 
-**Description:** Q-ENHANCED-PROPERTY
-Optional direct domain configuration for DataZone project setup enabling inline domain configuration management. Provides direct domain configuration object for DataZone project setup and governance configuration without external parameter references.
+**Description:** Direct domain configuration object for SageMaker project setup. Use this
+when SSM-based config resolution is not desired. Mutually exclusive with
+domainConfigSSMParam.
 
-Use cases: Direct configuration; Inline setup; Domain configuration; Governance setup
+Use cases: Inline domain config; Testing; Single-stack deployments
 
-AWS: DataZone domain configuration for project setup and governance management
+AWS: SageMaker (DataZone V2) domain configuration
 
-Validation: Must be valid DomainConfig object if provided; enables direct domain configuration when specified
-  *
+Validation: Optional; valid DomainConfig; mutually exclusive with domainConfigSSMParam
 
-| Property                                                                    | Pattern | Type            | Deprecated | Definition                                                                                           | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [blueprintIds](#domainConfig_blueprintIds )                               | No      | object          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [configParamArns](#domainConfig_configParamArns )                         | No      | array of string | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [customResourceRoleName](#domainConfig_customResourceRoleName )           | No      | string          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [domainArn](#domainConfig_domainArn )                                     | No      | string          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [domainBucketArn](#domainConfig_domainBucketArn )                         | No      | string          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [domainBucketUsagePolicyName](#domainConfig_domainBucketUsagePolicyName ) | No      | string          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [domainConfigCr](#domainConfig_domainConfigCr )                           | No      | object          | No         | In #/definitions/MdaaCustomResource                                                                  | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [domainId](#domainConfig_domainId )                                       | No      | string          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [domainKmsKeyArn](#domainConfig_domainKmsKeyArn )                         | No      | string          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [domainKmsUsagePolicyName](#domainConfig_domainKmsUsagePolicyName )       | No      | string          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [domainName](#domainConfig_domainName )                                   | No      | string          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [domainUnitIds](#domainConfig_domainUnitIds )                             | No      | object          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [domainVersion](#domainConfig_domainVersion )                             | No      | string          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [glueCatalogArns](#domainConfig_glueCatalogArns )                         | No      | array of string | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [glueCatalogKmsKeyArns](#domainConfig_glueCatalogKmsKeyArns )             | No      | array of string | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [node](#domainConfig_node )                                               | No      | object          | No         | Same as [node](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_node ) | The tree node.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| + [projectIds](#domainConfig_projectIds )                                   | No      | object          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| + [props](#domainConfig_props )                                             | No      | object          | No         | In #/definitions/DomainConfigProps                                                                   | Q-ENHANCED-INTERFACE<br />Configuration interface for MDAA-compliant DataZone domain configuration providing domain management and integration capabilities. Extends standard CDK properties with MDAA naming conventions and enhanced security features for secure domain governance and catalog integration.<br /><br />Use cases: DataZone domain configuration; Domain governance setup; Catalog integration; Multi-domain management<br /><br />AWS: Creates Amazon DataZone domain configuration with KMS integration and Glue catalog connectivity<br /><br />Validation: All properties except ssmParamBase and domainUnits are required for complete domain configuration |
-| + [ssmParamBase](#domainConfig_ssmParamBase )                               | No      | string          | No         | -                                                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Property                                                                    | Pattern | Type            | Deprecated | Definition                                                                                           | Title/Description |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------------------------------------------------------------------------------------------------- | ----------------- |
+| + [blueprintIds](#domainConfig_blueprintIds )                               | No      | object          | No         | -                                                                                                    | -                 |
+| + [configParamArns](#domainConfig_configParamArns )                         | No      | array of string | No         | -                                                                                                    | -                 |
+| + [customResourceRoleName](#domainConfig_customResourceRoleName )           | No      | string          | No         | -                                                                                                    | -                 |
+| + [domainArn](#domainConfig_domainArn )                                     | No      | string          | No         | -                                                                                                    | -                 |
+| + [domainBucketArn](#domainConfig_domainBucketArn )                         | No      | string          | No         | -                                                                                                    | -                 |
+| + [domainBucketUsagePolicyName](#domainConfig_domainBucketUsagePolicyName ) | No      | string          | No         | -                                                                                                    | -                 |
+| + [domainConfigCr](#domainConfig_domainConfigCr )                           | No      | object          | No         | In #/definitions/MdaaCustomResource                                                                  | -                 |
+| + [domainId](#domainConfig_domainId )                                       | No      | string          | No         | -                                                                                                    | -                 |
+| + [domainKmsKeyArn](#domainConfig_domainKmsKeyArn )                         | No      | string          | No         | -                                                                                                    | -                 |
+| + [domainKmsUsagePolicyName](#domainConfig_domainKmsUsagePolicyName )       | No      | string          | No         | -                                                                                                    | -                 |
+| + [domainName](#domainConfig_domainName )                                   | No      | string          | No         | -                                                                                                    | -                 |
+| + [domainUnitIds](#domainConfig_domainUnitIds )                             | No      | object          | No         | -                                                                                                    | -                 |
+| + [domainVersion](#domainConfig_domainVersion )                             | No      | string          | No         | -                                                                                                    | -                 |
+| + [glueCatalogArns](#domainConfig_glueCatalogArns )                         | No      | array of string | No         | -                                                                                                    | -                 |
+| + [glueCatalogKmsKeyArns](#domainConfig_glueCatalogKmsKeyArns )             | No      | array of string | No         | -                                                                                                    | -                 |
+| + [node](#domainConfig_node )                                               | No      | object          | No         | Same as [node](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_node ) | The tree node.    |
+| + [projectIds](#domainConfig_projectIds )                                   | No      | object          | No         | -                                                                                                    | -                 |
+| + [props](#domainConfig_props )                                             | No      | object          | No         | In #/definitions/DomainConfigProps                                                                   | -                 |
+| + [ssmParamBase](#domainConfig_ssmParamBase )                               | No      | string          | No         | -                                                                                                    | -                 |
 
 ### <a name="domainConfig_blueprintIds"></a>1.1. Property `root > domainConfig > blueprintIds`
 
@@ -5633,37 +5633,28 @@ This value will resolve to one of the following:
 | **Additional properties** | Not allowed                     |
 | **Defined in**            | #/definitions/DomainConfigProps |
 
-**Description:** Q-ENHANCED-INTERFACE
-Configuration interface for MDAA-compliant DataZone domain configuration providing domain management and integration capabilities. Extends standard CDK properties with MDAA naming conventions and enhanced security features for secure domain governance and catalog integration.
-
-Use cases: DataZone domain configuration; Domain governance setup; Catalog integration; Multi-domain management
-
-AWS: Creates Amazon DataZone domain configuration with KMS integration and Glue catalog connectivity
-
-Validation: All properties except ssmParamBase and domainUnits are required for complete domain configuration
-
-| Property                                                                          | Pattern | Type            | Deprecated | Definition                           | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| --------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [blueprintIds](#domainConfig_props_blueprintIds )                               | No      | object          | No         | -                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [createConfigParams](#domainConfig_props_createConfigParams )                   | No      | boolean         | No         | -                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [createOutputs](#domainConfig_props_createOutputs )                             | No      | boolean         | No         | -                                    | Q-ENHANCED-PROPERTY<br />Optional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.<br /><br />Use cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references<br /><br />AWS: CloudFormation outputs and exports for MDAA construct resource references and external integration<br /><br />Validation: Boolean value; defaults to true; enables CloudFormation output and export creation                                 |
-| - [createParams](#domainConfig_props_createParams )                               | No      | boolean         | No         | -                                    | Q-ENHANCED-PROPERTY<br />Optional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.<br /><br />Use cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management<br /><br />AWS: SSM parameter creation for MDAA construct resource references and infrastructure integration<br /><br />Validation: Boolean value; defaults to true; enables SSM parameter creation for resource references                           |
-| - [customResourceRoleName](#domainConfig_props_customResourceRoleName )           | No      | string          | No         | -                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [domainArn](#domainConfig_props_domainArn )                                     | No      | string          | No         | -                                    | Q-ENHANCED-PROPERTY<br />Required DataZone domain ARN for AWS resource identification and IAM policy integration enabling secure domain access control. Provides the complete AWS resource identifier for the domain for IAM policies and cross-service access control.<br /><br />Use cases: AWS resource identification; IAM policy integration; Cross-service access; Resource-based policies<br /><br />AWS: Amazon DataZone domain ARN for AWS resource identification and IAM integration<br /><br />Validation: Must be valid DataZone domain ARN; required; follows AWS ARN pattern for DataZone domains                                                                             |
-| - [domainBucketArn](#domainConfig_props_domainBucketArn )                         | No      | string          | No         | -                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [domainBucketUsagePolicyName](#domainConfig_props_domainBucketUsagePolicyName ) | No      | string          | No         | -                                    | Q-ENHANCED-PROPERTY<br />Required domain Bucket usage policy name. Provides IAM policy name for managing Bucket access and usage permissions for domain operations and data protection.<br /><br />Use cases: Bucket access management;<br /><br />AWS: IAM policy name for DataZone domain Bucket usage and access management<br /><br />Validation: Must be valid IAM policy name; required; defines Bucket access and usage permissions for domain                                                                                                                                                                                                                                        |
-| - [domainId](#domainConfig_props_domainId )                                       | No      | string          | No         | -                                    | Q-ENHANCED-PROPERTY<br />Required DataZone domain ID for unique domain identification within AWS enabling cross-service integration and reference. Provides the unique identifier assigned by DataZone service for domain operations and cross-service integration.<br /><br />Use cases: Unique domain identification; Cross-service integration; Domain operations; Service references<br /><br />AWS: Amazon DataZone domain ID for unique identification and cross-service integration<br /><br />Validation: Must be valid DataZone domain ID; required; assigned by DataZone service for unique identification                                                                         |
-| - [domainKmsKeyArn](#domainConfig_props_domainKmsKeyArn )                         | No      | string          | No         | -                                    | Q-ENHANCED-PROPERTY<br />Required KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations. Provides encryption at rest for domain data and metadata with customer-controlled key management for enhanced security and compliance.<br /><br />Use cases: Domain encryption; Data protection compliance; Customer-controlled encryption; Secure domain operations<br /><br />AWS: AWS KMS key ARN for DataZone domain encryption and secure data protection<br /><br />Validation: Must be valid KMS key ARN; required; enables customer-managed encryption for domain data                                                                         |
-| - [domainKmsUsagePolicyName](#domainConfig_props_domainKmsUsagePolicyName )       | No      | string          | No         | -                                    | Q-ENHANCED-PROPERTY<br />Required domain KMS usage policy name for key access management enabling controlled encryption key usage within the domain. Provides IAM policy name for managing KMS key access and usage permissions for domain operations and data protection.<br /><br />Use cases: KMS key access management; Encryption policy control; Key usage permissions; Domain security governance<br /><br />AWS: IAM policy name for DataZone domain KMS key usage and access management<br /><br />Validation: Must be valid IAM policy name; required; defines KMS key access and usage permissions for domain                                                                     |
-| - [domainName](#domainConfig_props_domainName )                                   | No      | string          | No         | -                                    | Q-ENHANCED-PROPERTY<br />Required DataZone domain name for domain identification and management enabling unique domain naming within the DataZone service. Provides the primary identifier for the DataZone domain for governance and operational management.<br /><br />Use cases: Domain identification; Unique naming; Domain management; Service organization<br /><br />AWS: Amazon DataZone domain name for identification and management within the DataZone service<br /><br />Validation: Must be unique domain name string; required; used for domain identification and service management                                                                                        |
-| - [domainUnitIds](#domainConfig_props_domainUnitIds )                             | No      | object          | No         | -                                    | Q-ENHANCED-PROPERTY<br />Optional map of domain unit names to identifiers for hierarchical domain organization enabling structured domain management. Provides organizational structure within the domain for improved governance, access control, and operational management.<br /><br />Use cases: Hierarchical organization; Domain structure; Organizational governance; Structured management<br /><br />AWS: DataZone domain units for hierarchical organization and structured domain management<br /><br />Validation: Must be object with string keys and values if provided; enables hierarchical domain organization<br />  *                                                     |
-| - [domainVersion](#domainConfig_props_domainVersion )                             | No      | string          | No         | -                                    | Q-ENHANCED-PROPERTY<br />Required domain version for domain lifecycle management and versioning control enabling domain evolution tracking. Provides version control for domain configuration changes and lifecycle management for governance and compliance.<br /><br />Use cases: Version control; Domain lifecycle management; Configuration tracking; Governance compliance<br /><br />AWS: DataZone domain version for lifecycle management and configuration version control<br /><br />Validation: Must be valid version string; required; enables domain version control and lifecycle management                                                                                    |
-| - [glueCatalogArns](#domainConfig_props_glueCatalogArns )                         | No      | array of string | No         | -                                    | Q-ENHANCED-PROPERTY<br />Required array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone. Provides the Glue catalog resources that will be integrated with the DataZone domain for data discovery and governance.<br /><br />Use cases: Catalog integration; Data discovery; governance; Cross-service connectivity<br /><br />AWS: AWS Glue catalog ARNs for DataZone integration and data catalog connectivity<br /><br />Validation: Must be array of valid Glue catalog ARNs; required; enables catalog integration with DataZone domain                                                                                                    |
-| - [glueCatalogKmsKeyArns](#domainConfig_props_glueCatalogKmsKeyArns )             | No      | array of string | No         | -                                    | Q-ENHANCED-PROPERTY<br />Required array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone. Provides encryption keys for Glue catalog data accessed through DataZone for data protection and governance.<br /><br />Use cases: Catalog encryption; Secure catalog integration; Data protection; governance<br /><br />AWS: AWS KMS key ARNs for Glue catalog encryption in DataZone integration<br /><br />Validation: Must be array of valid KMS key ARNs; required; enables secure catalog integration with DataZone                                                                                                                    |
-| + [naming](#domainConfig_props_naming )                                           | No      | object          | No         | In #/definitions/IMdaaResourceNaming | Q-ENHANCED-PROPERTY<br />Required MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.<br /><br />Use cases: Consistent naming; Resource identification; Naming conventions; Operational consistency<br /><br />AWS: MDAA resource naming for consistent resource identification and naming convention compliance<br /><br />Validation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming<br />  * |
-| - [projectIds](#domainConfig_props_projectIds )                                   | No      | object          | No         | -                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [refresh](#domainConfig_props_refresh )                                         | No      | boolean         | No         | -                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| + [ssmParamBase](#domainConfig_props_ssmParamBase )                               | No      | string          | No         | -                                    | Q-ENHANCED-PROPERTY<br />SSM parameter base path for domain configuration storage enabling centralized configuration management. Provides the base path for storing domain configuration parameters in SSM Parameter Store for centralized management and retrieval.<br /><br />Use cases: Centralized configuration; SSM integration; Configuration management; Parameter organization<br /><br />AWS: AWS Systems Manager parameter base path for domain configuration storage and management<br /><br />Validation: Must be valid SSM parameter path if provided; enables centralized domain configuration management                                                                     |
+| Property                                                                          | Pattern | Type            | Deprecated | Definition                           | Title/Description                                                                                           |
+| --------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| - [blueprintIds](#domainConfig_props_blueprintIds )                               | No      | object          | No         | -                                    | -                                                                                                           |
+| - [createConfigParams](#domainConfig_props_createConfigParams )                   | No      | boolean         | No         | -                                    | -                                                                                                           |
+| - [createOutputs](#domainConfig_props_createOutputs )                             | No      | boolean         | No         | -                                    | Flag controlling CloudFormation output and stack export creation for construct resources                    |
+| - [createParams](#domainConfig_props_createParams )                               | No      | boolean         | No         | -                                    | Flag controlling SSM parameter creation for construct resource references enabling                          |
+| - [customResourceRoleName](#domainConfig_props_customResourceRoleName )           | No      | string          | No         | -                                    | -                                                                                                           |
+| - [domainArn](#domainConfig_props_domainArn )                                     | No      | string          | No         | -                                    | DataZone domain ARN for AWS resource identification and IAM policy integration enabling                     |
+| - [domainBucketArn](#domainConfig_props_domainBucketArn )                         | No      | string          | No         | -                                    | -                                                                                                           |
+| - [domainBucketUsagePolicyName](#domainConfig_props_domainBucketUsagePolicyName ) | No      | string          | No         | -                                    | Domain Bucket usage policy name                                                                             |
+| - [domainId](#domainConfig_props_domainId )                                       | No      | string          | No         | -                                    | DataZone domain ID for unique domain identification within AWS enabling cross-service                       |
+| - [domainKmsKeyArn](#domainConfig_props_domainKmsKeyArn )                         | No      | string          | No         | -                                    | KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations          |
+| - [domainKmsUsagePolicyName](#domainConfig_props_domainKmsUsagePolicyName )       | No      | string          | No         | -                                    | Domain KMS usage policy name for key access management enabling controlled encryption key                   |
+| - [domainName](#domainConfig_props_domainName )                                   | No      | string          | No         | -                                    | DataZone domain name for domain identification and management enabling unique domain naming                 |
+| - [domainUnitIds](#domainConfig_props_domainUnitIds )                             | No      | object          | No         | -                                    | Map of domain unit names to identifiers for hierarchical domain organization enabling                       |
+| - [domainVersion](#domainConfig_props_domainVersion )                             | No      | string          | No         | -                                    | Domain version for domain lifecycle management and versioning control enabling domain evolution tracking    |
+| - [glueCatalogArns](#domainConfig_props_glueCatalogArns )                         | No      | array of string | No         | -                                    | Array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone         |
+| - [glueCatalogKmsKeyArns](#domainConfig_props_glueCatalogKmsKeyArns )             | No      | array of string | No         | -                                    | Array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone |
+| + [naming](#domainConfig_props_naming )                                           | No      | object          | No         | In #/definitions/IMdaaResourceNaming | MDAA naming implementation for consistent resource naming across all MDAA constructs                        |
+| - [projectIds](#domainConfig_props_projectIds )                                   | No      | object          | No         | -                                    | -                                                                                                           |
+| - [refresh](#domainConfig_props_refresh )                                         | No      | boolean         | No         | -                                    | -                                                                                                           |
+| + [ssmParamBase](#domainConfig_props_ssmParamBase )                               | No      | string          | No         | -                                    | SSM parameter base path for domain configuration storage enabling centralized configuration management      |
 
 #### <a name="domainConfig_props_blueprintIds"></a>1.18.1. Property `root > domainConfig > props > blueprintIds`
 
@@ -5698,14 +5689,7 @@ Validation: All properties except ssmParamBase and domainUnits are required for 
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Q-ENHANCED-PROPERTY
-Optional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.
-
-Use cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references
-
-AWS: CloudFormation outputs and exports for MDAA construct resource references and external integration
-
-Validation: Boolean value; defaults to true; enables CloudFormation output and export creation
+**Description:** Flag controlling CloudFormation output and stack export creation for construct resources
 
 #### <a name="domainConfig_props_createParams"></a>1.18.4. Property `root > domainConfig > props > createParams`
 
@@ -5714,14 +5698,7 @@ Validation: Boolean value; defaults to true; enables CloudFormation output and e
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Q-ENHANCED-PROPERTY
-Optional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.
-
-Use cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management
-
-AWS: SSM parameter creation for MDAA construct resource references and infrastructure integration
-
-Validation: Boolean value; defaults to true; enables SSM parameter creation for resource references
+**Description:** Flag controlling SSM parameter creation for construct resource references enabling
 
 #### <a name="domainConfig_props_customResourceRoleName"></a>1.18.5. Property `root > domainConfig > props > customResourceRoleName`
 
@@ -5737,14 +5714,7 @@ Validation: Boolean value; defaults to true; enables SSM parameter creation for 
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required DataZone domain ARN for AWS resource identification and IAM policy integration enabling secure domain access control. Provides the complete AWS resource identifier for the domain for IAM policies and cross-service access control.
-
-Use cases: AWS resource identification; IAM policy integration; Cross-service access; Resource-based policies
-
-AWS: Amazon DataZone domain ARN for AWS resource identification and IAM integration
-
-Validation: Must be valid DataZone domain ARN; required; follows AWS ARN pattern for DataZone domains
+**Description:** DataZone domain ARN for AWS resource identification and IAM policy integration enabling
 
 #### <a name="domainConfig_props_domainBucketArn"></a>1.18.7. Property `root > domainConfig > props > domainBucketArn`
 
@@ -5760,14 +5730,7 @@ Validation: Must be valid DataZone domain ARN; required; follows AWS ARN pattern
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required domain Bucket usage policy name. Provides IAM policy name for managing Bucket access and usage permissions for domain operations and data protection.
-
-Use cases: Bucket access management;
-
-AWS: IAM policy name for DataZone domain Bucket usage and access management
-
-Validation: Must be valid IAM policy name; required; defines Bucket access and usage permissions for domain
+**Description:** Domain Bucket usage policy name
 
 #### <a name="domainConfig_props_domainId"></a>1.18.9. Property `root > domainConfig > props > domainId`
 
@@ -5776,14 +5739,7 @@ Validation: Must be valid IAM policy name; required; defines Bucket access and u
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required DataZone domain ID for unique domain identification within AWS enabling cross-service integration and reference. Provides the unique identifier assigned by DataZone service for domain operations and cross-service integration.
-
-Use cases: Unique domain identification; Cross-service integration; Domain operations; Service references
-
-AWS: Amazon DataZone domain ID for unique identification and cross-service integration
-
-Validation: Must be valid DataZone domain ID; required; assigned by DataZone service for unique identification
+**Description:** DataZone domain ID for unique domain identification within AWS enabling cross-service
 
 #### <a name="domainConfig_props_domainKmsKeyArn"></a>1.18.10. Property `root > domainConfig > props > domainKmsKeyArn`
 
@@ -5792,14 +5748,7 @@ Validation: Must be valid DataZone domain ID; required; assigned by DataZone ser
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations. Provides encryption at rest for domain data and metadata with customer-controlled key management for enhanced security and compliance.
-
-Use cases: Domain encryption; Data protection compliance; Customer-controlled encryption; Secure domain operations
-
-AWS: AWS KMS key ARN for DataZone domain encryption and secure data protection
-
-Validation: Must be valid KMS key ARN; required; enables customer-managed encryption for domain data
+**Description:** KMS key ARN for domain encryption ensuring data protection compliance and secure domain operations
 
 #### <a name="domainConfig_props_domainKmsUsagePolicyName"></a>1.18.11. Property `root > domainConfig > props > domainKmsUsagePolicyName`
 
@@ -5808,14 +5757,7 @@ Validation: Must be valid KMS key ARN; required; enables customer-managed encryp
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required domain KMS usage policy name for key access management enabling controlled encryption key usage within the domain. Provides IAM policy name for managing KMS key access and usage permissions for domain operations and data protection.
-
-Use cases: KMS key access management; Encryption policy control; Key usage permissions; Domain security governance
-
-AWS: IAM policy name for DataZone domain KMS key usage and access management
-
-Validation: Must be valid IAM policy name; required; defines KMS key access and usage permissions for domain
+**Description:** Domain KMS usage policy name for key access management enabling controlled encryption key
 
 #### <a name="domainConfig_props_domainName"></a>1.18.12. Property `root > domainConfig > props > domainName`
 
@@ -5824,14 +5766,7 @@ Validation: Must be valid IAM policy name; required; defines KMS key access and 
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required DataZone domain name for domain identification and management enabling unique domain naming within the DataZone service. Provides the primary identifier for the DataZone domain for governance and operational management.
-
-Use cases: Domain identification; Unique naming; Domain management; Service organization
-
-AWS: Amazon DataZone domain name for identification and management within the DataZone service
-
-Validation: Must be unique domain name string; required; used for domain identification and service management
+**Description:** DataZone domain name for domain identification and management enabling unique domain naming
 
 #### <a name="domainConfig_props_domainUnitIds"></a>1.18.13. Property `root > domainConfig > props > domainUnitIds`
 
@@ -5841,15 +5776,7 @@ Validation: Must be unique domain name string; required; used for domain identif
 | **Required**              | No                                                                                                            |
 | **Additional properties** | [Each additional property must conform to the schema](#domainConfig_props_domainUnitIds_additionalProperties) |
 
-**Description:** Q-ENHANCED-PROPERTY
-Optional map of domain unit names to identifiers for hierarchical domain organization enabling structured domain management. Provides organizational structure within the domain for improved governance, access control, and operational management.
-
-Use cases: Hierarchical organization; Domain structure; Organizational governance; Structured management
-
-AWS: DataZone domain units for hierarchical organization and structured domain management
-
-Validation: Must be object with string keys and values if provided; enables hierarchical domain organization
-  *
+**Description:** Map of domain unit names to identifiers for hierarchical domain organization enabling
 
 | Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -5869,14 +5796,7 @@ Validation: Must be object with string keys and values if provided; enables hier
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required domain version for domain lifecycle management and versioning control enabling domain evolution tracking. Provides version control for domain configuration changes and lifecycle management for governance and compliance.
-
-Use cases: Version control; Domain lifecycle management; Configuration tracking; Governance compliance
-
-AWS: DataZone domain version for lifecycle management and configuration version control
-
-Validation: Must be valid version string; required; enables domain version control and lifecycle management
+**Description:** Domain version for domain lifecycle management and versioning control enabling domain evolution tracking
 
 #### <a name="domainConfig_props_glueCatalogArns"></a>1.18.15. Property `root > domainConfig > props > glueCatalogArns`
 
@@ -5885,14 +5805,7 @@ Validation: Must be valid version string; required; enables domain version contr
 | **Type**     | `array of string` |
 | **Required** | No                |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone. Provides the Glue catalog resources that will be integrated with the DataZone domain for data discovery and governance.
-
-Use cases: Catalog integration; Data discovery; governance; Cross-service connectivity
-
-AWS: AWS Glue catalog ARNs for DataZone integration and data catalog connectivity
-
-Validation: Must be array of valid Glue catalog ARNs; required; enables catalog integration with DataZone domain
+**Description:** Array of Glue catalog ARNs for catalog integration enabling data catalog connectivity with DataZone
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -5920,14 +5833,7 @@ Validation: Must be array of valid Glue catalog ARNs; required; enables catalog 
 | **Type**     | `array of string` |
 | **Required** | No                |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone. Provides encryption keys for Glue catalog data accessed through DataZone for data protection and governance.
-
-Use cases: Catalog encryption; Secure catalog integration; Data protection; governance
-
-AWS: AWS KMS key ARNs for Glue catalog encryption in DataZone integration
-
-Validation: Must be array of valid KMS key ARNs; required; enables secure catalog integration with DataZone
+**Description:** Array of Glue catalog KMS key ARNs for catalog encryption enabling secure catalog integration with DataZone
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -5957,19 +5863,11 @@ Validation: Must be array of valid KMS key ARNs; required; enables secure catalo
 | **Additional properties** | Not allowed                       |
 | **Defined in**            | #/definitions/IMdaaResourceNaming |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.
+**Description:** MDAA naming implementation for consistent resource naming across all MDAA constructs
 
-Use cases: Consistent naming; Resource identification; Naming conventions; Operational consistency
-
-AWS: MDAA resource naming for consistent resource identification and naming convention compliance
-
-Validation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming
-  *
-
-| Property                                     | Pattern | Type   | Deprecated | Definition                                | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| -------------------------------------------- | ------- | ------ | ---------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [props](#domainConfig_props_naming_props ) | No      | object | No         | In #/definitions/MdaaResourceNamingConfig | Q-ENHANCED-PROPERTY<br />Configuration properties containing organizational context and CDK node access for the naming implementation. Provides the foundational data required to generate consistent resource names across all MDAA modules.<br /><br />Use cases: Access to org/env/domain/module context; CDK context retrieval for custom naming; Immutable naming configuration<br /><br />AWS: Source data for all AWS resource name generation<br /><br />Validation: Must contain valid MdaaResourceNamingConfig with all required properties |
+| Property                                     | Pattern | Type   | Deprecated | Definition                                | Title/Description                                                                                            |
+| -------------------------------------------- | ------- | ------ | ---------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| + [props](#domainConfig_props_naming_props ) | No      | object | No         | In #/definitions/MdaaResourceNamingConfig | Configuration properties containing organizational context and CDK node access for the naming implementation |
 
 ##### <a name="domainConfig_props_naming_props"></a>1.18.17.1. Property `root > domainConfig > props > naming > props`
 
@@ -5980,22 +5878,15 @@ Validation: Must be valid IMdaaResourceNaming implementation; required for all M
 | **Additional properties** | Not allowed                            |
 | **Defined in**            | #/definitions/MdaaResourceNamingConfig |
 
-**Description:** Q-ENHANCED-PROPERTY
-Configuration properties containing organizational context and CDK node access for the naming implementation. Provides the foundational data required to generate consistent resource names across all MDAA modules.
+**Description:** Configuration properties containing organizational context and CDK node access for the naming implementation
 
-Use cases: Access to org/env/domain/module context; CDK context retrieval for custom naming; Immutable naming configuration
-
-AWS: Source data for all AWS resource name generation
-
-Validation: Must contain valid MdaaResourceNamingConfig with all required properties
-
-| Property                                                     | Pattern | Type   | Deprecated | Definition                                                                                           | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [cdkNode](#domainConfig_props_naming_props_cdkNode )       | No      | object | No         | Same as [node](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_node ) | Q-ENHANCED-PROPERTY<br />CDK construct node providing access to context values for custom naming implementations. Enables retrieval of additional configuration through tryGetContext() for advanced naming strategies beyond the standard org/env/domain/module pattern.<br /><br />Use cases: Custom naming with environment-specific prefixes; Integration with external naming services; Context-driven naming for compliance requirements<br /><br />AWS: CDK context system for CloudFormation template generation<br /><br />Validation: Must be valid CDK Node instance with accessible context<br />  *                                                                                  |
-| + [domain](#domainConfig_props_naming_props_domain )         | No      | string | No         | -                                                                                                    | Q-ENHANCED-PROPERTY<br />Domain identifier from MDAA configuration representing logical business or organizational boundaries within the data architecture. Forms the third component of the default naming pattern and enables data mesh architectures with domain-specific resource isolation.<br /><br />Use cases: Data mesh domain separation; Line-of-business resource isolation; Cross-domain data sharing with clear ownership<br /><br />AWS: Domain component in all AWS resource names, SSM parameter paths, and CloudFormation export names<br /><br />Validation: Must be valid AWS resource name component (typically business domain names like 'finance', 'marketing', 'shared') |
-| + [env](#domainConfig_props_naming_props_env )               | No      | string | No         | -                                                                                                    | Q-ENHANCED-PROPERTY<br />Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain. Forms the second component of the default naming pattern enabling parallel dev/test/prod deployments without resource conflicts.<br /><br />Use cases: Multi-stage deployments in same account; Environment-specific resource isolation; Progressive deployment strategies<br /><br />AWS: Environment component in all AWS resource names and CloudFormation stack names<br /><br />Validation: Must be valid AWS resource name component (typically 'dev', 'test', 'prod', 'staging')                                                                      |
-| + [moduleName](#domainConfig_props_naming_props_moduleName ) | No      | string | No         | -                                                                                                    | Q-ENHANCED-PROPERTY<br />Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment. Forms the final component of the default naming pattern and enables multiple instances of the same module type within the same scope.<br /><br />Use cases: Multiple data lake instances per domain; Separate analytics workloads; Module-specific resource grouping<br /><br />AWS: Module component in all AWS resource names, SSM parameter paths, and CloudFormation stack names<br /><br />Validation: Must be valid AWS resource name component (typically module function like 'datalake', 'warehouse', 'analytics')                             |
-| + [org](#domainConfig_props_naming_props_org )               | No      | string | No         | -                                                                                                    | Q-ENHANCED-PROPERTY<br />Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names. Forms the first component of the default naming pattern and ensures global uniqueness across multiple MDAA deployments.<br /><br />Use cases: Multi-organization AWS accounts; Shared service accounts with multiple tenants; Resource name collision prevention<br /><br />AWS: Prefix for all AWS resource names including S3 buckets, IAM roles, and CloudFormation stacks<br /><br />Validation: Must be valid AWS resource name component (3-63 characters, alphanumeric and hyphens only, no consecutive hyphens)                               |
+| Property                                                     | Pattern | Type   | Deprecated | Definition                                                                                           | Title/Description                                                                                                 |
+| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| + [cdkNode](#domainConfig_props_naming_props_cdkNode )       | No      | object | No         | Same as [node](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_node ) | CDK construct node providing access to context values for custom naming implementations                           |
+| + [domain](#domainConfig_props_naming_props_domain )         | No      | string | No         | -                                                                                                    | Domain identifier from MDAA configuration representing logical business or organizational boundaries              |
+| + [env](#domainConfig_props_naming_props_env )               | No      | string | No         | -                                                                                                    | Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain        |
+| + [moduleName](#domainConfig_props_naming_props_moduleName ) | No      | string | No         | -                                                                                                    | Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment   |
+| + [org](#domainConfig_props_naming_props_org )               | No      | string | No         | -                                                                                                    | Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names |
 
 ###### <a name="domainConfig_props_naming_props_cdkNode"></a>1.18.17.1.1. Property `root > domainConfig > props > naming > props > cdkNode`
 
@@ -6006,15 +5897,7 @@ Validation: Must contain valid MdaaResourceNamingConfig with all required proper
 | **Additional properties** | Not allowed                                                                                 |
 | **Same definition as**    | [node](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_node) |
 
-**Description:** Q-ENHANCED-PROPERTY
-CDK construct node providing access to context values for custom naming implementations. Enables retrieval of additional configuration through tryGetContext() for advanced naming strategies beyond the standard org/env/domain/module pattern.
-
-Use cases: Custom naming with environment-specific prefixes; Integration with external naming services; Context-driven naming for compliance requirements
-
-AWS: CDK context system for CloudFormation template generation
-
-Validation: Must be valid CDK Node instance with accessible context
-  *
+**Description:** CDK construct node providing access to context values for custom naming implementations
 
 ###### <a name="domainConfig_props_naming_props_domain"></a>1.18.17.1.2. Property `root > domainConfig > props > naming > props > domain`
 
@@ -6023,14 +5906,7 @@ Validation: Must be valid CDK Node instance with accessible context
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-Domain identifier from MDAA configuration representing logical business or organizational boundaries within the data architecture. Forms the third component of the default naming pattern and enables data mesh architectures with domain-specific resource isolation.
-
-Use cases: Data mesh domain separation; Line-of-business resource isolation; Cross-domain data sharing with clear ownership
-
-AWS: Domain component in all AWS resource names, SSM parameter paths, and CloudFormation export names
-
-Validation: Must be valid AWS resource name component (typically business domain names like 'finance', 'marketing', 'shared')
+**Description:** Domain identifier from MDAA configuration representing logical business or organizational boundaries
 
 ###### <a name="domainConfig_props_naming_props_env"></a>1.18.17.1.3. Property `root > domainConfig > props > naming > props > env`
 
@@ -6039,14 +5915,7 @@ Validation: Must be valid AWS resource name component (typically business domain
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain. Forms the second component of the default naming pattern enabling parallel dev/test/prod deployments without resource conflicts.
-
-Use cases: Multi-stage deployments in same account; Environment-specific resource isolation; Progressive deployment strategies
-
-AWS: Environment component in all AWS resource names and CloudFormation stack names
-
-Validation: Must be valid AWS resource name component (typically 'dev', 'test', 'prod', 'staging')
+**Description:** Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain
 
 ###### <a name="domainConfig_props_naming_props_moduleName"></a>1.18.17.1.4. Property `root > domainConfig > props > naming > props > moduleName`
 
@@ -6055,14 +5924,7 @@ Validation: Must be valid AWS resource name component (typically 'dev', 'test', 
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment. Forms the final component of the default naming pattern and enables multiple instances of the same module type within the same scope.
-
-Use cases: Multiple data lake instances per domain; Separate analytics workloads; Module-specific resource grouping
-
-AWS: Module component in all AWS resource names, SSM parameter paths, and CloudFormation stack names
-
-Validation: Must be valid AWS resource name component (typically module function like 'datalake', 'warehouse', 'analytics')
+**Description:** Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment
 
 ###### <a name="domainConfig_props_naming_props_org"></a>1.18.17.1.5. Property `root > domainConfig > props > naming > props > org`
 
@@ -6071,14 +5933,7 @@ Validation: Must be valid AWS resource name component (typically module function
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names. Forms the first component of the default naming pattern and ensures global uniqueness across multiple MDAA deployments.
-
-Use cases: Multi-organization AWS accounts; Shared service accounts with multiple tenants; Resource name collision prevention
-
-AWS: Prefix for all AWS resource names including S3 buckets, IAM roles, and CloudFormation stacks
-
-Validation: Must be valid AWS resource name component (3-63 characters, alphanumeric and hyphens only, no consecutive hyphens)
+**Description:** Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names
 
 #### <a name="domainConfig_props_projectIds"></a>1.18.18. Property `root > domainConfig > props > projectIds`
 
@@ -6113,14 +5968,7 @@ Validation: Must be valid AWS resource name component (3-63 characters, alphanum
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-SSM parameter base path for domain configuration storage enabling centralized configuration management. Provides the base path for storing domain configuration parameters in SSM Parameter Store for centralized management and retrieval.
-
-Use cases: Centralized configuration; SSM integration; Configuration management; Parameter organization
-
-AWS: AWS Systems Manager parameter base path for domain configuration storage and management
-
-Validation: Must be valid SSM parameter path if provided; enables centralized domain configuration management
+**Description:** SSM parameter base path for domain configuration storage enabling centralized configuration management
 
 ### <a name="domainConfig_ssmParamBase"></a>1.19. Property `root > domainConfig > ssmParamBase`
 
@@ -6136,14 +5984,16 @@ Validation: Must be valid SSM parameter path if provided; enables centralized do
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Q-ENHANCED-PROPERTY
-Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.
+**Description:** SSM parameter base name containing SageMaker domain configuration. Allows
+all required domain config (domain ID, blueprint IDs, domain unit IDs) to be
+pulled from SSM and APIs. If omitted, the full domainConfig object must be
+provided instead.
 
-Use cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup
+Use cases: Dynamic domain config resolution; Decoupled domain/project deployments
 
-AWS: AWS Systems Manager parameter for DataZone domain configuration reference
+AWS: SSM Parameter Store for SageMaker domain configuration
 
-Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration
+Validation: Optional; valid SSM parameter name; mutually exclusive with domainConfig
 
 ## <a name="nag_suppressions"></a>3. Property `root > nag_suppressions`
 
@@ -6163,9 +6013,9 @@ AWS: CDK Nag suppressions for compliance rule management and security exception 
 
 Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management
 
-| Property                                | Pattern | Type  | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| --------------------------------------- | ------- | ----- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| + [by_path](#nag_suppressions_by_path ) | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.<br /><br />Use cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations<br /><br />AWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation<br /><br />Validation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details<br />  * |
+| Property                                | Pattern | Type  | Deprecated | Definition | Title/Description                                                                          |
+| --------------------------------------- | ------- | ----- | ---------- | ---------- | ------------------------------------------------------------------------------------------ |
+| + [by_path](#nag_suppressions_by_path ) | No      | array | No         | -          | Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted |
 
 ### <a name="nag_suppressions_by_path"></a>3.1. Property `root > nag_suppressions > by_path`
 
@@ -6174,15 +6024,7 @@ Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structu
 | **Type**     | `array` |
 | **Required** | Yes     |
 
-**Description:** Q-ENHANCED-PROPERTY
-Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.
-
-Use cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations
-
-AWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation
-
-Validation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details
-  *
+**Description:** Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -6192,9 +6034,9 @@ Validation: Must be array of valid MdaaNagSuppressionByPath objects with valid r
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                             | Description              |
-| ----------------------------------------------------------- | ------------------------ |
-| [MdaaNagSuppressionByPath](#nag_suppressions_by_path_items) | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be                             | Description |
+| ----------------------------------------------------------- | ----------- |
+| [MdaaNagSuppressionByPath](#nag_suppressions_by_path_items) | -           |
 
 #### <a name="nag_suppressions_by_path_items"></a>3.1.1. root > nag_suppressions > by_path > MdaaNagSuppressionByPath
 
@@ -6205,19 +6047,10 @@ Validation: Must be array of valid MdaaNagSuppressionByPath objects with valid r
 | **Additional properties** | Not allowed                            |
 | **Defined in**            | #/definitions/MdaaNagSuppressionByPath |
 
-**Description:** Q-ENHANCED-INTERFACE
-Configuration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.
-
-Use cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations
-
-AWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation
-
-Validation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications
-
-| Property                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| --------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [path](#nag_suppressions_by_path_items_path )                 | No      | string          | No         | -          | Q-ENHANCED-PROPERTY<br />CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.<br /><br />Use cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control<br /><br />AWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation<br /><br />Validation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName) |
-| + [suppressions](#nag_suppressions_by_path_items_suppressions ) | No      | array of object | No         | -          | Q-ENHANCED-PROPERTY<br />Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.<br /><br />Use cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance<br /><br />AWS: CDK Nag rule ID suppression with justification tracking for compliance auditing<br /><br />Validation: Each suppression must have valid CDK Nag rule ID and non-empty reason string<br />  *          |
+| Property                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                           |
+| --------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------- |
+| + [path](#nag_suppressions_by_path_items_path )                 | No      | string          | No         | -          | CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed |
+| + [suppressions](#nag_suppressions_by_path_items_suppressions ) | No      | array of object | No         | -          | Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance |
 
 ##### <a name="nag_suppressions_by_path_items_path"></a>3.1.1.1. Property `root > nag_suppressions > by_path > by_path items > path`
 
@@ -6226,14 +6059,7 @@ Validation: path must be valid CloudFormation resource path; suppressions array 
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.
-
-Use cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control
-
-AWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation
-
-Validation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)
+**Description:** CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed
 
 ##### <a name="nag_suppressions_by_path_items_suppressions"></a>3.1.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions`
 
@@ -6242,15 +6068,7 @@ Validation: Must be valid CDK construct tree path format (e.g., /StackName/Const
 | **Type**     | `array of object` |
 | **Required** | Yes               |
 
-**Description:** Q-ENHANCED-PROPERTY
-Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.
-
-Use cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance
-
-AWS: CDK Nag rule ID suppression with justification tracking for compliance auditing
-
-Validation: Each suppression must have valid CDK Nag rule ID and non-empty reason string
-  *
+**Description:** Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -6299,6 +6117,16 @@ Validation: Each suppression must have valid CDK Nag rule ID and non-empty reaso
 | **Required**              | No                                                                                                               |
 | **Additional properties** | [Each additional property must conform to the schema](#projectProfileEnvironmentsTemplates_additionalProperties) |
 
+**Description:** Reusable environment templates that can be referenced by project profiles
+via the environmentsTemplate property. Template environments are merged
+with profile-specific environments.
+
+Use cases: Shared environment definitions; DRY profile configuration
+
+AWS: DataZone project profile environment templates
+
+Validation: Optional; map of template name to NamedProfileEnvironmentConfigs
+
 | Property                                                         | Pattern | Type   | Deprecated | Definition                                      | Title/Description |
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ----------------------------------------------- | ----------------- |
 | - [](#projectProfileEnvironmentsTemplates_additionalProperties ) | No      | object | No         | In #/definitions/NamedProfileEnvironmentConfigs | -                 |
@@ -6325,321 +6153,125 @@ Validation: Each suppression must have valid CDK Nag rule ID and non-empty reaso
 | **Additional properties** | Not allowed                            |
 | **Defined in**            | #/definitions/ProfileEnvironmentConfig |
 
-| Property                                                                                                                             | Pattern | Type             | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | ----------------- |
-| - [configurationParameters](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters ) | No      | object           | No         | -          | -                 |
-| - [deploymentMode](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_deploymentMode )                   | No      | enum (of string) | No         | -          | -                 |
-| - [deploymentOrder](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_deploymentOrder )                 | No      | number           | No         | -          | -                 |
-
-##### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters"></a>4.1.1.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters`
-
-|                           |                                                                                                                                                                                    |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                                           |
-| **Required**              | No                                                                                                                                                                                 |
-| **Additional properties** | [Each additional property must conform to the schema](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties) |
-
-| Property                                                                                                                           | Pattern | Type   | Deprecated | Definition                              | Title/Description |
-| ---------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------- | ----------------- |
-| - [](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties ) | No      | object | No         | In #/definitions/ConfigurationParameter | -                 |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties"></a>4.1.1.1.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > ConfigurationParameter`
-
-|                           |                                      |
-| ------------------------- | ------------------------------------ |
-| **Type**                  | `combining`                          |
-| **Required**              | No                                   |
-| **Additional properties** | Any type allowed                     |
-| **Defined in**            | #/definitions/ConfigurationParameter |
-
-| Any of(Option)                                                                                                                                                                                              |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [IResolvable](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i0)                                                         |
-| [CfnProjectProfile.EnvironmentConfigurationParametersDetailsProperty](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1) |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i0"></a>4.1.1.1.1.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > IResolvable`
-
-|                           |                                                                                                                        |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                               |
-| **Required**              | No                                                                                                                     |
-| **Additional properties** | Not allowed                                                                                                            |
-| **Same definition as**    | [renderedTags](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags) |
-
-**Description:** Interface for values that can be resolvable later
-
-Tokens are special objects that participate in synthesis.
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1"></a>4.1.1.1.1.2. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > CfnProjectProfile.EnvironmentConfigurationParametersDetailsProperty`
-
-|                           |                                                                                   |
-| ------------------------- | --------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                          |
-| **Required**              | No                                                                                |
-| **Additional properties** | Not allowed                                                                       |
-| **Defined in**            | #/definitions/CfnProjectProfile.EnvironmentConfigurationParametersDetailsProperty |
-
-**Description:** The details of the environment configuration parameter.
-
-| Property                                                                                                                                                                         | Pattern | Type        | Deprecated | Definition | Title/Description                                  |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | -------------------------------------------------- |
-| - [parameterOverrides](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides ) | No      | Combination | No         | -          | The parameter overrides.                           |
-| - [resolvedParameters](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters ) | No      | Combination | No         | -          | The resolved environment configuration parameters. |
-| - [ssmPath](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_ssmPath )                       | No      | string      | No         | -          | Ssm path environment configuration parameters.     |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides"></a>4.1.1.1.1.2.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > parameterOverrides`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `combining`      |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** The parameter overrides.
-
-| Any of(Option)                                                                                                                                                                  |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [IResolvable](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i0) |
-| [item 1](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1)      |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i0"></a>4.1.1.1.1.2.1.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > parameterOverrides > anyOf > IResolvable`
-
-|                           |                                                                                                                        |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                               |
-| **Required**              | No                                                                                                                     |
-| **Additional properties** | Not allowed                                                                                                            |
-| **Same definition as**    | [renderedTags](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags) |
-
-**Description:** Interface for values that can be resolvable later
-
-Tokens are special objects that participate in synthesis.
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1"></a>4.1.1.1.1.2.1.2. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > parameterOverrides > anyOf > item 1`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                                                                                                        | Description |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [item 1 items](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items) | -           |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items"></a>4.1.1.1.1.2.1.2.1. root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > parameterOverrides > anyOf > item 1 > item 1 items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `combining`      |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Any of(Option)                                                                                                                                                                                                                                 |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [IResolvable](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i0)                                                 |
-| [CfnProjectProfile.EnvironmentConfigurationParameterProperty](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1) |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i0"></a>4.1.1.1.1.2.1.2.1.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > parameterOverrides > anyOf > item 1 > item 1 items > anyOf > IResolvable`
-
-|                           |                                                                                                                        |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                               |
-| **Required**              | No                                                                                                                     |
-| **Additional properties** | Not allowed                                                                                                            |
-| **Same definition as**    | [renderedTags](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags) |
-
-**Description:** Interface for values that can be resolvable later
-
-Tokens are special objects that participate in synthesis.
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1"></a>4.1.1.1.1.2.1.2.1.2. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > parameterOverrides > anyOf > item 1 > item 1 items > anyOf > CfnProjectProfile.EnvironmentConfigurationParameterProperty`
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | Not allowed                                                               |
-| **Defined in**            | #/definitions/CfnProjectProfile.EnvironmentConfigurationParameterProperty |
-
-**Description:** The environment configuration parameter.
-
-| Property                                                                                                                                                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                                        |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | -------------------------------------------------------- |
-| - [isEditable](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1_isEditable ) | No      | Combination | No         | -          | Specifies whether the environment parameter is editable. |
-| - [name](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1_name )             | No      | string      | No         | -          | The name of the environment configuration parameter.     |
-| - [value](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1_value )           | No      | string      | No         | -          | The value of the environment configuration parameter.    |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1_isEditable"></a>4.1.1.1.1.2.1.2.1.2.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > parameterOverrides > anyOf > item 1 > item 1 items > anyOf > item 1 > isEditable`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `combining`      |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Specifies whether the environment parameter is editable.
-
-| Any of(Option)                                                                                                                                                                                                     |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [IResolvable](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1_isEditable_anyOf_i0) |
-| [item 1](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1_isEditable_anyOf_i1)      |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1_isEditable_anyOf_i0"></a>4.1.1.1.1.2.1.2.1.2.1.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > parameterOverrides > anyOf > item 1 > item 1 items > anyOf > item 1 > isEditable > anyOf > IResolvable`
-
-|                           |                                                                                                                        |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                               |
-| **Required**              | No                                                                                                                     |
-| **Additional properties** | Not allowed                                                                                                            |
-| **Same definition as**    | [renderedTags](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags) |
-
-**Description:** Interface for values that can be resolvable later
-
-Tokens are special objects that participate in synthesis.
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1_isEditable_anyOf_i1"></a>4.1.1.1.1.2.1.2.1.2.1.2. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > parameterOverrides > anyOf > item 1 > item 1 items > anyOf > item 1 > isEditable > anyOf > item 1`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1_name"></a>4.1.1.1.1.2.1.2.1.2.2. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > parameterOverrides > anyOf > item 1 > item 1 items > anyOf > item 1 > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** The name of the environment configuration parameter.
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1_value"></a>4.1.1.1.1.2.1.2.1.2.3. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > parameterOverrides > anyOf > item 1 > item 1 items > anyOf > item 1 > value`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** The value of the environment configuration parameter.
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters"></a>4.1.1.1.1.2.2. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > resolvedParameters`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `combining`      |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** The resolved environment configuration parameters.
-
-| Any of(Option)                                                                                                                                                                  |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [IResolvable](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters_anyOf_i0) |
-| [item 1](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters_anyOf_i1)      |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters_anyOf_i0"></a>4.1.1.1.1.2.2.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > resolvedParameters > anyOf > IResolvable`
-
-|                           |                                                                                                                        |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                               |
-| **Required**              | No                                                                                                                     |
-| **Additional properties** | Not allowed                                                                                                            |
-| **Same definition as**    | [renderedTags](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags) |
-
-**Description:** Interface for values that can be resolvable later
-
-Tokens are special objects that participate in synthesis.
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters_anyOf_i1"></a>4.1.1.1.1.2.2.2. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > resolvedParameters > anyOf > item 1`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                                                                                                        | Description |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [item 1 items](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters_anyOf_i1_items) | -           |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters_anyOf_i1_items"></a>4.1.1.1.1.2.2.2.1. root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > resolvedParameters > anyOf > item 1 > item 1 items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `combining`      |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Any of(Option)                                                                                                                                                                                                                                 |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [IResolvable](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters_anyOf_i1_items_anyOf_i0)                                                 |
-| [CfnProjectProfile.EnvironmentConfigurationParameterProperty](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters_anyOf_i1_items_anyOf_i1) |
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters_anyOf_i1_items_anyOf_i0"></a>4.1.1.1.1.2.2.2.1.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > resolvedParameters > anyOf > item 1 > item 1 items > anyOf > IResolvable`
-
-|                           |                                                                                                                        |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                               |
-| **Required**              | No                                                                                                                     |
-| **Additional properties** | Not allowed                                                                                                            |
-| **Same definition as**    | [renderedTags](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_tags_renderedTags) |
-
-**Description:** Interface for values that can be resolvable later
-
-Tokens are special objects that participate in synthesis.
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_resolvedParameters_anyOf_i1_items_anyOf_i1"></a>4.1.1.1.1.2.2.2.1.2. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > resolvedParameters > anyOf > item 1 > item 1 items > anyOf > CfnProjectProfile.EnvironmentConfigurationParameterProperty`
-
-|                           |                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                                                                                                                                                                                                                          |
-| **Required**              | No                                                                                                                                                                                                                                                                                                                                                                |
-| **Additional properties** | Not allowed                                                                                                                                                                                                                                                                                                                                                       |
-| **Same definition as**    | [projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_parameterOverrides_anyOf_i1_items_anyOf_i1) |
-
-**Description:** The environment configuration parameter.
-
-###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_configurationParameters_additionalProperties_anyOf_i1_ssmPath"></a>4.1.1.1.1.2.3. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > configurationParameters > additionalProperties > anyOf > item 1 > ssmPath`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Ssm path environment configuration parameters.
-
-##### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_deploymentMode"></a>4.1.1.2. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > deploymentMode`
+| Property                                                                                                             | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [deploymentMode](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_deploymentMode )   | No      | enum (of string) | No         | -          | When the environment is deployed relative to project creation.<br />ON_CREATE deploys immediately; ON_DEMAND requires manual trigger.<br /><br />Use cases: Automatic vs. manual environment provisioning<br /><br />AWS: DataZone environment deployment mode<br /><br />Validation: Optional; 'ON_CREATE' \| 'ON_DEMAND'                                                                  |
+| - [deploymentOrder](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_deploymentOrder ) | No      | number           | No         | -          | Numeric order for environment deployment. Lower numbers deploy first.<br />Tooling is always order 1, DataLake is always order 2.<br /><br />Use cases: Ordered environment provisioning; Dependency sequencing<br /><br />AWS: DataZone environment deployment order<br /><br />Validation: Optional; positive integer                                                                     |
+| - [parameters](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_parameters )           | No      | object           | No         | -          | Blueprint parameter overrides for this environment configuration.<br />Supports per-parameter value and editability settings.<br /><br />Use cases: Blueprint-specific parameter customization; Compliance overrides<br /><br />AWS: DataZone project profile environment parameters<br /><br />Validation: Optional; object with overrides map of parameter name to ParameterOverrideProps |
+
+##### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_deploymentMode"></a>4.1.1.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > deploymentMode`
 
 |              |                    |
 | ------------ | ------------------ |
 | **Type**     | `enum (of string)` |
 | **Required** | No                 |
 
+**Description:** When the environment is deployed relative to project creation.
+ON_CREATE deploys immediately; ON_DEMAND requires manual trigger.
+
+Use cases: Automatic vs. manual environment provisioning
+
+AWS: DataZone environment deployment mode
+
+Validation: Optional; 'ON_CREATE' | 'ON_DEMAND'
+
 Must be one of:
 * "ON_CREATE"
 * "ON_DEMAND"
 
-##### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_deploymentOrder"></a>4.1.1.3. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > deploymentOrder`
+##### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_deploymentOrder"></a>4.1.1.2. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > deploymentOrder`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
+
+**Description:** Numeric order for environment deployment. Lower numbers deploy first.
+Tooling is always order 1, DataLake is always order 2.
+
+Use cases: Ordered environment provisioning; Dependency sequencing
+
+AWS: DataZone environment deployment order
+
+Validation: Optional; positive integer
+
+##### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_parameters"></a>4.1.1.3. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > parameters`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Blueprint parameter overrides for this environment configuration.
+Supports per-parameter value and editability settings.
+
+Use cases: Blueprint-specific parameter customization; Compliance overrides
+
+AWS: DataZone project profile environment parameters
+
+Validation: Optional; object with overrides map of parameter name to ParameterOverrideProps
+
+| Property                                                                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| + [overrides](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_parameters_overrides ) | No      | object | No         | -          | -                 |
+
+###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_parameters_overrides"></a>4.1.1.3.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > parameters > overrides`
+
+|                           |                                                                                                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                        |
+| **Required**              | Yes                                                                                                                                                                             |
+| **Additional properties** | [Each additional property must conform to the schema](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_parameters_overrides_additionalProperties) |
+
+| Property                                                                                                                        | Pattern | Type   | Deprecated | Definition                              | Title/Description |
+| ------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------- | ----------------- |
+| - [](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_parameters_overrides_additionalProperties ) | No      | object | No         | In #/definitions/ParameterOverrideProps | -                 |
+
+###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_parameters_overrides_additionalProperties"></a>4.1.1.3.1.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > parameters > overrides > ParameterOverrideProps`
+
+|                           |                                      |
+| ------------------------- | ------------------------------------ |
+| **Type**                  | `object`                             |
+| **Required**              | No                                   |
+| **Additional properties** | Not allowed                          |
+| **Defined in**            | #/definitions/ParameterOverrideProps |
+
+| Property                                                                                                                                             | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                        |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [isEditable](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_parameters_overrides_additionalProperties_isEditable ) | No      | boolean | No         | -          | Whether this parameter can be edited by project creators. When false,<br />the value is locked to the profile-defined value.<br /><br />Use cases: Compliance-enforced parameters; Locked vs. flexible overrides<br /><br />AWS: DataZone project profile parameter editability<br /><br />Validation: Optional; boolean |
+| - [value](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_parameters_overrides_additionalProperties_value )           | No      | string  | No         | -          | Override value for this blueprint parameter.<br /><br />Use cases: Default parameter values; Compliance-enforced settings<br /><br />AWS: DataZone project profile parameter value<br /><br />Validation: Optional; string                                                                                               |
+
+###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_parameters_overrides_additionalProperties_isEditable"></a>4.1.1.3.1.1.1. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > parameters > overrides > additionalProperties > isEditable`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Whether this parameter can be edited by project creators. When false,
+the value is locked to the profile-defined value.
+
+Use cases: Compliance-enforced parameters; Locked vs. flexible overrides
+
+AWS: DataZone project profile parameter editability
+
+Validation: Optional; boolean
+
+###### <a name="projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties_parameters_overrides_additionalProperties_value"></a>4.1.1.3.1.1.2. Property `root > projectProfileEnvironmentsTemplates > additionalProperties > additionalProperties > parameters > overrides > additionalProperties > value`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Override value for this blueprint parameter.
+
+Use cases: Default parameter values; Compliance-enforced settings
+
+AWS: DataZone project profile parameter value
+
+Validation: Optional; string
 
 ## <a name="projectProfiles"></a>5. Property `root > projectProfiles`
 
@@ -6649,6 +6281,16 @@ Must be one of:
 | **Required**              | No                                                                                           |
 | **Additional properties** | [Each additional property must conform to the schema](#projectProfiles_additionalProperties) |
 | **Defined in**            | #/definitions/NamedProjectProfiles                                                           |
+
+**Description:** Project profiles defining environment blueprints and deployment configurations.
+Profiles are reusable templates that determine which environments are provisioned
+when a project is created.
+
+Use cases: Standardized project templates; Blueprint environment bundling
+
+AWS: DataZone project profiles with environment configurations
+
+Validation: Optional; valid NamedProjectProfiles
 
 | Property                                     | Pattern | Type   | Deprecated | Definition                           | Title/Description |
 | -------------------------------------------- | ------- | ------ | ---------- | ------------------------------------ | ----------------- |
@@ -6663,13 +6305,13 @@ Must be one of:
 | **Additional properties** | Not allowed                       |
 | **Defined in**            | #/definitions/ProjectProfileProps |
 
-| Property                                                                              | Pattern | Type   | Deprecated | Definition                                                                                                                     | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| ------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [account](#projectProfiles_additionalProperties_account )                           | No      | string | No         | -                                                                                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| - [domainUnit](#projectProfiles_additionalProperties_domainUnit )                     | No      | string | No         | -                                                                                                                              | Q-ENHANCED-PROPERTY<br />Optional domain unit specification for DataZone project organization enabling hierarchical domain management and project categorization. Defines the domain unit within the DataZone domain for project organization and governance scope management.<br /><br />Use cases: Domain organization; Project categorization; Hierarchical management; Governance scope<br /><br />AWS: DataZone domain unit for project organization and governance management<br /><br />Validation: Must be valid domain unit string if provided; affects project organization and governance scope |
-| - [environments](#projectProfiles_additionalProperties_environments )                 | No      | object | No         | Same as [projectProfileEnvironmentsTemplates_additionalProperties](#projectProfileEnvironmentsTemplates_additionalProperties ) | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| - [environmentsTemplate](#projectProfiles_additionalProperties_environmentsTemplate ) | No      | string | No         | -                                                                                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| - [region](#projectProfiles_additionalProperties_region )                             | No      | string | No         | -                                                                                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Property                                                                              | Pattern | Type   | Deprecated | Definition                                                                                                                     | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [account](#projectProfiles_additionalProperties_account )                           | No      | string | No         | -                                                                                                                              | Target AWS account ID for the profile's environments. Defaults to the<br />deploying stack's account if omitted.<br /><br />Use cases: Cross-account project profiles; Account-specific environment targeting<br /><br />AWS: Target account for DataZone environment provisioning<br /><br />Validation: Optional; valid 12-digit AWS account ID                                                                                                                 |
+| - [domainUnit](#projectProfiles_additionalProperties_domainUnit )                     | No      | string | No         | -                                                                                                                              | Domain unit path within the DataZone domain where this project profile<br />is scoped. Uses slash-delimited paths (e.g., /root/team-a).<br /><br />Use cases: Profile scoping to organizational units; Governance boundary control<br /><br />AWS: DataZone domain unit for project profile scoping<br /><br />Validation: Optional; valid domain unit path string                                                                                                |
+| - [environments](#projectProfiles_additionalProperties_environments )                 | No      | object | No         | Same as [projectProfileEnvironmentsTemplates_additionalProperties](#projectProfileEnvironmentsTemplates_additionalProperties ) | Named environment configurations for this profile. Each key is a blueprint<br />name that must exist in the domain's enabled blueprints. Merged with<br />environments from the referenced environmentsTemplate.<br /><br />Use cases: Profile-specific environment definitions; Blueprint parameter overrides<br /><br />AWS: DataZone project profile environment configurations<br /><br />Validation: Optional; valid NamedProfileEnvironmentConfigs          |
+| - [environmentsTemplate](#projectProfiles_additionalProperties_environmentsTemplate ) | No      | string | No         | -                                                                                                                              | Name of an environment template from projectProfileEnvironmentsTemplates.<br />Template environments are merged with this profile's environments, with<br />profile-level values taking precedence.<br /><br />Use cases: Reusable environment definitions; Template-based profile configuration<br /><br />AWS: DataZone project profile environment template reference<br /><br />Validation: Optional; must match a key in projectProfileEnvironmentsTemplates |
+| - [region](#projectProfiles_additionalProperties_region )                             | No      | string | No         | -                                                                                                                              | Target AWS region for the profile's environments. Defaults to the<br />deploying stack's region if omitted.<br /><br />Use cases: Cross-region project profiles; Region-specific environment targeting<br /><br />AWS: Target region for DataZone environment provisioning<br /><br />Validation: Optional; valid AWS region identifier                                                                                                                           |
 
 #### <a name="projectProfiles_additionalProperties_account"></a>5.1.1. Property `root > projectProfiles > additionalProperties > account`
 
@@ -6678,6 +6320,15 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
+**Description:** Target AWS account ID for the profile's environments. Defaults to the
+deploying stack's account if omitted.
+
+Use cases: Cross-account project profiles; Account-specific environment targeting
+
+AWS: Target account for DataZone environment provisioning
+
+Validation: Optional; valid 12-digit AWS account ID
+
 #### <a name="projectProfiles_additionalProperties_domainUnit"></a>5.1.2. Property `root > projectProfiles > additionalProperties > domainUnit`
 
 |              |          |
@@ -6685,14 +6336,14 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Q-ENHANCED-PROPERTY
-Optional domain unit specification for DataZone project organization enabling hierarchical domain management and project categorization. Defines the domain unit within the DataZone domain for project organization and governance scope management.
+**Description:** Domain unit path within the DataZone domain where this project profile
+is scoped. Uses slash-delimited paths (e.g., /root/team-a).
 
-Use cases: Domain organization; Project categorization; Hierarchical management; Governance scope
+Use cases: Profile scoping to organizational units; Governance boundary control
 
-AWS: DataZone domain unit for project organization and governance management
+AWS: DataZone domain unit for project profile scoping
 
-Validation: Must be valid domain unit string if provided; affects project organization and governance scope
+Validation: Optional; valid domain unit path string
 
 #### <a name="projectProfiles_additionalProperties_environments"></a>5.1.3. Property `root > projectProfiles > additionalProperties > environments`
 
@@ -6703,6 +6354,16 @@ Validation: Must be valid domain unit string if provided; affects project organi
 | **Additional properties** | [Each additional property must conform to the schema](#projectProfileEnvironmentsTemplates_additionalProperties_additionalProperties) |
 | **Same definition as**    | [projectProfileEnvironmentsTemplates_additionalProperties](#projectProfileEnvironmentsTemplates_additionalProperties)                 |
 
+**Description:** Named environment configurations for this profile. Each key is a blueprint
+name that must exist in the domain's enabled blueprints. Merged with
+environments from the referenced environmentsTemplate.
+
+Use cases: Profile-specific environment definitions; Blueprint parameter overrides
+
+AWS: DataZone project profile environment configurations
+
+Validation: Optional; valid NamedProfileEnvironmentConfigs
+
 #### <a name="projectProfiles_additionalProperties_environmentsTemplate"></a>5.1.4. Property `root > projectProfiles > additionalProperties > environmentsTemplate`
 
 |              |          |
@@ -6710,12 +6371,31 @@ Validation: Must be valid domain unit string if provided; affects project organi
 | **Type**     | `string` |
 | **Required** | No       |
 
+**Description:** Name of an environment template from projectProfileEnvironmentsTemplates.
+Template environments are merged with this profile's environments, with
+profile-level values taking precedence.
+
+Use cases: Reusable environment definitions; Template-based profile configuration
+
+AWS: DataZone project profile environment template reference
+
+Validation: Optional; must match a key in projectProfileEnvironmentsTemplates
+
 #### <a name="projectProfiles_additionalProperties_region"></a>5.1.5. Property `root > projectProfiles > additionalProperties > region`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+**Description:** Target AWS region for the profile's environments. Defaults to the
+deploying stack's region if omitted.
+
+Use cases: Cross-region project profiles; Region-specific environment targeting
+
+AWS: Target region for DataZone environment provisioning
+
+Validation: Optional; valid AWS region identifier
 
 ## <a name="projects"></a>6. Property `root > projects`
 
@@ -6725,6 +6405,15 @@ Validation: Must be valid domain unit string if provided; affects project organi
 | **Required**              | No                                                                                    |
 | **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties) |
 | **Defined in**            | #/definitions/NamedSageMakerProjects                                                  |
+
+**Description:** SageMaker projects to create in the domain. Each project references a
+project profile and can include data sources and membership assignments.
+
+Use cases: Project deployment; Data source registration; Team membership
+
+AWS: DataZone projects with profile-based environment provisioning
+
+Validation: Optional; valid NamedSageMakerProjects
 
 | Property                              | Pattern | Type   | Deprecated | Definition                             | Title/Description |
 | ------------------------------------- | ------- | ------ | ---------- | -------------------------------------- | ----------------- |
@@ -6739,236 +6428,18 @@ Validation: Must be valid domain unit string if provided; affects project organi
 | **Additional properties** | Not allowed                         |
 | **Defined in**            | #/definitions/SageMakerProjectProps |
 
-| Property                                                                   | Pattern | Type   | Deprecated | Definition                                  | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| -------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [account](#projects_additionalProperties_account )                       | No      | string | No         | -                                           | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [authorizations](#projects_additionalProperties_authorizations )         | No      | object | No         | In #/definitions/NamedAuthorizationPolicies | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [dataSources](#projects_additionalProperties_dataSources )               | No      | object | No         | -                                           | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [domainUnit](#projects_additionalProperties_domainUnit )                 | No      | string | No         | -                                           | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [environmentConfigs](#projects_additionalProperties_environmentConfigs ) | No      | object | No         | -                                           | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [groups](#projects_additionalProperties_groups )                         | No      | object | No         | -                                           | Q-ENHANCED-PROPERTY<br />Contributor group references for project access enabling group-based project contribution and collective standard permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting group-based project collaboration and collective contribution.<br /><br />Use cases: Group-based project access; Collective contribution; Contributor permissions; Team collaboration; Standard access<br /><br />AWS: Amazon DataZone project contributor groups with PROJECT_CONTRIBUTOR designation for contributor-level access<br /><br />Validation: Must be array of valid MDAA group configuration names as defined in the SageMaker module groups section; references must exist in module configuration |
-| - [ownerGroups](#projects_additionalProperties_ownerGroups )               | No      | object | No         | -                                           | Q-ENHANCED-PROPERTY<br />Owner group references for project ownership enabling group-based project administration and collective administrative permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting group-based project governance and collective administration.<br /><br />Use cases: Group-based project ownership; Collective administration; Full administrative access; Owner permissions; Team governance<br /><br />AWS: Amazon DataZone project owner groups with PROJECT_OWNER designation for full administrative access<br /><br />Validation: Must be array of valid MDAA group configuration names as defined in the SageMaker module groups section; references must exist in module configuration    |
-| - [ownerUsers](#projects_additionalProperties_ownerUsers )                 | No      | object | No         | -                                           | Q-ENHANCED-PROPERTY<br />Owner user references for project ownership enabling user-based project administration and full administrative permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting user-based project governance and individual administration.<br /><br />Use cases: User-based project ownership; Project administration; Full administrative access; Owner permissions; Project governance<br /><br />AWS: Amazon DataZone project owner users with PROJECT_OWNER designation for full administrative access<br /><br />Validation: Must be array of valid MDAA user configuration names as defined in the SageMaker module users section; references must exist in module configuration                          |
-| + [profileName](#projects_additionalProperties_profileName )               | No      | string | No         | -                                           | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [users](#projects_additionalProperties_users )                           | No      | object | No         | -                                           | Q-ENHANCED-PROPERTY<br />Contributor user references for project access enabling user-based project contribution and standard permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting user-based project collaboration and individual contribution.<br /><br />Use cases: User-based project access; Project contribution; Contributor permissions; Collaboration; Standard access<br /><br />AWS: Amazon DataZone project contributor users with PROJECT_CONTRIBUTOR designation for contributor-level access<br /><br />Validation: Must be array of valid MDAA user configuration names as defined in the SageMaker module users section; references must exist in module configuration                                    |
+| Property                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| -------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [dataSources](#projects_additionalProperties_dataSources )               | No      | object | No         | -          | Glue data sources to import into the project. Each data source references<br />a Glue database and creates Lake Formation read permissions for the project's<br />environment user.<br /><br />Use cases: Importing existing Glue databases into SageMaker projects; Data asset discovery<br /><br />AWS: DataZone data sources with Glue run configuration<br /><br />Validation: Optional; map of data source name to DataSourceProps                                                                  |
+| - [domainUnit](#projects_additionalProperties_domainUnit )                 | No      | string | No         | -          | Domain unit path where the project will be created (e.g., /some/domain/unit).<br /><br />Use cases: Project organizational placement; Governance scope targeting<br /><br />AWS: DataZone domain unit for project placement<br /><br />Validation: Optional; slash-delimited domain unit path                                                                                                                                                                                                            |
+| - [environmentConfigs](#projects_additionalProperties_environmentConfigs ) | No      | object | No         | -          | Per-environment configuration overrides for this project's environments.<br /><br />Use cases: Project-specific environment customization<br /><br />AWS: DataZone project environment configurations<br /><br />Validation: Optional; map of environment name to ProjectEnvironmentConfiguration                                                                                                                                                                                                        |
+| - [groups](#projects_additionalProperties_groups )                         | No      | object | No         | -          | MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: Team-based project contribution; Group standard access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                          |
+| - [ownerGroups](#projects_additionalProperties_ownerGroups )               | No      | object | No         | -          | MDAA group configuration names (from the SageMaker module groups section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone group names or Identity Center group identifiers.<br /><br />Use cases: Team-based project ownership; Group admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config |
+| - [ownerUsers](#projects_additionalProperties_ownerUsers )                 | No      | object | No         | -          | MDAA user configuration names (from the SageMaker module users section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone usernames or Identity Center identifiers.<br /><br />Use cases: User-based project ownership; Full project admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config      |
+| + [profileName](#projects_additionalProperties_profileName )               | No      | string | No         | -          | Name of the project profile to use for this project. The profile must<br />target the same account as the project.<br /><br />Use cases: Profile-based project creation; Environment template selection<br /><br />AWS: DataZone project profile reference<br /><br />Validation: Required; string; must match a key in projectProfiles config                                                                                                                                                           |
+| - [users](#projects_additionalProperties_users )                           | No      | object | No         | -          | MDAA user configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: User-based project contribution; Standard project access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                           |
 
-#### <a name="projects_additionalProperties_account"></a>6.1.1. Property `root > projects > additionalProperties > account`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="projects_additionalProperties_authorizations"></a>6.1.2. Property `root > projects > additionalProperties > authorizations`
-
-|                           |                                                                                                                           |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                  |
-| **Required**              | No                                                                                                                        |
-| **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties_authorizations_additionalProperties) |
-| **Defined in**            | #/definitions/NamedAuthorizationPolicies                                                                                  |
-
-| Property                                                                  | Pattern | Type   | Deprecated | Definition                           | Title/Description |
-| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------ | ----------------- |
-| - [](#projects_additionalProperties_authorizations_additionalProperties ) | No      | object | No         | In #/definitions/AuthorizationPolicy | -                 |
-
-##### <a name="projects_additionalProperties_authorizations_additionalProperties"></a>6.1.2.1. Property `root > projects > additionalProperties > authorizations > AuthorizationPolicy`
-
-|                           |                                   |
-| ------------------------- | --------------------------------- |
-| **Type**                  | `object`                          |
-| **Required**              | No                                |
-| **Additional properties** | Not allowed                       |
-| **Defined in**            | #/definitions/AuthorizationPolicy |
-
-| Property                                                                                                                 | Pattern | Type             | Deprecated | Definition                                    | Title/Description |
-| ------------------------------------------------------------------------------------------------------------------------ | ------- | ---------------- | ---------- | --------------------------------------------- | ----------------- |
-| - [blueprintConfig](#projects_additionalProperties_authorizations_additionalProperties_blueprintConfig )                 | No      | object           | No         | In #/definitions/BlueprintAuthorizationConfig | -                 |
-| - [description](#projects_additionalProperties_authorizations_additionalProperties_description )                         | No      | string           | No         | -                                             | -                 |
-| - [domainUnitId](#projects_additionalProperties_authorizations_additionalProperties_domainUnitId )                       | No      | string           | No         | -                                             | -                 |
-| - [includeChildDomainUnits](#projects_additionalProperties_authorizations_additionalProperties_includeChildDomainUnits ) | No      | boolean          | No         | -                                             | -                 |
-| + [policyType](#projects_additionalProperties_authorizations_additionalProperties_policyType )                           | No      | enum (of string) | No         | In #/definitions/PolicyType                   | -                 |
-| + [principals](#projects_additionalProperties_authorizations_additionalProperties_principals )                           | No      | array            | No         | -                                             | -                 |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_blueprintConfig"></a>6.1.2.1.1. Property `root > projects > additionalProperties > authorizations > additionalProperties > blueprintConfig`
-
-|                           |                                            |
-| ------------------------- | ------------------------------------------ |
-| **Type**                  | `object`                                   |
-| **Required**              | No                                         |
-| **Additional properties** | Not allowed                                |
-| **Defined in**            | #/definitions/BlueprintAuthorizationConfig |
-
-| Property                                                                                                                                 | Pattern | Type             | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
-| - [includeChildDomainUnits](#projects_additionalProperties_authorizations_additionalProperties_blueprintConfig_includeChildDomainUnits ) | No      | boolean          | No         | -          | -                 |
-| - [projectDesignation](#projects_additionalProperties_authorizations_additionalProperties_blueprintConfig_projectDesignation )           | No      | enum (of string) | No         | -          | -                 |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_blueprintConfig_includeChildDomainUnits"></a>6.1.2.1.1.1. Property `root > projects > additionalProperties > authorizations > additionalProperties > blueprintConfig > includeChildDomainUnits`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_blueprintConfig_projectDesignation"></a>6.1.2.1.1.2. Property `root > projects > additionalProperties > authorizations > additionalProperties > blueprintConfig > projectDesignation`
-
-|              |                    |
-| ------------ | ------------------ |
-| **Type**     | `enum (of string)` |
-| **Required** | No                 |
-
-Must be one of:
-* "CONTRIBUTOR"
-* "OWNER"
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_description"></a>6.1.2.1.2. Property `root > projects > additionalProperties > authorizations > additionalProperties > description`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_domainUnitId"></a>6.1.2.1.3. Property `root > projects > additionalProperties > authorizations > additionalProperties > domainUnitId`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_includeChildDomainUnits"></a>6.1.2.1.4. Property `root > projects > additionalProperties > authorizations > additionalProperties > includeChildDomainUnits`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_policyType"></a>6.1.2.1.5. Property `root > projects > additionalProperties > authorizations > additionalProperties > policyType`
-
-|                |                          |
-| -------------- | ------------------------ |
-| **Type**       | `enum (of string)`       |
-| **Required**   | Yes                      |
-| **Defined in** | #/definitions/PolicyType |
-
-Must be one of:
-* "ADD_TO_PROJECT_MEMBER_POOL"
-* "CREATE_ASSET_TYPE"
-* "CREATE_DOMAIN_UNIT"
-* "CREATE_ENVIRONMENT"
-* "CREATE_ENVIRONMENT_FROM_BLUEPRINT"
-* "CREATE_ENVIRONMENT_PROFILE"
-* "CREATE_FORM_TYPE"
-* "CREATE_GLOSSARY"
-* "CREATE_PROJECT"
-* "CREATE_PROJECT_FROM_PROJECT_PROFILE"
-* "DELEGATE_CREATE_ENVIRONMENT_PROFILE"
-* "OVERRIDE_DOMAIN_UNIT_OWNERS"
-* "OVERRIDE_PROJECT_OWNERS"
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_principals"></a>6.1.2.1.6. Property `root > projects > additionalProperties > authorizations > additionalProperties > principals`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | Yes     |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                        | Description |
-| ------------------------------------------------------------------------------------------------------ | ----------- |
-| [PolicyPrincipal](#projects_additionalProperties_authorizations_additionalProperties_principals_items) | -           |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_principals_items"></a>6.1.2.1.6.1. root > projects > additionalProperties > authorizations > additionalProperties > principals > PolicyPrincipal
-
-|                           |                               |
-| ------------------------- | ----------------------------- |
-| **Type**                  | `object`                      |
-| **Required**              | No                            |
-| **Additional properties** | Not allowed                   |
-| **Defined in**            | #/definitions/PolicyPrincipal |
-
-| Property                                                                                                                          | Pattern | Type    | Deprecated | Definition                                                                                                                      | Title/Description |
-| --------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| - [accountName](#projects_additionalProperties_authorizations_additionalProperties_principals_items_accountName )                 | No      | string  | No         | -                                                                                                                               | -                 |
-| - [allUsersGrantFilter](#projects_additionalProperties_authorizations_additionalProperties_principals_items_allUsersGrantFilter ) | No      | boolean | No         | -                                                                                                                               | -                 |
-| - [groupIdentifier](#projects_additionalProperties_authorizations_additionalProperties_principals_items_groupIdentifier )         | No      | object  | No         | In #/definitions/NamedPrincipalIdentifier                                                                                       | -                 |
-| - [groupName](#projects_additionalProperties_authorizations_additionalProperties_principals_items_groupName )                     | No      | string  | No         | -                                                                                                                               | -                 |
-| - [userIdentifier](#projects_additionalProperties_authorizations_additionalProperties_principals_items_userIdentifier )           | No      | object  | No         | Same as [groupIdentifier](#projects_additionalProperties_authorizations_additionalProperties_principals_items_groupIdentifier ) | -                 |
-| - [userName](#projects_additionalProperties_authorizations_additionalProperties_principals_items_userName )                       | No      | string  | No         | -                                                                                                                               | -                 |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_principals_items_accountName"></a>6.1.2.1.6.1.1. Property `root > projects > additionalProperties > authorizations > additionalProperties > principals > principals items > accountName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_principals_items_allUsersGrantFilter"></a>6.1.2.1.6.1.2. Property `root > projects > additionalProperties > authorizations > additionalProperties > principals > principals items > allUsersGrantFilter`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_principals_items_groupIdentifier"></a>6.1.2.1.6.1.3. Property `root > projects > additionalProperties > authorizations > additionalProperties > principals > principals items > groupIdentifier`
-
-|                           |                                        |
-| ------------------------- | -------------------------------------- |
-| **Type**                  | `object`                               |
-| **Required**              | No                                     |
-| **Additional properties** | Not allowed                            |
-| **Defined in**            | #/definitions/NamedPrincipalIdentifier |
-
-| Property                                                                                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [identifier](#projects_additionalProperties_authorizations_additionalProperties_principals_items_groupIdentifier_identifier ) | No      | string | No         | -          | -                 |
-| + [name](#projects_additionalProperties_authorizations_additionalProperties_principals_items_groupIdentifier_name )             | No      | string | No         | -          | -                 |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_principals_items_groupIdentifier_identifier"></a>6.1.2.1.6.1.3.1. Property `root > projects > additionalProperties > authorizations > additionalProperties > principals > principals items > groupIdentifier > identifier`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_principals_items_groupIdentifier_name"></a>6.1.2.1.6.1.3.2. Property `root > projects > additionalProperties > authorizations > additionalProperties > principals > principals items > groupIdentifier > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_principals_items_groupName"></a>6.1.2.1.6.1.4. Property `root > projects > additionalProperties > authorizations > additionalProperties > principals > principals items > groupName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_principals_items_userIdentifier"></a>6.1.2.1.6.1.5. Property `root > projects > additionalProperties > authorizations > additionalProperties > principals > principals items > userIdentifier`
-
-|                           |                                                                                                                        |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                               |
-| **Required**              | No                                                                                                                     |
-| **Additional properties** | Not allowed                                                                                                            |
-| **Same definition as**    | [groupIdentifier](#projects_additionalProperties_authorizations_additionalProperties_principals_items_groupIdentifier) |
-
-###### <a name="projects_additionalProperties_authorizations_additionalProperties_principals_items_userName"></a>6.1.2.1.6.1.6. Property `root > projects > additionalProperties > authorizations > additionalProperties > principals > principals items > userName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="projects_additionalProperties_dataSources"></a>6.1.3. Property `root > projects > additionalProperties > dataSources`
+#### <a name="projects_additionalProperties_dataSources"></a>6.1.1. Property `root > projects > additionalProperties > dataSources`
 
 |                           |                                                                                                                        |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -6976,11 +6447,21 @@ Must be one of:
 | **Required**              | No                                                                                                                     |
 | **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties_dataSources_additionalProperties) |
 
+**Description:** Glue data sources to import into the project. Each data source references
+a Glue database and creates Lake Formation read permissions for the project's
+environment user.
+
+Use cases: Importing existing Glue databases into SageMaker projects; Data asset discovery
+
+AWS: DataZone data sources with Glue run configuration
+
+Validation: Optional; map of data source name to DataSourceProps
+
 | Property                                                               | Pattern | Type   | Deprecated | Definition                       | Title/Description |
 | ---------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------- | ----------------- |
 | - [](#projects_additionalProperties_dataSources_additionalProperties ) | No      | object | No         | In #/definitions/DataSourceProps | -                 |
 
-##### <a name="projects_additionalProperties_dataSources_additionalProperties"></a>6.1.3.1. Property `root > projects > additionalProperties > dataSources > DataSourceProps`
+##### <a name="projects_additionalProperties_dataSources_additionalProperties"></a>6.1.1.1. Property `root > projects > additionalProperties > dataSources > DataSourceProps`
 
 |                           |                               |
 | ------------------------- | ----------------------------- |
@@ -6989,25 +6470,42 @@ Must be one of:
 | **Additional properties** | Not allowed                   |
 | **Defined in**            | #/definitions/DataSourceProps |
 
-| Property                                                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [databaseName](#projects_additionalProperties_dataSources_additionalProperties_databaseName ) | No      | string | No         | -          | -                 |
+| Property                                                                                        | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [databaseName](#projects_additionalProperties_dataSources_additionalProperties_databaseName ) | No      | string | No         | -          | Glue database name to use as the data source. The project's environment user<br />will be granted Lake Formation read permissions on this database and its tables.<br /><br />Use cases: Glue database import; Data asset registration<br /><br />AWS: Glue database referenced as a DataZone data source<br /><br />Validation: Required; valid Glue database name |
 
-###### <a name="projects_additionalProperties_dataSources_additionalProperties_databaseName"></a>6.1.3.1.1. Property `root > projects > additionalProperties > dataSources > additionalProperties > databaseName`
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_databaseName"></a>6.1.1.1.1. Property `root > projects > additionalProperties > dataSources > additionalProperties > databaseName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="projects_additionalProperties_domainUnit"></a>6.1.4. Property `root > projects > additionalProperties > domainUnit`
+**Description:** Glue database name to use as the data source. The project's environment user
+will be granted Lake Formation read permissions on this database and its tables.
+
+Use cases: Glue database import; Data asset registration
+
+AWS: Glue database referenced as a DataZone data source
+
+Validation: Required; valid Glue database name
+
+#### <a name="projects_additionalProperties_domainUnit"></a>6.1.2. Property `root > projects > additionalProperties > domainUnit`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_environmentConfigs"></a>6.1.5. Property `root > projects > additionalProperties > environmentConfigs`
+**Description:** Domain unit path where the project will be created (e.g., /some/domain/unit).
+
+Use cases: Project organizational placement; Governance scope targeting
+
+AWS: DataZone domain unit for project placement
+
+Validation: Optional; slash-delimited domain unit path
+
+#### <a name="projects_additionalProperties_environmentConfigs"></a>6.1.3. Property `root > projects > additionalProperties > environmentConfigs`
 
 |                           |                                                                                                                               |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -7015,11 +6513,19 @@ Must be one of:
 | **Required**              | No                                                                                                                            |
 | **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties_environmentConfigs_additionalProperties) |
 
+**Description:** Per-environment configuration overrides for this project's environments.
+
+Use cases: Project-specific environment customization
+
+AWS: DataZone project environment configurations
+
+Validation: Optional; map of environment name to ProjectEnvironmentConfiguration
+
 | Property                                                                      | Pattern | Type   | Deprecated | Definition                                       | Title/Description |
 | ----------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------ | ----------------- |
 | - [](#projects_additionalProperties_environmentConfigs_additionalProperties ) | No      | object | No         | In #/definitions/ProjectEnvironmentConfiguration | -                 |
 
-##### <a name="projects_additionalProperties_environmentConfigs_additionalProperties"></a>6.1.5.1. Property `root > projects > additionalProperties > environmentConfigs > ProjectEnvironmentConfiguration`
+##### <a name="projects_additionalProperties_environmentConfigs_additionalProperties"></a>6.1.3.1. Property `root > projects > additionalProperties > environmentConfigs > ProjectEnvironmentConfiguration`
 
 |                           |                                               |
 | ------------------------- | --------------------------------------------- |
@@ -7028,85 +6534,30 @@ Must be one of:
 | **Additional properties** | Not allowed                                   |
 | **Defined in**            | #/definitions/ProjectEnvironmentConfiguration |
 
-| Property                                                                                                                 | Pattern | Type  | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| ------------------------------------------------------------------------------------------------------------------------ | ------- | ----- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [environmentParameters](#projects_additionalProperties_environmentConfigs_additionalProperties_environmentParameters ) | No      | array | No         | -          | Q-ENHANCED-PROPERTY<br />Required array of environment parameters for DataZone project environment configuration enabling customizable environment settings. Defines the collection of environment parameters that configure the DataZone project environment for specific deployment and operational requirements.<br /><br />Use cases: Environment configuration; Parameter collections; Deployment settings; Operational customization<br /><br />AWS: DataZone project environment parameters for environment configuration and customization<br /><br />Validation: Must be array of valid ProjectEnvironmentParameter objects; required for environment configuration |
+| Property                                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [parameters](#projects_additionalProperties_environmentConfigs_additionalProperties_parameters ) | No      | object | No         | -          | -                 |
 
-###### <a name="projects_additionalProperties_environmentConfigs_additionalProperties_environmentParameters"></a>6.1.5.1.1. Property `root > projects > additionalProperties > environmentConfigs > additionalProperties > environmentParameters`
+###### <a name="projects_additionalProperties_environmentConfigs_additionalProperties_parameters"></a>6.1.3.1.1. Property `root > projects > additionalProperties > environmentConfigs > additionalProperties > parameters`
 
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | Yes     |
+|                           |                                                                                                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                      |
+| **Required**              | No                                                                                                                                                            |
+| **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties_environmentConfigs_additionalProperties_parameters_additionalProperties) |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required array of environment parameters for DataZone project environment configuration enabling customizable environment settings. Defines the collection of environment parameters that configure the DataZone project environment for specific deployment and operational requirements.
+| Property                                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#projects_additionalProperties_environmentConfigs_additionalProperties_parameters_additionalProperties ) | No      | string | No         | -          | -                 |
 
-Use cases: Environment configuration; Parameter collections; Deployment settings; Operational customization
-
-AWS: DataZone project environment parameters for environment configuration and customization
-
-Validation: Must be array of valid ProjectEnvironmentParameter objects; required for environment configuration
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                                                   | Description |
-| --------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [ProjectEnvironmentParameter](#projects_additionalProperties_environmentConfigs_additionalProperties_environmentParameters_items) | -           |
-
-###### <a name="projects_additionalProperties_environmentConfigs_additionalProperties_environmentParameters_items"></a>6.1.5.1.1.1. root > projects > additionalProperties > environmentConfigs > additionalProperties > environmentParameters > ProjectEnvironmentParameter
-
-|                           |                                           |
-| ------------------------- | ----------------------------------------- |
-| **Type**                  | `object`                                  |
-| **Required**              | No                                        |
-| **Additional properties** | Not allowed                               |
-| **Defined in**            | #/definitions/ProjectEnvironmentParameter |
-
-| Property                                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| -------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [name](#projects_additionalProperties_environmentConfigs_additionalProperties_environmentParameters_items_name )   | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required parameter name for DataZone project environment configuration enabling environment-specific settings. Specifies the name of the environment parameter for configuration management and environment customization within DataZone projects.<br /><br />Use cases: Environment configuration; Parameter naming; Configuration management; Environment customization<br /><br />AWS: DataZone project environment parameter name for configuration identification and management<br /><br />Validation: Must be non-empty string; required for environment parameter configuration |
-| + [value](#projects_additionalProperties_environmentConfigs_additionalProperties_environmentParameters_items_value ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Required parameter value for DataZone project environment configuration enabling environment-specific values. Specifies the value of the environment parameter for configuration application and environment customization within DataZone projects.<br /><br />Use cases: Environment values; Configuration application; Environment customization; Parameter values<br /><br />AWS: DataZone project environment parameter value for configuration application and management<br /><br />Validation: Must be non-empty string; required for environment parameter configuration        |
-
-###### <a name="projects_additionalProperties_environmentConfigs_additionalProperties_environmentParameters_items_name"></a>6.1.5.1.1.1.1. Property `root > projects > additionalProperties > environmentConfigs > additionalProperties > environmentParameters > environmentParameters items > name`
+###### <a name="projects_additionalProperties_environmentConfigs_additionalProperties_parameters_additionalProperties"></a>6.1.3.1.1.1. Property `root > projects > additionalProperties > environmentConfigs > additionalProperties > parameters > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
-| **Required** | Yes      |
+| **Required** | No       |
 
-**Description:** Q-ENHANCED-PROPERTY
-Required parameter name for DataZone project environment configuration enabling environment-specific settings. Specifies the name of the environment parameter for configuration management and environment customization within DataZone projects.
-
-Use cases: Environment configuration; Parameter naming; Configuration management; Environment customization
-
-AWS: DataZone project environment parameter name for configuration identification and management
-
-Validation: Must be non-empty string; required for environment parameter configuration
-
-###### <a name="projects_additionalProperties_environmentConfigs_additionalProperties_environmentParameters_items_value"></a>6.1.5.1.1.1.2. Property `root > projects > additionalProperties > environmentConfigs > additionalProperties > environmentParameters > environmentParameters items > value`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
-
-**Description:** Q-ENHANCED-PROPERTY
-Required parameter value for DataZone project environment configuration enabling environment-specific values. Specifies the value of the environment parameter for configuration application and environment customization within DataZone projects.
-
-Use cases: Environment values; Configuration application; Environment customization; Parameter values
-
-AWS: DataZone project environment parameter value for configuration application and management
-
-Validation: Must be non-empty string; required for environment parameter configuration
-
-#### <a name="projects_additionalProperties_groups"></a>6.1.6. Property `root > projects > additionalProperties > groups`
+#### <a name="projects_additionalProperties_groups"></a>6.1.4. Property `root > projects > additionalProperties > groups`
 
 |                           |                                                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -7114,27 +6565,27 @@ Validation: Must be non-empty string; required for environment parameter configu
 | **Required**              | No                                                                                                                |
 | **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties_groups_additionalProperties) |
 
-**Description:** Q-ENHANCED-PROPERTY
-Contributor group references for project access enabling group-based project contribution and collective standard permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting group-based project collaboration and collective contribution.
+**Description:** MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation
+with contributor-level access to the project.
 
-Use cases: Group-based project access; Collective contribution; Contributor permissions; Team collaboration; Standard access
+Use cases: Team-based project contribution; Group standard access
 
-AWS: Amazon DataZone project contributor groups with PROJECT_CONTRIBUTOR designation for contributor-level access
+AWS: DataZone project membership with PROJECT_CONTRIBUTOR role
 
-Validation: Must be array of valid MDAA group configuration names as defined in the SageMaker module groups section; references must exist in module configuration
+Validation: Optional; map of ID to group config name; names must exist in module groups config
 
 | Property                                                          | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_groups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_groups_additionalProperties"></a>6.1.6.1. Property `root > projects > additionalProperties > groups > additionalProperties`
+##### <a name="projects_additionalProperties_groups_additionalProperties"></a>6.1.4.1. Property `root > projects > additionalProperties > groups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_ownerGroups"></a>6.1.7. Property `root > projects > additionalProperties > ownerGroups`
+#### <a name="projects_additionalProperties_ownerGroups"></a>6.1.5. Property `root > projects > additionalProperties > ownerGroups`
 
 |                           |                                                                                                                        |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -7142,27 +6593,28 @@ Validation: Must be array of valid MDAA group configuration names as defined in 
 | **Required**              | No                                                                                                                     |
 | **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties_ownerGroups_additionalProperties) |
 
-**Description:** Q-ENHANCED-PROPERTY
-Owner group references for project ownership enabling group-based project administration and collective administrative permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting group-based project governance and collective administration.
+**Description:** MDAA group configuration names (from the SageMaker module groups section) that
+receive PROJECT_OWNER designation with full administrative access to the project.
+These are not DataZone group names or Identity Center group identifiers.
 
-Use cases: Group-based project ownership; Collective administration; Full administrative access; Owner permissions; Team governance
+Use cases: Team-based project ownership; Group admin access
 
-AWS: Amazon DataZone project owner groups with PROJECT_OWNER designation for full administrative access
+AWS: DataZone project membership with PROJECT_OWNER role
 
-Validation: Must be array of valid MDAA group configuration names as defined in the SageMaker module groups section; references must exist in module configuration
+Validation: Optional; map of ID to group config name; names must exist in module groups config
 
 | Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_ownerGroups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_ownerGroups_additionalProperties"></a>6.1.7.1. Property `root > projects > additionalProperties > ownerGroups > additionalProperties`
+##### <a name="projects_additionalProperties_ownerGroups_additionalProperties"></a>6.1.5.1. Property `root > projects > additionalProperties > ownerGroups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_ownerUsers"></a>6.1.8. Property `root > projects > additionalProperties > ownerUsers`
+#### <a name="projects_additionalProperties_ownerUsers"></a>6.1.6. Property `root > projects > additionalProperties > ownerUsers`
 
 |                           |                                                                                                                       |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -7170,34 +6622,44 @@ Validation: Must be array of valid MDAA group configuration names as defined in 
 | **Required**              | No                                                                                                                    |
 | **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties_ownerUsers_additionalProperties) |
 
-**Description:** Q-ENHANCED-PROPERTY
-Owner user references for project ownership enabling user-based project administration and full administrative permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting user-based project governance and individual administration.
+**Description:** MDAA user configuration names (from the SageMaker module users section) that
+receive PROJECT_OWNER designation with full administrative access to the project.
+These are not DataZone usernames or Identity Center identifiers.
 
-Use cases: User-based project ownership; Project administration; Full administrative access; Owner permissions; Project governance
+Use cases: User-based project ownership; Full project admin access
 
-AWS: Amazon DataZone project owner users with PROJECT_OWNER designation for full administrative access
+AWS: DataZone project membership with PROJECT_OWNER role
 
-Validation: Must be array of valid MDAA user configuration names as defined in the SageMaker module users section; references must exist in module configuration
+Validation: Optional; map of ID to user config name; names must exist in module users config
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_ownerUsers_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_ownerUsers_additionalProperties"></a>6.1.8.1. Property `root > projects > additionalProperties > ownerUsers > additionalProperties`
+##### <a name="projects_additionalProperties_ownerUsers_additionalProperties"></a>6.1.6.1. Property `root > projects > additionalProperties > ownerUsers > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_profileName"></a>6.1.9. Property `root > projects > additionalProperties > profileName`
+#### <a name="projects_additionalProperties_profileName"></a>6.1.7. Property `root > projects > additionalProperties > profileName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="projects_additionalProperties_users"></a>6.1.10. Property `root > projects > additionalProperties > users`
+**Description:** Name of the project profile to use for this project. The profile must
+target the same account as the project.
+
+Use cases: Profile-based project creation; Environment template selection
+
+AWS: DataZone project profile reference
+
+Validation: Required; string; must match a key in projectProfiles config
+
+#### <a name="projects_additionalProperties_users"></a>6.1.8. Property `root > projects > additionalProperties > users`
 
 |                           |                                                                                                                  |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -7205,20 +6667,20 @@ Validation: Must be array of valid MDAA user configuration names as defined in t
 | **Required**              | No                                                                                                               |
 | **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties_users_additionalProperties) |
 
-**Description:** Q-ENHANCED-PROPERTY
-Contributor user references for project access enabling user-based project contribution and standard permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting user-based project collaboration and individual contribution.
+**Description:** MDAA user configuration names that receive PROJECT_CONTRIBUTOR designation
+with contributor-level access to the project.
 
-Use cases: User-based project access; Project contribution; Contributor permissions; Collaboration; Standard access
+Use cases: User-based project contribution; Standard project access
 
-AWS: Amazon DataZone project contributor users with PROJECT_CONTRIBUTOR designation for contributor-level access
+AWS: DataZone project membership with PROJECT_CONTRIBUTOR role
 
-Validation: Must be array of valid MDAA user configuration names as defined in the SageMaker module users section; references must exist in module configuration
+Validation: Optional; map of ID to user config name; names must exist in module users config
 
 | Property                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_users_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_users_additionalProperties"></a>6.1.10.1. Property `root > projects > additionalProperties > users > additionalProperties`
+##### <a name="projects_additionalProperties_users_additionalProperties"></a>6.1.8.1. Property `root > projects > additionalProperties > users > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
@@ -7227,12 +6689,12 @@ Validation: Must be array of valid MDAA user configuration names as defined in t
 
 ## <a name="sagemakerBlueprint"></a>7. Property `root > sagemakerBlueprint`
 
-|                           |                                            |
-| ------------------------- | ------------------------------------------ |
-| **Type**                  | `object`                                   |
-| **Required**              | No                                         |
-| **Additional properties** | Not allowed                                |
-| **Defined in**            | #/definitions/MdaaSageMakerBluePrintConfig |
+|                           |                                                  |
+| ------------------------- | ------------------------------------------------ |
+| **Type**                  | `object`                                         |
+| **Required**              | No                                               |
+| **Additional properties** | Not allowed                                      |
+| **Defined in**            | #/definitions/MdaaSageMakerCustomBluePrintConfig |
 
 **Description:** Q-ENHANCED-PROPERTY
 Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.
@@ -7243,19 +6705,470 @@ AWS: SageMaker blueprint configuration for governed infrastructure deployment an
 
 Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode
 
-| Property                                                              | Pattern | Type            | Deprecated | Definition                             | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| --------------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [authorizedDomainUnits](#sagemakerBlueprint_authorizedDomainUnits ) | No      | array of string | No         | -                                      | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [blueprintName](#sagemakerBlueprint_blueprintName )                 | No      | string          | No         | -                                      | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [description](#sagemakerBlueprint_description )                     | No      | string          | No         | -                                      | Q-ENHANCED-PROPERTY<br />Description for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.<br /><br />Use cases: Product identification; User-friendly naming; SageMaker console display<br /><br />AWS: AWS SageMaker blueprint name for user interface display<br /><br />Validation: Must be non-empty string suitable for SageMaker blueprint naming                                                                                                           |
-| - [domainBucketName](#sagemakerBlueprint_domainBucketName )           | No      | string          | No         | -                                      | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [domainConfig](#sagemakerBlueprint_domainConfig )                   | No      | object          | No         | Same as [domainConfig](#domainConfig ) | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [domainConfigSSMParam](#sagemakerBlueprint_domainConfigSSMParam )   | No      | string          | No         | -                                      | Q-ENHANCED-PROPERTY<br />Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.<br /><br />Use cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup<br /><br />AWS: AWS Systems Manager parameter for DataZone domain configuration reference<br /><br />Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration |
-| - [enabledRegions](#sagemakerBlueprint_enabledRegions )               | No      | array of string | No         | -                                      | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [parameters](#sagemakerBlueprint_parameters )                       | No      | object          | No         | -                                      | Q-ENHANCED-PROPERTY<br />Optional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.<br /><br />Use cases: Product parameterization; User input collection; Deployment customization<br /><br />AWS: AWS SageMaker blueprint parameters for user-configurable deployment options<br /><br />Validation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided<br />  *                                                       |
-| + [provisioningRoleArn](#sagemakerBlueprint_provisioningRoleArn )     | No      | string          | No         | -                                      | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Property                                                              | Pattern | Type            | Deprecated | Definition                                                                                                | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| --------------------------------------------------------------------- | ------- | --------------- | ---------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [additionalAccounts](#sagemakerBlueprint_additionalAccounts )       | No      | object          | No         | -                                                                                                         | Q-ENHANCED-PROPERTY<br />Optional map of additional AWS accounts where the SageMaker blueprint should be enabled. Each entry maps a friendly account name to account-specific configuration including provisioning role ARN and optional parameters and authorized domain units.<br /><br />Use cases: Multi-account deployment; Cross-account provisioning; Account-specific configuration<br /><br />AWS: AWS SageMaker blueprint multi-account provisioning configuration<br /><br />Validation: Must be object with string keys and valid account configuration values if provided        |
+| - [authorizedDomainUnits](#sagemakerBlueprint_authorizedDomainUnits ) | No      | array of string | No         | -                                                                                                         | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [blueprintName](#sagemakerBlueprint_blueprintName )                 | No      | string          | No         | -                                                                                                         | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [description](#sagemakerBlueprint_description )                     | No      | string          | No         | -                                                                                                         | Q-ENHANCED-PROPERTY<br />Description for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.<br /><br />Use cases: Product identification; User-friendly naming; SageMaker console display<br /><br />AWS: AWS SageMaker blueprint name for user interface display<br /><br />Validation: Must be non-empty string suitable for SageMaker blueprint naming                                                                                                           |
+| - [domainBucketName](#sagemakerBlueprint_domainBucketName )           | No      | string          | No         | -                                                                                                         | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [domainConfig](#sagemakerBlueprint_domainConfig )                   | No      | object          | No         | Same as [domainConfig](#domainConfig )                                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [domainConfigSSMParam](#sagemakerBlueprint_domainConfigSSMParam )   | No      | string          | No         | -                                                                                                         | Q-ENHANCED-PROPERTY<br />Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.<br /><br />Use cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup<br /><br />AWS: AWS Systems Manager parameter for DataZone domain configuration reference<br /><br />Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration |
+| - [enabledRegions](#sagemakerBlueprint_enabledRegions )               | No      | array of string | No         | -                                                                                                         | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [parameters](#sagemakerBlueprint_parameters )                       | No      | object          | No         | -                                                                                                         | Q-ENHANCED-PROPERTY<br />Optional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.<br /><br />Use cases: Product parameterization; User input collection; Deployment customization<br /><br />AWS: AWS SageMaker blueprint parameters for user-configurable deployment options<br /><br />Validation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided<br />  *                                                       |
+| + [provisioningRole](#sagemakerBlueprint_provisioningRole )           | No      | object          | No         | Same as [provisioningRole](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole ) | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
-### <a name="sagemakerBlueprint_authorizedDomainUnits"></a>7.1. Property `root > sagemakerBlueprint > authorizedDomainUnits`
+### <a name="sagemakerBlueprint_additionalAccounts"></a>7.1. Property `root > sagemakerBlueprint > additionalAccounts`
+
+|                           |                                                                                                                    |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                                           |
+| **Required**              | No                                                                                                                 |
+| **Additional properties** | [Each additional property must conform to the schema](#sagemakerBlueprint_additionalAccounts_additionalProperties) |
+
+**Description:** Q-ENHANCED-PROPERTY
+Optional map of additional AWS accounts where the SageMaker blueprint should be enabled. Each entry maps a friendly account name to account-specific configuration including provisioning role ARN and optional parameters and authorized domain units.
+
+Use cases: Multi-account deployment; Cross-account provisioning; Account-specific configuration
+
+AWS: AWS SageMaker blueprint multi-account provisioning configuration
+
+Validation: Must be object with string keys and valid account configuration values if provided
+
+| Property                                                           | Pattern | Type   | Deprecated | Definition                                  | Title/Description |
+| ------------------------------------------------------------------ | ------- | ------ | ---------- | ------------------------------------------- | ----------------- |
+| - [](#sagemakerBlueprint_additionalAccounts_additionalProperties ) | No      | object | No         | In #/definitions/AdditionalBlueprintAccount | -                 |
+
+#### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties"></a>7.1.1. Property `root > sagemakerBlueprint > additionalAccounts > AdditionalBlueprintAccount`
+
+|                           |                                          |
+| ------------------------- | ---------------------------------------- |
+| **Type**                  | `object`                                 |
+| **Required**              | No                                       |
+| **Additional properties** | Not allowed                              |
+| **Defined in**            | #/definitions/AdditionalBlueprintAccount |
+
+| Property                                                                                                      | Pattern | Type            | Deprecated | Definition                   | Title/Description |
+| ------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------------------------- | ----------------- |
+| + [account](#sagemakerBlueprint_additionalAccounts_additionalProperties_account )                             | No      | string          | No         | -                            | -                 |
+| - [authorizedDomainUnits](#sagemakerBlueprint_additionalAccounts_additionalProperties_authorizedDomainUnits ) | No      | array of string | No         | -                            | -                 |
+| - [enabledRegions](#sagemakerBlueprint_additionalAccounts_additionalProperties_enabledRegions )               | No      | array of string | No         | -                            | -                 |
+| - [parameters](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters )                       | No      | object          | No         | -                            | -                 |
+| + [provisioningRole](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole )           | No      | object          | No         | In #/definitions/MdaaRoleRef | -                 |
+
+##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_account"></a>7.1.1.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > account`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_authorizedDomainUnits"></a>7.1.1.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > authorizedDomainUnits`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                        | Description |
+| ---------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [authorizedDomainUnits items](#sagemakerBlueprint_additionalAccounts_additionalProperties_authorizedDomainUnits_items) | -           |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_authorizedDomainUnits_items"></a>7.1.1.2.1. root > sagemakerBlueprint > additionalAccounts > additionalProperties > authorizedDomainUnits > authorizedDomainUnits items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_enabledRegions"></a>7.1.1.3. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > enabledRegions`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                          | Description |
+| -------------------------------------------------------------------------------------------------------- | ----------- |
+| [enabledRegions items](#sagemakerBlueprint_additionalAccounts_additionalProperties_enabledRegions_items) | -           |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_enabledRegions_items"></a>7.1.1.3.1. root > sagemakerBlueprint > additionalAccounts > additionalProperties > enabledRegions > enabledRegions items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters"></a>7.1.1.4. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters`
+
+|                           |                                                                                                                                                    |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                           |
+| **Required**              | No                                                                                                                                                 |
+| **Additional properties** | [Each additional property must conform to the schema](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties) |
+
+| Property                                                                                           | Pattern | Type   | Deprecated | Definition                                             | Title/Description |
+| -------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------ | ----------------- |
+| - [](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties ) | No      | object | No         | In #/definitions/MdaaSageMakerBluePrintParameterConfig | -                 |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties"></a>7.1.1.4.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > MdaaSageMakerBluePrintParameterConfig`
+
+|                           |                                                     |
+| ------------------------- | --------------------------------------------------- |
+| **Type**                  | `object`                                            |
+| **Required**              | No                                                  |
+| **Additional properties** | Not allowed                                         |
+| **Defined in**            | #/definitions/MdaaSageMakerBluePrintParameterConfig |
+
+| Property                                                                                                                                  | Pattern | Type   | Deprecated | Definition                                            | Title/Description |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ----------------------------------------------------- | ----------------- |
+| + [blueprintParamProps](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps ) | No      | object | No         | In #/definitions/MdaaSageMakerBluePrintParameterProps | -                 |
+| - [cfnParamProps](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps )             | No      | object | No         | In #/definitions/CfnParameterProps                    | -                 |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps"></a>7.1.1.4.1.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps`
+
+|                           |                                                    |
+| ------------------------- | -------------------------------------------------- |
+| **Type**                  | `object`                                           |
+| **Required**              | Yes                                                |
+| **Additional properties** | Not allowed                                        |
+| **Defined in**            | #/definitions/MdaaSageMakerBluePrintParameterProps |
+
+| Property                                                                                                                                                  | Pattern | Type    | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [defaultValue](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_defaultValue )           | No      | string  | No         | -          | -                 |
+| - [description](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_description )             | No      | string  | No         | -          | -                 |
+| + [fieldType](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_fieldType )                 | No      | string  | No         | -          | -                 |
+| - [isEditable](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isEditable )               | No      | boolean | No         | -          | -                 |
+| - [isOptional](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isOptional )               | No      | boolean | No         | -          | -                 |
+| - [isUpdateSupported](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isUpdateSupported ) | No      | boolean | No         | -          | -                 |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_defaultValue"></a>7.1.1.4.1.1.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > defaultValue`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_description"></a>7.1.1.4.1.1.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > description`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_fieldType"></a>7.1.1.4.1.1.3. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > fieldType`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isEditable"></a>7.1.1.4.1.1.4. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > isEditable`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isOptional"></a>7.1.1.4.1.1.5. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > isOptional`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isUpdateSupported"></a>7.1.1.4.1.1.6. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > isUpdateSupported`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps"></a>7.1.1.4.1.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps`
+
+|                           |                                 |
+| ------------------------- | ------------------------------- |
+| **Type**                  | `object`                        |
+| **Required**              | No                              |
+| **Additional properties** | Not allowed                     |
+| **Defined in**            | #/definitions/CfnParameterProps |
+
+| Property                                                                                                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [allowedPattern](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedPattern )               | No      | string          | No         | -          | A regular expression that represents the patterns to allow for String types.                                                                                                                                                                                              |
+| - [allowedValues](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedValues )                 | No      | array of string | No         | -          | An array containing the list of values allowed for the parameter.                                                                                                                                                                                                         |
+| - [constraintDescription](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_constraintDescription ) | No      | string          | No         | -          | A string that explains a constraint when the constraint is violated.<br />For example, without a constraint description, a parameter that has an allowed<br />pattern of [A-Za-z0-9]+ displays the following error message when the user specifies<br />an invalid value: |
+| - [default](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_default )                             | No      | object          | No         | -          | A value of the appropriate type for the template to use if no value is specified<br />when a stack is created. If you define constraints for the parameter, you must specify<br />a value that adheres to those constraints.                                              |
+| - [description](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_description )                     | No      | string          | No         | -          | A string of up to 4000 characters that describes the parameter.                                                                                                                                                                                                           |
+| - [maxLength](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_maxLength )                         | No      | number          | No         | -          | An integer value that determines the largest number of characters you want to allow for String types.                                                                                                                                                                     |
+| - [maxValue](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_maxValue )                           | No      | number          | No         | -          | A numeric value that determines the largest numeric value you want to allow for Number types.                                                                                                                                                                             |
+| - [minLength](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_minLength )                         | No      | number          | No         | -          | An integer value that determines the smallest number of characters you want to allow for String types.                                                                                                                                                                    |
+| - [minValue](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_minValue )                           | No      | number          | No         | -          | A numeric value that determines the smallest numeric value you want to allow for Number types.                                                                                                                                                                            |
+| - [noEcho](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_noEcho )                               | No      | boolean         | No         | -          | Whether to mask the parameter value when anyone makes a call that describes the stack.<br />If you set the value to \`\`true\`\`, the parameter value is masked with asterisks (\`\`*****\`\`).                                                                           |
+| - [type](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_type )                                   | No      | string          | No         | -          | The data type for the parameter (DataType).                                                                                                                                                                                                                               |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedPattern"></a>7.1.1.4.1.2.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > allowedPattern`
+
+|              |                                                         |
+| ------------ | ------------------------------------------------------- |
+| **Type**     | `string`                                                |
+| **Required** | No                                                      |
+| **Default**  | `"- No constraints on patterns allowed for parameter."` |
+
+**Description:** A regular expression that represents the patterns to allow for String types.
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedValues"></a>7.1.1.4.1.2.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > allowedValues`
+
+|              |                                                       |
+| ------------ | ----------------------------------------------------- |
+| **Type**     | `array of string`                                     |
+| **Required** | No                                                    |
+| **Default**  | `"- No constraints on values allowed for parameter."` |
+
+**Description:** An array containing the list of values allowed for the parameter.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                                                      | Description |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [allowedValues items](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedValues_items) | -           |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedValues_items"></a>7.1.1.4.1.2.2.1. root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > allowedValues > allowedValues items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_constraintDescription"></a>7.1.1.4.1.2.3. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > constraintDescription`
+
+|              |                                                                                        |
+| ------------ | -------------------------------------------------------------------------------------- |
+| **Type**     | `string`                                                                               |
+| **Required** | No                                                                                     |
+| **Default**  | `"- No description with customized error message when user specifies invalid values."` |
+
+**Description:** A string that explains a constraint when the constraint is violated.
+For example, without a constraint description, a parameter that has an allowed
+pattern of [A-Za-z0-9]+ displays the following error message when the user specifies
+an invalid value:
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_default"></a>7.1.1.4.1.2.4. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > default`
+
+|                           |                                       |
+| ------------------------- | ------------------------------------- |
+| **Type**                  | `object`                              |
+| **Required**              | No                                    |
+| **Additional properties** | Any type allowed                      |
+| **Default**               | `"- No default value for parameter."` |
+
+**Description:** A value of the appropriate type for the template to use if no value is specified
+when a stack is created. If you define constraints for the parameter, you must specify
+a value that adheres to those constraints.
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_description"></a>7.1.1.4.1.2.5. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > description`
+
+|              |                                         |
+| ------------ | --------------------------------------- |
+| **Type**     | `string`                                |
+| **Required** | No                                      |
+| **Default**  | `"- No description for the parameter."` |
+
+**Description:** A string of up to 4000 characters that describes the parameter.
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_maxLength"></a>7.1.1.4.1.2.6. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > maxLength`
+
+|              |             |
+| ------------ | ----------- |
+| **Type**     | `number`    |
+| **Required** | No          |
+| **Default**  | `"- None."` |
+
+**Description:** An integer value that determines the largest number of characters you want to allow for String types.
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_maxValue"></a>7.1.1.4.1.2.7. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > maxValue`
+
+|              |             |
+| ------------ | ----------- |
+| **Type**     | `number`    |
+| **Required** | No          |
+| **Default**  | `"- None."` |
+
+**Description:** A numeric value that determines the largest numeric value you want to allow for Number types.
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_minLength"></a>7.1.1.4.1.2.8. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > minLength`
+
+|              |             |
+| ------------ | ----------- |
+| **Type**     | `number`    |
+| **Required** | No          |
+| **Default**  | `"- None."` |
+
+**Description:** An integer value that determines the smallest number of characters you want to allow for String types.
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_minValue"></a>7.1.1.4.1.2.9. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > minValue`
+
+|              |             |
+| ------------ | ----------- |
+| **Type**     | `number`    |
+| **Required** | No          |
+| **Default**  | `"- None."` |
+
+**Description:** A numeric value that determines the smallest numeric value you want to allow for Number types.
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_noEcho"></a>7.1.1.4.1.2.10. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > noEcho`
+
+|              |                                        |
+| ------------ | -------------------------------------- |
+| **Type**     | `boolean`                              |
+| **Required** | No                                     |
+| **Default**  | `"- Parameter values are not masked."` |
+
+**Description:** Whether to mask the parameter value when anyone makes a call that describes the stack.
+If you set the value to ``true``, the parameter value is masked with asterisks (``*****``).
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_type"></a>7.1.1.4.1.2.11. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > type`
+
+|              |            |
+| ------------ | ---------- |
+| **Type**     | `string`   |
+| **Required** | No         |
+| **Default**  | `"String"` |
+
+**Description:** The data type for the parameter (DataType).
+
+##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole"></a>7.1.1.5. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > provisioningRole`
+
+|                           |                           |
+| ------------------------- | ------------------------- |
+| **Type**                  | `object`                  |
+| **Required**              | Yes                       |
+| **Additional properties** | Not allowed               |
+| **Defined in**            | #/definitions/MdaaRoleRef |
+
+| Property                                                                                               | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [arn](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_arn )             | No      | string  | No         | -          | Full IAM role ARN for cross-account role references and explicit role identification.<br /><br />Use cases: Cross-account role references; Explicit role binding; Multi-account deployments<br /><br />AWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)<br /><br />Validation: Optional; must be a valid IAM role ARN if provided                                                    |
+| - [id](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_id )               | No      | string  | No         | -          | IAM role unique identifier for role resolution using the role's AWS-generated ID.<br /><br />Use cases: Stable role references; Role resolution by unique ID; Immutable role binding<br /><br />AWS: IAM role unique ID (e.g., AROA...)<br /><br />Validation: Optional; must be a valid IAM role unique ID if provided                                                                          |
+| - [immutable](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_immutable ) | No      | boolean | No         | -          | Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.<br /><br />Use cases: Pre-existing role protection; Externally managed roles; Read-only role references<br /><br />AWS: Controls whether MDAA attaches policies or modifies the referenced IAM role<br /><br />Validation: Optional boolean; defaults to false                   |
+| - [name](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_name )           | No      | string  | No         | -          | IAM role name for role resolution within the same AWS account.<br /><br />Use cases: Same-account role references; Role name-based resolution; Local IAM role binding<br /><br />AWS: IAM role name resolved via GetRole within the deployment account<br /><br />Validation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution                             |
+| - [refId](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_refId )         | No      | string  | No         | -          | Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.<br /><br />Use cases: Role reference identification; Configuration deduplication; Role lookup key<br /><br />AWS: Logical identifier for IAM role references within MDAA configuration<br /><br />Validation: Optional; must be unique within the configuration scope if provided |
+| - [sso](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_sso )             | No      | boolean | No         | -          | Flag indicating the role should be resolved as an AWS SSO auto-generated role.<br /><br />Use cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access<br /><br />AWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention<br /><br />Validation: Optional boolean; defaults to false                                           |
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_arn"></a>7.1.1.5.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > provisioningRole > arn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Full IAM role ARN for cross-account role references and explicit role identification.
+
+Use cases: Cross-account role references; Explicit role binding; Multi-account deployments
+
+AWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)
+
+Validation: Optional; must be a valid IAM role ARN if provided
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_id"></a>7.1.1.5.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > provisioningRole > id`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** IAM role unique identifier for role resolution using the role's AWS-generated ID.
+
+Use cases: Stable role references; Role resolution by unique ID; Immutable role binding
+
+AWS: IAM role unique ID (e.g., AROA...)
+
+Validation: Optional; must be a valid IAM role unique ID if provided
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_immutable"></a>7.1.1.5.3. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > provisioningRole > immutable`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.
+
+Use cases: Pre-existing role protection; Externally managed roles; Read-only role references
+
+AWS: Controls whether MDAA attaches policies or modifies the referenced IAM role
+
+Validation: Optional boolean; defaults to false
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_name"></a>7.1.1.5.4. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > provisioningRole > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** IAM role name for role resolution within the same AWS account.
+
+Use cases: Same-account role references; Role name-based resolution; Local IAM role binding
+
+AWS: IAM role name resolved via GetRole within the deployment account
+
+Validation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_refId"></a>7.1.1.5.5. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > provisioningRole > refId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.
+
+Use cases: Role reference identification; Configuration deduplication; Role lookup key
+
+AWS: Logical identifier for IAM role references within MDAA configuration
+
+Validation: Optional; must be unique within the configuration scope if provided
+
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole_sso"></a>7.1.1.5.6. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > provisioningRole > sso`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Flag indicating the role should be resolved as an AWS SSO auto-generated role.
+
+Use cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access
+
+AWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention
+
+Validation: Optional boolean; defaults to false
+
+### <a name="sagemakerBlueprint_authorizedDomainUnits"></a>7.2. Property `root > sagemakerBlueprint > authorizedDomainUnits`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -7274,21 +7187,21 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | ------------------------------------------------------------------------------ | ----------- |
 | [authorizedDomainUnits items](#sagemakerBlueprint_authorizedDomainUnits_items) | -           |
 
-#### <a name="sagemakerBlueprint_authorizedDomainUnits_items"></a>7.1.1. root > sagemakerBlueprint > authorizedDomainUnits > authorizedDomainUnits items
+#### <a name="sagemakerBlueprint_authorizedDomainUnits_items"></a>7.2.1. root > sagemakerBlueprint > authorizedDomainUnits > authorizedDomainUnits items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="sagemakerBlueprint_blueprintName"></a>7.2. Property `root > sagemakerBlueprint > blueprintName`
+### <a name="sagemakerBlueprint_blueprintName"></a>7.3. Property `root > sagemakerBlueprint > blueprintName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="sagemakerBlueprint_description"></a>7.3. Property `root > sagemakerBlueprint > description`
+### <a name="sagemakerBlueprint_description"></a>7.4. Property `root > sagemakerBlueprint > description`
 
 |              |          |
 | ------------ | -------- |
@@ -7304,14 +7217,14 @@ AWS: AWS SageMaker blueprint name for user interface display
 
 Validation: Must be non-empty string suitable for SageMaker blueprint naming
 
-### <a name="sagemakerBlueprint_domainBucketName"></a>7.4. Property `root > sagemakerBlueprint > domainBucketName`
+### <a name="sagemakerBlueprint_domainBucketName"></a>7.5. Property `root > sagemakerBlueprint > domainBucketName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="sagemakerBlueprint_domainConfig"></a>7.5. Property `root > sagemakerBlueprint > domainConfig`
+### <a name="sagemakerBlueprint_domainConfig"></a>7.6. Property `root > sagemakerBlueprint > domainConfig`
 
 |                           |                               |
 | ------------------------- | ----------------------------- |
@@ -7320,7 +7233,7 @@ Validation: Must be non-empty string suitable for SageMaker blueprint naming
 | **Additional properties** | Not allowed                   |
 | **Same definition as**    | [domainConfig](#domainConfig) |
 
-### <a name="sagemakerBlueprint_domainConfigSSMParam"></a>7.6. Property `root > sagemakerBlueprint > domainConfigSSMParam`
+### <a name="sagemakerBlueprint_domainConfigSSMParam"></a>7.7. Property `root > sagemakerBlueprint > domainConfigSSMParam`
 
 |              |          |
 | ------------ | -------- |
@@ -7336,7 +7249,7 @@ AWS: AWS Systems Manager parameter for DataZone domain configuration reference
 
 Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration
 
-### <a name="sagemakerBlueprint_enabledRegions"></a>7.7. Property `root > sagemakerBlueprint > enabledRegions`
+### <a name="sagemakerBlueprint_enabledRegions"></a>7.8. Property `root > sagemakerBlueprint > enabledRegions`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -7355,14 +7268,14 @@ Validation: Must be valid SSM parameter name if provided; parameter must contain
 | ---------------------------------------------------------------- | ----------- |
 | [enabledRegions items](#sagemakerBlueprint_enabledRegions_items) | -           |
 
-#### <a name="sagemakerBlueprint_enabledRegions_items"></a>7.7.1. root > sagemakerBlueprint > enabledRegions > enabledRegions items
+#### <a name="sagemakerBlueprint_enabledRegions_items"></a>7.8.1. root > sagemakerBlueprint > enabledRegions > enabledRegions items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="sagemakerBlueprint_parameters"></a>7.8. Property `root > sagemakerBlueprint > parameters`
+### <a name="sagemakerBlueprint_parameters"></a>7.9. Property `root > sagemakerBlueprint > parameters`
 
 |                           |                                                                                                            |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -7380,249 +7293,27 @@ AWS: AWS SageMaker blueprint parameters for user-configurable deployment options
 Validation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided
   *
 
-| Property                                                   | Pattern | Type   | Deprecated | Definition                                             | Title/Description |
-| ---------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------ | ----------------- |
-| - [](#sagemakerBlueprint_parameters_additionalProperties ) | No      | object | No         | In #/definitions/MdaaSageMakerBluePrintParameterConfig | -                 |
+| Property                                                   | Pattern | Type   | Deprecated | Definition                                                                                                                                                                                         | Title/Description |
+| ---------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| - [](#sagemakerBlueprint_parameters_additionalProperties ) | No      | object | No         | Same as [sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties ) | -                 |
 
-#### <a name="sagemakerBlueprint_parameters_additionalProperties"></a>7.8.1. Property `root > sagemakerBlueprint > parameters > MdaaSageMakerBluePrintParameterConfig`
+#### <a name="sagemakerBlueprint_parameters_additionalProperties"></a>7.9.1. Property `root > sagemakerBlueprint > parameters > MdaaSageMakerBluePrintParameterConfig`
 
-|                           |                                                     |
-| ------------------------- | --------------------------------------------------- |
-| **Type**                  | `object`                                            |
-| **Required**              | No                                                  |
-| **Additional properties** | Not allowed                                         |
-| **Defined in**            | #/definitions/MdaaSageMakerBluePrintParameterConfig |
+|                           |                                                                                                                                                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                                  |
+| **Required**              | No                                                                                                                                                                                        |
+| **Additional properties** | Not allowed                                                                                                                                                                               |
+| **Same definition as**    | [sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties) |
 
-| Property                                                                                          | Pattern | Type   | Deprecated | Definition                                            | Title/Description |
-| ------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ----------------------------------------------------- | ----------------- |
-| + [blueprintParamProps](#sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps ) | No      | object | No         | In #/definitions/MdaaSageMakerBluePrintParameterProps | -                 |
-| - [cfnParamProps](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps )             | No      | object | No         | In #/definitions/CfnParameterProps                    | -                 |
+### <a name="sagemakerBlueprint_provisioningRole"></a>7.10. Property `root > sagemakerBlueprint > provisioningRole`
 
-##### <a name="sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps"></a>7.8.1.1. Property `root > sagemakerBlueprint > parameters > additionalProperties > blueprintParamProps`
-
-|                           |                                                    |
-| ------------------------- | -------------------------------------------------- |
-| **Type**                  | `object`                                           |
-| **Required**              | Yes                                                |
-| **Additional properties** | Not allowed                                        |
-| **Defined in**            | #/definitions/MdaaSageMakerBluePrintParameterProps |
-
-| Property                                                                                                          | Pattern | Type    | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [defaultValue](#sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_defaultValue )           | No      | string  | No         | -          | -                 |
-| - [description](#sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_description )             | No      | string  | No         | -          | -                 |
-| + [fieldType](#sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_fieldType )                 | No      | string  | No         | -          | -                 |
-| - [isEditable](#sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_isEditable )               | No      | boolean | No         | -          | -                 |
-| - [isOptional](#sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_isOptional )               | No      | boolean | No         | -          | -                 |
-| - [isUpdateSupported](#sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_isUpdateSupported ) | No      | boolean | No         | -          | -                 |
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_defaultValue"></a>7.8.1.1.1. Property `root > sagemakerBlueprint > parameters > additionalProperties > blueprintParamProps > defaultValue`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_description"></a>7.8.1.1.2. Property `root > sagemakerBlueprint > parameters > additionalProperties > blueprintParamProps > description`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_fieldType"></a>7.8.1.1.3. Property `root > sagemakerBlueprint > parameters > additionalProperties > blueprintParamProps > fieldType`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_isEditable"></a>7.8.1.1.4. Property `root > sagemakerBlueprint > parameters > additionalProperties > blueprintParamProps > isEditable`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_isOptional"></a>7.8.1.1.5. Property `root > sagemakerBlueprint > parameters > additionalProperties > blueprintParamProps > isOptional`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_blueprintParamProps_isUpdateSupported"></a>7.8.1.1.6. Property `root > sagemakerBlueprint > parameters > additionalProperties > blueprintParamProps > isUpdateSupported`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-##### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps"></a>7.8.1.2. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps`
-
-|                           |                                 |
-| ------------------------- | ------------------------------- |
-| **Type**                  | `object`                        |
-| **Required**              | No                              |
-| **Additional properties** | Not allowed                     |
-| **Defined in**            | #/definitions/CfnParameterProps |
-
-| Property                                                                                                            | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                         |
-| ------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [allowedPattern](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_allowedPattern )               | No      | string          | No         | -          | A regular expression that represents the patterns to allow for String types.                                                                                                                                                                                              |
-| - [allowedValues](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_allowedValues )                 | No      | array of string | No         | -          | An array containing the list of values allowed for the parameter.                                                                                                                                                                                                         |
-| - [constraintDescription](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_constraintDescription ) | No      | string          | No         | -          | A string that explains a constraint when the constraint is violated.<br />For example, without a constraint description, a parameter that has an allowed<br />pattern of [A-Za-z0-9]+ displays the following error message when the user specifies<br />an invalid value: |
-| - [default](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_default )                             | No      | object          | No         | -          | A value of the appropriate type for the template to use if no value is specified<br />when a stack is created. If you define constraints for the parameter, you must specify<br />a value that adheres to those constraints.                                              |
-| - [description](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_description )                     | No      | string          | No         | -          | A string of up to 4000 characters that describes the parameter.                                                                                                                                                                                                           |
-| - [maxLength](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_maxLength )                         | No      | number          | No         | -          | An integer value that determines the largest number of characters you want to allow for String types.                                                                                                                                                                     |
-| - [maxValue](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_maxValue )                           | No      | number          | No         | -          | A numeric value that determines the largest numeric value you want to allow for Number types.                                                                                                                                                                             |
-| - [minLength](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_minLength )                         | No      | number          | No         | -          | An integer value that determines the smallest number of characters you want to allow for String types.                                                                                                                                                                    |
-| - [minValue](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_minValue )                           | No      | number          | No         | -          | A numeric value that determines the smallest numeric value you want to allow for Number types.                                                                                                                                                                            |
-| - [noEcho](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_noEcho )                               | No      | boolean         | No         | -          | Whether to mask the parameter value when anyone makes a call that describes the stack.<br />If you set the value to \`\`true\`\`, the parameter value is masked with asterisks (\`\`*****\`\`).                                                                           |
-| - [type](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_type )                                   | No      | string          | No         | -          | The data type for the parameter (DataType).                                                                                                                                                                                                                               |
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_allowedPattern"></a>7.8.1.2.1. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > allowedPattern`
-
-|              |                                                         |
-| ------------ | ------------------------------------------------------- |
-| **Type**     | `string`                                                |
-| **Required** | No                                                      |
-| **Default**  | `"- No constraints on patterns allowed for parameter."` |
-
-**Description:** A regular expression that represents the patterns to allow for String types.
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_allowedValues"></a>7.8.1.2.2. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > allowedValues`
-
-|              |                                                       |
-| ------------ | ----------------------------------------------------- |
-| **Type**     | `array of string`                                     |
-| **Required** | No                                                    |
-| **Default**  | `"- No constraints on values allowed for parameter."` |
-
-**Description:** An array containing the list of values allowed for the parameter.
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                              | Description |
-| ------------------------------------------------------------------------------------------------------------ | ----------- |
-| [allowedValues items](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_allowedValues_items) | -           |
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_allowedValues_items"></a>7.8.1.2.2.1. root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > allowedValues > allowedValues items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_constraintDescription"></a>7.8.1.2.3. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > constraintDescription`
-
-|              |                                                                                        |
-| ------------ | -------------------------------------------------------------------------------------- |
-| **Type**     | `string`                                                                               |
-| **Required** | No                                                                                     |
-| **Default**  | `"- No description with customized error message when user specifies invalid values."` |
-
-**Description:** A string that explains a constraint when the constraint is violated.
-For example, without a constraint description, a parameter that has an allowed
-pattern of [A-Za-z0-9]+ displays the following error message when the user specifies
-an invalid value:
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_default"></a>7.8.1.2.4. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > default`
-
-|                           |                                       |
-| ------------------------- | ------------------------------------- |
-| **Type**                  | `object`                              |
-| **Required**              | No                                    |
-| **Additional properties** | Any type allowed                      |
-| **Default**               | `"- No default value for parameter."` |
-
-**Description:** A value of the appropriate type for the template to use if no value is specified
-when a stack is created. If you define constraints for the parameter, you must specify
-a value that adheres to those constraints.
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_description"></a>7.8.1.2.5. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > description`
-
-|              |                                         |
-| ------------ | --------------------------------------- |
-| **Type**     | `string`                                |
-| **Required** | No                                      |
-| **Default**  | `"- No description for the parameter."` |
-
-**Description:** A string of up to 4000 characters that describes the parameter.
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_maxLength"></a>7.8.1.2.6. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > maxLength`
-
-|              |             |
-| ------------ | ----------- |
-| **Type**     | `number`    |
-| **Required** | No          |
-| **Default**  | `"- None."` |
-
-**Description:** An integer value that determines the largest number of characters you want to allow for String types.
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_maxValue"></a>7.8.1.2.7. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > maxValue`
-
-|              |             |
-| ------------ | ----------- |
-| **Type**     | `number`    |
-| **Required** | No          |
-| **Default**  | `"- None."` |
-
-**Description:** A numeric value that determines the largest numeric value you want to allow for Number types.
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_minLength"></a>7.8.1.2.8. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > minLength`
-
-|              |             |
-| ------------ | ----------- |
-| **Type**     | `number`    |
-| **Required** | No          |
-| **Default**  | `"- None."` |
-
-**Description:** An integer value that determines the smallest number of characters you want to allow for String types.
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_minValue"></a>7.8.1.2.9. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > minValue`
-
-|              |             |
-| ------------ | ----------- |
-| **Type**     | `number`    |
-| **Required** | No          |
-| **Default**  | `"- None."` |
-
-**Description:** A numeric value that determines the smallest numeric value you want to allow for Number types.
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_noEcho"></a>7.8.1.2.10. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > noEcho`
-
-|              |                                        |
-| ------------ | -------------------------------------- |
-| **Type**     | `boolean`                              |
-| **Required** | No                                     |
-| **Default**  | `"- Parameter values are not masked."` |
-
-**Description:** Whether to mask the parameter value when anyone makes a call that describes the stack.
-If you set the value to ``true``, the parameter value is masked with asterisks (``*****``).
-
-###### <a name="sagemakerBlueprint_parameters_additionalProperties_cfnParamProps_type"></a>7.8.1.2.11. Property `root > sagemakerBlueprint > parameters > additionalProperties > cfnParamProps > type`
-
-|              |            |
-| ------------ | ---------- |
-| **Type**     | `string`   |
-| **Required** | No         |
-| **Default**  | `"String"` |
-
-**Description:** The data type for the parameter (DataType).
-
-### <a name="sagemakerBlueprint_provisioningRoleArn"></a>7.9. Property `root > sagemakerBlueprint > provisioningRoleArn`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
+|                           |                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                         |
+| **Required**              | Yes                                                                                              |
+| **Additional properties** | Not allowed                                                                                      |
+| **Same definition as**    | [provisioningRole](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole) |
 
 ## <a name="service_catalog_product_config"></a>8. Property `root > service_catalog_product_config`
 
@@ -7642,14 +7333,14 @@ AWS: Service Catalog product configuration for governed infrastructure deploymen
 
 Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode
 
-| Property                                                                          | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| --------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [launch_role_name](#service_catalog_product_config_launch_role_name )           | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Optional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.<br /><br />Use cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement<br /><br />AWS: AWS Service Catalog launch role for controlled product provisioning permissions<br /><br />Validation: Must be valid IAM role name if provided                                   |
-| + [name](#service_catalog_product_config_name )                                   | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Display name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.<br /><br />Use cases: Product identification; User-friendly naming; Service Catalog console display<br /><br />AWS: AWS Service Catalog product name for user interface display<br /><br />Validation: Must be non-empty string suitable for Service Catalog product naming                                    |
-| + [owner](#service_catalog_product_config_owner )                                 | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Owner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.<br /><br />Use cases: Product ownership identification; Contact information; Responsibility assignment<br /><br />AWS: AWS Service Catalog product owner for accountability and management<br /><br />Validation: Must be non-empty string identifying the product owner                                      |
-| - [parameters](#service_catalog_product_config_parameters )                       | No      | object | No         | -          | Q-ENHANCED-PROPERTY<br />Optional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.<br /><br />Use cases: Product parameterization; User input collection; Deployment customization<br /><br />AWS: AWS Service Catalog product parameters for user-configurable deployment options<br /><br />Validation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided<br />  * |
-| + [portfolio_arn](#service_catalog_product_config_portfolio_arn )                 | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />ARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.<br /><br />Use cases: Portfolio organization; Access control; Product categorization<br /><br />AWS: AWS Service Catalog portfolio ARN for product association and access management<br /><br />Validation: Must be valid AWS Service Catalog portfolio ARN format                                                                 |
-| + [portfolio_bucket_name](#service_catalog_product_config_portfolio_bucket_name ) | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Property                                                                          | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                             |
+| --------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------- |
+| - [launch_role_name](#service_catalog_product_config_launch_role_name )           | No      | string | No         | -          | IAM role name that will be used to launch the Service Catalog product                                         |
+| + [name](#service_catalog_product_config_name )                                   | No      | string | No         | -          | Display name for the Service Catalog product that will be visible to end users in the Service Catalog console |
+| + [owner](#service_catalog_product_config_owner )                                 | No      | string | No         | -          | Owner identifier for the Service Catalog product, typically representing the team or organization             |
+| - [parameters](#service_catalog_product_config_parameters )                       | No      | object | No         | -          | Object containing named parameter configurations for the Service Catalog product                              |
+| + [portfolio_arn](#service_catalog_product_config_portfolio_arn )                 | No      | string | No         | -          | ARN of the AWS Service Catalog portfolio where the product will be associated                                 |
+| + [portfolio_bucket_name](#service_catalog_product_config_portfolio_bucket_name ) | No      | string | No         | -          | -                                                                                                             |
 
 ### <a name="service_catalog_product_config_launch_role_name"></a>8.1. Property `root > service_catalog_product_config > launch_role_name`
 
@@ -7658,14 +7349,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Q-ENHANCED-PROPERTY
-Optional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.
-
-Use cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement
-
-AWS: AWS Service Catalog launch role for controlled product provisioning permissions
-
-Validation: Must be valid IAM role name if provided
+**Description:** IAM role name that will be used to launch the Service Catalog product
 
 ### <a name="service_catalog_product_config_name"></a>8.2. Property `root > service_catalog_product_config > name`
 
@@ -7674,14 +7358,7 @@ Validation: Must be valid IAM role name if provided
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-Display name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.
-
-Use cases: Product identification; User-friendly naming; Service Catalog console display
-
-AWS: AWS Service Catalog product name for user interface display
-
-Validation: Must be non-empty string suitable for Service Catalog product naming
+**Description:** Display name for the Service Catalog product that will be visible to end users in the Service Catalog console
 
 ### <a name="service_catalog_product_config_owner"></a>8.3. Property `root > service_catalog_product_config > owner`
 
@@ -7690,14 +7367,7 @@ Validation: Must be non-empty string suitable for Service Catalog product naming
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-Owner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.
-
-Use cases: Product ownership identification; Contact information; Responsibility assignment
-
-AWS: AWS Service Catalog product owner for accountability and management
-
-Validation: Must be non-empty string identifying the product owner
+**Description:** Owner identifier for the Service Catalog product, typically representing the team or organization
 
 ### <a name="service_catalog_product_config_parameters"></a>8.4. Property `root > service_catalog_product_config > parameters`
 
@@ -7707,19 +7377,11 @@ Validation: Must be non-empty string identifying the product owner
 | **Required**              | No                                                                                                                     |
 | **Additional properties** | [Each additional property must conform to the schema](#service_catalog_product_config_parameters_additionalProperties) |
 
-**Description:** Q-ENHANCED-PROPERTY
-Optional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.
+**Description:** Object containing named parameter configurations for the Service Catalog product
 
-Use cases: Product parameterization; User input collection; Deployment customization
-
-AWS: AWS Service Catalog product parameters for user-configurable deployment options
-
-Validation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided
-  *
-
-| Property                                                               | Pattern | Type   | Deprecated | Definition                                         | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ---------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [](#service_catalog_product_config_parameters_additionalProperties ) | No      | object | No         | In #/definitions/MdaaServiceCatalogParameterConfig | Q-ENHANCED-INTERFACE<br />Configuration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.<br /><br />Use cases: Service Catalog product parameterization; Parameter validation; User input constraints<br /><br />AWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints<br /><br />Validation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided |
+| Property                                                               | Pattern | Type   | Deprecated | Definition                                         | Title/Description |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------------- | ----------------- |
+| - [](#service_catalog_product_config_parameters_additionalProperties ) | No      | object | No         | In #/definitions/MdaaServiceCatalogParameterConfig | -                 |
 
 #### <a name="service_catalog_product_config_parameters_additionalProperties"></a>8.4.1. Property `root > service_catalog_product_config > parameters > MdaaServiceCatalogParameterConfig`
 
@@ -7730,19 +7392,10 @@ Validation: Must be object with string keys and valid MdaaServiceCatalogParamete
 | **Additional properties** | Not allowed                                     |
 | **Defined in**            | #/definitions/MdaaServiceCatalogParameterConfig |
 
-**Description:** Q-ENHANCED-INTERFACE
-Configuration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.
-
-Use cases: Service Catalog product parameterization; Parameter validation; User input constraints
-
-AWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints
-
-Validation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided
-
-| Property                                                                                      | Pattern | Type   | Deprecated | Definition                                                                                  | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| --------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [constraints](#service_catalog_product_config_parameters_additionalProperties_constraints ) | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintConfig                                         | Q-ENHANCED-PROPERTY<br />Optional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.<br /><br />Use cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation<br /><br />AWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogConstraintConfig object if provided |
-| + [props](#service_catalog_product_config_parameters_additionalProperties_props )             | No      | object | No         | Same as [cfnParamProps](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps ) | Q-ENHANCED-PROPERTY<br />CloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.<br /><br />Use cases: Parameter type definition; Default value specification; Allowed value constraints<br /><br />AWS: AWS CloudFormation parameter properties for Service Catalog product parameters<br /><br />Validation: Must be valid CfnParameterProps object with required CloudFormation parameter properties          |
+| Property                                                                                      | Pattern | Type   | Deprecated | Definition                                                                                                                          | Title/Description                                                                                           |
+| --------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| - [constraints](#service_catalog_product_config_parameters_additionalProperties_constraints ) | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintConfig                                                                                 | Constraint configuration that defines additional validation rules for the Service Catalog product parameter |
+| + [props](#service_catalog_product_config_parameters_additionalProperties_props )             | No      | object | No         | Same as [cfnParamProps](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps ) | CloudFormation parameter properties that define the parameter characteristics including type,               |
 
 ##### <a name="service_catalog_product_config_parameters_additionalProperties_constraints"></a>8.4.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints`
 
@@ -7753,19 +7406,12 @@ Validation: props must be valid CfnParameterProps; constraints must be valid con
 | **Additional properties** | Not allowed                                      |
 | **Defined in**            | #/definitions/MdaaServiceCatalogConstraintConfig |
 
-**Description:** Q-ENHANCED-PROPERTY
-Optional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.
+**Description:** Constraint configuration that defines additional validation rules for the Service Catalog product parameter
 
-Use cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation
-
-AWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning
-
-Validation: Must be valid MdaaServiceCatalogConstraintConfig object if provided
-
-| Property                                                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| --------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [description](#service_catalog_product_config_parameters_additionalProperties_constraints_description ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Human-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.<br /><br />Use cases: Constraint documentation; User guidance; Business rule explanation<br /><br />AWS: AWS Service Catalog constraint description for user understanding<br /><br />Validation: Must be non-empty descriptive text explaining the constraint purpose and scope                        |
-| + [rules](#service_catalog_product_config_parameters_additionalProperties_constraints_rules )             | No      | object | No         | -          | Q-ENHANCED-PROPERTY<br />Object containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.<br /><br />Use cases: Named validation rules; Organized constraint logic; Multiple validation scenarios<br /><br />AWS: AWS Service Catalog constraint rules for structured parameter validation<br /><br />Validation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values<br />  * |
+| Property                                                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                |
+| --------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| + [description](#service_catalog_product_config_parameters_additionalProperties_constraints_description ) | No      | string | No         | -          | Human-readable description explaining the purpose and scope of the Service Catalog constraint                    |
+| + [rules](#service_catalog_product_config_parameters_additionalProperties_constraints_rules )             | No      | object | No         | -          | Object containing named constraint rules that define the validation logic for Service Catalog product parameters |
 
 ###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_description"></a>8.4.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > description`
 
@@ -7774,14 +7420,7 @@ Validation: Must be valid MdaaServiceCatalogConstraintConfig object if provided
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-Human-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.
-
-Use cases: Constraint documentation; User guidance; Business rule explanation
-
-AWS: AWS Service Catalog constraint description for user understanding
-
-Validation: Must be non-empty descriptive text explaining the constraint purpose and scope
+**Description:** Human-readable description explaining the purpose and scope of the Service Catalog constraint
 
 ###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules"></a>8.4.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules`
 
@@ -7791,19 +7430,11 @@ Validation: Must be non-empty descriptive text explaining the constraint purpose
 | **Required**              | Yes                                                                                                                                                           |
 | **Additional properties** | [Each additional property must conform to the schema](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties) |
 
-**Description:** Q-ENHANCED-PROPERTY
-Object containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.
+**Description:** Object containing named constraint rules that define the validation logic for Service Catalog product parameters
 
-Use cases: Named validation rules; Organized constraint logic; Multiple validation scenarios
-
-AWS: AWS Service Catalog constraint rules for structured parameter validation
-
-Validation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values
-  *
-
-| Property                                                                                                      | Pattern | Type   | Deprecated | Definition                                              | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties ) | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintRuleConfig | Q-ENHANCED-INTERFACE<br />Configuration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.<br /><br />Use cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic<br /><br />AWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation<br /><br />Validation: condition must be valid condition config; assertions must be array of valid assertion configs |
+| Property                                                                                                      | Pattern | Type   | Deprecated | Definition                                              | Title/Description |
+| ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------- | ----------------- |
+| - [](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties ) | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintRuleConfig | -                 |
 
 ###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties"></a>8.4.1.1.2.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > MdaaServiceCatalogConstraintRuleConfig`
 
@@ -7814,19 +7445,10 @@ Validation: Must be object with string keys and valid MdaaServiceCatalogConstrai
 | **Additional properties** | Not allowed                                          |
 | **Defined in**            | #/definitions/MdaaServiceCatalogConstraintRuleConfig |
 
-**Description:** Q-ENHANCED-INTERFACE
-Configuration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.
-
-Use cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic
-
-AWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation
-
-Validation: condition must be valid condition config; assertions must be array of valid assertion configs
-
-| Property                                                                                                                           | Pattern | Type   | Deprecated | Definition                                                         | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| ---------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [assertions](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions ) | No      | array  | No         | -                                                                  | Q-ENHANCED-PROPERTY<br />Array of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.<br /><br />Use cases: Multiple validation checks; parameter validation; Business rule enforcement<br /><br />AWS: AWS Service Catalog constraint rule assertions for parameter validation<br /><br />Validation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects |
-| + [condition](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition )   | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig | Q-ENHANCED-PROPERTY<br />Condition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.<br /><br />Use cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints<br /><br />AWS: AWS Service Catalog constraint rule condition for conditional validation<br /><br />Validation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object   |
+| Property                                                                                                                           | Pattern | Type   | Deprecated | Definition                                                         | Title/Description                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| + [assertions](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions ) | No      | array  | No         | -                                                                  | Array of constraint assertions that define the validation logic to be applied when the condition is met |
+| + [condition](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition )   | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig | Condition configuration that determines when the constraint rule assertions should be evaluated         |
 
 ###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions"></a>8.4.1.1.2.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions`
 
@@ -7835,14 +7457,7 @@ Validation: condition must be valid condition config; assertions must be array o
 | **Type**     | `array` |
 | **Required** | Yes     |
 
-**Description:** Q-ENHANCED-PROPERTY
-Array of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.
-
-Use cases: Multiple validation checks; parameter validation; Business rule enforcement
-
-AWS: AWS Service Catalog constraint rule assertions for parameter validation
-
-Validation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects
+**Description:** Array of constraint assertions that define the validation logic to be applied when the condition is met
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -7852,9 +7467,9 @@ Validation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConf
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                                                                                            | Description              |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| [MdaaServiceCatalogConstraintRuleAssertionConfig](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items) | Q-ENHANCED-INTERFACE ... |
+| Each item of this array must be                                                                                                                                            | Description |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [MdaaServiceCatalogConstraintRuleAssertionConfig](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items) | -           |
 
 ###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items"></a>8.4.1.1.2.1.1.1. root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > MdaaServiceCatalogConstraintRuleAssertionConfig
 
@@ -7865,19 +7480,10 @@ Validation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConf
 | **Additional properties** | Not allowed                                                   |
 | **Defined in**            | #/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig |
 
-**Description:** Q-ENHANCED-INTERFACE
-Configuration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.
-
-Use cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance
-
-AWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning
-
-Validation: assert must be valid constraint assertion expression; description must be non-empty explanatory text
-
-| Property                                                                                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| + [assert](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert )           | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Constraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.<br /><br />Use cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement<br /><br />AWS: AWS Service Catalog constraint rule assertion for parameter validation<br /><br />Validation: Must be valid CloudFormation condition expression using intrinsic functions |
-| + [description](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description ) | No      | string | No         | -          | Q-ENHANCED-PROPERTY<br />Human-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.<br /><br />Use cases: User guidance for parameter validation; Error message context; Business rule documentation<br /><br />AWS: AWS Service Catalog constraint rule description for user guidance<br /><br />Validation: Must be non-empty descriptive text explaining the constraint purpose                                         |
+| Property                                                                                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                        |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| + [assert](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert )           | No      | string | No         | -          | Constraint assertion expression that defines the validation logic for Service Catalog product parameters |
+| + [description](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description ) | No      | string | No         | -          | Human-readable description explaining the purpose and requirements of the constraint assertion           |
 
 ###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert"></a>8.4.1.1.2.1.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > assert`
 
@@ -7886,14 +7492,7 @@ Validation: assert must be valid constraint assertion expression; description mu
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-Constraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.
-
-Use cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement
-
-AWS: AWS Service Catalog constraint rule assertion for parameter validation
-
-Validation: Must be valid CloudFormation condition expression using intrinsic functions
+**Description:** Constraint assertion expression that defines the validation logic for Service Catalog product parameters
 
 ###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description"></a>8.4.1.1.2.1.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > description`
 
@@ -7902,14 +7501,7 @@ Validation: Must be valid CloudFormation condition expression using intrinsic fu
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-Human-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.
-
-Use cases: User guidance for parameter validation; Error message context; Business rule documentation
-
-AWS: AWS Service Catalog constraint rule description for user guidance
-
-Validation: Must be non-empty descriptive text explaining the constraint purpose
+**Description:** Human-readable description explaining the purpose and requirements of the constraint assertion
 
 ###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition"></a>8.4.1.1.2.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > condition`
 
@@ -7920,32 +7512,18 @@ Validation: Must be non-empty descriptive text explaining the constraint purpose
 | **Additional properties** | Any type allowed                                                |
 | **Defined in**            | #/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig |
 
-**Description:** Q-ENHANCED-PROPERTY
-Condition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.
-
-Use cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints
-
-AWS: AWS Service Catalog constraint rule condition for conditional validation
-
-Validation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object
+**Description:** Condition configuration that determines when the constraint rule assertions should be evaluated
 
 ##### <a name="service_catalog_product_config_parameters_additionalProperties_props"></a>8.4.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > props`
 
-|                           |                                                                                    |
-| ------------------------- | ---------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                           |
-| **Required**              | Yes                                                                                |
-| **Additional properties** | Not allowed                                                                        |
-| **Same definition as**    | [cfnParamProps](#sagemakerBlueprint_parameters_additionalProperties_cfnParamProps) |
+|                           |                                                                                                                            |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                   |
+| **Required**              | Yes                                                                                                                        |
+| **Additional properties** | Not allowed                                                                                                                |
+| **Same definition as**    | [cfnParamProps](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps) |
 
-**Description:** Q-ENHANCED-PROPERTY
-CloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.
-
-Use cases: Parameter type definition; Default value specification; Allowed value constraints
-
-AWS: AWS CloudFormation parameter properties for Service Catalog product parameters
-
-Validation: Must be valid CfnParameterProps object with required CloudFormation parameter properties
+**Description:** CloudFormation parameter properties that define the parameter characteristics including type,
 
 ### <a name="service_catalog_product_config_portfolio_arn"></a>8.5. Property `root > service_catalog_product_config > portfolio_arn`
 
@@ -7954,14 +7532,7 @@ Validation: Must be valid CfnParameterProps object with required CloudFormation 
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Q-ENHANCED-PROPERTY
-ARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.
-
-Use cases: Portfolio organization; Access control; Product categorization
-
-AWS: AWS Service Catalog portfolio ARN for product association and access management
-
-Validation: Must be valid AWS Service Catalog portfolio ARN format
+**Description:** ARN of the AWS Service Catalog portfolio where the product will be associated
 
 ### <a name="service_catalog_product_config_portfolio_bucket_name"></a>8.6. Property `root > service_catalog_product_config > portfolio_bucket_name`
 

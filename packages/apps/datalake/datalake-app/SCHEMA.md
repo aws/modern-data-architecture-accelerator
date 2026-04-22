@@ -335,7 +335,7 @@ Validation: allowedMethods and allowedOrigins required
 | Property                                                                          | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                           |
 | --------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [allowedHeaders](#buckets_additionalProperties_corsRules_items_allowedHeaders ) | No      | array of string | No         | -          | Headers allowed in cross-origin requests.<br /><br />Validation: Optional; array of strings; use ['*'] to allow all headers                 |
-| + [allowedMethods](#buckets_additionalProperties_corsRules_items_allowedMethods ) | No      | array of string | No         | -          | HTTP methods allowed for cross-origin requests.<br /><br />Validation: Required; array of strings (enum: GET, PUT, HEAD, POST, DELETE)      |
+| + [allowedMethods](#buckets_additionalProperties_corsRules_items_allowedMethods ) | No      | array           | No         | -          | HTTP methods allowed for cross-origin requests.<br /><br />Validation: Required; array of HttpMethod (enum: GET, PUT, HEAD, POST, DELETE)   |
 | + [allowedOrigins](#buckets_additionalProperties_corsRules_items_allowedOrigins ) | No      | array of string | No         | -          | Origins allowed to make cross-origin requests to the bucket.<br /><br />Validation: Required; array of origin URLs or ['*'] for all origins |
 | - [exposedHeaders](#buckets_additionalProperties_corsRules_items_exposedHeaders ) | No      | array of string | No         | -          | Response headers exposed to the browser.<br /><br />Validation: Optional; array of strings                                                  |
 | - [id](#buckets_additionalProperties_corsRules_items_id )                         | No      | string          | No         | -          | A unique identifier for this CORS rule.<br /><br />Validation: Optional; string                                                             |
@@ -373,14 +373,14 @@ Validation: Optional; array of strings; use ['*'] to allow all headers
 
 ###### <a name="buckets_additionalProperties_corsRules_items_allowedMethods"></a>2.1.2.1.2. Property `root > buckets > additionalProperties > corsRules > corsRules items > allowedMethods`
 
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | Yes               |
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | Yes     |
 
 **Description:** HTTP methods allowed for cross-origin requests.
 
-Validation: Required; array of strings (enum: GET, PUT, HEAD, POST, DELETE)
+Validation: Required; array of HttpMethod (enum: GET, PUT, HEAD, POST, DELETE)
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -390,16 +390,26 @@ Validation: Required; array of strings (enum: GET, PUT, HEAD, POST, DELETE)
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                            | Description |
-| ------------------------------------------------------------------------------------------ | ----------- |
-| [allowedMethods items](#buckets_additionalProperties_corsRules_items_allowedMethods_items) | -           |
+| Each item of this array must be                                                  | Description                           |
+| -------------------------------------------------------------------------------- | ------------------------------------- |
+| [HttpMethod](#buckets_additionalProperties_corsRules_items_allowedMethods_items) | HTTP method permitted in a CORS rule. |
 
-###### <a name="buckets_additionalProperties_corsRules_items_allowedMethods_items"></a>2.1.2.1.2.1. root > buckets > additionalProperties > corsRules > corsRules items > allowedMethods > allowedMethods items
+###### <a name="buckets_additionalProperties_corsRules_items_allowedMethods_items"></a>2.1.2.1.2.1. root > buckets > additionalProperties > corsRules > corsRules items > allowedMethods > HttpMethod
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+|                |                          |
+| -------------- | ------------------------ |
+| **Type**       | `enum (of string)`       |
+| **Required**   | No                       |
+| **Defined in** | #/definitions/HttpMethod |
+
+**Description:** HTTP method permitted in a CORS rule.
+
+Must be one of:
+* "DELETE"
+* "GET"
+* "HEAD"
+* "POST"
+* "PUT"
 
 ###### <a name="buckets_additionalProperties_corsRules_items_allowedOrigins"></a>2.1.2.1.3. Property `root > buckets > additionalProperties > corsRules > corsRules items > allowedOrigins`
 

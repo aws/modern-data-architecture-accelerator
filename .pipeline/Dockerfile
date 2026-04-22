@@ -55,18 +55,10 @@ RUN npm install -g \
     jsii-pacmak
 
 # Install Python packages
+COPY requirements-dev.txt /tmp/requirements-dev.txt
 RUN pip3 install --no-cache-dir --upgrade pip --break-system-packages && \
-    pip3 install --no-cache-dir --break-system-packages \
-    twine \
-    mkdocs \
-    mkdocs-material \
-    mike \
-    mdx_truly_sane_lists \
-    mkdocs-exclude \
-    mkdocs-include-dir-to-nav \
-    mkdocs-awesome-pages-plugin \
-    git-remote-codecommit \
-    json-schema-for-humans
+    pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements-dev.txt && \
+    rm /tmp/requirements-dev.txt
 
 # Install SonarQube scanner
 RUN wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-8.0.1.6346-linux-x64.zip && \

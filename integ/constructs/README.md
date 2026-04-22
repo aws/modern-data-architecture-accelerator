@@ -111,7 +111,7 @@ ENV_VARS_MAP = [
 
 1. AWS credentials configured (via environment or profile)
 2. `AWS_REGION` or `AWS_DEFAULT_REGION` set
-3. Dependencies installed: `npm install` from repo root
+3. Dependencies installed: `npm run install:all` from repo root
 
 ### Bootstrap (first time or after teardown)
 

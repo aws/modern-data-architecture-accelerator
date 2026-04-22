@@ -3,8 +3,8 @@
 # Stops on first failure.
 #
 # Usage:
-#   ./scripts/quality/prepush.sh          # affected only, uses cache (fast)
-#   ./scripts/quality/prepush.sh --all    # all packages, no cache (thorough)
+#   ./scripts/quality/prepush_repo.sh                    # affected only, uses cache (fast)
+#   NX_RUN_ALL=true ./scripts/quality/prepush_repo.sh   # all packages, no cache (thorough)
 set -e
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -12,7 +12,7 @@ PROJECT_ROOT="$SCRIPT_DIR/../.."
 cd "$PROJECT_ROOT"
 
 # --- Determine scope ---
-if [ "$1" = "--all" ]; then
+if [ "${NX_RUN_ALL:-false}" = "true" ] || [ "${MERGE_PIPELINE_RUN_ALL:-false}" = "true" ]; then
   MODE="all"
   NX_LINT="npx nx run-many -t lint --all --skip-nx-cache"
   NX_PRETTIER="npx nx run-many -t prettier --all --skip-nx-cache"

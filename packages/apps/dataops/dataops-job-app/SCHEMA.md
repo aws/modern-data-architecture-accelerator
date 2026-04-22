@@ -215,11 +215,11 @@ Validation: executionRoleArn, command, and description are required; other prope
 
 **Description:** Job command configuration defining script and runtime environment.
 
-| Property                                                               | Pattern | Type             | Deprecated | Definition                               | Title/Description                                                                                                                                                                                                                  |
-| ---------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [name](#jobs_additionalProperties_command_name )                     | No      | enum (of string) | No         | In #/definitions/JobCommandName          | Job type: 'glueetl' for Spark ETL or 'pythonshell' for Python scripts.                                                                                                                                                             |
-| - [pythonVersion](#jobs_additionalProperties_command_pythonVersion )   | No      | enum (of string) | No         | In #/definitions/JobCommandPythonVersion | Python version for job runtime ('2' or '3').                                                                                                                                                                                       |
-| + [scriptLocation](#jobs_additionalProperties_command_scriptLocation ) | No      | string           | No         | -                                        | Relative path to the Glue script for job execution, or \`asset:<filename>\` to use a pre-built script from the app's assets directory. Available assets: dq-main.py (with utils/dq_config.py, utils/smus.py as additionalScripts). |
+| Property                                                               | Pattern | Type             | Deprecated | Definition                               | Title/Description                                                                                                                                                                                                      |
+| ---------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [name](#jobs_additionalProperties_command_name )                     | No      | enum (of string) | No         | In #/definitions/JobCommandName          | Job type: 'glueetl' for Spark ETL or 'pythonshell' for Python scripts.                                                                                                                                                 |
+| - [pythonVersion](#jobs_additionalProperties_command_pythonVersion )   | No      | enum (of string) | No         | In #/definitions/JobCommandPythonVersion | Python version for job runtime ('2' or '3').                                                                                                                                                                           |
+| + [scriptLocation](#jobs_additionalProperties_command_scriptLocation ) | No      | string           | No         | -                                        | Relative path to the Glue script for job execution, or \`asset:<filename>\` to use a pre-built script from the app's assets directory. Available assets: dq-main.py (DQ evaluation, with utils/ as additionalScripts). |
 
 ##### <a name="jobs_additionalProperties_command_name"></a>3.1.5.1. Property `root > jobs > additionalProperties > command > name`
 
@@ -256,7 +256,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** Relative path to the Glue script for job execution, or `asset:<filename>` to use a pre-built script from the app's assets directory. Available assets: dq-main.py (with utils/dq_config.py, utils/smus.py as additionalScripts).
+**Description:** Relative path to the Glue script for job execution, or `asset:<filename>` to use a pre-built script from the app's assets directory. Available assets: dq-main.py (DQ evaluation, with utils/ as additionalScripts).
 
 #### <a name="jobs_additionalProperties_connections"></a>3.1.6. Property `root > jobs > additionalProperties > connections`
 

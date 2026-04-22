@@ -62,8 +62,7 @@ aws --version     # AWS CLI v2 for CodeArtifact access
 5. **Install project dependencies**:
 
    ```bash
-   npm install
-   npx lerna bootstrap
+   npm run install:all
    ```
 
 ### NPM Registry Setup

@@ -238,7 +238,7 @@ export function baselineDiffTestApp(
               fs.writeFileSync(baselineFile, JSON.stringify(normalized, null, 2) + '\n');
               console.log(`[baseline-updated] ${baselineFile}\n`);
             } else {
-              failures.push(`${diffSummary} Run npm run test:diff:update to accept.`);
+              failures.push(`${diffSummary} Run npm run test:update-baselines to accept.`);
             }
           }
         }

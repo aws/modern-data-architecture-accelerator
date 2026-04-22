@@ -5,11 +5,11 @@ fileMatchPattern: '**/*.diff.test.ts,**/diff.ts,**/*.baseline.json'
 
 # CDK Diff-Based Baseline Testing - Steering Guide
 
-Guidance for the local per-module diff testing approach that replaces Jest snapshot tests with CDK semantic diffs.
+Guidance for the local per-module diff testing approach using CDK semantic diffs.
 
-## Why Diff Tests Over Snapshots
+## Why Diff Tests
 
-Jest snapshot tests (`snapShotTestApp` in `*.snapshot.test.ts`) compare serialized text. They require custom serializers to mask volatile values (UUIDs, asset hashes, timestamps, CFN logical IDs) and still break on cosmetic changes that have no infrastructure impact. CDK diff tests use the CDK toolkit's own semantic diff engine, which understands CloudFormation structure and only flags real infrastructure changes.
+CDK diff tests use the CDK toolkit's own semantic diff engine, which understands CloudFormation structure and only flags real infrastructure changes. This eliminates false positives from cosmetic changes that have no infrastructure impact.
 
 ## Architecture
 
@@ -42,7 +42,7 @@ The function is exported from `@aws-mdaa/testing` alongside the existing `snapSh
 
 ## Writing a Diff Test
 
-Each sample config gets one `baselineDiffTestApp` call. Use `Create.appProvider` from `@aws-mdaa/testing` to create the memoized app factory, same as snapshot tests.
+Each sample config gets one `baselineDiffTestApp` call. Use `Create.appProvider` from `@aws-mdaa/testing` to create the memoized app factory.
 
 ```typescript
 import { describe } from '@jest/globals';
@@ -144,7 +144,7 @@ It comes transitively through `@aws-mdaa/testing`. No additional dependency need
 
 ### 3. Create the diff test file
 
-Follow the pattern above. Mirror the sample config variants from the snapshot test — each `snapShotTestApp` call maps to a `baselineDiffTestApp` call with the same config and context.
+Follow the pattern above. Each sample config variant gets a `baselineDiffTestApp` call with the corresponding config and context.
 
 ### 4. Generate initial baselines
 
@@ -176,9 +176,9 @@ In `.gitlab-ci.yml`:
 - `feature_merge_test` — runs `npx lerna run test` on merge requests in the `analyze` stage
 - `release_version_package` — runs `npx lerna run test:update-baselines` during release
 
-## Relationship to Snapshot Tests
+## Test Coverage
 
-Diff tests and snapshot tests coexist during migration. Every app module under `packages/apps/` has both `*.snapshot.test.ts` and `*.diff.test.ts`, with matching sample config coverage. Both test types and their npm scripts (`test:diff`, `test:diff:update`) are present in all 45 app packages. The long-term goal is for diff tests to replace snapshot tests, eliminating the need for custom snapshot serializers and reducing false-positive test failures.
+Every app module under `packages/apps/` has `*.diff.test.ts` with matching sample config coverage. The npm script `test:update-baselines` regenerates baselines across all packages.
 
 ## How baselineDiffTestApp Works Internally
 

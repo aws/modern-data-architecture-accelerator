@@ -37,7 +37,6 @@ Are there any breaking changes in this MR? If so list them here:
 - [ ] I have reviewed/updated the README
 - [ ] I have reviewed/updated the Change Log
 - [ ] I have reviewed/updated the Implementation Guide
-- [ ] I have reviewed/update the SCHEMA.md docs using ./scripts/update_schemas.sh script
 - [ ] Code follows security best practices and AWS Security Reference Architecture
 - [ ] All dependencies are properly declared and up to date
 

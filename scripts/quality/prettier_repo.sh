@@ -5,6 +5,13 @@ echo "Running prettier check"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# When MERGE_PIPELINE_RUN_ALL is set, run prettier on every package.
+if [ "${MERGE_PIPELINE_RUN_ALL:-false}" = "true" ] || [ "${NX_RUN_ALL:-false}" = "true" ]; then
+  echo "Running prettier on all packages"
+  npx nx run-many -t prettier --all "$@"
+  exit 0
+fi
+
 # Run prettier only on packages with direct file changes (not transitive dependents)
 source "$SCRIPT_DIR/../nx/affected-base.sh"
 

@@ -11,7 +11,7 @@
   "version": "1.5.0",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc && typescript-json-schema --required --noExtraProps tsconfig.json SageMakerGroundTruthConfigContents --include 'lib/*.ts' --include '../../../../node_modules/@types/**/*.ts' > lib/config-schema.json && cp lib/config-schema.json ../../../../schemas/${npm_package_name}.json",
+    "build": "../../../../scripts/build/build_package.sh SageMakerGroundTruthConfigContents",
     "cdk": "cdk",
     "lint": "eslint --max-warnings 0 -c ../../../../eslint.config.mjs",
     "test": "jest --passWithNoTests --coverage",

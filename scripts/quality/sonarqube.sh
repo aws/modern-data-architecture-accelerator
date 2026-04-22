@@ -29,23 +29,29 @@ if [ "${CI_PIPELINE_SOURCE}" = "merge_request_event" ] || [ -n "${CI_MERGE_REQUE
 
   # Scope the scanner to only affected packages so we don't need full-repo
   # coverage. Each MR project is independent, so partial analysis is fine.
-  SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-  source "$SCRIPT_DIR/../nx/affected-base.sh"
-
-  echo "Computing directly changed packages (base: $NX_BASE)"
-  CHANGED_PROJECTS=$(python3 ./scripts/nx/changed-only.py "$NX_BASE" "$NX_HEAD")
-  AFFECTED_PATHS=$(echo "$CHANGED_PROJECTS" | python3 ./scripts/nx/affected-paths.py)
-
-  if [ -n "$AFFECTED_PATHS" ]; then
-    echo "Scoping scanner to affected packages: $AFFECTED_PATHS"
-    # Build sonar.sources as comma-separated list of affected package roots
-    SCOPE_ARGS="-Dsonar.sources=${AFFECTED_PATHS}"
-    # Restrict inclusions to lib/**/*.ts within affected packages only
-    INCLUSIONS=$(echo "$AFFECTED_PATHS" | tr ',' '\n' | sed 's|$|/lib/**/*.ts|' | paste -sd ',' -)
-    SCOPE_ARGS="${SCOPE_ARGS} -Dsonar.inclusions=${INCLUSIONS}"
+  # Set MERGE_PIPELINE_RUN_ALL=true to force a full-repo scan in MR pipelines.
+  if [ "${MERGE_PIPELINE_RUN_ALL:-false}" = "true" ]; then
+    echo "MERGE_PIPELINE_RUN_ALL=true — running full-repo scan for this MR"
+    SCOPE_ARGS=""
   else
-    echo "No affected packages found, skipping SonarQube scan"
-    exit 0
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    source "$SCRIPT_DIR/../nx/affected-base.sh"
+
+    echo "Computing directly changed packages (base: $NX_BASE)"
+    CHANGED_PROJECTS=$(python3 ./scripts/nx/changed-only.py "$NX_BASE" "$NX_HEAD")
+    AFFECTED_PATHS=$(echo "$CHANGED_PROJECTS" | python3 ./scripts/nx/affected-paths.py)
+
+    if [ -n "$AFFECTED_PATHS" ]; then
+      echo "Scoping scanner to affected packages: $AFFECTED_PATHS"
+      # Build sonar.sources as comma-separated list of affected package roots
+      SCOPE_ARGS="-Dsonar.sources=${AFFECTED_PATHS}"
+      # Restrict inclusions to lib/**/*.ts within affected packages only
+      INCLUSIONS=$(echo "$AFFECTED_PATHS" | tr ',' '\n' | sed 's|$|/lib/**/*.ts|' | paste -sd ',' -)
+      SCOPE_ARGS="${SCOPE_ARGS} -Dsonar.inclusions=${INCLUSIONS}"
+    else
+      echo "No affected packages found, skipping SonarQube scan"
+      exit 0
+    fi
   fi
 else
   # Main branch analysis - use the canonical project key

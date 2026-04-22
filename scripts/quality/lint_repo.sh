@@ -8,9 +8,10 @@ echo "Running lintcheck"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# On main, lint everything. On feature/MR branches, lint only changed packages.
-if [ "${CI_COMMIT_BRANCH:-}" = "main" ]; then
-  echo "Running full lint on main"
+# On main or when MERGE_PIPELINE_RUN_ALL is set, lint everything.
+# On feature/MR branches, lint only changed packages.
+if [ "${CI_COMMIT_BRANCH:-}" = "main" ] || [ "${MERGE_PIPELINE_RUN_ALL:-false}" = "true" ] || [ "${NX_RUN_ALL:-false}" = "true" ]; then
+  echo "Running full lint (main or MERGE_PIPELINE_RUN_ALL=true)"
   npx nx run-many -t lint --all "$@"
 else
   # Run linting only on packages with direct file changes (not transitive dependents)
