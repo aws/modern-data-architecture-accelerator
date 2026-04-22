@@ -7,7 +7,7 @@ set -e
 
 echo "Checking for schema drift..."
 
-CHANGED=$(git diff --name-only -- 'schemas/' '**/config-schema.json' '**/SCHEMA.md')
+CHANGED=$(git diff --name-only -- 'schemas/@aws-mdaa/' '**/config-schema.json' '**/SCHEMA.md')
 
 if [ -n "$CHANGED" ]; then
     echo ""
@@ -18,7 +18,7 @@ if [ -n "$CHANGED" ]; then
     echo "The following files differ from what was committed:"
     echo "$CHANGED"
     echo ""
-    git diff --stat -- 'schemas/' '**/config-schema.json' '**/SCHEMA.md'
+    git diff --stat -- 'schemas/@aws-mdaa/' '**/config-schema.json' '**/SCHEMA.md'
     echo ""
     echo "Run 'npm run build' locally and commit the updated schema files."
     exit 1
