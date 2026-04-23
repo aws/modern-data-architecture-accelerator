@@ -72,6 +72,7 @@ export class MdaaDeploy {
   private readonly diffOutDir?: string;
   private readonly testMode: boolean;
   private readonly noFail: boolean;
+  private pythonInstalled = false;
 
   private static readonly TF_ACTION_MAPPINGS: { [key: string]: string } = {
     list: 'validate',
@@ -246,8 +247,6 @@ export class MdaaDeploy {
   }
 
   public deploy() {
-    this.installPython();
-
     const globalEffectiveConfig: EffectiveConfig = this.createGlobalEffectiveConfig();
     this.deployDomains(globalEffectiveConfig);
     if (this.devopsMode) {
@@ -501,6 +500,11 @@ export class MdaaDeploy {
       throw new Error("module_path must be specified if module_type is 'tf'");
     }
 
+    if (!this.pythonInstalled && !this.testMode) {
+      this.installPython();
+      this.pythonInstalled = true;
+    }
+
     if (!fs.existsSync(`${this.workingDir}/python/bin/checkov`) && !this.testMode) {
       console.log('Cannot locate checkov on path. Terraform modules cannot deploy. Check Python/Pip installation.');
       process.exit(1);
@@ -623,7 +627,9 @@ export class MdaaDeploy {
     const prefix = this.localPackages[npmPackage];
 
     console.log(`Module ${logPrefix}: Package ${npmPackageNoVersion} found in local codebase. Running build.`);
-    const buildCmd = `npx lerna run build --scope ${npmPackageNoVersion} --loglevel warn`;
+    // Set MDAA_BUILD_CODE_ONLY so build_package.sh compiles TypeScript only,
+    // skipping schema generation and documentation that aren't needed at deploy time.
+    const buildCmd = `MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope ${npmPackageNoVersion} --loglevel warn`;
     const fullBuildCmd = `cd '${__dirname}/../../../' && ${buildCmd} && cd '${this.cwd}'`;
     console.log(`Running Lerna Build: ${fullBuildCmd}`);
     this.execCmd(fullBuildCmd);

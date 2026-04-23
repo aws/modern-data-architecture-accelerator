@@ -1,15 +1,34 @@
 #!/bin/bash
 set -e
 
-# Builds an MDAA app package:
-#   1. Compiles TypeScript
+# Builds an MDAA app package.
+#
+# Default (dev/CI) mode:
+#   1. Compiles TypeScript (delegates to build_package_code.sh)
 #   2. Generates config-schema.json from the specified TypeScript config class
 #   3. Copies the schema to the central schemas/ directory
 #   4. Generates SCHEMA.md documentation from the schema
 #
+# Code-only mode (MDAA_BUILD_CODE_ONLY=true):
+#   Only compiles TypeScript — skips schema generation and documentation.
+#   Used by the CLI at deploy time to build local modules without the overhead
+#   of schema and doc generation.
+#
 # Usage: build_package.sh <ConfigClassName>
 #
 # Must be run from the package root directory (e.g. packages/apps/dataops/dataops-job-app/)
+
+# Resolve project root relative to this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# 1. Compile TypeScript
+"$SCRIPT_DIR/build_package_code.sh"
+
+# In code-only mode, skip schema generation and documentation
+if [ "${MDAA_BUILD_CODE_ONLY:-}" = "true" ]; then
+    exit 0
+fi
 
 CONFIG_CLASS="$1"
 
@@ -19,17 +38,10 @@ if [ -z "$CONFIG_CLASS" ]; then
     exit 1
 fi
 
-# Resolve project root relative to this script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-
 # Resolve node_modules and schemas relative to project root
 NODE_MODULES="$PROJECT_ROOT/node_modules"
 SCHEMAS_DIR="$PROJECT_ROOT/schemas"
 JSFH_CONF="$PROJECT_ROOT/scripts/generate_docs/jsfh-conf.yaml"
-
-# 1. Compile TypeScript
-tsc
 
 # 2. Generate config-schema.json
 typescript-json-schema \

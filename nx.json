@@ -12,6 +12,7 @@
         "{projectRoot}/src/*.sh",
         "{projectRoot}/test/*.ts",
         "{workspaceRoot}/scripts/build/build_package.sh",
+        "{workspaceRoot}/scripts/build/build_package_code.sh",
         "{workspaceRoot}/scripts/generate_docs/jsfh-conf.yaml",
         "{workspaceRoot}/requirements-dev.txt"
       ],
