@@ -9,7 +9,7 @@
     "build": "./scripts/build/build_repo.sh",
     "build:all": "NX_RUN_ALL=true npm run build",
     "install:all": "npm install && npm run python-install",
-    "python-install": "pip3 install -r requirements-dev.txt",
+    "python-install": "./scripts/build/python_install_repo.sh",
     "lint": "./scripts/quality/lint_repo.sh",
     "lint:all": "NX_RUN_ALL=true npm run lint",
     "prepare": "husky install source/.husky",

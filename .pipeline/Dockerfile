@@ -56,8 +56,7 @@ RUN npm install -g \
 
 # Install Python packages
 COPY requirements-dev.txt /tmp/requirements-dev.txt
-RUN pip3 install --no-cache-dir --upgrade pip --break-system-packages && \
-    pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements-dev.txt && \
+RUN uv pip install --system --break-system-packages -r /tmp/requirements-dev.txt && \
     rm /tmp/requirements-dev.txt
 
 # Install SonarQube scanner

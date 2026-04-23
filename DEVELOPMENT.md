@@ -29,8 +29,7 @@ MDAA development follows a working-backwards process, starting from the user exp
 ### Prerequisites
 
 - **Node.js 22.x** and **npm 10.x** — See the [Node.js downloads page](https://nodejs.org/).
-- **Python 3** and **pip** — Required for schema doc generation and MkDocs.
-- **uv** — Required for Python tests. See the [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/).
+- **Python 3** , **pip**, **uv** — Required for Python virtual environment, dependency management, schema doc generation and tests. See the [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/).
 
 ### Quick Start
 
@@ -41,19 +40,27 @@ MDAA development follows a working-backwards process, starting from the user exp
    cd modern-data-architecture-accelerator
    ```
 
-2. **Install dependencies**
+2. **Set up and activate a virtual env with uv**
+
+   ```bash
+   uv venv --python 3.13
+   source .venv/bin/activate
+   ```
+
+3. **Install dependencies**
 
    ```bash
    npm run install:all
    ```
 
-3. **Build all packages**
+
+4. **Build packages**
 
    ```bash
-   npm run build:all
+   npm run build
    ```
 
-4. **Run tests to verify your setup**
+5. **Run tests to verify your setup**
 
    ```bash
    npm test

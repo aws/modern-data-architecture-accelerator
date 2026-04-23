@@ -1,5 +1,5 @@
 # Python dev dependencies for building and documenting MDAA
-# Install with: npm run python-install
+# Install with: npm run python-install (uses uv)
 
 # Schema documentation generation
 json-schema-for-humans==1.5.1
