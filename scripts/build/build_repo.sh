@@ -15,7 +15,7 @@ fi
 python3 "$SCRIPT_DIR/fix_license_headers.py"
 
 if [ "${NX_RUN_ALL:-false}" = "true" ]; then
-  npx lerna run build --stream -- --skip-nx-cache
+  npx lerna run build --stream --skip-nx-cache
 else
   npx lerna run build --stream
 fi
