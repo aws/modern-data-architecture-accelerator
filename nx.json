@@ -14,7 +14,11 @@
         "{workspaceRoot}/scripts/build/build_package.sh",
         "{workspaceRoot}/scripts/build/build_package_code.sh",
         "{workspaceRoot}/scripts/generate_docs/jsfh-conf.yaml",
-        "{workspaceRoot}/requirements-dev.txt"
+        "{workspaceRoot}/requirements-dev.txt",
+        { "dependentTasksOutputFiles": "lib/*.d.ts" },
+        { "dependentTasksOutputFiles": "lib/*.js" },
+        { "dependentTasksOutputFiles": "bin/*.d.ts" },
+        { "dependentTasksOutputFiles": "bin/*.js" }
       ],
       "outputs": [
         "{projectRoot}/bin/*.d.ts",
@@ -39,7 +43,11 @@
         "{projectRoot}/test/*.ts",
         "{projectRoot}/test/**/*.yaml",
         "{projectRoot}/test/**/*.json",
-        "{projectRoot}/sample_configs/**/*.yaml"
+        "{projectRoot}/sample_configs/**/*.yaml",
+        { "dependentTasksOutputFiles": "lib/*.d.ts" },
+        { "dependentTasksOutputFiles": "lib/*.js" },
+        { "dependentTasksOutputFiles": "bin/*.d.ts" },
+        { "dependentTasksOutputFiles": "bin/*.js" }
       ],
       "outputs": ["{projectRoot}/coverage"],
       "options": {
@@ -54,7 +62,11 @@
         "{projectRoot}/lib/*.ts",
         "{projectRoot}/test/*.ts",
         "{projectRoot}/test/**/*.json",
-        "{projectRoot}/sample_configs/**/*.yaml"
+        "{projectRoot}/sample_configs/**/*.yaml",
+        { "dependentTasksOutputFiles": "lib/*.d.ts" },
+        { "dependentTasksOutputFiles": "lib/*.js" },
+        { "dependentTasksOutputFiles": "bin/*.d.ts" },
+        { "dependentTasksOutputFiles": "bin/*.js" }
       ],
       "cache": false
     }
