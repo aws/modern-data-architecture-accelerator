@@ -8,7 +8,7 @@ import { baselineDiffTestApp, Create } from '@aws-mdaa/testing';
 import { DataOpsProjectCDKApp } from '../lib/dataops-project';
 import * as path from 'path';
 
-const IGNORE_DOMAIN_CONFIG_REFRESH = { ignoreResourcePatterns: ['domainConfigcr'] };
+const IGNORE_DOMAIN_CONFIG_REFRESH = { ignoreResourceProperties: { domainConfigcr: ['refresh'] } };
 
 describe('Dataops Project Baseline Diff Tests', () => {
   baselineDiffTestApp(

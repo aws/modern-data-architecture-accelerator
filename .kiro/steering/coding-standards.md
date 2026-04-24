@@ -1,0 +1,61 @@
+---
+inclusion: manual
+---
+
+# Coding Standards - Steering Guide
+
+Enforce and improve MDAA coding standards across TypeScript/CDK constructs, Python code, and config schema documentation. This steering file covers the full scope of code quality — formatting, construct patterns, interface documentation, and schema generation.
+
+#[[file:CONTRIBUTING.md]]
+#[[file:TESTING.md]]
+
+## Scope
+
+- **TypeScript/CDK code**: All packages under `packages/constructs/`, `packages/apps/`, `packages/utilities/`, `packages/cli/`
+- **Python code**: Lambda functions, Glue jobs, and tool projects
+- **Config schema interfaces**: `lib/*-config.ts` files in app modules and their L3 construct dependencies
+- **Generated schemas**: `lib/config-schema.json` (auto-generated from TypeScript interfaces via `typescript-json-schema`)
+
+## What to Review
+
+When reviewing or improving code quality, apply the coding guidelines from CONTRIBUTING.md (pulled in via `#[[file:CONTRIBUTING.md]]` above). This steering file focuses on the config schema JSDoc audit process below.
+
+## Config Schema Documentation
+
+Config-exposed TypeScript interfaces flow into JSON schemas via `typescript-json-schema` during build. The quality of JSDoc on these interfaces directly determines the quality of the generated schema documentation that users see.
+
+The documentation standards for config-exposed properties are defined in the `code-documentation` steering file (auto-included). This section covers the detailed process for auditing and improving config schema JSDoc across modules.
+
+### Process
+
+1. **Gather context** — read the app README, L3 construct README, app config (`lib/*-config.ts`), L3 construct source, and test config (`test/test-config.yaml`)
+2. **Write documentation** — enhance JSDoc on ALL config-exposed properties using context from READMEs and code
+3. **Cleanup** — replace verbose Q-ENHANCED docs with concise versions; remove misplaced docs on non-interface locations
+4. **Validate** — no TypeScript errors, docs consistent with README, all config-exposed properties documented
+
+### Validation
+
+- No TypeScript syntax errors
+- Documentation consistent with README
+- All config-exposed properties documented
+
+### Critical: Documentation-Only Changes
+
+Config schema documentation tasks MUST produce documentation-only changes. No property declarations, imports, exports, class definitions, or executable code may be added, removed, or modified.
+
+**After every edit**, verify interface integrity:
+
+```bash
+diff <(git show HEAD:path/to/file.ts | grep "readonly " | sort) <(grep "readonly " path/to/file.ts | sort)
+```
+
+If any `readonly` lines differ, the edit introduced a code change — revert and redo.
+
+**After completing a module**, run `npx lerna run build` and verify zero errors.
+
+### Anti-Patterns
+
+- Replacing a multi-line JSDoc comment and accidentally eating the `readonly` property declaration, interface closing `}`, or next interface's `/**` opening
+- Replacing `id` fields in NagPackSuppression object literals with comments (these are code, not documentation)
+- Verbose Q-ENHANCED docs with redundant phrasing instead of concise, README-informed descriptions
+- Generic filler use cases ("Data management; Configuration; Setup") instead of specific ones from the README

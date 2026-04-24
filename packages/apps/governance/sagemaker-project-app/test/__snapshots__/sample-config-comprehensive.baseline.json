@@ -75,8 +75,7 @@
         },
         "domain_id": {
           "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
-        },
-        "refresh": 1775061362993
+        }
       },
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete"

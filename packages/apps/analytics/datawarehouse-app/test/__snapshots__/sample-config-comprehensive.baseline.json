@@ -3211,7 +3211,6 @@
         },
         "Schedule": "cron(0 22 ? * FRI *)",
         "ScheduledActionName": "test-org-test-env-test-domain-test-datawarehou-52563a39",
-        "StartTime": "2026-04-08T21:43:08.294Z",
         "TargetAction": {
           "PauseCluster": {
             "ClusterIdentifier": {
@@ -3234,7 +3233,6 @@
         },
         "Schedule": "cron(0 12 ? * MON *)",
         "ScheduledActionName": "test-org-test-env-test-domain-test-datawareho-32f491fc",
-        "StartTime": "2026-04-08T21:43:08.297Z",
         "TargetAction": {
           "ResumeCluster": {
             "ClusterIdentifier": {

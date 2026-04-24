@@ -445,10 +445,13 @@ feature_merge_baseline_review:
       - packages/**/node_modules/
       - .nx/
     policy: pull
-  allow_failure: true
+  allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     GIT_DEPTH: '0'
+    KIRO_API_KEY: '${KIRO_API_KEY}'
+    # Set to 'false' to enable Kiro risk assessment (requires kiro-cli in the base image and KIRO_API_KEY)
+    SKIP_RISK_ASSESSMENT: 'true'
   script:
     - python3 ./scripts/quality/baseline_review.py --output-dir baseline-review
     - python3 ./scripts/quality/post_baseline_threads.py --report baseline-review/report.json

@@ -7,6 +7,9 @@ description: General working instructions
 
 Guidance to be applied to all Kiro tasks.
 
+#[[file:CONTRIBUTING.md]]
+#[[file:TESTING.md]]
+
 ## Guidance
 
 - All temporary working kiro files and outputs should written be under .kiro/working/<task identifier>

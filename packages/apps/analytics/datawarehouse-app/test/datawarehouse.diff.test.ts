@@ -8,7 +8,7 @@ import { baselineDiffTestApp, Create } from '@aws-mdaa/testing';
 import { DataWarehouseCDKApp } from '../lib/datawarehouse';
 import * as path from 'path';
 
-const IGNORE_SCHEDULED_ACTION_TIMESTAMPS = { ignoreResourcePatterns: ['scheduledaction'] };
+const IGNORE_SCHEDULED_ACTION_TIMESTAMPS = { ignoreResourceProperties: { scheduledaction: ['StartTime'] } };
 
 describe('Data Warehouse Baseline Diff Tests', () => {
   baselineDiffTestApp(

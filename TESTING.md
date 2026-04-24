@@ -144,6 +144,8 @@ L2 constructs require 80% branch and statement coverage. All compliance controls
 
 L3 constructs implement architectural patterns and multi-resource integrations. They compose L2 constructs and CDK resources into higher-level abstractions (e.g., a data lake with buckets, encryption, access controls, and Lake Formation permissions).
 
+L3 constructs also implement compliance controls when a reusable L2 construct isn't warranted for a particular resource type.
+
 ### What to Test
 
 - All compliance controls implemented at the L3 level (encryption, IAM policies, security groups, logging)
@@ -285,13 +287,25 @@ Review the diff output before committing updated baselines to confirm changes ar
 
 ### Handling Non-Deterministic Resources
 
-Some resources produce non-deterministic output (e.g., timestamps, generated IDs). Use `ignoreResourcePatterns` to exclude specific logical IDs from diff checking:
+Some resources produce non-deterministic output (e.g., timestamps, generated IDs). Two options are available:
+
+**Strip entire resources** — use `ignoreResourcePatterns` when the entire resource is non-deterministic (e.g., Lambda versions with hash-based logical IDs):
 
 ```typescript
 baselineDiffTestApp('MyModule Comprehensive', appProvider, {
-  ignoreResourcePatterns: ['domainConfigcr', 'scheduledaction'],
+  ignoreResourcePatterns: ['scheduledaction'],
 });
 ```
+
+**Strip specific properties** — use `ignoreResourceProperties` when a resource is mostly stable but has one or two non-deterministic properties (e.g., a `refresh` timestamp). This keeps the resource in the baseline so its other properties are still validated:
+
+```typescript
+baselineDiffTestApp('MyModule Comprehensive', appProvider, {
+  ignoreResourceProperties: { 'domainConfigcr': ['refresh'] },
+});
+```
+
+Both options strip the ignored content from the baseline template at write time, so baselines only contain validated content.
 
 ### File Naming
 
@@ -301,6 +315,64 @@ baselineDiffTestApp('MyModule Comprehensive', appProvider, {
 ### Coverage
 
 App modules require 80% statement coverage. Branch coverage is set to 0% at the apps base level due to an Istanbul/ts-jest quirk where default constructor parameters (`props: AppProps = {}`) count as uncovered branches even when all real logic is tested.
+
+### Diff Risk Assessment
+
+Baseline diffs must be reviewed carefully before committing. Not all diffs are equal — some represent routine changes, while others can cause data loss or deployment failures in existing environments. Treat every baseline update as a change to deployed infrastructure.
+
+#### Breaking Diffs
+
+A breaking diff is any change that would cause a CloudFormation deployment failure in an existing environment. Breaking diffs must be avoided at all costs. Common causes:
+
+- Renaming a CloudFormation logical ID for a stateful resource (S3 bucket, DynamoDB table, RDS instance) — CloudFormation deletes the old resource and creates a new one, losing all data
+- Changing a resource property that requires replacement (e.g., `BucketName` on an S3 bucket, `TableName` on a DynamoDB table) — same delete-and-recreate behavior
+- Removing a resource that other stacks or external systems depend on (exports, SSM parameters, IAM roles referenced by running workloads)
+
+#### Data-Containing Resource Diffs
+
+Any diff that deletes or replaces a data-containing resource requires explicit justification and review. These resources include S3 buckets, DynamoDB tables, RDS/Aurora instances, OpenSearch domains, EFS file systems, and Glue databases/tables. Even if the replacement resource is identical, the data in the original resource is lost.
+
+When reviewing a baseline diff, flag any resource where `Action: DELETE` or `Action: REPLACE` appears on a data-containing resource type. If the change is intentional, document why data loss is acceptable or how data migration will be handled.
+
+#### Construct ID and Scoping Changes
+
+CDK generates CloudFormation logical IDs from the construct tree path. Changes to construct IDs, nesting depth, or scope hierarchy silently change logical IDs, which CloudFormation interprets as "delete old resource, create new one." This is particularly dangerous because:
+
+- The new resource has the same configuration as the old one, so the diff looks harmless — just a logical ID rename
+- But CloudFormation will attempt to create the new resource before deleting the old one, causing naming collisions if the resource has a fixed physical name (e.g., S3 bucket name, IAM role name, SSM parameter path)
+- Even if creation succeeds, the old resource is orphaned or deleted, losing any data it contained
+
+Watch for these patterns in diffs:
+
+- A resource disappearing at one logical ID and appearing at another with identical properties
+- Changes to construct `id` parameters in L2/L3 constructors
+- Moving a construct from one scope to another (e.g., from the stack directly into a nested construct)
+- Refactoring that changes the construct tree depth (adding or removing intermediate constructs)
+
+When a logical ID change is unavoidable, it must be handled with a CloudFormation resource import or a migration plan — never by simply updating the baseline and deploying.
+
+#### Privilege Escalation Diffs
+
+Changes that increase permissions or broaden access require security review, even though they deploy successfully. Watch for:
+
+- IAM policy statements with added actions, especially `*` actions or sensitive actions (`iam:PassRole`, `sts:AssumeRole`, `kms:Decrypt`)
+- Removal of IAM policy conditions that previously scoped access (`aws:SourceArn`, `aws:SourceAccount`)
+- Broadened resource ARNs (e.g., scoped prefix → wildcard)
+- New principals in resource policies (S3, KMS, SNS/SQS)
+- Security group ingress additions, especially `0.0.0.0/0`
+- Removal of `DeletionPolicy: Retain` or `UpdateReplacePolicy: Retain`
+
+Privilege escalation is dangerous because it deploys without errors but silently weakens the security posture. Verify the increase is intentional, justified, and follows least-privilege principles.
+
+#### New CDK Nag Suppressions
+
+New `NagPackSuppression` entries — whether in construct code or config-level `nag_suppressions` — are explicit opt-outs from compliance controls. Each new suppression requires compliance review:
+
+- The reason must be specific and reference AWS service authorization documentation
+- The suppression must be scoped as narrowly as possible (resource-level, not stack-level)
+- Suppressions that bypass encryption or access control requirements are highest priority for review
+
+> **Kiro:** The `diff-risk-assessment` steering file automates reviewing baseline diffs for breaking changes, data loss risks, and construct ID scoping issues. It activates automatically when baseline files are modified.
 
 ## Testing Python Code
 
@@ -346,8 +418,6 @@ uv run pytest -v               # Verbose output
 1. Create a `python-tests/` directory with `pyproject.toml`, `conftest.py`, and `test_*.py` files
 2. Add `"test:python": "bash ../../../../scripts/test/test_python_package.sh"` to the package's `package.json` scripts (adjust the relative path depth as needed)
 3. The centralized runner (`scripts/test/test_python_package.sh`) no-ops gracefully if `python-tests/` doesn't exist
-
-For detailed Python testing documentation, see [PYTHON_TESTING.md](PYTHON_TESTING.md).
 
 ## Integration Tests
 
@@ -425,9 +495,10 @@ The CI pipeline runs tests at multiple stages:
 
 1. Create sample configs under `sample_configs/` (minimal + comprehensive + variants)
 2. Create `test/{module}.diff.test.ts` with one `baselineDiffTestApp` per sample config
-3. Run `UPDATE_BASELINES=true npm test` to generate initial baselines
-4. Commit the baseline JSON files
-5. Ensure 80% statement coverage
+3. Create `test/{module}.snapshot.test.ts` with one `snapShotTestApp` per sample config using `Create.appProvider`
+4. Run `UPDATE_BASELINES=true npm test` to generate initial baselines
+5. Commit the baseline JSON files
+6. Ensure 80% statement coverage
 
 ### Updating Infrastructure
 

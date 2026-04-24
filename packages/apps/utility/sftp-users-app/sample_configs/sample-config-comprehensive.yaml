@@ -68,3 +68,9 @@ users:
     homeDirectory: /incoming
     publicKeys:
       - test-key2
+
+  test-user-3:
+    bucket: home-bucket2
+    homeDirectory: /incoming
+    publicKeys:
+      - test-key2

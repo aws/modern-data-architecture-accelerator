@@ -137,7 +137,7 @@ describe('baselineDiffTestApp', () => {
   // Covers ignore patterns filtering
   describe('diff with ignore patterns', () => {
     const options: BaselineDiffOptions = {
-      ignoreResourcePatterns: ['CurrentVersion', 'Alias', 'CustomPattern'],
+      ignoreResourcePatterns: ['CurrentVersion', 'AliasLive', 'CustomPattern'],
     };
     baselineDiffTestApp(
       'Ignore Patterns Filtering',
@@ -210,25 +210,17 @@ describe('baselineDiffTestApp', () => {
     });
   });
 
-  // Covers the diff failure path (line 248: failures.length > 0)
-  // and the ignore-pattern logging path (lines 216-219)
+  // Covers the case where ignored resources are stripped from both baseline and synth output.
+  // Since ignored resources are removed before writing baselines, a clean baseline
+  // diffed against a clean synth output produces no differences.
   describe('diff with resource differences and ignore patterns', () => {
     const configName = 'diff-with-ignored';
     const baselineFile = trackBaseline(configName);
 
-    // Baseline has a resource named CurrentVersionXYZ (matches default ignore pattern)
-    // and a resource named KeepMe that will also be in synth output
+    // Baseline has no ignored resources — they were stripped at write time.
+    // This matches what stripIgnoredResources produces for an empty stack.
     const baselineTemplate = {
-      Resources: {
-        CurrentVersionXYZ: {
-          Type: 'AWS::Lambda::Version',
-          Properties: { FunctionName: 'old-fn' },
-        },
-        AliasLive: {
-          Type: 'AWS::Lambda::Alias',
-          Properties: { FunctionName: 'old-fn', FunctionVersion: '1' },
-        },
-      },
+      Resources: {},
       Parameters: {
         BootstrapVersion: {
           Type: 'AWS::SSM::Parameter::Value<String>',
@@ -253,9 +245,8 @@ describe('baselineDiffTestApp', () => {
     fs.mkdirSync(snapshotsDir, { recursive: true });
     fs.writeFileSync(baselineFile, JSON.stringify(baselineTemplate, null, 2) + '\n');
 
-    // The synth output won't have these resources, so they'll show as diffs.
-    // But CurrentVersionXYZ and AliasLive match the default ignore patterns,
-    // so they should be ignored and the test should pass.
+    // Synth produces an empty stack. After stripping ignored resources,
+    // both sides match — no diff.
     baselineDiffTestApp('Diff With Ignored', () => {
       const app = new cdk.App({
         context: { module_configs: `${configName}.yaml` },

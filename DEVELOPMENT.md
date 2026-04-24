@@ -139,7 +139,7 @@ MDAA enforces code quality through ESLint, Prettier, and strict TypeScript compi
 - Target runtime: Python 3.13
 - Use [pytest](https://docs.pytest.org/) for testing and [uv](https://docs.astral.sh/uv/) for dependency management
 - Security scanning via [Bandit](https://bandit.readthedocs.io/)
-- See [PYTHON_TESTING.md](PYTHON_TESTING.md) for the full Python testing setup
+- See the [Testing Python Code](TESTING.md#testing-python-code) section in `TESTING.md` for the full Python testing setup
 
 ## Scripts Directory
 

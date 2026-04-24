@@ -280,8 +280,7 @@
         },
         "domain_id": {
           "Ref": "constructsagemakerdomainconfigparserdomainconfigparserssmdomainidParameter6F93BD9C"
-        },
-        "refresh": 1775061358343
+        }
       },
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete"

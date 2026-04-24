@@ -73,3 +73,11 @@ RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/shar
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/opt/sonar-scanner/bin:$PATH"
+
+# Install Kiro CLI for headless risk assessment in CI
+RUN curl --proto '=https' --tlsv1.2 -sSf \
+    'https://desktop-release.q.us-east-1.amazonaws.com/latest/kirocli-x86_64-linux.zip' -o kirocli.zip && \
+    unzip -q kirocli.zip && \
+    ./kirocli/install.sh --force --no-confirm && \
+    rm -rf kirocli kirocli.zip
+ENV PATH="/root/.local/bin:$PATH"

@@ -35,14 +35,15 @@ echo "--- Nx affected debug ---"
 echo "MERGE_PIPELINE_RUN_ALL: ${MERGE_PIPELINE_RUN_ALL:-false}"
 echo "NX_TARGET: $NX_TARGET ($(git rev-parse "$NX_TARGET" 2>/dev/null || echo 'NOT FOUND'))"
 echo "NX_BASE (merge-base): $NX_BASE"
+echo "NX_HEAD: ${NX_HEAD:-<working tree>}"
 echo "HEAD: $(git rev-parse HEAD)"
 echo ""
 echo "git status (short):"
 git --no-pager status --short | head -20
 echo ""
-echo "Changed files (base..HEAD):"
-git --no-pager diff --name-only "$NX_BASE"...HEAD
-echo "(total: $(git --no-pager diff --name-only "$NX_BASE"...HEAD | wc -l))"
+echo "Changed files (base..HEAD + uncommitted):"
+git --no-pager diff --name-only "$NX_BASE"
+echo "(total: $(git --no-pager diff --name-only "$NX_BASE" | wc -l))"
 echo ""
-python3 "$(dirname "${BASH_SOURCE[0]}")/affected-tree.py" "$NX_BASE" HEAD 2>/dev/null || true
+python3 "$(dirname "${BASH_SOURCE[0]}")/affected-tree.py" "$NX_BASE" "${NX_HEAD:-HEAD}" 2>/dev/null || true
 echo "--- End Nx affected debug ---"

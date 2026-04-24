@@ -89,12 +89,25 @@ function mockCodeFactoryMethods(): Array<any> {
  */
 export interface BaselineDiffOptions {
   /**
-   * Resource logical ID patterns to ignore when counting diffs.
+   * Resource logical ID patterns to ignore when writing baselines.
    * Each pattern is tested as a regex against the logical ID.
-   * Use this for resources with expected non-deterministic changes
+   * Matching resources are stripped entirely from the baseline template.
+   * Use this for resources with fully non-deterministic output
    * (e.g., Lambda code assets that change due to mocking).
    */
   readonly ignoreResourcePatterns?: string[];
+
+  /**
+   * Properties to strip from specific resources before writing baselines.
+   * Keys are regex patterns matched against logical IDs; values are arrays
+   * of property names to remove from the resource's Properties object.
+   * Use this for resources that are mostly stable but have one or two
+   * non-deterministic properties (e.g., a `refresh` timestamp).
+   *
+   * @example
+   * { 'domainConfigcr': ['refresh'] }
+   */
+  readonly ignoreResourceProperties?: Record<string, string[]>;
 }
 
 /**
@@ -133,10 +146,46 @@ export function baselineDiffTestApp(
 
   // Global patterns for resources with non-deterministic logical IDs
   const defaultIgnorePatterns = [
-    'CurrentVersion', // Lambda version hash changes with code/config across version bumps
-    'Alias', // Lambda aliases reference CurrentVersion, so they drift too
+    'CurrentVersion[a-fA-F0-9]+$', // Lambda version hash changes with code/config across version bumps
+    'AliasLive[a-fA-F0-9]+$', // Lambda aliases reference CurrentVersion, so they drift too
   ];
   const ignorePatterns = [...defaultIgnorePatterns, ...(options?.ignoreResourcePatterns ?? [])].map(p => new RegExp(p));
+  const ignoreProperties = Object.entries(options?.ignoreResourceProperties ?? {}).map(([pattern, props]) => ({
+    pattern: new RegExp(pattern),
+    properties: props,
+  }));
+
+  /**
+   * Remove ignored resources and properties from a template.
+   * - Resources matching ignoreResourcePatterns are stripped entirely.
+   * - Properties matching ignoreResourceProperties are removed from
+   *   the resource's Properties object, keeping the resource itself.
+   */
+  function stripIgnoredContent(template: Record<string, unknown>): Record<string, unknown> {
+    const resources = template.Resources as Record<string, Record<string, unknown>> | undefined;
+    if (!resources) return template;
+
+    const filtered: Record<string, Record<string, unknown>> = {};
+    for (const [logicalId, resource] of Object.entries(resources)) {
+      // Strip entire resource if it matches an ignore pattern
+      if (ignorePatterns.some(p => p.test(logicalId))) continue;
+
+      // Strip specific properties if configured
+      let processedResource = resource;
+      for (const { pattern, properties } of ignoreProperties) {
+        if (pattern.test(logicalId) && processedResource.Properties) {
+          const props = { ...(processedResource.Properties as Record<string, unknown>) };
+          for (const prop of properties) {
+            delete props[prop];
+          }
+          processedResource = { ...processedResource, Properties: props };
+        }
+      }
+      filtered[logicalId] = processedResource;
+    }
+
+    return { ...template, Resources: filtered };
+  }
 
   test(`${testNamePrefix} Baseline Diff Test`, async () => {
     const spies = mockCodeFactoryMethods();
@@ -175,7 +224,7 @@ export function baselineDiffTestApp(
 
         if (!fs.existsSync(baselineFile)) {
           fs.mkdirSync(snapshotsDir, { recursive: true });
-          const normalized = normalizeTemplate(stack.template as Record<string, unknown>);
+          const normalized = stripIgnoredContent(normalizeTemplate(stack.template as Record<string, unknown>));
           fs.writeFileSync(baselineFile, JSON.stringify(normalized, null, 2) + '\n');
           firstRun = true;
         }
@@ -189,10 +238,11 @@ export function baselineDiffTestApp(
       const failures: string[] = [];
 
       // Normalize synth output on disk so the toolkit diffs version-stable templates
+      // Also strip ignored resources so they don't appear in diffs
       for (const stack of stacks) {
         const templateFile = path.join(assembly.directory, stack.templateFile);
         const raw = JSON.parse(fs.readFileSync(templateFile, 'utf-8'));
-        const normalized = normalizeTemplate(raw as Record<string, unknown>);
+        const normalized = stripIgnoredContent(normalizeTemplate(raw as Record<string, unknown>));
         fs.writeFileSync(templateFile, JSON.stringify(normalized, null, 2));
       }
 
@@ -210,22 +260,7 @@ export function baselineDiffTestApp(
 
         const stackDiff = result[stack.stackName];
         if (stackDiff) {
-          // Log ignored diffs
-          if (ignorePatterns.length > 0) {
-            Object.keys(stackDiff.resources.changes)
-              .filter(logicalId => ignorePatterns.some(p => p.test(logicalId)))
-              .filter(logicalId => stackDiff.resources.changes[logicalId]?.isDifferent)
-              .forEach(logicalId => {
-                console.warn(`[diff-ignored] ${stack.stackName}: ${logicalId}`);
-              });
-          }
-
-          const resourceDiffs =
-            ignorePatterns.length > 0
-              ? Object.keys(stackDiff.resources.changes)
-                  .filter(logicalId => !ignorePatterns.some(p => p.test(logicalId)))
-                  .filter(logicalId => stackDiff.resources.changes[logicalId]?.isDifferent).length
-              : stackDiff.resources.differenceCount;
+          const resourceDiffs = stackDiff.resources.differenceCount;
           const outputDiffs = stackDiff.outputs.differenceCount;
           const total = resourceDiffs + outputDiffs;
           if (total > 0) {
@@ -234,7 +269,7 @@ export function baselineDiffTestApp(
             if (UPDATE_BASELINES) {
               // Print the diff, update the baseline, and continue without failing
               console.log(`\n${diffSummary}`);
-              const normalized = normalizeTemplate(stack.template as Record<string, unknown>);
+              const normalized = stripIgnoredContent(normalizeTemplate(stack.template as Record<string, unknown>));
               fs.writeFileSync(baselineFile, JSON.stringify(normalized, null, 2) + '\n');
               console.log(`[baseline-updated] ${baselineFile}\n`);
             } else {

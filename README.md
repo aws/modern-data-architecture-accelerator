@@ -256,9 +256,9 @@ This solution collects anonymous operational metrics to help AWS improve quality
 
 For detailed guides, see:
 
-- [DEVELOPMENT.md](DEVELOPMENT.md) - Development setup, build process, and testing guide.
-- [PYTHON_TESTING.md](PYTHON_TESTING.md) - Comprehensive Python testing documentation.
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines and pull request process.
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Project architecture, coding guidelines, and pull request process.
+- [DEVELOPMENT.md](DEVELOPMENT.md) - Development environment setup, build process, and tooling.
+- [TESTING.md](TESTING.md) - Testing standards, architecture, and coverage requirements.
 
 Full documentation and module reference is available at [aws.github.io/modern-data-architecture-accelerator](https://aws.github.io/modern-data-architecture-accelerator/). To generate the docs locally, run `mkdocs serve` from the project root (requires [MkDocs](https://www.mkdocs.org/)).
 
