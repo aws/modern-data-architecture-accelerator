@@ -57,11 +57,9 @@ typescript-json-schema \
 cp lib/config-schema.json "$SCHEMAS_DIR/${npm_package_name}.json"
 
 # 4. Generate SCHEMA.md documentation
-if ! python3 -c "import json_schema_for_humans" &> /dev/null; then
-    echo "Error: json-schema-for-humans Python package not found"
-    echo "Install with: npm run python-install"
-    exit 1
-fi
+
+# Ensure Python dev dependencies are available (auto-creates venv locally if needed)
+source "$SCRIPT_DIR/ensure_python_env.sh"
 
 python3 -m json_schema_for_humans.cli \
     --config-file "$JSFH_CONF" \

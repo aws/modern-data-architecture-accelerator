@@ -40,27 +40,23 @@ MDAA development follows a working-backwards process, starting from the user exp
    cd modern-data-architecture-accelerator
    ```
 
-2. **Set up and activate a virtual env with uv**
+2. **Install dependencies**
 
    ```bash
-   uv venv --python 3.13
-   source .venv/bin/activate
+   npm install
    ```
 
-3. **Install dependencies**
-
-   ```bash
-   npm run install:all
-   ```
-
-
-4. **Build packages**
+3. **Build packages**
 
    ```bash
    npm run build
    ```
 
-5. **Run tests to verify your setup**
+   > The build automatically creates a Python virtual environment (`.venv`) and installs
+   > the required Python dependencies (for schema and doc generation) on first run.
+   > This requires `uv` to be installed — see [Prerequisites](#prerequisites).
+
+4. **Run tests to verify your setup**
 
    ```bash
    npm test

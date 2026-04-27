@@ -51,6 +51,7 @@ integ/constructs/dist
 
 # Python build artifacts and virtual environments
 .venv
+.build_venv
 .coverage
 coverage.xml
 htmlcov/
