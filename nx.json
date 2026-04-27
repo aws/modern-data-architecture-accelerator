@@ -1,30 +1,38 @@
 {
+  "namedInputs": {
+    "build-source": [
+      "{projectRoot}/package.json",
+      "{projectRoot}/bin/*.ts",
+      "{projectRoot}/lib/**/*.ts",
+      "{projectRoot}/lib/**/*.py",
+      "{projectRoot}/lib/**/*.sh",
+      "{projectRoot}/src/**/*.py",
+      "{projectRoot}/src/**/*.sh"
+    ]
+  },
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/bin/*.ts",
-        "{projectRoot}/lib/*.ts",
-        "{projectRoot}/lib/*.py",
-        "{projectRoot}/lib/*.sh",
-        "{projectRoot}/src/*.py",
-        "{projectRoot}/src/*.sh",
+        "{projectRoot}/lib/**/*.ts",
+        "{projectRoot}/lib/**/*.py",
+        "{projectRoot}/lib/**/*.sh",
+        "{projectRoot}/src/**/*.py",
+        "{projectRoot}/src/**/*.sh",
         "{projectRoot}/test/*.ts",
         "{workspaceRoot}/scripts/build/build_package.sh",
         "{workspaceRoot}/scripts/build/build_package_code.sh",
         "{workspaceRoot}/scripts/generate_docs/jsfh-conf.yaml",
         "{workspaceRoot}/requirements-dev.txt",
-        { "dependentTasksOutputFiles": "lib/*.d.ts" },
-        { "dependentTasksOutputFiles": "lib/*.js" },
-        { "dependentTasksOutputFiles": "bin/*.d.ts" },
-        { "dependentTasksOutputFiles": "bin/*.js" }
+        { "dependencies": true, "input": "build-source" }
       ],
       "outputs": [
         "{projectRoot}/bin/*.d.ts",
         "{projectRoot}/bin/*.js",
-        "{projectRoot}/lib/*.d.ts",
-        "{projectRoot}/lib/*.js",
+        "{projectRoot}/lib/**/*.d.ts",
+        "{projectRoot}/lib/**/*.js",
         "{projectRoot}/lib/config-schema.json",
         "{projectRoot}/test/*.d.ts",
         "{projectRoot}/test/*.js",
@@ -35,19 +43,16 @@
       "cache": true
     },
     "test": {
-      "dependsOn": ["build", "^test"],
+      "dependsOn": ["build", "^build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/bin/*.ts",
-        "{projectRoot}/lib/*.ts",
+        "{projectRoot}/lib/**/*.ts",
         "{projectRoot}/test/*.ts",
         "{projectRoot}/test/**/*.yaml",
         "{projectRoot}/test/**/*.json",
         "{projectRoot}/sample_configs/**/*.yaml",
-        { "dependentTasksOutputFiles": "lib/*.d.ts" },
-        { "dependentTasksOutputFiles": "lib/*.js" },
-        { "dependentTasksOutputFiles": "bin/*.d.ts" },
-        { "dependentTasksOutputFiles": "bin/*.js" }
+        { "dependencies": true, "input": "build-source" }
       ],
       "outputs": ["{projectRoot}/coverage"],
       "options": {
@@ -56,17 +61,14 @@
       "cache": true
     },
     "test:update-baselines": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build", "^build"],
       "inputs": [
         "{projectRoot}/bin/*.ts",
-        "{projectRoot}/lib/*.ts",
+        "{projectRoot}/lib/**/*.ts",
         "{projectRoot}/test/*.ts",
         "{projectRoot}/test/**/*.json",
         "{projectRoot}/sample_configs/**/*.yaml",
-        { "dependentTasksOutputFiles": "lib/*.d.ts" },
-        { "dependentTasksOutputFiles": "lib/*.js" },
-        { "dependentTasksOutputFiles": "bin/*.d.ts" },
-        { "dependentTasksOutputFiles": "bin/*.js" }
+        { "dependencies": true, "input": "build-source" }
       ],
       "cache": false
     }

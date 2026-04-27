@@ -45,5 +45,5 @@ echo "Changed files (base..HEAD + uncommitted):"
 git --no-pager diff --name-only "$NX_BASE"
 echo "(total: $(git --no-pager diff --name-only "$NX_BASE" | wc -l))"
 echo ""
-python3 "$(dirname "${BASH_SOURCE[0]}")/affected-tree.py" "$NX_BASE" "${NX_HEAD:-HEAD}" 2>/dev/null || true
+python3 "$(dirname "${BASH_SOURCE[0]}")/affected-tree.py" "$NX_BASE" "$NX_HEAD" 2>/dev/null || true
 echo "--- End Nx affected debug ---"

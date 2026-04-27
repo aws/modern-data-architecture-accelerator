@@ -37,11 +37,27 @@ def get_dependents(graph_deps):
 
 
 def get_changed_files(nx_base, nx_head):
-    out = subprocess.check_output(
-        ["git", "diff", "--name-only", f"{nx_base}...{nx_head}"],
-        stderr=subprocess.DEVNULL,
-    )
-    return out.decode().strip().split("\n")
+    """Return files changed between nx_base and the working tree.
+
+    When nx_head is empty we are running locally and need to include
+    uncommitted (staged + unstaged) changes — matching what
+    ``nx affected --head=""`` does.  When nx_head is a ref (e.g. "HEAD")
+    we are in CI and only compare committed changes.
+    """
+    if nx_head:
+        # CI path: compare two commits.
+        out = subprocess.check_output(
+            ["git", "diff", "--name-only", nx_base, nx_head],
+            stderr=subprocess.DEVNULL,
+        )
+    else:
+        # Local path: diff base against the working tree (includes
+        # both committed-since-base AND uncommitted changes).
+        out = subprocess.check_output(
+            ["git", "diff", "--name-only", nx_base],
+            stderr=subprocess.DEVNULL,
+        )
+    return [f for f in out.decode().strip().split("\n") if f]
 
 
 def find_directly_changed(affected, nodes, changed_files):
@@ -71,7 +87,7 @@ def print_tree(project, dependents, affected, printed, prefix="", is_last=True):
 
 def main():
     nx_base = sys.argv[1] if len(sys.argv) > 1 else "origin/main"
-    nx_head = sys.argv[2] if len(sys.argv) > 2 else "HEAD"
+    nx_head = sys.argv[2] if len(sys.argv) > 2 else ""
 
     affected = get_affected_projects(nx_base, nx_head)
     if not affected:
