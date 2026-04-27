@@ -44,9 +44,6 @@
       "path": "../../../L2/datazone-constructs"
     },
     {
-      "path": "../../governance/datazone-l3-construct"
-    },
-    {
       "path": "../../../L2/ec2-constructs"
     },
     {
@@ -83,9 +80,6 @@
       "path": "../../governance/lakeformation-tags-l3-construct"
     },
     {
-      "path": "../../../L2/lambda-constructs"
-    },
-    {
       "path": "../../../../utilities/mdaa-naming"
     },
     {
@@ -95,13 +89,13 @@
       "path": "../../../L2/s3-constructs"
     },
     {
-      "path": "../../../../utilities/s3-inventory-helper"
-    },
-    {
       "path": "../../governance/sagemaker-project-l3-construct"
     },
     {
       "path": "../../../L2/sns-constructs"
+    },
+    {
+      "path": "../../../../utilities/mdaa-config"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

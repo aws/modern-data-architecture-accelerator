@@ -21,8 +21,6 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/dataops-lambda-l3-construct": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "@aws-mdaa/s3-constructs": "1.5.0",
@@ -39,14 +37,7 @@
     "typescript": "5.9.3",
     "typescript-json-schema": "0.67.1"
   },
-  "bundledDependencies": [
-    "@aws-mdaa/s3-bucketpolicy-helper",
-    "lodash",
-    "yaml"
-  ],
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/dataops-lambda-l3-construct": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "@aws-mdaa/s3-constructs": "1.5.0",
@@ -55,14 +46,10 @@
   },
   "dependencies": {
     "@aws-mdaa/cloudwatch-constructs": "1.5.0",
-    "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/iam-constructs": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/kms-constructs": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
-    "@aws-mdaa/rds-constructs": "1.5.0",
-    "@aws-mdaa/s3-bucketpolicy-helper": "1.5.0",
     "@aws-mdaa/s3-constructs": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
@@ -76,5 +63,9 @@
     "outdir": "jsii-dist",
     "versionFormat": "full",
     "targets": {}
-  }
+  },
+  "bundledDependencies": [
+    "lodash",
+    "yaml"
+  ]
 }

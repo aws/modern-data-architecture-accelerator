@@ -41,16 +41,7 @@
       "path": "../custom-constructs"
     },
     {
-      "path": "../iam-constructs"
-    },
-    {
       "path": "../kms-constructs"
-    },
-    {
-      "path": "../lambda-constructs"
-    },
-    {
-      "path": "../../../utilities/mdaa-naming"
     },
     {
       "path": "../../../utilities/mdaa-testing"

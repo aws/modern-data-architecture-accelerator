@@ -50,9 +50,6 @@
       "path": "../../../L2/lambda-constructs"
     },
     {
-      "path": "../../../../utilities/mdaa-naming"
-    },
-    {
       "path": "../../../../utilities/mdaa-testing"
     }
   ],

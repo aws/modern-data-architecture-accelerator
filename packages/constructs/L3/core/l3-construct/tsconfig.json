@@ -35,9 +35,6 @@
   ],
   "references": [
     {
-      "path": "../../../../utilities/mdaa-config"
-    },
-    {
       "path": "../../../L2/construct"
     },
     {

@@ -9,9 +9,6 @@
     "fixture:destroy": "npx ts-node fixture.ts destroy"
   },
   "devDependencies": {
-    "@aws-mdaa/ec2-constructs": "1.5.0",
-    "@aws-mdaa/kms-constructs": "1.5.0",
-    "@aws-mdaa/testing": "1.5.0",
     "@types/node": "22.9.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "10.0.96",

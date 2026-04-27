@@ -41,9 +41,6 @@
       "path": "../../../L2/construct"
     },
     {
-      "path": "../dataops-project-l3-construct"
-    },
-    {
       "path": "../../../L2/ec2-constructs"
     },
     {
@@ -51,12 +48,6 @@
     },
     {
       "path": "../../../../utilities/eventbridge-helper"
-    },
-    {
-      "path": "../../../L2/glue-constructs"
-    },
-    {
-      "path": "../../../L2/iam-constructs"
     },
     {
       "path": "../../../../utilities/iam-role-helper"
@@ -69,12 +60,6 @@
     },
     {
       "path": "../../../L2/lambda-constructs"
-    },
-    {
-      "path": "../../../../utilities/mdaa-naming"
-    },
-    {
-      "path": "../../../L2/sqs-constructs"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

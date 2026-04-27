@@ -35,16 +35,10 @@
   ],
   "references": [
     {
-      "path": "../../datalake/athena-workgroup-l3-construct"
-    },
-    {
       "path": "../../../L2/cloudwatch-constructs"
     },
     {
       "path": "../../../L2/construct"
-    },
-    {
-      "path": "../../datalake/datalake-l3-construct"
     },
     {
       "path": "../../../L2/ddb-constructs"
@@ -62,28 +56,10 @@
       "path": "../../core/l3-construct"
     },
     {
-      "path": "../../../../utilities/mdaa-naming"
-    },
-    {
       "path": "../../../L2/rds-constructs"
     },
     {
-      "path": "../../governance/roles-l3-construct"
-    },
-    {
-      "path": "../../../../utilities/s3-bucketpolicy-helper"
-    },
-    {
       "path": "../../../L2/s3-constructs"
-    },
-    {
-      "path": "../../../../utilities/s3-inventory-helper"
-    },
-    {
-      "path": "../../../L2/sagemaker-constructs"
-    },
-    {
-      "path": "../sm-studio-domain-l3-construct"
     },
     {
       "path": "../../../L2/sns-constructs"

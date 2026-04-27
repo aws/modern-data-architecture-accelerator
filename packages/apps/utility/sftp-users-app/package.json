@@ -32,10 +32,7 @@
   },
   "dependencies": {
     "@aws-mdaa/app": "1.5.0",
-    "@aws-mdaa/config": "1.5.0",
-    "@aws-mdaa/kms-constructs": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/s3-constructs": "1.5.0",
     "@aws-mdaa/sftp-users-l3-construct": "1.5.0",
     "ajv": "8.18.0",
     "aws-cdk-lib": "2.220.0",

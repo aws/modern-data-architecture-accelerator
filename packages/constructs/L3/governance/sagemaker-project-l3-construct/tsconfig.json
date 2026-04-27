@@ -37,40 +37,16 @@
   ],
   "references": [
     {
-      "path": "../../../L2/construct"
-    },
-    {
-      "path": "../../../L2/custom-constructs"
-    },
-    {
       "path": "../../../L2/datazone-constructs"
     },
     {
-      "path": "../glue-catalog-l3-construct"
-    },
-    {
-      "path": "../../../L2/iam-constructs"
-    },
-    {
       "path": "../../../../utilities/iam-role-helper"
-    },
-    {
-      "path": "../../../L2/kms-constructs"
     },
     {
       "path": "../../core/l3-construct"
     },
     {
       "path": "../lakeformation-access-control-l3-construct"
-    },
-    {
-      "path": "../lakeformation-settings-l3-construct"
-    },
-    {
-      "path": "../../../L2/s3-constructs"
-    },
-    {
-      "path": "../../../../utilities/mdaa-naming"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

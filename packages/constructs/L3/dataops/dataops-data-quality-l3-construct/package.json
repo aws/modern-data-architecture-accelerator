@@ -21,7 +21,6 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/dataops-project-l3-construct": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "@aws-mdaa/testing": "1.5.0",
@@ -38,7 +37,6 @@
     "typescript-json-schema": "0.67.1"
   },
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/dataops-project-l3-construct": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "aws-cdk-lib": "2.220.0",
@@ -49,10 +47,8 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/dataops-project-l3-construct": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96"

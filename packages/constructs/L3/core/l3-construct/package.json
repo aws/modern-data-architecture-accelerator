@@ -37,11 +37,7 @@
     "typescript": "5.9.3",
     "typescript-json-schema": "0.67.1"
   },
-  "bundledDependencies": [
-    "@aws-mdaa/config"
-  ],
   "dependencies": {
-    "@aws-mdaa/config": "1.5.0",
     "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/naming": "1.5.0",

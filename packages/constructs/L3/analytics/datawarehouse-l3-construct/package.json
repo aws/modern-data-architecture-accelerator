@@ -39,8 +39,8 @@
     "typescript-json-schema": "0.67.1"
   },
   "bundledDependencies": [
+    "@aws-mdaa/config",
     "@aws-mdaa/s3-bucketpolicy-helper",
-    "@aws-mdaa/s3-inventory-helper",
     "lodash"
   ],
   "peerDependencies": {
@@ -59,17 +59,14 @@
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/kms-constructs": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/lambda-constructs": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
     "@aws-mdaa/redshift-constructs": "1.5.0",
     "@aws-mdaa/s3-bucketpolicy-helper": "1.5.0",
     "@aws-mdaa/s3-constructs": "1.5.0",
-    "@aws-mdaa/s3-inventory-helper": "1.5.0",
-    "@aws-mdaa/sns-constructs": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96",
-    "lodash": "4.18.1"
+    "lodash": "4.18.1",
+    "@aws-mdaa/config": "1.5.0"
   },
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
   "stability": "experimental",

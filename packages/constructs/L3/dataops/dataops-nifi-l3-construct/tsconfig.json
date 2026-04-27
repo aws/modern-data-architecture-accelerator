@@ -38,22 +38,10 @@
       "path": "../../../L2/construct"
     },
     {
-      "path": "../dataops-project-l3-construct"
-    },
-    {
       "path": "../../../L2/ec2-constructs"
     },
     {
-      "path": "../../utility/ec2-l3-construct"
-    },
-    {
       "path": "../../../L2/eks-constructs"
-    },
-    {
-      "path": "../../../L2/glue-constructs"
-    },
-    {
-      "path": "../../../L2/iam-constructs"
     },
     {
       "path": "../../../../utilities/iam-role-helper"
@@ -66,9 +54,6 @@
     },
     {
       "path": "../../../../utilities/mdaa-naming"
-    },
-    {
-      "path": "../../../L2/sqs-constructs"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

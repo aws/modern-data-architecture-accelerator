@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@aws-mdaa/app": "1.5.0",
-    "@aws-mdaa/config": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "@aws-mdaa/quicksight-account-l3-construct": "1.5.0",
     "ajv": "8.18.0",

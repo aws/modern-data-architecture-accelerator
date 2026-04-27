@@ -35,37 +35,19 @@
   ],
   "references": [
     {
-      "path": "../../../L2/cloudwatch-constructs"
-    },
-    {
-      "path": "../../../L2/construct"
-    },
-    {
       "path": "../dataops-project-l3-construct"
     },
     {
       "path": "../../../L2/ddb-constructs"
     },
     {
-      "path": "../../../../utilities/eventbridge-helper"
-    },
-    {
-      "path": "../../../L2/iam-constructs"
-    },
-    {
       "path": "../../../../utilities/iam-role-helper"
-    },
-    {
-      "path": "../../../L2/kms-constructs"
     },
     {
       "path": "../../core/l3-construct"
     },
     {
       "path": "../../../../utilities/mdaa-naming"
-    },
-    {
-      "path": "../../../L2/sqs-constructs"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

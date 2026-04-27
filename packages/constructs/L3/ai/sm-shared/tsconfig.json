@@ -38,15 +38,6 @@
       "path": "../../../L2/construct"
     },
     {
-      "path": "../../core/l3-construct"
-    },
-    {
-      "path": "../../../../utilities/mdaa-naming"
-    },
-    {
-      "path": "../../../L2/sagemaker-constructs"
-    },
-    {
       "path": "../../../../utilities/mdaa-testing"
     }
   ],

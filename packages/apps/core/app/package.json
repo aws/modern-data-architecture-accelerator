@@ -19,7 +19,6 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/custom-constructs": "1.5.0",
     "@aws-mdaa/datazone-constructs": "1.5.0",
     "@aws-mdaa/testing": "1.5.0",
     "@types/jest": "29.5.14",
@@ -33,17 +32,14 @@
     "typescript-json-schema": "0.67.1"
   },
   "peerDependencies": {
-    "@aws-mdaa/custom-constructs": "1.5.0",
     "@aws-mdaa/datazone-constructs": "1.5.0"
   },
   "dependencies": {
     "@aws-mdaa/config": "1.5.0",
     "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/custom-constructs": "1.5.0",
     "@aws-mdaa/datazone-constructs": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/lambda-constructs": "1.5.0",
     "@aws-mdaa/naming": "1.5.0",
     "ajv": "8.18.0",
     "aws-cdk-lib": "2.220.0",

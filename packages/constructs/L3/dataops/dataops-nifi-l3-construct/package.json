@@ -23,7 +23,6 @@
   "devDependencies": {
     "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/ec2-constructs": "1.5.0",
-    "@aws-mdaa/ec2-l3-construct": "1.5.0",
     "@aws-mdaa/eks-constructs": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
@@ -43,30 +42,20 @@
   "peerDependencies": {
     "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/ec2-constructs": "1.5.0",
-    "@aws-mdaa/ec2-l3-construct": "1.5.0",
     "@aws-mdaa/eks-constructs": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "10.0.96"
   },
-  "bundledDependencies": [
-    "fast-xml-parser",
-    "lodash"
-  ],
   "dependencies": {
     "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/dataops-project-l3-construct": "1.5.0",
     "@aws-mdaa/ec2-constructs": "1.5.0",
-    "@aws-mdaa/ec2-l3-construct": "1.5.0",
     "@aws-mdaa/eks-constructs": "1.5.0",
-    "@aws-mdaa/glue-constructs": "1.5.0",
-    "@aws-mdaa/iam-constructs": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/kms-constructs": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "@aws-mdaa/naming": "1.5.0",
-    "@aws-mdaa/sqs-constructs": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "cdk8s": "2.69.42",
@@ -80,5 +69,10 @@
     "outdir": "jsii-dist",
     "versionFormat": "full",
     "targets": {}
-  }
+  },
+  "bundledDependencies": [
+    "cdk8s",
+    "fast-xml-parser",
+    "lodash"
+  ]
 }

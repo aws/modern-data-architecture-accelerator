@@ -34,7 +34,6 @@
   "dependencies": {
     "@aws-mdaa/app": "1.5.0",
     "@aws-mdaa/athena-workgroup-l3-construct": "1.5.0",
-    "@aws-mdaa/config": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "ajv": "8.18.0",

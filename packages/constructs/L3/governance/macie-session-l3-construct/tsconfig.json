@@ -35,13 +35,7 @@
   ],
   "references": [
     {
-      "path": "../../../L2/construct"
-    },
-    {
       "path": "../../core/l3-construct"
-    },
-    {
-      "path": "../../../../utilities/mdaa-naming"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

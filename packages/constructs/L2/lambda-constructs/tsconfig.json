@@ -41,9 +41,6 @@
       "path": "../iam-constructs"
     },
     {
-      "path": "../../../utilities/mdaa-naming"
-    },
-    {
       "path": "../../../utilities/mdaa-testing"
     }
   ],

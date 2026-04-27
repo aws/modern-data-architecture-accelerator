@@ -26,7 +26,6 @@
     "@aws-mdaa/datalake-l3-construct": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/roles-l3-construct": "1.5.0",
     "@aws-mdaa/sm-studio-domain-l3-construct": "1.5.0",
     "@aws-mdaa/testing": "1.5.0",
     "@types/jest": "29.5.14",
@@ -41,18 +40,12 @@
     "typescript": "5.9.3",
     "typescript-json-schema": "0.67.1"
   },
-  "bundledDependencies": [
-    "@aws-mdaa/s3-bucketpolicy-helper",
-    "@aws-mdaa/s3-inventory-helper",
-    "lodash"
-  ],
   "peerDependencies": {
     "@aws-mdaa/athena-workgroup-l3-construct": "1.5.0",
     "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/datalake-l3-construct": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/roles-l3-construct": "1.5.0",
     "@aws-mdaa/sm-studio-domain-l3-construct": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "10.0.96"
@@ -64,14 +57,7 @@
     "@aws-mdaa/datalake-l3-construct": "1.5.0",
     "@aws-mdaa/iam-constructs": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
-    "@aws-mdaa/kms-constructs": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
-    "@aws-mdaa/roles-l3-construct": "1.5.0",
-    "@aws-mdaa/s3-bucketpolicy-helper": "1.5.0",
-    "@aws-mdaa/s3-constructs": "1.5.0",
-    "@aws-mdaa/s3-inventory-helper": "1.5.0",
-    "@aws-mdaa/sagemaker-constructs": "1.5.0",
     "@aws-mdaa/sm-shared": "1.5.0",
     "@aws-mdaa/sm-studio-domain-l3-construct": "1.5.0",
     "aws-cdk-lib": "2.220.0",
@@ -85,5 +71,8 @@
     "outdir": "jsii-dist",
     "versionFormat": "full",
     "targets": {}
-  }
+  },
+  "bundledDependencies": [
+    "lodash"
+  ]
 }

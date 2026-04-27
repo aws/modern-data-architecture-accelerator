@@ -35,9 +35,6 @@
   ],
   "references": [
     {
-      "path": "../../../../utilities/mdaa-config"
-    },
-    {
       "path": "../../../L2/construct"
     },
     {
@@ -57,9 +54,6 @@
     },
     {
       "path": "../../../../utilities/mdaa-naming"
-    },
-    {
-      "path": "../../../../utilities/s3-audit-helper"
     },
     {
       "path": "../../../../utilities/s3-bucketpolicy-helper"

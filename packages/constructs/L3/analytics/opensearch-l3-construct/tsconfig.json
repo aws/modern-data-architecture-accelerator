@@ -35,16 +35,10 @@
   ],
   "references": [
     {
-      "path": "../../../L2/construct"
-    },
-    {
       "path": "../../../L2/ec2-constructs"
     },
     {
       "path": "../../../../utilities/eventbridge-helper"
-    },
-    {
-      "path": "../../../L2/iam-constructs"
     },
     {
       "path": "../../../../utilities/iam-role-helper"
@@ -56,25 +50,10 @@
       "path": "../../core/l3-construct"
     },
     {
-      "path": "../../../L2/lambda-constructs"
-    },
-    {
       "path": "../../../../utilities/mdaa-naming"
     },
     {
       "path": "../../../L2/opensearch-constructs"
-    },
-    {
-      "path": "../../../L2/redshift-constructs"
-    },
-    {
-      "path": "../../../../utilities/s3-bucketpolicy-helper"
-    },
-    {
-      "path": "../../../L2/s3-constructs"
-    },
-    {
-      "path": "../../../../utilities/s3-inventory-helper"
     },
     {
       "path": "../../../L2/sns-constructs"

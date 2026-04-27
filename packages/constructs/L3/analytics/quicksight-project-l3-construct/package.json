@@ -46,15 +46,14 @@
   },
   "dependencies": {
     "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/iam-constructs": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "@aws-mdaa/lambda-constructs": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
     "@aws-mdaa/quicksight-constructs": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
-    "constructs": "10.0.96"
+    "constructs": "10.0.96",
+    "@aws-mdaa/config": "1.5.0"
   },
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
   "stability": "experimental",
@@ -62,5 +61,8 @@
     "outdir": "jsii-dist",
     "versionFormat": "full",
     "targets": {}
-  }
+  },
+  "bundledDependencies": [
+    "@aws-mdaa/config"
+  ]
 }

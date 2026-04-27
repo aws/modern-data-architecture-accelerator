@@ -33,11 +33,8 @@
   },
   "dependencies": {
     "@aws-mdaa/app": "1.5.0",
-    "@aws-mdaa/config": "1.5.0",
-    "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "@aws-mdaa/sm-notebook-l3-construct": "1.5.0",
-    "@aws-mdaa/sm-shared": "1.5.0",
     "ajv": "8.18.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",

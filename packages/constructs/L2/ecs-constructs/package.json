@@ -22,10 +22,8 @@
   },
   "devDependencies": {
     "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/custom-constructs": "1.5.0",
     "@aws-mdaa/iam-constructs": "1.5.0",
     "@aws-mdaa/kms-constructs": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
     "@aws-mdaa/testing": "1.5.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
@@ -41,20 +39,16 @@
   },
   "dependencies": {
     "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/custom-constructs": "1.5.0",
     "@aws-mdaa/iam-constructs": "1.5.0",
     "@aws-mdaa/kms-constructs": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96"
   },
   "peerDependencies": {
     "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/custom-constructs": "1.5.0",
     "@aws-mdaa/iam-constructs": "1.5.0",
     "@aws-mdaa/kms-constructs": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96"

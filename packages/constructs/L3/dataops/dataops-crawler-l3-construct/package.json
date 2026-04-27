@@ -21,7 +21,6 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "@aws-mdaa/testing": "1.5.0",
     "@types/jest": "29.5.14",
@@ -36,32 +35,23 @@
     "typescript": "5.9.3",
     "typescript-json-schema": "0.67.1"
   },
-  "bundledDependencies": [
-    "@aws-mdaa/s3-bucketpolicy-helper",
-    "@aws-mdaa/s3-inventory-helper",
-    "lodash"
-  ],
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "10.0.96"
   },
   "dependencies": {
-    "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/dataops-project-l3-construct": "1.5.0",
     "@aws-mdaa/eventbridge-helper": "1.5.0",
     "@aws-mdaa/glue-constructs": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
-    "@aws-mdaa/s3-bucketpolicy-helper": "1.5.0",
-    "@aws-mdaa/s3-inventory-helper": "1.5.0",
     "@aws-mdaa/sns-constructs": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96",
-    "lodash": "4.18.1"
+    "lodash": "4.18.1",
+    "@aws-mdaa/config": "1.5.0"
   },
   "gitHead": "ade1ce5962dee1fa47a3668c8e35d130c686ad35",
   "stability": "experimental",
@@ -69,5 +59,9 @@
     "outdir": "jsii-dist",
     "versionFormat": "full",
     "targets": {}
-  }
+  },
+  "bundledDependencies": [
+    "@aws-mdaa/config",
+    "lodash"
+  ]
 }

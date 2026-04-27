@@ -35,13 +35,7 @@
   ],
   "references": [
     {
-      "path": "../cloudwatch-constructs"
-    },
-    {
       "path": "../construct"
-    },
-    {
-      "path": "../custom-constructs"
     },
     {
       "path": "../iam-constructs"

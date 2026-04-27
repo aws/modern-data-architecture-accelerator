@@ -38,9 +38,6 @@
       "path": "../../../L2/construct"
     },
     {
-      "path": "../../../L2/iam-constructs"
-    },
-    {
       "path": "../../../../utilities/iam-role-helper"
     },
     {
@@ -50,10 +47,10 @@
       "path": "../../../L2/lambda-constructs"
     },
     {
-      "path": "../../../../utilities/mdaa-naming"
+      "path": "../../../L2/quicksight-constructs"
     },
     {
-      "path": "../../../L2/quicksight-constructs"
+      "path": "../../../../utilities/mdaa-config"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

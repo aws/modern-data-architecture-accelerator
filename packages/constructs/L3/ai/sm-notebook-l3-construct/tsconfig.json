@@ -41,9 +41,6 @@
       "path": "../../../L2/ec2-constructs"
     },
     {
-      "path": "../../../L2/iam-constructs"
-    },
-    {
       "path": "../../../../utilities/iam-role-helper"
     },
     {
@@ -51,9 +48,6 @@
     },
     {
       "path": "../../core/l3-construct"
-    },
-    {
-      "path": "../../../../utilities/mdaa-naming"
     },
     {
       "path": "../../../L2/sagemaker-constructs"

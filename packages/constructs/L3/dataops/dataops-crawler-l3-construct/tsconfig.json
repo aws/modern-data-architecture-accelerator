@@ -35,9 +35,6 @@
   ],
   "references": [
     {
-      "path": "../../../L2/construct"
-    },
-    {
       "path": "../dataops-project-l3-construct"
     },
     {
@@ -53,16 +50,10 @@
       "path": "../../core/l3-construct"
     },
     {
-      "path": "../../../../utilities/mdaa-naming"
-    },
-    {
-      "path": "../../../../utilities/s3-bucketpolicy-helper"
-    },
-    {
-      "path": "../../../../utilities/s3-inventory-helper"
-    },
-    {
       "path": "../../../L2/sns-constructs"
+    },
+    {
+      "path": "../../../../utilities/mdaa-config"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

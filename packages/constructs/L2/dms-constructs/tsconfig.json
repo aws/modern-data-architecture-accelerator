@@ -38,9 +38,6 @@
       "path": "../construct"
     },
     {
-      "path": "../../../utilities/mdaa-naming"
-    },
-    {
       "path": "../../../utilities/mdaa-testing"
     }
   ],

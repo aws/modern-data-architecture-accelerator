@@ -38,9 +38,6 @@
       "path": "../../../L2/cloudwatch-constructs"
     },
     {
-      "path": "../../../L2/construct"
-    },
-    {
       "path": "../../../L2/iam-constructs"
     },
     {
@@ -53,19 +50,7 @@
       "path": "../../core/l3-construct"
     },
     {
-      "path": "../../../../utilities/mdaa-naming"
-    },
-    {
-      "path": "../../../L2/rds-constructs"
-    },
-    {
-      "path": "../../../../utilities/s3-bucketpolicy-helper"
-    },
-    {
       "path": "../../../L2/s3-constructs"
-    },
-    {
-      "path": "../../dataops/dataops-lambda-l3-construct"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

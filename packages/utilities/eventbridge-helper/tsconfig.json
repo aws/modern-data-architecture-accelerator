@@ -35,15 +35,6 @@
   ],
   "references": [
     {
-      "path": "../mdaa-config"
-    },
-    {
-      "path": "../../constructs/L2/construct"
-    },
-    {
-      "path": "../../constructs/L3/core/l3-construct"
-    },
-    {
       "path": "../mdaa-naming"
     },
     {

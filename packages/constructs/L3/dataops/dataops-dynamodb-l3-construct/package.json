@@ -21,9 +21,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/dataops-project-l3-construct": "1.5.0",
-    "@aws-mdaa/eventbridge-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "@aws-mdaa/testing": "1.5.0",
     "@types/jest": "29.5.14",
@@ -39,38 +37,30 @@
     "typescript-json-schema": "0.67.1"
   },
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/dataops-project-l3-construct": "1.5.0",
-    "@aws-mdaa/eventbridge-helper": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "10.0.96"
   },
   "dependencies": {
-    "@aws-mdaa/cloudwatch-constructs": "1.5.0",
-    "@aws-mdaa/construct": "1.5.0",
     "@aws-mdaa/dataops-project-l3-construct": "1.5.0",
     "@aws-mdaa/ddb-constructs": "1.5.0",
-    "@aws-mdaa/eventbridge-helper": "1.5.0",
-    "@aws-mdaa/iam-constructs": "1.5.0",
     "@aws-mdaa/iam-role-helper": "1.5.0",
-    "@aws-mdaa/kms-constructs": "1.5.0",
     "@aws-mdaa/l3-construct": "1.5.0",
     "@aws-mdaa/naming": "1.5.0",
-    "@aws-mdaa/sqs-constructs": "1.5.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96",
     "lodash": "4.18.1"
   },
-  "bundledDependencies": [
-    "lodash"
-  ],
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
   "stability": "experimental",
   "jsii": {
     "outdir": "jsii-dist",
     "versionFormat": "full",
     "targets": {}
-  }
+  },
+  "bundledDependencies": [
+    "lodash"
+  ]
 }
