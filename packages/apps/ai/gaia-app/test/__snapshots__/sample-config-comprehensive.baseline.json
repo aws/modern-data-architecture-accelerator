@@ -11588,12 +11588,6 @@
         "FunctionName": {
           "Ref": "gaiaChatBotApiRestApiApiHandler1ABC3322"
         },
-        "FunctionVersion": {
-          "Fn::GetAtt": [
-            "gaiaChatBotApiRestApiApiHandlerCurrentVersionCFCC26B1fb964bee0cd08118f2a9de81dec12a71",
-            "Version"
-          ]
-        },
         "Name": "live",
         "ProvisionedConcurrencyConfig": {
           "ProvisionedConcurrentExecutions": 10
@@ -16724,12 +16718,6 @@
       "Properties": {
         "FunctionName": {
           "Ref": "gaiaLangchainInterfaceRequestHandler9E3B033F"
-        },
-        "FunctionVersion": {
-          "Fn::GetAtt": [
-            "gaiaLangchainInterfaceRequestHandlerCurrentVersion2B67ADE6161563fe2f7e6440a295fb0d3cbb2c7f",
-            "Version"
-          ]
         },
         "Name": "live",
         "ProvisionedConcurrencyConfig": {

@@ -150,7 +150,15 @@ export function baselineDiffTestApp(
     'AliasLive[a-fA-F0-9]+$', // Lambda aliases reference CurrentVersion, so they drift too
   ];
   const ignorePatterns = [...defaultIgnorePatterns, ...(options?.ignoreResourcePatterns ?? [])].map(p => new RegExp(p));
-  const ignoreProperties = Object.entries(options?.ignoreResourceProperties ?? {}).map(([pattern, props]) => ({
+
+  // Strip FunctionVersion from all Lambda Alias resources globally.
+  // The version reference contains a CurrentVersion hash that drifts
+  // across environments, but the alias itself is stable and worth diffing.
+  const defaultIgnoreProperties: Record<string, string[]> = {
+    'Alias[a-fA-F0-9]+$': ['FunctionVersion'],
+  };
+  const mergedIgnoreProperties = { ...defaultIgnoreProperties, ...(options?.ignoreResourceProperties ?? {}) };
+  const ignoreProperties = Object.entries(mergedIgnoreProperties).map(([pattern, props]) => ({
     pattern: new RegExp(pattern),
     properties: props,
   }));
