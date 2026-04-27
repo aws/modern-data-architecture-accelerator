@@ -234,7 +234,7 @@ export class MdaaDeploy {
         return Object.entries(envMergedConfig.modules ?? {}).forEach(([moduleName, module]) => {
           const moduleEffectiveConfig = this.computeModuleEffectiveConfig(moduleName, module, envEffectiveConfig);
 
-          if (getMdaaConfig(moduleEffectiveConfig, 'ACCOUNT_LEVEL_MODULE', isBoolean)) {
+          if (getMdaaConfig(moduleEffectiveConfig, 'accountLevelModule', isBoolean)) {
             accountLevelModuleCountMap[accountRegion] ??= {};
             const moduleCountMap = accountLevelModuleCountMap[accountRegion];
             moduleCountMap[moduleName] = (moduleCountMap[moduleName] ?? 0) + 1;
@@ -705,18 +705,18 @@ export class MdaaDeploy {
   }
 
   private computeModuleDeployStage(moduleDeployConfig: ModuleDeploymentConfig): string {
-    const moduleMdaaDeployConfigFile = `${moduleDeployConfig.modulePath}/mdaa.config.json`;
+    const packageJsonPath = `${moduleDeployConfig.modulePath}/package.json`;
     // nosemgrep
-    if (fs.existsSync(moduleMdaaDeployConfigFile)) {
+    if (fs.existsSync(packageJsonPath)) {
       // nosemgrep
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const moduleMdaaDeployConfig = require(moduleMdaaDeployConfigFile);
-      if ('DEPLOY_STAGE' in moduleMdaaDeployConfig) {
-        const deployStage = moduleMdaaDeployConfig['DEPLOY_STAGE'];
+      const packageJson = require(packageJsonPath);
+      const deployStage = packageJson?.mdaa?.deployStage;
+      if (deployStage !== undefined) {
         console.log(
-          `Module ${this.modulePrefix(moduleDeployConfig)}: Set deploy stage to ${deployStage} by mdaa.config.json`,
+          `Module ${this.modulePrefix(moduleDeployConfig)}: Set deploy stage to ${deployStage} by package.json mdaa config`,
         );
-        return deployStage;
+        return String(deployStage);
       }
     }
     console.log(

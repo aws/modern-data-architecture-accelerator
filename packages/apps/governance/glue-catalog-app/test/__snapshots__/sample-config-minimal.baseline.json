@@ -28,6 +28,22 @@
         "Value": "(SO0320-glue-catalog) Modern Data Architecture Accelerator. Version VERSION"
       }
     },
+    "AccountLevelModuleLockParameterDC55FB66": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Account-level module lock for glue-catalog. Prevents multiple deployments of this module to the same account.",
+        "Name": "/account-module-lock/glue-catalog",
+        "Tags": {
+          "mdaa_cdk_app": "glue-catalog",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-catalog-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-glue-catalog-main"
+      }
+    },
     "catalogfunctionroleF4DA1BF8": {
       "Type": "AWS::IAM::Role",
       "Properties": {

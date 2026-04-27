@@ -1,0 +1,6 @@
+{
+  "name": "@aws-mdaa/mock-module-wrong-type",
+  "mdaa": {
+    "testProperty": 123
+  }
+}

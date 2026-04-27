@@ -1,6 +1,0 @@
-{
-  "DEPLOY_STAGE": "2",
-  "name": "@aws-mdaa/sagemaker-ground-truth-app",
-  "displayName": "SageMaker Ground Truth",
-  "description": "SageMaker Ground Truth labeling workflow app"
-}

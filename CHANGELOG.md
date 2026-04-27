@@ -30,6 +30,7 @@
 - Data Warehouse app: Added `multiAz` (multi-AZ high availability) and `backupRegion` (cross-region snapshot copy) config options
 - Roles app: added an optional `additionalTrustedActions` for the role primary principal, allowing additional actions like 
 `sts:TagSession` to be added to the trust policy;
+- Account-level modules (Glue Catalog, LakeFormation Settings, Macie Session, QuickSight Account) now create a static SSM parameter (`/account-module-lock/<module-name>`) that prevents multiple deployments of the same module to a single AWS account
 
 ### Bug Fixes
 

@@ -48,9 +48,10 @@ export interface MdaaAppProps extends AppProps {
   readonly useBootstrap?: boolean;
 }
 
-export interface MdaaPackageNameVersion {
+export interface MdaaPackageMetadata {
   readonly name: string;
   readonly version: string;
+  readonly mdaaConfig?: { [key: string]: unknown };
 }
 
 /**
@@ -102,13 +103,14 @@ export abstract class MdaaCdkApp extends App {
   private readonly stack: MdaaStack;
   private readonly baseConfigParser: MdaaAppConfigParser<MdaaBaseConfigContents>;
   private readonly additionalStacksMap: { [account: string]: { [region: string]: Stack } };
+  private readonly mdaaPackageConfig?: { [key: string]: unknown };
 
   /**
    * Constructor does most of the app initialization, reading inputs from CDK context, parsing App config files, configuring resource naming, and configuring CDK Nag.
    * @param props - CDK AppProps (default empty). Not typically required if running using the CDK cli, but useful for direct instantiation.
    * @param packageNameVersion
    */
-  constructor(props: MdaaAppProps, packageNameVersion?: MdaaPackageNameVersion) {
+  constructor(props: MdaaAppProps, packageNameVersion?: MdaaPackageMetadata) {
     super(props);
 
     this.node.setContext('aws-cdk:enableDiffNoFail', true);
@@ -131,6 +133,7 @@ export abstract class MdaaCdkApp extends App {
 
     const packageName = packageNameVersion?.name.replace('@aws-mdaa/', '') ?? 'unknown';
     const packageVersion = packageNameVersion?.version ?? 'unknown';
+    this.mdaaPackageConfig = packageNameVersion?.mdaaConfig;
 
     console.log(`Running MDAA Module ${packageName} Version: ${packageVersion}`);
     if (this.node.tryGetContext('@aws-mdaa/legacyCaefTags')) {
@@ -234,13 +237,14 @@ export abstract class MdaaCdkApp extends App {
     );
   }
 
-  protected static parsePackageJson(pjsonPath: string): MdaaPackageNameVersion {
+  protected static parsePackageJson(pjsonPath: string): MdaaPackageMetadata {
     // nosemgrep
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const pjson = require(pjsonPath);
     return {
       name: pjson.name,
       version: pjson.version.replace(/\.\d*$/, '.x'),
+      mdaaConfig: pjson.mdaa,
     };
   }
 
@@ -487,7 +491,19 @@ export abstract class MdaaCdkApp extends App {
       description: 'Stack description parameter to update on version changes',
     });
 
+    if (this.isAccountLevelModule()) {
+      new MdaaStringParameter(stack, 'AccountLevelModuleLockParameter', {
+        parameterName: `/account-module-lock/${packageName}`,
+        stringValue: this.naming.stackName(),
+        description: `Account-level module lock for ${packageName}. Prevents multiple deployments of this module to the same account.`,
+      });
+    }
+
     return stack;
+  }
+
+  private isAccountLevelModule(): boolean {
+    return this.mdaaPackageConfig?.accountLevelModule === true;
   }
 
   private addTagsAndSuppressions() {

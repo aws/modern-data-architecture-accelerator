@@ -28,6 +28,22 @@
         "Value": "(SO0320-lakeformation-settings) Modern Data Architecture Accelerator. Version VERSION"
       }
     },
+    "AccountLevelModuleLockParameterDC55FB66": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Account-level module lock for lakeformation-settings. Prevents multiple deployments of this module to the same account.",
+        "Name": "/account-module-lock/lakeformation-settings",
+        "Tags": {
+          "mdaa_cdk_app": "lakeformation-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lakeformation-settings-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-lakeformation-settings-main"
+      }
+    },
     "constructboto3layer0BE5CB87": {
       "Type": "AWS::Lambda::LayerVersion",
       "Properties": {

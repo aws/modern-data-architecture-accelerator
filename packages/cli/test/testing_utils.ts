@@ -87,7 +87,7 @@ export function isAccountLevelModule<T>(
   console.log(`validator: ${validator}`);
 
   // Return different values based on the module name or other properties
-  if (configName === 'ACCOUNT_LEVEL_MODULE') {
+  if (configName === 'accountLevelModule') {
     const moduleName = moduleEffectiveConfig.moduleName;
 
     // Regular expression to match "mod" followed by a number

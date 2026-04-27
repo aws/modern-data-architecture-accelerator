@@ -1,0 +1,8 @@
+{
+  "name": "@aws-mdaa/mock-module",
+  "mdaa": {
+    "testProperty": "test value",
+    "numberProp": 42,
+    "stringArrayProp": ["one", "two", "three"]
+  }
+}

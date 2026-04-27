@@ -4,21 +4,26 @@
  */
 
 import { ModuleEffectiveConfig } from './config-types';
+import * as fs from 'fs';
 
 export function getMdaaConfig<T>(
   moduleDeployConfig: ModuleEffectiveConfig,
   property: string,
   typeGuard: (value: unknown) => value is T,
 ): T | undefined {
-  const moduleMdaaDeployConfigFile = `${moduleDeployConfig.modulePath}/mdaa.config.json`;
-  let moduleMdaaDeployConfig;
+  const packageJsonPath = `${moduleDeployConfig.modulePath}/package.json`;
+  let packageJson;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    moduleMdaaDeployConfig = require(moduleMdaaDeployConfigFile);
+    const content = fs.readFileSync(packageJsonPath, 'utf8');
+    packageJson = JSON.parse(content);
   } catch {
     return undefined;
   }
-  return getPropertyOfType(moduleMdaaDeployConfig, property, typeGuard);
+  const mdaaConfig = packageJson?.mdaa;
+  if (!mdaaConfig || typeof mdaaConfig !== 'object') {
+    return undefined;
+  }
+  return getPropertyOfType(mdaaConfig as Record<string, unknown>, property, typeGuard);
 }
 
 function getPropertyOfType<TKey extends string, TExpectedType>(

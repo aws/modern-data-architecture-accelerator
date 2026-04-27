@@ -28,6 +28,22 @@
         "Value": "(SO0320-macie-session) Modern Data Architecture Accelerator. Version VERSION"
       }
     },
+    "AccountLevelModuleLockParameterDC55FB66": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Account-level module lock for macie-session. Prevents multiple deployments of this module to the same account.",
+        "Name": "/account-module-lock/macie-session",
+        "Tags": {
+          "mdaa_cdk_app": "macie-session",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-macie-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-macie-main"
+      }
+    },
     "maciesession227EE496": {
       "Type": "AWS::Macie::Session",
       "Properties": {

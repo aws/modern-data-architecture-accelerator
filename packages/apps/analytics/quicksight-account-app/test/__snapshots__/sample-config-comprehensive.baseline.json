@@ -28,6 +28,22 @@
         "Value": "(SO0320-quicksight-account) Modern Data Architecture Accelerator. Version VERSION"
       }
     },
+    "AccountLevelModuleLockParameterDC55FB66": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Account-level module lock for quicksight-account. Prevents multiple deployments of this module to the same account.",
+        "Name": "/account-module-lock/quicksight-account",
+        "Tags": {
+          "mdaa_cdk_app": "quicksight-account",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-quicksight-account-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-quicksight-account-main"
+      }
+    },
     "accountboto3layer8FFAB85E": {
       "Type": "AWS::Lambda::LayerVersion",
       "Properties": {

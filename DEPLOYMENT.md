@@ -268,6 +268,26 @@ aws ssm get-parameters-by-path \
 
 ---
 
+## Account-Level Modules
+
+Some MDAA modules manage AWS resources that are inherently account-scoped — they configure account-wide settings rather than project-specific resources. These are called **account-level modules**:
+
+- **Glue Catalog** (`@aws-mdaa/glue-catalog`) — Account-wide Glue Data Catalog settings and encryption
+- **LakeFormation Settings** (`@aws-mdaa/lakeformation-settings`) — Account-wide Lake Formation configuration
+- **Macie Session** (`@aws-mdaa/macie-session`) — Account-wide Macie session
+- **QuickSight Account** (`@aws-mdaa/quicksight-account`) — Account-wide QuickSight configuration
+
+### Deployment constraint
+
+Each account-level module can only be deployed **once per AWS account**. This is enforced in two ways:
+
+1. **CLI validation** — The MDAA CLI checks your `mdaa.yaml` before deployment and rejects configurations that would deploy the same account-level module to the same account more than once.
+2. **SSM parameter lock** — Each account-level module creates an SSM parameter at `/account-module-lock/<module-name>` (e.g., `/account-module-lock/glue-catalog`). If a second deployment attempts to create the same parameter, CloudFormation will fail, preventing the duplicate.
+
+If you need the same account-level settings shared across multiple domains or environments in the same account, deploy the module once and reference it from other modules.
+
+---
+
 ## Troubleshooting
 
 ### Common Deployment Errors
@@ -278,6 +298,7 @@ aws ssm get-parameters-by-path \
 | `Access Denied` or `is not authorized to perform` | Insufficient IAM permissions for the deploying credentials | Verify your AWS credentials have the required permissions for the resources being deployed |
 | `Docker daemon is not running` | Docker is required by some modules to build assets | Start Docker (or set `CDK_DOCKER` to an alternative like [Finch](https://github.com/runfinch/finch)) |
 | `Resource already exists` | A resource with the same name was previously created outside MDAA | Either remove the conflicting resource or adjust your `mdaa.yaml` configuration to use a different name |
+| `Resource already exists` on `/account-module-lock/<module>` SSM parameter | An account-level module (e.g., Glue Catalog, LakeFormation Settings, Macie Session, QuickSight Account) is already deployed to this account by another stack | Account-level modules can only be deployed once per account. Remove the existing deployment first, or share the single deployment across domains. See [Account-Level Modules](#account-level-modules) |
 | `Rate exceeded` or throttling errors | AWS API rate limits hit during large deployments | Re-run the deploy command — CDK will skip already-completed stacks and resume where it left off |
 | Stack stuck in `ROLLBACK_COMPLETE` | A previous deployment failed and the stack could not be cleaned up | Delete the failed stack manually (`aws cloudformation delete-stack --stack-name <name>`) and redeploy |
 
