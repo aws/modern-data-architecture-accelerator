@@ -187,7 +187,7 @@ export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
    *
    * Validation: Optional; string key-value pairs
    */
-  readonly parameterGroupParams?: Record<string, string>;
+  readonly parameterGroupParams?: { [key: string]: string };
   /**
    * Workload management (WLM) configuration for query queue management and resource allocation.
    *
@@ -334,7 +334,7 @@ export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouse
   public readonly multiNode?: boolean;
   public readonly preferredMaintenanceWindow: string;
   public readonly securityGroupIngress: { ipv4?: string[]; sg?: string[] };
-  public readonly parameterGroupParams: Record<string, string>;
+  public readonly parameterGroupParams: { [key: string]: string };
   public readonly workloadManagement: ConfigurationElement[];
   public readonly additionalBucketKmsKeyArns?: string[];
   public static readonly defaultClusterPort = 5440;

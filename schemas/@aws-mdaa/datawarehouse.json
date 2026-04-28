@@ -2346,10 +2346,6 @@
             "additionalProperties": false,
             "type": "object"
         },
-        "Record<string,string>": {
-            "additionalProperties": false,
-            "type": "object"
-        },
         "ResourceEnvironment": {
             "additionalProperties": false,
             "description": "Represents the environment a given resource lives in.\nUsed as the return value for the `IResource.env` property.",
@@ -3014,8 +3010,11 @@
             "type": "number"
         },
         "parameterGroupParams": {
-            "$ref": "#/definitions/Record%3Cstring%2Cstring%3E",
-            "description": "Additional cluster parameter group parameters for performance tuning.\nSecurity-sensitive values are automatically overridden for compliance (e.g., SSL enforcement).\n\nUse cases: Performance tuning; Custom cluster configuration; Workload optimization\n\nAWS: Redshift parameter group parameters\n\nValidation: Optional; string key-value pairs"
+            "additionalProperties": {
+                "type": "string"
+            },
+            "description": "Additional cluster parameter group parameters for performance tuning.\nSecurity-sensitive values are automatically overridden for compliance (e.g., SSL enforcement).\n\nUse cases: Performance tuning; Custom cluster configuration; Workload optimization\n\nAWS: Redshift parameter group parameters\n\nValidation: Optional; string key-value pairs",
+            "type": "object"
         },
         "preferredMaintenanceWindow": {
             "description": "Weekly maintenance window in ddd:hh24:mi-ddd:hh24:mi format (UTC).\nExample: 'Sun:23:45-Mon:00:15'.\n\nUse cases: Maintenance scheduling; Business continuity; Downtime management\n\nAWS: Redshift preferred maintenance window\n\nValidation: Required; valid time window format",

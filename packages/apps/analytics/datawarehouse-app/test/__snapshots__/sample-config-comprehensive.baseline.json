@@ -1410,6 +1410,14 @@
         "ParameterGroupFamily": "redshift-1.0",
         "Parameters": [
           {
+            "ParameterName": "max_concurrency_scaling_clusters",
+            "ParameterValue": "1"
+          },
+          {
+            "ParameterName": "auto_analyze",
+            "ParameterValue": "true"
+          },
+          {
             "ParameterName": "wlm_json_configuration",
             "ParameterValue": "[{\"query_group\":\"test-group\",\"memory_percent_to_use\":50,\"query_concurrency\":5}]"
           },

@@ -255,7 +255,7 @@ export interface DataWarehouseL3ConstructProps extends MdaaL3ConstructProps {
   // Preferred maintenance window (ddd:hh24:mi-ddd:hh24:mi UTC)
   readonly preferredMaintenanceWindow: string;
   // Additional parameter group parameters
-  readonly parameterGroupParams?: Record<string, string>;
+  readonly parameterGroupParams?: { [key: string]: string };
   // WLM configuration elements
   readonly workloadManagement?: ConfigurationElement[];
   // Additional KMS key ARNs for warehouse bucket encryption

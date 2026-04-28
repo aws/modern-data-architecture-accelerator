@@ -110,9 +110,9 @@ redshiftManageMasterPassword: false
 # (Optional) Additional cluster parameter group parameters for
 # performance tuning. Security-sensitive values are automatically
 # overridden for compliance (e.g., SSL enforcement).
-# Note: Schema defines this as Record<string,string>. Provide
-# string key-value pairs for Redshift parameter group settings.
-parameterGroupParams: {}
+parameterGroupParams:
+  max_concurrency_scaling_clusters: "1"
+  auto_analyze: "true"
 
 # (Optional) Snapshot identifier for cluster restoration. Only
 # provide when restoring from an existing snapshot.
