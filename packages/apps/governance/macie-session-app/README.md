@@ -4,6 +4,8 @@
 
 Configures an Amazon Macie session for the account, enabling automated sensitive data discovery and classification with configurable finding publishing frequency. Use this module when you need to scan your S3 data for personally identifiable information (PII) and other sensitive data to meet data privacy and compliance requirements.
 
+> ⚠️ **Account-Level Module** — This module can only be deployed once per AWS account. A second deployment to the same account will fail. See [Account-Level Modules](../../../DEPLOYMENT.md#account-level-modules) for details.
+
 ---
 
 ## Deployed Resources

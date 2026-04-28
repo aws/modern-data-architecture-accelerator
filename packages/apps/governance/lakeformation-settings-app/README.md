@@ -2,7 +2,9 @@
 
 > **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/governance/lakeformation-settings-app/index.html).
 
-Configures account-level Lake Formation settings including administrator roles, default IAM Allowed Principals behavior, DataZone admin role creation, and IAM Identity Center integration. Should be deployed only once per account. Use this module as a prerequisite when setting up Lake Formation-based data governance, to establish admin roles and control whether new Glue resources default to IAM or Lake Formation permissions.
+Configures account-level Lake Formation settings including administrator roles, default IAM Allowed Principals behavior, DataZone admin role creation, and IAM Identity Center integration. Use this module as a prerequisite when setting up Lake Formation-based data governance, to establish admin roles and control whether new Glue resources default to IAM or Lake Formation permissions.
+
+> ⚠️ **Account-Level Module** — This module can only be deployed once per AWS account. A second deployment to the same account will fail. See [Account-Level Modules](../../../DEPLOYMENT.md#account-level-modules) for details.
 
 ---
 

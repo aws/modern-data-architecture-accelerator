@@ -49,6 +49,7 @@ domains:
               - ./datalake/datalake.yaml
 
           # This module will ensure the Glue Catalog is KMS encrypted.
+          # NOTE: Account-level module — can only be deployed once per AWS account.
           glue-catalog:
             module_path: "@aws-mdaa/glue-catalog"
 
@@ -56,6 +57,7 @@ domains:
           # automatically generate IAMAllowedPrincipal grants on new databases and tables.
           # This effectively delegates all Glue resource access controls
           # to IAM.
+          # NOTE: Account-level module — can only be deployed once per AWS account.
           lakeformation-settings:
             module_path: "@aws-mdaa/lakeformation-settings"
             module_configs:

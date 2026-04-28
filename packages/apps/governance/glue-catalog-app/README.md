@@ -2,7 +2,9 @@
 
 > **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/governance/glue-catalog-app/index.html).
 
-Configures an account's Glue Catalog for encryption at rest and cross-account access for data mesh deployments. Supports complete mesh, partial mesh, and hub/spoke topologies. Should be deployed only once per AWS account. Use this module when you need to encrypt your Glue Catalog metadata and enable cross-account data sharing for multi-account data mesh or hub-and-spoke architectures.
+Configures an account's Glue Catalog for encryption at rest and cross-account access for data mesh deployments. Supports complete mesh, partial mesh, and hub/spoke topologies. Use this module when you need to encrypt your Glue Catalog metadata and enable cross-account data sharing for multi-account data mesh or hub-and-spoke architectures.
+
+> ⚠️ **Account-Level Module** — This module can only be deployed once per AWS account. A second deployment to the same account will fail. See [Account-Level Modules](../../../DEPLOYMENT.md#account-level-modules) for details.
 
 ---
 

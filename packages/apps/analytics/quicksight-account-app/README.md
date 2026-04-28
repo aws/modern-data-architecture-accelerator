@@ -4,6 +4,8 @@
 
 Configures and deploys account-level QuickSight resources including the QuickSight account, VPC connection security group, service role, and IP restrictions. Manual post-deployment procedures are required to finalize the account configuration. See [Manual Procedures](MANUAL_PROCEDURES.md). Use this module when you need to set up QuickSight for the first time in an AWS account, establishing the foundation for BI dashboards and data visualization.
 
+> ⚠️ **Account-Level Module** — This module can only be deployed once per AWS account. A second deployment to the same account will fail. See [Account-Level Modules](../../../../DEPLOYMENT.md#account-level-modules) for details.
+
 ---
 
 ## Deployed Resources

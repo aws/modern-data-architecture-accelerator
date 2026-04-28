@@ -36,6 +36,7 @@ domains:
         # specifies a deployment configuration file if required.
         modules:
           # This module will create SageMaker Unified Studio (SMUS) domains with DataZone V2
+          # NOTE: Account-level module — can only be deployed once per AWS account.
           glue-catalog:
             module_path: '@aws-mdaa/glue-catalog'
 
@@ -44,6 +45,7 @@ domains:
             module_configs:
               - ./shared/roles.yaml
 
+          # NOTE: Account-level module — can only be deployed once per AWS account.
           lakeformation-settings:
             module_path: '@aws-mdaa/lakeformation-settings'
             module_configs:

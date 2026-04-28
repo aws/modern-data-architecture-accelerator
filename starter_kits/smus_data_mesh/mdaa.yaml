@@ -94,6 +94,7 @@ env_templates:
     modules:
       # Configures the Glue Catalog encryption key for cross-account access
       # Required for cross-account data sharing via Lake Formation and DataZone
+      # NOTE: Account-level module — can only be deployed once per AWS account.
       glue-cat:
         module_path: '@aws-mdaa/glue-catalog'
         module_configs:
@@ -108,6 +109,7 @@ env_templates:
 
       # Configures Lake Formation settings for use with DataZone/SMUS
       # Disables IAM-based permissions in favor of Lake Formation governance
+      # NOTE: Account-level module — can only be deployed once per AWS account.
       lf-set:
         module_path: '@aws-mdaa/lakeformation-settings'
         module_configs:
