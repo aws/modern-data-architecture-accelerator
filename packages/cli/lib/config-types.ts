@@ -18,6 +18,11 @@ export interface EffectiveConfig {
   readonly terraform?: TerraformConfig;
   readonly deployAccount?: string;
   readonly deployRegion?: string;
+  /**
+   * IAM permissions boundary policy ARN. Injected as a dedicated CDK context
+   * parameter so it cannot be overridden by domain/env/module context blocks.
+   */
+  readonly permissionsBoundaryArn?: string;
 }
 
 export interface DomainEffectiveConfig extends EffectiveConfig {

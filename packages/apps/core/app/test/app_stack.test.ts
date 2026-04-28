@@ -4,6 +4,8 @@
  */
 
 import { AppProps, Stack } from 'aws-cdk-lib';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Template } from 'aws-cdk-lib/assertions';
 import { MdaaCdkApp } from '../lib';
 import * as utils from '../lib/utils';
 
@@ -89,5 +91,68 @@ describe('Test App Stack', () => {
       });
       testApp.generateStack();
     }).not.toThrow();
+  });
+
+  test('Permissions boundary applied when context value present', () => {
+    const testApp = new TestMdaaCdkApp({
+      context: {
+        ...context,
+        permissions_boundary_arn: 'arn:aws:iam::123456789012:policy/test-boundary-policy',
+      },
+    });
+    const stack = testApp.generateStack();
+    // Create a role so we can verify the boundary is applied
+    new Role(stack, 'TestRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+    const template = Template.fromStack(stack);
+
+    const roles = template.findResources('AWS::IAM::Role');
+    const roleKeys = Object.keys(roles);
+    expect(roleKeys.length).toBeGreaterThan(0);
+    for (const key of roleKeys) {
+      expect(roles[key].Properties.PermissionsBoundary).toBeDefined();
+      expect(JSON.stringify(roles[key].Properties.PermissionsBoundary)).toContain('test-boundary-policy');
+    }
+  });
+
+  test('No permissions boundary when context value absent', () => {
+    const testApp = new TestMdaaCdkApp({
+      context: { ...context },
+    });
+    const stack = testApp.generateStack();
+    new Role(stack, 'TestRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+    const template = Template.fromStack(stack);
+
+    const roles = template.findResources('AWS::IAM::Role');
+    for (const key of Object.keys(roles)) {
+      expect(roles[key].Properties?.PermissionsBoundary).toBeUndefined();
+    }
+  });
+
+  test('Permissions boundary coexists with custom_aspects boundary pattern', () => {
+    const testApp = new TestMdaaCdkApp({
+      context: {
+        ...extraContext,
+        ...context,
+        permissions_boundary_arn: 'arn:aws:iam::123456789012:policy/first-class-boundary',
+      },
+    });
+    const stack = testApp.generateStack();
+    new Role(stack, 'TestRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+    const template = Template.fromStack(stack);
+
+    // The first-class permissions_boundary_arn should be applied to all roles
+    const roles = template.findResources('AWS::IAM::Role');
+    const roleKeys = Object.keys(roles);
+    expect(roleKeys.length).toBeGreaterThan(0);
+    for (const key of roleKeys) {
+      expect(roles[key].Properties.PermissionsBoundary).toBeDefined();
+      expect(JSON.stringify(roles[key].Properties.PermissionsBoundary)).toContain('first-class-boundary');
+    }
   });
 });

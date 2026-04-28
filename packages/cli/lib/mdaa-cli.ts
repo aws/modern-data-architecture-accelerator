@@ -876,6 +876,13 @@ export class MdaaDeploy {
     cdkCmd.push(`-c 'module_name=${moduleEffectiveConfig.moduleName}'`);
     cdkCmd.push(`-c 'domain=${moduleEffectiveConfig.domainName}'`);
 
+    // Injected as a dedicated param so domain/env/module context blocks cannot override it
+    this.addOptionalCdkContextStringParam(
+      cdkCmd,
+      'permissions_boundary_arn',
+      moduleEffectiveConfig.permissionsBoundaryArn,
+    );
+
     if (this.config.contents.naming_module && this.config.contents.naming_class) {
       cdkCmd.push(`-c 'naming_module=${moduleEffectiveConfig.customNaming?.naming_module}'`);
       cdkCmd.push(`-c 'naming_class=${moduleEffectiveConfig.customNaming?.naming_class}'`);
@@ -995,6 +1002,10 @@ export class MdaaDeploy {
       terraform: this.computeEffectiveTerraformConfig(globalEffectiveConfig, domain.terraform),
       deployAccount: domain.account ?? globalEffectiveConfig.deployAccount,
       deployRegion: domain.region ?? globalEffectiveConfig.deployRegion,
+      permissionsBoundaryArn: this.computeEffectivePermissionsBoundaryArn(
+        globalEffectiveConfig,
+        domain.permissions_boundary_arn,
+      ),
     };
   }
 
@@ -1016,6 +1027,10 @@ export class MdaaDeploy {
       customAspects: this.computeEffectiveCustomAspects(domainEffectiveConfig, env.custom_aspects),
       customNaming: this.computeEffectiveCustomNaming(domainEffectiveConfig, env.custom_naming),
       terraform: this.computeEffectiveTerraformConfig(domainEffectiveConfig, env.terraform),
+      permissionsBoundaryArn: this.computeEffectivePermissionsBoundaryArn(
+        domainEffectiveConfig,
+        env.permissions_boundary_arn,
+      ),
     };
   }
 
@@ -1092,6 +1107,10 @@ export class MdaaDeploy {
     return child || parent.effectiveMdaaVersion;
   }
 
+  private computeEffectivePermissionsBoundaryArn(parent: EffectiveConfig, child?: string): string | undefined {
+    return child ?? parent.permissionsBoundaryArn;
+  }
+
   private computeEffectiveTagConfig(parent: EffectiveConfig, child?: TagElement): TagElement {
     return {
       ...parent.effectiveTagConfig,
@@ -1152,7 +1171,9 @@ export class MdaaDeploy {
 
   private createGlobalEffectiveConfig(): EffectiveConfig {
     return {
-      effectiveContext: this.config.contents.context || {},
+      effectiveContext: {
+        ...(this.config.contents.context || {}),
+      },
       effectiveTagConfig: this.config.contents.tag_config_data || {},
       tagConfigFiles: this.config.contents.tag_configs || [],
       effectiveMdaaVersion: this.config.contents.mdaa_version || this.mdaaVersion,
@@ -1169,6 +1190,7 @@ export class MdaaDeploy {
       terraform: this.config.contents.terraform,
       deployAccount: this.config.contents.account,
       deployRegion: this.config.contents.region,
+      permissionsBoundaryArn: this.config.contents.permissions_boundary_arn,
     };
   }
 

@@ -1726,6 +1726,10 @@
                     "description": "MDAA version override for domain-wide version control enabling consistent version",
                     "type": "string"
                 },
+                "permissions_boundary_arn": {
+                    "description": "IAM permissions boundary policy ARN. Overrides the top-level value for this domain.\nWhen specified, the managed policy is applied as a permissions boundary to all IAM roles\nin this domain's stacks.",
+                    "type": "string"
+                },
                 "region": {
                     "description": "Target AWS region for MDAA deployments overriding CDK default region settings",
                     "type": "string"
@@ -1787,6 +1791,10 @@
                     },
                     "description": "Map of MDAA module names to their configuration enabling multi-module deployment orchestration",
                     "type": "object"
+                },
+                "permissions_boundary_arn": {
+                    "description": "IAM permissions boundary policy ARN. Overrides the parent (domain or top-level) value.\nWhen specified, the managed policy is applied as a permissions boundary to all IAM roles\nin this environment's stacks.",
+                    "type": "string"
                 },
                 "region": {
                     "description": "Target AWS region for MDAA environment deployment enabling multi-region deployment strategies",
@@ -3409,6 +3417,10 @@
         },
         "organization": {
             "description": "Organization identifier that serves as the top-level namespace for all AWS resource names",
+            "type": "string"
+        },
+        "permissions_boundary_arn": {
+            "description": "IAM permissions boundary policy ARN. When specified, the managed policy\nis applied as a permissions boundary to all IAM roles across all stacks.\nSupports hierarchy: can be set at the top level, domain, or environment level.\nA child value overrides the parent. This is a first-class config field and\ncannot be overridden via generic context blocks.",
             "type": "string"
         },
         "region": {

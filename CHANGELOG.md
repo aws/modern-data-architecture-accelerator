@@ -27,6 +27,7 @@
 - Datalake app:
   - Added optional S3 Storage Lens support — enable via storageLensEnabled: true
   - Added optional CORS support - enable via corsRules property
+- CLI: added permission boundary name as an optional input to applied an IAM policy as permission boundary to all IAM roles
 - Data Warehouse app: Added `multiAz` (multi-AZ high availability) and `backupRegion` (cross-region snapshot copy) config options
 - Roles app: added an optional `additionalTrustedActions` for the role primary principal, allowing additional actions like 
 `sts:TagSession` to be added to the trust policy;

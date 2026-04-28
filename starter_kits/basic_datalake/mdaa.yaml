@@ -12,6 +12,12 @@ tag_configs:
 # Failure to do so may result in global naming conflicts.
 organization: <unique-org-name>
 
+# Optional: IAM permissions boundary policy ARN.
+# When specified, the managed policy is applied as a permissions boundary
+# to all IAM roles across all stacks. Supports hierarchy — can be overridden
+# at the domain or environment level to use a different boundary per scope.
+# permissions_boundary_arn: arn:aws:iam::<account-id>:policy/<boundary-policy-name>
+
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
 # to prefix all resource names.
 domains:

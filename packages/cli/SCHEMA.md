@@ -6,25 +6,26 @@
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                 | Pattern | Type            | Deprecated | Definition                                                                                                                    | Title/Description                                                                                             |
-| ---------------------------------------- | ------- | --------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| - [account](#account )                   | No      | string          | No         | -                                                                                                                             | Target AWS account number for MDAA deployments enabling cross-account deployment scenarios                    |
-| - [context](#context )                   | No      | object          | No         | -                                                                                                                             | Additional CDK Context key/value pairs                                                                        |
-| - [custom_aspects](#custom_aspects )     | No      | array           | No         | -                                                                                                                             | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                             |
-| - [devops](#devops )                     | No      | object          | No         | In #/definitions/DevOpsConfigContents                                                                                         | Configurations used when deploying MDAA DevOps resources                                                      |
-| + [domains](#domains )                   | No      | object          | No         | -                                                                                                                             | Map of domain configurations defining the organizational structure and deployment targets for MDAA modules    |
-| - [env_templates](#env_templates )       | No      | object          | No         | -                                                                                                                             | Templates for environments which can be referenced throughout the config.                                     |
-| - [log_suppressions](#log_suppressions ) | No      | boolean         | No         | -                                                                                                                             | Flag controlling CDK Nag suppression logging for compliance and debugging purposes                            |
-| - [mdaa_version](#mdaa_version )         | No      | string          | No         | -                                                                                                                             | Override the MDAA version                                                                                     |
-| - [naming_class](#naming_class )         | No      | string          | No         | -                                                                                                                             | Class name for custom MDAA naming implementation within the specified module                                  |
-| - [naming_module](#naming_module )       | No      | string          | No         | -                                                                                                                             | Module path for custom MDAA naming implementation overriding the default org-env-domain-module pattern        |
-| - [naming_props](#naming_props )         | No      | object          | No         | -                                                                                                                             | Configuration properties passed to custom naming implementation constructor for naming behavior customization |
-| + [organization](#organization )         | No      | string          | No         | -                                                                                                                             | Organization identifier that serves as the top-level namespace for all AWS resource names                     |
-| - [region](#region )                     | No      | string          | No         | -                                                                                                                             | Target AWS region for MDAA deployments overriding CDK default region settings                                 |
-| - [tag_config_data](#tag_config_data )   | No      | object          | No         | -                                                                                                                             | Tagging data which will be passed directly to apps                                                            |
-| - [tag_configs](#tag_configs )           | No      | array of string | No         | -                                                                                                                             | Array of tag configuration file paths for centralized tagging strategy implementation                         |
-| - [terraform](#terraform )               | No      | object          | No         | Same as [terraform](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_terraform ) | Config properties for TF modules                                                                              |
-| - [useStaging](#useStaging )             | No      | boolean         | No         | -                                                                                                                             | -                                                                                                             |
+| Property                                                 | Pattern | Type            | Deprecated | Definition                                                                                                                    | Title/Description                                                                                                                                                                                                                                                                                                                                                               |
+| -------------------------------------------------------- | ------- | --------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [account](#account )                                   | No      | string          | No         | -                                                                                                                             | Target AWS account number for MDAA deployments enabling cross-account deployment scenarios                                                                                                                                                                                                                                                                                      |
+| - [context](#context )                                   | No      | object          | No         | -                                                                                                                             | Additional CDK Context key/value pairs                                                                                                                                                                                                                                                                                                                                          |
+| - [custom_aspects](#custom_aspects )                     | No      | array           | No         | -                                                                                                                             | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                                                                                                                                                                                               |
+| - [devops](#devops )                                     | No      | object          | No         | In #/definitions/DevOpsConfigContents                                                                                         | Configurations used when deploying MDAA DevOps resources                                                                                                                                                                                                                                                                                                                        |
+| + [domains](#domains )                                   | No      | object          | No         | -                                                                                                                             | Map of domain configurations defining the organizational structure and deployment targets for MDAA modules                                                                                                                                                                                                                                                                      |
+| - [env_templates](#env_templates )                       | No      | object          | No         | -                                                                                                                             | Templates for environments which can be referenced throughout the config.                                                                                                                                                                                                                                                                                                       |
+| - [log_suppressions](#log_suppressions )                 | No      | boolean         | No         | -                                                                                                                             | Flag controlling CDK Nag suppression logging for compliance and debugging purposes                                                                                                                                                                                                                                                                                              |
+| - [mdaa_version](#mdaa_version )                         | No      | string          | No         | -                                                                                                                             | Override the MDAA version                                                                                                                                                                                                                                                                                                                                                       |
+| - [naming_class](#naming_class )                         | No      | string          | No         | -                                                                                                                             | Class name for custom MDAA naming implementation within the specified module                                                                                                                                                                                                                                                                                                    |
+| - [naming_module](#naming_module )                       | No      | string          | No         | -                                                                                                                             | Module path for custom MDAA naming implementation overriding the default org-env-domain-module pattern                                                                                                                                                                                                                                                                          |
+| - [naming_props](#naming_props )                         | No      | object          | No         | -                                                                                                                             | Configuration properties passed to custom naming implementation constructor for naming behavior customization                                                                                                                                                                                                                                                                   |
+| + [organization](#organization )                         | No      | string          | No         | -                                                                                                                             | Organization identifier that serves as the top-level namespace for all AWS resource names                                                                                                                                                                                                                                                                                       |
+| - [permissions_boundary_arn](#permissions_boundary_arn ) | No      | string          | No         | -                                                                                                                             | IAM permissions boundary policy ARN. When specified, the managed policy<br />is applied as a permissions boundary to all IAM roles across all stacks.<br />Supports hierarchy: can be set at the top level, domain, or environment level.<br />A child value overrides the parent. This is a first-class config field and<br />cannot be overridden via generic context blocks. |
+| - [region](#region )                                     | No      | string          | No         | -                                                                                                                             | Target AWS region for MDAA deployments overriding CDK default region settings                                                                                                                                                                                                                                                                                                   |
+| - [tag_config_data](#tag_config_data )                   | No      | object          | No         | -                                                                                                                             | Tagging data which will be passed directly to apps                                                                                                                                                                                                                                                                                                                              |
+| - [tag_configs](#tag_configs )                           | No      | array of string | No         | -                                                                                                                             | Array of tag configuration file paths for centralized tagging strategy implementation                                                                                                                                                                                                                                                                                           |
+| - [terraform](#terraform )                               | No      | object          | No         | Same as [terraform](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_terraform ) | Config properties for TF modules                                                                                                                                                                                                                                                                                                                                                |
+| - [useStaging](#useStaging )                             | No      | boolean         | No         | -                                                                                                                             | -                                                                                                                                                                                                                                                                                                                                                                               |
 
 ## <a name="account"></a>1. Property `root > account`
 
@@ -7824,19 +7825,20 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | **Additional properties** | Not allowed                    |
 | **Defined in**            | #/definitions/MdaaDomainConfig |
 
-| Property                                                            | Pattern | Type            | Deprecated | Definition                                                                                                                    | Title/Description                                                                                              |
-| ------------------------------------------------------------------- | ------- | --------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| - [account](#domains_additionalProperties_account )                 | No      | string          | No         | -                                                                                                                             | Target AWS account number for MDAA deployments enabling cross-account deployment scenarios                     |
-| - [context](#domains_additionalProperties_context )                 | No      | object          | No         | -                                                                                                                             | Additional CDK context key/value pairs for domain-wide configuration enabling flexible                         |
-| - [custom_aspects](#domains_additionalProperties_custom_aspects )   | No      | array           | No         | -                                                                                                                             | Array of custom CDK aspects for advanced deployment customization and cross-cutting                            |
-| - [custom_naming](#domains_additionalProperties_custom_naming )     | No      | object          | No         | In #/definitions/MdaaCustomNaming                                                                                             | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                              |
-| - [env_templates](#domains_additionalProperties_env_templates )     | No      | object          | No         | -                                                                                                                             | Environment templates configuration for reusable environment definitions enabling                              |
-| + [environments](#domains_additionalProperties_environments )       | No      | object          | No         | -                                                                                                                             | Map of environment names to environment configurations for multi-environment MDAA deployment orchestration     |
-| - [mdaa_version](#domains_additionalProperties_mdaa_version )       | No      | string          | No         | -                                                                                                                             | MDAA version override for domain-wide version control enabling consistent version                              |
-| - [region](#domains_additionalProperties_region )                   | No      | string          | No         | -                                                                                                                             | Target AWS region for MDAA deployments overriding CDK default region settings                                  |
-| - [tag_config_data](#domains_additionalProperties_tag_config_data ) | No      | object          | No         | -                                                                                                                             | Tag configuration data providing direct tagging parameters for domain-wide resource tagging strategy           |
-| - [tag_configs](#domains_additionalProperties_tag_configs )         | No      | array of string | No         | -                                                                                                                             | Array of tag configuration file paths for domain-wide resource tagging strategy compilation                    |
-| - [terraform](#domains_additionalProperties_terraform )             | No      | object          | No         | Same as [terraform](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_terraform ) | Terraform configuration for Terraform module integration enabling hybrid CDK/Terraform deployments within MDAA |
+| Property                                                                              | Pattern | Type            | Deprecated | Definition                                                                                                                    | Title/Description                                                                                                                                                                                               |
+| ------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [account](#domains_additionalProperties_account )                                   | No      | string          | No         | -                                                                                                                             | Target AWS account number for MDAA deployments enabling cross-account deployment scenarios                                                                                                                      |
+| - [context](#domains_additionalProperties_context )                                   | No      | object          | No         | -                                                                                                                             | Additional CDK context key/value pairs for domain-wide configuration enabling flexible                                                                                                                          |
+| - [custom_aspects](#domains_additionalProperties_custom_aspects )                     | No      | array           | No         | -                                                                                                                             | Array of custom CDK aspects for advanced deployment customization and cross-cutting                                                                                                                             |
+| - [custom_naming](#domains_additionalProperties_custom_naming )                       | No      | object          | No         | In #/definitions/MdaaCustomNaming                                                                                             | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                               |
+| - [env_templates](#domains_additionalProperties_env_templates )                       | No      | object          | No         | -                                                                                                                             | Environment templates configuration for reusable environment definitions enabling                                                                                                                               |
+| + [environments](#domains_additionalProperties_environments )                         | No      | object          | No         | -                                                                                                                             | Map of environment names to environment configurations for multi-environment MDAA deployment orchestration                                                                                                      |
+| - [mdaa_version](#domains_additionalProperties_mdaa_version )                         | No      | string          | No         | -                                                                                                                             | MDAA version override for domain-wide version control enabling consistent version                                                                                                                               |
+| - [permissions_boundary_arn](#domains_additionalProperties_permissions_boundary_arn ) | No      | string          | No         | -                                                                                                                             | IAM permissions boundary policy ARN. Overrides the top-level value for this domain.<br />When specified, the managed policy is applied as a permissions boundary to all IAM roles<br />in this domain's stacks. |
+| - [region](#domains_additionalProperties_region )                                     | No      | string          | No         | -                                                                                                                             | Target AWS region for MDAA deployments overriding CDK default region settings                                                                                                                                   |
+| - [tag_config_data](#domains_additionalProperties_tag_config_data )                   | No      | object          | No         | -                                                                                                                             | Tag configuration data providing direct tagging parameters for domain-wide resource tagging strategy                                                                                                            |
+| - [tag_configs](#domains_additionalProperties_tag_configs )                           | No      | array of string | No         | -                                                                                                                             | Array of tag configuration file paths for domain-wide resource tagging strategy compilation                                                                                                                     |
+| - [terraform](#domains_additionalProperties_terraform )                               | No      | object          | No         | Same as [terraform](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_terraform ) | Terraform configuration for Terraform module integration enabling hybrid CDK/Terraform deployments within MDAA                                                                                                  |
 
 #### <a name="domains_additionalProperties_account"></a>5.1.1. Property `root > domains > additionalProperties > account`
 
@@ -7979,20 +7981,21 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | **Additional properties** | Not allowed                         |
 | **Defined in**            | #/definitions/MdaaEnvironmentConfig |
 
-| Property                                                                                               | Pattern | Type            | Deprecated | Definition                                                                                                                    | Title/Description                                                                                    |
-| ------------------------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| - [account](#domains_additionalProperties_env_templates_additionalProperties_account )                 | No      | string          | No         | -                                                                                                                             | Target AWS account ID for MDAA environment deployment enabling multi-account deployment strategies   |
-| - [context](#domains_additionalProperties_env_templates_additionalProperties_context )                 | No      | object          | No         | -                                                                                                                             | Additional CDK context key/value pairs for environment-specific configuration enabling               |
-| - [custom_aspects](#domains_additionalProperties_env_templates_additionalProperties_custom_aspects )   | No      | array           | No         | -                                                                                                                             | Array of custom CDK aspects for advanced deployment customization and cross-cutting                  |
-| - [custom_naming](#domains_additionalProperties_env_templates_additionalProperties_custom_naming )     | No      | object          | No         | Same as [custom_naming](#domains_additionalProperties_custom_naming )                                                         | Custom naming configuration for environment-specific resource naming conventions enabling            |
-| - [mdaa_version](#domains_additionalProperties_env_templates_additionalProperties_mdaa_version )       | No      | string          | No         | -                                                                                                                             | MDAA version override for environment-specific version control enabling selective version            |
-| - [modules](#domains_additionalProperties_env_templates_additionalProperties_modules )                 | No      | object          | No         | -                                                                                                                             | Map of MDAA module names to their configuration enabling multi-module deployment orchestration       |
-| - [region](#domains_additionalProperties_env_templates_additionalProperties_region )                   | No      | string          | No         | -                                                                                                                             | Target AWS region for MDAA environment deployment enabling multi-region deployment strategies        |
-| - [tag_config_data](#domains_additionalProperties_env_templates_additionalProperties_tag_config_data ) | No      | object          | No         | -                                                                                                                             | Tag configuration data providing direct tagging parameters for environment resource tagging strategy |
-| - [tag_configs](#domains_additionalProperties_env_templates_additionalProperties_tag_configs )         | No      | array of string | No         | -                                                                                                                             | Array of tag configuration file paths for resource tagging strategy compilation                      |
-| - [template](#domains_additionalProperties_env_templates_additionalProperties_template )               | No      | string          | No         | -                                                                                                                             | Environment template reference for template-based environment configuration enabling                 |
-| - [terraform](#domains_additionalProperties_env_templates_additionalProperties_terraform )             | No      | object          | No         | Same as [terraform](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_terraform ) | Terraform configuration for environment-specific Terraform module deployment enabling                |
-| - [use_bootstrap](#domains_additionalProperties_env_templates_additionalProperties_use_bootstrap )     | No      | boolean         | No         | -                                                                                                                             | Flag controlling CDK bootstrap environment usage for environment deployment enabling                 |
+| Property                                                                                                                 | Pattern | Type            | Deprecated | Definition                                                                                                                    | Title/Description                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [account](#domains_additionalProperties_env_templates_additionalProperties_account )                                   | No      | string          | No         | -                                                                                                                             | Target AWS account ID for MDAA environment deployment enabling multi-account deployment strategies                                                                                                                      |
+| - [context](#domains_additionalProperties_env_templates_additionalProperties_context )                                   | No      | object          | No         | -                                                                                                                             | Additional CDK context key/value pairs for environment-specific configuration enabling                                                                                                                                  |
+| - [custom_aspects](#domains_additionalProperties_env_templates_additionalProperties_custom_aspects )                     | No      | array           | No         | -                                                                                                                             | Array of custom CDK aspects for advanced deployment customization and cross-cutting                                                                                                                                     |
+| - [custom_naming](#domains_additionalProperties_env_templates_additionalProperties_custom_naming )                       | No      | object          | No         | Same as [custom_naming](#domains_additionalProperties_custom_naming )                                                         | Custom naming configuration for environment-specific resource naming conventions enabling                                                                                                                               |
+| - [mdaa_version](#domains_additionalProperties_env_templates_additionalProperties_mdaa_version )                         | No      | string          | No         | -                                                                                                                             | MDAA version override for environment-specific version control enabling selective version                                                                                                                               |
+| - [modules](#domains_additionalProperties_env_templates_additionalProperties_modules )                                   | No      | object          | No         | -                                                                                                                             | Map of MDAA module names to their configuration enabling multi-module deployment orchestration                                                                                                                          |
+| - [permissions_boundary_arn](#domains_additionalProperties_env_templates_additionalProperties_permissions_boundary_arn ) | No      | string          | No         | -                                                                                                                             | IAM permissions boundary policy ARN. Overrides the parent (domain or top-level) value.<br />When specified, the managed policy is applied as a permissions boundary to all IAM roles<br />in this environment's stacks. |
+| - [region](#domains_additionalProperties_env_templates_additionalProperties_region )                                     | No      | string          | No         | -                                                                                                                             | Target AWS region for MDAA environment deployment enabling multi-region deployment strategies                                                                                                                           |
+| - [tag_config_data](#domains_additionalProperties_env_templates_additionalProperties_tag_config_data )                   | No      | object          | No         | -                                                                                                                             | Tag configuration data providing direct tagging parameters for environment resource tagging strategy                                                                                                                    |
+| - [tag_configs](#domains_additionalProperties_env_templates_additionalProperties_tag_configs )                           | No      | array of string | No         | -                                                                                                                             | Array of tag configuration file paths for resource tagging strategy compilation                                                                                                                                         |
+| - [template](#domains_additionalProperties_env_templates_additionalProperties_template )                                 | No      | string          | No         | -                                                                                                                             | Environment template reference for template-based environment configuration enabling                                                                                                                                    |
+| - [terraform](#domains_additionalProperties_env_templates_additionalProperties_terraform )                               | No      | object          | No         | Same as [terraform](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_terraform ) | Terraform configuration for environment-specific Terraform module deployment enabling                                                                                                                                   |
+| - [use_bootstrap](#domains_additionalProperties_env_templates_additionalProperties_use_bootstrap )                       | No      | boolean         | No         | -                                                                                                                             | Flag controlling CDK bootstrap environment usage for environment deployment enabling                                                                                                                                    |
 
 ###### <a name="domains_additionalProperties_env_templates_additionalProperties_account"></a>5.1.5.1.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > account`
 
@@ -8646,7 +8649,18 @@ Must be one of:
 
 **Description:** Flag controlling CDK bootstrap environment usage for module deployment enabling bootstrap
 
-###### <a name="domains_additionalProperties_env_templates_additionalProperties_region"></a>5.1.5.1.7. Property `root > domains > additionalProperties > env_templates > additionalProperties > region`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_permissions_boundary_arn"></a>5.1.5.1.7. Property `root > domains > additionalProperties > env_templates > additionalProperties > permissions_boundary_arn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** IAM permissions boundary policy ARN. Overrides the parent (domain or top-level) value.
+When specified, the managed policy is applied as a permissions boundary to all IAM roles
+in this environment's stacks.
+
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_region"></a>5.1.5.1.8. Property `root > domains > additionalProperties > env_templates > additionalProperties > region`
 
 |              |          |
 | ------------ | -------- |
@@ -8655,7 +8669,7 @@ Must be one of:
 
 **Description:** Target AWS region for MDAA environment deployment enabling multi-region deployment strategies
 
-###### <a name="domains_additionalProperties_env_templates_additionalProperties_tag_config_data"></a>5.1.5.1.8. Property `root > domains > additionalProperties > env_templates > additionalProperties > tag_config_data`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_tag_config_data"></a>5.1.5.1.9. Property `root > domains > additionalProperties > env_templates > additionalProperties > tag_config_data`
 
 |                           |                                                                                                                                                              |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -8669,14 +8683,14 @@ Must be one of:
 | ------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#domains_additionalProperties_env_templates_additionalProperties_tag_config_data_additionalProperties ) | No      | string | No         | -          | -                 |
 
-###### <a name="domains_additionalProperties_env_templates_additionalProperties_tag_config_data_additionalProperties"></a>5.1.5.1.8.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > tag_config_data > additionalProperties`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_tag_config_data_additionalProperties"></a>5.1.5.1.9.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > tag_config_data > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_env_templates_additionalProperties_tag_configs"></a>5.1.5.1.9. Property `root > domains > additionalProperties > env_templates > additionalProperties > tag_configs`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_tag_configs"></a>5.1.5.1.10. Property `root > domains > additionalProperties > env_templates > additionalProperties > tag_configs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8697,14 +8711,14 @@ Must be one of:
 | ------------------------------------------------------------------------------------------------------- | ----------- |
 | [tag_configs items](#domains_additionalProperties_env_templates_additionalProperties_tag_configs_items) | -           |
 
-###### <a name="domains_additionalProperties_env_templates_additionalProperties_tag_configs_items"></a>5.1.5.1.9.1. root > domains > additionalProperties > env_templates > additionalProperties > tag_configs > tag_configs items
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_tag_configs_items"></a>5.1.5.1.10.1. root > domains > additionalProperties > env_templates > additionalProperties > tag_configs > tag_configs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_env_templates_additionalProperties_template"></a>5.1.5.1.10. Property `root > domains > additionalProperties > env_templates > additionalProperties > template`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_template"></a>5.1.5.1.11. Property `root > domains > additionalProperties > env_templates > additionalProperties > template`
 
 |              |          |
 | ------------ | -------- |
@@ -8713,7 +8727,7 @@ Must be one of:
 
 **Description:** Environment template reference for template-based environment configuration enabling
 
-###### <a name="domains_additionalProperties_env_templates_additionalProperties_terraform"></a>5.1.5.1.11. Property `root > domains > additionalProperties > env_templates > additionalProperties > terraform`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_terraform"></a>5.1.5.1.12. Property `root > domains > additionalProperties > env_templates > additionalProperties > terraform`
 
 |                           |                                                                                                                      |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -8724,7 +8738,7 @@ Must be one of:
 
 **Description:** Terraform configuration for environment-specific Terraform module deployment enabling
 
-###### <a name="domains_additionalProperties_env_templates_additionalProperties_use_bootstrap"></a>5.1.5.1.12. Property `root > domains > additionalProperties > env_templates > additionalProperties > use_bootstrap`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_use_bootstrap"></a>5.1.5.1.13. Property `root > domains > additionalProperties > env_templates > additionalProperties > use_bootstrap`
 
 |              |           |
 | ------------ | --------- |
@@ -8765,7 +8779,18 @@ Must be one of:
 
 **Description:** MDAA version override for domain-wide version control enabling consistent version
 
-#### <a name="domains_additionalProperties_region"></a>5.1.8. Property `root > domains > additionalProperties > region`
+#### <a name="domains_additionalProperties_permissions_boundary_arn"></a>5.1.8. Property `root > domains > additionalProperties > permissions_boundary_arn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** IAM permissions boundary policy ARN. Overrides the top-level value for this domain.
+When specified, the managed policy is applied as a permissions boundary to all IAM roles
+in this domain's stacks.
+
+#### <a name="domains_additionalProperties_region"></a>5.1.9. Property `root > domains > additionalProperties > region`
 
 |              |          |
 | ------------ | -------- |
@@ -8774,7 +8799,7 @@ Must be one of:
 
 **Description:** Target AWS region for MDAA deployments overriding CDK default region settings
 
-#### <a name="domains_additionalProperties_tag_config_data"></a>5.1.9. Property `root > domains > additionalProperties > tag_config_data`
+#### <a name="domains_additionalProperties_tag_config_data"></a>5.1.10. Property `root > domains > additionalProperties > tag_config_data`
 
 |                           |                                                                                                                           |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -8788,14 +8813,14 @@ Must be one of:
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#domains_additionalProperties_tag_config_data_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="domains_additionalProperties_tag_config_data_additionalProperties"></a>5.1.9.1. Property `root > domains > additionalProperties > tag_config_data > additionalProperties`
+##### <a name="domains_additionalProperties_tag_config_data_additionalProperties"></a>5.1.10.1. Property `root > domains > additionalProperties > tag_config_data > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="domains_additionalProperties_tag_configs"></a>5.1.10. Property `root > domains > additionalProperties > tag_configs`
+#### <a name="domains_additionalProperties_tag_configs"></a>5.1.11. Property `root > domains > additionalProperties > tag_configs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8816,14 +8841,14 @@ Must be one of:
 | -------------------------------------------------------------------- | ----------- |
 | [tag_configs items](#domains_additionalProperties_tag_configs_items) | -           |
 
-##### <a name="domains_additionalProperties_tag_configs_items"></a>5.1.10.1. root > domains > additionalProperties > tag_configs > tag_configs items
+##### <a name="domains_additionalProperties_tag_configs_items"></a>5.1.11.1. root > domains > additionalProperties > tag_configs > tag_configs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="domains_additionalProperties_terraform"></a>5.1.11. Property `root > domains > additionalProperties > terraform`
+#### <a name="domains_additionalProperties_terraform"></a>5.1.12. Property `root > domains > additionalProperties > terraform`
 
 |                           |                                                                                                                      |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -8924,7 +8949,20 @@ Must be one of:
 
 **Description:** Organization identifier that serves as the top-level namespace for all AWS resource names
 
-## <a name="region"></a>13. Property `root > region`
+## <a name="permissions_boundary_arn"></a>13. Property `root > permissions_boundary_arn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** IAM permissions boundary policy ARN. When specified, the managed policy
+is applied as a permissions boundary to all IAM roles across all stacks.
+Supports hierarchy: can be set at the top level, domain, or environment level.
+A child value overrides the parent. This is a first-class config field and
+cannot be overridden via generic context blocks.
+
+## <a name="region"></a>14. Property `root > region`
 
 |              |          |
 | ------------ | -------- |
@@ -8933,7 +8971,7 @@ Must be one of:
 
 **Description:** Target AWS region for MDAA deployments overriding CDK default region settings
 
-## <a name="tag_config_data"></a>14. Property `root > tag_config_data`
+## <a name="tag_config_data"></a>15. Property `root > tag_config_data`
 
 |                           |                                                                                              |
 | ------------------------- | -------------------------------------------------------------------------------------------- |
@@ -8947,14 +8985,14 @@ Must be one of:
 | -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#tag_config_data_additionalProperties ) | No      | string | No         | -          | -                 |
 
-### <a name="tag_config_data_additionalProperties"></a>14.1. Property `root > tag_config_data > additionalProperties`
+### <a name="tag_config_data_additionalProperties"></a>15.1. Property `root > tag_config_data > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="tag_configs"></a>15. Property `root > tag_configs`
+## <a name="tag_configs"></a>16. Property `root > tag_configs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8975,14 +9013,14 @@ Must be one of:
 | --------------------------------------- | ----------- |
 | [tag_configs items](#tag_configs_items) | -           |
 
-### <a name="tag_configs_items"></a>15.1. root > tag_configs > tag_configs items
+### <a name="tag_configs_items"></a>16.1. root > tag_configs > tag_configs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="terraform"></a>16. Property `root > terraform`
+## <a name="terraform"></a>17. Property `root > terraform`
 
 |                           |                                                                                                                      |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -8993,7 +9031,7 @@ Must be one of:
 
 **Description:** Config properties for TF modules
 
-## <a name="useStaging"></a>17. Property `root > useStaging`
+## <a name="useStaging"></a>18. Property `root > useStaging`
 
 |              |           |
 | ------------ | --------- |

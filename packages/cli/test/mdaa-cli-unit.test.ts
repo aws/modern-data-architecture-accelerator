@@ -1166,3 +1166,143 @@ describe('MdaaDeploy.execCmdWithDiffCapture', () => {
     expect(writeCall[0]).toContain('diff.txt');
   });
 });
+
+describe('permissions_boundary_arn injection', () => {
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should inject top-level permissions_boundary_arn into CDK command', () => {
+    const mdaaDeploy = new MdaaDeploy({ action: 'synth', testing: 'true' }, [], {
+      organization: 'test-org',
+      permissions_boundary_arn: 'arn:aws:iam::123456789012:policy/top-level-boundary',
+      domains: {
+        'test-domain': {
+          environments: {
+            'test-env': {
+              modules: { 'test-module': { module_path: '@test/module' } },
+            },
+          },
+        },
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockExecCmd = jest.spyOn(mdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
+    mdaaDeploy.deploy();
+
+    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes('cdk synth'));
+    expect(cdkCall).toBeDefined();
+    expect(String(cdkCall![0])).toContain(
+      'permissions_boundary_arn="arn:aws:iam::123456789012:policy/top-level-boundary"',
+    );
+  });
+
+  it('should allow domain-level permissions_boundary_arn to override top-level', () => {
+    const mdaaDeploy = new MdaaDeploy({ action: 'synth', testing: 'true' }, [], {
+      organization: 'test-org',
+      permissions_boundary_arn: 'arn:aws:iam::123456789012:policy/top-level-boundary',
+      domains: {
+        'test-domain': {
+          permissions_boundary_arn: 'arn:aws:iam::123456789012:policy/domain-boundary',
+          environments: {
+            'test-env': {
+              modules: { 'test-module': { module_path: '@test/module' } },
+            },
+          },
+        },
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockExecCmd = jest.spyOn(mdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
+    mdaaDeploy.deploy();
+
+    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes('cdk synth'));
+    expect(cdkCall).toBeDefined();
+    expect(String(cdkCall![0])).toContain(
+      'permissions_boundary_arn="arn:aws:iam::123456789012:policy/domain-boundary"',
+    );
+    expect(String(cdkCall![0])).not.toContain('top-level-boundary');
+  });
+
+  it('should allow env-level permissions_boundary_arn to override domain-level', () => {
+    const mdaaDeploy = new MdaaDeploy({ action: 'synth', testing: 'true' }, [], {
+      organization: 'test-org',
+      permissions_boundary_arn: 'arn:aws:iam::123456789012:policy/top-level-boundary',
+      domains: {
+        'test-domain': {
+          permissions_boundary_arn: 'arn:aws:iam::123456789012:policy/domain-boundary',
+          environments: {
+            'test-env': {
+              permissions_boundary_arn: 'arn:aws:iam::123456789012:policy/env-boundary',
+              modules: { 'test-module': { module_path: '@test/module' } },
+            },
+          },
+        },
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockExecCmd = jest.spyOn(mdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
+    mdaaDeploy.deploy();
+
+    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes('cdk synth'));
+    expect(cdkCall).toBeDefined();
+    expect(String(cdkCall![0])).toContain('permissions_boundary_arn="arn:aws:iam::123456789012:policy/env-boundary"');
+    expect(String(cdkCall![0])).not.toContain('domain-boundary');
+  });
+
+  it('should inherit parent permissions_boundary_arn when child does not specify one', () => {
+    const mdaaDeploy = new MdaaDeploy({ action: 'synth', testing: 'true' }, [], {
+      organization: 'test-org',
+      permissions_boundary_arn: 'arn:aws:iam::123456789012:policy/top-level-boundary',
+      domains: {
+        'test-domain': {
+          environments: {
+            'test-env': {
+              modules: { 'test-module': { module_path: '@test/module' } },
+            },
+          },
+        },
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockExecCmd = jest.spyOn(mdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
+    mdaaDeploy.deploy();
+
+    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes('cdk synth'));
+    expect(cdkCall).toBeDefined();
+    expect(String(cdkCall![0])).toContain(
+      'permissions_boundary_arn="arn:aws:iam::123456789012:policy/top-level-boundary"',
+    );
+  });
+
+  it('should not inject permissions_boundary_arn when not configured at any level', () => {
+    const mdaaDeploy = new MdaaDeploy({ action: 'synth', testing: 'true' }, [], {
+      organization: 'test-org',
+      domains: {
+        'test-domain': {
+          environments: {
+            'test-env': {
+              modules: { 'test-module': { module_path: '@test/module' } },
+            },
+          },
+        },
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockExecCmd = jest.spyOn(mdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
+    mdaaDeploy.deploy();
+
+    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes('cdk synth'));
+    expect(cdkCall).toBeDefined();
+    expect(String(cdkCall![0])).not.toContain('permissions_boundary_arn');
+  });
+});

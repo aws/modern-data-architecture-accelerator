@@ -4,7 +4,7 @@
  */
 
 import { ModuleEffectiveConfig } from './config-types';
-import * as fs from 'fs';
+import * as fs from 'node:fs';
 
 export function getMdaaConfig<T>(
   moduleDeployConfig: ModuleEffectiveConfig,

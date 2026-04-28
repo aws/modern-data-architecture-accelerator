@@ -126,6 +126,12 @@ export interface MdaaEnvironmentConfig {
   readonly custom_naming?: MdaaCustomNaming;
   /** Terraform configuration for environment-specific Terraform module deployment enabling */
   readonly terraform?: TerraformConfig;
+  /**
+   * IAM permissions boundary policy ARN. Overrides the parent (domain or top-level) value.
+   * When specified, the managed policy is applied as a permissions boundary to all IAM roles
+   * in this environment's stacks.
+   */
+  readonly permissions_boundary_arn?: string;
 }
 
 export interface MdaaDomainConfig {
@@ -153,6 +159,12 @@ export interface MdaaDomainConfig {
   readonly region?: string;
   /** Target AWS account number for MDAA deployments enabling cross-account deployment scenarios */
   readonly account?: string;
+  /**
+   * IAM permissions boundary policy ARN. Overrides the top-level value for this domain.
+   * When specified, the managed policy is applied as a permissions boundary to all IAM roles
+   * in this domain's stacks.
+   */
+  readonly permissions_boundary_arn?: string;
 }
 
 export interface MdaaConfigContents {
@@ -207,6 +219,15 @@ export interface MdaaConfigContents {
   readonly terraform?: TerraformConfig;
 
   readonly useStaging?: boolean;
+
+  /**
+   * IAM permissions boundary policy ARN. When specified, the managed policy
+   * is applied as a permissions boundary to all IAM roles across all stacks.
+   * Supports hierarchy: can be set at the top level, domain, or environment level.
+   * A child value overrides the parent. This is a first-class config field and
+   * cannot be overridden via generic context blocks.
+   */
+  readonly permissions_boundary_arn?: string;
 }
 
 export interface MdaaParserConfig {

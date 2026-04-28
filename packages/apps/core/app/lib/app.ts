@@ -15,6 +15,7 @@ import { MdaaNagSuppressions, MdaaStringParameter } from '@aws-mdaa/construct'; 
 import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { IMdaaResourceNaming, MdaaDefaultResourceNaming } from '@aws-mdaa/naming';
 import { App, AppProps, Aspects, Stack, Tags } from 'aws-cdk-lib';
+import { ManagedPolicy, PermissionsBoundary } from 'aws-cdk-lib/aws-iam';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import {
   CfnLaunchRoleConstraint,
@@ -188,6 +189,7 @@ export abstract class MdaaCdkApp extends App {
     this.deployRegion = process.env.CI_SUPPLIED_TARGET_REGION || process.env.CDK_DEFAULT_REGION;
 
     this.stack = this.createEmptyStack(packageName);
+    this.applyPermissionsBoundary();
 
     const additionalStacks = getNodeValue(this.node, 'additional_stacks', []) as Deployment[];
     this.additionalStacksMap = Object.fromEntries(
@@ -335,6 +337,15 @@ export abstract class MdaaCdkApp extends App {
     const customAspectModule = require(customAspectModulePath);
     const aspect = new customAspectModule[customAspect.aspect_class](customAspect.aspect_props);
     Aspects.of(this).add(aspect);
+  }
+
+  private applyPermissionsBoundary() {
+    const rawBoundaryArn: string | undefined = this.node.tryGetContext('permissions_boundary_arn');
+    const boundaryArn = rawBoundaryArn ? cleanContextStringValue(rawBoundaryArn) : undefined;
+    if (boundaryArn) {
+      const boundaryPolicy = ManagedPolicy.fromManagedPolicyArn(this.stack, 'PermissionsBoundary', boundaryArn);
+      PermissionsBoundary.of(this).apply(boundaryPolicy);
+    }
   }
 
   private generateServiceCatalogProductParentStackResources(
