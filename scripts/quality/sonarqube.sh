@@ -19,40 +19,22 @@ if [ "${CI_PIPELINE_SOURCE}" = "merge_request_event" ] || [ -n "${CI_MERGE_REQUE
   SANITIZED_BRANCH=$(echo "${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}" | sed 's/[^a-zA-Z0-9._:-]/_/g')
 
   # Use a dedicated MR project so the main project stays untouched.
-  # Format: <SONAR_PROJECT_KEY>-mr-<branch-name> for easy identification
-  # on a shared SonarQube instance.
   PROJECT_KEY="${BASE_PROJECT_KEY}-mr-${SANITIZED_BRANCH}"
   echo "Merge Request detected (MR !${CI_MERGE_REQUEST_IID}, branch: ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}) - using project key: ${PROJECT_KEY}"
 
-  # Pass the project version so SonarQube can compute new code correctly.
   VERSION_ARGS="-Dsonar.projectVersion=${CI_COMMIT_SHORT_SHA}"
 
-  # Scope the scanner to only affected packages so we don't need full-repo
-  # coverage. Each MR project is independent, so partial analysis is fine.
-  # Set MERGE_PIPELINE_RUN_ALL=true to force a full-repo scan in MR pipelines.
-  if [ "${MERGE_PIPELINE_RUN_ALL:-false}" = "true" ]; then
-    echo "MERGE_PIPELINE_RUN_ALL=true — running full-repo scan for this MR"
-    SCOPE_ARGS=""
-  else
-    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-    source "$SCRIPT_DIR/../nx/affected-base.sh"
+  # Scope the scan to the same changed packages as the target baseline job.
+  # Both jobs use sonar-scope.sh with the same commit refs so the
+  # file sets match exactly, ensuring correct new-code classification.
+  source ./scripts/quality/sonar-scope.sh
 
-    echo "Computing directly changed packages (base: $NX_BASE)"
-    CHANGED_PROJECTS=$(python3 ./scripts/nx/changed-only.py "$NX_BASE" "$NX_HEAD")
-    AFFECTED_PATHS=$(echo "$CHANGED_PROJECTS" | python3 ./scripts/nx/affected-paths.py)
-
-    if [ -n "$AFFECTED_PATHS" ]; then
-      echo "Scoping scanner to affected packages: $AFFECTED_PATHS"
-      # Build sonar.sources as comma-separated list of affected package roots
-      SCOPE_ARGS="-Dsonar.sources=${AFFECTED_PATHS}"
-      # Restrict inclusions to lib/**/*.ts within affected packages only
-      INCLUSIONS=$(echo "$AFFECTED_PATHS" | tr ',' '\n' | sed 's|$|/lib/**/*.ts|' | paste -sd ',' -)
-      SCOPE_ARGS="${SCOPE_ARGS} -Dsonar.inclusions=${INCLUSIONS}"
-    else
-      echo "No affected packages found, skipping SonarQube scan"
-      exit 0
-    fi
+  if [ "${SONAR_SCOPE_SKIP}" = "true" ]; then
+    echo "No affected packages found, skipping SonarQube scan"
+    exit 0
   fi
+
+  SCOPE_ARGS="${SONAR_SCOPE_ARGS} -Dsonar.scm.disabled=true -Dsonar.scanner.skipSystemTruststore=true"
 else
   # Main branch analysis - use the canonical project key
   PROJECT_KEY="${BASE_PROJECT_KEY}"

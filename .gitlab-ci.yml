@@ -174,7 +174,7 @@ feature_merge_lint_python:
     - ./scripts/quality/lint_python.sh
 
 # Verify the feature branch is up to date with the target branch before proceeding
-feature_merge_main:
+feature_check_target:
   interruptible: true
   tags:
     - arch:amd64
@@ -207,9 +207,9 @@ feature_validate_dependencies:
     - merge_requests
   stage: build
   dependencies:
-    - feature_merge_main
+    - feature_check_target
   needs:
-    - feature_merge_main
+    - feature_check_target
   script:
     - ./scripts/quality/validate_dependencies.sh
 
@@ -223,9 +223,9 @@ feature_merge_build_test:
     - merge_requests
   stage: build
   dependencies:
-    - feature_merge_main
+    - feature_check_target
   needs:
-    - feature_merge_main
+    - feature_check_target
   cache:
     key: feature-merge-build-$CI_COMMIT_SHA
     paths:
@@ -462,6 +462,27 @@ feature_merge_baseline_review:
       junit: baseline-review/junit-report.xml
     when: always
 
+# Scan the target branch (main) to establish the SonarQube baseline so
+# that MR changes are correctly classified as "new code".
+feature_merge_sonarqube_target:
+  interruptible: true
+  tags:
+    - arch:amd64
+    - size:large
+  only:
+    - merge_requests
+  stage: prebuild
+  dependencies:
+    - feature_merge_base_image
+  needs:
+    - feature_merge_base_image
+  variables:
+    GIT_DEPTH: '0'
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+  allow_failure: false
+  script:
+    - ./scripts/quality/sonarqube-target-baseline.sh
+
 # Run SonarQube analysis
 feature_merge_sonarqube:
   interruptible: true
@@ -475,6 +496,7 @@ feature_merge_sonarqube:
     - feature_merge_build_test
   needs:
     - feature_merge_build_test
+    - feature_merge_sonarqube_target
   cache:
     key: feature-merge-build-$CI_COMMIT_SHA
     paths:
