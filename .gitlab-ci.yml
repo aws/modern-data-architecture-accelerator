@@ -173,7 +173,7 @@ feature_merge_lint_python:
   script:
     - ./scripts/quality/lint_python.sh
 
-# Merge main into the feature branch to validate compatibility
+# Verify the feature branch is up to date with the target branch before proceeding
 feature_merge_main:
   interruptible: true
   tags:
@@ -193,7 +193,7 @@ feature_merge_main:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
-    - ./scripts/ci/merge_main.sh
+    - ./scripts/ci/check_target.sh
 
 # --- build stage ---
 
