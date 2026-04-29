@@ -56,8 +56,11 @@ echo "NX_BASE (merge-base): ${NX_BASE}"
 echo ""
 
 # Compute directly changed packages between merge-base and MR HEAD.
-echo "Computing changed packages..."
-CHANGED_PROJECTS=$(python3 "$SCRIPT_DIR/../nx/changed-only.py" "$NX_BASE" "$MR_HEAD")
+# Only consider TypeScript and Python source files — changes to
+# non-code files (markdown, JSON, config) don't affect SonarQube
+# analysis and shouldn't trigger a scan for the package.
+echo "Computing changed packages (code files only)..."
+CHANGED_PROJECTS=$(python3 "$SCRIPT_DIR/../nx/changed-only.py" "$NX_BASE" "$MR_HEAD" --extensions .ts .py)
 AFFECTED_PATHS=$(echo "$CHANGED_PROJECTS" | python3 "$SCRIPT_DIR/../nx/affected-paths.py")
 
 echo "Changed projects: ${CHANGED_PROJECTS}"
