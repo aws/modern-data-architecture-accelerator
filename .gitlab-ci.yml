@@ -360,13 +360,16 @@ pages:
       - internal
 
 # Template: Integration test base configuration (used by feature_merge_integ_split_* jobs)
+# NOTE: Integration tests are currently disabled across all pipelines.
+# To re-enable, remove the `rules: - when: never` block and uncomment the `only` block.
 .integ_test_template: &integ_test_template
   interruptible: true
   tags:
     - arch:amd64
     - size:3xlarge
-  only:
-    - merge_requests
+  # Disable integ testing, until it's deprecated
+  rules:
+    - when: never
   stage: test
   dependencies:
     - feature_merge_build_test
