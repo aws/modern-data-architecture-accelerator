@@ -3,7 +3,7 @@ import * as path from 'node:path';
 
 describe('loadLocalPackages', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExecSync = jest.spyOn(require('child_process'), 'execSync');
+  const mockExecSync = jest.spyOn(require('node:child_process'), 'execSync');
   const mockConsoleLog = jest.spyOn(console, 'log');
   const mockPathResolve = jest.spyOn(path, 'resolve');
 

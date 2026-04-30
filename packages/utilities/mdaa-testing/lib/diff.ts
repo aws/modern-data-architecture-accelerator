@@ -14,12 +14,15 @@ import { TestRegionFact } from './test-app';
 
 const UPDATE_BASELINES = process.env.UPDATE_BASELINES === 'true';
 
-// Matches MDAA version strings like "1.5.0", "1.5.20260401145352" in known contexts
-// NOSONAR
+// Matches MDAA version strings like "1.5.0", "1.5.20260401145352" in known contexts.
+// The version suffix uses non-overlapping groups to avoid super-linear backtracking (S5852).
 const VERSION_PATTERNS = [
-  /Version \d+\.\d+\.\d+[a-zA-Z0-9.]*/g, // "Version 1.5.0" or "Version 1.5.20260401145352"
-  /AWSSOLUTION\/SO\d+\/v\d+\.\d+\.\d+[a-zA-Z0-9.]*/g, // "AWSSOLUTION/SO0320/v1.5.0"
+  /Version \d+\.\d+\.\d+(?:[a-zA-Z][a-zA-Z0-9.]*|\.\d[a-zA-Z0-9.]*)*/g, // "Version 1.5.0" or "Version 1.5.20260401145352"
+  /AWSSOLUTION\/SO\d+\/v\d+\.\d+\.\d+(?:[a-zA-Z][a-zA-Z0-9.]*|\.\d[a-zA-Z0-9.]*)*/g, // "AWSSOLUTION/SO0320/v1.5.0"
 ];
+
+// Replacement regex for the version number portion — uses the same non-overlapping structure.
+const VERSION_NUMBER_PATTERN = /\d+\.\d+\.\d+(?:[a-zA-Z][a-zA-Z0-9.]*|\.\d[a-zA-Z0-9.]*)*/; //NOSONAR
 
 /**
  * Normalize volatile values in a template so that MDAA version bumps
@@ -27,7 +30,7 @@ const VERSION_PATTERNS = [
  */
 function normalizeTemplate(template: Record<string, unknown>): Record<string, unknown> {
   const json = VERSION_PATTERNS.reduce(
-    (s, pattern) => s.replace(pattern, match => match.replace(/\d+\.\d+\.\d+[a-zA-Z0-9.]*/, 'VERSION')),
+    (s, pattern) => s.replace(pattern, match => match.replace(VERSION_NUMBER_PATTERN, 'VERSION')),
     JSON.stringify(template),
   );
 

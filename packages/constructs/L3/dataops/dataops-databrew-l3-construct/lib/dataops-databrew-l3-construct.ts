@@ -337,7 +337,7 @@ export class DataBrewL3Construct extends MdaaL3Construct {
     const isUpperCase = (char: string) => char == char.toUpperCase();
 
     const transformedSteps = JSON.parse(recipeConfig.steps, function (key, value) {
-      if (isNaN(Number(key)) && key.trim().length > 0 && isUpperCase(key.charAt(0))) {
+      if (Number.isNaN(Number(key)) && key.trim().length > 0 && isUpperCase(key.charAt(0))) {
         this[toLowerCase(key)] = value;
         return;
       }

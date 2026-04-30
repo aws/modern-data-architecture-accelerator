@@ -638,7 +638,7 @@ export class NifiL3Construct extends MdaaL3Construct {
             `Unknown peer cluster ${peerClusterName} referenced by cluster ${addNifiClusterProps.nifiClusterName}`,
           );
         }
-        const peerNodeIds = [...Array(peerClusterOptions.nodeCount ?? 1).keys()];
+        const peerNodeIds = [...new Array(peerClusterOptions.nodeCount ?? 1).keys()];
         return peerNodeIds.map(peerNodeId => {
           return `CN=nifi-${peerNodeId}.nifi-${peerClusterName}.${addNifiClusterProps.hostedZone.zoneName}`;
         });

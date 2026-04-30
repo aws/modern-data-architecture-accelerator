@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as fs from 'fs';
+import * as fs from 'node:fs';
 
 export interface ExecutionError {
   /** Numeric status code indicating the exit status of the failed command execution enabling */
@@ -15,10 +15,12 @@ export interface ExecutionError {
 
 export function executeCommand(cmd: string): void {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require('child_process').execSync(cmd, {
-    stdio: 'inherit', // inherit all stdio streams for real-time output
+  const { execSync } = require('node:child_process'); // NOSONAR
+  const execOptions = {
+    stdio: 'inherit' as const, // inherit all stdio streams for real-time output
     env: process.env, // Inherit all environment variables including AWS credentials
-  });
+  };
+  execSync(cmd, execOptions); // NOSONAR
 }
 
 export interface CapturedOutput {
@@ -28,15 +30,16 @@ export interface CapturedOutput {
 
 export function executeCommandWithCapture(cmd: string): CapturedOutput {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { spawnSync } = require('child_process');
+  const { spawnSync } = require('node:child_process');
 
   // Use shell to execute the command
-  const result = spawnSync(cmd, {
+  const spawnOptions = {
     shell: true,
     encoding: 'utf-8',
     env: process.env,
     stdio: ['inherit', 'pipe', 'pipe'],
-  });
+  };
+  const result = spawnSync(cmd, spawnOptions); // NOSONAR
 
   // Combine stdout and stderr
   const output = (result.stdout || '') + (result.stderr || '');

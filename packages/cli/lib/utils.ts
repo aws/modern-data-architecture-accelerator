@@ -18,10 +18,10 @@ export function findDuplicates(keyCounts: Record<string, Record<string, number>>
 }
 
 function encodeContextValue(contextValue: unknown): string {
-  if (contextValue instanceof Array) {
+  if (Array.isArray(contextValue)) {
     return `"list:${JSON.stringify(contextValue)}"`;
   }
-  if (contextValue instanceof Object) {
+  if (typeof contextValue === 'object' && contextValue !== null) {
     return `"obj:${JSON.stringify(contextValue)}"`;
   }
   if (typeof contextValue === 'string') {

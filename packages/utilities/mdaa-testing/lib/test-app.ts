@@ -71,8 +71,8 @@ export class MdaaTestApp extends App {
           document: new PolicyDocument({
             statements: [
               new PolicyStatement({
-                resources: ['*'],
-                actions: ['*'],
+                resources: ['*'], // NOSONAR — intentional: test resource to verify CDK Nag is active
+                actions: ['*'], // NOSONAR — intentional: test resource to verify CDK Nag is active
               }),
             ],
           }),

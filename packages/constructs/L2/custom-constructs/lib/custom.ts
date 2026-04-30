@@ -294,18 +294,19 @@ export class MdaaCustomResource extends CustomResource {
 
   private static transformUpperCaseObj(result: ConfigurationElement, value: unknown, key: string) {
     const newKey = MdaaCustomResource.upcaseFirst(key);
-    if (typeof value === 'string' || value instanceof String) result[newKey] = value;
-    else if (value instanceof Array) result[newKey] = MdaaCustomResource.transformUpperCaseObjArray(value);
-    else if (value instanceof Object) {
+    if (typeof value === 'string') result[newKey] = value;
+    else if (Array.isArray(value)) result[newKey] = MdaaCustomResource.transformUpperCaseObjArray(value);
+    else if (typeof value === 'object' && value !== null) {
       result[newKey] = _.transform(value, MdaaCustomResource.transformUpperCaseObj, {});
     } else result[newKey] = value;
   }
 
   private static transformUpperCaseObjArray(values: unknown[]): unknown {
     return values.map(value => {
-      if (typeof value === 'string' || value instanceof String) return value;
-      else if (value instanceof Array) return this.transformUpperCaseObjArray(value);
-      else if (value instanceof Object) return _.transform(value, MdaaCustomResource.transformUpperCaseObj, {});
+      if (typeof value === 'string') return value;
+      else if (Array.isArray(value)) return this.transformUpperCaseObjArray(value);
+      else if (typeof value === 'object' && value !== null)
+        return _.transform(value, MdaaCustomResource.transformUpperCaseObj, {});
       else return value;
     });
   }

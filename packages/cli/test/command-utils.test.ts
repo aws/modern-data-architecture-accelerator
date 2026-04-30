@@ -4,8 +4,8 @@
  */
 
 import { executeCommandWithCapture, logScriptAnalysis } from '../lib/command-utils';
-import * as fs from 'fs';
-import * as childProcess from 'child_process';
+import * as fs from 'node:fs';
+import * as childProcess from 'node:child_process';
 
 describe('logScriptAnalysis', () => {
   let mockStatSync: jest.SpyInstance;

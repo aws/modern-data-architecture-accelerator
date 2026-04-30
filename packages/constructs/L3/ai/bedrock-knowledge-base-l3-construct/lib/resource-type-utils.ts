@@ -15,7 +15,7 @@ export const MAX_RESOURCE_TYPE_LENGTH = 60 - 'Custom::'.length;
 export function hashCodeHex(s: string): string {
   let h = 0;
   for (let i = 0; i < s.length; i++) {
-    h = Math.trunc(Math.imul(31, h) + s.charCodeAt(i));
+    h = Math.trunc(Math.imul(31, h) + (s.codePointAt(i) ?? 0));
   }
   return Math.abs(h).toString(16);
 }

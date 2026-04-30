@@ -490,12 +490,12 @@ export class M2MApiL3Construct extends MdaaL3Construct {
         new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['execute-api:Invoke'],
-          principals: [new AnyPrincipal()],
+          principals: [new AnyPrincipal()], // NOSONAR — scoped to specific resource path with explicit DENY below
           resources: [`execute-api:/${stageName}/GET/upload*`],
         }),
         new PolicyStatement({
           effect: Effect.DENY,
-          principals: [new AnyPrincipal()],
+          principals: [new AnyPrincipal()], // NOSONAR — explicit DENY policy restricting by source IP
           actions: ['execute-api:Invoke'],
           resources: [`execute-api:/${stageName}/GET/upload*`],
           conditions: {

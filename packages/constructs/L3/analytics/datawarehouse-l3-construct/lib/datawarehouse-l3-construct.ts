@@ -330,7 +330,8 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
     scheduledActions: CfnScheduledAction[],
     eventNotifications: EventNotificationsProps,
   ) {
-    const topic = new Topic(this.scope, 'cluster-events-sns-topic', {
+    // prettier-ignore
+    const topic = new Topic(this.scope, 'cluster-events-sns-topic', { // NOSONAR — Redshift event notifications do not support encrypted topics
       topicName: this.props.naming.resourceName('cluster-events'),
     });
     const enforceSslStatement = new PolicyStatement({

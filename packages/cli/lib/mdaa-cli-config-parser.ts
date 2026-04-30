@@ -264,7 +264,7 @@ export class MdaaCliConfig {
           new ConfigConfigPathValueTransformer(baseDir),
         ).transformConfig(parsedContents);
       } catch (err) {
-        throw Error(`${this.props.filename}: Structural problem found in the YAML file: ${err} `);
+        throw new Error(`${this.props.filename}: Structural problem found in the YAML file: ${err} `);
       }
       // Confirm our provided file matches our Schema (verification of Data shape)
       if (!configShapeValidator(relativePathTransformedContents)) {

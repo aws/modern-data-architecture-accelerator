@@ -449,7 +449,7 @@ export class NifiCluster extends Construct {
       },
     ]);
 
-    return [...Array(createEfsPvsProps.nodeCount).keys()].map(i => {
+    return [...new Array(createEfsPvsProps.nodeCount).keys()].map(i => {
       const ap = new AccessPoint(createEfsPvsProps.scope, `${createEfsPvsProps.name}-pv-ap-${i}`, {
         fileSystem: efs,
         path: `/${createEfsPvsProps.name}/${i}`,
