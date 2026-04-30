@@ -22,7 +22,8 @@
     "lint": "eslint --max-warnings 0 -c ../../../../../eslint.config.mjs",
     "test:coverage": "jest --passWithNoTests --coverage --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
     "test:snapshots": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts'",
-    "test:snapshots:update": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts' --updateSnapshot"
+    "test:snapshots:update": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts' --updateSnapshot",
+    "test:package-docs": "../../../../../scripts/generate_docs/test_package_docs.sh"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

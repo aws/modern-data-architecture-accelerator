@@ -17,7 +17,8 @@
     "package": "jsii-pacmak --npmignore=false",
     "test": "jest --passWithNoTests --coverage",
     "test:python": "bash ../../../../../scripts/test/test_python_package.sh lib/shared/python-tests",
-    "lint": "eslint --max-warnings 0 -c ../../../../../eslint.config.mjs"
+    "lint": "eslint --max-warnings 0 -c ../../../../../eslint.config.mjs",
+    "test:package-docs": "../../../../../scripts/generate_docs/test_package_docs.sh"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

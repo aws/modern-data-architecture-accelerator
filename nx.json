@@ -60,6 +60,17 @@
       },
       "cache": true
     },
+    "test:package-docs": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "{projectRoot}/typedoc.json",
+        "{projectRoot}/package.json",
+        "{projectRoot}/lib/**/*.ts",
+        "{projectRoot}/bin/*.ts",
+        "{projectRoot}/**/*.md"
+      ],
+      "cache": true
+    },
     "test:update-baselines": {
       "dependsOn": ["build", "^build"],
       "inputs": [

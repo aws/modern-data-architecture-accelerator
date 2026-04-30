@@ -31,7 +31,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest --passWithNoTests --coverage",
-    "lint": "eslint --max-warnings 0 -c ../../../eslint.config.mjs"
+    "lint": "eslint --max-warnings 0 -c ../../../eslint.config.mjs",
+    "test:package-docs": "../../../scripts/generate_docs/test_package_docs.sh"
   },
   "devDependencies": {
     "@aws-mdaa/naming": "1.5.0",

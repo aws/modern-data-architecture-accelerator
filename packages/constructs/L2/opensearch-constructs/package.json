@@ -18,7 +18,8 @@
     "watch": "jsii -w  --project-references",
     "package": "jsii-pacmak --npmignore=false",
     "lint": "eslint --max-warnings 0 -c ../../../../eslint.config.mjs",
-    "test": "jest --passWithNoTests --coverage"
+    "test": "jest --passWithNoTests --coverage",
+    "test:package-docs": "../../../../scripts/generate_docs/test_package_docs.sh"
   },
   "devDependencies": {
     "@aws-mdaa/cloudwatch-constructs": "1.5.0",

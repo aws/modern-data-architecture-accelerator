@@ -23,10 +23,10 @@ import os
 import sys
 import json
 import subprocess
-from typing import Sequence
+from typing import List, Optional, Sequence
 
 
-def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
+def _parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     """Parse CLI arguments, preserving the original positional interface."""
     parser = argparse.ArgumentParser(
         description="Compute Nx projects with direct file changes.",
@@ -66,14 +66,14 @@ def _get_nx_graph() -> dict:
     )
 
 
-def get_all_projects() -> list[str]:
+def get_all_projects() -> List[str]:
     """Return every project in the Nx workspace."""
     return sorted(_get_nx_graph().get("graph", {}).get("nodes", {}).keys())
 
 
 def _filter_by_extensions(
-    files: list[str], extensions: list[str] | None
-) -> list[str]:
+    files: List[str], extensions: Optional[List[str]]
+) -> List[str]:
     """Keep only files whose extension is in *extensions*.
 
     Extensions are compared case-insensitively and must include the
@@ -86,7 +86,7 @@ def _filter_by_extensions(
     return [f for f in files if os.path.splitext(f)[1].lower() in normalised]
 
 
-def main(argv: Sequence[str] | None = None) -> None:
+def main(argv: Optional[Sequence[str]] = None) -> None:
     # When MERGE_PIPELINE_RUN_ALL is set, return every project unconditionally.
     if os.environ.get("MERGE_PIPELINE_RUN_ALL", "false").lower() == "true":
         json.dump(get_all_projects(), sys.stdout)

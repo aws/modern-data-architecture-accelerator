@@ -18,7 +18,8 @@
     "test": "jest --passWithNoTests --coverage",
     "cdk": "cdk",
     "lint": "eslint --max-warnings 0 -c ../../../../eslint.config.mjs",
-    "test:update-baselines": "UPDATE_BASELINES=true jest --passWithNoTests --testPathPattern='.*\\.diff\\.test\\.ts'"
+    "test:update-baselines": "UPDATE_BASELINES=true jest --passWithNoTests --testPathPattern='.*\\.diff\\.test\\.ts'",
+    "test:package-docs": "../../../../scripts/generate_docs/test_package_docs.sh"
   },
   "devDependencies": {
     "@aws-mdaa/testing": "1.5.0",

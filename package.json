@@ -19,6 +19,8 @@
     "test:all": "NX_RUN_ALL=true npm run test",
     "test:update-baselines": "./scripts/test/test_update_baselines_repo.sh",
     "test:update-baselines:all": "NX_RUN_ALL=true npm run test:update-baselines",
+    "test:package-docs": "./scripts/generate_docs/test_package_docs_repo.sh",
+    "test:package-docs:all": "NX_RUN_ALL=true npm run test:package-docs",
     "test:python": "./scripts/test/test_python_repo.sh",
     "test:python:all": "NX_RUN_ALL=true npm run test:python",
     "delete:snapshots": "find . -path '*/__snapshots__/*.snap' -type f -delete",

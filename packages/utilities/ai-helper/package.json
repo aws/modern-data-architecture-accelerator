@@ -18,7 +18,8 @@
     "watch": "jsii -w  --project-references",
     "package": "jsii-pacmak --npmignore=false",
     "test": "jest --passWithNoTests --coverage",
-    "lint": "eslint --max-warnings 0 -c ../../../eslint.config.mjs"
+    "lint": "eslint --max-warnings 0 -c ../../../eslint.config.mjs",
+    "test:package-docs": "../../../scripts/generate_docs/test_package_docs.sh"
   },
   "devDependencies": {
     "@types/jest": "29.5.14",

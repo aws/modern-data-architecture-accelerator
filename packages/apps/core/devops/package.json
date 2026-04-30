@@ -15,7 +15,8 @@
     "watch": "tsc -w",
     "test": "jest --passWithNoTests --coverage",
     "cdk": "cdk",
-    "lint": "eslint --max-warnings 0 -c ../../../../eslint.config.mjs"
+    "lint": "eslint --max-warnings 0 -c ../../../../eslint.config.mjs",
+    "test:package-docs": "../../../../scripts/generate_docs/test_package_docs.sh"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

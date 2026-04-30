@@ -290,12 +290,12 @@ feature_merge_python_test:
 
 # --- test stage ---
 
-# Build and validate documentation
-feature_merge_test_docs:
+# Validate package-level documentation for changed packages
+feature_merge_test_package_docs:
   interruptible: true
   tags:
     - arch:amd64
-    - size:large
+    - size:medium
   only:
     - merge_requests
   stage: test
@@ -311,16 +311,10 @@ feature_merge_test_docs:
       - .nx/
     policy: pull
   allow_failure: false
+  variables:
+    GIT_DEPTH: '0'
   script:
-    - echo -e "\e[0Ksection_start:$(date +%s):prepare\r\e[0KPrepare docs output"
-    - source ./scripts/generate_docs/prepare.sh
-    - echo -e "\e[0Ksection_end:$(date +%s):prepare\r\e[0K"
-    - echo -e "\e[0Ksection_start:$(date +%s):typedocs\r\e[0KGenerate TypeDocs"
-    - ./scripts/generate_docs/typedocs.sh
-    - echo -e "\e[0Ksection_end:$(date +%s):typedocs\r\e[0K"
-    - echo -e "\e[0Ksection_start:$(date +%s):mkdocs\r\e[0KBuild MkDocs Site"
-    - ./scripts/generate_docs/mkdocs.sh
-    - echo -e "\e[0Ksection_end:$(date +%s):mkdocs\r\e[0K"
+    - ./scripts/generate_docs/test_package_docs_repo.sh
 
 # =============================================================================
 # GitLab Pages (serves docs directly from this repo)

@@ -17,7 +17,8 @@
     "test": "jest --passWithNoTests --coverage",
     "test:coverage": "jest --passWithNoTests --coverage --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
     "test:update-baselines": "UPDATE_BASELINES=true jest --passWithNoTests --testPathPattern='.*\\.diff\\.test\\.ts'",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "test:package-docs": "../../../../scripts/generate_docs/test_package_docs.sh"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

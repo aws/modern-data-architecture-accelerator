@@ -25,6 +25,9 @@
 #   Property 7: App packages with config schemas must use build_package.sh
 #     - build script must call scripts/build/build_package.sh with a config class name
 #     - Excludes special-case packages (core/app, core/bootstrap, shared apps, test fixtures)
+#   Property 8: Packages with doc content must have test:package-docs script
+#     - Any package with typedoc.json, README.md, or SCHEMA.md must define test:package-docs
+#     - The script must reference scripts/generate_docs/test_package_docs.sh
 #
 # Usage: ./scripts/quality/validate_packages.sh
 # Exit code: 0 if all packages pass, 1 if any deviations found
@@ -273,6 +276,21 @@ for pkg_dir in $(discover_packages); do
       if ! echo "$build_val" | grep -q 'build_package\.sh'; then
         fail "$pkg_dir" "Property 7 - build script must use scripts/build/build_package.sh"
       fi
+    fi
+  fi
+
+  # Property 8: Packages with doc content must have test:package-docs script
+  _has_docs=false
+  [ -f "${pkg_dir}/typedoc.json" ] && _has_docs=true
+  [ -f "${pkg_dir}/README.md" ] && _has_docs=true
+  [ -f "${pkg_dir}/SCHEMA.md" ] && _has_docs=true
+
+  if [ "$_has_docs" = true ]; then
+    pkg_docs_val=$(read_script "$pkg_json" "test:package-docs")
+    if [ "$pkg_docs_val" = "__MISSING__" ]; then
+      fail "$pkg_dir" "Property 8 - test:package-docs script is missing (package has doc content)"
+    elif ! echo "$pkg_docs_val" | grep -q 'test_package_docs\.sh'; then
+      fail "$pkg_dir" "Property 8 - test:package-docs script must reference test_package_docs.sh. Got: '$pkg_docs_val'"
     fi
   fi
 done

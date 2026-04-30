@@ -18,7 +18,8 @@
     "test": "jest --passWithNoTests --coverage",
     "lint": "eslint --max-warnings 0 -c ../../../../../eslint.config.mjs",
     "test:python": "bash ../../../../../scripts/test/test_python_package.sh",
-    "test:python:coverage": "cd python-tests && uv run pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html"
+    "test:python:coverage": "cd python-tests && uv run pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html",
+    "test:package-docs": "../../../../../scripts/generate_docs/test_package_docs.sh"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

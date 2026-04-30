@@ -30,6 +30,7 @@ npm
 .npmrc
 .scannerwork
 coverage
+.docs-test
 .mdaa_working
 cdk.context.json
 __pycache__
