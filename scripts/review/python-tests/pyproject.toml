@@ -1,0 +1,26 @@
+[project]
+name = "baseline-review-tests"
+version = "0.1.0"
+description = "Tests for baseline review and thread posting scripts"
+requires-python = ">=3.9"
+dependencies = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--verbose",
+    "--tb=short",
+]
+
+[tool.coverage.run]
+source = [".."]
+omit = [
+    "*/python-tests/*",
+    "*/__pycache__/*",
+]

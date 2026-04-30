@@ -21,3 +21,11 @@ else
   echo "Running Python tests (affected packages)"
   npx nx affected -t test:python --base="$NX_BASE" --head="$NX_HEAD" --parallel=5 --exclude=@aws-mdaa/gaia-l3-construct "$@"
 fi
+
+# Run baseline review script tests (not managed by nx)
+QUALITY_TESTS="$SCRIPT_DIR/../review/python-tests"
+if [ -d "$QUALITY_TESTS" ]; then
+  echo ""
+  echo "Running baseline review script tests..."
+  (cd "$QUALITY_TESTS" && uv run pytest)
+fi

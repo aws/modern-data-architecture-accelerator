@@ -447,11 +447,11 @@ feature_merge_baseline_review:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     GIT_DEPTH: '0'
     KIRO_API_KEY: '${KIRO_API_KEY}'
-    # Set to 'false' to enable Kiro risk assessment (requires kiro-cli in the base image and KIRO_API_KEY)
-    SKIP_RISK_ASSESSMENT: 'true'
+    KIRO_TIMEOUT: '600'
+    KIRO_MAX_THREADS: '5'
   script:
-    - python3 ./scripts/quality/baseline_review.py --output-dir baseline-review
-    - python3 ./scripts/quality/post_baseline_threads.py --report baseline-review/report.json
+    - python3 ./scripts/review/baseline/baseline_review.py --output-dir baseline-review
+    - python3 ./scripts/review/baseline/post_baseline_threads.py --report baseline-review/report.json
   artifacts:
     paths:
       - baseline-review/report.json
@@ -925,7 +925,7 @@ prerelease_baseline_review:
   variables:
     GIT_DEPTH: '0'
   script:
-    - python3 ./scripts/quality/baseline_review.py --output-dir baseline-review
+    - python3 ./scripts/review/baseline/baseline_review.py --output-dir baseline-review
   artifacts:
     paths:
       - baseline-review/report.json
