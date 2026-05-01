@@ -1261,6 +1261,16 @@
               }
             },
             {
+              "Action": "kms:DescribeKey",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "smpipelineartifactskmskeyED79F744",
+                  "Arn"
+                ]
+              }
+            },
+            {
               "Action": "kms:CreateGrant",
               "Condition": {
                 "Bool": {

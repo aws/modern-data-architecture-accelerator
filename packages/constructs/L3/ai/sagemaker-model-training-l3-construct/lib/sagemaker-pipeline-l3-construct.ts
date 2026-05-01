@@ -313,6 +313,17 @@ export class SageMakerPipelineL3Construct extends MdaaL3Construct {
     this.modelBucket.grantReadWrite(this.executionRole);
     this.kmsKey.grantEncryptDecrypt(this.executionRole);
 
+    // Explicit DescribeKey grant — required when the key is imported (fromKeyArn)
+    // because grantEncryptDecrypt may not include it for imported keys.
+    // SageMaker calls kms:DescribeKey before creating processing/training jobs.
+    this.executionRole.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['kms:DescribeKey'],
+        resources: [this.kmsKey.keyArn],
+      }),
+    );
+
     for (const bucketName of props.additionalReadBucketNames ?? []) {
       this.executionRole.addToPolicy(
         new PolicyStatement({

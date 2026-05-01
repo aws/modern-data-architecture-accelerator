@@ -21,9 +21,13 @@ phases:
           --max-results 1 \
           --query 'ModelPackageSummaryList[0].ModelPackageArn' --output text)
         if [ "${MODEL_PACKAGE_ARN}" = "None" ] || [ -z "${MODEL_PACKAGE_ARN}" ]; then
-          echo "ERROR: No approved model package found in group ${MODEL_PACKAGE_GROUP_NAME}"; exit 1
+          echo "No approved model package found in group ${MODEL_PACKAGE_GROUP_NAME}."
+          echo "Skipping deployment — the pipeline will re-run when a model is approved."
+          # Signal to the build phase that there is nothing to deploy.
+          export SKIP_DEPLOY=true
+        else
+          echo "Latest approved model: ${MODEL_PACKAGE_ARN}"
         fi
-        echo "Latest approved model: ${MODEL_PACKAGE_ARN}"
       # Resolve model artifact bucket and KMS key.
       # Lookup order for PIPELINE_BUCKET_NAME:
       #   1. Already set by L3 construct env var (pipelineBucketName in deploy config)
@@ -56,6 +60,13 @@ phases:
 
   build:
     commands:
+      # Skip the entire build phase if no approved model is available.
+      - |
+        if [ "${SKIP_DEPLOY:-false}" = "true" ]; then
+          echo "=== Skipping deployment (no approved model) ==="
+          exit 0
+        fi
+
       # Validate that cross-account env vars are set for non-dev stages
       - |
         if [ "${DEPLOY_STAGE}" = "preprod" ] && [ -z "${PRE_PROD_ACCOUNT_ID}" ]; then
