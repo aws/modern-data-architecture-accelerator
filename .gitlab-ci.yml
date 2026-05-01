@@ -173,27 +173,40 @@ feature_merge_lint_python:
   script:
     - ./scripts/quality/lint_python.sh
 
-# Verify the feature branch is up to date with the target branch before proceeding
+# Verify the feature branch is up to date with the target branch before proceeding.
+# Runs independently (needs: []) so it doesn't block the build stage.
+# If it fails the pipeline fails and the MR cannot merge.
 feature_check_target:
   interruptible: true
+  image:
+    name: alpine/git:latest
+    entrypoint: [""]
   tags:
     - arch:amd64
     - size:medium
   only:
     - merge_requests
   stage: prebuild
-  artifacts:
-    paths:
-      - '*'
-    exclude:
-      - .git
-      - .git/**/*
-    untracked: false
+  needs: []
+  before_script: []
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    GIT_DEPTH: '0'
   script:
-    - ./scripts/ci/check_target.sh
+    - sh ./scripts/ci/check_target.sh
+
+# Scan for accidentally committed secrets
+feature_merge_git_secrets:
+  interruptible: true
+  tags:
+    - arch:amd64
+    - size:small
+  only:
+    - merge_requests
+  stage: prebuild
+  allow_failure: false
+  script:
+    - ./scripts/quality/git_secrets.sh
 
 # --- build stage ---
 
@@ -206,10 +219,9 @@ feature_validate_dependencies:
   only:
     - merge_requests
   stage: build
-  dependencies:
-    - feature_check_target
+  dependencies: []
   needs:
-    - feature_check_target
+    - feature_merge_base_image
   script:
     - ./scripts/quality/validate_dependencies.sh
 
@@ -222,17 +234,16 @@ feature_merge_build_test:
   only:
     - merge_requests
   stage: build
-  dependencies:
-    - feature_check_target
+  dependencies: []
   needs:
-    - feature_check_target
+    - feature_merge_base_image
   cache:
-    key: feature-merge-build-$CI_COMMIT_SHA
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
       - node_modules/
       - packages/**/node_modules/
       - .nx/
-    policy: push
+    policy: pull-push
   artifacts:
     untracked: false
     paths:
@@ -244,7 +255,6 @@ feature_merge_build_test:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     GIT_DEPTH: '0'
   script:
-    - ./scripts/quality/git_secrets.sh
     - ./scripts/build/npm_install_repo.sh
     - npm run build
     - ./scripts/ci/check_schema_drift.sh
@@ -264,13 +274,13 @@ feature_merge_python_test:
   needs:
     - feature_merge_build_test
   cache:
-    - key: feature-merge-build-$CI_COMMIT_SHA
+    - key: feature-merge-build-$CI_COMMIT_REF_SLUG
       paths:
         - node_modules/
         - packages/**/node_modules/
         - .nx/
       policy: pull
-    - key: feature-merge-python-$CI_COMMIT_SHA
+    - key: feature-merge-python-$CI_COMMIT_REF_SLUG
       paths:
         - '**/python-tests/.venv/'
         - '**/python-tests/uv.lock'
@@ -304,7 +314,7 @@ feature_merge_test_package_docs:
   needs:
     - feature_merge_build_test
   cache:
-    key: feature-merge-build-$CI_COMMIT_SHA
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
       - node_modules/
       - packages/**/node_modules/
@@ -376,7 +386,7 @@ pages:
   needs:
     - feature_merge_build_test
   cache:
-    key: feature-merge-build-$CI_COMMIT_SHA
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
       - node_modules/
       - packages/**/node_modules/
@@ -436,7 +446,7 @@ feature_merge_baseline_review:
   needs:
     - feature_merge_build_test
   cache:
-    key: feature-merge-build-$CI_COMMIT_SHA
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
       - node_modules/
       - packages/**/node_modules/
@@ -473,6 +483,13 @@ feature_merge_sonarqube_target:
     - feature_merge_base_image
   needs:
     - feature_merge_base_image
+  cache:
+    key: feature-merge-sonar-target-$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+      - .nx/
+    policy: pull-push
   variables:
     GIT_DEPTH: '0'
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
@@ -495,7 +512,7 @@ feature_merge_sonarqube:
     - feature_merge_build_test
     - feature_merge_sonarqube_target
   cache:
-    key: feature-merge-build-$CI_COMMIT_SHA
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
       - node_modules/
       - packages/**/node_modules/
@@ -506,22 +523,7 @@ feature_merge_sonarqube:
   allow_failure: false
   script:
     - ./scripts/quality/sonarqube.sh
-
-# Pre-merge gate: blocks merge when MERGE_PIPELINE_RUN_ALL=true.
-# All other jobs run and succeed normally so you get full results;
-# only this lightweight gate fails to prevent an accidental merge.
-feature_merge_pre_merge_check:
-  interruptible: true
-  tags:
-    - arch:amd64
-    - size:small
-  only:
-    - merge_requests
-  stage: analyze
-  needs:
-    - feature_merge_sonarqube
-  allow_failure: false
-  script:
+    # Pre-merge gate: block merge when MERGE_PIPELINE_RUN_ALL=true.
     - |
       if [ "${MERGE_PIPELINE_RUN_ALL}" = "true" ]; then
         echo "============================================================"
@@ -549,7 +551,7 @@ feature_merge_risk_assessment:
   needs:
     - feature_merge_build_test
   cache:
-    key: feature-merge-build-$CI_COMMIT_SHA
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
       - node_modules/
       - packages/**/node_modules/

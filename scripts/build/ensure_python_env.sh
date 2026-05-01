@@ -35,7 +35,8 @@ fi
 # Create venv if it doesn't exist
 if [ ! -d "$ENSURE_PYTHON_VENV_DIR" ]; then
     echo "Creating Python $ENSURE_PYTHON_VERSION virtual environment at $ENSURE_PYTHON_VENV_DIR..."
-    uv venv --python "$ENSURE_PYTHON_VERSION" "$ENSURE_PYTHON_VENV_DIR"
+    uv venv --python "$ENSURE_PYTHON_VERSION" "$ENSURE_PYTHON_VENV_DIR" || \
+    uv venv --python "$ENSURE_PYTHON_VERSION" --clear "$ENSURE_PYTHON_VENV_DIR"
 fi
 
 # Activate venv

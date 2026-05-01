@@ -7,4 +7,5 @@ git secrets --add --allowed 'packages/constructs/L3/ai/gaia-l3-construct/lib/sag
 git secrets --add --allowed 'packages/apps/core/app/test/app_stack.test.ts:.*'
 git secrets --add --allowed 'packages/apps/governance/lakeformation-access-control-app/test/lakeformation-access.synth.test.ts:.*'
 git secrets --add --allowed 'packages/utilities/ai-helper/test/modelUtils.test.ts:.*'
-git secrets --scan --no-index
+# Scan only tracked files to avoid false positives from cached node_modules
+git secrets --scan

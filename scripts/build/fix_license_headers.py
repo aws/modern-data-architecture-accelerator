@@ -19,7 +19,7 @@ license_header_reorder_regex = re.compile(
 def reorder_license(contents):
     if re.search(license_header_reorder_regex, contents):
         fixed_contents = re.sub(license_header_reorder_regex,
-                                f'{license_header_contents}\n\n\g<1>', contents)
+                                rf'{license_header_contents}\n\n\g<1>', contents)
     else:
         fixed_contents = None
     return fixed_contents

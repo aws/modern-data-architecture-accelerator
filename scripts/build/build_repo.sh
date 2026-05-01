@@ -14,8 +14,13 @@ fi
 # Otherwise it might cause snapshot drift
 python3 "$SCRIPT_DIR/fix_license_headers.py"
 
-if [ "${NX_RUN_ALL:-false}" = "true" ]; then
+# Compute affected base/head and (optionally) set NX_RUN_ALL
+source "$SCRIPT_DIR/../nx/affected-base.sh"
+
+if [ "${CI:-}" = "true" ] && [ "${CI_COMMIT_BRANCH:-}" = "main" ] || [ "${NX_RUN_ALL:-false}" = "true" ]; then
+  echo "Running full build (main or NX_RUN_ALL=true)"
   npx lerna run build --stream --skip-nx-cache
 else
-  npx lerna run build --stream
+  echo "Running affected build (base: $NX_BASE)"
+  npx nx affected -t build --base="$NX_BASE" --head="$NX_HEAD"
 fi
