@@ -29,6 +29,8 @@
         { "dependencies": true, "input": "build-source" }
       ],
       "outputs": [
+        "{projectRoot}/.jsii",
+        "{projectRoot}/tsconfig.tsbuildinfo",
         "{projectRoot}/bin/*.d.ts",
         "{projectRoot}/bin/*.js",
         "{projectRoot}/lib/**/*.d.ts",
