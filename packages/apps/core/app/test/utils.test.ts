@@ -355,7 +355,58 @@ describe('Utils', () => {
 
       coerceConfigTypes(config, errors);
 
-      expect(config.data).toBe('123'); // unchanged, array coercion not supported
+      expect(config.data).toBe('123'); // unchanged, not a JSON array
+    });
+
+    test('coerces JSON-encoded array string to array', () => {
+      const config = { subnetIds: '["subnet-aaa","subnet-bbb"]' } as Record<string, unknown>;
+      const errors = [
+        {
+          keyword: 'type',
+          instancePath: '/subnetIds',
+          schemaPath: '#/properties/subnetIds/type',
+          params: { type: 'array' },
+          message: 'must be array',
+        },
+      ];
+
+      coerceConfigTypes(config, errors);
+
+      expect(config.subnetIds).toEqual(['subnet-aaa', 'subnet-bbb']);
+    });
+
+    test('does not coerce non-array JSON value to array', () => {
+      const config = { data: '{"a":1}' } as Record<string, unknown>;
+      const errors = [
+        {
+          keyword: 'type',
+          instancePath: '/data',
+          schemaPath: '#/properties/data/type',
+          params: { type: 'array' },
+          message: 'must be array',
+        },
+      ];
+
+      coerceConfigTypes(config, errors);
+
+      expect(config.data).toBe('{"a":1}'); // unchanged, parsed but not an array
+    });
+
+    test('does not coerce invalid JSON array string', () => {
+      const config = { items: '[not valid' } as Record<string, unknown>;
+      const errors = [
+        {
+          keyword: 'type',
+          instancePath: '/items',
+          schemaPath: '#/properties/items/type',
+          params: { type: 'array' },
+          message: 'must be array',
+        },
+      ];
+
+      coerceConfigTypes(config, errors);
+
+      expect(config.items).toBe('[not valid'); // unchanged, JSON.parse fails
     });
   });
 });

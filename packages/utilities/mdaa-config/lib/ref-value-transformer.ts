@@ -77,6 +77,22 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
       }
     }
 
+    // For env_var refs, attempt to parse JSON arrays/objects so that
+    // env vars containing '["a","b"]' resolve to actual arrays rather than strings.
+    if (refInner.startsWith('env_var:')) {
+      const envValue = this.resolveEnvVar(refInner);
+      if (envValue && (envValue.startsWith('[') || envValue.startsWith('{'))) {
+        try {
+          const parsed = JSON.parse(envValue);
+          if (typeof parsed === 'object' && parsed !== null) {
+            return parsed;
+          }
+        } catch {
+          // Not valid JSON — fall through to string substitution
+        }
+      }
+    }
+
     return undefined;
   }
 

@@ -135,6 +135,27 @@ describe('MdaaConfigRefValueTransformer', () => {
     expect(transformer.transformValue('{{env_var:MISSING_VAR}}')).toBe('{{env_var:MISSING_VAR}}');
   });
 
+  test('resolves env_var JSON array to actual array', () => {
+    process.env.TEST_JSON_ARRAY = '["subnet-aaa","subnet-bbb"]';
+    const transformer = new MdaaConfigRefValueTransformer(baseProps);
+    expect(transformer.transformValue('{{env_var:TEST_JSON_ARRAY}}')).toEqual(['subnet-aaa', 'subnet-bbb']);
+    delete process.env.TEST_JSON_ARRAY;
+  });
+
+  test('resolves env_var JSON object to actual object', () => {
+    process.env.TEST_JSON_OBJ = '{"key":"value"}';
+    const transformer = new MdaaConfigRefValueTransformer(baseProps);
+    expect(transformer.transformValue('{{env_var:TEST_JSON_OBJ}}')).toEqual({ key: 'value' });
+    delete process.env.TEST_JSON_OBJ;
+  });
+
+  test('falls through to string for invalid JSON starting with [', () => {
+    process.env.TEST_BAD_JSON = '[not valid json';
+    const transformer = new MdaaConfigRefValueTransformer(baseProps);
+    expect(transformer.transformValue('{{env_var:TEST_BAD_JSON}}')).toBe('[not valid json');
+    delete process.env.TEST_BAD_JSON;
+  });
+
   test('handles naked reference with object context', () => {
     const transformer = new MdaaConfigRefValueTransformer({
       ...baseProps,

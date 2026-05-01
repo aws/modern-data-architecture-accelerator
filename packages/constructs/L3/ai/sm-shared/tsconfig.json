@@ -38,6 +38,9 @@
       "path": "../../../L2/construct"
     },
     {
+      "path": "../../../L2/iam-constructs"
+    },
+    {
       "path": "../../../../utilities/mdaa-testing"
     }
   ],

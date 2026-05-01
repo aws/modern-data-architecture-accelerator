@@ -1,0 +1,137 @@
+version: 0.2
+
+# This buildspec is invoked once per stage (dev/preprod/prod).
+# The DEPLOY_STAGE env var is set by the CodePipeline stage's CodeBuild action.
+
+phases:
+  install:
+    commands:
+      - npm install -g @aws-mdaa/cli
+
+  pre_build:
+    commands:
+      - echo "Deploying stage ${DEPLOY_STAGE} for project ${PROJECT_NAME}"
+      # Resolve the latest approved model package ARN
+      - |
+        set -e
+        export MODEL_PACKAGE_ARN=$(aws sagemaker list-model-packages \
+          --model-package-group-name "${MODEL_PACKAGE_GROUP_NAME}" \
+          --model-approval-status Approved \
+          --sort-by CreationTime --sort-order Descending \
+          --max-results 1 \
+          --query 'ModelPackageSummaryList[0].ModelPackageArn' --output text)
+        if [ "${MODEL_PACKAGE_ARN}" = "None" ] || [ -z "${MODEL_PACKAGE_ARN}" ]; then
+          echo "ERROR: No approved model package found in group ${MODEL_PACKAGE_GROUP_NAME}"; exit 1
+        fi
+        echo "Latest approved model: ${MODEL_PACKAGE_ARN}"
+      # Resolve model artifact bucket and KMS key.
+      # Lookup order for PIPELINE_BUCKET_NAME:
+      #   1. Already set by L3 construct env var (pipelineBucketName in deploy config)
+      #   2. Auto-resolved from SSM (written by the sagemaker-pipeline-app stack)
+      #   3. Falls back to MODEL_BUCKET_NAME (training-only deployments without a pipeline stack)
+      # Same order for PIPELINE_KMS_ARN: env var → SSM → empty (warning issued).
+      - |
+        set -e
+        SSM_BUCKET="/${MDAA_ORG}/mlops/pipeline/bucket/pipeline-${PROJECT_NAME}/name"
+        SSM_KMS="/${MDAA_ORG}/mlops/pipeline/kms/sm-pipeline-${PROJECT_NAME}/arn"
+        if [ -z "${PIPELINE_BUCKET_NAME}" ]; then
+          PIPELINE_BUCKET_NAME=$(aws ssm get-parameter --name "${SSM_BUCKET}" \
+            --query 'Parameter.Value' --output text 2>/dev/null || echo "")
+        fi
+        if [ -z "${PIPELINE_BUCKET_NAME}" ]; then
+          export PIPELINE_BUCKET_NAME="${MODEL_BUCKET_NAME}"
+        fi
+        if [ -n "${PIPELINE_BUCKET_NAME}" ]; then
+          export PIPELINE_BUCKET_ARN="arn:aws:s3:::${PIPELINE_BUCKET_NAME}"
+        fi
+        if [ -z "${PIPELINE_KMS_ARN}" ]; then
+          PIPELINE_KMS_ARN=$(aws ssm get-parameter --name "${SSM_KMS}" \
+            --query 'Parameter.Value' --output text 2>/dev/null || echo "")
+        fi
+        export PIPELINE_KMS_ARN="${PIPELINE_KMS_ARN:-}"
+        if [ -z "${PIPELINE_KMS_ARN}" ] && [ -n "${PIPELINE_BUCKET_NAME}" ]; then
+          echo "WARNING: Could not resolve KMS key for pipeline bucket ${PIPELINE_BUCKET_NAME}."
+        fi
+        echo "Pipeline bucket: ${PIPELINE_BUCKET_NAME:-<not set>}, KMS: ${PIPELINE_KMS_ARN:-<not set>}"
+
+  build:
+    commands:
+      # Validate that cross-account env vars are set for non-dev stages
+      - |
+        if [ "${DEPLOY_STAGE}" = "preprod" ] && [ -z "${PRE_PROD_ACCOUNT_ID}" ]; then
+          echo "ERROR: PRE_PROD_ACCOUNT_ID not set for preprod stage"; exit 1
+        fi
+        if [ "${DEPLOY_STAGE}" = "prod" ] && [ -z "${PROD_ACCOUNT_ID}" ]; then
+          echo "ERROR: PROD_ACCOUNT_ID not set for prod stage"; exit 1
+        fi
+
+      # Select the correct VPC config for the current stage.
+      # The construct passes per-stage env vars (DEV_*, PRE_PROD_*, PROD_*).
+      # We normalize them to STAGE_* so the MDAA configs are stage-agnostic.
+      - |
+        case "${DEPLOY_STAGE}" in
+          dev)
+            export STAGE_VPC_ID="${DEV_VPC_ID}"
+            export STAGE_SUBNET_IDS="${DEV_SUBNET_IDS}"
+            export STAGE_SECURITY_GROUP_IDS="${DEV_SECURITY_GROUP_IDS}"
+            ;;
+          preprod)
+            export STAGE_VPC_ID="${PRE_PROD_VPC_ID}"
+            export STAGE_SUBNET_IDS="${PRE_PROD_SUBNET_IDS}"
+            export STAGE_SECURITY_GROUP_IDS="${PRE_PROD_SECURITY_GROUP_IDS}"
+            ;;
+          prod)
+            export STAGE_VPC_ID="${PROD_VPC_ID}"
+            export STAGE_SUBNET_IDS="${PROD_SUBNET_IDS}"
+            export STAGE_SECURITY_GROUP_IDS="${PROD_SECURITY_GROUP_IDS}"
+            ;;
+          *)
+            echo "ERROR: Unknown DEPLOY_STAGE '${DEPLOY_STAGE}'. Expected: dev|preprod|prod"; exit 1
+            ;;
+        esac
+        export STAGE_SUBNET_IDS="${STAGE_SUBNET_IDS:-[]}"
+        export STAGE_SECURITY_GROUP_IDS="${STAGE_SECURITY_GROUP_IDS:-[]}"
+        echo "Stage VPC: ${STAGE_VPC_ID}, Subnets: ${STAGE_SUBNET_IDS}"
+
+      # Resolve org name in MDAA routing configs
+      - |
+        ESCAPED_ORG=$(printf '%s\n' "${MDAA_ORG}" | sed -e 's/[\/&]/\\&/g')
+        for cfg in mdaa-config/mdaa-endpoint.yaml mdaa-config/mdaa-monitoring.yaml; do
+          sed -i "s/{{env_var:MDAA_ORG}}/${ESCAPED_ORG}/g" "$cfg"
+        done
+
+      # Deploy endpoint (using per-stage domain: deploy-<stage>)
+      - echo "=== Deploying ${DEPLOY_STAGE} endpoint ==="
+      - cd mdaa-config && mdaa deploy -c ./mdaa-endpoint.yaml -d deploy-${DEPLOY_STAGE} && cd ..
+
+      # Resolve the endpoint name for the monitoring config.
+      # Same-account (dev): SSM param is readable — use it directly.
+      # Cross-account (preprod/prod): SSM param lives in the target account, which
+      #   CodeBuild cannot read. We construct the name from the MDAA naming convention:
+      #   ${org}-${env}-deploy-${stage}-endpoint-${project}-${stage}-ep
+      # No explicit `wait endpoint-in-service` is needed — CloudFormation already waits
+      # for the endpoint to reach InService before marking the stack CREATE_COMPLETE.
+      - |
+        EP_SSM_PATH="/${MDAA_ORG}/deploy-${DEPLOY_STAGE}/endpoint/endpoint/${PROJECT_NAME}-${DEPLOY_STAGE}/endpoint-name"
+        export ENDPOINT_NAME=$(aws ssm get-parameter --name "${EP_SSM_PATH}" --query 'Parameter.Value' --output text 2>/dev/null || echo "")
+        if [ -z "${ENDPOINT_NAME}" ]; then
+          export ENDPOINT_NAME="${MDAA_ORG}-${MDAA_ENV:-dev}-deploy-${DEPLOY_STAGE}-endpoint-${PROJECT_NAME}-${DEPLOY_STAGE}-ep"
+          echo "Constructed endpoint name (cross-account): ${ENDPOINT_NAME}"
+        else
+          echo "Endpoint name from SSM: ${ENDPOINT_NAME}"
+        fi
+
+      # Resolve the regional ECR account and deploy monitoring.
+      # The export must be in the same shell block as mdaa deploy (env vars don't persist across blocks).
+      - |
+        set -e
+        # Pin to v2 — v3 removed sagemaker.image_uris.retrieve(). Revisit when v3 provides an equivalent.
+        pip install -q "sagemaker>=2.200,<3"
+        export SAGEMAKER_MONITOR_REGISTRY=$(python3 -c "
+        from sagemaker import image_uris
+        print(image_uris.retrieve('model-monitor', '${AWS_REGION}').split('.')[0])
+        " 2>/dev/null | tail -1)
+        echo "SageMaker monitor registry: ${SAGEMAKER_MONITOR_REGISTRY}"
+        echo "=== Deploying ${DEPLOY_STAGE} monitoring ==="
+        cd mdaa-config && mdaa deploy -c ./mdaa-monitoring.yaml -d deploy-${DEPLOY_STAGE} && cd ..
+      - echo "=== ${DEPLOY_STAGE} stage complete ==="

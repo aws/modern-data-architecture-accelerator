@@ -1,0 +1,43 @@
+# MDAA routing config for SageMaker Endpoint deployment
+#
+# Uses separate domains per stage (MDAA pattern for same-account multi-env).
+# Each domain gets its own SSM namespace and CloudFormation stack.
+# The buildspec invokes: mdaa deploy -c ./mdaa-endpoint.yaml -d deploy-<stage>
+
+organization: "{{env_var:MDAA_ORG}}"
+
+domains:
+  # Dev stage — deploys to the same account as the training pipeline
+  deploy-dev:
+    environments:
+      dev:
+        account: default
+        modules:
+          endpoint:
+            module_path: "@aws-mdaa/sagemaker-endpoint"
+            module_configs:
+              - ./endpoint.yaml
+
+  # Pre-prod stage — deploys to cross-account (set by deploy construct env vars)
+  deploy-preprod:
+    environments:
+      dev:
+        account: "{{env_var:PRE_PROD_ACCOUNT_ID}}"
+        region: "{{env_var:PRE_PROD_REGION}}"
+        modules:
+          endpoint:
+            module_path: "@aws-mdaa/sagemaker-endpoint"
+            module_configs:
+              - ./endpoint.yaml
+
+  # Prod stage — deploys to cross-account (set by deploy construct env vars)
+  deploy-prod:
+    environments:
+      dev:
+        account: "{{env_var:PROD_ACCOUNT_ID}}"
+        region: "{{env_var:PROD_REGION}}"
+        modules:
+          endpoint:
+            module_path: "@aws-mdaa/sagemaker-endpoint"
+            module_configs:
+              - ./endpoint.yaml

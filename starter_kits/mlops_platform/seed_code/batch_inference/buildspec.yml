@@ -1,0 +1,51 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - npm install -g @aws-mdaa/cli
+
+  build:
+    commands:
+      # Upload preprocessing script to S3
+      - aws s3 cp source_scripts/preprocessing.py "s3://${ARTIFACT_BUCKET}/${BASE_JOB_PREFIX}/scripts/preprocessing.py" --sse aws:kms --sse-kms-key-id "${ARTIFACT_BUCKET_KMS_ID}"
+
+      # Resolve org name (MDAA CLI doesn't resolve {{env_var:...}} in organization)
+      - sed -i "s/{{env_var:MDAA_ORG}}/${MDAA_ORG}/g" mdaa-config/mdaa.yaml
+
+      # Resolve the regional ECR account and deploy.
+      # The export must be in the same shell block as mdaa deploy (env vars don't persist across blocks).
+      - |
+        set -e
+        # Pin to v2 — v3 removed sagemaker.image_uris.retrieve(). Revisit when v3 provides an equivalent.
+        pip install -q "sagemaker>=2.200,<3"
+        export SAGEMAKER_IMAGE_REGISTRY=$(python3 -c "
+        from sagemaker import image_uris
+        print(image_uris.retrieve('sklearn', '${AWS_REGION}', version='1.4-1').split('.')[0])
+        " 2>/dev/null | tail -1)
+        echo "SageMaker image registry: ${SAGEMAKER_IMAGE_REGISTRY}"
+        cd mdaa-config && mdaa deploy && cd ..
+
+      # Resolve the latest approved model package ARN
+      - |
+        set -e
+        MODEL_PACKAGE_ARN=$(aws sagemaker list-model-packages \
+          --model-package-group-name "${MODEL_PACKAGE_GROUP_NAME}" \
+          --model-approval-status Approved \
+          --sort-by CreationTime --sort-order Descending \
+          --max-results 1 \
+          --query 'ModelPackageSummaryList[0].ModelPackageArn' --output text)
+        if [ "${MODEL_PACKAGE_ARN}" = "None" ] || [ -z "${MODEL_PACKAGE_ARN}" ]; then
+          echo "ERROR: No approved model package found in group ${MODEL_PACKAGE_GROUP_NAME}"; exit 1
+        fi
+        echo "Latest approved model: ${MODEL_PACKAGE_ARN}"
+
+      # Start pipeline execution with the model package ARN
+      - |
+        set -e
+        echo "Starting batch inference pipeline: ${SAGEMAKER_PROJECT_NAME}"
+        aws sagemaker start-pipeline-execution \
+          --pipeline-name "${SAGEMAKER_PROJECT_NAME}" \
+          --pipeline-execution-display-name "batch-$(date +%Y%m%d-%H%M%S)" \
+          --pipeline-parameters '[{"Name":"ModelPackageArn","Value":"'"${MODEL_PACKAGE_ARN}"'"}]'
+      - echo "Batch inference pipeline deployed and execution started."

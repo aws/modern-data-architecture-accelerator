@@ -1,0 +1,45 @@
+# Config for the SageMaker MLOps module using GitHub via CodeStar Connections.
+# Uses an existing GitHub repository instead of creating CodeCommit repos.
+#
+# Prerequisites:
+# 1. Create a CodeStar Connection in the AWS Console
+#    (Developer Tools > Connections) and complete the GitHub handshake.
+# 2. Push your training and deploy seed code to the configured GitHub repos.
+
+training:
+  # SageMaker project name for the training pipeline
+  projectName: test-training-github
+
+  # Source repository type
+  sourceType: CODESTAR_CONNECTIONS
+
+  # CodeStar Connections config for the training repo
+  codeStarConnection:
+    # ARN of the CodeStar Connection (must be in Available status)
+    connectionArn: "arn:aws:codestar-connections:us-east-1:123456789012:connection/example-conn-id"
+    # GitHub organization or user
+    owner: my-org
+    # Repository name
+    repo: my-training-repo
+    # Branch to track (default: main)
+    branch: main
+
+deploy:
+  # SageMaker project name for the deployment pipeline
+  projectName: test-deploy-github
+
+  # Model Package Group name
+  modelPackageGroupName: test-mpg
+
+  # Model bucket name
+  modelBucketName: test-bucket
+
+  # Source repository type
+  sourceType: CODESTAR_CONNECTIONS
+
+  # CodeStar Connections config for the deploy repo
+  codeStarConnection:
+    connectionArn: "arn:aws:codestar-connections:us-east-1:123456789012:connection/example-conn-id"
+    owner: my-org
+    repo: my-deploy-repo
+    branch: main

@@ -137,7 +137,7 @@ function getValueAtPath(obj: ConfigurationElement, path: string) {
  * @param path The JSON Pointer path
  * @param value The value to set
  */
-function setValueAtPath(obj: ConfigurationElement, path: string, value: boolean | number): void {
+function setValueAtPath(obj: ConfigurationElement, path: string, value: boolean | number | unknown[]): void {
   if (path === '' || path === '/') {
     throw new Error('Cannot set root object');
   }
@@ -151,7 +151,7 @@ function setValueAtPath(obj: ConfigurationElement, path: string, value: boolean 
  * @param expectedType The expected type from the schema
  * @returns The coerced value, or undefined if coercion is not possible
  */
-function coerceValue(value: string, expectedType: string): boolean | number | undefined {
+function coerceValue(value: string, expectedType: string): boolean | number | unknown[] | undefined {
   switch (expectedType) {
     case 'number': {
       const num = Number(value);
@@ -167,6 +167,17 @@ function coerceValue(value: string, expectedType: string): boolean | number | un
       const num = Number(value);
       if (Number.isNaN(num) || !Number.isInteger(num)) return undefined;
       return num;
+    }
+
+    case 'array': {
+      // Support JSON-encoded arrays passed as strings (e.g., from env var substitution).
+      // Example: '["subnet-xxx","subnet-yyy"]' → ["subnet-xxx","subnet-yyy"]
+      try {
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed : undefined;
+      } catch {
+        return undefined;
+      }
     }
 
     default:

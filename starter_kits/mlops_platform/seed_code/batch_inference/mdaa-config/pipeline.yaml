@@ -1,0 +1,77 @@
+# MDAA SageMaker Pipeline Configuration — Batch Inference
+# Environment variables are resolved at CDK synth time via {{env_var:...}}
+
+projectName: "{{env_var:SAGEMAKER_PROJECT_NAME}}"
+modelPackageGroupName: "{{env_var:MODEL_PACKAGE_GROUP_NAME}}"
+pipelineName: "{{env_var:SAGEMAKER_PROJECT_NAME}}"
+
+# Additional S3 buckets the SageMaker role needs read access to.
+# TRAINING_PIPELINE_BUCKET is set by the batch-inference L3 construct from
+# the trainingPipelineBucketName config prop (the training pipeline's model artifact bucket).
+additionalReadBucketNames:
+  - "{{env_var:ARTIFACT_BUCKET}}"
+  - "{{env_var:TRAINING_PIPELINE_BUCKET}}"
+
+pipeline:
+  parameters:
+    - name: ModelPackageArn
+      type: String
+      defaultValue: ""
+    - name: ProcessingInstanceType
+      type: String
+      defaultValue: ml.m5.large
+    - name: ProcessingInstanceCount
+      type: Integer
+      defaultValue: 1
+    - name: TransformInstanceType
+      type: String
+      defaultValue: "{{env_var:INSTANCE_TYPE}}"
+    - name: TransformInstanceCount
+      type: Integer
+      defaultValue: "{{env_var:INSTANCE_COUNT}}"
+    - name: InputDataUrl
+      type: String
+      defaultValue: "{{env_var:INPUT_DATA_S3_URI}}"
+    - name: OutputsBucketName
+      type: String
+      defaultValue: "{{env_var:ARTIFACT_BUCKET}}"
+
+  steps:
+    - name: CreateModel
+      type: Model
+      model:
+        modelPackageArn:
+          parameter: ModelPackageArn
+
+    - name: PreprocessData
+      type: Processing
+      processing:
+        imageUri: "{{env_var:SAGEMAKER_IMAGE_REGISTRY}}.dkr.ecr.{{env_var:AWS_REGION}}.amazonaws.com/sagemaker-scikit-learn:1.4-2-cpu-py3"
+        instanceType: ml.m5.large
+        scriptS3Uri: "s3://{{env_var:ARTIFACT_BUCKET}}/{{env_var:BASE_JOB_PREFIX}}/scripts/preprocessing.py"
+        inputs:
+          - inputName: data
+            s3Uri:
+              parameter: InputDataUrl
+        outputs:
+          - outputName: output_data
+        arguments:
+          - "--do-train-test-split"
+          - "False"
+
+    - name: Transformer
+      type: Transform
+      transform:
+        modelNameStep: CreateModel
+        instanceType: "{{env_var:INSTANCE_TYPE}}"
+        instanceCount: "{{env_var:INSTANCE_COUNT}}"
+        inputDataStepOutput: PreprocessData.output_data
+        contentType: text/csv
+        splitType: Line
+        outputPath: "s3://<default_bucket>/{{env_var:BASE_JOB_PREFIX}}/batch/"
+        assembleWith: Line
+        maxConcurrentTransforms: 64
+        maxPayloadInMB: 1
+        strategy: SingleRecord
+      dependsOn:
+        - PreprocessData

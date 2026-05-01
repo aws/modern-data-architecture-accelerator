@@ -1,0 +1,118 @@
+# MDAA SageMaker Pipeline Configuration — Training
+#
+# Defines a 3-step ML pipeline: preprocess → train → register model.
+# Deployed by the training buildspec via `mdaa deploy`.
+#
+# The ECR registry account for SageMaker built-in images (e.g. sagemaker-xgboost)
+# varies by region. The buildspec resolves it at runtime via the SageMaker Python SDK
+# and exports SAGEMAKER_IMAGE_REGISTRY. No manual region-specific changes needed.
+#
+# To discover available built-in image tags:
+#   from sagemaker import image_uris
+#   image_uris.retrieve("xgboost", "<region>", version="3.0-5")
+# For custom containers, replace the imageUri with your own ECR repository URI.
+
+projectName: "{{env_var:SAGEMAKER_PROJECT_NAME}}"
+modelPackageGroupName: "{{env_var:MODEL_PACKAGE_GROUP_NAME}}"
+# The Model Package Group is created by the sagemaker-mlops-app training construct, not here.
+# Setting false tells the pipeline construct to use this name as-is without applying the MDAA
+# naming prefix, since it is already a fully-qualified name (e.g. "myorg-dev-core-abalone-mpg").
+createModelPackageGroup: false
+pipelineName: "{{env_var:SAGEMAKER_PIPELINE_NAME}}"
+pipelineBucketName: "{{env_var:PIPELINE_BUCKET_NAME}}"
+pipelineKmsKeyArn: "{{env_var:PIPELINE_KMS_ARN}}"
+
+pipeline:
+  # Network config — applied to all pipeline steps (processing, training).
+  # Runs SageMaker jobs inside your VPC with network isolation and encrypted inter-container traffic.
+  # The construct passes subnetIds/securityGroupIds as JSON-encoded env vars;
+  # the MDAA config parser auto-coerces JSON strings to arrays.
+  networkConfig:
+    enableNetworkIsolation: "{{env_var:ENABLE_NETWORK_ISOLATION}}"
+    encryptInterContainerTraffic: "{{env_var:ENCRYPT_INTER_CONTAINER_TRAFFIC}}"
+    subnetIds: "{{env_var:SUBNET_IDS}}"
+    securityGroupIds: "{{env_var:SECURITY_GROUP_IDS}}"
+
+  parameters:
+    - name: ProcessingInstanceCount
+      type: Integer
+      defaultValue: 1
+    - name: TrainingInstanceType
+      type: String
+      defaultValue: ml.m5.xlarge
+    - name: ModelApprovalStatus
+      type: String
+      # "Approved" auto-triggers the deploy pipeline via EventBridge after each training run.
+      # Change to "PendingManualApproval" to require manual model approval before deployment.
+      # Pipeline stage promotions (dev → preprod → prod) are controlled separately by
+      # enableManualApproval in mlops.yaml, which is enabled by default.
+      defaultValue: Approved
+    - name: InputDataUrl
+      type: String
+      # The sample Abalone dataset should be placed in the data/ directory at the starter kit
+      # root. It is uploaded to this S3 path during `mdaa deploy` via CDK BucketDeployment.
+      # To use a different dataset, replace the file in data/ or override this parameter
+      # at pipeline execution time.
+      # NOTE: <default_bucket> is a system placeholder resolved by Fn::Sub at CDK deploy time
+      # to the pipeline construct's S3 bucket. Do not replace it with an actual bucket name.
+      defaultValue: "s3://<default_bucket>/dataset/abalone-dataset.csv"
+
+  steps:
+    # Step 1: Preprocess raw data into train/validation/test splits
+    - name: PreprocessAbaloneData
+      type: Processing
+      processing:
+        imageUri: "{{env_var:SAGEMAKER_IMAGE_REGISTRY}}.dkr.ecr.{{env_var:AWS_REGION}}.amazonaws.com/sagemaker-xgboost:3.0-5"
+        instanceType: ml.m5.xlarge
+        scriptS3Uri: "s3://<default_bucket>/{{env_var:SAGEMAKER_PIPELINE_NAME}}/scripts/preprocessing.py"
+        inputs:
+          - inputName: data
+            parameter: InputDataUrl
+        outputs:
+          - outputName: train
+          - outputName: validation
+          - outputName: test
+
+    # Step 2: Train XGBoost regression model
+    - name: TrainAbaloneModel
+      type: Training
+      training:
+        imageUri: "{{env_var:SAGEMAKER_IMAGE_REGISTRY}}.dkr.ecr.{{env_var:AWS_REGION}}.amazonaws.com/sagemaker-xgboost:3.0-5"
+        instanceType: ml.m5.xlarge
+        outputPath: "s3://<default_bucket>/{{env_var:SAGEMAKER_PIPELINE_NAME}}/AbaloneTrain"
+        hyperparameters:
+          objective: "reg:squarederror"
+          num_round: "50"
+          max_depth: "5"
+          eta: "0.2"
+          gamma: "4"
+          min_child_weight: "6"
+          subsample: "0.7"
+          verbosity: "1"
+        inputChannels:
+          - channelName: train
+            stepOutput: PreprocessAbaloneData.train
+            contentType: text/csv
+          - channelName: validation
+            stepOutput: PreprocessAbaloneData.validation
+            contentType: text/csv
+
+    # Step 3: Register trained model in the Model Package Group
+    # The model is registered with the approval status from the pipeline parameter.
+    # When set to "Approved", EventBridge triggers the deploy pipeline automatically.
+    - name: RegisterAbaloneModel
+      type: RegisterModel
+      register:
+        imageUri: "{{env_var:SAGEMAKER_IMAGE_REGISTRY}}.dkr.ecr.{{env_var:AWS_REGION}}.amazonaws.com/sagemaker-xgboost:3.0-5"
+        modelDataStep: TrainAbaloneModel
+        modelPackageGroupName: "{{env_var:MODEL_PACKAGE_GROUP_NAME}}"
+        contentTypes:
+          - text/csv
+        responseTypes:
+          - text/csv
+        inferenceInstanceTypes:
+          - ml.m5.large
+        transformInstanceTypes:
+          - ml.m5.large
+        approvalStatus:
+          parameter: ModelApprovalStatus

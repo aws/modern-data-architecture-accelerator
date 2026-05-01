@@ -1,0 +1,2264 @@
+{
+  "Description": "(SO0320-sagemaker-model-monitoring) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-model-monitoring/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-model-monitoring",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-model-monitoring",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-sagemaker-model-monitoring) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "modelmonitoringmonitoringoutput2A74D0BB": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "BucketKeyEnabled": true,
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
+                "SSEAlgorithm": "aws:kms"
+              }
+            }
+          ]
+        },
+        "BucketName": "test-org-test-env-test-domain-test-model-monitoring-m--437a036e",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringmonitoringoutputPolicyB7BE11B1": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "modelmonitoringmonitoringoutput2A74D0BB"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "modelmonitoringmonitoringoutput2A74D0BB",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "modelmonitoringmonitoringoutput2A74D0BB",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-server-side-encryption": "AES256"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "modelmonitoringmonitoringoutput2A74D0BB",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "DenyAES"
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringNotLikeIfExists": {
+                  "s3:x-amz-server-side-encryption-aws-kms-key-id": "arn:test-partition:kms:test-region:test-account:key/test-key-id"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "modelmonitoringmonitoringoutput2A74D0BB",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "ForceKMS"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringmonitoringoutputbucketmonitorexectestendpointnamessmB4FDC712": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-model-monitoring/bucket/monitor-exec-test-endpoint/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-model-monitoring",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-model-monitoring",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "modelmonitoringmonitoringoutput2A74D0BB"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringmonitoringoutputbucketmonitorexectestendpointarnssmEFFE69DA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-model-monitoring/bucket/monitor-exec-test-endpoint/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-model-monitoring",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-model-monitoring",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "modelmonitoringmonitoringoutput2A74D0BB",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringmonitoringroleEA9AD395": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "sagemaker.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-model-monitoring-mo--437a036e",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Wildcard permissions required for: ECR image access, SageMaker processing jobs, CloudWatch metrics, EC2 network interface operations, and endpoint-config/* (CDK auto-generates endpoint config names to support replacement updates, so resource-level scoping is not possible).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringmonitoringrolerolemonitorexectestendpointarnssmAC83803D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-model-monitoring/role/monitor-exec-test-endpoint/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-model-monitoring",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-model-monitoring",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "modelmonitoringmonitoringroleEA9AD395",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Wildcard permissions required for: ECR image access, SageMaker processing jobs, CloudWatch metrics, EC2 network interface operations, and endpoint-config/* (CDK auto-generates endpoint config names to support replacement updates, so resource-level scoping is not possible).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringmonitoringrolerolemonitorexectestendpointidssmA4EA42C0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-model-monitoring/role/monitor-exec-test-endpoint/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-model-monitoring",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-model-monitoring",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "modelmonitoringmonitoringroleEA9AD395",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Wildcard permissions required for: ECR image access, SageMaker processing jobs, CloudWatch metrics, EC2 network interface operations, and endpoint-config/* (CDK auto-generates endpoint config names to support replacement updates, so resource-level scoping is not possible).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringmonitoringrolerolemonitorexectestendpointnamessmCA7908CA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-model-monitoring/role/monitor-exec-test-endpoint/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-model-monitoring",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-model-monitoring",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "modelmonitoringmonitoringroleEA9AD395"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Wildcard permissions required for: ECR image access, SageMaker processing jobs, CloudWatch metrics, EC2 network interface operations, and endpoint-config/* (CDK auto-generates endpoint config names to support replacement updates, so resource-level scoping is not possible).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringmonitoringroleDefaultPolicy433B15BD": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sagemaker:DescribeEndpoint",
+                "sagemaker:DescribeEndpointConfig",
+                "sagemaker:DescribeModel",
+                "sagemaker:InvokeEndpoint"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":endpoint/test-endpoint"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":endpoint-config/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":model/test-endpoint*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "sagemaker:CreateProcessingJob",
+                "sagemaker:DescribeProcessingJob",
+                "sagemaker:StopProcessingJob"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":sagemaker:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":processing-job/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "cloudwatch:PutMetricData",
+              "Condition": {
+                "StringLike": {
+                  "cloudwatch:namespace": "/aws/sagemaker/*"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":logs:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":log-group:/aws/sagemaker/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "modelmonitoringmonitoringoutput2A74D0BB",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "modelmonitoringmonitoringoutput2A74D0BB",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/test-key-id"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/test-key-id"
+            },
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:s3:::test-model-bucket",
+                "arn:test-partition:s3:::test-model-bucket/*"
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::test-model-bucket"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::test-model-bucket/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:BatchGetImage",
+                "ecr:GetDownloadUrlForLayer"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ecr:*:*:repository/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "iam:PassRole",
+              "Condition": {
+                "StringEquals": {
+                  "iam:PassedToService": "sagemaker.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "modelmonitoringmonitoringroleEA9AD395",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DescribeVpcs",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeDhcpOptions",
+                "ec2:DescribeSecurityGroups"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "ec2:CreateNetworkInterface",
+                "ec2:DeleteNetworkInterface"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "ec2:CreateNetworkInterfacePermission",
+              "Condition": {
+                "StringEquals": {
+                  "ec2:AuthorizedService": "sagemaker.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:ListBucket"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::test-model-bucket"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::test-model-bucket/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "modelmonitoringmonitoringroleDefaultPolicy433B15BD",
+        "Roles": [
+          {
+            "Ref": "modelmonitoringmonitoringroleEA9AD395"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Wildcard permissions required for: ECR image access, SageMaker processing jobs, CloudWatch metrics, EC2 network interface operations, and endpoint-config/* (CDK auto-generates endpoint config names to support replacement updates, so resource-level scoping is not possible).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringdataqualityjobdef7525AC82": {
+      "Type": "AWS::SageMaker::DataQualityJobDefinition",
+      "Properties": {
+        "DataQualityAppSpecification": {
+          "ImageUri": "156813124566.dkr.ecr.us-east-1.amazonaws.com/sagemaker-model-monitor-analyzer"
+        },
+        "DataQualityBaselineConfig": {
+          "ConstraintsResource": {
+            "S3Uri": "s3://test-model-bucket/baselines/data-quality/constraints.json"
+          },
+          "StatisticsResource": {
+            "S3Uri": "s3://test-model-bucket/baselines/data-quality/statistics.json"
+          }
+        },
+        "DataQualityJobInput": {
+          "EndpointInput": {
+            "EndpointName": "test-endpoint",
+            "LocalPath": "/opt/ml/processing/input/endpoint"
+          }
+        },
+        "DataQualityJobOutputConfig": {
+          "KmsKeyId": "test-key-id",
+          "MonitoringOutputs": [
+            {
+              "S3Output": {
+                "LocalPath": "/opt/ml/processing/output",
+                "S3UploadMode": "EndOfJob",
+                "S3Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "s3://",
+                      {
+                        "Ref": "modelmonitoringmonitoringoutput2A74D0BB"
+                      },
+                      "/data-quality/"
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "JobDefinitionName": "test-org-test-env-test-domain-test-model-monitoring-d--5e8d4605",
+        "JobResources": {
+          "ClusterConfig": {
+            "InstanceCount": 1,
+            "InstanceType": "ml.m5.xlarge",
+            "VolumeKmsKeyId": "test-key-id",
+            "VolumeSizeInGB": 30
+          }
+        },
+        "NetworkConfig": {
+          "EnableNetworkIsolation": false,
+          "VpcConfig": {
+            "SecurityGroupIds": [
+              "sg-0123456789abcdef0"
+            ],
+            "Subnets": [
+              "subnet-0123456789abcdef0",
+              "subnet-0123456789abcdef1"
+            ]
+          }
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "modelmonitoringmonitoringroleEA9AD395",
+            "Arn"
+          ]
+        },
+        "StoppingCondition": {
+          "MaxRuntimeInSeconds": 3600
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "modelmonitoringdataqualityscheduleD5541477": {
+      "Type": "AWS::SageMaker::MonitoringSchedule",
+      "Properties": {
+        "MonitoringScheduleConfig": {
+          "MonitoringJobDefinitionName": "test-org-test-env-test-domain-test-model-monitoring-d--5e8d4605",
+          "MonitoringType": "DataQuality",
+          "ScheduleConfig": {
+            "ScheduleExpression": "cron(0 * ? * * *)"
+          }
+        },
+        "MonitoringScheduleName": "test-org-test-env-test-domain-test-model-monitoring-d--1a38c0b6",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "modelmonitoringdataqualityjobdef7525AC82",
+        "modelmonitoringmonitoringroleDefaultPolicy433B15BD",
+        "modelmonitoringmonitoringroleEA9AD395",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointarnssmAC83803D",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointidssmA4EA42C0",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointnamessmCA7908CA"
+      ]
+    },
+    "modelmonitoringmodelqualityjobdefC02D8C1B": {
+      "Type": "AWS::SageMaker::ModelQualityJobDefinition",
+      "Properties": {
+        "JobDefinitionName": "test-org-test-env-test-domain-test-model-monitoring-m--706c792e",
+        "JobResources": {
+          "ClusterConfig": {
+            "InstanceCount": 1,
+            "InstanceType": "ml.m5.xlarge",
+            "VolumeKmsKeyId": "test-key-id",
+            "VolumeSizeInGB": 20
+          }
+        },
+        "ModelQualityAppSpecification": {
+          "ImageUri": "156813124566.dkr.ecr.us-east-1.amazonaws.com/sagemaker-model-monitor-analyzer",
+          "ProblemType": "BinaryClassification"
+        },
+        "ModelQualityJobInput": {
+          "EndpointInput": {
+            "EndpointName": "test-endpoint",
+            "InferenceAttribute": "prediction",
+            "LocalPath": "/opt/ml/processing/input/endpoint",
+            "ProbabilityAttribute": "probability",
+            "ProbabilityThresholdAttribute": 0.5
+          },
+          "GroundTruthS3Input": {
+            "S3Uri": "s3://test-model-bucket/ground-truth/"
+          }
+        },
+        "ModelQualityJobOutputConfig": {
+          "KmsKeyId": "test-key-id",
+          "MonitoringOutputs": [
+            {
+              "S3Output": {
+                "LocalPath": "/opt/ml/processing/output",
+                "S3UploadMode": "EndOfJob",
+                "S3Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "s3://",
+                      {
+                        "Ref": "modelmonitoringmonitoringoutput2A74D0BB"
+                      },
+                      "/model-quality/"
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "NetworkConfig": {
+          "EnableNetworkIsolation": false,
+          "VpcConfig": {
+            "SecurityGroupIds": [
+              "sg-0123456789abcdef0"
+            ],
+            "Subnets": [
+              "subnet-0123456789abcdef0",
+              "subnet-0123456789abcdef1"
+            ]
+          }
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "modelmonitoringmonitoringroleEA9AD395",
+            "Arn"
+          ]
+        },
+        "StoppingCondition": {
+          "MaxRuntimeInSeconds": 1800
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "modelmonitoringmodelqualityscheduleD7D8867F": {
+      "Type": "AWS::SageMaker::MonitoringSchedule",
+      "Properties": {
+        "MonitoringScheduleConfig": {
+          "MonitoringJobDefinitionName": "test-org-test-env-test-domain-test-model-monitoring-m--706c792e",
+          "MonitoringType": "ModelQuality",
+          "ScheduleConfig": {
+            "ScheduleExpression": "cron(0 */6 ? * * *)"
+          }
+        },
+        "MonitoringScheduleName": "test-org-test-env-test-domain-test-model-monitoring-mo-4bce88d3",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "modelmonitoringmodelqualityjobdefC02D8C1B",
+        "modelmonitoringmonitoringroleDefaultPolicy433B15BD",
+        "modelmonitoringmonitoringroleEA9AD395",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointarnssmAC83803D",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointidssmA4EA42C0",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointnamessmCA7908CA"
+      ]
+    },
+    "modelmonitoringmodelbiasjobdef039F9E4A": {
+      "Type": "AWS::SageMaker::ModelBiasJobDefinition",
+      "Properties": {
+        "JobDefinitionName": "test-org-test-env-test-domain-test-model-monitoring-mb-4bb84d03",
+        "JobResources": {
+          "ClusterConfig": {
+            "InstanceCount": 1,
+            "InstanceType": "ml.m5.xlarge",
+            "VolumeKmsKeyId": "test-key-id",
+            "VolumeSizeInGB": 20
+          }
+        },
+        "ModelBiasAppSpecification": {
+          "ConfigUri": {
+            "Fn::Join": [
+              "",
+              [
+                "s3://",
+                {
+                  "Ref": "modelmonitoringmonitoringoutput2A74D0BB"
+                },
+                "/model-bias/analysis_config.json"
+              ]
+            ]
+          },
+          "ImageUri": "246618743249.dkr.ecr.us-east-1.amazonaws.com/sagemaker-clarify-processing:1.0"
+        },
+        "ModelBiasJobInput": {
+          "EndpointInput": {
+            "EndpointName": "test-endpoint",
+            "FeaturesAttribute": "features",
+            "LocalPath": "/opt/ml/processing/input/endpoint"
+          },
+          "GroundTruthS3Input": {
+            "S3Uri": "s3://test-model-bucket/ground-truth/"
+          }
+        },
+        "ModelBiasJobOutputConfig": {
+          "KmsKeyId": "test-key-id",
+          "MonitoringOutputs": [
+            {
+              "S3Output": {
+                "LocalPath": "/opt/ml/processing/output",
+                "S3UploadMode": "EndOfJob",
+                "S3Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "s3://",
+                      {
+                        "Ref": "modelmonitoringmonitoringoutput2A74D0BB"
+                      },
+                      "/model-bias/"
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "NetworkConfig": {
+          "EnableNetworkIsolation": false,
+          "VpcConfig": {
+            "SecurityGroupIds": [
+              "sg-0123456789abcdef0"
+            ],
+            "Subnets": [
+              "subnet-0123456789abcdef0",
+              "subnet-0123456789abcdef1"
+            ]
+          }
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "modelmonitoringmonitoringroleEA9AD395",
+            "Arn"
+          ]
+        },
+        "StoppingCondition": {
+          "MaxRuntimeInSeconds": 1800
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "modelmonitoringmodelbiasschedule8822DED3": {
+      "Type": "AWS::SageMaker::MonitoringSchedule",
+      "Properties": {
+        "MonitoringScheduleConfig": {
+          "MonitoringJobDefinitionName": "test-org-test-env-test-domain-test-model-monitoring-mb-4bb84d03",
+          "MonitoringType": "ModelBias",
+          "ScheduleConfig": {
+            "ScheduleExpression": "cron(0 0 ? * MON *)"
+          }
+        },
+        "MonitoringScheduleName": "test-org-test-env-test-domain-test-model-monitoring-mo-7781414b",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "modelmonitoringmodelbiasjobdef039F9E4A",
+        "modelmonitoringmonitoringroleDefaultPolicy433B15BD",
+        "modelmonitoringmonitoringroleEA9AD395",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointarnssmAC83803D",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointidssmA4EA42C0",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointnamessmCA7908CA"
+      ]
+    },
+    "modelmonitoringmodelexplainabilityjobdef1AB50EEF": {
+      "Type": "AWS::SageMaker::ModelExplainabilityJobDefinition",
+      "Properties": {
+        "JobDefinitionName": "test-org-test-env-test-domain-test-model-monitoring-me-594a8bc6",
+        "JobResources": {
+          "ClusterConfig": {
+            "InstanceCount": 1,
+            "InstanceType": "ml.m5.xlarge",
+            "VolumeKmsKeyId": "test-key-id",
+            "VolumeSizeInGB": 20
+          }
+        },
+        "ModelExplainabilityAppSpecification": {
+          "ConfigUri": {
+            "Fn::Join": [
+              "",
+              [
+                "s3://",
+                {
+                  "Ref": "modelmonitoringmonitoringoutput2A74D0BB"
+                },
+                "/model-explainability/analysis_config.json"
+              ]
+            ]
+          },
+          "ImageUri": "246618743249.dkr.ecr.us-east-1.amazonaws.com/sagemaker-clarify-processing:1.0"
+        },
+        "ModelExplainabilityJobInput": {
+          "EndpointInput": {
+            "EndpointName": "test-endpoint",
+            "FeaturesAttribute": "features",
+            "LocalPath": "/opt/ml/processing/input/endpoint"
+          }
+        },
+        "ModelExplainabilityJobOutputConfig": {
+          "KmsKeyId": "test-key-id",
+          "MonitoringOutputs": [
+            {
+              "S3Output": {
+                "LocalPath": "/opt/ml/processing/output",
+                "S3UploadMode": "EndOfJob",
+                "S3Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "s3://",
+                      {
+                        "Ref": "modelmonitoringmonitoringoutput2A74D0BB"
+                      },
+                      "/model-explainability/"
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "NetworkConfig": {
+          "EnableNetworkIsolation": false,
+          "VpcConfig": {
+            "SecurityGroupIds": [
+              "sg-0123456789abcdef0"
+            ],
+            "Subnets": [
+              "subnet-0123456789abcdef0",
+              "subnet-0123456789abcdef1"
+            ]
+          }
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "modelmonitoringmonitoringroleEA9AD395",
+            "Arn"
+          ]
+        },
+        "StoppingCondition": {
+          "MaxRuntimeInSeconds": 1800
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "modelmonitoringmodelexplainabilityschedule991F5BA8": {
+      "Type": "AWS::SageMaker::MonitoringSchedule",
+      "Properties": {
+        "MonitoringScheduleConfig": {
+          "MonitoringJobDefinitionName": "test-org-test-env-test-domain-test-model-monitoring-me-594a8bc6",
+          "MonitoringType": "ModelExplainability",
+          "ScheduleConfig": {
+            "ScheduleExpression": "cron(0 0 ? * MON *)"
+          }
+        },
+        "MonitoringScheduleName": "test-org-test-env-test-domain-test-model-monitoring-mo-4bd6e6a5",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "modelmonitoringmodelexplainabilityjobdef1AB50EEF",
+        "modelmonitoringmonitoringroleDefaultPolicy433B15BD",
+        "modelmonitoringmonitoringroleEA9AD395",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointarnssmAC83803D",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointidssmA4EA42C0",
+        "modelmonitoringmonitoringrolerolemonitorexectestendpointnamessmCA7908CA"
+      ]
+    },
+    "modelmonitoringbaselineloggroupA19FC8B3": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
+        "LogGroupName": "/aws/states/test-org-test-env-test-domain-test-model-monitoring-baseline-test-endpoint",
+        "RetentionInDays": 30,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "modelmonitoringbaselinestatemachineRole461134AB": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "states.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Processing job names are dynamic and include execution IDs.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] X-Ray tracing is not required for this low-frequency baselining workflow.",
+              "id": "AwsSolutions-SF2"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringbaselinestatemachineRoleDefaultPolicyAF483C65": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sagemaker:CreateProcessingJob",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":sagemaker:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":processing-job/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "logs:CreateLogDelivery",
+                "logs:GetLogDelivery",
+                "logs:UpdateLogDelivery",
+                "logs:DeleteLogDelivery",
+                "logs:ListLogDeliveries",
+                "logs:PutResourcePolicy",
+                "logs:DescribeResourcePolicies",
+                "logs:DescribeLogGroups"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "iam:PassRole",
+              "Condition": {
+                "StringEquals": {
+                  "iam:PassedToService": "sagemaker.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "modelmonitoringmonitoringroleEA9AD395",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "modelmonitoringbaselinestatemachineRoleDefaultPolicyAF483C65",
+        "Roles": [
+          {
+            "Ref": "modelmonitoringbaselinestatemachineRole461134AB"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Processing job names are dynamic and include execution IDs.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] X-Ray tracing is not required for this low-frequency baselining workflow.",
+              "id": "AwsSolutions-SF2"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringbaselinestatemachine6F987C4A": {
+      "Type": "AWS::StepFunctions::StateMachine",
+      "Properties": {
+        "DefinitionString": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"StartAt\":\"baseline-processing-job\",\"States\":{\"baseline-processing-job\":{\"End\":true,\"Type\":\"Task\",\"ResultPath\":\"$.processingJobResult\",\"Resource\":\"arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":states:::aws-sdk:sagemaker:createProcessingJob\",\"Parameters\":{\"ProcessingJobName.$\":\"States.Format('baseline-test-endpoint-{}', $$.Execution.Name)\",\"ProcessingResources\":{\"ClusterConfig\":{\"InstanceCount\":1,\"InstanceType\":\"ml.m5.xlarge\",\"VolumeSizeInGB\":20,\"VolumeKmsKeyId\":\"test-key-id\"}},\"AppSpecification\":{\"ImageUri\":\"156813124566.dkr.ecr.us-east-1.amazonaws.com/sagemaker-model-monitor-analyzer\"},\"RoleArn\":\"",
+              {
+                "Fn::GetAtt": [
+                  "modelmonitoringmonitoringroleEA9AD395",
+                  "Arn"
+                ]
+              },
+              "\",\"ProcessingInputs\":[{\"InputName\":\"baseline_dataset\",\"S3Input\":{\"S3Uri\":\"s3://test-model-bucket/baselines/training-data.csv\",\"LocalPath\":\"/opt/ml/processing/input/baseline_dataset\",\"S3DataType\":\"S3Prefix\",\"S3InputMode\":\"File\"}}],\"ProcessingOutputConfig\":{\"Outputs\":[{\"OutputName\":\"baseline_output\",\"S3Output\":{\"S3Uri\":\"s3://test-model-bucket/baselines/output/\",\"LocalPath\":\"/opt/ml/processing/output\",\"S3UploadMode\":\"EndOfJob\"}}]},\"Environment\":{\"dataset_format\":\"{\\\"csv\\\": {\\\"header\\\": true}}\",\"output_path\":\"/opt/ml/processing/output\",\"publish_cloudwatch_metrics\":\"Disabled\"}}}},\"TimeoutSeconds\":7200}"
+            ]
+          ]
+        },
+        "LoggingConfiguration": {
+          "Destinations": [
+            {
+              "CloudWatchLogsLogGroup": {
+                "LogGroupArn": {
+                  "Fn::GetAtt": [
+                    "modelmonitoringbaselineloggroupA19FC8B3",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "Level": "ALL"
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "modelmonitoringbaselinestatemachineRole461134AB",
+            "Arn"
+          ]
+        },
+        "StateMachineName": "test-org-test-env-test-domain-test-model-monitoring-baseline-test-endpoint",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "modelmonitoringbaselinestatemachineRoleDefaultPolicyAF483C65",
+        "modelmonitoringbaselinestatemachineRole461134AB"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Processing job names are dynamic and include execution IDs.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] X-Ray tracing is not required for this low-frequency baselining workflow.",
+              "id": "AwsSolutions-SF2"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringbaselinestatemachineEventsRoleD23A3DF2": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Processing job names are dynamic and include execution IDs.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] X-Ray tracing is not required for this low-frequency baselining workflow.",
+              "id": "AwsSolutions-SF2"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringbaselinestatemachineEventsRoleDefaultPolicy261E55A7": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "modelmonitoringbaselinestatemachine6F987C4A"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "modelmonitoringbaselinestatemachineEventsRoleDefaultPolicy261E55A7",
+        "Roles": [
+          {
+            "Ref": "modelmonitoringbaselinestatemachineEventsRoleD23A3DF2"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Processing job names are dynamic and include execution IDs.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-monitoring-l3-construct/lib/sagemaker-model-monitoring-l3-construct.ts] X-Ray tracing is not required for this low-frequency baselining workflow.",
+              "id": "AwsSolutions-SF2"
+            }
+          ]
+        }
+      }
+    },
+    "modelmonitoringbaselinescheduleE180422A": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Periodic baselining for test-endpoint monitors (data_quality, model_quality, model_bias, model_explainability)",
+        "Name": "test-org-test-env-test-domain-test-model-monitoring-bas-541ead73",
+        "ScheduleExpression": "cron(0 0 1 * ? *)",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-model-monitoring"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-model-monitoring"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "modelmonitoringbaselinestatemachine6F987C4A"
+            },
+            "Id": "Target0",
+            "Input": "{\"endpointName\":\"test-endpoint\",\"enabledMonitors\":[\"data_quality\",\"model_quality\",\"model_bias\",\"model_explainability\"]}",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "modelmonitoringbaselinestatemachineEventsRoleD23A3DF2",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "modelmonitoringmodelmonitoringtestendpointmonitorschedulecountssm3F9F14C0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-model-monitoring/model-monitoring/test-endpoint/monitor-schedule-count",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-model-monitoring",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-model-monitoring",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "4"
+      }
+    },
+    "modelmonitoringmodelmonitoringtestendpointmonitorschedulearnsssmEB219F42": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-model-monitoring/model-monitoring/test-endpoint/monitor-schedule-arns",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-model-monitoring",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-model-monitoring",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            ",",
+            [
+              {
+                "Fn::GetAtt": [
+                  "modelmonitoringdataqualityscheduleD5541477",
+                  "MonitoringScheduleArn"
+                ]
+              },
+              {
+                "Fn::GetAtt": [
+                  "modelmonitoringmodelqualityscheduleD7D8867F",
+                  "MonitoringScheduleArn"
+                ]
+              },
+              {
+                "Fn::GetAtt": [
+                  "modelmonitoringmodelbiasschedule8822DED3",
+                  "MonitoringScheduleArn"
+                ]
+              },
+              {
+                "Fn::GetAtt": [
+                  "modelmonitoringmodelexplainabilityschedule991F5BA8",
+                  "MonitoringScheduleArn"
+                ]
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "modelmonitoringmodelmonitoringtestendpointoutputbucketnamessmFCD061D7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-model-monitoring/model-monitoring/test-endpoint/output-bucket-name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-model-monitoring",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-model-monitoring",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "modelmonitoringmonitoringoutput2A74D0BB"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "modelmonitoringmonitoringoutputbucketmonitorexectestendpointnameout213C1B0A": {
+      "Value": {
+        "Ref": "modelmonitoringmonitoringoutput2A74D0BB"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-model-monitoring:bucket:monitorexectestendpoint:name"
+      }
+    },
+    "modelmonitoringmonitoringoutputbucketmonitorexectestendpointarnoutCB654D1F": {
+      "Value": {
+        "Fn::GetAtt": [
+          "modelmonitoringmonitoringoutput2A74D0BB",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-model-monitoring:bucket:monitorexectestendpoint:arn"
+      }
+    },
+    "modelmonitoringmonitoringrolerolemonitorexectestendpointarnoutB9A29608": {
+      "Value": {
+        "Fn::GetAtt": [
+          "modelmonitoringmonitoringroleEA9AD395",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-model-monitoring:role:monitorexectestendpoint:arn"
+      }
+    },
+    "modelmonitoringmonitoringrolerolemonitorexectestendpointidout57B34A7C": {
+      "Value": {
+        "Fn::GetAtt": [
+          "modelmonitoringmonitoringroleEA9AD395",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-model-monitoring:role:monitorexectestendpoint:id"
+      }
+    },
+    "modelmonitoringmonitoringrolerolemonitorexectestendpointnameout14CBAB27": {
+      "Value": {
+        "Ref": "modelmonitoringmonitoringroleEA9AD395"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-model-monitoring:role:monitorexectestendpoint:name"
+      }
+    },
+    "modelmonitoringmodelmonitoringtestendpointmonitorschedulecountoutCF21C16C": {
+      "Value": "4",
+      "Export": {
+        "Name": "test-org:test-domain:test-model-monitoring:model-monitoring:testendpoint:monitor-schedule-count"
+      }
+    },
+    "modelmonitoringmodelmonitoringtestendpointmonitorschedulearnsoutE98C21F7": {
+      "Value": {
+        "Fn::Join": [
+          ",",
+          [
+            {
+              "Fn::GetAtt": [
+                "modelmonitoringdataqualityscheduleD5541477",
+                "MonitoringScheduleArn"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "modelmonitoringmodelqualityscheduleD7D8867F",
+                "MonitoringScheduleArn"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "modelmonitoringmodelbiasschedule8822DED3",
+                "MonitoringScheduleArn"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "modelmonitoringmodelexplainabilityschedule991F5BA8",
+                "MonitoringScheduleArn"
+              ]
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-model-monitoring:model-monitoring:testendpoint:monitor-schedule-arns"
+      }
+    },
+    "modelmonitoringmodelmonitoringtestendpointoutputbucketnameout485355E4": {
+      "Value": {
+        "Ref": "modelmonitoringmonitoringoutput2A74D0BB"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-model-monitoring:model-monitoring:testendpoint:output-bucket-name"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

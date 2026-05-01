@@ -49,14 +49,18 @@ export class MdaaTestApp extends App {
     });
   }
 
-  public checkCdkNagCompliance(stack: Stack) {
+  public checkCdkNagCompliance(stack: Stack, options?: { ignorePathPatterns?: string[] }) {
     // eslint-disable-next-line no-undef
     describe('MDAA CDK Nag Compliance Tests', () => {
       // eslint-disable-next-line no-undef
       test(`No unsuppressed CDK Nags`, () => {
         const annotations = Annotations.fromStack(stack);
-        const errors = annotations.findError('*', Match.stringLikeRegexp('AwsSolutions.*|HIPAA.*|NIST.*|PCI.*'));
-        //Expect our Managed Policy to trigger 6 errors
+        let errors = annotations.findError('*', Match.stringLikeRegexp('AwsSolutions.*|HIPAA.*|NIST.*|PCI.*'));
+        // Filter out known CDK-generated resources (e.g., OverflowPolicy) that cannot be
+        // suppressed at construct time because they are created during synthesis.
+        if (options?.ignorePathPatterns) {
+          errors = errors.filter(e => !options.ignorePathPatterns!.some(pattern => e.id.includes(pattern)));
+        }
         if (errors.length > 0) console.log(errors);
         // eslint-disable-next-line no-undef
         expect(errors).toHaveLength(0);

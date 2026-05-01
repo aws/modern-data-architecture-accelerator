@@ -297,7 +297,7 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
     this.configContents = resolvedBlueprintRefConfigContents as unknown as T;
 
     // Confirm our provided config matches our Schema (verification of Data shape)
-    const avj = new Ajv();
+    const avj = new Ajv({ allErrors: true });
     const configValidator = avj.compile(configSchema);
     if (!suppressOutputConfigContents) {
       console.log(

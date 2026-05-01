@@ -1,0 +1,42 @@
+# MDAA routing config for SageMaker Model Monitoring deployment
+#
+# Uses the same domain-per-stage pattern as the endpoint config.
+# The buildspec invokes: mdaa deploy -c ./mdaa-monitoring.yaml -d deploy-<stage>
+
+organization: "{{env_var:MDAA_ORG}}"
+
+domains:
+  # Dev stage — monitoring in the same account as the endpoint
+  deploy-dev:
+    environments:
+      dev:
+        account: default
+        modules:
+          monitoring:
+            module_path: "@aws-mdaa/sagemaker-model-monitoring"
+            module_configs:
+              - ./monitoring.yaml
+
+  # Pre-prod stage — monitoring in the cross-account alongside the endpoint
+  deploy-preprod:
+    environments:
+      dev:
+        account: "{{env_var:PRE_PROD_ACCOUNT_ID}}"
+        region: "{{env_var:PRE_PROD_REGION}}"
+        modules:
+          monitoring:
+            module_path: "@aws-mdaa/sagemaker-model-monitoring"
+            module_configs:
+              - ./monitoring.yaml
+
+  # Prod stage — monitoring in the cross-account alongside the endpoint
+  deploy-prod:
+    environments:
+      dev:
+        account: "{{env_var:PROD_ACCOUNT_ID}}"
+        region: "{{env_var:PROD_REGION}}"
+        modules:
+          monitoring:
+            module_path: "@aws-mdaa/sagemaker-model-monitoring"
+            module_configs:
+              - ./monitoring.yaml

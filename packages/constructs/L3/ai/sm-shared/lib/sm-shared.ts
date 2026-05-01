@@ -3,12 +3,41 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import { execSync } from 'child_process';
 import { Fn, Stack } from 'aws-cdk-lib';
 import { IRole } from 'aws-cdk-lib/aws-iam';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
+
+/**
+ * Source repository type for MLOps CI/CD pipelines.
+ */
+export enum SourceType {
+  CODECOMMIT = 'CODECOMMIT',
+  CODESTAR_CONNECTIONS = 'CODESTAR_CONNECTIONS',
+}
+
+/**
+ * Configuration for external repository sources (GitHub, GitLab, Bitbucket)
+ * via AWS CodeStar Connections / CodeConnections.
+ *
+ * Required when sourceType is 'CODESTAR_CONNECTIONS'.
+ */
+export interface CodeStarConnectionConfig {
+  /** ARN of the AWS CodeStar Connection (created in AWS Console or via CLI) */
+  readonly connectionArn: string;
+  /** Repository owner (GitHub org or user, Bitbucket workspace) */
+  readonly owner: string;
+  /** Repository name (without owner prefix) */
+  readonly repo: string;
+  /** Branch to track (default: 'main') */
+  readonly branch?: string;
+}
 
 export interface LifecycleScriptProps {
   /** Named assets to deploy for this lifecycle script */
@@ -33,6 +62,39 @@ export interface AssetDeploymentProps {
   readonly assetDeploymentRole: IRole;
   readonly memoryLimitMB?: number;
 }
+/**
+ * Utility helpers for MLOps seed code resolution at CDK synth time.
+ */
+export class SeedCodeHelper {
+  /**
+   * Resolves a seed code path to an absolute zip file path.
+   *
+   * - If the path already points to a .zip file, it is returned as-is.
+   * - If the path is a directory, the directory is zipped into a temp file
+   *   (excluding .pyc / __pycache__ / .git / .egg-info) and the temp path
+   *   is returned.  The temp file is removed after the calling code has
+   *   consumed it (i.e. after CDK's Code.fromZipFile has read it).
+   *
+   * Uses execSync with the cwd option instead of an interpolated `cd` command
+   * to avoid shell-injection risks with paths that contain special characters.
+   */
+  public static resolveSeedCodeZip(seedCodePath: string): string {
+    if (seedCodePath.endsWith('.zip') && fs.existsSync(seedCodePath)) {
+      return seedCodePath;
+    }
+    if (fs.existsSync(seedCodePath) && fs.statSync(seedCodePath).isDirectory()) {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'mdaa-seed-'));
+      const zipPath = path.join(tmpDir, 'seed_code.zip');
+      execSync(
+        `zip -r ${JSON.stringify(zipPath)} . -x '*.pyc' '__pycache__/*' '.git/*' '*.egg-info/*' '.venv/*' 'node_modules/*' '.tox/*' '.pytest_cache/*'`,
+        { stdio: 'pipe', cwd: seedCodePath },
+      );
+      return zipPath;
+    }
+    throw new Error(`seedCodePath '${seedCodePath}' does not exist or is not a directory/zip file.`);
+  }
+}
+
 export class LifeCycleConfigHelper {
   public static createLifecycleConfigContents(
     scriptProps: LifecycleScriptProps,

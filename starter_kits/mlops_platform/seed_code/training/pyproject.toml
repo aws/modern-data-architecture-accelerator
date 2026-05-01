@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ml_pipelines"
+version = "0.0.1"
+description = "ml pipelines - template package"
+authors = [
+    {"name" = "Amazon Web Services"},
+]
+readme = "README.md"
+license = {text = "Apache 2.0"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">= 3.12"
+dependencies = [
+    "sagemaker>=2.200.0,<3.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "black",
+    "flake8",
+    "pydocstyle",
+]
+
+[project.scripts]
+get-pipeline-definition = "ml_pipelines.get_pipeline_definition:main"
+run-pipeline = "ml_pipelines.run_pipeline:main"
+
+[tool.setuptools.packages.find]
+include = ["ml_pipelines*", "source_scripts*"]

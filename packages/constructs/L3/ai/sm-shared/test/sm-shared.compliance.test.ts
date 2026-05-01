@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as path from 'path';
 import { AssetDeploymentProps, LifeCycleConfigHelper, LifecycleScriptProps } from '../lib';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { MdaaTestApp } from '@aws-mdaa/testing';
@@ -23,7 +24,7 @@ describe('MDAA Shared Tests', () => {
       cmds: ['testing'],
       assets: {
         test_asset: {
-          sourcePath: 'test/assets',
+          sourcePath: path.join(__dirname, 'assets'),
         },
       },
     };

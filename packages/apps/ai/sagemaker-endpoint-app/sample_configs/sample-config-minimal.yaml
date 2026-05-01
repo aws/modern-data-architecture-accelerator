@@ -1,0 +1,18 @@
+# Minimal config for the SageMaker Endpoint module.
+# Contains only the required properties for a basic real-time
+# inference endpoint with default instance type and no VPC.
+
+# SageMaker project name used in resource naming
+projectName: test-endpoint-project
+
+# ARN of the approved model package from the SageMaker Model
+# Registry
+modelPackageArn: arn:{{partition}}:sagemaker:{{region}}:{{account}}:model-package/test-model-group/1
+
+# S3 bucket containing model artifacts
+# Often created by the SageMaker MLOps module.
+# Example SSM: ssm:/{{org}}/{{domain}}/<mlops_module_name>/training/model-bucket-name
+modelBucketName: test-model-artifacts-bucket
+
+# Deployment stage name
+stageName: dev

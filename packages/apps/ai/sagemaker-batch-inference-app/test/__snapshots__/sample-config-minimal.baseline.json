@@ -1,0 +1,3188 @@
+{
+  "Description": "(SO0320-sagemaker-batch-inference) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-sagemaker-batch-inference) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "batchinferencebatchkmskey90A7EC1D": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "batchinferencebatchkmskeyAlias8AD113FC": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-batch-inference-minimal-batch-inference-test-batch-project",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "batchinferencebatchkmskey90A7EC1D",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "batchinferencebatchkmskeykmsbatchinferencetestbatchprojectarnssm132AD6CD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/kms/batch-inference-test-batch-project/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "batchinferencebatchkmskey90A7EC1D",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "batchinferencebatchkmskeykmsbatchinferencetestbatchprojectidssm23959B55": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/kms/batch-inference-test-batch-project/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "batchinferencebatchkmskey90A7EC1D"
+        }
+      }
+    },
+    "batchinferencebatchpipelineartifacts66363683": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "BucketKeyEnabled": true,
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "batchinferencebatchkmskey90A7EC1D",
+                    "Arn"
+                  ]
+                },
+                "SSEAlgorithm": "aws:kms"
+              }
+            }
+          ]
+        },
+        "BucketName": "test-org-test-env-test-domain-test-batch-inference-mi--5df49479",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipelineartifactsPolicy22159A8B": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "batchinferencebatchpipelineartifacts66363683"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "batchinferencebatchpipelineartifacts66363683",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "batchinferencebatchpipelineartifacts66363683",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-server-side-encryption": "AES256"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "batchinferencebatchpipelineartifacts66363683",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "DenyAES"
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringNotLikeIfExists": {
+                  "s3:x-amz-server-side-encryption-aws-kms-key-id": {
+                    "Fn::GetAtt": [
+                      "batchinferencebatchkmskey90A7EC1D",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "batchinferencebatchpipelineartifacts66363683",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "ForceKMS"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipelineartifactsbucketbatchtestbatchprojectnamessm94AE5B93": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/bucket/batch-test-batch-project/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "batchinferencebatchpipelineartifacts66363683"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipelineartifactsbucketbatchtestbatchprojectarnssmEF03763D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/bucket/batch-test-batch-project/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "batchinferencebatchpipelineartifacts66363683",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchsagemakerrole5DC72C49": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "sagemaker.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-batch-inference-min--73b3b835",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Wildcard permissions required for ECR, SageMaker transform/model resources, and S3 objects. Managed policies are not used because they grant broader permissions than needed; inline policies allow least-privilege scoping to construct-specific resources.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchsagemakerrolerolebatchexectestbatchprojectarnssmC73AD410": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/role/batch-exec-test-batch-project/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "batchinferencebatchsagemakerrole5DC72C49",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Wildcard permissions required for ECR, SageMaker transform/model resources, and S3 objects. Managed policies are not used because they grant broader permissions than needed; inline policies allow least-privilege scoping to construct-specific resources.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchsagemakerrolerolebatchexectestbatchprojectidssmED361E6F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/role/batch-exec-test-batch-project/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "batchinferencebatchsagemakerrole5DC72C49",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Wildcard permissions required for ECR, SageMaker transform/model resources, and S3 objects. Managed policies are not used because they grant broader permissions than needed; inline policies allow least-privilege scoping to construct-specific resources.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchsagemakerrolerolebatchexectestbatchprojectnamessm9A91C346": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/role/batch-exec-test-batch-project/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "batchinferencebatchsagemakerrole5DC72C49"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Wildcard permissions required for ECR, SageMaker transform/model resources, and S3 objects. Managed policies are not used because they grant broader permissions than needed; inline policies allow least-privilege scoping to construct-specific resources.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchsagemakerroleDefaultPolicyB9B87DDD": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sagemaker:CreateTransformJob",
+                "sagemaker:DescribeTransformJob",
+                "sagemaker:StopTransformJob",
+                "sagemaker:CreateModel",
+                "sagemaker:DeleteModel",
+                "sagemaker:DescribeModel",
+                "sagemaker:CreateProcessingJob",
+                "sagemaker:DescribeProcessingJob",
+                "sagemaker:StopProcessingJob",
+                "sagemaker:AddTags",
+                "sagemaker:DeleteTags",
+                "sagemaker:ListTags"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":transform-job/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":model/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":processing-job/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "sagemaker:DescribeModelPackage",
+                "sagemaker:ListModelPackages",
+                "sagemaker:DescribeModelPackageGroup"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":model-package-group/test-mpg"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":model-package/test-mpg/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:ListBucket",
+                "s3:GetBucketLocation"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::test-model-bucket"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::test-model-bucket/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "batchinferencebatchpipelineartifacts66363683",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "batchinferencebatchpipelineartifacts66363683",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchkmskey90A7EC1D",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "iam:PassRole",
+              "Condition": {
+                "StringEquals": {
+                  "iam:PassedToService": "sagemaker.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchsagemakerrole5DC72C49",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:BatchGetImage",
+                "ecr:GetDownloadUrlForLayer"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ecr:*:*:repository/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":logs:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":log-group:/aws/sagemaker/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchkmskey90A7EC1D",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:GetBucketLocation",
+                "s3:ListBucket"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::sagemaker-servicecatalog-seedcode-",
+                      {
+                        "Ref": "AWS::Region"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::sagemaker-servicecatalog-seedcode-",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "batchinferencebatchsagemakerroleDefaultPolicyB9B87DDD",
+        "Roles": [
+          {
+            "Ref": "batchinferencebatchsagemakerrole5DC72C49"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Wildcard permissions required for ECR, SageMaker transform/model resources, and S3 objects. Managed policies are not used because they grant broader permissions than needed; inline policies allow least-privilege scoping to construct-specific resources.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchcodebuildroleD8472AE5": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codebuild.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-batch-inference-min--533b59c3",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Wildcard permissions required for SageMaker pipeline operations and S3 artifact access.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchcodebuildrolerolebatchcbtestbatchprojectarnssm8CF4AFD5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/role/batch-cb-test-batch-project/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "batchinferencebatchcodebuildroleD8472AE5",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Wildcard permissions required for SageMaker pipeline operations and S3 artifact access.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchcodebuildrolerolebatchcbtestbatchprojectidssm9E65168C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/role/batch-cb-test-batch-project/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "batchinferencebatchcodebuildroleD8472AE5",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Wildcard permissions required for SageMaker pipeline operations and S3 artifact access.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchcodebuildrolerolebatchcbtestbatchprojectnamessmE68F2DFA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/role/batch-cb-test-batch-project/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "batchinferencebatchcodebuildroleD8472AE5"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Wildcard permissions required for SageMaker pipeline operations and S3 artifact access.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchcodebuildroleDefaultPolicyFE8E5E3A": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sagemaker:CreatePipeline",
+                "sagemaker:UpdatePipeline",
+                "sagemaker:DeletePipeline",
+                "sagemaker:StartPipelineExecution",
+                "sagemaker:StopPipelineExecution",
+                "sagemaker:DescribePipelineExecution",
+                "sagemaker:ListPipelineExecutionSteps",
+                "sagemaker:AddTags",
+                "sagemaker:DeleteTags",
+                "sagemaker:ListTags"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":pipeline/test-batch-project"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":pipeline/test-batch-project/execution/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":pipeline/test-batch-project-*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":pipeline/test-batch-project-*/execution/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "sagemaker:DescribeModelPackage",
+                "sagemaker:ListModelPackages"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":sagemaker:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":model-package/test-mpg/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "sagemaker:DescribeImageVersion",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":sagemaker:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":image-version/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":logs:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":log-group:/aws/codebuild/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "iam:PassRole",
+              "Condition": {
+                "StringEquals": {
+                  "iam:PassedToService": "sagemaker.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchsagemakerrole5DC72C49",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "batchinferencebatchpipelineartifacts66363683",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "batchinferencebatchpipelineartifacts66363683",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchkmskey90A7EC1D",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchkmskey90A7EC1D",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ssm:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":parameter/cdk-bootstrap/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "cloudformation:CreateStack",
+                "cloudformation:UpdateStack",
+                "cloudformation:DeleteStack",
+                "cloudformation:DescribeStacks",
+                "cloudformation:DescribeStackEvents",
+                "cloudformation:GetTemplate",
+                "cloudformation:CreateChangeSet",
+                "cloudformation:DescribeChangeSet",
+                "cloudformation:ExecuteChangeSet",
+                "cloudformation:DeleteChangeSet",
+                "cloudformation:GetTemplateSummary"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":cloudformation:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":stack/test-org-*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:ListBucket",
+                "s3:GetBucketLocation"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::cdk-hnb659fds-assets-",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::cdk-hnb659fds-assets-",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "iam:PassRole",
+              "Condition": {
+                "StringEquals": {
+                  "iam:PassedToService": "cloudformation.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":iam::",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":role/cdk-hnb659fds-cfn-exec-role-",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    "-",
+                    {
+                      "Ref": "AWS::Region"
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":role/cdk-hnb659fds-deploy-role-",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":role/cdk-hnb659fds-file-publishing-role-",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":role/cdk-hnb659fds-lookup-role-",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:ListBucket",
+                "s3:GetBucketLocation"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::test-org-*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::test-org-*/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:GenerateDataKey",
+                "kms:DescribeKey"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:CallerAccount": {
+                    "Ref": "AWS::AccountId"
+                  },
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "s3.",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ".amazonaws.com"
+                      ]
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":kms:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":key/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "ssm:PutParameter",
+                "ssm:GetParameter",
+                "ssm:DeleteParameter",
+                "ssm:GetParameters"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ssm:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":parameter/test-org/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "batchinferencebatchbuildproject822361ED"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "batchinferencebatchbuildproject822361ED"
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutTestCases",
+                "codebuild:BatchPutCodeCoverages"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:codebuild:test-region:test-account:report-group/",
+                    {
+                      "Ref": "batchinferencebatchbuildproject822361ED"
+                    },
+                    "-*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "batchinferencebatchpipelineartifacts66363683",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "batchinferencebatchpipelineartifacts66363683",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchkmskey90A7EC1D",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "batchinferencebatchcodebuildroleDefaultPolicyFE8E5E3A",
+        "Roles": [
+          {
+            "Ref": "batchinferencebatchcodebuildroleD8472AE5"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Wildcard permissions required for SageMaker pipeline operations and S3 artifact access.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchbuildproject822361ED": {
+      "Type": "AWS::CodeBuild::Project",
+      "Properties": {
+        "Artifacts": {
+          "Type": "CODEPIPELINE"
+        },
+        "Cache": {
+          "Type": "NO_CACHE"
+        },
+        "EncryptionKey": {
+          "Fn::GetAtt": [
+            "batchinferencebatchkmskey90A7EC1D",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "ComputeType": "BUILD_GENERAL1_SMALL",
+          "EnvironmentVariables": [
+            {
+              "Name": "SAGEMAKER_PROJECT_NAME",
+              "Type": "PLAINTEXT",
+              "Value": "test-batch-project"
+            },
+            {
+              "Name": "SAGEMAKER_DOMAIN_ID",
+              "Type": "PLAINTEXT",
+              "Value": ""
+            },
+            {
+              "Name": "SAGEMAKER_DOMAIN_ARN",
+              "Type": "PLAINTEXT",
+              "Value": ""
+            },
+            {
+              "Name": "MODEL_PACKAGE_GROUP_NAME",
+              "Type": "PLAINTEXT",
+              "Value": "test-mpg"
+            },
+            {
+              "Name": "SAGEMAKER_PIPELINE_ROLE_ARN",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchsagemakerrole5DC72C49",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Name": "ARTIFACT_BUCKET",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "batchinferencebatchpipelineartifacts66363683"
+              }
+            },
+            {
+              "Name": "ARTIFACT_BUCKET_KMS_ID",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "batchinferencebatchkmskey90A7EC1D"
+              }
+            },
+            {
+              "Name": "MODEL_BUCKET_NAME",
+              "Type": "PLAINTEXT",
+              "Value": "test-model-bucket"
+            },
+            {
+              "Name": "TRAINING_PIPELINE_BUCKET",
+              "Type": "PLAINTEXT",
+              "Value": ""
+            },
+            {
+              "Name": "BASE_JOB_PREFIX",
+              "Type": "PLAINTEXT",
+              "Value": "test-batch-project"
+            },
+            {
+              "Name": "INSTANCE_TYPE",
+              "Type": "PLAINTEXT",
+              "Value": "ml.m5.xlarge"
+            },
+            {
+              "Name": "INSTANCE_COUNT",
+              "Type": "PLAINTEXT",
+              "Value": "1"
+            },
+            {
+              "Name": "INPUT_DATA_S3_URI",
+              "Type": "PLAINTEXT",
+              "Value": ""
+            },
+            {
+              "Name": "OUTPUT_DATA_S3_PREFIX",
+              "Type": "PLAINTEXT",
+              "Value": ""
+            },
+            {
+              "Name": "ENABLE_NETWORK_ISOLATION",
+              "Type": "PLAINTEXT",
+              "Value": "true"
+            },
+            {
+              "Name": "SUBNET_IDS",
+              "Type": "PLAINTEXT",
+              "Value": "[]"
+            },
+            {
+              "Name": "SECURITY_GROUP_IDS",
+              "Type": "PLAINTEXT",
+              "Value": "[]"
+            },
+            {
+              "Name": "MDAA_ORG",
+              "Type": "PLAINTEXT",
+              "Value": "test-org"
+            }
+          ],
+          "Image": "aws/codebuild/standard:7.0",
+          "ImagePullCredentialsType": "CODEBUILD",
+          "PrivilegedMode": false,
+          "Type": "LINUX_CONTAINER"
+        },
+        "Name": "test-org-test-env-test-domain-test-batch-inference-minimal-batch-test-batch-project",
+        "ServiceRole": {
+          "Fn::GetAtt": [
+            "batchinferencebatchcodebuildroleD8472AE5",
+            "Arn"
+          ]
+        },
+        "Source": {
+          "BuildSpec": "buildspec.yml",
+          "Type": "CODEPIPELINE"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/pipeline-helpers.ts] CodeBuild project uses CodeCommit as source, not GitHub/Bitbucket. OAuth is not applicable.",
+              "id": "HIPAA.Security-CodeBuildProjectSourceRepoUrl"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/pipeline-helpers.ts] CodeBuild project uses CodeCommit as source, not GitHub/Bitbucket. OAuth is not applicable.",
+              "id": "PCI.DSS.321-CodeBuildProjectSourceRepoUrl"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/pipeline-helpers.ts] CodeBuild project uses customer-managed KMS key for encryption.",
+              "id": "AwsSolutions-CB4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/pipeline-helpers.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/pipeline-helpers.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/pipeline-helpers.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipelineRole52611AE0": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codepipeline.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] CodePipeline requires wildcard permissions for S3 artifact operations.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipelineRoleDefaultPolicy6BE6B119": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "batchinferencebatchpipelineartifacts66363683",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "batchinferencebatchpipelineartifacts66363683",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchkmskey90A7EC1D",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchpipelineSourceCodePipelineActionRole435A4876",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchpipelineBuildBatchInferenceCodePipelineActionRoleBE08B45F",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "batchinferencebatchpipelineRoleDefaultPolicy6BE6B119",
+        "Roles": [
+          {
+            "Ref": "batchinferencebatchpipelineRole52611AE0"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] CodePipeline requires wildcard permissions for S3 artifact operations.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipeline1FBAE5B9": {
+      "Type": "AWS::CodePipeline::Pipeline",
+      "Properties": {
+        "ArtifactStore": {
+          "EncryptionKey": {
+            "Id": {
+              "Fn::GetAtt": [
+                "batchinferencebatchkmskey90A7EC1D",
+                "Arn"
+              ]
+            },
+            "Type": "KMS"
+          },
+          "Location": {
+            "Ref": "batchinferencebatchpipelineartifacts66363683"
+          },
+          "Type": "S3"
+        },
+        "Name": "test-org-test-env-test-domain-test-batch-inference-minimal-test-batch-project-batch",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "batchinferencebatchpipelineRole52611AE0",
+            "Arn"
+          ]
+        },
+        "Stages": [
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Source",
+                  "Owner": "AWS",
+                  "Provider": "CodeCommit",
+                  "Version": "1"
+                },
+                "Configuration": {
+                  "RepositoryName": {
+                    "Fn::GetAtt": [
+                      "batchinferencebatchsourcerepo4B78F6AD",
+                      "Name"
+                    ]
+                  },
+                  "BranchName": "main",
+                  "PollForSourceChanges": false
+                },
+                "Name": "Source",
+                "OutputArtifacts": [
+                  {
+                    "Name": "BatchSourceOutput"
+                  }
+                ],
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "batchinferencebatchpipelineSourceCodePipelineActionRole435A4876",
+                    "Arn"
+                  ]
+                },
+                "RunOrder": 1
+              }
+            ],
+            "Name": "Source"
+          },
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Provider": "CodeBuild",
+                  "Version": "1"
+                },
+                "Configuration": {
+                  "ProjectName": {
+                    "Ref": "batchinferencebatchbuildproject822361ED"
+                  }
+                },
+                "InputArtifacts": [
+                  {
+                    "Name": "BatchSourceOutput"
+                  }
+                ],
+                "Name": "BatchInference",
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "batchinferencebatchpipelineBuildBatchInferenceCodePipelineActionRoleBE08B45F",
+                    "Arn"
+                  ]
+                },
+                "RunOrder": 1
+              }
+            ],
+            "Name": "Build"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ]
+      },
+      "DependsOn": [
+        "batchinferencebatchpipelineRoleDefaultPolicy6BE6B119",
+        "batchinferencebatchpipelineRole52611AE0"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] CodePipeline requires wildcard permissions for S3 artifact operations.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipelineSourceCodePipelineActionRole435A4876": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "batchinferencebatchpipelineRole52611AE0",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] CodePipeline requires wildcard permissions for S3 artifact operations.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipelineSourceCodePipelineActionRoleDefaultPolicyBF97E8F3": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "batchinferencebatchpipelineartifacts66363683",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "batchinferencebatchpipelineartifacts66363683",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchkmskey90A7EC1D",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "codecommit:GetBranch",
+                "codecommit:GetCommit",
+                "codecommit:UploadArchive",
+                "codecommit:GetUploadArchiveStatus",
+                "codecommit:CancelUploadArchive"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchsourcerepo4B78F6AD",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "batchinferencebatchpipelineSourceCodePipelineActionRoleDefaultPolicyBF97E8F3",
+        "Roles": [
+          {
+            "Ref": "batchinferencebatchpipelineSourceCodePipelineActionRole435A4876"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] CodePipeline requires wildcard permissions for S3 artifact operations.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipelineEventsRole53E2546B": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] CodePipeline requires wildcard permissions for S3 artifact operations.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipelineEventsRoleDefaultPolicyDAB3C617": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "codepipeline:StartPipelineExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:codepipeline:test-region:test-account:",
+                    {
+                      "Ref": "batchinferencebatchpipeline1FBAE5B9"
+                    }
+                  ]
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "batchinferencebatchpipelineEventsRoleDefaultPolicyDAB3C617",
+        "Roles": [
+          {
+            "Ref": "batchinferencebatchpipelineEventsRole53E2546B"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] CodePipeline requires wildcard permissions for S3 artifact operations.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipelineBuildBatchInferenceCodePipelineActionRoleBE08B45F": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "batchinferencebatchpipelineRole52611AE0",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] CodePipeline requires wildcard permissions for S3 artifact operations.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchpipelineBuildBatchInferenceCodePipelineActionRoleDefaultPolicy840390BF": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "batchinferencebatchbuildproject822361ED",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "batchinferencebatchpipelineBuildBatchInferenceCodePipelineActionRoleDefaultPolicy840390BF",
+        "Roles": [
+          {
+            "Ref": "batchinferencebatchpipelineBuildBatchInferenceCodePipelineActionRoleBE08B45F"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-batch-inference-l3-construct/lib/sagemaker-batch-inference-l3-construct.ts] CodePipeline requires wildcard permissions for S3 artifact operations.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "batchinferencebatchsourcerepo4B78F6AD": {
+      "Type": "AWS::CodeCommit::Repository",
+      "Properties": {
+        "Code": {
+          "BranchName": "main",
+          "S3": {
+            "Bucket": "cdk-hnb659fds-assets-test-account-test-region",
+            "Key": "d2e12fd2a6cc34df1ed5f637ab253f723106914de99e4105a367bb9858f56f46.zip"
+          }
+        },
+        "RepositoryDescription": "Batch inference pipeline for test-batch-project",
+        "RepositoryName": "test-org-test-env-test-domain-test-batch-inference-minimal-test-batch-project-batch",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ]
+      }
+    },
+    "batchinferencebatchsourcerepotestorgtestenvtestdomaintestbatchinferenceminimalbatchinferencebatchpipeline3170409AmainEventRule5E566BE8": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "EventPattern": {
+          "source": [
+            "aws.codecommit"
+          ],
+          "resources": [
+            {
+              "Fn::GetAtt": [
+                "batchinferencebatchsourcerepo4B78F6AD",
+                "Arn"
+              ]
+            }
+          ],
+          "detail-type": [
+            "CodeCommit Repository State Change"
+          ],
+          "detail": {
+            "event": [
+              "referenceCreated",
+              "referenceUpdated"
+            ],
+            "referenceName": [
+              "main"
+            ]
+          }
+        },
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-batch-inference"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-batch-inference-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-batch-project"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:test-partition:codepipeline:test-region:test-account:",
+                  {
+                    "Ref": "batchinferencebatchpipeline1FBAE5B9"
+                  }
+                ]
+              ]
+            },
+            "Id": "Target0",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "batchinferencebatchpipelineEventsRole53E2546B",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "batchinferencebatchinferencetestbatchprojectpipelinenamessmDCF05087": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/batch-inference/test-batch-project/pipeline-name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "batchinferencebatchpipeline1FBAE5B9"
+        }
+      }
+    },
+    "batchinferencebatchinferencetestbatchprojectreponamessmD1C0FA4F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-batch-inference-minimal/batch-inference/test-batch-project/repo-name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-batch-inference",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-batch-inference-minimal",
+          "mdaa_org": "test-org",
+          "sagemaker:project-name": "test-batch-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "batchinferencebatchsourcerepo4B78F6AD",
+            "Name"
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "batchinferencebatchkmskeykmsbatchinferencetestbatchprojectarnout29677CA3": {
+      "Value": {
+        "Fn::GetAtt": [
+          "batchinferencebatchkmskey90A7EC1D",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:kms:batchinferencetestbatchproject:arn"
+      }
+    },
+    "batchinferencebatchkmskeykmsbatchinferencetestbatchprojectidout0F3728CE": {
+      "Value": {
+        "Ref": "batchinferencebatchkmskey90A7EC1D"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:kms:batchinferencetestbatchproject:id"
+      }
+    },
+    "batchinferencebatchpipelineartifactsbucketbatchtestbatchprojectnameout5DEF4286": {
+      "Value": {
+        "Ref": "batchinferencebatchpipelineartifacts66363683"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:bucket:batchtestbatchproject:name"
+      }
+    },
+    "batchinferencebatchpipelineartifactsbucketbatchtestbatchprojectarnout2872EA17": {
+      "Value": {
+        "Fn::GetAtt": [
+          "batchinferencebatchpipelineartifacts66363683",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:bucket:batchtestbatchproject:arn"
+      }
+    },
+    "batchinferencebatchsagemakerrolerolebatchexectestbatchprojectarnout8DAE94AC": {
+      "Value": {
+        "Fn::GetAtt": [
+          "batchinferencebatchsagemakerrole5DC72C49",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:role:batchexectestbatchproject:arn"
+      }
+    },
+    "batchinferencebatchsagemakerrolerolebatchexectestbatchprojectidoutDCAC98BF": {
+      "Value": {
+        "Fn::GetAtt": [
+          "batchinferencebatchsagemakerrole5DC72C49",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:role:batchexectestbatchproject:id"
+      }
+    },
+    "batchinferencebatchsagemakerrolerolebatchexectestbatchprojectnameout627418F7": {
+      "Value": {
+        "Ref": "batchinferencebatchsagemakerrole5DC72C49"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:role:batchexectestbatchproject:name"
+      }
+    },
+    "batchinferencebatchcodebuildrolerolebatchcbtestbatchprojectarnout44719971": {
+      "Value": {
+        "Fn::GetAtt": [
+          "batchinferencebatchcodebuildroleD8472AE5",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:role:batchcbtestbatchproject:arn"
+      }
+    },
+    "batchinferencebatchcodebuildrolerolebatchcbtestbatchprojectidoutEB8080F6": {
+      "Value": {
+        "Fn::GetAtt": [
+          "batchinferencebatchcodebuildroleD8472AE5",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:role:batchcbtestbatchproject:id"
+      }
+    },
+    "batchinferencebatchcodebuildrolerolebatchcbtestbatchprojectnameout861C534D": {
+      "Value": {
+        "Ref": "batchinferencebatchcodebuildroleD8472AE5"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:role:batchcbtestbatchproject:name"
+      }
+    },
+    "batchinferencebatchinferencetestbatchprojectpipelinenameoutF7103578": {
+      "Value": {
+        "Ref": "batchinferencebatchpipeline1FBAE5B9"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:batch-inference:testbatchproject:pipeline-name"
+      }
+    },
+    "batchinferencebatchinferencetestbatchprojectreponameoutCC00ADA9": {
+      "Value": {
+        "Fn::GetAtt": [
+          "batchinferencebatchsourcerepo4B78F6AD",
+          "Name"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-batch-inference-minimal:batch-inference:testbatchproject:repo-name"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

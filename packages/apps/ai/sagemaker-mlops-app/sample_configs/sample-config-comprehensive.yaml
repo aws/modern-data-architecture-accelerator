@@ -1,0 +1,123 @@
+# Comprehensive config for the SageMaker MLOps module.
+# Deploys a unified training and deployment pipeline with
+# cross-account promotion, VPC isolation, EventBridge-triggered
+# deployments, and multi-environment endpoint rollout.
+
+training:
+  # SageMaker project name for the training pipeline
+  projectName: test-training-project
+
+  # (Optional) SageMaker domain ID for Studio integration tagging
+  # Often created by the SageMaker Studio Domain module.
+  # Example SSM: ssm:/{{org}}/{{domain}}/<sm_studio_domain_module_name>/domain-id
+  domainId: d-test123
+
+  # (Optional) SageMaker domain ARN for Studio integration tagging
+  # Often created by the SageMaker Studio Domain module.
+  # Example SSM: ssm:/{{org}}/{{domain}}/<sm_studio_domain_module_name>/domain-arn
+  domainArn: arn:{{partition}}:sagemaker:{{region}}:{{account}}:domain/d-test123
+
+  # (Optional) Enable network isolation for training jobs
+  enableNetworkIsolation: false
+
+  # (Optional) Enable inter-container traffic encryption
+  enableInterContainerEncryption: true
+
+  # Path to training seed code directory or zip file.
+  # Point this to your project's training seed code directory.
+  seedCodePath: "../test/test-seed-code.zip"
+
+  # (Optional) Pre-prod account ID for cross-account model
+  # registry access
+  preProdAccountId: '{{context:account-2}}'
+
+  # (Optional) Prod account ID for cross-account model
+  # registry access
+  prodAccountId: '{{context:account-3}}'
+
+  # (Optional) Dev environment VPC configuration
+  devEnvironment:
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-dev
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetIds:
+      - subnet-dev-1
+      - subnet-dev-2
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/security-group/id
+    securityGroupIds:
+      - sg-dev-1
+
+deploy:
+  # SageMaker project name for the deployment pipeline
+  projectName: test-deploy-project
+
+  # (Optional) SageMaker domain ID
+  # Often created by the SageMaker Studio Domain module.
+  # Example SSM: ssm:/{{org}}/{{domain}}/<sm_studio_domain_module_name>/domain-id
+  domainId: d-test123
+
+  # (Optional) SageMaker domain ARN
+  # Often created by the SageMaker Studio Domain module.
+  # Example SSM: ssm:/{{org}}/{{domain}}/<sm_studio_domain_module_name>/domain-arn
+  domainArn: arn:{{partition}}:sagemaker:{{region}}:{{account}}:domain/d-test123
+
+  # (Optional) Model Package Group name — auto-wired from
+  # training construct when omitted
+  modelPackageGroupName: test-model-package-group
+
+  # (Optional) Model bucket name — auto-wired from training
+  # construct when omitted
+  modelBucketName: test-model-bucket
+
+  # (Optional) Pipeline bucket name — set when using
+  # CfnPipeline-based training where model artifacts may live
+  # in a different bucket
+  pipelineBucketName: test-pipeline-bucket
+
+  # (Optional) Enable network isolation for endpoints
+  enableNetworkIsolation: false
+
+  # (Optional) Enable manual approval gate before production
+  enableManualApproval: true
+
+  # (Optional) Enable EventBridge trigger on model package
+  # approval
+  enableEventBridgeTrigger: true
+
+  # (Optional) Enable data capture on deployed endpoints
+  enableDataCapture: true
+
+  # Path to deploy seed code directory or zip file.
+  # Point this to your project's deploy seed code directory.
+  seedCodePath: "../test/test-seed-code.zip"
+
+  # (Optional) Dev environment VPC configuration
+  devEnvironment:
+    vpcId: vpc-dev
+    subnetIds:
+      - subnet-dev-1
+    securityGroupIds:
+      - sg-dev-1
+
+  # (Optional) Pre-prod environment for cross-account deployment
+  preProdEnvironment:
+    accountId: '{{context:account-2}}'
+    region: '{{region}}'
+    vpcId: vpc-preprod
+    subnetIds:
+      - subnet-pp-1
+    securityGroupIds:
+      - sg-pp-1
+
+  # (Optional) Prod environment for cross-account deployment
+  prodEnvironment:
+    accountId: '{{context:account-3}}'
+    region: '{{region}}'
+    vpcId: vpc-prod
+    subnetIds:
+      - subnet-prod-1
+    securityGroupIds:
+      - sg-prod-1

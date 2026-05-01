@@ -1,0 +1,5 @@
+tags:
+  cost-center: "123456"
+  project: mlops-platform
+  # TODO: Set to your environment name (dev/preprod/prod)
+  environment: dev

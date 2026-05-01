@@ -1,0 +1,30 @@
+# Config for the SageMaker Batch Inference module using GitHub via CodeStar Connections.
+# Uses an existing GitHub repository instead of creating a CodeCommit repo.
+#
+# Prerequisites:
+# 1. Create a CodeStar Connection in the AWS Console
+#    (Developer Tools > Connections) and complete the GitHub handshake.
+# 2. Push your batch inference seed code to the configured GitHub repo.
+
+# SageMaker project name used in resource naming
+projectName: test-batch-github
+
+# Source repository type
+sourceType: CODESTAR_CONNECTIONS
+
+# CodeStar Connections config
+codeStarConnection:
+  # ARN of the CodeStar Connection (must be in Available status)
+  connectionArn: "arn:aws:codestar-connections:us-east-1:123456789012:connection/example-conn-id"
+  # GitHub organization or user
+  owner: my-org
+  # Repository name
+  repo: my-batch-repo
+  # Branch to track (default: main)
+  branch: main
+
+# Model Package Group name from the SageMaker Model Registry
+modelPackageGroupName: test-mpg
+
+# S3 bucket containing model artifacts
+modelBucketName: test-model-bucket

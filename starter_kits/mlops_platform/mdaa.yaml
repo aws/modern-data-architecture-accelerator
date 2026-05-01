@@ -1,0 +1,55 @@
+# All resources will be deployed to the default region specified in the environment or AWS configurations.
+region: default
+
+# Tags applied to all deployed resources
+tag_configs:
+  - ./tags.yaml
+
+## Pre-Deployment Instructions
+#
+# 1. Set 'organization' to a unique name (used as prefix for all resource names)
+# 2. Set context values for your environment (VPC, subnets, project name)
+# 3. Deploy: mdaa -c ./mdaa.yaml -a deploy -d mlops
+#
+# The MLOps module deploys a unified training + deployment pipeline.
+# Monitoring is deployed by the deploy seed code alongside the endpoint.
+
+# TODO: Set an appropriate, unique organization name
+# Failure to do so may result in global naming conflicts.
+organization: "<unique-org-name>"
+
+# TODO: Set context values for your environment
+context:
+  # SageMaker project identifiers
+  sagemaker_project_name: "<your-project-name>"
+
+  # VPC and networking
+  # MDAA best practice: run SageMaker jobs inside your VPC for network isolation.
+  # Ensure the VPC has the following endpoints provisioned:
+  #   Gateway:   com.amazonaws.<region>.s3
+  #   Interface: com.amazonaws.<region>.sagemaker.api
+  #              com.amazonaws.<region>.sagemaker.runtime
+  #              com.amazonaws.<region>.sts
+  #              com.amazonaws.<region>.logs
+  vpc_id: "<your-vpc-id>"
+  subnet_ids:
+    - "<subnet-1>"
+    - "<subnet-2>"
+  security_group_ids:
+    - "<sg-1>"
+
+domains:
+  # MLOps domain: unified training → deployment pipeline
+  mlops:
+    environments:
+      dev:
+        account: default
+        modules:
+          # Unified MLOps module: training pipeline + deployment pipeline
+          # Training creates model package group, S3 bucket, CodePipeline
+          # Deploy creates CodeBuild + EventBridge triggered by model approval
+          # Monitoring is deployed by the deploy seed code alongside the endpoint
+          core:
+            module_path: "@aws-mdaa/sagemaker-mlops"
+            module_configs:
+              - ./mlops/mlops.yaml

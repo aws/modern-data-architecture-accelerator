@@ -1,0 +1,64 @@
+# Comprehensive config for the SageMaker Endpoint module.
+# Deploys a real-time inference endpoint with production variant
+# tuning, data capture for model monitoring, VPC network
+# isolation, and cross-account model artifact decryption.
+
+# SageMaker project name used in resource naming
+projectName: test-endpoint-project
+
+# (Optional) SageMaker domain ID for Studio integration tagging
+# Often created by the SageMaker Studio Domain module.
+# Example SSM: ssm:/{{org}}/{{domain}}/<sm_studio_domain_module_name>/domain-id
+domainId: d-test123
+
+# (Optional) SageMaker domain ARN for Studio integration tagging
+# Often created by the SageMaker Studio Domain module.
+# Example SSM: ssm:/{{org}}/{{domain}}/<sm_studio_domain_module_name>/domain-arn
+domainArn: arn:{{partition}}:sagemaker:{{region}}:{{account}}:domain/d-test123
+
+# ARN of the approved model package from the SageMaker Model
+# Registry. Typically the latest approved version from the
+# training pipeline.
+modelPackageArn: arn:{{partition}}:sagemaker:{{region}}:{{account}}:model-package/test-model-group/1
+
+# S3 bucket containing model artifacts
+# Often created by the SageMaker MLOps module.
+# Example SSM: ssm:/{{org}}/{{domain}}/<mlops_module_name>/training/model-bucket-name
+modelBucketName: test-model-artifacts-bucket
+
+# Deployment stage name (e.g., dev, preprod, prod)
+stageName: dev
+
+# (Optional) Production variant configuration
+productionVariant:
+  instanceType: ml.m5.2xlarge
+  instanceCount: 2
+  variantName: AllTraffic
+  initialVariantWeight: 1
+
+# (Optional) Data capture configuration for model monitoring
+dataCaptureConfig:
+  enableCapture: true
+  samplingPercentage: 100
+  csvContentTypes:
+    - text/csv
+  jsonContentTypes:
+    - application/json
+
+# (Optional) VPC configuration for network isolation
+networkConfig:
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/subnet/id
+  subnetIds:
+    - subnet-0123456789abcdef0
+    - subnet-0123456789abcdef1
+  # Often created by your VPC/networking stack.
+  # Example SSM: ssm:/path/to/security-group/id
+  securityGroupIds:
+    - sg-0123456789abcdef0
+  enableNetworkIsolation: true
+
+# (Optional) KMS key ARN for cross-account model artifact
+# decryption. Set when the model was trained in a different
+# account and artifacts are encrypted with that account's key.
+modelArtifactKmsKeyArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id

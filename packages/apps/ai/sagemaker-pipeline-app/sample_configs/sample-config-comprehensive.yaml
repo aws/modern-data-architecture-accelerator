@@ -1,0 +1,133 @@
+# Comprehensive config for the SageMaker Pipeline module.
+# Creates a SageMaker Pipeline via CfnPipeline (pure CDK) with
+# preprocessing, training, evaluation, conditional model
+# registration, VPC isolation, and cross-account model registry.
+
+# SageMaker project name used in resource naming
+projectName: test-pipeline-project
+
+# (Optional) SageMaker domain ID for Studio integration tagging
+# Often created by the SageMaker Studio Domain module.
+# Example SSM: ssm:/{{org}}/{{domain}}/<sm_studio_domain_module_name>/domain-id
+domainId: d-test123
+
+# (Optional) SageMaker domain ARN for Studio integration tagging
+# Often created by the SageMaker Studio Domain module.
+# Example SSM: ssm:/{{org}}/{{domain}}/<sm_studio_domain_module_name>/domain-arn
+domainArn: arn:{{partition}}:sagemaker:{{region}}:{{account}}:domain/d-test123
+
+# (Optional) Model Package Group name for model registration
+modelPackageGroupName: test-mpg
+
+# (Optional) Pre-prod account ID for cross-account model
+# registry access
+preProdAccountId: '{{context:account-2}}'
+
+# (Optional) Prod account ID for cross-account model
+# registry access
+prodAccountId: '{{context:account-3}}'
+
+pipeline:
+  # (Optional) Pipeline parameters — configurable at execution
+  parameters:
+    - name: ProcessingInstanceType
+      type: String
+      defaultValue: ml.m5.xlarge
+    - name: TrainingInstanceType
+      type: String
+      defaultValue: ml.m5.xlarge
+    - name: InputDataUrl
+      type: String
+      defaultValue: s3://test-bucket/dataset/data.csv
+
+  # (Optional) Network configuration for pipeline steps
+  networkConfig:
+    enableNetworkIsolation: true
+    encryptInterContainerTraffic: true
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetIds:
+      - subnet-abc
+      - subnet-def
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/security-group/id
+    securityGroupIds:
+      - sg-123
+
+  # Pipeline steps — define the ML workflow
+  steps:
+    - name: PreprocessData
+      type: Processing
+      processing:
+        imageUri: "123456789012.dkr.ecr.us-east-1.amazonaws.com/preprocess:latest"
+        instanceType: ml.m5.xlarge
+        scriptS3Uri: s3://test-bucket/scripts/preprocessing.py
+        inputs:
+          - inputName: input-data
+            s3Uri: s3://test-bucket/dataset/data.csv
+        outputs:
+          - outputName: train
+          - outputName: validation
+          - outputName: test
+        enableNetworkIsolation: false
+
+    - name: TrainModel
+      type: Training
+      training:
+        imageUri: "123456789012.dkr.ecr.us-east-1.amazonaws.com/train:latest"
+        instanceType: ml.m5.xlarge
+        hyperparameters:
+          objective: "reg:linear"
+          num_round: "50"
+          max_depth: "5"
+          eta: "0.2"
+        inputChannels:
+          - channelName: train
+            stepOutput: "PreprocessData.train"
+            contentType: text/csv
+          - channelName: validation
+            stepOutput: "PreprocessData.validation"
+            contentType: text/csv
+        outputPath: s3://test-bucket/output
+
+    - name: EvaluateModel
+      type: Processing
+      processing:
+        imageUri: "123456789012.dkr.ecr.us-east-1.amazonaws.com/train:latest"
+        instanceType: ml.m5.xlarge
+        scriptS3Uri: s3://test-bucket/scripts/evaluate.py
+        inputs:
+          - inputName: model
+            stepOutput: "TrainModel.modelArtifacts"
+          - inputName: test
+            stepOutput: "PreprocessData.test"
+        outputs:
+          - outputName: evaluation
+        propertyFiles:
+          - propertyFileName: EvaluationReport
+            outputName: evaluation
+            filePath: evaluation.json
+
+    - name: RegisterModel
+      type: RegisterModel
+      register:
+        imageUri: "123456789012.dkr.ecr.us-east-1.amazonaws.com/inference:latest"
+        modelDataStep: TrainModel
+        modelPackageGroupName: test-mpg
+        approvalStatus: PendingManualApproval
+        contentTypes: ["text/csv"]
+        responseTypes: ["text/csv"]
+        inferenceInstanceTypes: ["ml.t2.medium", "ml.m5.large"]
+        transformInstanceTypes: ["ml.m5.large"]
+
+    - name: CheckMSE
+      type: Condition
+      condition:
+        conditions:
+          - operator: LessThanOrEqualTo
+            stepName: EvaluateModel
+            propertyFile: EvaluationReport
+            jsonPath: regression_metrics.mse.value
+            threshold: 6.0
+        ifSteps:
+          - RegisterModel

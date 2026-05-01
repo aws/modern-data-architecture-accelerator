@@ -1,0 +1,56 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - npm install -g @aws-mdaa/cli
+
+  build:
+    commands:
+      # Resolve org name (MDAA CLI doesn't resolve {{env_var:...}} in organization field)
+      - sed -i "s/{{env_var:MDAA_ORG}}/${MDAA_ORG}/g" mdaa-config/mdaa.yaml
+
+      # Inject cross-account IDs into pipeline config if set.
+      # These enable cross-account bucket/KMS policies on the pipeline's model artifacts.
+      - |
+        set -e
+        if [ -n "${PRE_PROD_ACCOUNT_ID:-}" ]; then
+          echo "preProdAccountId: \"${PRE_PROD_ACCOUNT_ID}\"" >> mdaa-config/pipeline.yaml
+        fi
+        if [ -n "${PROD_ACCOUNT_ID:-}" ]; then
+          echo "prodAccountId: \"${PROD_ACCOUNT_ID}\"" >> mdaa-config/pipeline.yaml
+        fi
+
+      # Resolve the regional ECR account for SageMaker built-in images and deploy.
+      # Each AWS region uses a different ECR registry account for images like sagemaker-xgboost.
+      # The export must be in the same shell block as mdaa deploy (env vars don't persist across blocks).
+      - |
+        set -e
+        # Pin to v2 — v3 removed sagemaker.image_uris.retrieve(). Revisit when v3 provides an equivalent.
+        pip install -q "sagemaker>=2.200,<3"
+        export SAGEMAKER_IMAGE_REGISTRY=$(python3 -c "
+        from sagemaker import image_uris
+        print(image_uris.retrieve('xgboost', '${AWS_REGION}', version='3.0-5').split('.')[0])
+        " 2>/dev/null | tail -1)
+        echo "SageMaker image registry: ${SAGEMAKER_IMAGE_REGISTRY}"
+        cd mdaa-config && mdaa deploy && cd ..
+
+      # Read pipeline name from SSM (created by mdaa deploy above)
+      # PIPELINE_BUCKET_NAME and PIPELINE_KMS_ARN are set as CodeBuild env vars by the core stack.
+      - |
+        set -e
+        PIPELINE_NAME=$(aws ssm get-parameter --name "/${MDAA_ORG}/mlops/pipeline/sm-pipeline/${SAGEMAKER_PROJECT_NAME}/pipeline-name" --query 'Parameter.Value' --output text)
+        echo "Pipeline: ${PIPELINE_NAME}, Bucket: ${PIPELINE_BUCKET_NAME}"
+
+      # Upload ML scripts to the pipeline bucket (bucket default encryption handles KMS)
+      - aws s3 cp source_scripts/preprocessing.py "s3://${PIPELINE_BUCKET_NAME}/${PIPELINE_NAME}/scripts/preprocessing.py"
+      - aws s3 cp source_scripts/evaluate.py "s3://${PIPELINE_BUCKET_NAME}/${PIPELINE_NAME}/scripts/evaluate.py"
+
+      # Start pipeline execution
+      - |
+        set -e
+        echo "Starting pipeline execution for: ${PIPELINE_NAME}"
+        aws sagemaker start-pipeline-execution \
+          --pipeline-name "${PIPELINE_NAME}" \
+          --pipeline-execution-display-name "codebuild-$(date +%Y%m%d-%H%M%S)"
+      - echo "SageMaker Pipeline deployed and execution started."

@@ -1,0 +1,20 @@
+# Minimal config for the SageMaker Model Monitoring module.
+# Contains only the required properties for basic data quality
+# monitoring on a SageMaker endpoint.
+#
+# NOTE: ECR image URIs below are region-specific (us-east-1). Replace the account ID
+# and region with values appropriate for your deployment region. See:
+# https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-algo-docker-registry-paths.html
+
+# Name of the SageMaker endpoint to monitor
+# Often created by the SageMaker Endpoint module.
+# Example SSM: ssm:/{{org}}/{{domain}}/<endpoint_module_name>/endpoint-name
+endpointName: test-endpoint
+
+# Monitor configurations — at least one type must be enabled
+monitors:
+  dataQuality:
+    enabled: true
+    schedule: "cron(0 * ? * * *)"
+    instanceType: ml.m5.xlarge
+    imageUri: "156813124566.dkr.ecr.us-east-1.amazonaws.com/sagemaker-model-monitor-analyzer"

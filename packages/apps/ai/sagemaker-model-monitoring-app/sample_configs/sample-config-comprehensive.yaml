@@ -1,0 +1,86 @@
+# Comprehensive config for the SageMaker Model Monitoring module.
+# Deploys all four monitor types (data quality, model quality,
+# model bias, model explainability) with VPC isolation, KMS
+# encryption, and automated baselining.
+#
+# NOTE: ECR image URIs below are region-specific (us-east-1). Replace the account ID
+# and region with values appropriate for your deployment region. See:
+# https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-algo-docker-registry-paths.html
+
+# Name of the SageMaker endpoint to monitor
+# Often created by the SageMaker Endpoint module.
+# Example SSM: ssm:/{{org}}/{{domain}}/<endpoint_module_name>/endpoint-name
+endpointName: test-endpoint
+
+# Monitor configurations — at least one type must be enabled
+monitors:
+  dataQuality:
+    enabled: true
+    schedule: "cron(0 * ? * * *)"
+    instanceType: ml.m5.xlarge
+    instanceCount: 1
+    volumeSizeInGb: 30
+    maxRuntimeInSeconds: 3600
+    imageUri: "156813124566.dkr.ecr.us-east-1.amazonaws.com/sagemaker-model-monitor-analyzer"
+    # (Optional) Pre-computed baseline references
+    baselineDatasetUri: s3://test-model-bucket/baselines/data-quality/dataset.csv
+    baselineConstraintsUri: s3://test-model-bucket/baselines/data-quality/constraints.json
+    baselineStatisticsUri: s3://test-model-bucket/baselines/data-quality/statistics.json
+  modelQuality:
+    enabled: true
+    schedule: "cron(0 */6 ? * * *)"
+    instanceType: ml.m5.xlarge
+    imageUri: "156813124566.dkr.ecr.us-east-1.amazonaws.com/sagemaker-model-monitor-analyzer"
+    problemType: BinaryClassification
+    groundTruthS3Uri: s3://test-model-bucket/ground-truth/
+    inferenceAttribute: prediction
+    probabilityAttribute: probability
+    probabilityThreshold: 0.5
+  modelBias:
+    enabled: true
+    schedule: "cron(0 0 ? * MON *)"
+    instanceType: ml.m5.xlarge
+    imageUri: "246618743249.dkr.ecr.us-east-1.amazonaws.com/sagemaker-clarify-processing:1.0"
+    groundTruthS3Uri: s3://test-model-bucket/ground-truth/
+    featuresAttribute: features
+  modelExplainability:
+    enabled: true
+    schedule: "cron(0 0 ? * MON *)"
+    instanceType: ml.m5.xlarge
+    imageUri: "246618743249.dkr.ecr.us-east-1.amazonaws.com/sagemaker-clarify-processing:1.0"
+    featuresAttribute: features
+
+# (Optional) VPC ID for monitoring jobs
+# Often created by your VPC/networking stack.
+# Example SSM: ssm:/path/to/vpc/id
+vpcId: vpc-0123456789abcdef0
+
+# (Optional) Subnet IDs for monitoring jobs
+# Often created by your VPC/networking stack.
+# Example SSM: ssm:/path/to/subnet/id
+subnetIds:
+  - subnet-0123456789abcdef0
+  - subnet-0123456789abcdef1
+
+# (Optional) Security group IDs for monitoring jobs
+# Often created by your VPC/networking stack.
+# Example SSM: ssm:/path/to/security-group/id
+securityGroupIds:
+  - sg-0123456789abcdef0
+
+# (Optional) S3 bucket ARN for model artifacts access
+modelBucketArn: arn:{{partition}}:s3:::test-model-bucket
+
+# (Optional) Enable network isolation for monitoring jobs
+# (default: false)
+networkIsolation: false
+
+# (Optional) KMS key ARN for encryption. If omitted, a new
+# customer-managed key is created.
+kmsKeyArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id
+
+# (Optional) Automated baselining configuration
+baselineTrainingDataS3Uri: s3://test-model-bucket/baselines/training-data.csv
+baselineOutputDataS3Uri: s3://test-model-bucket/baselines/output/
+baselineSchedule: "cron(0 0 1 * ? *)"
+baselineDatasetFormat: '{"csv": {"header": true}}'

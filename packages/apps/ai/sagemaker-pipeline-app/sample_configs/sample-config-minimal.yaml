@@ -1,0 +1,17 @@
+# Minimal config for the SageMaker Pipeline module.
+# Contains only the required properties for a basic pipeline
+# with a single processing step.
+
+# SageMaker project name used in resource naming
+projectName: test-pipeline-minimal
+
+pipeline:
+  # Pipeline steps — at least one step is required
+  steps:
+    - name: PreprocessData
+      type: Processing
+      processing:
+        imageUri: "123456789012.dkr.ecr.us-east-1.amazonaws.com/preprocess:latest"
+        instanceType: ml.m5.xlarge
+        outputs:
+          - outputName: output

@@ -1,0 +1,25 @@
+# Minimal config for the SageMaker MLOps module.
+# Contains only the required properties for a basic training
+# and deployment pipeline.
+
+training:
+  # SageMaker project name for the training pipeline
+  projectName: test-training-minimal
+
+  # Path to training seed code directory or zip file.
+  # Point this to your project's training seed code directory.
+  seedCodePath: "../test/test-seed-code.zip"
+
+deploy:
+  # SageMaker project name for the deployment pipeline
+  projectName: test-deploy-minimal
+
+  # Model Package Group name
+  modelPackageGroupName: test-mpg
+
+  # Model bucket name
+  modelBucketName: test-bucket
+
+  # Path to deploy seed code directory or zip file.
+  # Point this to your project's deploy seed code directory.
+  seedCodePath: "../test/test-seed-code.zip"
