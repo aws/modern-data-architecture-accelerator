@@ -50,12 +50,81 @@ before_script:
 # Shared Templates
 # =============================================================================
 
+# -----------------------------------------------------------------------------
+# T-Shirt Size Templates
+# -----------------------------------------------------------------------------
+# The shared runner fleet runs on Amazon EKS Auto Mode. Compute and memory are
+# requested per-job via KUBERNETES_* CI/CD variables rather than size:X tags.
+# The templates below roughly re-create the previous T-shirt sizing. Each job
+# extends the appropriate template. For a given job, REQUEST and LIMIT are set
+# to the same value so a job that requests more than the default limit is not
+# rejected (default CPU limit = 1, default memory limit = 1Gi). Ephemeral
+# storage requests the amount needed to be scheduled on a suitable node;
+# Kubernetes manages the limit automatically (max request is 200Gi).
+#
+# Size    CPU  Memory  Ephemeral
+# small    1     2Gi     1Gi
+# medium   2     4Gi     4Gi
+# large    4     8Gi     8Gi
+# xlarge   8    16Gi    16Gi
+# 2xlarge 16    32Gi    32Gi
+# 3xlarge 32    64Gi    64Gi  (max CPU = 32, max memory = 64Gi)
+# -----------------------------------------------------------------------------
+
+.size_small:
+  variables:
+    KUBERNETES_CPU_REQUEST: '1'
+    KUBERNETES_CPU_LIMIT: '1'
+    KUBERNETES_MEMORY_REQUEST: 2Gi
+    KUBERNETES_MEMORY_LIMIT: 2Gi
+    KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 1Gi
+
+.size_medium:
+  variables:
+    KUBERNETES_CPU_REQUEST: '2'
+    KUBERNETES_CPU_LIMIT: '2'
+    KUBERNETES_MEMORY_REQUEST: 4Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+    KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 4Gi
+
+.size_large:
+  variables:
+    KUBERNETES_CPU_REQUEST: '4'
+    KUBERNETES_CPU_LIMIT: '4'
+    KUBERNETES_MEMORY_REQUEST: 8Gi
+    KUBERNETES_MEMORY_LIMIT: 8Gi
+    KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 8Gi
+
+.size_xlarge:
+  variables:
+    KUBERNETES_CPU_REQUEST: '8'
+    KUBERNETES_CPU_LIMIT: '8'
+    KUBERNETES_MEMORY_REQUEST: 16Gi
+    KUBERNETES_MEMORY_LIMIT: 16Gi
+    KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 16Gi
+
+.size_2xlarge:
+  variables:
+    KUBERNETES_CPU_REQUEST: '16'
+    KUBERNETES_CPU_LIMIT: '16'
+    KUBERNETES_MEMORY_REQUEST: 32Gi
+    KUBERNETES_MEMORY_LIMIT: 32Gi
+    KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 32Gi
+
+.size_3xlarge:
+  variables:
+    KUBERNETES_CPU_REQUEST: '32'
+    KUBERNETES_CPU_LIMIT: '32'
+    KUBERNETES_MEMORY_REQUEST: 64Gi
+    KUBERNETES_MEMORY_LIMIT: 64Gi
+    KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 64Gi
+
 # Template: Kaniko-based Docker image build
 .base_image_template:
+  extends: .size_2xlarge
   stage: base_image
   tags:
     - arch:amd64
-    - size:2xlarge
   cache: {} # This disables cache for this job
   before_script: [] # Disable global before_script
   image:
@@ -127,31 +196,33 @@ feature_merge_base_image:
 
 # Validate package configurations
 feature_validate_packages:
+  extends: .size_medium
   interruptible: true
   tags:
     - arch:amd64
-    - size:medium
   only:
     - merge_requests
   stage: prebuild
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/quality/validate_packages.sh
 
 # Lint TypeScript/JavaScript source
 feature_merge_lint:
+  extends: .size_large
   interruptible: true
   tags:
     - arch:amd64
-    - size:large
   only:
     - merge_requests
   stage: prebuild
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
     GIT_DEPTH: '0'
   script:
     - echo "Running npm_install_repo.sh script"
@@ -162,10 +233,10 @@ feature_merge_lint:
 
 # Lint Python source
 feature_merge_lint_python:
+  extends: .size_medium
   interruptible: true
   tags:
     - arch:amd64
-    - size:medium
   only:
     - merge_requests
   stage: prebuild
@@ -177,13 +248,13 @@ feature_merge_lint_python:
 # Runs independently (needs: []) so it doesn't block the build stage.
 # If it fails the pipeline fails and the MR cannot merge.
 feature_check_target:
+  extends: .size_medium
   interruptible: true
   image:
     name: alpine/git:latest
     entrypoint: [""]
   tags:
     - arch:amd64
-    - size:medium
   only:
     - merge_requests
   stage: prebuild
@@ -197,10 +268,10 @@ feature_check_target:
 
 # Scan for accidentally committed secrets
 feature_merge_git_secrets:
+  extends: .size_small
   interruptible: true
   tags:
     - arch:amd64
-    - size:small
   only:
     - merge_requests
   stage: prebuild
@@ -212,10 +283,10 @@ feature_merge_git_secrets:
 
 # Validate dependency tree after merge
 feature_validate_dependencies:
+  extends: .size_medium
   interruptible: true
   tags:
     - arch:amd64
-    - size:medium
   only:
     - merge_requests
   stage: build
@@ -227,10 +298,10 @@ feature_validate_dependencies:
 
 # Build and run TypeScript/JavaScript tests
 feature_merge_build_test:
+  extends: .size_3xlarge
   interruptible: true
   tags:
     - arch:amd64
-    - size:3xlarge
   only:
     - merge_requests
   stage: build
@@ -253,6 +324,7 @@ feature_merge_build_test:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
     GIT_DEPTH: '0'
   script:
     - ./scripts/build/npm_install_repo.sh
@@ -262,11 +334,11 @@ feature_merge_build_test:
 
 # Run Python tests (after build_test to reuse node_modules cache)
 feature_merge_python_test:
+  extends: .size_large
   interruptible: true
   stage: test
   tags:
     - arch:amd64
-    - size:large
   only:
     - merge_requests
   dependencies:
@@ -302,10 +374,10 @@ feature_merge_python_test:
 
 # Validate package-level documentation for changed packages
 feature_merge_test_package_docs:
+  extends: .size_medium
   interruptible: true
   tags:
     - arch:amd64
-    - size:medium
   only:
     - merge_requests
   stage: test
@@ -331,10 +403,10 @@ feature_merge_test_package_docs:
 # =============================================================================
 
 pages:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   only:
     refs:
       - main
@@ -373,10 +445,10 @@ pages:
 # NOTE: Integration tests are currently disabled across all pipelines.
 # To re-enable, remove the `rules: - when: never` block and uncomment the `only` block.
 .integ_test_template: &integ_test_template
+  extends: .size_3xlarge
   interruptible: true
   tags:
     - arch:amd64
-    - size:3xlarge
   # Disable integ testing, until it's deprecated
   rules:
     - when: never
@@ -404,6 +476,7 @@ feature_merge_integ_split_0:
   resource_group: integ-us-east-2
   variables:
     AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
     AWS_REGION: us-east-2
 
 # Integration test split 1 (us-west-1)
@@ -416,6 +489,7 @@ feature_merge_integ_split_1:
   resource_group: integ-us-west-1
   variables:
     AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
     AWS_REGION: us-west-1
 
 # Integration test split 2 (us-west-2)
@@ -428,16 +502,17 @@ feature_merge_integ_split_2:
   resource_group: integ-us-west-2
   variables:
     AWS_CREDS_TARGET_ROLE: '${INTEG_TESTING_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
     AWS_REGION: us-west-2
 
 # --- analyze stage ---
 
 # Run baseline review against previous release
 feature_merge_baseline_review:
+  extends: .size_medium
   interruptible: true
   tags:
     - arch:amd64
-    - size:medium
   only:
     - merge_requests
   stage: analyze
@@ -455,6 +530,7 @@ feature_merge_baseline_review:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
     GIT_DEPTH: '0'
     KIRO_API_KEY: '${KIRO_API_KEY}'
     KIRO_TIMEOUT: '600'
@@ -472,10 +548,10 @@ feature_merge_baseline_review:
 # Scan the target branch (main) to establish the SonarQube baseline so
 # that MR changes are correctly classified as "new code".
 feature_merge_sonarqube_target:
+  extends: .size_large
   interruptible: true
   tags:
     - arch:amd64
-    - size:large
   only:
     - merge_requests
   stage: prebuild
@@ -493,16 +569,17 @@ feature_merge_sonarqube_target:
   variables:
     GIT_DEPTH: '0'
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   allow_failure: false
   script:
     - ./scripts/quality/sonarqube-target-baseline.sh
 
 # Run SonarQube analysis
 feature_merge_sonarqube:
+  extends: .size_large
   interruptible: true
   tags:
     - arch:amd64
-    - size:large
   only:
     - merge_requests
   stage: analyze
@@ -537,12 +614,12 @@ feature_merge_sonarqube:
 
 # Risk assessment (currently disabled)
 feature_merge_risk_assessment:
+  extends: .size_large
   interruptible: true
   rules:
     - when: never
   tags:
     - arch:amd64
-    - size:large
   # only:
   #   - merge_requests
   stage: analyze
@@ -563,6 +640,7 @@ feature_merge_risk_assessment:
     ASSESSMENT_TIMEOUT: '300'
     BASELINE_BUCKET_REGION: 'us-east-1'
     AWS_CREDS_TARGET_ROLE: '${TESTING_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/quality/risk_assessment.sh
   artifacts:
@@ -594,10 +672,11 @@ feature_base_image:
 
 # Version bump and install dependencies
 feature_version:
-  extends: .feature_branch_template
+  extends:
+    - .feature_branch_template
+    - .size_large
   tags:
     - arch:amd64
-    - size:large
   stage: prebuild
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -619,6 +698,7 @@ feature_version:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/version_prerelease.sh
     - ./scripts/build/npm_install_repo.sh
@@ -627,10 +707,11 @@ feature_version:
 
 # Build and run TypeScript/JavaScript tests
 feature_build_test:
-  extends: .feature_branch_template
+  extends:
+    - .feature_branch_template
+    - .size_3xlarge
   tags:
     - arch:amd64
-    - size:3xlarge
   stage: build
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -661,11 +742,12 @@ feature_build_test:
 
 # Run Python tests (after build_test to reuse node_modules cache)
 feature_python_test:
-  extends: .feature_branch_template
+  extends:
+    - .feature_branch_template
+    - .size_large
   stage: test
   tags:
     - arch:amd64
-    - size:large
   dependencies:
     - feature_build_test
   needs:
@@ -698,10 +780,11 @@ feature_python_test:
 
 # Package JSII distributions
 feature_package:
-  extends: .feature_branch_template
+  extends:
+    - .feature_branch_template
+    - .size_large
   tags:
     - arch:amd64
-    - size:large
   stage: package
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -729,10 +812,11 @@ feature_package:
 
 # Publish NPM packages to prerelease CodeArtifact repo
 feature_publish_npm:
-  extends: .feature_branch_template
+  extends:
+    - .feature_branch_template
+    - .size_medium
   tags:
     - arch:amd64
-    - size:medium
   stage: prerelease_publish
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -747,15 +831,17 @@ feature_publish_npm:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
 
 # Verify published NPM packages are installable
 feature_test_published_npm:
-  extends: .feature_branch_template
+  extends:
+    - .feature_branch_template
+    - .size_medium
   tags:
     - arch:amd64
-    - size:medium
   stage: prerelease_publish
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -772,6 +858,7 @@ feature_test_published_npm:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - SNAPSHOT_VERSION=$(jq -r .version < lerna.json)
     - echo 'Testing published artifacts for version:' $SNAPSHOT_VERSION
@@ -779,10 +866,11 @@ feature_test_published_npm:
 
 # Publish Python packages to prerelease CodeArtifact repo
 feature_publish_pip:
-  extends: .feature_branch_template
+  extends:
+    - .feature_branch_template
+    - .size_medium
   tags:
     - arch:amd64
-    - size:medium
   stage: prerelease_publish
   cache:
     key: feature-build-$CI_COMMIT_SHA
@@ -797,6 +885,7 @@ feature_publish_pip:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
 
@@ -822,9 +911,9 @@ prerelease_base_image:
 
 # Version bump, secret scan, and install dependencies
 prerelease_version:
+  extends: .size_3xlarge
   tags:
     - arch:amd64
-    - size:3xlarge
   only:
     refs:
       - main
@@ -852,6 +941,7 @@ prerelease_version:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/quality/git_secrets.sh
     - ./scripts/publish/version_prerelease.sh
@@ -861,9 +951,9 @@ prerelease_version:
 
 # Build and run TypeScript/JavaScript tests
 prerelease_build_test:
+  extends: .size_3xlarge
   tags:
     - arch:amd64
-    - size:3xlarge
   only:
     refs:
       - main
@@ -903,9 +993,9 @@ prerelease_build_test:
 
 # Run baseline review against previous release
 prerelease_baseline_review:
+  extends: .size_medium
   tags:
     - arch:amd64
-    - size:medium
   only:
     refs:
       - main
@@ -937,9 +1027,9 @@ prerelease_baseline_review:
 
 # Run SonarQube analysis
 prerelease_analyze:
+  extends: .size_large
   tags:
     - arch:amd64
-    - size:large
   only:
     refs:
       - main
@@ -979,9 +1069,9 @@ prerelease_analyze:
 
 # Package JSII distributions
 prerelease_package:
+  extends: .size_large
   tags:
     - arch:amd64
-    - size:large
   only:
     refs:
       - main
@@ -1019,10 +1109,10 @@ prerelease_package:
 
 # Generate and deploy HTML documentation to GitLab Pages
 prerelease_generate_html_docs:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
@@ -1060,10 +1150,10 @@ prerelease_generate_html_docs:
 
 # Publish NPM packages to prerelease CodeArtifact repo
 prerelease_publish_npm:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: prerelease_npm
   only:
     refs:
@@ -1087,6 +1177,7 @@ prerelease_publish_npm:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - PRERELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo "Deleting existing version $PRERELEASE_VERSION from CodeArtifact for idempotency"
@@ -1095,10 +1186,10 @@ prerelease_publish_npm:
 
 # Publish Python packages to prerelease CodeArtifact repo
 prerelease_publish_pip:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: prerelease_pip
   only:
     refs:
@@ -1122,15 +1213,16 @@ prerelease_publish_pip:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
 
 # Publish packaged artifacts to S3
 prerelease_publish_s3:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: prerelease_s3
   except:
     variables:
@@ -1167,6 +1259,7 @@ prerelease_publish_s3:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/publish_s3.sh $MDAA_PRERELEASE_PACKAGE_BUCKET
 
@@ -1195,12 +1288,12 @@ release_base_image:
 
 # Version, build, test, and package the release (manual trigger)
 release_version_package:
+  extends: .size_3xlarge
   interruptible: false
   when: manual
   environment: release
   tags:
     - arch:amd64
-    - size:3xlarge
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
@@ -1234,6 +1327,7 @@ release_version_package:
   dependencies: []
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/quality/git_secrets.sh
     - ./scripts/build/npm_install_repo.sh
@@ -1245,10 +1339,10 @@ release_version_package:
 
 # Manual confirmation gate to proceed with the release
 release:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: release
   when: manual
   manual_confirmation: 'Are you sure you want to create a $VERSION_BUMP_LEVEL $RELEASE_TYPE version?'
@@ -1272,10 +1366,10 @@ release:
 
 # Publish NPM packages back to prerelease repo as 'latest'
 release_publish_npm_prerelease:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
@@ -1312,15 +1406,16 @@ release_publish_npm_prerelease:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest
 
 # Verify published NPM packages pass readiness checks
 release_npm_readiness_check:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: release_npm
   except:
     variables:
@@ -1347,6 +1442,7 @@ release_npm_readiness_check:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - RELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo 'Testing NPM readiness for version:' $RELEASE_VERSION
@@ -1356,10 +1452,10 @@ release_npm_readiness_check:
 
 # Publish NPM packages to production CodeArtifact repo
 release_publish_npm:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: release_npm
   except:
     variables:
@@ -1398,15 +1494,16 @@ release_publish_npm:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT latest
 
 # Publish Python packages to production CodeArtifact repo
 release_publish_pip:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: release_pip
   except:
     variables:
@@ -1444,15 +1541,16 @@ release_publish_pip:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/publish_pip.sh $MDAA_CODEARTIFACT_RELEASE_PIP_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT
 
 # Publish packaged artifacts to production S3 bucket
 release_publish_s3:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: release_s3
   except:
     variables:
@@ -1490,15 +1588,16 @@ release_publish_s3:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/publish_s3.sh $MDAA_RELEASE_PACKAGE_BUCKET
 
 # Generate and deploy release HTML documentation
 release_generate_html_docs:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: release_html_docs
   except:
     variables:
@@ -1540,10 +1639,10 @@ release_generate_html_docs:
 
 # Manual confirmation gate to push version changes to git
 confirm_push_to_git:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: release_git_confirmation
   when: manual
   manual_confirmation: 'Packages have been published. Do you want to push version changes to git repositories?'
@@ -1570,10 +1669,10 @@ confirm_push_to_git:
 
 # Push prerelease version changes to git
 prerelease_push_git:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: prerelease_git
   except:
     variables:
@@ -1610,15 +1709,16 @@ prerelease_push_git:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/push_git_prerelease.sh
 
 # Push release version changes and tags to git
 release_push_git:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: release_git
   except:
     variables:
@@ -1655,6 +1755,7 @@ release_push_git:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/push_git_release.sh
 
@@ -1662,10 +1763,10 @@ release_push_git:
 
 # Manual trigger to initiate rollback of published packages
 rollback_release:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: rollback_release
   when: manual
   manual_confirmation: 'This will DELETE all published packages for this version. Are you sure you want to rollback?'
@@ -1692,10 +1793,10 @@ rollback_release:
 
 # Delete prerelease packages from CodeArtifact (rollback)
 rollback_delete_prerelease_packages:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: rollback_prerelease
   except:
     variables:
@@ -1720,6 +1821,7 @@ rollback_delete_prerelease_packages:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - RELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo "Rolling back prerelease packages for version $RELEASE_VERSION"
@@ -1727,10 +1829,10 @@ rollback_delete_prerelease_packages:
 
 # Delete release packages from CodeArtifact (rollback)
 rollback_delete_release_packages:
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
-    - size:medium
   environment: rollback_release_packages
   except:
     variables:
@@ -1755,6 +1857,7 @@ rollback_delete_release_packages:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
   script:
     - RELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo "Rolling back release packages for version $RELEASE_VERSION"
@@ -1770,12 +1873,12 @@ rollback_delete_release_packages:
 
 # Build Cornerstone solution distributions (manual trigger)
 cornerstone_build_distributions:
+  extends: .size_xlarge
   interruptible: false
   when: manual
   manual_confirmation: 'This will build, package, and upload the Cornerstone distribution. Continue?'
   tags:
     - arch:amd64
-    - size:xlarge
   only:
     refs:
       - main
@@ -1809,13 +1912,14 @@ cornerstone_build_distributions:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
 
 # Package Cornerstone artifact as a zip archive
 cornerstone_package_artifact:
+  extends: .size_large
   interruptible: false
   tags:
     - arch:amd64
-    - size:large
   only:
     refs:
       - main
@@ -1867,13 +1971,14 @@ cornerstone_package_artifact:
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
+    AWS_DEFAULT_REGION: us-east-1
 
 # Upload Cornerstone artifact to S3
 cornerstone_upload:
+  extends: .size_large
   interruptible: false
   tags:
     - arch:amd64
-    - size:large
   only:
     refs:
       - main
