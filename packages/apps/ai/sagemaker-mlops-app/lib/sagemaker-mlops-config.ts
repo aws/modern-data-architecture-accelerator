@@ -6,7 +6,7 @@
 import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
 import { ModelTrainingEnvironmentConfig } from '@aws-mdaa/sagemaker-model-training-l3-construct';
 import { DeployEnvironmentConfig } from '@aws-mdaa/sagemaker-model-deploy-l3-construct';
-import { SourceType, CodeStarConnectionConfig } from '@aws-mdaa/sm-shared';
+import { SourceType, CodeStarConnectionConfig, CodeArtifactConfig } from '@aws-mdaa/sm-shared';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
@@ -38,6 +38,8 @@ export interface SageMakerMLOpsTrainingConfig {
   readonly baseJobPrefix?: string;
   /** Path to a local directory containing training data files to upload to the pipeline S3 bucket during deploy. */
   readonly trainingDataPath?: string;
+  /** Optional CodeArtifact config for pulling @aws-mdaa packages from a private repository instead of public npm. */
+  readonly codeArtifact?: CodeArtifactConfig;
 }
 
 export interface SageMakerMLOpsDeployConfig {
@@ -77,6 +79,8 @@ export interface SageMakerMLOpsDeployConfig {
   readonly codeStarConnection?: CodeStarConnectionConfig;
   /** CDK bootstrap qualifier for cross-account role ARNs */
   readonly cdkBootstrapQualifier?: string;
+  /** Optional CodeArtifact config for pulling @aws-mdaa packages from a private repository instead of public npm. */
+  readonly codeArtifact?: CodeArtifactConfig;
 }
 
 export interface SageMakerMLOpsConfigContents extends MdaaBaseConfigContents {

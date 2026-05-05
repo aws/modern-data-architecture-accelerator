@@ -60,6 +60,7 @@ export class SageMakerMLOpsApp extends MdaaCdkApp {
       codeStarConnection: config.training.codeStarConnection,
       baseJobPrefix: config.training.baseJobPrefix,
       trainingDataPath: config.training.trainingDataPath,
+      codeArtifact: config.training.codeArtifact,
     };
 
     const training = new SageMakerModelTrainingL3Construct(stack, 'training', trainingProps);
@@ -91,6 +92,7 @@ export class SageMakerMLOpsApp extends MdaaCdkApp {
       sourceType: config.deploy.sourceType,
       codeStarConnection: config.deploy.codeStarConnection,
       cdkBootstrapQualifier: config.deploy.cdkBootstrapQualifier,
+      codeArtifact: config.deploy.codeArtifact,
     };
 
     new SageMakerModelDeployL3Construct(stack, 'deploy', deployProps);

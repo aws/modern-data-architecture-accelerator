@@ -1,0 +1,32 @@
+# Config for the SageMaker MLOps module with private CodeArtifact npm registry.
+# Pulls @aws-mdaa packages from a CodeArtifact repository instead of public npm.
+# Useful for pre-release testing or air-gapped environments.
+
+training:
+  projectName: test-training-ca
+
+  seedCodePath: "../test/test-seed-code.zip"
+
+  # (Optional) Pull @aws-mdaa packages from a private CodeArtifact repository.
+  # When set, the CodeBuild project gets CodeArtifact IAM permissions
+  # and env vars so the buildspec can authenticate before npm install.
+  codeArtifact:
+    domain: mdaa
+    repository: mdaa-npm
+    region: us-east-2
+    version: "1.5.0"
+
+deploy:
+  projectName: test-deploy-ca
+
+  modelPackageGroupName: test-mpg
+  modelBucketName: test-bucket
+
+  seedCodePath: "../test/test-seed-code.zip"
+
+  # (Optional) Pull @aws-mdaa packages from a private CodeArtifact repository.
+  codeArtifact:
+    domain: mdaa
+    repository: mdaa-npm
+    region: us-east-2
+    version: "1.5.0"

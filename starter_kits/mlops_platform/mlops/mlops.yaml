@@ -57,6 +57,16 @@ training:
   # preProdAccountId: "<pre-prod-account-id>"
   # prodAccountId: "<prod-account-id>"
 
+  # Private CodeArtifact registry (optional)
+  # Pull @aws-mdaa packages from a private CodeArtifact repository instead of public npm.
+  # When set, the CodeBuild role gets CodeArtifact read permissions and the buildspec
+  # authenticates npm to the private registry before installing @aws-mdaa/cli.
+  # codeArtifact:
+  #   domain: "<codeartifact-domain>"
+  #   repository: "<codeartifact-repo>"
+  #   region: "<region>"          # optional — defaults to deployment region
+  #   version: "<semver>"         # optional — pins @aws-mdaa/cli version and default version of all the mdaa modules
+
 # ── Deployment pipeline ────────────────────────────────────────────────────
 # What it creates:
 #   - CodeCommit repository seeded with endpoint + monitoring MDAA configs
@@ -111,6 +121,13 @@ deploy:
     vpcId: "{{context:vpc_id}}"
     subnetIds: "{{context:subnet_ids}}"
     securityGroupIds: "{{context:security_group_ids}}"
+
+  # Private CodeArtifact registry (optional — same as training.codeArtifact)
+  # codeArtifact:
+  #   domain: "<codeartifact-domain>"
+  #   repository: "<codeartifact-repo>"
+  #   region: "<region>"
+  #   version: "<semver>"
 
   # Cross-account deployment (optional)
   # When configured, the deploy pipeline adds PreProd and Prod stages.

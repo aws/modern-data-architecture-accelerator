@@ -38,6 +38,8 @@ import {
   validateAccountId,
   SourceType,
   CodeStarConnectionConfig,
+  CodeArtifactConfig,
+  addCodeArtifactReadPolicy,
 } from '@aws-mdaa/sm-shared';
 
 const MAX_REPO_NAME_LENGTH = 100;
@@ -94,6 +96,8 @@ export interface SageMakerModelDeployL3ConstructProps extends MdaaL3ConstructPro
   readonly codeStarConnection?: CodeStarConnectionConfig;
   /** CDK bootstrap qualifier for cross-account role ARNs (default: 'hnb659fds') */
   readonly cdkBootstrapQualifier?: string;
+  /** Optional CodeArtifact config for pulling @aws-mdaa packages from a private repository instead of public npm. */
+  readonly codeArtifact?: CodeArtifactConfig;
 }
 
 /**
@@ -419,6 +423,15 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
         resources: [`arn:${Aws.PARTITION}:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/${props.naming.props.org}/*`],
       }),
     );
+
+    if (props.codeArtifact) {
+      addCodeArtifactReadPolicy(
+        this.codeBuildRole,
+        props.codeArtifact.domain,
+        props.codeArtifact.repository,
+        props.codeArtifact.region,
+      );
+    }
   }
 
   private addDeployEnvVars(
@@ -477,6 +490,15 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
     }
     if (props.preProdEnvironment) this.addDeployEnvVars(envVars, 'PRE_PROD', props.preProdEnvironment);
     if (props.prodEnvironment) this.addDeployEnvVars(envVars, 'PROD', props.prodEnvironment);
+
+    if (props.codeArtifact) {
+      envVars['MDAA_CODEARTIFACT_DOMAIN'] = { value: props.codeArtifact.domain };
+      envVars['MDAA_CODEARTIFACT_REPO'] = { value: props.codeArtifact.repository };
+      envVars['MDAA_CODEARTIFACT_REGION'] = { value: props.codeArtifact.region ?? Aws.REGION };
+      if (props.codeArtifact.version) {
+        envVars['MDAA_VERSION'] = { value: props.codeArtifact.version };
+      }
+    }
 
     let repoName: string;
     let codeCommitRepo: Repository | undefined;

@@ -90,6 +90,23 @@ starter_kits/mlops_platform/
 6. Model is auto-approved and EventBridge triggers the deploy pipeline automatically
 7. After first endpoint is deployed, the monitoring schedule starts automatically (configured in `seed_code/deploy/mdaa-config/monitoring.yaml`)
 
+## Updating Seed Code After Initial Deployment
+
+Seed code (`seed_code/training/`, `seed_code/deploy/`, `seed_code/batch_inference/`) is pushed to CodeCommit only during the initial `mdaa deploy` when the repositories are first created. Subsequent deploys do not update the CodeCommit repos — CloudFormation skips initial code on existing repositories.
+
+If you modify any seed code file (e.g., `buildspec.yml`, MDAA configs, ML scripts), you must push the changes to CodeCommit manually:
+
+```bash
+# Example: update the training buildspec
+aws codecommit put-file \
+  --repository-name "<training-repo-name>" \
+  --branch-name main \
+  --file-path "buildspec.yml" \
+  --file-content fileb://seed_code/training/buildspec.yml \
+  --parent-commit-id "$(aws codecommit get-branch --repository-name <training-repo-name> --branch-name main --query 'branch.commitId' --output text)" \
+  --commit-message "update buildspec"
+```
+
 ## Environment Variables
 
 The L3 constructs pass these environment variables to CodeBuild, which are resolved by MDAA's `{{env_var:...}}` syntax:

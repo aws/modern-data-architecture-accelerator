@@ -3,7 +3,18 @@ version: 0.2
 phases:
   install:
     commands:
-      - npm install -g @aws-mdaa/cli
+      # If CodeArtifact is configured, authenticate npm to the private registry before install.
+      # MDAA_CODEARTIFACT_DOMAIN is set by the L3 construct when codeArtifact config is present.
+      - |
+        if [ -n "${MDAA_CODEARTIFACT_DOMAIN:-}" ]; then
+          echo "Logging in to CodeArtifact: ${MDAA_CODEARTIFACT_DOMAIN}/${MDAA_CODEARTIFACT_REPO} (${MDAA_CODEARTIFACT_REGION})"
+          aws codeartifact login --tool npm \
+            --domain "${MDAA_CODEARTIFACT_DOMAIN}" \
+            --repository "${MDAA_CODEARTIFACT_REPO}" \
+            --region "${MDAA_CODEARTIFACT_REGION}" \
+            --namespace '@aws-mdaa'
+        fi
+      - npm install -g @aws-mdaa/cli${MDAA_VERSION:+@${MDAA_VERSION}}
 
   build:
     commands:
@@ -33,7 +44,7 @@ phases:
         print(image_uris.retrieve('xgboost', '${AWS_REGION}', version='3.0-5').split('.')[0])
         " 2>/dev/null | tail -1)
         echo "SageMaker image registry: ${SAGEMAKER_IMAGE_REGISTRY}"
-        cd mdaa-config && mdaa deploy && cd ..
+        cd mdaa-config && mdaa deploy${MDAA_VERSION:+ -u "${MDAA_VERSION}"} && cd ..
 
       # Read pipeline name from SSM (created by mdaa deploy above)
       # PIPELINE_BUCKET_NAME and PIPELINE_KMS_ARN are set as CodeBuild env vars by the core stack.

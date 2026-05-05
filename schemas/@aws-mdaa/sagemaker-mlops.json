@@ -409,6 +409,34 @@
             },
             "type": "object"
         },
+        "CodeArtifactConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for pulling",
+            "properties": {
+                "domain": {
+                    "description": "CodeArtifact domain name that owns the repository.\n\nUse cases: Identifies the CodeArtifact domain for authentication and endpoint resolution\n\nAWS: CodeArtifact domain (codeartifact:GetAuthorizationToken)\n\nValidation: Required; string",
+                    "type": "string"
+                },
+                "region": {
+                    "default": "deployment region",
+                    "description": "AWS region where the CodeArtifact domain is hosted.\n\nUse cases: Cross-region CodeArtifact access when the registry is in a different region than the deployment\n\nAWS: CodeArtifact region for API calls\n\nValidation: Optional; defaults to the deployment region (AWS_REGION)",
+                    "type": "string"
+                },
+                "repository": {
+                    "description": "CodeArtifact repository name within the domain.\n\nUse cases: Identifies the specific npm repository to pull packages from\n\nAWS: CodeArtifact repository (codeartifact:ReadFromRepository)\n\nValidation: Required; string",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Pin",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "domain",
+                "repository"
+            ],
+            "type": "object"
+        },
         "CodeStarConnectionConfig": {
             "additionalProperties": false,
             "description": "Configuration for external repository sources (GitHub, GitLab, Bitbucket)\nvia AWS CodeStar Connections / CodeConnections.\n\nRequired when sourceType is 'CODESTAR_CONNECTIONS'.",
@@ -2430,6 +2458,10 @@
                     "description": "CDK bootstrap qualifier for cross-account role ARNs",
                     "type": "string"
                 },
+                "codeArtifact": {
+                    "$ref": "#/definitions/CodeArtifactConfig",
+                    "description": "Optional CodeArtifact config for pulling"
+                },
                 "codeStarConnection": {
                     "$ref": "#/definitions/CodeStarConnectionConfig",
                     "description": "CodeStar Connections config for the deploy repo"
@@ -2514,6 +2546,10 @@
                 "baseJobPrefix": {
                     "description": "Prefix used by seed code when naming SageMaker jobs (default: projectName). Used to scope IAM resource ARNs.",
                     "type": "string"
+                },
+                "codeArtifact": {
+                    "$ref": "#/definitions/CodeArtifactConfig",
+                    "description": "Optional CodeArtifact config for pulling"
                 },
                 "codeStarConnection": {
                     "$ref": "#/definitions/CodeStarConnectionConfig",

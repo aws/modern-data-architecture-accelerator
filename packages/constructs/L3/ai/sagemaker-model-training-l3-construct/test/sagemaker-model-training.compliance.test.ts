@@ -364,4 +364,81 @@ describe('SageMaker Model Training L3 Construct', () => {
       }).toThrow('seedCodePath is required when sourceType is CODECOMMIT');
     });
   });
+
+  describe('CodeArtifact npm Registry', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    new SageMakerModelTrainingL3Construct(stack, 'model-training-ca', {
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      projectName: 'test-ca',
+      seedCodePath: __dirname + '/test-seed-code.zip',
+      codeArtifact: {
+        domain: 'mdaa',
+        repository: 'mdaa-npm',
+        region: 'us-east-2',
+        version: '1.5.0',
+      },
+    });
+    testApp.checkCdkNagCompliance(stack);
+    const template = Template.fromStack(stack);
+
+    test('CodeBuild has CodeArtifact env vars', () => {
+      template.hasResourceProperties('AWS::CodeBuild::Project', {
+        Environment: Match.objectLike({
+          EnvironmentVariables: Match.arrayWith([
+            Match.objectLike({ Name: 'MDAA_CODEARTIFACT_DOMAIN', Value: 'mdaa' }),
+            Match.objectLike({ Name: 'MDAA_CODEARTIFACT_REPO', Value: 'mdaa-npm' }),
+            Match.objectLike({ Name: 'MDAA_CODEARTIFACT_REGION', Value: 'us-east-2' }),
+            Match.objectLike({ Name: 'MDAA_VERSION', Value: '1.5.0' }),
+          ]),
+        }),
+      });
+    });
+
+    test('CodeBuild role has CodeArtifact permissions', () => {
+      template.hasResourceProperties(
+        'AWS::IAM::Policy',
+        Match.objectLike({
+          PolicyDocument: Match.objectLike({
+            Statement: Match.arrayWith([
+              Match.objectLike({
+                Action: 'codeartifact:GetAuthorizationToken',
+              }),
+            ]),
+          }),
+        }),
+      );
+      template.hasResourceProperties(
+        'AWS::IAM::Policy',
+        Match.objectLike({
+          PolicyDocument: Match.objectLike({
+            Statement: Match.arrayWith([
+              Match.objectLike({
+                Action: Match.arrayWith(['codeartifact:GetRepositoryEndpoint', 'codeartifact:ReadFromRepository']),
+              }),
+            ]),
+          }),
+        }),
+      );
+    });
+
+    test('CodeBuild role has sts:GetServiceBearerToken for CodeArtifact', () => {
+      template.hasResourceProperties(
+        'AWS::IAM::Policy',
+        Match.objectLike({
+          PolicyDocument: Match.objectLike({
+            Statement: Match.arrayWith([
+              Match.objectLike({
+                Action: 'sts:GetServiceBearerToken',
+                Condition: Match.objectLike({
+                  StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' },
+                }),
+              }),
+            ]),
+          }),
+        }),
+      );
+    });
+  });
 });

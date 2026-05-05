@@ -31,10 +31,12 @@ import {
   validateConnectionArn,
   SourceType,
   CodeStarConnectionConfig,
+  CodeArtifactConfig,
   SAGEMAKER_TAG_ACTIONS,
   addCrossAccountKmsPolicy,
   addPipelineSourceStage,
   addBuildProjectNagSuppressions,
+  addCodeArtifactReadPolicy,
 } from '@aws-mdaa/sm-shared';
 
 const MAX_MODEL_PACKAGE_GROUP_NAME_LENGTH = 63;
@@ -83,6 +85,8 @@ export interface SageMakerModelTrainingL3ConstructProps extends MdaaL3ConstructP
    * This avoids routing datasets through CodeCommit. For datasets larger than ~500MB,
    * upload directly to S3 and override the InputDataUrl pipeline parameter instead. */
   readonly trainingDataPath?: string;
+  /** Optional CodeArtifact config for pulling @aws-mdaa packages from a private repository instead of public npm. */
+  readonly codeArtifact?: CodeArtifactConfig;
 }
 
 /**
@@ -483,6 +487,15 @@ export class SageMakerModelTrainingL3Construct extends MdaaL3Construct {
         ],
       }),
     );
+
+    if (props.codeArtifact) {
+      addCodeArtifactReadPolicy(
+        this.codeBuildRole,
+        props.codeArtifact.domain,
+        props.codeArtifact.repository,
+        props.codeArtifact.region,
+      );
+    }
   }
 
   private createPipeline(): { pipeline: Pipeline; buildProject: PipelineProject; repoName: string } {
@@ -517,6 +530,14 @@ export class SageMakerModelTrainingL3Construct extends MdaaL3Construct {
           PIPELINE_KMS_ARN: { value: this.kmsKey.keyArn },
           ...(props.preProdAccountId ? { PRE_PROD_ACCOUNT_ID: { value: props.preProdAccountId } } : {}),
           ...(props.prodAccountId ? { PROD_ACCOUNT_ID: { value: props.prodAccountId } } : {}),
+          ...(props.codeArtifact
+            ? {
+                MDAA_CODEARTIFACT_DOMAIN: { value: props.codeArtifact.domain },
+                MDAA_CODEARTIFACT_REPO: { value: props.codeArtifact.repository },
+                MDAA_CODEARTIFACT_REGION: { value: props.codeArtifact.region ?? Aws.REGION },
+                ...(props.codeArtifact.version ? { MDAA_VERSION: { value: props.codeArtifact.version } } : {}),
+              }
+            : {}),
         },
       },
       encryptionKey: this.kmsKey,

@@ -6,7 +6,18 @@ version: 0.2
 phases:
   install:
     commands:
-      - npm install -g @aws-mdaa/cli
+      # If CodeArtifact is configured, authenticate npm to the private registry before install.
+      # MDAA_CODEARTIFACT_DOMAIN is set by the L3 construct when codeArtifact config is present.
+      - |
+        if [ -n "${MDAA_CODEARTIFACT_DOMAIN:-}" ]; then
+          echo "Logging in to CodeArtifact: ${MDAA_CODEARTIFACT_DOMAIN}/${MDAA_CODEARTIFACT_REPO} (${MDAA_CODEARTIFACT_REGION})"
+          aws codeartifact login --tool npm \
+            --domain "${MDAA_CODEARTIFACT_DOMAIN}" \
+            --repository "${MDAA_CODEARTIFACT_REPO}" \
+            --region "${MDAA_CODEARTIFACT_REGION}" \
+            --namespace '@aws-mdaa'
+        fi
+      - npm install -g @aws-mdaa/cli${MDAA_VERSION:+@${MDAA_VERSION}}
 
   pre_build:
     commands:
@@ -113,7 +124,7 @@ phases:
 
       # Deploy endpoint (using per-stage domain: deploy-<stage>)
       - echo "=== Deploying ${DEPLOY_STAGE} endpoint ==="
-      - cd mdaa-config && mdaa deploy -c ./mdaa-endpoint.yaml -d deploy-${DEPLOY_STAGE} && cd ..
+      - cd mdaa-config && mdaa deploy${MDAA_VERSION:+ -u "${MDAA_VERSION}"} -c ./mdaa-endpoint.yaml -d deploy-${DEPLOY_STAGE} && cd ..
 
       # Resolve the endpoint name for the monitoring config.
       # Same-account (dev): SSM param is readable — use it directly.
@@ -144,5 +155,5 @@ phases:
         " 2>/dev/null | tail -1)
         echo "SageMaker monitor registry: ${SAGEMAKER_MONITOR_REGISTRY}"
         echo "=== Deploying ${DEPLOY_STAGE} monitoring ==="
-        cd mdaa-config && mdaa deploy -c ./mdaa-monitoring.yaml -d deploy-${DEPLOY_STAGE} && cd ..
+        cd mdaa-config && mdaa deploy${MDAA_VERSION:+ -u "${MDAA_VERSION}"} -c ./mdaa-monitoring.yaml -d deploy-${DEPLOY_STAGE} && cd ..
       - echo "=== ${DEPLOY_STAGE} stage complete ==="

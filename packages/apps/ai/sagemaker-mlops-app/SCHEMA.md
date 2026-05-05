@@ -28,6 +28,7 @@
 | Property                                                        | Pattern | Type             | Deprecated | Definition                                        | Title/Description                                                                             |
 | --------------------------------------------------------------- | ------- | ---------------- | ---------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | - [cdkBootstrapQualifier](#deploy_cdkBootstrapQualifier )       | No      | string           | No         | -                                                 | CDK bootstrap qualifier for cross-account role ARNs                                           |
+| - [codeArtifact](#deploy_codeArtifact )                         | No      | object           | No         | In #/definitions/CodeArtifactConfig               | Optional CodeArtifact config for pulling                                                      |
 | - [codeStarConnection](#deploy_codeStarConnection )             | No      | object           | No         | In #/definitions/CodeStarConnectionConfig         | CodeStar Connections config for the deploy repo                                               |
 | - [devEnvironment](#deploy_devEnvironment )                     | No      | object           | No         | In #/definitions/DeployEnvironmentConfig          | Dev environment config                                                                        |
 | - [domainArn](#deploy_domainArn )                               | No      | string           | No         | -                                                 | SageMaker domain ARN                                                                          |
@@ -55,7 +56,80 @@
 
 **Description:** CDK bootstrap qualifier for cross-account role ARNs
 
-### <a name="deploy_codeStarConnection"></a>1.2. Property `root > deploy > codeStarConnection`
+### <a name="deploy_codeArtifact"></a>1.2. Property `root > deploy > codeArtifact`
+
+|                           |                                  |
+| ------------------------- | -------------------------------- |
+| **Type**                  | `object`                         |
+| **Required**              | No                               |
+| **Additional properties** | Not allowed                      |
+| **Defined in**            | #/definitions/CodeArtifactConfig |
+
+**Description:** Optional CodeArtifact config for pulling
+
+| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [domain](#deploy_codeArtifact_domain )         | No      | string | No         | -          | CodeArtifact domain name that owns the repository.<br /><br />Use cases: Identifies the CodeArtifact domain for authentication and endpoint resolution<br /><br />AWS: CodeArtifact domain (codeartifact:GetAuthorizationToken)<br /><br />Validation: Required; string                                     |
+| - [region](#deploy_codeArtifact_region )         | No      | string | No         | -          | AWS region where the CodeArtifact domain is hosted.<br /><br />Use cases: Cross-region CodeArtifact access when the registry is in a different region than the deployment<br /><br />AWS: CodeArtifact region for API calls<br /><br />Validation: Optional; defaults to the deployment region (AWS_REGION) |
+| + [repository](#deploy_codeArtifact_repository ) | No      | string | No         | -          | CodeArtifact repository name within the domain.<br /><br />Use cases: Identifies the specific npm repository to pull packages from<br /><br />AWS: CodeArtifact repository (codeartifact:ReadFromRepository)<br /><br />Validation: Required; string                                                        |
+| - [version](#deploy_codeArtifact_version )       | No      | string | No         | -          | Pin                                                                                                                                                                                                                                                                                                         |
+
+#### <a name="deploy_codeArtifact_domain"></a>1.2.1. Property `root > deploy > codeArtifact > domain`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** CodeArtifact domain name that owns the repository.
+
+Use cases: Identifies the CodeArtifact domain for authentication and endpoint resolution
+
+AWS: CodeArtifact domain (codeartifact:GetAuthorizationToken)
+
+Validation: Required; string
+
+#### <a name="deploy_codeArtifact_region"></a>1.2.2. Property `root > deploy > codeArtifact > region`
+
+|              |                       |
+| ------------ | --------------------- |
+| **Type**     | `string`              |
+| **Required** | No                    |
+| **Default**  | `"deployment region"` |
+
+**Description:** AWS region where the CodeArtifact domain is hosted.
+
+Use cases: Cross-region CodeArtifact access when the registry is in a different region than the deployment
+
+AWS: CodeArtifact region for API calls
+
+Validation: Optional; defaults to the deployment region (AWS_REGION)
+
+#### <a name="deploy_codeArtifact_repository"></a>1.2.3. Property `root > deploy > codeArtifact > repository`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** CodeArtifact repository name within the domain.
+
+Use cases: Identifies the specific npm repository to pull packages from
+
+AWS: CodeArtifact repository (codeartifact:ReadFromRepository)
+
+Validation: Required; string
+
+#### <a name="deploy_codeArtifact_version"></a>1.2.4. Property `root > deploy > codeArtifact > version`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Pin
+
+### <a name="deploy_codeStarConnection"></a>1.3. Property `root > deploy > codeStarConnection`
 
 |                           |                                        |
 | ------------------------- | -------------------------------------- |
@@ -73,7 +147,7 @@
 | + [owner](#deploy_codeStarConnection_owner )                 | No      | string | No         | -          | Repository owner (GitHub org or user, Bitbucket workspace)             |
 | + [repo](#deploy_codeStarConnection_repo )                   | No      | string | No         | -          | Repository name (without owner prefix)                                 |
 
-#### <a name="deploy_codeStarConnection_branch"></a>1.2.1. Property `root > deploy > codeStarConnection > branch`
+#### <a name="deploy_codeStarConnection_branch"></a>1.3.1. Property `root > deploy > codeStarConnection > branch`
 
 |              |          |
 | ------------ | -------- |
@@ -82,7 +156,7 @@
 
 **Description:** Branch to track (default: 'main')
 
-#### <a name="deploy_codeStarConnection_connectionArn"></a>1.2.2. Property `root > deploy > codeStarConnection > connectionArn`
+#### <a name="deploy_codeStarConnection_connectionArn"></a>1.3.2. Property `root > deploy > codeStarConnection > connectionArn`
 
 |              |          |
 | ------------ | -------- |
@@ -91,7 +165,7 @@
 
 **Description:** ARN of the AWS CodeStar Connection (created in AWS Console or via CLI)
 
-#### <a name="deploy_codeStarConnection_owner"></a>1.2.3. Property `root > deploy > codeStarConnection > owner`
+#### <a name="deploy_codeStarConnection_owner"></a>1.3.3. Property `root > deploy > codeStarConnection > owner`
 
 |              |          |
 | ------------ | -------- |
@@ -100,7 +174,7 @@
 
 **Description:** Repository owner (GitHub org or user, Bitbucket workspace)
 
-#### <a name="deploy_codeStarConnection_repo"></a>1.2.4. Property `root > deploy > codeStarConnection > repo`
+#### <a name="deploy_codeStarConnection_repo"></a>1.3.4. Property `root > deploy > codeStarConnection > repo`
 
 |              |          |
 | ------------ | -------- |
@@ -109,7 +183,7 @@
 
 **Description:** Repository name (without owner prefix)
 
-### <a name="deploy_devEnvironment"></a>1.3. Property `root > deploy > devEnvironment`
+### <a name="deploy_devEnvironment"></a>1.4. Property `root > deploy > devEnvironment`
 
 |                           |                                       |
 | ------------------------- | ------------------------------------- |
@@ -128,7 +202,7 @@
 | - [subnetIds](#deploy_devEnvironment_subnetIds )               | No      | array of string | No         | -          | Subnet IDs for endpoint deployment — optional regardless of environment                                       |
 | - [vpcId](#deploy_devEnvironment_vpcId )                       | No      | string          | No         | -          | VPC ID for endpoint deployment — optional regardless of environment                                           |
 
-#### <a name="deploy_devEnvironment_accountId"></a>1.3.1. Property `root > deploy > devEnvironment > accountId`
+#### <a name="deploy_devEnvironment_accountId"></a>1.4.1. Property `root > deploy > devEnvironment > accountId`
 
 |              |          |
 | ------------ | -------- |
@@ -137,7 +211,7 @@
 
 **Description:** AWS account ID — required for cross-account deployment (preProd/prod), ignored for dev (uses current account)
 
-#### <a name="deploy_devEnvironment_region"></a>1.3.2. Property `root > deploy > devEnvironment > region`
+#### <a name="deploy_devEnvironment_region"></a>1.4.2. Property `root > deploy > devEnvironment > region`
 
 |              |          |
 | ------------ | -------- |
@@ -146,7 +220,7 @@
 
 **Description:** AWS region — required for cross-account deployment (preProd/prod), ignored for dev (uses current region)
 
-#### <a name="deploy_devEnvironment_securityGroupIds"></a>1.3.3. Property `root > deploy > devEnvironment > securityGroupIds`
+#### <a name="deploy_devEnvironment_securityGroupIds"></a>1.4.3. Property `root > deploy > devEnvironment > securityGroupIds`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -167,14 +241,14 @@
 | ----------------------------------------------------------------------- | ----------- |
 | [securityGroupIds items](#deploy_devEnvironment_securityGroupIds_items) | -           |
 
-##### <a name="deploy_devEnvironment_securityGroupIds_items"></a>1.3.3.1. root > deploy > devEnvironment > securityGroupIds > securityGroupIds items
+##### <a name="deploy_devEnvironment_securityGroupIds_items"></a>1.4.3.1. root > deploy > devEnvironment > securityGroupIds > securityGroupIds items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="deploy_devEnvironment_subnetIds"></a>1.3.4. Property `root > deploy > devEnvironment > subnetIds`
+#### <a name="deploy_devEnvironment_subnetIds"></a>1.4.4. Property `root > deploy > devEnvironment > subnetIds`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -195,14 +269,14 @@
 | --------------------------------------------------------- | ----------- |
 | [subnetIds items](#deploy_devEnvironment_subnetIds_items) | -           |
 
-##### <a name="deploy_devEnvironment_subnetIds_items"></a>1.3.4.1. root > deploy > devEnvironment > subnetIds > subnetIds items
+##### <a name="deploy_devEnvironment_subnetIds_items"></a>1.4.4.1. root > deploy > devEnvironment > subnetIds > subnetIds items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="deploy_devEnvironment_vpcId"></a>1.3.5. Property `root > deploy > devEnvironment > vpcId`
+#### <a name="deploy_devEnvironment_vpcId"></a>1.4.5. Property `root > deploy > devEnvironment > vpcId`
 
 |              |          |
 | ------------ | -------- |
@@ -211,7 +285,7 @@
 
 **Description:** VPC ID for endpoint deployment — optional regardless of environment
 
-### <a name="deploy_domainArn"></a>1.4. Property `root > deploy > domainArn`
+### <a name="deploy_domainArn"></a>1.5. Property `root > deploy > domainArn`
 
 |              |          |
 | ------------ | -------- |
@@ -220,7 +294,7 @@
 
 **Description:** SageMaker domain ARN
 
-### <a name="deploy_domainId"></a>1.5. Property `root > deploy > domainId`
+### <a name="deploy_domainId"></a>1.6. Property `root > deploy > domainId`
 
 |              |          |
 | ------------ | -------- |
@@ -229,7 +303,7 @@
 
 **Description:** SageMaker domain ID
 
-### <a name="deploy_enableDataCapture"></a>1.6. Property `root > deploy > enableDataCapture`
+### <a name="deploy_enableDataCapture"></a>1.7. Property `root > deploy > enableDataCapture`
 
 |              |           |
 | ------------ | --------- |
@@ -238,7 +312,7 @@
 
 **Description:** Enable data capture on deployed endpoints
 
-### <a name="deploy_enableEventBridgeTrigger"></a>1.7. Property `root > deploy > enableEventBridgeTrigger`
+### <a name="deploy_enableEventBridgeTrigger"></a>1.8. Property `root > deploy > enableEventBridgeTrigger`
 
 |              |           |
 | ------------ | --------- |
@@ -247,7 +321,7 @@
 
 **Description:** Enable EventBridge trigger on model package approval
 
-### <a name="deploy_enableManualApproval"></a>1.8. Property `root > deploy > enableManualApproval`
+### <a name="deploy_enableManualApproval"></a>1.9. Property `root > deploy > enableManualApproval`
 
 |              |           |
 | ------------ | --------- |
@@ -256,7 +330,7 @@
 
 **Description:** Enable manual approval gate before production deployment
 
-### <a name="deploy_enableNetworkIsolation"></a>1.9. Property `root > deploy > enableNetworkIsolation`
+### <a name="deploy_enableNetworkIsolation"></a>1.10. Property `root > deploy > enableNetworkIsolation`
 
 |              |           |
 | ------------ | --------- |
@@ -265,7 +339,7 @@
 
 **Description:** Enable network isolation for endpoints
 
-### <a name="deploy_modelBucketName"></a>1.10. Property `root > deploy > modelBucketName`
+### <a name="deploy_modelBucketName"></a>1.11. Property `root > deploy > modelBucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -274,7 +348,7 @@
 
 **Description:** Model bucket name (optional — auto-wired from training when both are in same app)
 
-### <a name="deploy_modelPackageGroupName"></a>1.11. Property `root > deploy > modelPackageGroupName`
+### <a name="deploy_modelPackageGroupName"></a>1.12. Property `root > deploy > modelPackageGroupName`
 
 |              |          |
 | ------------ | -------- |
@@ -283,7 +357,7 @@
 
 **Description:** Model Package Group name (optional — auto-wired from training when both are in same app)
 
-### <a name="deploy_pipelineBucketName"></a>1.12. Property `root > deploy > pipelineBucketName`
+### <a name="deploy_pipelineBucketName"></a>1.13. Property `root > deploy > pipelineBucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -292,7 +366,7 @@
 
 **Description:** Pipeline bucket name for CfnPipeline-based training (model artifacts may live here)
 
-### <a name="deploy_pipelineKmsKeyArn"></a>1.13. Property `root > deploy > pipelineKmsKeyArn`
+### <a name="deploy_pipelineKmsKeyArn"></a>1.14. Property `root > deploy > pipelineKmsKeyArn`
 
 |              |          |
 | ------------ | -------- |
@@ -301,7 +375,7 @@
 
 **Description:** KMS key ARN for pipeline bucket encryption (passed to endpoint execution role for decryption)
 
-### <a name="deploy_preProdEnvironment"></a>1.14. Property `root > deploy > preProdEnvironment`
+### <a name="deploy_preProdEnvironment"></a>1.15. Property `root > deploy > preProdEnvironment`
 
 |                           |                                          |
 | ------------------------- | ---------------------------------------- |
@@ -312,7 +386,7 @@
 
 **Description:** Pre-prod environment config
 
-### <a name="deploy_prodEnvironment"></a>1.15. Property `root > deploy > prodEnvironment`
+### <a name="deploy_prodEnvironment"></a>1.16. Property `root > deploy > prodEnvironment`
 
 |                           |                                          |
 | ------------------------- | ---------------------------------------- |
@@ -323,7 +397,7 @@
 
 **Description:** Prod environment config
 
-### <a name="deploy_projectName"></a>1.16. Property `root > deploy > projectName`
+### <a name="deploy_projectName"></a>1.17. Property `root > deploy > projectName`
 
 |              |          |
 | ------------ | -------- |
@@ -332,7 +406,7 @@
 
 **Description:** SageMaker project name for deployment
 
-### <a name="deploy_seedCodePath"></a>1.17. Property `root > deploy > seedCodePath`
+### <a name="deploy_seedCodePath"></a>1.18. Property `root > deploy > seedCodePath`
 
 |              |          |
 | ------------ | -------- |
@@ -341,7 +415,7 @@
 
 **Description:** Path to deploy seed code directory or zip file
 
-### <a name="deploy_sourceType"></a>1.18. Property `root > deploy > sourceType`
+### <a name="deploy_sourceType"></a>1.19. Property `root > deploy > sourceType`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7277,6 +7351,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | Property                                                                      | Pattern | Type             | Deprecated | Definition                                                | Title/Description                                                                                            |
 | ----------------------------------------------------------------------------- | ------- | ---------------- | ---------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | - [baseJobPrefix](#training_baseJobPrefix )                                   | No      | string           | No         | -                                                         | Prefix used by seed code when naming SageMaker jobs (default: projectName). Used to scope IAM resource ARNs. |
+| - [codeArtifact](#training_codeArtifact )                                     | No      | object           | No         | Same as [codeArtifact](#deploy_codeArtifact )             | Optional CodeArtifact config for pulling                                                                     |
 | - [codeStarConnection](#training_codeStarConnection )                         | No      | object           | No         | Same as [codeStarConnection](#deploy_codeStarConnection ) | CodeStar Connections config for the training repo                                                            |
 | - [devEnvironment](#training_devEnvironment )                                 | No      | object           | No         | In #/definitions/ModelTrainingEnvironmentConfig           | Dev environment config (VPC, subnets, security groups)                                                       |
 | - [domainArn](#training_domainArn )                                           | No      | string           | No         | -                                                         | SageMaker domain ARN (SSM reference from sm-studio-domain-app)                                               |
@@ -7299,7 +7374,18 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Prefix used by seed code when naming SageMaker jobs (default: projectName). Used to scope IAM resource ARNs.
 
-### <a name="training_codeStarConnection"></a>5.2. Property `root > training > codeStarConnection`
+### <a name="training_codeArtifact"></a>5.2. Property `root > training > codeArtifact`
+
+|                           |                                      |
+| ------------------------- | ------------------------------------ |
+| **Type**                  | `object`                             |
+| **Required**              | No                                   |
+| **Additional properties** | Not allowed                          |
+| **Same definition as**    | [codeArtifact](#deploy_codeArtifact) |
+
+**Description:** Optional CodeArtifact config for pulling
+
+### <a name="training_codeStarConnection"></a>5.3. Property `root > training > codeStarConnection`
 
 |                           |                                                  |
 | ------------------------- | ------------------------------------------------ |
@@ -7310,7 +7396,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** CodeStar Connections config for the training repo
 
-### <a name="training_devEnvironment"></a>5.3. Property `root > training > devEnvironment`
+### <a name="training_devEnvironment"></a>5.4. Property `root > training > devEnvironment`
 
 |                           |                                              |
 | ------------------------- | -------------------------------------------- |
@@ -7327,7 +7413,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | - [subnetIds](#training_devEnvironment_subnetIds )               | No      | array of string | No         | -          | Subnet IDs for SageMaker training jobs         |
 | - [vpcId](#training_devEnvironment_vpcId )                       | No      | string          | No         | -          | VPC ID for SageMaker training jobs             |
 
-#### <a name="training_devEnvironment_securityGroupIds"></a>5.3.1. Property `root > training > devEnvironment > securityGroupIds`
+#### <a name="training_devEnvironment_securityGroupIds"></a>5.4.1. Property `root > training > devEnvironment > securityGroupIds`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -7348,14 +7434,14 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | ------------------------------------------------------------------------- | ----------- |
 | [securityGroupIds items](#training_devEnvironment_securityGroupIds_items) | -           |
 
-##### <a name="training_devEnvironment_securityGroupIds_items"></a>5.3.1.1. root > training > devEnvironment > securityGroupIds > securityGroupIds items
+##### <a name="training_devEnvironment_securityGroupIds_items"></a>5.4.1.1. root > training > devEnvironment > securityGroupIds > securityGroupIds items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="training_devEnvironment_subnetIds"></a>5.3.2. Property `root > training > devEnvironment > subnetIds`
+#### <a name="training_devEnvironment_subnetIds"></a>5.4.2. Property `root > training > devEnvironment > subnetIds`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -7376,14 +7462,14 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | ----------------------------------------------------------- | ----------- |
 | [subnetIds items](#training_devEnvironment_subnetIds_items) | -           |
 
-##### <a name="training_devEnvironment_subnetIds_items"></a>5.3.2.1. root > training > devEnvironment > subnetIds > subnetIds items
+##### <a name="training_devEnvironment_subnetIds_items"></a>5.4.2.1. root > training > devEnvironment > subnetIds > subnetIds items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="training_devEnvironment_vpcId"></a>5.3.3. Property `root > training > devEnvironment > vpcId`
+#### <a name="training_devEnvironment_vpcId"></a>5.4.3. Property `root > training > devEnvironment > vpcId`
 
 |              |          |
 | ------------ | -------- |
@@ -7392,7 +7478,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** VPC ID for SageMaker training jobs
 
-### <a name="training_domainArn"></a>5.4. Property `root > training > domainArn`
+### <a name="training_domainArn"></a>5.5. Property `root > training > domainArn`
 
 |              |          |
 | ------------ | -------- |
@@ -7401,7 +7487,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** SageMaker domain ARN (SSM reference from sm-studio-domain-app)
 
-### <a name="training_domainId"></a>5.5. Property `root > training > domainId`
+### <a name="training_domainId"></a>5.6. Property `root > training > domainId`
 
 |              |          |
 | ------------ | -------- |
@@ -7410,7 +7496,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** SageMaker domain ID (SSM reference from sm-studio-domain-app)
 
-### <a name="training_enableInterContainerEncryption"></a>5.6. Property `root > training > enableInterContainerEncryption`
+### <a name="training_enableInterContainerEncryption"></a>5.7. Property `root > training > enableInterContainerEncryption`
 
 |              |           |
 | ------------ | --------- |
@@ -7419,7 +7505,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Enable inter-container traffic encryption
 
-### <a name="training_enableNetworkIsolation"></a>5.7. Property `root > training > enableNetworkIsolation`
+### <a name="training_enableNetworkIsolation"></a>5.8. Property `root > training > enableNetworkIsolation`
 
 |              |           |
 | ------------ | --------- |
@@ -7428,7 +7514,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Enable network isolation for training jobs
 
-### <a name="training_preProdAccountId"></a>5.8. Property `root > training > preProdAccountId`
+### <a name="training_preProdAccountId"></a>5.9. Property `root > training > preProdAccountId`
 
 |              |          |
 | ------------ | -------- |
@@ -7437,7 +7523,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Pre-prod account ID for cross-account model registry access
 
-### <a name="training_prodAccountId"></a>5.9. Property `root > training > prodAccountId`
+### <a name="training_prodAccountId"></a>5.10. Property `root > training > prodAccountId`
 
 |              |          |
 | ------------ | -------- |
@@ -7446,7 +7532,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Prod account ID for cross-account model registry access
 
-### <a name="training_projectName"></a>5.10. Property `root > training > projectName`
+### <a name="training_projectName"></a>5.11. Property `root > training > projectName`
 
 |              |          |
 | ------------ | -------- |
@@ -7455,7 +7541,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** SageMaker project name for training
 
-### <a name="training_seedCodePath"></a>5.11. Property `root > training > seedCodePath`
+### <a name="training_seedCodePath"></a>5.12. Property `root > training > seedCodePath`
 
 |              |          |
 | ------------ | -------- |
@@ -7464,7 +7550,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Path to training seed code directory or zip file
 
-### <a name="training_sourceType"></a>5.12. Property `root > training > sourceType`
+### <a name="training_sourceType"></a>5.13. Property `root > training > sourceType`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7477,7 +7563,7 @@ Must be one of:
 * "CODECOMMIT"
 * "CODESTAR_CONNECTIONS"
 
-### <a name="training_trainingDataPath"></a>5.13. Property `root > training > trainingDataPath`
+### <a name="training_trainingDataPath"></a>5.14. Property `root > training > trainingDataPath`
 
 |              |          |
 | ------------ | -------- |
