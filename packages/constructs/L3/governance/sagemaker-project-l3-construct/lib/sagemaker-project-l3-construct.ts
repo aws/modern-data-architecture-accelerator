@@ -510,41 +510,50 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
       );
     }
 
-    // Build environment configurations from template and profile props
-    const envConfigs: CfnProjectProfile.EnvironmentConfigurationProperty[] = Object.entries({
-      ...templateEnvs,
-      ...profileProps.environments,
-    }).map(([envName, envProps]) => {
-      const blueprintName = envName;
-      const blueprintId = domainConfig.getBlueprintId(blueprintName);
-      if (!blueprintId) {
-        throw new Error(`Environment blueprint ${blueprintName} not found in enabledManagedBlueprints`);
-      }
+    // Merge template and profile environments, then separate reserved (Tooling/DataLake) from custom
+    const allEnvs = { ...templateEnvs, ...profileProps.environments };
+    const { Tooling: userTooling, DataLake: userDataLake, ...otherEnvs } = allEnvs;
 
-      const overrides = Object.entries(envProps.parameters?.overrides || {}).map(([paramName, paramProps]) => {
-        return {
-          ...paramProps,
-          name: paramName,
+    // Build environment configurations for custom (non-reserved) environments
+    const envConfigs: CfnProjectProfile.EnvironmentConfigurationProperty[] = Object.entries(otherEnvs).map(
+      ([envName, envProps]) => {
+        const blueprintName = envName;
+        const blueprintId = domainConfig.getBlueprintId(blueprintName);
+        if (!blueprintId) {
+          throw new Error(`Environment blueprint ${blueprintName} not found in enabledManagedBlueprints`);
+        }
+
+        const overrides = Object.entries(envProps.parameters?.overrides || {}).map(([paramName, paramProps]) => {
+          return {
+            ...paramProps,
+            name: paramName,
+          };
+        });
+
+        const configParameters: CfnProjectProfile.EnvironmentConfigurationParametersDetailsProperty = {
+          ...envProps.parameters,
+          parameterOverrides: [...overrides, ...getParamComplianceOverrides(blueprintName)],
         };
-      });
+        const envConfig: CfnProjectProfile.EnvironmentConfigurationProperty = {
+          awsRegion: { regionName: profileProps.region ?? this.region },
+          awsAccount: {
+            awsAccountId: profileProps.account ?? this.account,
+          },
+          configurationParameters: configParameters,
+          name: envName,
+          environmentBlueprintId: blueprintId,
+          deploymentMode: envProps.deploymentMode,
+          deploymentOrder: envProps.deploymentOrder,
+        };
+        return envConfig;
+      },
+    );
 
-      const configParameters: CfnProjectProfile.EnvironmentConfigurationParametersDetailsProperty = {
-        ...envProps.parameters,
-        parameterOverrides: [...overrides, ...getParamComplianceOverrides(blueprintName)],
-      };
-      const envConfig: CfnProjectProfile.EnvironmentConfigurationProperty = {
-        awsRegion: { regionName: profileProps.region ?? this.region },
-        awsAccount: {
-          awsAccountId: profileProps.account ?? this.account,
-        },
-        configurationParameters: configParameters,
-        name: envName,
-        environmentBlueprintId: blueprintId,
-        deploymentMode: envProps.deploymentMode,
-        deploymentOrder: envProps.deploymentOrder,
-      };
-      return envConfig;
-    });
+    // Merge user-supplied Tooling overrides with compliance overrides (compliance takes precedence)
+    const toolingUserOverrides = Object.entries(userTooling?.parameters?.overrides || {}).map(
+      ([paramName, paramProps]) => ({ ...paramProps, name: paramName }),
+    );
+    const toolingOverrides = [...toolingUserOverrides, ...getParamComplianceOverrides('Tooling')];
 
     // Create required Tooling environment configuration
     const toolingEnvConfig: CfnProjectProfile.EnvironmentConfigurationProperty = {
@@ -557,9 +566,15 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
       deploymentMode: 'ON_CREATE',
       deploymentOrder: 1,
       configurationParameters: {
-        parameterOverrides: getParamComplianceOverrides('Tooling'),
+        parameterOverrides: toolingOverrides,
       },
     };
+
+    // Merge user-supplied DataLake overrides with compliance overrides (compliance takes precedence)
+    const datalakeUserOverrides = Object.entries(userDataLake?.parameters?.overrides || {}).map(
+      ([paramName, paramProps]) => ({ ...paramProps, name: paramName }),
+    );
+    const datalakeOverrides = [...datalakeUserOverrides, ...getParamComplianceOverrides('DataLake')];
 
     // Create required DataLake environment configuration
     const datalakeEnvConfig: CfnProjectProfile.EnvironmentConfigurationProperty = {
@@ -572,7 +587,7 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
       deploymentMode: 'ON_CREATE',
       deploymentOrder: 2,
       configurationParameters: {
-        parameterOverrides: getParamComplianceOverrides('DataLake'),
+        parameterOverrides: datalakeOverrides,
       },
     };
 

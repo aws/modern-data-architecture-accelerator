@@ -148,6 +148,99 @@ describe('SagemakerProjectL3Construct', () => {
     expect(construct.projects['test-project']).toBeDefined();
   });
 
+  it('should not produce duplicate environment names when Tooling is specified in environments', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-dup-tooling', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'dup-profile': {
+          environments: {
+            Tooling: {
+              parameters: {
+                overrides: {
+                  enableAthena: { value: 'true', isEditable: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    const profiles = template.findResources('AWS::DataZone::ProjectProfile');
+    const envConfigs = Object.values(profiles)[0].Properties.EnvironmentConfigurations;
+    const names = envConfigs.map((c: { Name: string }) => c.Name);
+    expect(names.length).toBe(new Set(names).size);
+  });
+
+  it('should not produce duplicate environment names when DataLake is specified in environments', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-dup-datalake', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'dup-dl-profile': {
+          environments: {
+            DataLake: {
+              parameters: {
+                overrides: {
+                  glueDbName: { value: 'my_db', isEditable: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    const profiles = template.findResources('AWS::DataZone::ProjectProfile');
+    const envConfigs = Object.values(profiles)[0].Properties.EnvironmentConfigurations;
+    const names = envConfigs.map((c: { Name: string }) => c.Name);
+    expect(names.length).toBe(new Set(names).size);
+  });
+
+  it('should merge user overrides with compliance overrides for Tooling', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-merge-tooling', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'merge-profile': {
+          environments: {
+            Tooling: {
+              parameters: {
+                overrides: {
+                  enableAthena: { value: 'true', isEditable: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    const profiles = template.findResources('AWS::DataZone::ProjectProfile');
+    const envConfigs = Object.values(profiles)[0].Properties.EnvironmentConfigurations;
+    const toolingConfig = envConfigs.find((c: { Name: string }) => c.Name === 'Tooling');
+    const paramOverrides = toolingConfig.ConfigurationParameters.ParameterOverrides;
+
+    // User override is present
+    expect(paramOverrides).toContainEqual(
+      expect.objectContaining({ Name: 'enableAthena', Value: 'true', IsEditable: true }),
+    );
+    // Compliance overrides are present and not editable
+    expect(paramOverrides).toContainEqual(
+      expect.objectContaining({ Name: 'sagemakerDomainNetworkType', Value: 'VpcOnly', IsEditable: false }),
+    );
+    expect(paramOverrides).toContainEqual(
+      expect.objectContaining({ Name: 'enableNetworkIsolation', Value: 'true', IsEditable: false }),
+    );
+  });
+
   it('should resolve profile from SSM when not using config prefix', () => {
     new SagemakerProjectL3Construct(testApp.testStack, 'test-sm-construct11', {
       naming: testApp.naming,
