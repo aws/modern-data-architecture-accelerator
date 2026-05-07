@@ -127,21 +127,41 @@ phases:
       - cd mdaa-config && mdaa deploy${MDAA_VERSION:+ -u "${MDAA_VERSION}"} -c ./mdaa-endpoint.yaml -d deploy-${DEPLOY_STAGE} && cd ..
 
       # Resolve the endpoint name for the monitoring config.
-      # Same-account (dev): SSM param is readable — use it directly.
-      # Cross-account (preprod/prod): SSM param lives in the target account, which
-      #   CodeBuild cannot read. We construct the name from the MDAA naming convention:
-      #   ${org}-${env}-deploy-${stage}-endpoint-${project}-${stage}-ep
+      # Same-account (dev): read SSM in the tooling account directly.
+      # Cross-account (preprod/prod): assume the target account's CDK lookup role
+      #   (trust already granted by the deploy construct) and read the authoritative
+      #   endpoint name from SSM in the target account. This avoids reconstructing
+      #   the name from the MDAA naming template, which ignores MDAA's truncation
+      #   + hash-suffix logic and produces wrong names for long org names.
       # No explicit `wait endpoint-in-service` is needed — CloudFormation already waits
       # for the endpoint to reach InService before marking the stack CREATE_COMPLETE.
       - |
+        set -e
         EP_SSM_PATH="/${MDAA_ORG}/deploy-${DEPLOY_STAGE}/endpoint/endpoint/${PROJECT_NAME}-${DEPLOY_STAGE}/endpoint-name"
-        export ENDPOINT_NAME=$(aws ssm get-parameter --name "${EP_SSM_PATH}" --query 'Parameter.Value' --output text 2>/dev/null || echo "")
-        if [ -z "${ENDPOINT_NAME}" ]; then
-          export ENDPOINT_NAME="${MDAA_ORG}-${MDAA_ENV:-dev}-deploy-${DEPLOY_STAGE}-endpoint-${PROJECT_NAME}-${DEPLOY_STAGE}-ep"
-          echo "Constructed endpoint name (cross-account): ${ENDPOINT_NAME}"
+        TARGET_REGION="${AWS_REGION}"
+        case "${DEPLOY_STAGE}" in
+          preprod) TARGET_ACCOUNT="${PRE_PROD_ACCOUNT_ID}"; TARGET_REGION="${PRE_PROD_REGION:-${AWS_REGION}}" ;;
+          prod)    TARGET_ACCOUNT="${PROD_ACCOUNT_ID}";     TARGET_REGION="${PROD_REGION:-${AWS_REGION}}" ;;
+          *)       TARGET_ACCOUNT="" ;;
+        esac
+        if [ -n "${TARGET_ACCOUNT}" ]; then
+          CDK_QUAL="${CDK_QUALIFIER:-hnb659fds}"
+          LOOKUP_ROLE="arn:aws:iam::${TARGET_ACCOUNT}:role/cdk-${CDK_QUAL}-lookup-role-${TARGET_ACCOUNT}-${TARGET_REGION}"
+          echo "Assuming lookup role in account ${TARGET_ACCOUNT}: ${LOOKUP_ROLE}"
+          CREDS_JSON=$(aws sts assume-role \
+            --role-arn "${LOOKUP_ROLE}" \
+            --role-session-name "mdaa-resolve-endpoint" \
+            --query 'Credentials' --output json)
+          export ENDPOINT_NAME=$(AWS_ACCESS_KEY_ID=$(echo "${CREDS_JSON}" | jq -r '.AccessKeyId') \
+            AWS_SECRET_ACCESS_KEY=$(echo "${CREDS_JSON}" | jq -r '.SecretAccessKey') \
+            AWS_SESSION_TOKEN=$(echo "${CREDS_JSON}" | jq -r '.SessionToken') \
+            aws ssm get-parameter --name "${EP_SSM_PATH}" --region "${TARGET_REGION}" \
+              --query 'Parameter.Value' --output text)
         else
-          echo "Endpoint name from SSM: ${ENDPOINT_NAME}"
+          export ENDPOINT_NAME=$(aws ssm get-parameter --name "${EP_SSM_PATH}" \
+            --query 'Parameter.Value' --output text)
         fi
+        echo "Endpoint name from SSM: ${ENDPOINT_NAME}"
 
       # Resolve the regional ECR account and deploy monitoring.
       # The export must be in the same shell block as mdaa deploy (env vars don't persist across blocks).
