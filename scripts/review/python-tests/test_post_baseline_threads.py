@@ -209,7 +209,7 @@ class TestFindExistingRootCauseThread:
                 "body": "<!-- root-cause:lib/index.ts:L94 -->\n<!-- rootcause-hash:abc123 -->\nSome content",
             }],
         }]
-        disc, hash_val, note_id = _find_existing_root_cause_thread(discussions, "lib/index.ts:L94")
+        disc, hash_val, note_id, source_hash = _find_existing_root_cause_thread(discussions, "lib/index.ts:L94")
         assert disc is not None
         assert disc["id"] == "disc-123"
         assert hash_val == "abc123"
@@ -225,7 +225,7 @@ class TestFindExistingRootCauseThread:
                 "body": "<!-- root-cause:other/file.ts:L10 -->\n<!-- rootcause-hash:xyz -->\nContent",
             }],
         }]
-        disc, hash_val, note_id = _find_existing_root_cause_thread(discussions, "lib/index.ts:L94")
+        disc, hash_val, note_id, source_hash = _find_existing_root_cause_thread(discussions, "lib/index.ts:L94")
         assert disc is None
         assert hash_val is None
         assert note_id is None
@@ -240,7 +240,7 @@ class TestFindExistingRootCauseThread:
                 {"id": 2, "body": "<!-- rootcause-hash:new_hash -->\nUpdated"},
             ],
         }]
-        disc, hash_val, note_id = _find_existing_root_cause_thread(discussions, "file.ts:L1")
+        disc, hash_val, note_id, source_hash = _find_existing_root_cause_thread(discussions, "file.ts:L1")
         assert hash_val == "new_hash"
         assert note_id == "1"  # first note ID for editing
 

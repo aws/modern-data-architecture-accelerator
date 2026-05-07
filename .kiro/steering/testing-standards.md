@@ -131,3 +131,50 @@ After making test changes:
 2. `npm run lint` — no linting errors
 3. If baselines were updated, review the diff to confirm changes are intentional
 4. If new sample configs were added, verify corresponding diff, synth, and snapshot tests exist
+
+
+## CI Agent Usage
+
+This section is used by the automated Test Standards CI agent. When invoked by the agent,
+Kiro receives the test files, sample config filenames, jest config, baseline filenames, code diff,
+and package type for a single package, and must produce structured JSON findings.
+
+### JSON Output Schema
+
+Write findings to `{output_file}` as a JSON object. No preamble, no markdown fences, no explanation
+outside the JSON. The file must contain ONLY valid JSON.
+
+```json
+{
+  "overall_risk": "HIGH | MEDIUM | LOW",
+  "summary": "One paragraph explaining the overall test standards alignment.",
+  "findings": [
+    {
+      "risk": "HIGH | MEDIUM | LOW",
+      "category": "missing_test | naming | coverage | baseline | nag_compliance",
+      "file": "path/to/file (the test file or source file with the gap)",
+      "detail": "What's missing or wrong and what should be done."
+    }
+  ]
+}
+```
+
+### Risk Classification for CI Agent
+
+- **HIGH:** Missing compliance test assertions for new security-related code (encryption, IAM policies, access controls, security groups, logging). Missing `checkCdkNagCompliance()` call in a construct test. Missing `baselineDiffTestApp` for a sample config in an app module.
+- **MEDIUM:** Missing functional test assertions for new non-security code (resource composition, constructor validation, cross-account logic). Test file naming violations. Hardcoded test values (`us-east-1` instead of `test-region`). Coverage threshold misconfiguration.
+- **LOW:** Missing test assertions for non-functional changes (tags, descriptions, metadata). Missing `test:update-baselines` script. Minor style issues.
+
+### Rules for CI Agent Findings
+
+- One finding per test gap. Group related gaps (e.g., missing diff + synth + snapshot for the same config) into one finding.
+- **Layer-specific focus:**
+  - **L2 constructs:** Focus on compliance test assertions (encryption, access controls, logging). Functional tests are secondary.
+  - **L3 constructs:** Focus on compliance tests AND functional tests (resource composition, constructor validation). Tags, metadata, and operational properties are LOW priority.
+  - **App modules:** Focus on diff baseline tests (every sample config has a `baselineDiffTestApp`). Schema coverage is the Module Quality agent's concern, not this agent's.
+- Every finding must include `file` pointing to either the missing test location or the source file that lacks test coverage.
+- Only flag gaps related to code that was CHANGED in this MR. Do not flag pre-existing test gaps.
+- For app modules, cross-reference sample config filenames against `baselineDiffTestApp` calls in diff test files.
+- For constructs, check that new/changed classes in `lib/` have corresponding test assertions.
+- Order findings: HIGH first, then MEDIUM, then LOW.
+- Use only ASCII characters in all string values.

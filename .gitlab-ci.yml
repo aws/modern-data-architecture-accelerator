@@ -11,7 +11,7 @@
 
 workflow:
   auto_cancel:
-    on_new_commit: conservative
+    on_new_commit: interruptible
 
 stages:
   - base_image
@@ -543,6 +543,210 @@ feature_merge_baseline_review:
       - baseline-review/report.json
     reports:
       junit: baseline-review/junit-report.xml
+    when: always
+
+# Auto-populate MR description with change summary and narrative
+feature_merge_mr_summary:
+  extends: .size_medium
+  interruptible: true
+  tags:
+    - arch:amd64
+  only:
+    - merge_requests
+  stage: prebuild
+  dependencies:
+    - feature_merge_base_image
+  needs:
+    - feature_merge_base_image
+  allow_failure: false
+  variables:
+    GIT_DEPTH: '0'
+    KIRO_API_KEY: '${KIRO_API_KEY}'
+    KIRO_TIMEOUT: '600'
+  script:
+    - python3 ./scripts/review/mr_summary/mr_summary.py --output-dir mr-summary
+  artifacts:
+    paths:
+      - mr-summary/summary.md
+    when: always
+
+# Review L2/L3 construct changes for compliance (encryption, IAM, nag suppressions)
+feature_merge_compliance_review:
+  extends: .size_medium
+  interruptible: true
+  tags:
+    - arch:amd64
+  only:
+    - merge_requests
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+  cache:
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+      - .nx/
+    policy: pull
+  allow_failure: false
+  variables:
+    GIT_DEPTH: '0'
+    KIRO_API_KEY: '${KIRO_API_KEY}'
+    KIRO_TIMEOUT: '600'
+    KIRO_MAX_THREADS: '5'
+  script:
+    - python3 ./scripts/review/compliance/compliance_review.py --output-dir compliance-review
+    - python3 ./scripts/review/compliance/post_compliance_threads.py --report compliance-review/report.json
+  artifacts:
+    paths:
+      - compliance-review/report.json
+    reports:
+      junit: compliance-review/junit-report.xml
+    when: always
+
+# Review test standards alignment across changed packages
+feature_merge_test_standards_review:
+  extends: .size_medium
+  interruptible: true
+  tags:
+    - arch:amd64
+  only:
+    - merge_requests
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+  cache:
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+      - .nx/
+    policy: pull
+  allow_failure: false
+  variables:
+    GIT_DEPTH: '0'
+    KIRO_API_KEY: '${KIRO_API_KEY}'
+    KIRO_TIMEOUT: '600'
+    KIRO_MAX_THREADS: '5'
+  script:
+    - python3 ./scripts/review/test_standards/test_standards_review.py --output-dir test-standards-review
+    - python3 ./scripts/review/test_standards/post_test_standards_threads.py --report test-standards-review/report.json
+  artifacts:
+    paths:
+      - test-standards-review/report.json
+    reports:
+      junit: test-standards-review/junit-report.xml
+    when: always
+
+# Review app module quality (README, sample configs, config schema, JSDoc)
+feature_merge_module_quality_review:
+  extends: .size_medium
+  interruptible: true
+  tags:
+    - arch:amd64
+  only:
+    - merge_requests
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+  cache:
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+      - .nx/
+    policy: pull
+  allow_failure: false
+  variables:
+    GIT_DEPTH: '0'
+    KIRO_API_KEY: '${KIRO_API_KEY}'
+    KIRO_TIMEOUT: '600'
+    KIRO_MAX_THREADS: '5'
+  script:
+    - python3 ./scripts/review/module_quality/module_quality_review.py --output-dir module-quality-review
+    - python3 ./scripts/review/module_quality/post_module_quality_threads.py --report module-quality-review/report.json
+  artifacts:
+    paths:
+      - module-quality-review/report.json
+    reports:
+      junit: module-quality-review/junit-report.xml
+    when: always
+
+# Review code architecture (construct hierarchy, dependency direction, separation of concerns)
+feature_merge_architecture_review:
+  extends: .size_medium
+  interruptible: true
+  tags:
+    - arch:amd64
+  only:
+    - merge_requests
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+  cache:
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+      - .nx/
+    policy: pull
+  allow_failure: false
+  variables:
+    GIT_DEPTH: '0'
+    KIRO_API_KEY: '${KIRO_API_KEY}'
+    KIRO_TIMEOUT: '600'
+    KIRO_MAX_THREADS: '5'
+  script:
+    - python3 ./scripts/review/architecture/architecture_review.py --output-dir architecture-review
+    - python3 ./scripts/review/architecture/post_architecture_threads.py --report architecture-review/report.json
+  artifacts:
+    paths:
+      - architecture-review/report.json
+    reports:
+      junit: architecture-review/junit-report.xml
+    when: always
+
+# Review repo-wide documentation quality (CHANGELOG, SCHEMA.md, cross-references)
+feature_merge_doc_quality_review:
+  extends: .size_medium
+  interruptible: true
+  tags:
+    - arch:amd64
+  only:
+    - merge_requests
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+  cache:
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+      - .nx/
+    policy: pull
+  allow_failure: false
+  variables:
+    GIT_DEPTH: '0'
+    KIRO_API_KEY: '${KIRO_API_KEY}'
+    KIRO_TIMEOUT: '600'
+  script:
+    - python3 ./scripts/review/doc_quality/doc_quality_review.py --output-dir doc-quality-review
+    - python3 ./scripts/review/doc_quality/post_doc_quality_threads.py --report doc-quality-review/report.json
+  artifacts:
+    paths:
+      - doc-quality-review/report.json
+    reports:
+      junit: doc-quality-review/junit-report.xml
     when: always
 
 # Scan the target branch (main) to establish the SonarQube baseline so

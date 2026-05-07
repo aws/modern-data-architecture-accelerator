@@ -44,6 +44,7 @@ from review.lib.kiro_integration import (
     _parse_risk_json,
     _parse_risk_level,
 )
+from review.lib.thread_lifecycle import compute_source_hash
 
 DIFF_HELPER = PROJECT_ROOT / "scripts" / "test" / "baseline-diff-helper.mjs"
 
@@ -441,6 +442,14 @@ def build_report(changed: list[str]) -> list[dict]:
         findings = parsed.get("findings", []) if parsed else []
         summary = parsed.get("summary", "") if parsed else ""
 
+        # Compute source hash from the module root
+        parts = Path(entry["file"]).parts
+        try:
+            test_idx = parts.index("test")
+            module_root = str(PROJECT_ROOT / Path(*parts[:test_idx]))
+        except ValueError:
+            module_root = ""
+
         entries.append({
             "file": entry["file"],
             "module": entry["module"],
@@ -452,6 +461,7 @@ def build_report(changed: list[str]) -> list[dict]:
             "risk_level": _parse_risk_level(assessment),
             "findings": findings,
             "risk_summary": summary,
+            "source_hash": compute_source_hash(module_root) if module_root else "",
         })
 
     # Generate overall summary across all baselines

@@ -106,3 +106,27 @@ def _target_ref() -> str:
     """
     target = os.environ.get("CI_MERGE_REQUEST_TARGET_BRANCH_NAME")
     return f"origin/{target}" if target else "origin/main"
+
+
+def get_downstream_consumers(package_name: str) -> list[str]:
+    """Find packages that depend ON the given package (reverse/downstream deps).
+
+    Iterates the project graph's dependency edges to find all projects that
+    list `package_name` as a dependency target.
+
+    Returns a sorted list of consumer project names, or an empty list if the
+    graph is unavailable or no consumers exist.
+    """
+    graph = _load_project_graph()
+    if not graph:
+        return []
+
+    graph_deps = graph.get("dependencies", {})
+    consumers = []
+    for proj, deps in graph_deps.items():
+        for dep in deps:
+            if dep.get("target") == package_name:
+                consumers.append(proj)
+                break
+
+    return sorted(consumers)

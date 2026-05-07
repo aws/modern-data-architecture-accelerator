@@ -221,6 +221,39 @@ For every resource change, trace it back to the specific source file and line th
 - When in doubt, mark the source as "Unknown - Please Investigate" rather than guessing
 
 - When attributing a source, always use the **first line of the relevant code change** (the start of the diff hunk), not an arbitrary line within the change. Multiple baselines affected by the same code change must all attribute to the exact same source file and line. If a single addition spans lines 94-101, every baseline affected by that addition must attribute to line 94. Inconsistent line attribution across baselines causes duplicate review threads.
+- For constructor calls or method calls that span multiple lines, always use the line of the opening statement (`new Bucket({`, `Tags.of(`, `.addResourcePolicy(`), never a property or closing brace within it.
+- If you cannot determine the exact line from the diff context, use `"source": "Unknown - Please Investigate"` rather than guessing a line number.
+
+#### Line Anchoring (CRITICAL for thread stability)
+
+The `source` field in findings uses `file:Lline` format. Inconsistent line numbers cause duplicate threads. The line MUST be the opening statement of the construct or call that caused the resource change.
+
+| Code pattern | Anchor to the line containing |
+|---|---|
+| New resource construct | `new MdaaBucket(`, `new MdaaKmsKey(`, `new MdaaSqsQueue(`, etc. |
+| Tag addition | `Tags.of(` |
+| Policy addition | `new PolicyStatement({` or `.addToResourcePolicy(` |
+| Nag suppression | `NagSuppressions.addResourceSuppressions(` or `MdaaNagSuppressions.addCodeResourceSuppressions(` |
+| Config property change | The `readonly propertyName` line in the config interface |
+| Method call | The method name line (`.createBucket(`, `.grantRead(`, etc.) |
+
+**NEVER anchor to:**
+- A comment line (`//` or `/**`)
+- A `super(` call
+- A closing brace `}`
+- A blank line
+- A property within a constructor (use the constructor's opening line)
+
+**Example:** Given this diff:
+```
++  354  // Tag each bucket with its data lake zone for operational visibility
++  355  Tags.of(bucket).add('datalake:zone', bucketDefinition.bucketZone);
+```
+
+Correct source: `lib/datalake-bucket-l3-construct.ts:L355` (the `Tags.of(` line)
+Wrong: `lib/datalake-bucket-l3-construct.ts:L354` (the comment)
+
+If you cannot determine the exact line, use `"source": "Unknown - Please Investigate"`.
 
 ### 5. Produce Assessment
 

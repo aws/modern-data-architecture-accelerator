@@ -1,0 +1,48 @@
+"""
+Safety checks for review agents.
+
+Catches silent failures where the nx project graph is unavailable (cache miss)
+and changed-only.py returns empty despite actual code changes existing.
+"""
+
+from __future__ import annotations
+
+import subprocess
+
+from review.lib.nx_graph import PROJECT_ROOT, _target_ref
+
+
+class FalseNegativeError(Exception):
+    """Raised when git shows relevant changes but package detection returned empty.
+
+    This indicates the nx project graph is likely unavailable (CI cache miss)
+    and the review did NOT run.
+    """
+
+    def __init__(self, path_prefix: str, extensions: list[str], relevant_files: list[str]):
+        self.path_prefix = path_prefix
+        self.extensions = extensions
+        self.relevant_files = relevant_files
+        super().__init__(
+            f"git diff shows {len(relevant_files)} changed files in {path_prefix} "
+            f"matching {extensions}, but package detection returned 0 packages."
+        )
+
+
+def verify_no_false_negative(path_prefix: str, extensions: list[str]) -> None:
+    """Fail the job if git shows relevant changes but package detection returned empty.
+
+    This catches silent failures where the nx project graph is unavailable (cache miss)
+    and changed-only.py returns empty despite actual code changes existing.
+
+    Raises:
+        FalseNegativeError: if relevant file changes exist but no packages were detected.
+    """
+    result = subprocess.run(
+        ["git", "diff", "--name-only", _target_ref(), "--", f"{path_prefix}"],
+        capture_output=True, text=True, cwd=str(PROJECT_ROOT),
+    )
+    changed = [f.strip() for f in result.stdout.strip().split("\n") if f.strip()]
+    relevant = [f for f in changed if any(f.endswith(ext) for ext in extensions)]
+    if relevant:
+        raise FalseNegativeError(path_prefix, extensions, relevant)

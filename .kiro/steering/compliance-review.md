@@ -79,3 +79,93 @@ After making compliance changes:
 2. Run `npm run lint` — no linting errors
 3. If nag suppressions were added or modified, verify the reason text follows the structure above
 4. If compliance controls were added, verify they have explicit test assertions
+
+## CI Agent Usage
+
+This section is used by the automated Compliance Review CI agent. When invoked by the agent,
+Kiro receives the code diff, full source, test files, and dependency tree for a construct package,
+and must produce structured JSON findings.
+
+### JSON Output Schema
+
+Write findings to `{output_file}` as a JSON object. No preamble, no markdown fences, no explanation
+outside the JSON. The file must contain ONLY valid JSON.
+
+```json
+{
+  "overall_risk": "BLOCKING | HIGH | MEDIUM | LOW",
+  "summary": "One paragraph explaining the overall compliance posture and key concerns.",
+  "findings": [
+    {
+      "risk": "BLOCKING | HIGH | MEDIUM | LOW",
+      "category": "encryption | access_control | nag_suppression | iam_policy | security_group | logging",
+      "file": "path/to/file.ts",
+      "line": 42,
+      "resource": "AWS::S3::Bucket (if applicable)",
+      "detail": "What's wrong and what should be done."
+    }
+  ]
+}
+```
+
+### Risk Classification for CI Agent
+
+- **BLOCKING:** Missing encryption on stateful resources (S3, DynamoDB, RDS, OpenSearch, EFS), removed security controls that were previously enforced, new resource created without any compliance controls
+- **HIGH:** Vague nag suppression reasons (no AWS service authorization reference), broad IAM wildcards (`Resource: '*'`) without justification, removed IAM conditions (`aws:SourceArn`, `aws:SourceAccount`)
+- **MEDIUM:** Nag suppressions with specific but improvable reasons, IAM policies that could be tighter, security group rules that could be narrower
+- **LOW:** Minor documentation gaps on suppressions, style issues in suppression reason formatting
+
+### Rules for CI Agent Findings
+
+- One finding per compliance issue. If a resource has multiple concerns, create separate findings.
+- Every finding must include `file` and `line` pointing to the construct source where the issue is.
+- Only include findings for code that was CHANGED in this MR. Do not flag pre-existing issues.
+- Order findings: BLOCKING first, then HIGH, then MEDIUM, then LOW.
+- Omit LOW findings if there are BLOCKING or HIGH findings.
+- Use only ASCII characters in all string values.
+- **Do NOT report missing tests or test coverage gaps.** Testing is handled by the Test Standards agent. Focus exclusively on the compliance posture of the implementation code itself.
+
+### Line Number Anchoring (CRITICAL for stability)
+
+Line numbers must be deterministic across runs. **Incorrect line numbers cause duplicate review threads and block the pipeline.** You MUST follow these rules exactly:
+
+**Step 1: Identify the problematic statement.** Find the specific TypeScript statement that IS the compliance issue.
+
+**Step 2: Report the line number of THAT statement's opening keyword.** Not a nearby line. Not a related line. THE line.
+
+| Finding type | The line MUST contain |
+|---|---|
+| Nag suppression | `NagSuppressions.addResourceSuppressions(` or `MdaaNagSuppressions.addCodeResourceSuppressions(` or `addNagSuppression` |
+| IAM policy | `new PolicyStatement({` (the line with `new PolicyStatement`) |
+| Missing encryption | `new Bucket({` or `new Queue({` or `new Table({` (the resource constructor) |
+| Security group | `.addIngressRule(` or `new SecurityGroup({` |
+| Resource policy | `.addToResourcePolicy(` |
+
+**Example:** Given this code:
+```
+181  // Intentionally broad IAM policy
+182  const adminStatement = new PolicyStatement({
+183    sid: 'AdminAccess',
+184    effect: Effect.ALLOW,
+185    actions: ['sqs:*'],
+186    resources: ['*'],
+187  });
+188  adminStatement.addAnyPrincipal();
+189  this.addToResourcePolicy(adminStatement);
+190
+191  MdaaNagSuppressions.addCodeResourceSuppressions(
+192    this,
+193    [{ id: 'AwsSolutions-SQS4', reason: 'Required for functionality' }],
+194    true,
+195  );
+```
+
+- IAM policy finding → `"line": 182` (the `new PolicyStatement({` line)
+- Nag suppression finding → `"line": 191` (the `MdaaNagSuppressions.addCodeResourceSuppressions(` line)
+
+**WRONG answers:** 180 (super call), 181 (comment), 188 (addAnyPrincipal), 189 (addToResourcePolicy), 193 (suppression object)
+
+**Rules:**
+- NEVER use the line of `super(`, a comment, a closing brace, or a method call on the result
+- NEVER estimate — count from the source file content provided
+- If you cannot find the exact line, use `0`

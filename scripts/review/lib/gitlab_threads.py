@@ -56,6 +56,35 @@ def get_mr_discussions(project_id: str, mr_iid: str, token: str) -> list[dict]:
     return discussions
 
 
+def get_mr_notes(project_id: str, mr_iid: str, token: str) -> list[dict]:
+    """Fetch all notes (comments) on the MR, handling pagination."""
+    notes: list[dict] = []
+    page = 1
+    while True:
+        path = (
+            f"/projects/{project_id}/merge_requests/{mr_iid}"
+            f"/notes?per_page=100&page={page}"
+        )
+        batch = gitlab_api("GET", path, token)
+        if not batch:
+            break
+        notes.extend(batch)
+        page += 1
+    return notes
+
+
+def create_mr_note(project_id: str, mr_iid: str, token: str, body: str) -> dict:
+    """Create a plain comment (note) on the MR. Returns the created note."""
+    path = f"/projects/{project_id}/merge_requests/{mr_iid}/notes"
+    return gitlab_api("POST", path, token, {"body": body})
+
+
+def edit_mr_note(project_id: str, mr_iid: str, note_id: str, token: str, body: str) -> None:
+    """Edit an existing plain note on the MR."""
+    path = f"/projects/{project_id}/merge_requests/{mr_iid}/notes/{note_id}"
+    gitlab_api("PUT", path, token, {"body": body})
+
+
 def compute_hash(content: str) -> str:
     """Compute a short hash of the diff content."""
     return hashlib.sha256(content.encode()).hexdigest()[:12]

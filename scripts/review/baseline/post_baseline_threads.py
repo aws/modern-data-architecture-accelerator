@@ -52,18 +52,20 @@ from review.lib.gitlab_threads import (
     _build_diff_position,
     _mr_changes_link,
 )
+from review.lib.thread_lifecycle import compute_line_anchor
 
 HASH_PATTERN = re.compile(r"<!-- baseline-hash:(\w+) -->")
 MODULE_PATTERN = re.compile(r"<!-- baseline-module:(.+?) -->")
+SOURCE_HASH_PATTERN = re.compile(r"<!-- source-hash:(\w+) -->")
 
 
 def find_existing_thread(
     discussions: list[dict],
     module_key: str,
-) -> tuple[dict | None, str | None]:
+) -> tuple[dict | None, str | None, str | None]:
     """Find an existing baseline thread for a given module key.
 
-    Returns (discussion, existing_hash) or (None, None).
+    Returns (discussion, existing_hash, existing_source_hash) or (None, None, None).
     """
     for discussion in discussions:
         notes = discussion.get("notes", [])
@@ -75,12 +77,16 @@ def find_existing_thread(
         if module_match and module_match.group(1) == module_key:
             # Find the latest hash (could be in the first note or a later update)
             latest_hash = None
+            latest_source_hash = None
             for note in notes:
                 hash_match = HASH_PATTERN.search(note.get("body", ""))
                 if hash_match:
                     latest_hash = hash_match.group(1)
-            return discussion, latest_hash
-    return None, None
+                sm = SOURCE_HASH_PATTERN.search(note.get("body", ""))
+                if sm:
+                    latest_source_hash = sm.group(1)
+            return discussion, latest_hash, latest_source_hash
+    return None, None, None
 
 
 def _filter_safe_findings(risk_assessment: str) -> str:
@@ -222,6 +228,7 @@ def _collect_finding_groups(failures: list[dict]) -> dict[str, dict]:
     for entry in failures:
         findings = entry.get("findings", [])
         baseline_key = f"{entry['module']}/{entry['config']}"
+        entry_source_hash = entry.get("source_hash", "")
 
         if not findings:
             if entry.get("risk_level", "UNKNOWN") == "LOW":
@@ -233,6 +240,7 @@ def _collect_finding_groups(failures: list[dict]) -> dict[str, dict]:
                 "findings": [],
                 "risk_summary": entry.get("risk_summary", ""),
                 "baseline_key": baseline_key,
+                "source_hash": entry_source_hash,
             }
             if not groups[source]["risk_summary"] and entry.get("risk_assessment"):
                 groups[source]["risk_summary"] = str(entry["risk_assessment"])[:500]
@@ -242,20 +250,35 @@ def _collect_finding_groups(failures: list[dict]) -> dict[str, dict]:
             source = finding.get("source", "Unknown - Please Investigate")
             finding_risk = finding.get("risk", "UNKNOWN").upper()
 
-            if source not in groups:
-                groups[source] = {
+            # Compute stable key from line content hash
+            # Baseline sources use format "file:Lline" or "file:line"
+            if source and source != "Unknown - Please Investigate":
+                line_match = re.match(r'^(.+?):L?(\d+)$', source)
+                if line_match:
+                    anchor = compute_line_anchor(line_match.group(1), int(line_match.group(2)))
+                    # If anchor differs from fallback (file:line), use it; otherwise keep original source as key
+                    fallback = f"{line_match.group(1)}:{line_match.group(2)}"
+                    key = anchor if anchor != fallback else source
+                else:
+                    key = source
+            else:
+                key = source
+
+            if key not in groups:
+                groups[key] = {
                     "source": source,
                     "risk_level": finding_risk,
                     "findings": [],
                     "risk_summary": "",
+                    "source_hash": entry_source_hash,
                 }
 
-            current_rank = RISK_RANK.get(groups[source]["risk_level"], 1)
+            current_rank = RISK_RANK.get(groups[key]["risk_level"], 1)
             finding_rank = RISK_RANK.get(finding_risk, 1)
             if finding_rank < current_rank:
-                groups[source]["risk_level"] = finding_risk
+                groups[key]["risk_level"] = finding_risk
 
-            groups[source]["findings"].append((baseline_key, finding))
+            groups[key]["findings"].append((baseline_key, finding))
 
     return groups
 
@@ -324,7 +347,7 @@ def _format_root_cause_body(
         f"<!-- root-cause:{source} -->",
         f"<!-- rootcause-hash:{content_hash} -->",
         "",
-        f"## {icon} Risk Level: {risk_level}",
+        f"## {icon} Baseline Review \u2014 Infrastructure Risk: {risk_level}",
         "",
     ]
 
@@ -411,10 +434,10 @@ def _format_root_cause_body(
 def _find_existing_root_cause_thread(
     discussions: list[dict],
     source: str,
-) -> tuple[dict | None, str | None, str | None]:
+) -> tuple[dict | None, str | None, str | None, str | None]:
     """Find an existing root cause thread for a given source.
 
-    Returns (discussion, existing_hash, first_note_id) or (None, None, None).
+    Returns (discussion, existing_hash, first_note_id, existing_source_hash) or (None, None, None, None).
     """
     for discussion in discussions:
         notes = discussion.get("notes", [])
@@ -425,12 +448,16 @@ def _find_existing_root_cause_thread(
         rc_match = ROOTCAUSE_PATTERN.search(first_body)
         if rc_match and rc_match.group(1) == source:
             latest_hash = None
+            latest_source_hash = None
             for note in notes:
                 hash_match = ROOTCAUSE_HASH_PATTERN.search(note.get("body", ""))
                 if hash_match:
                     latest_hash = hash_match.group(1)
-            return discussion, latest_hash, first_note_id
-    return None, None, None
+                sm = SOURCE_HASH_PATTERN.search(note.get("body", ""))
+                if sm:
+                    latest_source_hash = sm.group(1)
+            return discussion, latest_hash, first_note_id, latest_source_hash
+    return None, None, None, None
 
 
 SUMMARY_MARKER = "<!-- baseline-summary -->"
@@ -561,12 +588,11 @@ def _format_summary_body(failures: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def _find_summary_thread(discussions: list[dict]) -> dict | None:
-    """Find the existing summary thread."""
-    for discussion in discussions:
-        notes = discussion.get("notes", [])
-        if notes and SUMMARY_MARKER in notes[0].get("body", ""):
-            return discussion
+def _find_summary_note(notes: list[dict]) -> dict | None:
+    """Find the existing summary plain note."""
+    for note in notes:
+        if SUMMARY_MARKER in note.get("body", ""):
+            return note
     return None
 
 
@@ -577,31 +603,26 @@ def _post_summary_thread(
     token: str,
     discussions: list[dict],
 ) -> None:
-    """Post or update the summary thread, then resolve it.
+    """Post or update the summary as a plain MR comment.
 
-    Always updates the summary to reflect the latest assessment results.
+    Checks for legacy discussion-based summaries first (edits in place).
+    Otherwise creates/updates a plain note.
     """
-    body = _format_summary_body(failures)
-    existing = _find_summary_thread(discussions)
+    from review.lib.gitlab_threads import get_mr_notes, create_mr_note, edit_mr_note
 
-    if existing is None:
-        print("  Creating summary thread...")
-        create_discussion(project_id, mr_iid, token, body)
-        # Resolve it — re-fetch to get the new thread's ID
-        updated = get_mr_discussions(project_id, mr_iid, token)
-        summary = _find_summary_thread(updated)
-        if summary:
-            resolve_discussion(project_id, mr_iid, summary["id"], token, resolved=True)
+    body = _format_summary_body(failures)
+
+    # Check for existing plain note
+    notes = get_mr_notes(project_id, mr_iid, token)
+    existing_note = _find_summary_note(notes)
+
+    if existing_note is None:
+        print("  Creating summary note...")
+        create_mr_note(project_id, mr_iid, token, body)
     else:
-        # Always update the summary to reflect latest results
-        print("  Updating summary thread...")
-        discussion_id = existing["id"]
-        first_note_id = str(existing.get("notes", [{}])[0].get("id", ""))
-        if first_note_id:
-            edit_note(project_id, mr_iid, discussion_id, first_note_id, token, body)
-        else:
-            add_note_to_discussion(project_id, mr_iid, discussion_id, token, body)
-        resolve_discussion(project_id, mr_iid, discussion_id, token, resolved=True)
+        print("  Updating summary note...")
+        note_id = str(existing_note.get("id", ""))
+        edit_mr_note(project_id, mr_iid, note_id, token, body)
 
 
 def main() -> None:
@@ -684,12 +705,15 @@ def main() -> None:
                 for bk, f in group["findings"]
             ]
             content_hash = compute_hash(json.dumps(sorted(structural), sort_keys=True))
+            current_source_hash = group.get("source_hash", "")
 
-            existing, existing_hash, first_note_id = _find_existing_root_cause_thread(discussions, source)
+            existing, existing_hash, first_note_id, existing_source_hash = _find_existing_root_cause_thread(discussions, source)
 
             if existing is None:
                 print(f"  Creating root cause thread for '{source}' (risk: {risk_level})")
                 body = _format_root_cause_body(source, group, content_hash)
+                if current_source_hash:
+                    body += f"\n<!-- source-hash:{current_source_hash} -->"
                 # Try to position the thread on the source line in the MR diff
                 display_source = group.get("source", source)
                 parsed = _parse_source_position(display_source)
@@ -699,9 +723,14 @@ def main() -> None:
             elif existing_hash == content_hash:
                 print(f"  Root cause thread for '{source}' unchanged, skipping")
 
+            elif current_source_hash and existing_source_hash == current_source_hash:
+                print(f"  Root cause thread for '{source}' source unchanged, skipping (Kiro variance)")
+
             else:
                 print(f"  Updating root cause thread for '{source}' (findings changed, risk: {risk_level})")
                 body = _format_root_cause_body(source, group, content_hash, is_update=True)
+                if current_source_hash:
+                    body += f"\n<!-- source-hash:{current_source_hash} -->"
                 discussion_id = existing["id"]
                 if first_note_id:
                     # Edit the existing note in place instead of adding a new one
@@ -723,23 +752,149 @@ def main() -> None:
             module_key = f"{entry['module']}/{entry['config']}"
             diff_hash = compute_hash(entry["cdk_diff"])
             risk_level = entry.get("risk_level", "UNKNOWN")
+            current_source_hash = entry.get("source_hash", "")
 
-            existing, existing_hash = find_existing_thread(discussions, module_key)
+            existing, existing_hash, existing_source_hash = find_existing_thread(discussions, module_key)
 
             if existing is None:
                 print(f"  Creating thread for {module_key} (risk: {risk_level})")
                 body = format_thread_body(entry, diff_hash)
+                if current_source_hash:
+                    body += f"\n<!-- source-hash:{current_source_hash} -->"
                 create_discussion(project_id, mr_iid, token, body)
-            elif existing_hash != diff_hash:
+            elif existing_hash == diff_hash:
+                print(f"  Thread for {module_key} unchanged, skipping")
+            elif current_source_hash and existing_source_hash == current_source_hash:
+                print(f"  Thread for {module_key} source unchanged, skipping (Kiro variance)")
+            else:
                 print(f"  Updating thread for {module_key} (diff changed, risk: {risk_level})")
                 body = format_thread_body(entry, diff_hash, is_update=True)
+                if current_source_hash:
+                    body += f"\n<!-- source-hash:{current_source_hash} -->"
                 discussion_id = existing["id"]
                 add_note_to_discussion(project_id, mr_iid, discussion_id, token, body)
                 resolve_discussion(project_id, mr_iid, discussion_id, token, resolved=False)
-            else:
-                print(f"  Thread for {module_key} unchanged, skipping")
+
+    # Collect current keys for orphan resolution
+    current_root_causes = set(root_cause_groups.keys()) if root_cause_groups else set()
+    current_module_keys = set(
+        f"{e['module']}/{e['config']}" for e in entries_without_findings
+    ) if entries_without_findings and not root_cause_groups else set()
+
+    # Build source hash map for orphan resolution
+    source_hashes: dict[str, str] = {}
+    for source, group in (root_cause_groups or {}).items():
+        sh = group.get("source_hash", "")
+        if sh:
+            source_hashes[source] = sh
+    if entries_without_findings and not root_cause_groups:
+        for e in entries_without_findings:
+            mk = f"{e['module']}/{e['config']}"
+            sh = e.get("source_hash", "")
+            if sh:
+                source_hashes[mk] = sh
+
+    # Auto-resolve orphaned threads
+    _resolve_orphaned_threads(project_id, mr_iid, token, current_root_causes, current_module_keys, source_hashes)
+
+    # Check for unresolved threads — exit non-zero to block merge
+    if _check_unresolved_threads(project_id, mr_iid, token):
+        sys.exit(1)
 
     print("Done.")
+
+
+def _resolve_orphaned_threads(
+    project_id: str,
+    mr_iid: str,
+    token: str,
+    current_root_causes: set[str],
+    current_module_keys: set[str],
+    source_hashes: dict[str, str] | None = None,
+) -> None:
+    """Auto-resolve baseline threads whose findings no longer exist.
+
+    If source_hashes is provided, only orphan-resolve threads whose source
+    files actually changed. If source is unchanged but finding disappeared,
+    it's likely Kiro variance — leave the thread alone.
+    """
+    discussions = get_mr_discussions(project_id, mr_iid, token)
+    for discussion in discussions:
+        notes = discussion.get("notes", [])
+        if not notes:
+            continue
+        first_body = notes[0].get("body", "")
+
+        # Check root cause threads
+        rc_match = ROOTCAUSE_PATTERN.search(first_body)
+        if rc_match and rc_match.group(1) not in current_root_causes:
+            orphan_key = rc_match.group(1)
+            # Check source hash before orphan-resolving
+            if source_hashes:
+                stored_sh = None
+                for note in notes:
+                    sm = SOURCE_HASH_PATTERN.search(note.get("body", ""))
+                    if sm:
+                        stored_sh = sm.group(1)
+                # Check against this specific orphan's package, not all packages
+                current_sh = source_hashes.get(orphan_key, "")
+                if stored_sh and current_sh and stored_sh == current_sh:
+                    print(f"  Root cause thread for '{orphan_key}' not in findings but source unchanged, keeping")
+                    continue
+
+            print(f"  Auto-resolving orphaned root cause thread for '{orphan_key}'")
+            add_note_to_discussion(
+                project_id, mr_iid, discussion["id"], token,
+                "_This finding was resolved by code changes. Thread auto-resolved._",
+            )
+            resolve_discussion(project_id, mr_iid, discussion["id"], token, resolved=True)
+            continue
+
+        # Check per-baseline fallback threads
+        mod_match = MODULE_PATTERN.search(first_body)
+        if mod_match and mod_match.group(1) not in current_module_keys:
+            orphan_key = mod_match.group(1)
+            if source_hashes:
+                stored_sh = None
+                for note in notes:
+                    sm = SOURCE_HASH_PATTERN.search(note.get("body", ""))
+                    if sm:
+                        stored_sh = sm.group(1)
+                current_sh = source_hashes.get(orphan_key, "")
+                if stored_sh and current_sh and stored_sh == current_sh:
+                    print(f"  Thread for '{orphan_key}' not in findings but source unchanged, keeping")
+                    continue
+
+            print(f"  Auto-resolving orphaned baseline thread for '{orphan_key}'")
+            add_note_to_discussion(
+                project_id, mr_iid, discussion["id"], token,
+                "_This finding was resolved by code changes. Thread auto-resolved._",
+            )
+            resolve_discussion(project_id, mr_iid, discussion["id"], token, resolved=True)
+
+
+def _check_unresolved_threads(project_id: str, mr_iid: str, token: str) -> bool:
+    """Check if any baseline detail threads are unresolved."""
+    discussions = get_mr_discussions(project_id, mr_iid, token)
+    unresolved = 0
+    for discussion in discussions:
+        notes = discussion.get("notes", [])
+        if not notes:
+            continue
+        first_body = notes[0].get("body", "")
+        # Check both root cause and per-baseline threads
+        if ROOTCAUSE_PATTERN.search(first_body) or MODULE_PATTERN.search(first_body):
+            if not all(n.get("resolved", True) for n in notes if n.get("resolvable", False)):
+                unresolved += 1
+    if unresolved > 0:
+        print("\n" + "=" * 70)
+        print("REVIEW AGENT FAILURE: Unresolved baseline review threads")
+        print("=" * 70)
+        print(f"\n{unresolved} unresolved Infrastructure Risk thread(s) found.")
+        print("Resolve all threads in the MR, then rerun `feature_merge_baseline_review`.")
+        print("\n" + "=" * 70)
+        return True
+    return False
 
 
 if __name__ == "__main__":

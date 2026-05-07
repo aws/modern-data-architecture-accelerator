@@ -137,14 +137,13 @@ def run_kiro_assessment(prompt: str, validate_json: bool = False) -> str:
     raise KiroError("kiro-cli exhausted all retries")
 
 
-def _parse_risk_json(raw: str) -> dict | None:
-    """Try to parse Kiro's risk assessment output as JSON.
+def strip_markdown_fences(text: str) -> str:
+    """Strip markdown code fences from text if present.
 
-    Handles cases where Kiro wraps JSON in markdown fences.
-    Returns the parsed dict or None if parsing fails.
+    Handles both ```json\\n...\\n``` and ```\\n...\\n``` patterns.
+    Returns the inner content stripped of the fence lines.
     """
-    text = raw.strip()
-    # Strip markdown code fences if present
+    text = text.strip()
     if text.startswith("```"):
         lines = text.split("\n")
         if lines[-1].strip() == "```":
@@ -152,6 +151,16 @@ def _parse_risk_json(raw: str) -> dict | None:
         else:
             lines = lines[1:]
         text = "\n".join(lines).strip()
+    return text
+
+
+def _parse_risk_json(raw: str) -> dict | None:
+    """Try to parse Kiro's risk assessment output as JSON.
+
+    Handles cases where Kiro wraps JSON in markdown fences.
+    Returns the parsed dict or None if parsing fails.
+    """
+    text = strip_markdown_fences(raw)
 
     try:
         data = json.loads(text)

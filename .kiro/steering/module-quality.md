@@ -167,3 +167,47 @@ For cross-module audits, use a sub-agent per module. Each module's analysis and 
 
 - Apps: `packages/apps/{ai,analytics,core,datalake,dataops,governance,utility}/*-app/`
 - L3 Constructs: `packages/constructs/L3/{category}/{module}-l3-construct/`
+
+
+## CI Agent Usage
+
+This section is used by the automated Module Quality CI agent. When invoked by the agent,
+Kiro receives the README, config schema, sample configs, config interface, L3 construct source,
+and code diff for a single app module, and must produce structured JSON findings.
+
+### JSON Output Schema
+
+Write findings to `{output_file}` as a JSON object. No preamble, no markdown fences, no explanation
+outside the JSON. The file must contain ONLY valid JSON.
+
+```json
+{
+  "overall_risk": "HIGH | MEDIUM | LOW",
+  "summary": "One paragraph summarizing the module's quality posture.",
+  "findings": [
+    {
+      "risk": "HIGH | MEDIUM | LOW",
+      "category": "readme_gap | schema_coverage | config_usability | sample_config | jsdoc",
+      "file": "path/to/file",
+      "property": "propertyName (if applicable, empty string otherwise)",
+      "detail": "What's wrong and what should be done."
+    }
+  ]
+}
+```
+
+### Severity Classification for CI Agent
+
+- **HIGH:** Missing README, missing comprehensive sample config, required config property with no JSDoc (users can't configure without reading source), required property that should have a default
+- **MEDIUM:** README section missing or non-conforming, schema property not exercised in any sample config, inconsistent property naming, missing template variables (hardcoded account/region), sample config missing inline documentation comments
+- **LOW:** Minor documentation improvements, style issues in sample config comments, enum value not exercised (but covered by other configs), weak JSDoc that restates the property name
+
+### Rules for CI Agent Findings
+
+- One finding per quality concern. Group related issues (e.g., multiple missing README sections) into one finding per category.
+- Every finding must include `file` pointing to the file with the issue.
+- For config usability and JSDoc findings, include the `property` name.
+- Only flag issues related to code that was CHANGED in this MR. Do not flag pre-existing quality gaps.
+- For L3 construct changes that affect the app module, check if the README's Deployed Resources and Security/Compliance sections still accurately reflect the construct's behavior.
+- Order findings: HIGH first, then MEDIUM, then LOW.
+- Use only ASCII characters in all string values.
