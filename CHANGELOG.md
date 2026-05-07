@@ -37,6 +37,8 @@
 
 - Fixed IAM Policy cross-stack collision in `dataops-job` and `sm-studio-domain` caused by `BucketDeployment` adding inline policies to imported roles
 - Agentcore Runtime app: fixed missing ECR permissions when `containerUri` config param is used
+-  Fix: Modifying [mutable SageMaker AI domain settings (default user settings, domain settings)](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-sagemaker-domain.html#aws-resource-sagemaker-domain-properties) no longer causes "resource already exists" deployment failures.
+Note: changing immutable properties (AuthMode, DomainName, KmsKeyId, VpcId) will still require manual domain recreation.
 
 #### RDS Constructs (#752)
 

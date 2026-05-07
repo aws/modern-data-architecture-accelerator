@@ -63,17 +63,24 @@ export class MdaaStudioDomain extends CfnDomain {
   };
 
   private static setProps(props: MdaaStudioDomainProps): CfnDomainProps {
-    const overrideProps = {
+    // Only pass immutable (create-only) properties to the CfnDomain resource.
+    // All mutable settings (defaultUserSettings, domainSettings) are handled
+    // by the custom resource via the SageMaker UpdateDomain API.
+    // This prevents CloudFormation from triggering resource replacement when
+    // mutable properties change, which would fail with "already exists" due
+    // to the fixed DomainName.
+    return {
       domainName: props.naming.resourceName(props.domainName, 63),
+      authMode: props.authMode,
       appNetworkAccessType: 'VpcOnly',
-      //default user settings from props will be set by custom resource
-      //because the CFN resource does not support all required parameters
+      vpcId: props.vpcId,
+      subnetIds: props.subnetIds,
+      kmsKeyId: props.kmsKeyId,
       defaultUserSettings: {
         executionRole: props.defaultUserSettings.executionRole,
         securityGroups: [props.securityGroupId, ...(props.securityGroupIds || [])],
       },
     };
-    return { ...props, ...overrideProps };
   }
 
   constructor(scope: Construct, id: string, props: MdaaStudioDomainProps) {

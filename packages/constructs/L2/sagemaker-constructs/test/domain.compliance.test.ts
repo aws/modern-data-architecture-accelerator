@@ -76,6 +76,43 @@ describe('MDAA Construct Compliance Tests', () => {
     });
   });
 
+  test('CfnDomain does not contain mutable properties that could trigger replacement', () => {
+    // Verify that only immutable (create-only) properties are passed to the CfnDomain resource.
+    // Extra properties leaking into CfnDomain can cause CloudFormation to attempt resource
+    // replacement when they change, which fails with "already exists" due to the fixed DomainName.
+    const domainResources = template.findResources('AWS::SageMaker::Domain');
+    const domainLogicalIds = Object.keys(domainResources);
+    expect(domainLogicalIds.length).toBe(1);
+
+    const domainProps = domainResources[domainLogicalIds[0]].Properties;
+    const allowedTopLevelKeys = [
+      'DomainName',
+      'AuthMode',
+      'AppNetworkAccessType',
+      'VpcId',
+      'SubnetIds',
+      'KmsKeyId',
+      'DefaultUserSettings',
+      'Tags',
+    ];
+    const actualKeys = Object.keys(domainProps);
+    const unexpectedKeys = actualKeys.filter(k => !allowedTopLevelKeys.includes(k));
+    expect(unexpectedKeys).toEqual([]);
+  });
+
+  test('CfnDomain DefaultUserSettings only contains minimal create-time settings', () => {
+    // The full DefaultUserSettings (lifecycle configs, app settings, etc.) are applied
+    // via the custom resource UpdateDomain API call, not via the CfnDomain resource.
+    const domainResources = template.findResources('AWS::SageMaker::Domain');
+    const domainProps = domainResources[Object.keys(domainResources)[0]].Properties;
+    const cfnUserSettings = domainProps.DefaultUserSettings;
+
+    const allowedUserSettingsKeys = ['ExecutionRole', 'SecurityGroups'];
+    const actualKeys = Object.keys(cfnUserSettings);
+    const unexpectedKeys = actualKeys.filter(k => !allowedUserSettingsKeys.includes(k));
+    expect(unexpectedKeys).toEqual([]);
+  });
+
   test('DomainUpdate', () => {
     template.hasResourceProperties('Custom::StudioDomainUpdate', {
       ServiceToken: {
