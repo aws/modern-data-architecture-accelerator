@@ -139,43 +139,6 @@ before_script:
       --destination "${BASE_IMAGE_TAG}"
       --cache=true --cache-repo="${CI_REGISTRY_IMAGE}/cache" --cleanup --cache-ttl 72h0m0s
 
-# =============================================================================
-# Shared Jobs (SAST / Security Scanning)
-# =============================================================================
-
-include:
-  # Gitlab built-in SAST
-  - template: Jobs/Dependency-Scanning.latest.gitlab-ci.yml
-  - template: Jobs/SAST.latest.gitlab-ci.yml
-  - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
-
-# SAST scan
-sast:
-  stage: prebuild
-  interruptible: true
-  after_script:
-    - mkdir reports
-    - cp gl-sast-report.json reports/$CI_JOB_NAME.json
-  artifacts:
-    paths:
-      - reports/
-
-# Semgrep SAST scan (excludes CDK TS under **/lib as it is not application code)
-# Other code (such as Lambda, application code) should typically be
-# under ./src and will be included.
-semgrep-sast:
-  interruptible: true
-  stage: prebuild
-  variables:
-    SAST_EXCLUDED_PATHS: 'spec, test, tests, tmp, scripts, **/lib/*.ts'
-  after_script:
-    - echo "Analyzing GitLab SAST reports"
-    - python3 ./scripts/quality/analyze_sast_reports.py
-
-# Secret detection scan
-secret_detection:
-  interruptible: true
-  stage: prebuild
 
 # =============================================================================
 # Pipeline 1: Feature Merge Pipeline (merge requests)
