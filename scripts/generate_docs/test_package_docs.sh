@@ -20,6 +20,9 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# Ensure Python dev dependencies (mkdocs, etc.) are available
+source "$PROJECT_ROOT/scripts/build/ensure_python_env.sh"
+
 PACKAGE_DIR="$(pwd)"
 PACKAGE_REL=$(python3 -c "import os; print(os.path.relpath('$PACKAGE_DIR', '$PROJECT_ROOT'))")
 PACKAGE_NAME=$(python3 -c "import json; print(json.load(open('package.json'))['name'])")
