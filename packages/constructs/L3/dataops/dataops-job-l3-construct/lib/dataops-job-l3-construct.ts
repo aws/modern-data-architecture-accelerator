@@ -24,7 +24,7 @@ import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { updateProps } from '@aws-mdaa/cloudwatch-constructs/lib/loggroup-utils';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
-import { IRole } from 'aws-cdk-lib/aws-iam';
+import { CfnPolicy, IRole } from 'aws-cdk-lib/aws-iam';
 
 export type JobCommandPythonVersion = '2' | '3' | undefined;
 export type JobCommandName = 'glueetl' | 'pythonshell';
@@ -355,6 +355,15 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     this.addAdditionalScripts(jobName, jobConfig, bucket, deploymentRole, defaultArguments);
     this.addAdditionalJars(jobName, jobConfig, bucket, deploymentRole, defaultArguments);
     this.addAdditionalFiles(jobName, jobConfig, bucket, deploymentRole, defaultArguments);
+
+    // Override the IAM Policy physical name to include the stack name,
+    // preventing CloudFormation deployment failures from Jan 30, 2026
+    // that block policies with the same name across stacks.
+    const defaultPolicy = deploymentRole.node.tryFindChild('DefaultPolicy')?.node.defaultChild as CfnPolicy;
+    if (defaultPolicy && !defaultPolicy.policyName) {
+      defaultPolicy.policyName = `${this.scope.stack.stackName}-DeploymentRolePolicy`;
+    }
+
     MdaaNagSuppressions.addCodeResourceSuppressions(
       this.scope,
       [
