@@ -6,7 +6,7 @@
 import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { Construct } from 'constructs';
-import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaRole, MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { Aws } from 'aws-cdk-lib';
 import { BuildSpec, LinuxBuildImage, PipelineProject } from 'aws-cdk-lib/aws-codebuild';
@@ -39,7 +39,6 @@ import {
   SourceType,
   CodeStarConnectionConfig,
   CodeArtifactConfig,
-  addCodeArtifactReadPolicy,
 } from '@aws-mdaa/sm-shared';
 
 const MAX_REPO_NAME_LENGTH = 100;
@@ -117,7 +116,8 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
   protected readonly props: SageMakerModelDeployL3ConstructProps;
   private kmsKey!: MdaaKmsKey;
   private pipelineBucket!: MdaaBucket;
-  private codeBuildRole!: MdaaRole;
+  private stageRoles!: Map<string, MdaaRole>;
+  private sharedPolicy!: MdaaManagedPolicy;
   private sagemakerEndpointRole!: MdaaRole;
   private uniqueAccountIds!: string[];
 
@@ -130,7 +130,7 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
 
     this.createKmsKeyAndBucket();
     this.createSageMakerEndpointRole();
-    this.createCodeBuildRole();
+    this.createCodeBuildRoles();
 
     const { envVars, repoName, codeCommitRepo } = this.buildEnvironmentVariables();
     const { pipeline, buildProjects, devProject } = this.createPipeline(envVars, codeCommitRepo);
@@ -252,18 +252,76 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
     this.kmsKey.grantEncryptDecrypt(this.sagemakerEndpointRole);
   }
 
-  private createCodeBuildRole(): void {
+  private createCodeBuildRoles(): void {
     const props = this.props;
     const projectName = props.projectName;
+
+    this.createSharedCodeBuildPolicy();
+
+    // Determine which stages are active
+    const stages: { name: string; accountId?: string; region?: string }[] = [
+      { name: 'dev' },
+      ...(props.preProdEnvironment?.accountId
+        ? [{ name: 'preprod', accountId: props.preProdEnvironment.accountId, region: props.preProdEnvironment.region }]
+        : []),
+      ...(props.prodEnvironment?.accountId
+        ? [{ name: 'prod', accountId: props.prodEnvironment.accountId, region: props.prodEnvironment.region }]
+        : []),
+    ];
+
+    this.stageRoles = new Map();
+    const cdkBootstrapQualifier = props.cdkBootstrapQualifier ?? CDK_DEFAULT_BOOTSTRAP_QUALIFIER;
+    const cdkRoleSuffixes = ['deploy-role', 'file-publishing-role', 'lookup-role'];
+    const org = props.naming.props.org;
+
+    for (const stage of stages) {
+      const role = new MdaaRole(this, `deploy-${stage.name}-codebuild-role`, {
+        naming: props.naming,
+        roleName: `deploy-cb-${stage.name}-${projectName}`,
+        assumedBy: new ServicePrincipal('codebuild.amazonaws.com'),
+      });
+
+      role.addManagedPolicy(this.sharedPolicy);
+
+      // Per-stage CDK bootstrap role assumptions
+      const targetAccountId = stage.accountId ?? Aws.ACCOUNT_ID;
+      const targetRegion = stage.region ?? Aws.REGION;
+      const cdkRoleArns = cdkRoleSuffixes.map(
+        suffix =>
+          `arn:${Aws.PARTITION}:iam::${targetAccountId}:role/cdk-${cdkBootstrapQualifier}-${suffix}-${targetAccountId}-${targetRegion}`,
+      );
+      role.addToPolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['sts:AssumeRole'],
+          resources: cdkRoleArns,
+        }),
+      );
+
+      // Per-stage SSM read for cross-account parameters
+      if (stage.accountId && stage.region) {
+        role.addToPolicy(
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: ['ssm:GetParameter'],
+            resources: [`arn:${Aws.PARTITION}:ssm:${stage.region}:${stage.accountId}:parameter/${org}/*`],
+          }),
+        );
+      }
+
+      addCloudWatchLogsPolicy(role, '/aws/codebuild/');
+
+      this.stageRoles.set(stage.name, role);
+    }
+  }
+
+  /** Creates a shared managed policy with permissions common to all deploy stage roles. */
+  private createSharedCodeBuildPolicy(): void {
+    const props = this.props;
     const modelPackageGroupName = props.modelPackageGroupName;
+    const org = props.naming.props.org;
 
-    this.codeBuildRole = new MdaaRole(this, 'deploy-codebuild-role', {
-      naming: props.naming,
-      roleName: `deploy-cb-${projectName}`,
-      assumedBy: new ServicePrincipal('codebuild.amazonaws.com'),
-    });
-
-    this.codeBuildRole.addToPolicy(
+    const statements: PolicyStatement[] = [
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['sagemaker:DescribeModelPackageGroup'],
@@ -271,8 +329,6 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
           `arn:${Aws.PARTITION}:sagemaker:${Aws.REGION}:${Aws.ACCOUNT_ID}:model-package-group/${modelPackageGroupName}`,
         ],
       }),
-    );
-    this.codeBuildRole.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['sagemaker:DescribeModelPackage', 'sagemaker:ListModelPackages', 'sagemaker:UpdateModelPackage'],
@@ -280,17 +336,11 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
           `arn:${Aws.PARTITION}:sagemaker:${Aws.REGION}:${Aws.ACCOUNT_ID}:model-package/${modelPackageGroupName}/*`,
         ],
       }),
-    );
-
-    this.codeBuildRole.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['sagemaker:CreateModel', 'sagemaker:DeleteModel', 'sagemaker:DescribeModel'],
         resources: [`arn:${Aws.PARTITION}:sagemaker:${Aws.REGION}:${Aws.ACCOUNT_ID}:model/*`],
       }),
-    );
-
-    this.codeBuildRole.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: [
@@ -307,9 +357,6 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
           `arn:${Aws.PARTITION}:sagemaker:${Aws.REGION}:${Aws.ACCOUNT_ID}:endpoint-config/*`,
         ],
       }),
-    );
-
-    this.codeBuildRole.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['iam:PassRole'],
@@ -318,60 +365,11 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
           StringEquals: { 'iam:PassedToService': 'sagemaker.amazonaws.com' },
         },
       }),
-    );
-
-    const cdkBootstrapQualifier = props.cdkBootstrapQualifier ?? CDK_DEFAULT_BOOTSTRAP_QUALIFIER;
-    const cdkRoleSuffixes = ['deploy-role', 'file-publishing-role', 'lookup-role'];
-    const cdkRoleArns = [Aws.ACCOUNT_ID, ...this.uniqueAccountIds].flatMap(id =>
-      cdkRoleSuffixes.map(
-        suffix => `arn:${Aws.PARTITION}:iam::${id}:role/cdk-${cdkBootstrapQualifier}-${suffix}-${id}-${Aws.REGION}`,
-      ),
-    );
-    this.codeBuildRole.addToPolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['sts:AssumeRole'],
-        resources: cdkRoleArns,
-      }),
-    );
-
-    const org = props.naming.props.org;
-    const ssmResources: string[] = [
-      `arn:${Aws.PARTITION}:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/${org}/*`,
-      `arn:${Aws.PARTITION}:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/cdk-bootstrap/*`,
-    ];
-    if (props.preProdEnvironment?.accountId && props.preProdEnvironment?.region) {
-      ssmResources.push(
-        `arn:${Aws.PARTITION}:ssm:${props.preProdEnvironment.region}:${props.preProdEnvironment.accountId}:parameter/${org}/*`,
-      );
-    }
-    if (props.prodEnvironment?.accountId && props.prodEnvironment?.region) {
-      ssmResources.push(
-        `arn:${Aws.PARTITION}:ssm:${props.prodEnvironment.region}:${props.prodEnvironment.accountId}:parameter/${org}/*`,
-      );
-    }
-    this.codeBuildRole.addToPolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['ssm:GetParameter'],
-        resources: ssmResources,
-      }),
-    );
-
-    addCloudWatchLogsPolicy(this.codeBuildRole, '/aws/codebuild/');
-
-    this.pipelineBucket.grantReadWrite(this.codeBuildRole);
-    this.kmsKey.grantEncryptDecrypt(this.codeBuildRole);
-
-    const orgPrefix = props.naming.props.org;
-    this.codeBuildRole.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['s3:GetObject', 's3:PutObject', 's3:ListBucket', 's3:GetBucketLocation'],
-        resources: [`arn:${Aws.PARTITION}:s3:::${orgPrefix}-*`, `arn:${Aws.PARTITION}:s3:::${orgPrefix}-*/*`],
+        resources: [`arn:${Aws.PARTITION}:s3:::${org}-*`, `arn:${Aws.PARTITION}:s3:::${org}-*/*`],
       }),
-    );
-    this.codeBuildRole.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['kms:Decrypt', 'kms:Encrypt', 'kms:GenerateDataKey', 'kms:DescribeKey'],
@@ -383,9 +381,6 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
           },
         },
       }),
-    );
-
-    this.codeBuildRole.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: [
@@ -401,12 +396,8 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
           'cloudformation:DeleteChangeSet',
           'cloudformation:GetTemplateSummary',
         ],
-        resources: [
-          `arn:${Aws.PARTITION}:cloudformation:${Aws.REGION}:${Aws.ACCOUNT_ID}:stack/${props.naming.props.org}-*`,
-        ],
+        resources: [`arn:${Aws.PARTITION}:cloudformation:${Aws.REGION}:${Aws.ACCOUNT_ID}:stack/${org}-*`],
       }),
-    );
-    this.codeBuildRole.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['s3:GetObject', 's3:PutObject', 's3:ListBucket', 's3:GetBucketLocation'],
@@ -415,21 +406,54 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
           `arn:${Aws.PARTITION}:s3:::cdk-*-assets-${Aws.ACCOUNT_ID}-${Aws.REGION}/*`,
         ],
       }),
-    );
-    this.codeBuildRole.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['ssm:PutParameter', 'ssm:GetParameter', 'ssm:DeleteParameter', 'ssm:GetParameters'],
-        resources: [`arn:${Aws.PARTITION}:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/${props.naming.props.org}/*`],
+        resources: [`arn:${Aws.PARTITION}:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/${org}/*`],
       }),
-    );
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['ssm:GetParameter'],
+        resources: [`arn:${Aws.PARTITION}:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/cdk-bootstrap/*`],
+      }),
+    ];
+
+    this.sharedPolicy = new MdaaManagedPolicy(this, 'deploy-shared-policy', {
+      naming: props.naming,
+      managedPolicyName: `deploy-cb-shared-${props.projectName}`,
+      statements,
+      roles: [],
+    });
+
+    // Grant pipeline bucket and KMS access via the shared policy
+    this.pipelineBucket.grantReadWrite(this.sharedPolicy);
+    this.kmsKey.grantEncryptDecrypt(this.sharedPolicy);
 
     if (props.codeArtifact) {
-      addCodeArtifactReadPolicy(
-        this.codeBuildRole,
-        props.codeArtifact.domain,
-        props.codeArtifact.repository,
-        props.codeArtifact.region,
+      const caRegion = props.codeArtifact.region ?? Aws.REGION;
+      this.sharedPolicy.addStatements(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['codeartifact:GetAuthorizationToken'],
+          resources: [
+            `arn:${Aws.PARTITION}:codeartifact:${caRegion}:${Aws.ACCOUNT_ID}:domain/${props.codeArtifact.domain}`,
+          ],
+        }),
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['codeartifact:GetRepositoryEndpoint', 'codeartifact:ReadFromRepository'],
+          resources: [
+            `arn:${Aws.PARTITION}:codeartifact:${caRegion}:${Aws.ACCOUNT_ID}:repository/${props.codeArtifact.domain}/${props.codeArtifact.repository}`,
+          ],
+        }),
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['sts:GetServiceBearerToken'],
+          resources: ['*'],
+          conditions: {
+            StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' },
+          },
+        }),
       );
     }
   }
@@ -533,9 +557,10 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
         ...envVars,
         DEPLOY_STAGE: { value: stage },
       };
+      const stageRole = this.stageRoles.get(stage)!;
       return new PipelineProject(this, `deploy-${stage}-project`, {
         projectName: props.naming.resourceName(`deploy-${stage}-${projectName}`, MAX_CODEBUILD_PROJECT_NAME_LENGTH),
-        role: this.codeBuildRole,
+        role: stageRole,
         buildSpec: BuildSpec.fromSourceFilename('buildspec.yml'),
         environment: {
           buildImage: LinuxBuildImage.STANDARD_7_0,
@@ -699,11 +724,38 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
       {
         id: 'AwsSolutions-IAM5',
         reason:
-          'Wildcard permissions required for cross-account CDK role assumptions, SSM parameter reads, ' +
-          'SageMaker model packages, CodeBuild report groups, and S3 artifact access where resource names are dynamically generated.',
+          'Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support ' +
+          'resource-level permissions ' +
+          '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). ' +
+          'CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime ' +
+          '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).',
       },
     ];
-    MdaaNagSuppressions.addCodeResourceSuppressions(this.codeBuildRole, codeBuildRoleSuppressions, true);
+    for (const role of this.stageRoles.values()) {
+      MdaaNagSuppressions.addCodeResourceSuppressions(role, codeBuildRoleSuppressions, true);
+    }
+
+    MdaaNagSuppressions.addCodeResourceSuppressions(
+      this.sharedPolicy,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'Wildcard permissions required: sagemaker:CreateModel/DeleteModel/DescribeModel require wildcard on model ' +
+            'names since they are dynamically generated at runtime ' +
+            '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonsagemaker.html). ' +
+            'KMS key wildcards are scoped via kms:CallerAccount and kms:ViaService conditions. ' +
+            'sts:GetServiceBearerToken does not support resource-level permissions and is scoped via ' +
+            'sts:AWSServiceName condition ' +
+            '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_awssecuritytokenservice.html). ' +
+            'CloudFormation stack wildcards use org-scoped prefix (stack/${org}-*) since stack names are generated at deploy time ' +
+            '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscloudformation.html). ' +
+            'CDK assets bucket wildcards (cdk-*-assets-*) are required because the bootstrap qualifier segment is configurable. ' +
+            'S3 and SSM resources use org-scoped prefixes where object names are dynamically generated.',
+        },
+      ],
+      true,
+    );
 
     if (sourceType === SourceType.CODECOMMIT) {
       for (const proj of buildProjects) {

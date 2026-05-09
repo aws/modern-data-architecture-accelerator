@@ -103,9 +103,9 @@ describe('SageMaker Model Deploy L3 Construct', () => {
       );
     });
 
-    test('CodeBuild role has model and endpoint permissions', () => {
+    test('CodeBuild shared policy has model and endpoint permissions', () => {
       template.hasResourceProperties(
-        'AWS::IAM::Policy',
+        'AWS::IAM::ManagedPolicy',
         Match.objectLike({
           PolicyDocument: Match.objectLike({
             Statement: Match.arrayWith([
@@ -117,7 +117,7 @@ describe('SageMaker Model Deploy L3 Construct', () => {
         }),
       );
       template.hasResourceProperties(
-        'AWS::IAM::Policy',
+        'AWS::IAM::ManagedPolicy',
         Match.objectLike({
           PolicyDocument: Match.objectLike({
             Statement: Match.arrayWith([
@@ -130,9 +130,9 @@ describe('SageMaker Model Deploy L3 Construct', () => {
       );
     });
 
-    test('CodeBuild role has iam:PassRole for SageMaker', () => {
+    test('CodeBuild shared policy has iam:PassRole for SageMaker', () => {
       template.hasResourceProperties(
-        'AWS::IAM::Policy',
+        'AWS::IAM::ManagedPolicy',
         Match.objectLike({
           PolicyDocument: Match.objectLike({
             Statement: Match.arrayWith([
@@ -182,9 +182,7 @@ describe('SageMaker Model Deploy L3 Construct', () => {
       },
     };
     new SageMakerModelDeployL3Construct(stack, 'model-deploy-full', constructProps);
-    // CDK creates OverflowPolicy resources when inline policies exceed 10KB (cross-account
-    // multi-stage configs). These cannot be suppressed at construct time — filter them.
-    testApp.checkCdkNagCompliance(stack, { ignorePathPatterns: ['OverflowPolicy'] });
+    testApp.checkCdkNagCompliance(stack);
     const template = Template.fromStack(stack);
 
     test('Cross-account KMS key policy', () => {
@@ -233,6 +231,99 @@ describe('SageMaker Model Deploy L3 Construct', () => {
       template.hasResourceProperties('AWS::CodeBuild::Project', {
         Tags: Match.arrayWith([Match.objectLike({ Key: 'sagemaker:project-name' })]),
       });
+    });
+
+    test('Creates separate per-stage CodeBuild roles', () => {
+      const roles = template.findResources('AWS::IAM::Role', {
+        Properties: {
+          AssumeRolePolicyDocument: Match.objectLike({
+            Statement: Match.arrayWith([
+              Match.objectLike({
+                Principal: { Service: 'codebuild.amazonaws.com' },
+              }),
+            ]),
+          }),
+        },
+      });
+      // dev + preprod + prod = 3 CodeBuild roles
+      expect(Object.keys(roles).length).toBe(3);
+    });
+
+    test('Per-stage roles have STS AssumeRole scoped to only their target account', () => {
+      const policies = template.findResources('AWS::IAM::Policy');
+      const stsPolicies: { logicalId: string; resources: string }[] = [];
+
+      for (const [logicalId, policy] of Object.entries(policies)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const statements = (policy as any).Properties.PolicyDocument.Statement;
+        const stsStmt = statements.find((s: { Action: string }) => s.Action === 'sts:AssumeRole');
+        if (stsStmt) {
+          stsPolicies.push({ logicalId, resources: JSON.stringify(stsStmt.Resource) });
+        }
+      }
+
+      // Should have at least 3 STS policies (dev + preprod + prod)
+      expect(stsPolicies.length).toBeGreaterThanOrEqual(3);
+
+      // Verify isolation: no single policy references both preprod and prod accounts
+      for (const p of stsPolicies) {
+        const hasPreprod = p.resources.includes('222222222222');
+        const hasProd = p.resources.includes('333333333333');
+        expect(hasPreprod && hasProd).toBe(false);
+      }
+
+      // Verify preprod account is referenced in at least one policy
+      expect(stsPolicies.some(p => p.resources.includes('222222222222'))).toBe(true);
+      // Verify prod account is referenced in at least one policy
+      expect(stsPolicies.some(p => p.resources.includes('333333333333'))).toBe(true);
+    });
+
+    test('Per-stage SSM read permissions scoped to specific account and region', () => {
+      const policies = template.findResources('AWS::IAM::Policy');
+      const ssmPolicies: { logicalId: string; resources: string }[] = [];
+
+      for (const [logicalId, policy] of Object.entries(policies)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const statements = (policy as any).Properties.PolicyDocument.Statement;
+        const ssmStmt = statements.find((s: { Action: string }) => s.Action === 'ssm:GetParameter');
+        if (ssmStmt) {
+          ssmPolicies.push({ logicalId, resources: JSON.stringify(ssmStmt.Resource) });
+        }
+      }
+
+      // Preprod SSM references 222222222222
+      expect(ssmPolicies.some(p => p.resources.includes('222222222222'))).toBe(true);
+      // Prod SSM references 333333333333
+      expect(ssmPolicies.some(p => p.resources.includes('333333333333'))).toBe(true);
+    });
+
+    test('Shared managed policy is attached to all stage roles', () => {
+      const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
+      // Find the shared policy (has SageMaker statements)
+      const sharedPolicyLogicalId = Object.keys(managedPolicies).find(key => {
+        const doc = JSON.stringify(managedPolicies[key]);
+        return doc.includes('sagemaker:CreateModel');
+      });
+      expect(sharedPolicyLogicalId).toBeDefined();
+
+      // Each CodeBuild role should reference the shared managed policy
+      const roles = template.findResources('AWS::IAM::Role', {
+        Properties: {
+          AssumeRolePolicyDocument: Match.objectLike({
+            Statement: Match.arrayWith([
+              Match.objectLike({
+                Principal: { Service: 'codebuild.amazonaws.com' },
+              }),
+            ]),
+          }),
+        },
+      });
+      for (const [, role] of Object.entries(roles)) {
+        const managedPolicyArns = JSON.stringify(
+          (role as { Properties: { ManagedPolicyArns?: unknown[] } }).Properties.ManagedPolicyArns,
+        );
+        expect(managedPolicyArns).toContain(sharedPolicyLogicalId);
+      }
     });
   });
 
@@ -408,6 +499,37 @@ describe('SageMaker Model Deploy L3 Construct', () => {
     });
   });
 
+  describe('CodeArtifact Config', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    new SageMakerModelDeployL3Construct(stack, 'model-deploy-ca', {
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      projectName: 'test-ca',
+      seedCodePath: __dirname + '/test-seed-code.zip',
+      modelPackageGroupName: 'test-mpg-ca',
+      modelBucketName: 'test-model-bucket-ca',
+      codeArtifact: {
+        domain: 'my-domain',
+        repository: 'my-repo',
+        region: 'us-west-2',
+      },
+    });
+    testApp.checkCdkNagCompliance(stack);
+    const template = Template.fromStack(stack);
+
+    test('Shared managed policy has CodeArtifact permissions', () => {
+      const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
+      const sharedPolicyJson = JSON.stringify(managedPolicies);
+      expect(sharedPolicyJson).toContain('codeartifact:GetAuthorizationToken');
+      expect(sharedPolicyJson).toContain('codeartifact:GetRepositoryEndpoint');
+      expect(sharedPolicyJson).toContain('codeartifact:ReadFromRepository');
+      expect(sharedPolicyJson).toContain('sts:GetServiceBearerToken');
+      expect(sharedPolicyJson).toContain('my-domain');
+      expect(sharedPolicyJson).toContain('my-domain/my-repo');
+    });
+  });
+
   describe('Domain and Environment Defaults', () => {
     const testApp = new MdaaTestApp();
     const stack = testApp.testStack;
@@ -438,7 +560,7 @@ describe('SageMaker Model Deploy L3 Construct', () => {
         repo: 'test-deploy-repo',
       },
     });
-    testApp.checkCdkNagCompliance(stack, { ignorePathPatterns: ['OverflowPolicy'] });
+    testApp.checkCdkNagCompliance(stack);
     const template = Template.fromStack(stack);
 
     test('CodeBuild has domain env vars', () => {

@@ -4733,215 +4733,12 @@
         }
       }
     },
-    "deploydeploycodebuildroleBCF18107": {
-      "Type": "AWS::IAM::Role",
+    "deploydeploysharedpolicy317F9CE5": {
+      "Type": "AWS::IAM::ManagedPolicy",
       "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "codebuild.amazonaws.com"
-              }
-            }
-          ],
-          "Version": "2012-10-17"
-        },
-        "RoleName": "test-org-test-env-test-domain-test-mlops-deploy-cb-test-1e17f676",
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "sagemaker-mlops"
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain"
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env"
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-mlops"
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org"
-          },
-          {
-            "Key": "sagemaker:domain-arn",
-            "Value": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123"
-          },
-          {
-            "Key": "sagemaker:domain-id",
-            "Value": "d-test123"
-          },
-          {
-            "Key": "sagemaker:project-name",
-            "Value": "test-deploy-project"
-          }
-        ]
-      },
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "HIPAA.Security-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "PCI.DSS.321-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required for cross-account CDK role assumptions, SSM parameter reads, SageMaker model packages, CodeBuild report groups, and S3 artifact access where resource names are dynamically generated.",
-              "id": "AwsSolutions-IAM5"
-            }
-          ]
-        }
-      }
-    },
-    "deploydeploycodebuildroleroledeploycbtestdeployprojectarnssm13DC6998": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-test-deploy-project/arn",
-        "Tags": {
-          "mdaa_cdk_app": "sagemaker-mlops",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-mlops",
-          "mdaa_org": "test-org",
-          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
-          "sagemaker:domain-id": "d-test123",
-          "sagemaker:project-name": "test-deploy-project"
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::GetAtt": [
-            "deploydeploycodebuildroleBCF18107",
-            "Arn"
-          ]
-        }
-      },
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "HIPAA.Security-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "PCI.DSS.321-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required for cross-account CDK role assumptions, SSM parameter reads, SageMaker model packages, CodeBuild report groups, and S3 artifact access where resource names are dynamically generated.",
-              "id": "AwsSolutions-IAM5"
-            }
-          ]
-        }
-      }
-    },
-    "deploydeploycodebuildroleroledeploycbtestdeployprojectidssmA3DACCAB": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-test-deploy-project/id",
-        "Tags": {
-          "mdaa_cdk_app": "sagemaker-mlops",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-mlops",
-          "mdaa_org": "test-org",
-          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
-          "sagemaker:domain-id": "d-test123",
-          "sagemaker:project-name": "test-deploy-project"
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::GetAtt": [
-            "deploydeploycodebuildroleBCF18107",
-            "RoleId"
-          ]
-        }
-      },
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "HIPAA.Security-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "PCI.DSS.321-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required for cross-account CDK role assumptions, SSM parameter reads, SageMaker model packages, CodeBuild report groups, and S3 artifact access where resource names are dynamically generated.",
-              "id": "AwsSolutions-IAM5"
-            }
-          ]
-        }
-      }
-    },
-    "deploydeploycodebuildroleroledeploycbtestdeployprojectnamessmD79C5AED": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-test-deploy-project/name",
-        "Tags": {
-          "mdaa_cdk_app": "sagemaker-mlops",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-mlops",
-          "mdaa_org": "test-org",
-          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
-          "sagemaker:domain-id": "d-test123",
-          "sagemaker:project-name": "test-deploy-project"
-        },
-        "Type": "String",
-        "Value": {
-          "Ref": "deploydeploycodebuildroleBCF18107"
-        }
-      },
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "HIPAA.Security-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "PCI.DSS.321-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required for cross-account CDK role assumptions, SSM parameter reads, SageMaker model packages, CodeBuild report groups, and S3 artifact access where resource names are dynamically generated.",
-              "id": "AwsSolutions-IAM5"
-            }
-          ]
-        }
-      }
-    },
-    "deploydeploycodebuildroleDefaultPolicyEBE0ACD4": {
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-mlops-deploy-cb-share-3c9c8be",
+        "Path": "/",
         "PolicyDocument": {
           "Statement": [
             {
@@ -5089,337 +4886,6 @@
               "Resource": {
                 "Fn::GetAtt": [
                   "deploydeploysagemakerrole7A87F37D",
-                  "Arn"
-                ]
-              }
-            },
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":role/cdk-hnb659fds-deploy-role-",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      "-",
-                      {
-                        "Ref": "AWS::Region"
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":role/cdk-hnb659fds-file-publishing-role-",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      "-",
-                      {
-                        "Ref": "AWS::Region"
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":role/cdk-hnb659fds-lookup-role-",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      "-",
-                      {
-                        "Ref": "AWS::Region"
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::222222222222:role/cdk-hnb659fds-deploy-role-222222222222-",
-                      {
-                        "Ref": "AWS::Region"
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::222222222222:role/cdk-hnb659fds-file-publishing-role-222222222222-",
-                      {
-                        "Ref": "AWS::Region"
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::222222222222:role/cdk-hnb659fds-lookup-role-222222222222-",
-                      {
-                        "Ref": "AWS::Region"
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::333333333333:role/cdk-hnb659fds-deploy-role-333333333333-",
-                      {
-                        "Ref": "AWS::Region"
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::333333333333:role/cdk-hnb659fds-file-publishing-role-333333333333-",
-                      {
-                        "Ref": "AWS::Region"
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::333333333333:role/cdk-hnb659fds-lookup-role-333333333333-",
-                      {
-                        "Ref": "AWS::Region"
-                      }
-                    ]
-                  ]
-                }
-              ]
-            },
-            {
-              "Action": "ssm:GetParameter",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":ssm:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":parameter/test-org/*"
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":ssm:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":parameter/cdk-bootstrap/*"
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":ssm:test-region:222222222222:parameter/test-org/*"
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":ssm:test-region:333333333333:parameter/test-org/*"
-                    ]
-                  ]
-                }
-              ]
-            },
-            {
-              "Action": [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents"
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition"
-                    },
-                    ":logs:",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId"
-                    },
-                    ":log-group:/aws/codebuild/*"
-                  ]
-                ]
-              }
-            },
-            {
-              "Action": [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*"
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "deploydeploypipelineartifacts29773A98",
-                    "Arn"
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "deploydeploypipelineartifacts29773A98",
-                          "Arn"
-                        ]
-                      },
-                      "/*"
-                    ]
-                  ]
-                }
-              ]
-            },
-            {
-              "Action": [
-                "kms:Decrypt",
-                "kms:DescribeKey",
-                "kms:Encrypt",
-                "kms:ReEncrypt*",
-                "kms:GenerateDataKey*"
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "deploydeploykmskey11636641",
-                  "Arn"
-                ]
-              }
-            },
-            {
-              "Action": [
-                "kms:Decrypt",
-                "kms:Encrypt",
-                "kms:ReEncrypt*",
-                "kms:GenerateDataKey*"
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "deploydeploykmskey11636641",
                   "Arn"
                 ]
               }
@@ -5623,6 +5089,512 @@
               }
             },
             {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ssm:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":parameter/cdk-bootstrap/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "deploydeploypipelineartifacts29773A98",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "deploydeploypipelineartifacts29773A98",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "deploydeploykmskey11636641",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "deploydeploykmskey11636641",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: sagemaker:CreateModel/DeleteModel/DescribeModel require wildcard on model names since they are dynamically generated at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonsagemaker.html). KMS key wildcards are scoped via kms:CallerAccount and kms:ViaService conditions. sts:GetServiceBearerToken does not support resource-level permissions and is scoped via sts:AWSServiceName condition (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awssecuritytokenservice.html). CloudFormation stack wildcards use org-scoped prefix (stack/${org}-*) since stack names are generated at deploy time (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscloudformation.html). CDK assets bucket wildcards (cdk-*-assets-*) are required because the bootstrap qualifier segment is configurable. S3 and SSM resources use org-scoped prefixes where object names are dynamically generated.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploysharedpolicymanagedpolicydeploycbsharedtestdeployprojectarnssm751D2B27": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mlops/managed-policy/deploy-cb-shared-test-deploy-project/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-mlops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mlops",
+          "mdaa_org": "test-org",
+          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
+          "sagemaker:domain-id": "d-test123",
+          "sagemaker:project-name": "test-deploy-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "deploydeploysharedpolicy317F9CE5"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: sagemaker:CreateModel/DeleteModel/DescribeModel require wildcard on model names since they are dynamically generated at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonsagemaker.html). KMS key wildcards are scoped via kms:CallerAccount and kms:ViaService conditions. sts:GetServiceBearerToken does not support resource-level permissions and is scoped via sts:AWSServiceName condition (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awssecuritytokenservice.html). CloudFormation stack wildcards use org-scoped prefix (stack/${org}-*) since stack names are generated at deploy time (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscloudformation.html). CDK assets bucket wildcards (cdk-*-assets-*) are required because the bootstrap qualifier segment is configurable. S3 and SSM resources use org-scoped prefixes where object names are dynamically generated.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploysharedpolicymanagedpolicydeploycbsharedtestdeployprojectnamessmC53DB525": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mlops/managed-policy/deploy-cb-shared-test-deploy-project/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-mlops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mlops",
+          "mdaa_org": "test-org",
+          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
+          "sagemaker:domain-id": "d-test123",
+          "sagemaker:project-name": "test-deploy-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "deploydeploysharedpolicy317F9CE5"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: sagemaker:CreateModel/DeleteModel/DescribeModel require wildcard on model names since they are dynamically generated at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonsagemaker.html). KMS key wildcards are scoped via kms:CallerAccount and kms:ViaService conditions. sts:GetServiceBearerToken does not support resource-level permissions and is scoped via sts:AWSServiceName condition (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awssecuritytokenservice.html). CloudFormation stack wildcards use org-scoped prefix (stack/${org}-*) since stack names are generated at deploy time (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscloudformation.html). CDK assets bucket wildcards (cdk-*-assets-*) are required because the bootstrap qualifier segment is configurable. S3 and SSM resources use org-scoped prefixes where object names are dynamically generated.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploydevcodebuildrole699953DA": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codebuild.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Ref": "deploydeploysharedpolicy317F9CE5"
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-mlops-deploy-cb-dev--6867c742",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-mlops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mlops"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:domain-arn",
+            "Value": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123"
+          },
+          {
+            "Key": "sagemaker:domain-id",
+            "Value": "d-test123"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-deploy-project"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploydevcodebuildroleroledeploycbdevtestdeployprojectarnssm4FE299FF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-dev-test-deploy-project/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-mlops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mlops",
+          "mdaa_org": "test-org",
+          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
+          "sagemaker:domain-id": "d-test123",
+          "sagemaker:project-name": "test-deploy-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "deploydeploydevcodebuildrole699953DA",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploydevcodebuildroleroledeploycbdevtestdeployprojectidssm9FE892CD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-dev-test-deploy-project/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-mlops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mlops",
+          "mdaa_org": "test-org",
+          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
+          "sagemaker:domain-id": "d-test123",
+          "sagemaker:project-name": "test-deploy-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "deploydeploydevcodebuildrole699953DA",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploydevcodebuildroleroledeploycbdevtestdeployprojectnamessm90926CBB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-dev-test-deploy-project/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-mlops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mlops",
+          "mdaa_org": "test-org",
+          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
+          "sagemaker:domain-id": "d-test123",
+          "sagemaker:project-name": "test-deploy-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "deploydeploydevcodebuildrole699953DA"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploydevcodebuildroleDefaultPolicy96D2C24B": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":role/cdk-hnb659fds-deploy-role-",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":role/cdk-hnb659fds-file-publishing-role-",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":role/cdk-hnb659fds-lookup-role-",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::Region"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":logs:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":log-group:/aws/codebuild/*"
+                  ]
+                ]
+              }
+            },
+            {
               "Action": [
                 "logs:CreateLogGroup",
                 "logs:CreateLogStream",
@@ -5679,6 +5651,21 @@
             },
             {
               "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "deploydeploykmskey11636641",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*"
@@ -5717,6 +5704,341 @@
                 "Fn::GetAtt": [
                   "deploydeploykmskey11636641",
                   "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "deploydeploydevcodebuildroleDefaultPolicy96D2C24B",
+        "Roles": [
+          {
+            "Ref": "deploydeploydevcodebuildrole699953DA"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploypreprodcodebuildrole1A547FBB": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codebuild.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Ref": "deploydeploysharedpolicy317F9CE5"
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-mlops-deploy-cb-prep-5955c8a3",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-mlops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mlops"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:domain-arn",
+            "Value": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123"
+          },
+          {
+            "Key": "sagemaker:domain-id",
+            "Value": "d-test123"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-deploy-project"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploypreprodcodebuildroleroledeploycbpreprodtestdeployprojectarnssm10021931": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-preprod-test-deploy-project/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-mlops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mlops",
+          "mdaa_org": "test-org",
+          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
+          "sagemaker:domain-id": "d-test123",
+          "sagemaker:project-name": "test-deploy-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "deploydeploypreprodcodebuildrole1A547FBB",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploypreprodcodebuildroleroledeploycbpreprodtestdeployprojectidssm0BEAA317": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-preprod-test-deploy-project/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-mlops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mlops",
+          "mdaa_org": "test-org",
+          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
+          "sagemaker:domain-id": "d-test123",
+          "sagemaker:project-name": "test-deploy-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "deploydeploypreprodcodebuildrole1A547FBB",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploypreprodcodebuildroleroledeploycbpreprodtestdeployprojectnamessmB2AF0145": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-preprod-test-deploy-project/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-mlops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mlops",
+          "mdaa_org": "test-org",
+          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
+          "sagemaker:domain-id": "d-test123",
+          "sagemaker:project-name": "test-deploy-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "deploydeploypreprodcodebuildrole1A547FBB"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeploypreprodcodebuildroleDefaultPolicy64D7ED08": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::222222222222:role/cdk-hnb659fds-deploy-role-222222222222-test-region"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::222222222222:role/cdk-hnb659fds-file-publishing-role-222222222222-test-region"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::222222222222:role/cdk-hnb659fds-lookup-role-222222222222-test-region"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ssm:test-region:222222222222:parameter/test-org/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":logs:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":log-group:/aws/codebuild/*"
+                  ]
                 ]
               }
             },
@@ -5777,6 +6099,399 @@
             },
             {
               "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "deploydeploykmskey11636641",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "deploydeploypipelineartifacts29773A98",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "deploydeploypipelineartifacts29773A98",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "deploydeploykmskey11636641",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "deploydeploypreprodcodebuildroleDefaultPolicy64D7ED08",
+        "Roles": [
+          {
+            "Ref": "deploydeploypreprodcodebuildrole1A547FBB"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeployprodcodebuildroleF89021CE": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codebuild.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Ref": "deploydeploysharedpolicy317F9CE5"
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-mlops-deploy-cb-prod-1ab8c8b0",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker-mlops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mlops"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "sagemaker:domain-arn",
+            "Value": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123"
+          },
+          {
+            "Key": "sagemaker:domain-id",
+            "Value": "d-test123"
+          },
+          {
+            "Key": "sagemaker:project-name",
+            "Value": "test-deploy-project"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeployprodcodebuildroleroledeploycbprodtestdeployprojectarnssmEB8F0802": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-prod-test-deploy-project/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-mlops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mlops",
+          "mdaa_org": "test-org",
+          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
+          "sagemaker:domain-id": "d-test123",
+          "sagemaker:project-name": "test-deploy-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "deploydeployprodcodebuildroleF89021CE",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeployprodcodebuildroleroledeploycbprodtestdeployprojectidssm3C44797F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-prod-test-deploy-project/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-mlops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mlops",
+          "mdaa_org": "test-org",
+          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
+          "sagemaker:domain-id": "d-test123",
+          "sagemaker:project-name": "test-deploy-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "deploydeployprodcodebuildroleF89021CE",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeployprodcodebuildroleroledeploycbprodtestdeployprojectnamessm3CCDB894": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mlops/role/deploy-cb-prod-test-deploy-project/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker-mlops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mlops",
+          "mdaa_org": "test-org",
+          "sagemaker:domain-arn": "arn:test-partition:sagemaker:test-region:test-account:domain/d-test123",
+          "sagemaker:domain-id": "d-test123",
+          "sagemaker:project-name": "test-deploy-project"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "deploydeployprodcodebuildroleF89021CE"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "deploydeployprodcodebuildroleDefaultPolicyD600B0C9": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::333333333333:role/cdk-hnb659fds-deploy-role-333333333333-test-region"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::333333333333:role/cdk-hnb659fds-file-publishing-role-333333333333-test-region"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::333333333333:role/cdk-hnb659fds-lookup-role-333333333333-test-region"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ssm:test-region:333333333333:parameter/test-org/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":logs:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":log-group:/aws/codebuild/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
                 "logs:CreateLogGroup",
                 "logs:CreateLogStream",
                 "logs:PutLogEvents"
@@ -5807,47 +6522,7 @@
                   ]
                 }
               ]
-            }
-          ],
-          "Version": "2012-10-17"
-        },
-        "PolicyName": "deploydeploycodebuildroleDefaultPolicyEBE0ACD4",
-        "Roles": [
-          {
-            "Ref": "deploydeploycodebuildroleBCF18107"
-          }
-        ]
-      },
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
-              "id": "PCI.DSS.321-IAMNoInlinePolicy"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required for cross-account CDK role assumptions, SSM parameter reads, SageMaker model packages, CodeBuild report groups, and S3 artifact access where resource names are dynamically generated.",
-              "id": "AwsSolutions-IAM5"
-            }
-          ]
-        }
-      }
-    },
-    "deploydeploycodebuildroleOverflowPolicy1C7FA66D2": {
-      "Type": "AWS::IAM::ManagedPolicy",
-      "Properties": {
-        "Description": "Part of the policies for test-org-test-env-test-domain-test-mlops/deploy/deploy-codebuild-role",
-        "Path": "/",
-        "PolicyDocument": {
-          "Statement": [
             {
               "Action": [
                 "codebuild:CreateReportGroup",
@@ -5869,15 +6544,96 @@
                   ]
                 ]
               }
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "deploydeploykmskey11636641",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "deploydeploypipelineartifacts29773A98",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "deploydeploypipelineartifacts29773A98",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "deploydeploykmskey11636641",
+                  "Arn"
+                ]
+              }
             }
           ],
           "Version": "2012-10-17"
         },
+        "PolicyName": "deploydeployprodcodebuildroleDefaultPolicyD600B0C9",
         "Roles": [
           {
-            "Ref": "deploydeploycodebuildroleBCF18107"
+            "Ref": "deploydeployprodcodebuildroleF89021CE"
           }
         ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Inline policies are used for least-privilege scoping on construct-specific roles.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/sagemaker-model-deploy-l3-construct/lib/sagemaker-model-deploy-l3-construct.ts] Wildcard permissions required: codebuild:CreateReportGroup/BatchPutCodeCoverages do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awscodebuild.html). CloudWatch Logs log group names are dynamically generated by CodeBuild at runtime (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
       }
     },
     "deploydeploysourcerepoB054E895": {
@@ -7595,7 +8351,7 @@
         "Name": "test-org-test-env-test-domain-test-mlops-deploy-dev-test-deploy-project",
         "ServiceRole": {
           "Fn::GetAtt": [
-            "deploydeploycodebuildroleBCF18107",
+            "deploydeploydevcodebuildrole699953DA",
             "Arn"
           ]
         },
@@ -7902,7 +8658,7 @@
         "Name": "test-org-test-env-test-domain-test-mlops-deploy-preprod-test-deploy-project",
         "ServiceRole": {
           "Fn::GetAtt": [
-            "deploydeploycodebuildroleBCF18107",
+            "deploydeploypreprodcodebuildrole1A547FBB",
             "Arn"
           ]
         },
@@ -8209,7 +8965,7 @@
         "Name": "test-org-test-env-test-domain-test-mlops-deploy-prod-test-deploy-project",
         "ServiceRole": {
           "Fn::GetAtt": [
-            "deploydeploycodebuildroleBCF18107",
+            "deploydeployprodcodebuildroleF89021CE",
             "Arn"
           ]
         },
@@ -8675,34 +9431,130 @@
         "Name": "test-org:test-domain:test-mlops:role:deployexectestdeployproject:name"
       }
     },
-    "deploydeploycodebuildroleroledeploycbtestdeployprojectarnout79A209A8": {
+    "deploydeploysharedpolicymanagedpolicydeploycbsharedtestdeployprojectarnout6BC463CD": {
+      "Value": {
+        "Ref": "deploydeploysharedpolicy317F9CE5"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mlops:managed-policy:deploycbsharedtestdeployproject:arn"
+      }
+    },
+    "deploydeploysharedpolicymanagedpolicydeploycbsharedtestdeployprojectnameoutA17884D7": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "deploydeploysharedpolicy317F9CE5"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mlops:managed-policy:deploycbsharedtestdeployproject:name"
+      }
+    },
+    "deploydeploydevcodebuildroleroledeploycbdevtestdeployprojectarnoutF16F60F2": {
       "Value": {
         "Fn::GetAtt": [
-          "deploydeploycodebuildroleBCF18107",
+          "deploydeploydevcodebuildrole699953DA",
           "Arn"
         ]
       },
       "Export": {
-        "Name": "test-org:test-domain:test-mlops:role:deploycbtestdeployproject:arn"
+        "Name": "test-org:test-domain:test-mlops:role:deploycbdevtestdeployproject:arn"
       }
     },
-    "deploydeploycodebuildroleroledeploycbtestdeployprojectidout0946723A": {
+    "deploydeploydevcodebuildroleroledeploycbdevtestdeployprojectidout41AA57A8": {
       "Value": {
         "Fn::GetAtt": [
-          "deploydeploycodebuildroleBCF18107",
+          "deploydeploydevcodebuildrole699953DA",
           "RoleId"
         ]
       },
       "Export": {
-        "Name": "test-org:test-domain:test-mlops:role:deploycbtestdeployproject:id"
+        "Name": "test-org:test-domain:test-mlops:role:deploycbdevtestdeployproject:id"
       }
     },
-    "deploydeploycodebuildroleroledeploycbtestdeployprojectnameoutCC54F955": {
+    "deploydeploydevcodebuildroleroledeploycbdevtestdeployprojectnameout42D20EA4": {
       "Value": {
-        "Ref": "deploydeploycodebuildroleBCF18107"
+        "Ref": "deploydeploydevcodebuildrole699953DA"
       },
       "Export": {
-        "Name": "test-org:test-domain:test-mlops:role:deploycbtestdeployproject:name"
+        "Name": "test-org:test-domain:test-mlops:role:deploycbdevtestdeployproject:name"
+      }
+    },
+    "deploydeploypreprodcodebuildroleroledeploycbpreprodtestdeployprojectarnout52B39CAA": {
+      "Value": {
+        "Fn::GetAtt": [
+          "deploydeploypreprodcodebuildrole1A547FBB",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mlops:role:deploycbpreprodtestdeployproject:arn"
+      }
+    },
+    "deploydeploypreprodcodebuildroleroledeploycbpreprodtestdeployprojectidout2691F10D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "deploydeploypreprodcodebuildrole1A547FBB",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mlops:role:deploycbpreprodtestdeployproject:id"
+      }
+    },
+    "deploydeploypreprodcodebuildroleroledeploycbpreprodtestdeployprojectnameoutD3546AC3": {
+      "Value": {
+        "Ref": "deploydeploypreprodcodebuildrole1A547FBB"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mlops:role:deploycbpreprodtestdeployproject:name"
+      }
+    },
+    "deploydeployprodcodebuildroleroledeploycbprodtestdeployprojectarnout1912A11A": {
+      "Value": {
+        "Fn::GetAtt": [
+          "deploydeployprodcodebuildroleF89021CE",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mlops:role:deploycbprodtestdeployproject:arn"
+      }
+    },
+    "deploydeployprodcodebuildroleroledeploycbprodtestdeployprojectidout54CB1909": {
+      "Value": {
+        "Fn::GetAtt": [
+          "deploydeployprodcodebuildroleF89021CE",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mlops:role:deploycbprodtestdeployproject:id"
+      }
+    },
+    "deploydeployprodcodebuildroleroledeploycbprodtestdeployprojectnameout5E3BC898": {
+      "Value": {
+        "Ref": "deploydeployprodcodebuildroleF89021CE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mlops:role:deploycbprodtestdeployproject:name"
       }
     },
     "deploymodeldeploytestdeployprojectendpointnameprefixout297772D9": {
