@@ -164,4 +164,35 @@ describe('SagemakerProjectL3Construct', () => {
     const template = Template.fromStack(testApp.testStack);
     template.resourceCountIs('AWS::DataZone::Project', 1);
   });
+
+  it('should merge user Tooling/DataLake param overrides without duplicates', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-sm-construct-dup', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'test-profile-merge': {
+          environments: {
+            DefaultDataLake: {},
+            Tooling: {
+              parameters: {
+                overrides: {
+                  CustomParam: { value: 'user-value' },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    // Verify exactly one project profile is created (no duplicate resource)
+    template.resourceCountIs('AWS::DataZone::ProjectProfile', 1);
+    // Verify the profile exists with expected name
+    template.hasResourceProperties('AWS::DataZone::ProjectProfile', {
+      Name: 'test-profile-merge',
+      Status: 'ENABLED',
+    });
+  });
 });
