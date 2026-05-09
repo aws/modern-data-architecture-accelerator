@@ -160,6 +160,7 @@ Starter kits provide secure, prepackaged foundations for common use cases:
 | [Governed Lakehouse](starter_kits/governed_lakehouse/README.md)                 | DataZone-governed lakehouse with fine-grained access control                                             | ~20–25 min       |
 | [Health Data Accelerator](starter_kits/health_data_accelerator/README.md)       | Healthcare data lake with DMS (Database Migration Service) integration                                   | ~30–45 min       |
 | [SMUS Research Environment](starter_kits/smus_research_environment/README.md)   | A SageMaker Unified Studio-enabled architecture suitable for facilitating team-based research activities | ~20–25 min       |
+| [MLOps Platform](starter_kits/mlops_platform/README.md)                         | End-to-end ML lifecycle platform with training, deployment, and monitoring pipelines                      | ~20–30 min       |
 
 ## Sample Configurations
 
