@@ -546,6 +546,19 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
       return envConfig;
     });
 
+    // Extract user overrides for Tooling/DataLake (if any) to prevent duplicates
+    const userToolingConfig = envConfigs.find(e => e.name === 'Tooling');
+    const userDataLakeConfig = envConfigs.find(e => e.name === 'DataLake');
+    const otherEnvConfigs = envConfigs.filter(e => e.name !== 'Tooling' && e.name !== 'DataLake');
+
+    // Merge user parameter overrides into Tooling compliance config;
+    // compliance overrides always win on name collision (isEditable=false)
+    const toolingUserOverrides: any[] =
+      (userToolingConfig?.configurationParameters as any)?.parameterOverrides || [];
+    const toolingOverrideMap = new Map<string, any>();
+    for (const o of toolingUserOverrides) toolingOverrideMap.set(o.name, o);
+    for (const o of getParamComplianceOverrides('Tooling')) toolingOverrideMap.set(o.name, o);
+
     // Create required Tooling environment configuration
     const toolingEnvConfig: CfnProjectProfile.EnvironmentConfigurationProperty = {
       awsRegion: { regionName: profileProps.region ?? this.region },
@@ -557,9 +570,16 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
       deploymentMode: 'ON_CREATE',
       deploymentOrder: 1,
       configurationParameters: {
-        parameterOverrides: getParamComplianceOverrides('Tooling'),
+        parameterOverrides: Array.from(toolingOverrideMap.values()),
       },
     };
+
+    // Merge user parameter overrides into DataLake compliance config
+    const datalakeUserOverrides: any[] =
+      (userDataLakeConfig?.configurationParameters as any)?.parameterOverrides || [];
+    const datalakeOverrideMap = new Map<string, any>();
+    for (const o of datalakeUserOverrides) datalakeOverrideMap.set(o.name, o);
+    for (const o of getParamComplianceOverrides('DataLake')) datalakeOverrideMap.set(o.name, o);
 
     // Create required DataLake environment configuration
     const datalakeEnvConfig: CfnProjectProfile.EnvironmentConfigurationProperty = {
@@ -572,7 +592,7 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
       deploymentMode: 'ON_CREATE',
       deploymentOrder: 2,
       configurationParameters: {
-        parameterOverrides: getParamComplianceOverrides('DataLake'),
+        parameterOverrides: Array.from(datalakeOverrideMap.values()),
       },
     };
 
@@ -587,7 +607,7 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
       domainIdentifier: domainConfig.domainId,
       domainUnitIdentifier: domainUnitId,
       name: profileName,
-      environmentConfigurations: [toolingEnvConfig, datalakeEnvConfig, ...envConfigs],
+      environmentConfigurations: [toolingEnvConfig, datalakeEnvConfig, ...otherEnvConfigs],
       status: 'ENABLED',
     });
   }

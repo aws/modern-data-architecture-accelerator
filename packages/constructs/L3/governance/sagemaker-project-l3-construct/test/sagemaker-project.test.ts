@@ -4,7 +4,7 @@
  */
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { DomainConfig } from '@aws-mdaa/datazone-constructs';
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { SagemakerProjectL3Construct } from '../lib';
@@ -163,5 +163,117 @@ describe('SagemakerProjectL3Construct', () => {
 
     const template = Template.fromStack(testApp.testStack);
     template.resourceCountIs('AWS::DataZone::Project', 1);
+  });
+
+  it('should merge user ParameterOverrides into Tooling environment config', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-sm-merge-1', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'test-profile-merge-1': {
+          environments: {
+            Tooling: {
+              parameters: {
+                overrides: {
+                  CustomParam: { value: 'tooling-user-value' },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::ProjectProfile', {
+      Name: 'test-profile-merge-1',
+      EnvironmentConfigurations: Match.arrayWith([
+        Match.objectLike({
+          Name: 'Tooling',
+          ConfigurationParameters: {
+            ParameterOverrides: Match.arrayWith([
+              Match.objectLike({ Name: 'CustomParam', Value: 'tooling-user-value' }),
+            ]),
+          },
+        }),
+      ]),
+    });
+  });
+
+  it('should let compliance overrides win on name collision with user overrides', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-sm-merge-2', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'test-profile-merge-2': {
+          environments: {
+            Tooling: {
+              parameters: {
+                overrides: {
+                  enableNetworkIsolation: { value: 'false', isEditable: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::ProjectProfile', {
+      Name: 'test-profile-merge-2',
+      EnvironmentConfigurations: Match.arrayWith([
+        Match.objectLike({
+          Name: 'Tooling',
+          ConfigurationParameters: {
+            ParameterOverrides: Match.arrayWith([
+              Match.objectLike({
+                Name: 'enableNetworkIsolation',
+                Value: 'true',
+                IsEditable: false,
+              }),
+            ]),
+          },
+        }),
+      ]),
+    });
+  });
+
+  it('should merge user ParameterOverrides into DataLake environment identically', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-sm-merge-3', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'test-profile-merge-3': {
+          environments: {
+            DataLake: {
+              parameters: {
+                overrides: {
+                  DataLakeParam: { value: 'datalake-value' },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::ProjectProfile', {
+      Name: 'test-profile-merge-3',
+      EnvironmentConfigurations: Match.arrayWith([
+        Match.objectLike({
+          Name: 'DataLake',
+          ConfigurationParameters: {
+            ParameterOverrides: Match.arrayWith([
+              Match.objectLike({ Name: 'DataLakeParam', Value: 'datalake-value' }),
+            ]),
+          },
+        }),
+      ]),
+    });
   });
 });
