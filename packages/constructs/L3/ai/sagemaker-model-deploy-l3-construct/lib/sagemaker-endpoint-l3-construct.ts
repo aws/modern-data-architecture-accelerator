@@ -220,11 +220,12 @@ export class SageMakerEndpointL3Construct extends MdaaL3Construct {
       );
     }
 
-    // CfnModel
-    const modelName = props.naming.resourceName(`${projectName}-${stageName}-model`, MAX_NAME_LENGTH);
+    // CfnModel — no custom name to allow CloudFormation replacement updates
+    // (e.g., when modelPackageArn changes to a new model version).
+    // SageMaker Model replacement uses CREATE_BEFORE_DELETE, which fails if the
+    // name is fixed because the old resource still exists during creation.
     this.model = new CfnModel(this, 'model', {
       executionRoleArn: this.executionRole.roleArn,
-      modelName,
       containers: [{ modelPackageName: props.modelPackageArn }],
       enableNetworkIsolation: networkConfig?.enableNetworkIsolation ?? false,
       vpcConfig,
@@ -267,7 +268,7 @@ export class SageMakerEndpointL3Construct extends MdaaL3Construct {
       dataCaptureConfig,
       productionVariants: [
         {
-          modelName,
+          modelName: this.model.attrModelName,
           instanceType: variant.instanceType,
           initialInstanceCount: variant.instanceCount ?? 1,
           variantName: variant.variantName ?? 'AllTraffic',
@@ -338,7 +339,7 @@ export class SageMakerEndpointL3Construct extends MdaaL3Construct {
       resourceType: 'endpoint',
       resourceId: `${projectName}-${stageName}`,
       name: 'model-name',
-      value: modelName,
+      value: this.model.attrModelName,
     });
 
     new MdaaParamAndOutput(this, {

@@ -30,7 +30,7 @@ describe('SageMaker Endpoint L3 Construct', () => {
     test('Creates CfnModel', () => {
       template.resourceCountIs('AWS::SageMaker::Model', 1);
       template.hasResourceProperties('AWS::SageMaker::Model', {
-        ModelName: Match.stringLikeRegexp('test-endpoint-dev-model|test-org.*test-endpoi'),
+        ModelName: Match.absent(),
         Containers: [
           Match.objectLike({
             ModelPackageName: 'arn:aws:sagemaker:us-east-1:111111111111:model-package/test-mpg/1',
@@ -45,6 +45,7 @@ describe('SageMaker Endpoint L3 Construct', () => {
         KmsKeyId: Match.anyValue(),
         ProductionVariants: [
           Match.objectLike({
+            ModelName: { 'Fn::GetAtt': [Match.stringLikeRegexp('endpoint.*model'), 'ModelName'] },
             InstanceType: 'ml.m5.2xlarge',
             InitialInstanceCount: 1,
             VariantName: 'AllTraffic',
@@ -100,6 +101,7 @@ describe('SageMaker Endpoint L3 Construct', () => {
       });
       template.hasResourceProperties('AWS::SSM::Parameter', {
         Name: Match.stringLikeRegexp('model-name'),
+        Value: { 'Fn::GetAtt': [Match.stringLikeRegexp('endpoint.*model'), 'ModelName'] },
       });
       template.hasResourceProperties('AWS::SSM::Parameter', {
         Name: Match.stringLikeRegexp('kms-key-id'),

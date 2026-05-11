@@ -759,7 +759,6 @@
             "Arn"
           ]
         },
-        "ModelName": "test-org-test-env-test-domain-test-endpoint-test-endpo-29612d9e",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -845,7 +844,12 @@
             "InitialInstanceCount": 2,
             "InitialVariantWeight": 1,
             "InstanceType": "ml.m5.2xlarge",
-            "ModelName": "test-org-test-env-test-domain-test-endpoint-test-endpo-29612d9e",
+            "ModelName": {
+              "Fn::GetAtt": [
+                "endpointmodelB0B36083",
+                "ModelName"
+              ]
+            },
             "VariantName": "AllTraffic"
           }
         ],
@@ -1007,7 +1011,12 @@
           "sagemaker:project-name": "test-endpoint-project"
         },
         "Type": "String",
-        "Value": "test-org-test-env-test-domain-test-endpoint-test-endpo-29612d9e"
+        "Value": {
+          "Fn::GetAtt": [
+            "endpointmodelB0B36083",
+            "ModelName"
+          ]
+        }
       }
     },
     "endpointendpointtestendpointprojectdevkmskeyidssmFD391BC7": {
@@ -1185,7 +1194,12 @@
       }
     },
     "endpointendpointtestendpointprojectdevmodelnameout189E4B20": {
-      "Value": "test-org-test-env-test-domain-test-endpoint-test-endpo-29612d9e",
+      "Value": {
+        "Fn::GetAtt": [
+          "endpointmodelB0B36083",
+          "ModelName"
+        ]
+      },
       "Export": {
         "Name": "test-org:test-domain:test-endpoint:endpoint:testendpointprojectdev:model-name"
       }
