@@ -2,8 +2,26 @@
 
 ## [Unreleased]
 
+### Deprecations
+
+- **`@aws-mdaa/gaia` and `@aws-mdaa/gaia-l3-construct` (GAIA v1) are deprecated** in favor of `@aws-mdaa/gaia-v2` and `@aws-mdaa/gaia-v2-l3-construct`.
+  - v1 packages remain published and functional for existing deployments but will not receive new features.
+  - v1 packages will be removed in a future major release; no removal date is committed yet.
+  - v2 is a re-architected GAIA backend (Cognito, AppSync Events, CloudFront) and is **not** a drop-in replacement. See [MIGRATION_TO_V2.md](packages/apps/ai/gaia-app/MIGRATION_TO_V2.md) for guidance.
+  - The `genai_accelerator` starter kit now deploys v2.
+
 ### New Features
 
+- **Generative AI Accelerator v2** (`@aws-mdaa/gaia-v2`): Authenticated GenAI chatbot platform, successor to `@aws-mdaa/gaia`
+  - AppSync Events API for real-time bidirectional streaming to client UIs, fronted by Cognito User Pool authentication (with optional external OIDC such as Entra ID)
+  - REST API (API Gateway + Lambda) for session management, feedback, and administrative endpoints
+  - Pluggable data source model: Bedrock Knowledge Base RAG (via `@aws-mdaa/bedrock-builder`), direct Bedrock model invocation with streaming, or customer-provided Lambda — exactly one per deployment
+  - Optional client and admin CloudFront UIs with KMS-encrypted logging, Origin Access Control, HTTPS-only enforcement (TLS 1.2), and custom-domain + ACM certificate support
+  - Chat history, feedback collection, and service-interruption banner managed via DynamoDB tables with KMS encryption and TTL
+  - X-Origin verification secret (KMS-encrypted Secrets Manager) to validate that API traffic flows through CloudFront
+  - WAF protection (regional + global), VPC-attached Lambda execution, and full CDK Nag compliance
+  - Runtime validation rejects misconfigurations at synth time: exactly one data source, Knowledge Base required when `bedrockRagDataSource` is set, authentication requires at least one of `cognitoDomain` or `entraIdOIDCConfiguration`, and `vpc.appSubnets` must be non-empty
+  - The `genai_accelerator` starter kit deploys v2 by default
 - **SageMaker Ground Truth App** (`@aws-mdaa/sagemaker-ground-truth`): Automated, continuous data labeling pipeline
   - EventBridge + SQS + Step Functions architecture for continuous S3 ingestion → batched labeling
   - Upload/Output S3 buckets with KMS encryption and EventBridge notifications

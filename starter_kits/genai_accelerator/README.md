@@ -1,379 +1,561 @@
-# GenAI Accelerator with Bedrock Builder Sample Configuration
+# GenAI Accelerator - Chatbot Starter Kit
 
-This sample configuration demonstrates deploying an enterprise-ready Customer Support Agent using MDAA's GenAI Accelerator Starter Package, featuring intelligent customer support agents with RAG capabilities.
+This sample configuration deploys a production-ready GenAI chatbot **backend** using Amazon Bedrock Knowledge Bases, Guardrails, and serverless APIs.
 
-***
+> **Important:** MDAA deploys the backend infrastructure only. You'll need to provide your own frontend application (React, Vue, Angular, etc.) that integrates with the APIs.
 
-## Architecture Overview
+## What Gets Deployed
 
-![GenAI Accelerator](docs/genai_accelerator.png)
+- **Cognito User Pool**: Authentication with email/password or enterprise SSO
+- **Bedrock Knowledge Base**: RAG pipeline with OpenSearch Serverless vector store
+- **Bedrock Guardrails**: Content filtering and PII protection
+- **S3 Data Lake**: Encrypted document storage
+- **REST API** (API Gateway): Session management, feedback, admin operations
+- **WebSocket API** (AppSync Events): Real-time chat streaming
+- **Lambda Functions**: VPC-deployed serverless compute
+- **CloudFront**: CDN serving `aws-exports.json` configuration
+- **WAF**: Web application firewall (optional)
 
+## What You Need to Provide
 
-This configuration deploys:
+- **Frontend Application**: A web or mobile app that integrates with the APIs (see [API Reference](#api-reference) below)
+- **Documents**: Content for the knowledge base (PDF, TXT, MD, HTML, DOCX)
 
-1. A GenAI platform with Bedrock integration for the core GenAI capabilities
-2. Bedrock Agents with action groups for customer support use cases
-3. Bedrock Knowledge Bases for RAG (Retrieval Augmented Generation) with auto-sync capabilities
-4. Vector stores for efficient knowledge retrieval
-5. Guardrails to ensure appropriate AI responses
-6. IAM roles including a data-admin role with all necessary permissions
-7. Multi-sync architecture for handling concurrent file uploads
+## Prerequisites
 
-***
+1. **AWS Account Setup**
+   - AWS CLI configured with credentials
+   - CDK bootstrapped: `npx cdk bootstrap aws://<account>/<region>`
+   - Bedrock model access enabled in the console
 
-## Deployment Instructions
+2. **Network Infrastructure**
+   - VPC with private subnets
+   - NAT Gateway OR VPC Endpoints for AWS services
+   - Subnet IDs available (or stored in SSM parameters)
+   - For AWS RAM shared VPCs: the network account ID that owns the VPC
 
-### Prerequisites
-- CDK bootstrapped in target account ([Bootstrap Guide](../../PREDEPLOYMENT.md))
-- MDAA source repo cloned locally
-- AWS CLI configured with appropriate permissions
+   > **Don't have a VPC?** See [Optional: Deploy Reference VPC](#optional-deploy-reference-vpc) below.
+   
+   > **Using AWS RAM shared VPC?** If your VPC is shared from a central network account, you'll need to configure `vpcOwnerAccountId` in `gaia.yaml`. See [AWS RAM Shared VPCs](#aws-ram-shared-vpcs) below.
 
-### Step-by-Step Deployment
+3. **MDAA Installed**
+   - Clone and install the MDAA framework
+   - `npm install` in the installer directory
 
-1. **Setup Configuration**
-   ```bash
-   # Copy starter kit to your working directory
-   cp -r starter_kits/genai_accelerator ./my-genai-application
-   cd my-genai-application
-   ```
+## Optional: Deploy Reference VPC
 
-2. Edit the `mdaa.yaml` to specify an organization name. This must be a globally unique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
+If you don't have an existing VPC, you can deploy the included reference infrastructure:
 
-3. **Determine Model Configuration**
+```bash
+cd infrastructure/
 
-   Choose your model ID from the [AWS Bedrock supported models list](https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html).
+# Deploy with NAT Gateway (required for Lambda internet access)
+aws cloudformation deploy \
+  --template-file genai-vpc.yaml \
+  --stack-name genai-reference-infra \
+  --parameter-overrides EnvironmentName=dev ActivateNatGateway=true
 
-   **For cross-region inference capabilities**, use the [Model Configuration Helper Script](#model-configuration-helper-script) to determine the correct model arn.
-   - **Single region**: Use model ID directly (e.g., `anthropic.claude-3-5-sonnet-20240620-v1:0`)
-
-4. **Update Configuration Files**
-
-   Update the `mdaa.yaml` file under the `context:` section with:
-   - VPC and subnet information from your environment
-   - `llm_model` value from step 3 (either model ID or inference profile ARN)
-
-
-5. **Deploy Application**
-   ```bash
-   # Deploy genai_accelerator starter package
-   <path_to_mdaa_repo>/bin/mdaa <path_to_mdaa_repo>/starter_kits/genai_accelerator/mdaa.yaml deploy
-   ```
-
-For detailed deployment procedures, see [DEPLOYMENT](../../DEPLOYMENT.md).
-
-***
-
-## Auto-Sync Architecture
-
-### Multi-Sync Solution for Concurrent File Processing
-
-This configuration implements an advanced auto-sync architecture to address AWS Knowledge Base service limitations that allow only one concurrent ingestion job per knowledge base.
-
-#### Solution Architecture
-
-The multi-sync architecture uses event batching and serialized processing:
-
-1. **Event Batching**: S3 events are collected and batched using SQS queues
-2. **Serialized Processing**: A dedicated Lambda function processes batches sequentially
-3. **State Management**: Tracks ingestion status to prevent duplicate processing
-4. **Error Handling**: Implements retry mechanisms and dead letter queues
-
-#### AWS Service Constraints Handled
-
-| Constraint | Limit | Solution |
-|------------|-------|----------|
-| Concurrent ingestion jobs per knowledge base | 1 | Event batching and serialization |
-| Concurrent ingestion jobs per data source | 1 | Sequential processing |
-| Concurrent ingestion jobs per account | 5 | Account-level coordination |
-| Maximum documents per API call | 25 | Batch size optimization |
-| Maximum file size per ingestion | 50 MB | File validation |
-
-#### Components
-- **SQS Queues**: Buffer S3 events for batch processing
-- **Batch Sync Lambda**: Processes events in serialized batches
-- **Dead Letter Queues**: Handle failed processing attempts
-
-***
-
-## Configuration Files
-
-### Directory Structure
-```
-genai_accelerator/
-├── mdaa.yaml              # Main orchestration config
-├── tags.yaml              # Resource tagging
-├── roles.yaml             # IAM roles and policies
-├── datalake/
-│   └── datalake.yaml      # S3 buckets for knowledge bases
-├── ai/
-│   └── bedrock-builder.yaml # Bedrock agents and knowledge bases
-├── lambda/src/            # Custom Lambda functions
-│   ├── support_function.py
-│   └── kb_custom_transform.py
-└── api-schema/
-    └── support-actions-api.yaml # OpenAPI schema for action groups
+# View outputs
+aws cloudformation describe-stacks --stack-name genai-reference-infra \
+  --query "Stacks[0].Outputs" --output table
 ```
 
-### Key Configuration Files
+This creates:
 
-#### mdaa.yaml - Main Configuration
-**⚠️ Required Changes Before Deployment:**
-- `organization`: Must be globally unique (used in S3 bucket names)
-- `vpc_id`, `subnet_id_1`, `subnet_id_2`: Your VPC details (use private subnets for security)
+- VPC with public and private subnets across 2 AZs
+- NAT Gateway for outbound internet access (~$32/month)
+- SSM parameters for easy reference in your MDAA config
+
+After deployment, copy the VPC and subnet IDs from the stack outputs into the `context:` block of your `mdaa.yaml` (see the Quick Start section below). The reference-infra stack also publishes SSM parameters at `/genai/vpc-id`, `/genai/app-subnet-1`, `/genai/app-subnet-2`, `/genai/data-subnet-1`, `/genai/data-subnet-2` for programmatic retrieval:
+
+```bash
+aws ssm get-parameter --name /genai/vpc-id --query "Parameter.Value" --output text
+```
+
+Paste the values directly into `context:`. VPC / subnet IDs must be concrete values at CDK synth time; `{{resolve:ssm:...}}` placeholders are not resolved before MDAA performs VPC attribute lookups.
+
+> **Cost Note:** NAT Gateway costs ~$32/month + data transfer. For development, you can disable it and use VPC Endpoints instead, but this requires additional configuration.
+
+---
+
+## Quick Start
+
+### 1. Configure Your Deployment
+
+Edit `mdaa.yaml`:
 
 ```yaml
-region: us-east-1
-organization: your-unique-org-name  # CHANGE THIS
+organization: myorg  # Your org identifier (lowercase, no spaces)
+region: us-east-1    # Or your preferred region
 
+# In the context section:
 context:
-  vpc_id: vpc-xxxxxxxxx            # CHANGE THIS
-  subnet_id_1: subnet-xxxxxxxxx    # CHANGE THIS  
-  subnet_id_2: subnet-xxxxxxxxx    # CHANGE THIS
-  subnet_id_3: subnet-xxxxxxxxx    # CHANGE THIS
+  vpc_id: vpc-xxxxxxxxx              # CHANGE THIS — your VPC ID
+  app_subnet_id_1: subnet-xxxxxxxxx  # CHANGE THIS — application subnet 1 (must have NAT Gateway route)
+  app_subnet_id_2: subnet-xxxxxxxxx  # CHANGE THIS — application subnet 2 (must have NAT Gateway route)
+  data_subnet_id_1: subnet-xxxxxxxxx # CHANGE THIS — data subnet 1 (can be same as app subnets)
+  data_subnet_id_2: subnet-xxxxxxxxx # CHANGE THIS — data subnet 2 (can be same as app subnets)
 
 domains:
   shared:
     environments:
       dev:
         modules:
+          # IAM roles for all other modules (must deploy first)
           roles:
             module_path: "@aws-mdaa/roles"
             module_configs:
-              - ./roles.yaml
+              - ./config/roles.yaml
+
+          # S3 data lake buckets for documents and assets
           datalake:
             module_path: "@aws-mdaa/datalake"
             module_configs:
-              - ./datalake/datalake.yaml
-          genai_accelerator:
+              - ./config/datalake.yaml
+
+          # Bedrock Knowledge Base and Guardrails
+          bedrock-builder:
             module_path: "@aws-mdaa/bedrock-builder"
             module_configs:
-              - ./ai/bedrock-builder.yaml
+              - ./config/bedrock-builder.yaml
+
+          # GAIA v2 chatbot backend (REST API, WebSocket, Lambda, CloudFront, Cognito, WAF)
+          gaia-chatbot:
+            module_path: "@aws-mdaa/gaia-v2"
+            module_configs:
+              - ./config/gaia.yaml
 ```
-
-#### Key Module Configurations
-
-- **roles.yaml**: Defines IAM roles including data-admin with comprehensive Bedrock permissions
-- **datalake/datalake.yaml**: Creates KMS-encrypted S3 buckets for knowledge base data sources
-- **ai/bedrock-builder.yaml**: Configures Bedrock agents, knowledge bases, and guardrails
-- **tags.yaml**: Standard tags applied to all resources
-
-***
-
-## Components
-
-### Bedrock Builder
-
-The Bedrock Builder module deploys:
-- Bedrock Agents with custom instructions
-- Lambda functions for agent action groups
-- Knowledge Bases for RAG capabilities
-- Vector stores for efficient knowledge retrieval
-- Guardrails for content safety
-
-### IAM Roles
-
-The roles module deploys:
-- **data-admin role**: A comprehensive role with all permissions needed to manage Bedrock resources, including agents, knowledge bases, guardrails, Lambda functions, and associated resources
-- **agent-execution-role**: Service role for Bedrock agents to invoke models and access knowledge bases
-- **kb-execution-role**: Service role for Knowledge Base operations and data ingestion
-- **agent-lambda-role**: Execution role for Lambda functions used in agent action groups
-- **kb-sync-lambda role**: Execution role for multi-sync Lambda functions that handle concurrent file processing
-
-***
-
-## Use Cases
-
-This configuration is designed for:
-- Customer support Agent Assistant
-- Knowledge base search and retrieval
-- Document processing and analysis
-- Multi-modal content handling (text and images)
-
-***
-
-## Usage Instructions
-
-Once the MDAA deployment is complete, follow the following steps to interact with the GenerativeAI platform and test the Bedrock agents.
-
-1. **Assume the data-user role** created by the MDAA deployment. This role is configured with AssumeRole trust to the local account for uploading documents by default.
-
-2. **Upload test documents** to the knowledge base S3 buckets (see Document Upload section below).
-
-3. **Assume the data-admin role** created by the MDAA deployment. This role is configured with AssumeRole trust to bedrock and all other resources.
-
-3. **Test the Bedrock Agent** through the AWS Console:
-   - Navigate to Amazon Bedrock > Knowledge Bases
-   - Select the data source name and sync the Knowledge Base for the documents
-   - Navigate to Amazon Bedrock > Agents
-   - Select your deployed customer-support-agent
-   - Use the Test Agent interface to interact with the agent
-   - Ask questions related to the documents you uploaded
-
-4. **Monitor agent performance** through CloudWatch logs and Bedrock trace.
-
-### Document Upload for Testing
-
-The customer support agent uses Amazon Bedrock Knowledge Bases for document ingestion and retrieval. To test the agent with your documents, upload them to the configured S3 buckets.
-
-#### Upload Locations
-
-You have two separate data sources configured in different buckets:
-
-1. **Support Documents** (`support-docs`) - **Auto-sync enabled with multi-sync**:
-   - **Bucket**: `${org}-${env}-shared-datalake-support-docs`
-   - **Prefix**: `data/`
-   - **Full S3 path**: `s3://${org}-${env}-shared-datalake-support-docs/data/`
-
-2. **Product Documents** (`product-docs`) - **Auto-sync enabled with multi-sync**:
-   - **Bucket**: `${org}-${env}-shared-datalake-product-docs`
-   - **Prefix**: `data/`
-   - **Full S3 path**: `s3://${org}-${env}-shared-datalake-product-docs/data/`
-
-**Note**: Both data sources have `enableMultiSync: true` configured to handle concurrent file uploads and synced to Knowledge base
-
-#### How to Upload Documents
-
-**IMPORTANT**: You must assume the **data-user role** before uploading documents.
-
-##### Step 1: Assume the Data User Role
+### 2. Deploy
 
 ```bash
-# Get your account ID
-ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-
-# Assume the data-user role
-aws sts assume-role \
-  --role-arn arn:aws:iam::${ACCOUNT_ID}:role/${ORG}-${ENV}-shared-roles-data-user \
-  --role-session-name document-upload-session
+mdaa deploy -c /path/to/starter_kits/genai_accelerator/mdaa.yaml
 ```
 
-### 2. Upload Knowledge Base Documents
-
-Upload documents to enable your agent to answer questions:
+### 3. Upload Documents
 
 ```bash
-# Set your organization and environment names
-ORG="your-org-name"
-ENV="dev"
-REGION="us-east-1"
+# Get bucket name from stack outputs or SSM
+aws s3 cp ./documents/ s3://<org>-<env>-<domain>-datalake-knowledge-base/data/bedrock-knowledge-base/ --recursive
 
-# Get the KMS key ID (replace with actual key from deployment output)
-KMS_KEY_ID="arn:aws:kms:${REGION}:${ACCOUNT_ID}:key/your-kms-key-id"
-
-# Upload support documents
-aws s3 cp your-support-doc.pdf \
-  s3://${ORG}-${ENV}-shared-datalake-support-docs/data/ \
-  --sse aws:kms --sse-kms-key-id ${KMS_KEY_ID}
-
-# Upload product documents
-aws s3 cp your-product-doc.pdf \
-  s3://${ORG}-${ENV}-shared-datalake-product-docs/data/ \
-  --sse aws:kms --sse-kms-key-id ${KMS_KEY_ID}
-
-# Bulk upload to support docs
-aws s3 sync ./support-documents/ \
-  s3://${ORG}-${ENV}-shared-datalake-support-docs/data/ \
-  --sse aws:kms --sse-kms-key-id ${KMS_KEY_ID}
-
-# Bulk upload to product docs
-aws s3 sync ./product-documents/ \
-  s3://${ORG}-${ENV}-shared-datalake-product-docs/data/ \
-  --sse aws:kms --sse-kms-key-id ${KMS_KEY_ID}
+# Sync the knowledge base in Bedrock console
 ```
 
-### 3. Test Your Agent
-
-1. **AWS Console**: Navigate to Amazon Bedrock → Agents → customer-support-agent
-2. **Test Interface**: Use the built-in test chat to interact with your agent
-3. **Sample Questions**:
-   - "What are our return policies?"
-   - "How do I troubleshoot product X?"
-
-### 4. Monitor Performance
-
-- **CloudWatch Logs**: Monitor agent interactions and Lambda function execution
-- **Bedrock Metrics**: Track usage, latency, and error rates
-- **Knowledge Base Sync**: Verify document ingestion status
-
-***
-
-## Scripts
-
-### Model Configuration Helper Script
-
-Use this script to determine the correct model configuration for your deployment:
+### 4. Get Stack Outputs
 
 ```bash
-#!/bin/bash
-# Model Configuration Helper Script
-
-# Set your desired model ID and region
-export LLM_MODEL_ID="anthropic.claude-3-7-sonnet-20250219-v1:0"  # Change this to your desired model
-export AWS_REGION="us-east-1"  # Change this to your target region
-
-echo "Checking model: $LLM_MODEL_ID in region: $AWS_REGION"
-
-MODEL_ARN=$(aws bedrock get-foundation-model --model-identifier "$LLM_MODEL_ID" --region "$AWS_REGION" --query "modelDetails.modelArn" --output text 2>/dev/null || echo "")
-
-if [ -z "$MODEL_ARN" ]; then
-    echo "Could not retrieve model ARN for $LLM_MODEL_ID"
-    exit 1
-fi
-
-echo "Checking to see if there is a profile..."
-
-# Check if there's an inference profile for this model ARN
-PROFILE_ARN=$(aws bedrock list-inference-profiles --region "$AWS_REGION" --query "inferenceProfileSummaries[?contains(models[].modelArn, '$MODEL_ARN')].inferenceProfileArn" --output text 2>/dev/null || echo "")
-if [ -n "$PROFILE_ARN" ]; then
-    MODEL_TO_USE="$PROFILE_ARN"
-    echo "Found inference profile in $AWS_REGION: $PROFILE_ARN"
-else
-    MODEL_TO_USE="$LLM_MODEL_ID"
-    echo "No inference profile found, using model directly"
-fi
-
-echo "Testing accessibility of: $MODEL_TO_USE"
-
+# Get all outputs at once
+aws cloudformation describe-stacks --stack-name <org>-<env>-<domain>-genai-chatbot \
+  --query "Stacks[0].Outputs" --output table
 ```
 
-**Important Notes:**
-- **Cross-region inference**: Use inference profile ARN (e.g., `arn:aws:bedrock:us-east-1:<account_id>:inference-profile/us.anthropic.claude-3-7-sonnet-20250219-v1:0`)
-- **Knowledge base parsing**: Always use standard model ID format
-- **Single region**: Use model ID directly
+Key outputs for your frontend:
 
-***
+- `UserInterfaceDomainName` → CloudFront URL serving `aws-exports.json`
+- `UserPoolId` → Cognito User Pool ID
+- `UserPoolWebClientId` → Cognito App Client ID
+
+---
+
+## Frontend Development
+
+To build a frontend that integrates with the deployed backend:
+
+### 1. Configure MDAA for Local Development
+
+Your `gaia.yaml` must include localhost in the OAuth URLs:
+
+```yaml
+auth:
+  cognitoDomain: "{{org}}-{{domain}}-{{env}}"
+  cognitoAddAsIdentityProvider: true  # REQUIRED for email/password auth
+    # Add other callback and logout URLs based on what domains you plan to use
+  oAuthCallbackUrls:
+    - http://localhost:5173
+    - http://localhost:3000
+  oAuthLogoutUrls:
+    - http://localhost:5173
+    - http://localhost:3000
+```
+
+### 2. Configure WAF (if enabled)
+
+Add your IP addresses to the WAF allowlist. **You need THREE types of IPs:**
+
+```yaml
+waf:
+  # By default, both regional and global WAF are created automatically when
+  # deploying to us-east-1. For non-us-east-1 deployments, add additional_stacks
+  # to the module in mdaa.yaml to enable global WAF:
+  #
+  #   additional_stacks:
+  #     - region: 'us-east-1'
+  #
+  # To skip global WAF entirely (not recommended for production):
+  #   skipGlobalDefaultWaf: true
+  allowedCidrs:
+    # 1. Your IPv4 address (for browser requests)
+    - 203.0.113.50/32           # curl -4 ifconfig.me
+    # 2. Your IPv6 address (browsers may connect via IPv6)
+    - 2001:db8:1234:5678::/64   # curl -6 ifconfig.me (use /64 prefix)
+    # 3. NAT Gateway IP (REQUIRED for Lambda → AppSync responses)
+    - 198.51.100.10/32          # aws ec2 describe-nat-gateways
+```
+
+> **Why IPv6?** Many ISPs use dual-stack networking. Your browser may connect via IPv6 even if you only know your IPv4 address. If you get 403 errors, check WAF logs for blocked IPv6 requests.
+
+> **Why NAT Gateway IP?** Lambda functions run in your VPC and send chat responses back through AppSync. These requests exit via the NAT Gateway, so WAF must allow that IP. Without it, chat messages will hang indefinitely.
+
+### 3. Redeploy After Config Changes
+
+```bash
+mdaa deploy -c /path/to/starter_kits/genai_accelerator/mdaa.yaml
+```
+
+### 4. Fetch Configuration in Your Frontend
+
+Your frontend should fetch `/aws-exports.json` from the CloudFront URL to get Cognito and API configuration:
+
+```javascript
+const config = await fetch('https://<cloudfront-url>/aws-exports.json').then(r => r.json());
+
+// config contains:
+// - Auth.Cognito.userPoolId
+// - Auth.Cognito.userPoolClientId
+// - API.Events.endpoint (WebSocket for chat)
+```
+
+### 5. Recommended Libraries
+
+- **AWS Amplify** - Authentication and API integration
+- **@aws-amplify/api-graphql** - AppSync Events subscription for real-time chat
+- **React Query / TanStack Query** - REST API data fetching
+
+---
+---
+
+## AWS RAM Shared VPCs
+
+If your organization uses AWS RAM to share VPCs from a central network account to workload accounts, you need to configure the `vpcOwnerAccountId` setting.
+
+### When to Use
+
+- Your VPC is shared via AWS RAM from a different AWS account
+- The subnets you're using belong to a network account, not the account where GAIA is deployed
+
+### Configuration
+
+1. **Add the network account ID to your context** in `mdaa.yaml`:
+
+   ```yaml
+   context:
+     vpc_id: vpc-0123456789abcdef0
+     app_subnet_id_1: subnet-0123456789abcdef0
+     app_subnet_id_2: subnet-0123456789abcdef1
+     vpc_owner_account_id: "222222222222"  # Network account that owns the VPC
+   ```
+
+2. **Reference it in `gaia.yaml`** (already configured in the starter kit):
+
+   ```yaml
+   vpc:
+     vpcId: "{{context:vpc_id}}"
+     appSubnets:
+       - "{{context:app_subnet_id_1}}"
+       - "{{context:app_subnet_id_2}}"
+     vpcOwnerAccountId: "{{context:vpc_owner_account_id}}"
+   ```
+
+### Why Is This Needed?
+
+When Lambda functions create network interfaces (ENIs) in shared subnets, the IAM policy must reference the VPC ARN with the network account ID (the account that owns the VPC), not the workload account ID. Without this setting, Lambda functions will fail with authorization errors when trying to create ENIs.
+
+### Not Using Shared VPCs?
+
+If your VPC exists in the same account where GAIA is deployed, you can either:
+- Remove the `vpcOwnerAccountId` line from `gaia.yaml`, or
+- Remove `vpc_owner_account_id` from the context in `mdaa.yaml`
+
+The deployment will work without this setting when using same-account VPCs.
+
+---
 
 ## Troubleshooting
 
-### Common Issues
+### 403 Forbidden on Cognito Login
 
-1. **Access Denied when calling Bedrock**:
-   - Verify the llm_model_id specified in the context values is correct
-   - Use the [Model Configuration Helper Script](#model-configuration-helper-script) to verify model configuration
-   - If you want to use models which need cross-region inference, use inference profile arn (e.g., `arn:aws:bedrock:us-east-1:<account_id>:inference-profile/us.anthropic.claude-3-7-sonnet-20250219-v1:0`)
-   - Ensure the agent execution role has the necessary Bedrock permissions
-   - Verify that the foundation model is available in your region
-   - Check that the agent execution role can assume the service role for bedrock.amazonaws.com
+**Symptoms:** Clicking "Sign In" returns a 403 error page.
 
-2. **Knowledge Base ingestion failures**:
-   - Verify S3 bucket permissions and KMS key access
-   - Check that documents are uploaded with proper encryption
-   - Monitor CloudWatch logs for detailed error messages
-   - For multi-sync issues, check SQS queue status and batch processing lambda logs
+**Causes & Solutions:**
 
-3. **Agent not responding**:
-   - Ensure the agent is in "Prepared" state
-   - Check guardrail configurations
-   - Verify Lambda function permissions for action groups
+1. **Missing `cognitoAddAsIdentityProvider: true`**
+   - Required when using email/password auth (no external IdP)
+   - Add to `gaia.yaml` under `auth:` and redeploy
 
-***
+2. **WAF blocking your IP**
+   - Check if your IPv6 is in the allowlist (not just IPv4!)
+   - Find your IPv6: `curl -6 ifconfig.me`
+   - Add to `allowedCidrs` with /64 prefix
 
-## Customization
+3. **Check WAF logs for blocked requests:**
 
-You can customize this configuration by:
-- Defining your agent behaviour
-- Adding more agents with different capabilities
-- Expanding the knowledge bases with additional data sources
-- Modifying the guardrails for different content policies
-- Adding custom Lambda functions for specialized processing
-- Integrating with additional AWS services for enhanced functionality
+   ```bash
+   aws logs filter-log-events \
+     --log-group-name "aws-waf-logs-/<org>-<env>-<domain>-regional-default-waf" \
+     --start-time $(( $(date +%s) - 3600 ))000 \
+     --query "events[*].message" --output text | jq -r '.clientIp, .action'
+   ```
+
+### Chat Messages Hang / No Response
+
+**Symptoms:** You send a message in the chat, but nothing happens. The UI shows a loading state indefinitely.
+
+**Cause:** WAF is blocking the Lambda function from sending responses back through AppSync Events. The Lambda runs in your VPC and exits through the NAT Gateway, so its public IP must be in the WAF allowlist.
+
+**Solution:** Add your NAT Gateway's public IP to the WAF allowlist:
+
+```bash
+# Find your NAT Gateway IP
+aws ec2 describe-nat-gateways \
+  --filter "Name=state,Values=available" "Name=vpc-id,Values=<your-vpc-id>" \
+  --query 'NatGateways[*].[NatGatewayId,NatGatewayAddresses[0].PublicIp]' \
+  --output table
+```
+
+Then add it to `gaia.yaml`:
+
+```yaml
+waf:
+  allowedCidrs:
+    - 203.0.113.50/32           # Your IPv4
+    - 2001:db8:1234:5678::/64   # Your IPv6
+    - 198.51.100.10/32          # NAT Gateway IP ← ADD THIS
+```
+
+> **Why is this needed?** The chat flow is: Browser → AppSync → Lambda → Bedrock → Lambda → AppSync → Browser. When Lambda sends the response back to AppSync, it goes through the NAT Gateway. WAF sees this as a new request from the NAT Gateway IP, which must be allowed.
+
+### Lambda Timeouts / Connection Errors
+
+**Cause:** VPC networking issue - Lambda can't reach AWS services.
+
+**Solutions:**
+
+1. Ensure subnets have NAT Gateway with route to internet
+2. Or add VPC Endpoints for: Bedrock, DynamoDB, S3, Secrets Manager, CloudWatch Logs
+
+### Knowledge Base Not Finding Documents
+
+1. Verify documents uploaded to correct S3 prefix: `data/bedrock-knowledge-base/`
+2. Sync the knowledge base in Bedrock console
+3. Check supported file formats: PDF, TXT, MD, HTML, DOC/DOCX
+
+## Configuration Reference
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `mdaa.yaml` | Main deployment config: region, org, VPC settings |
+| `config/gaia.yaml` | Application config: auth, WAF, model selection |
+| `config/bedrock-builder.yaml` | Knowledge base and guardrails |
+| `config/roles.yaml` | IAM roles and policies |
+| `config/datalake.yaml` | S3 buckets and access policies |
+| `tags.yaml` | Resource tags for cost allocation |
+| `infrastructure/genai-vpc.yaml` | Optional reference VPC (CloudFormation) |
+
+### Common Customizations
+
+**Change the foundation model:**
+
+```yaml
+# In gaia.yaml
+webSocketApi:
+  bedrockRagDataSource:
+    modelId: "anthropic.claude-3-5-haiku-20241022-v1:0"
+```
+
+**Adjust guardrail sensitivity:**
+
+```yaml
+# In bedrock-builder.yaml
+guardrails:
+  chatbot-guardrail:
+    contentFilters:
+      sexual:
+        inputStrength: HIGH  # NONE, LOW, MEDIUM, HIGH
+        outputStrength: HIGH
+```
+
+**Enable chat history cleanup:**
+
+```yaml
+# In gaia.yaml
+chatHistory:
+  chatRetentionInMinutes: 1440  # 24 hours
+```
+
+---
+
+## Security Best Practices
+
+1. **Network Security**
+   - Use VPC endpoints where available
+   - Enable VPC flow logs
+
+2. **Access Control**
+   - Enable MFA for admin users in Cognito
+   - Use least-privilege IAM roles (already configured)
+   - Rotate secrets regularly
+
+3. **Data Protection**
+   - S3 encryption enabled by default
+   - Enable S3 versioning for document recovery
+   - Configure guardrails for PII protection
+
+4. **Monitoring**
+   - Enable CloudTrail for API audit
+   - Set up CloudWatch alarms for errors
+   - Monitor WAF blocked requests
+
+---
+
+## API Reference
+
+The GenAI Accelerator exposes two APIs for building chat applications:
+
+### WebSocket API (Real-time Chat)
+
+The WebSocket API uses **AWS AppSync Events** for real-time, streaming chat responses.
+
+**Endpoint:** Available in `aws-exports.json` as `API.Events.endpoint`
+
+**Authentication:** Cognito JWT token
+
+**How it works:**
+
+1. Connect to the AppSync Events endpoint with a Cognito token
+2. Subscribe to a channel for your session (e.g., `chat/<session-id>`)
+3. Publish messages to trigger AI responses
+4. Receive streaming responses as events on the channel
+
+**Configuration file:** The CloudFront distribution serves `/aws-exports.json` containing:
+
+```json
+{
+  "Auth": {
+    "Cognito": {
+      "userPoolId": "...",
+      "userPoolClientId": "...",
+      "region": "..."
+    }
+  },
+  "API": {
+    "Events": {
+      "endpoint": "https://xxx.appsync-api.region.amazonaws.com/event",
+      "region": "...",
+      "defaultAuthMode": "userPool"
+    }
+  }
+}
+```
+
+### REST API (Management Operations)
+
+The REST API handles session management, feedback, and admin operations.
+
+**Base URL:** `https://<cloudfront-url>/api/v1`
+
+**Authentication:** All endpoints require a Cognito JWT token in the `Authorization` header.
+
+#### Session Endpoints (User)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/sessions` | List user's chat sessions |
+| `GET` | `/sessions/<session_id>` | Get session with full chat history |
+| `DELETE` | `/sessions` | Delete all user's sessions |
+| `DELETE` | `/sessions/<session_id>` | Delete a specific session |
+
+#### Feedback Endpoints (User)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/feedback` | Submit feedback for a response |
+| `GET` | `/feedback` | Get user's feedback history |
+| `GET` | `/feedback/<feedback_id>` | Get specific feedback entry |
+
+**Feedback payload:**
+
+```json
+{
+  "session_id": "uuid",
+  "message_id": "uuid",
+  "rating": "thumbs_up | thumbs_down",
+  "reason": "accuracy",
+  "text_feedback": "Optional detailed feedback"
+}
+```
+
+**Valid feedback reasons:** Configured in `gaia.yaml` under `userFeedback.reasons`
+
+#### Admin Endpoints (Requires admin group membership)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/admin/sessions` | List all sessions (paginated) |
+| `GET` | `/users/<user_id>/sessions` | List sessions for a user |
+| `GET` | `/users/<user_id>/sessions/<session_id>` | Get specific user's session |
+| `GET` | `/admin/feedback?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` | Get feedback in date range |
+
+#### Bot Management Endpoints (Admin only)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/bot-management/health` | Health check |
+| `GET` | `/bot-management/service-types` | List available service types |
+| `GET` | `/bot-management/interruptions` | Get all interruption statuses |
+| `GET` | `/bot-management/interruptions/<service_type>` | Get specific interruption status |
+| `POST` | `/bot-management/interruptions` | Activate service interruption |
+| `DELETE` | `/bot-management/interruptions/<service_type>` | Deactivate interruption |
+
+**Service types:** `global`, `bedrock-rag`, `bedrock-invoke-model`, `bedrock-strands-agents`
+
+**Activate interruption payload:**
+
+```json
+{
+  "service_type": "global",
+  "message": "System maintenance in progress",
+  "reason": "Scheduled maintenance",
+  "duration_minutes": 60
+}
+```
+
+### Authentication Flow
+
+1. **Get Cognito configuration** from `aws-exports.json`
+2. **Authenticate user** via Cognito Hosted UI or SDK
+3. **Get JWT tokens** (ID token, access token, refresh token)
+4. **Include token in requests:**
+   - REST API: `Authorization: Bearer <id_token>`
+   - WebSocket: Pass token during connection
+
+**Cognito Hosted UI URL pattern:**
+
+```
+https://<cognito-domain>.auth.<region>.amazoncognito.com/oauth2/authorize?
+  client_id=<client_id>&
+  response_type=code&
+  scope=openid+email+profile&
+  redirect_uri=<your-callback-url>
+```
+
+---
+
+## Additional Resources
+
+- [AWS Amplify Documentation](https://docs.amplify.aws/)
+- [AppSync Events Documentation](https://docs.aws.amazon.com/appsync/latest/eventapi/)
+- [Bedrock Knowledge Bases Documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html)
+- [Bedrock Guardrails Documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)
+- [Bedrock Model Availability by Region](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)
+- [WAF Developer Guide](https://docs.aws.amazon.com/waf/latest/developerguide/)

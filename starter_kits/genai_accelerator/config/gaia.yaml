@@ -1,0 +1,404 @@
+gaia:
+  # =============================================================================
+  # USER FEEDBACK CONFIGURATION
+  # =============================================================================
+  # Predefined reasons users can select when providing feedback on responses
+  userFeedback:
+    reasons:
+      - "accuracy"
+      - "unhelpful"
+      - "app_issue"
+      - "other"
+
+  # =============================================================================
+  # WEB APPLICATION FIREWALL (WAF) CONFIGURATION
+  # =============================================================================
+  # WAF protects your application from common web exploits and bots.
+  # 
+  # IMPORTANT: There are TWO types of WAF:
+  # - Global WAF: Protects CloudFront distributions (must be in us-east-1)
+  # - Regional WAF: Protects API Gateway and Cognito (in your deployment region)
+  #
+  # ============================================================================
+  # WAF + NAT GATEWAY RELATIONSHIP
+  # ============================================================================
+  # If you enable WAF with IP allowlisting (allowedCidrs), you MUST:
+  #
+  # 1. USE NAT GATEWAY (not VPC Endpoints) for Lambda outbound traffic
+  #    - Lambda functions send WebSocket responses through AppSync
+  #    - AppSync is protected by WAF with your IP allowlist
+  #    - Lambda traffic appears to come from your NAT Gateway's public IP
+  #    - If NAT Gateway IP is not in allowedCidrs, Lambda gets FORBIDDEN errors
+  #
+  # 2. INCLUDE NAT GATEWAY IP in allowedCidrs (if WAF enabled)
+  #    - Find your NAT Gateway IP: aws ec2 describe-nat-gateways \
+  #        --query 'NatGateways[*].[NatGatewayId,NatGatewayAddresses[0].PublicIp]'
+  #    - Add it to allowedCidrs below
+  #
+  # SYMPTOM IF MISCONFIGURED:
+  # - Chat messages send successfully but responses never arrive
+  # - Lambda logs show "FORBIDDEN" errors when calling AppSync
+  # - This happens because Lambda's outbound IP (NAT Gateway) is blocked by WAF
+  #
+  # ALTERNATIVE: If you don't want to manage NAT Gateway IPs in WAF:
+  # - Set skipRegionalDefaultWaf: true and skipGlobalDefaultWaf: true
+  # - Use AWS Firewall Manager or a separate WAF configuration
+  # - Or don't use WAF IP allowlisting (use other WAF rules instead)
+  #
+  # WHY us-east-1 FOR GLOBAL WAF?
+  # CloudFront is a global service, and AWS requires WAF rules protecting
+  # CloudFront to be created in us-east-1 regardless of where your app is deployed.
+  # 
+  # For non-us-east-1 deployments, GAIA v2 attempts to create a cross-region
+  # stack in us-east-1 for the global WAF. This requires:
+  # - CDK bootstrapped in us-east-1: `cdk bootstrap aws://<account>/us-east-1`
+  # - Cross-region stack support in your CDK app
+  #
+  # If cross-region stacks aren't supported or you want to manage WAF separately:
+  # - Set `skipGlobalDefaultWaf: true` to skip automatic creation
+  # - Optionally provide `globalWafArn` pointing to a pre-created WAF in us-east-1
+  #
+  # Code reference: lib/gaia-l3-construct.ts -> createGlobalWaf()
+  waf:
+    # =========================================================================
+    # GLOBAL WAF (CloudFront protection)
+    # =========================================================================
+    # Controls whether MDAA creates a CLOUDFRONT-scoped WAF in us-east-1 to
+    # protect the client UI and admin UI CloudFront distributions.
+    #
+    # When true: CloudFront distributions have NO WAF protection (no IP
+    #   allowlisting, no rate limiting, no managed rules on the frontend).
+    #   Cognito still requires authentication, but the login page and static
+    #   assets are publicly accessible to anyone on the internet.
+    #
+    # When false (or omitted):
+    #   - If deploying to us-east-1: global WAF is created automatically.
+    #   - If deploying to another region: you MUST also configure
+    #     additional_stacks in mdaa.yaml so MDAA can create a cross-region
+    #     stack in us-east-1 for the global WAF. Example:
+    #
+    #       modules:
+    #         gaia-chatbot:
+    #           module_path: "@aws-mdaa/gaia-v2"
+    #           additional_stacks:
+    #             - region: 'us-east-1'
+    #           module_configs:
+    #             - ./config/gaia.yaml
+    #
+    #     CDK must also be bootstrapped in us-east-1:
+    #       cdk bootstrap aws://<account>/us-east-1
+    #
+    # Alternative: set skipGlobalDefaultWaf to true and provide a pre-created
+    # CLOUDFRONT-scoped WAF ARN via globalWafArn below.
+    #
+    # Deploying to us-east-1 (starter kit default):
+    #   Leave skipGlobalDefaultWaf omitted or false — global WAF is created
+    #   automatically in the same stack.
+    #
+    # Deploying to another region with global WAF:
+    #   Leave skipGlobalDefaultWaf omitted or false, and add additional_stacks
+    #   to the module in mdaa.yaml (see example above).
+    #
+    # Deploying without global WAF (not recommended for production):
+    #   skipGlobalDefaultWaf: true
+    #
+    # Using a pre-created global WAF:
+    #   skipGlobalDefaultWaf: true
+    #   globalWafArn: "arn:aws:wafv2:us-east-1:<account>:global/webacl/<name>/<id>"
+    
+    # Skip regional WAF entirely (useful for development/testing)
+    # WARNING: Not recommended for production - leaves APIs unprotected
+    # skipRegionalDefaultWaf: true
+    
+    # IP allowlist for WAF
+    # 
+    # IMPORTANT: You must include THREE types of IPs:
+    # 1. Your IPv4 address (for browser requests)
+    # 2. Your IPv6 address (browsers may connect via IPv6)
+    # 3. Your NAT Gateway IP (for Lambda -> AppSync WebSocket calls)
+    #
+    # Without the NAT Gateway IP, Lambda functions cannot send responses
+    # back through AppSync, causing chat messages to hang indefinitely.
+    #
+    # To find your IPs:
+    #   Your IPv4: curl -4 ifconfig.me
+    #   Your IPv6: curl -6 ifconfig.me
+    #   NAT Gateway: Check your VPC's NAT Gateway or SSM parameter
+    #
+    # For IPv6, use /64 prefix to cover your subnet (suffix may change)
+    allowedCidrs: "{{context:waf_allowed_cidrs}}"
+      # Corporate VPN ranges (optional)
+      # - 10.0.0.0/8
+      # - 192.168.0.0/16
+    
+    # Optional: Pre-created global WAF ARN (for us-east-1 WAF with non-us-east-1 deployment)
+    # globalWafArn: "arn:aws:wafv2:us-east-1:<account>:global/webacl/<name>/<id>"
+    
+    # Optional: AWS Managed rule sets for additional protection
+    # wafRules:
+    #   AWSManagedRulesAmazonIpReputationList:
+    #     priority: 1
+    #   AWSManagedRulesCommonRuleSet:
+    #     priority: 2
+    #   AWSManagedRulesKnownBadInputsRuleSet:
+    #     priority: 3
+
+  # =============================================================================
+  # DATA ADMIN ROLES
+  # =============================================================================
+  # IAM roles that can manage application data and settings
+  dataAdminRoles:
+    - id: generated-role-id:data-admin
+
+  # =============================================================================
+  # BEDROCK CONFIGURATION
+  # =============================================================================
+  # Reference to the Bedrock Knowledge Base created by bedrock-builder module
+  bedrock:
+    knowledgeBaseId: ssm:/{{org}}/{{domain}}/bedrock-builder/knowledgebase/bedrock-knowledge-base/id
+
+  # =============================================================================
+  # AUTHENTICATION CONFIGURATION
+  # =============================================================================
+  # Cognito user pool settings for user authentication
+  auth:
+    # Cognito hosted UI domain prefix (must be globally unique)
+    cognitoDomain: "{{org}}-{{domain}}-{{env}}"
+    
+    # REQUIRED for email/password authentication (no external IdP)
+    # This adds Cognito as an identity provider to the user pool client
+    # Without this, you'll get 403 errors on the hosted UI
+    cognitoAddAsIdentityProvider: true
+    
+    # OAuth callback URLs - where users are redirected after login
+    # IMPORTANT: Include localhost for local development!
+    oAuthCallbackUrls:
+      - http://localhost:5173    # Local development (Vite default port)
+      - http://localhost:5174    # Local development (admin app)
+      # - https://your-domain.com  # Production domain (if using custom domain)
+    
+    # OAuth logout URLs - where users are redirected after logout
+    oAuthLogoutUrls:
+      - http://localhost:5173    # Local development
+      - http://localhost:5174    # Local development (admin app)
+      # - https://your-domain.com  # Production domain
+    
+    # ==========================================================================
+    # ENTERPRISE SSO (Optional)
+    # ==========================================================================
+    # For Microsoft Entra ID (Azure AD) integration, uncomment and configure:
+    #
+    # entraIdOIDCConfiguration:
+    #   # Secret containing Entra ID OIDC configuration
+    #   # Secret should contain: client_id, client_secret, issuer_url
+    #   entraIdConfigSecretArn: "arn:aws:secretsmanager:{{region}}:<account>:secret:<path>"
+    #   attributeMapping:
+    #     email: "email"
+    #     # name: "name"
+    #     # preferred_username: "preferred_username"
+
+  # =============================================================================
+  # VPC CONFIGURATION
+  # =============================================================================
+  # Deploy Lambda functions in a VPC for enhanced security
+  #
+  # IMPORTANT: Your VPC must have:
+  # - NAT Gateway for outbound internet access, OR
+  # - VPC Endpoints for: Bedrock, DynamoDB, Secrets Manager, S3, CloudWatch Logs
+  #
+  # Without proper egress, Lambda functions will time out!
+  vpc:
+    vpcId: "{{context:vpc_id}}"
+    appSubnets:
+      - "{{context:app_subnet_id_1}}"
+      - "{{context:app_subnet_id_2}}"
+    vpcOwnerAccountId: "{{context:vpc_owner_account_id}}"
+
+  # =============================================================================
+  # CHAT HISTORY RETENTION (Optional)
+  # =============================================================================
+  # Automatically delete old conversations after specified time
+  # Uncomment to enable automatic cleanup
+  # chatHistory:
+  #   chatRetentionInMinutes: 1440  # 24 hours
+  #   # chatRetentionInMinutes: 10080  # 7 days
+  #   # chatRetentionInMinutes: 43200  # 30 days
+
+  # =============================================================================
+  # REST API CONFIGURATION
+  # =============================================================================
+  restApi:
+    # Cognito group name for admin users (can access admin UI)
+    adminGroup: analytics-admin
+    
+    # CloudWatch log group prefix for API Gateway logs
+    logGroupNamePathPrefix: "{{org}}-{{domain}}-{{env}}"
+    
+    # Create API Gateway CloudWatch role
+    # Set to false if this role already exists in your account
+    # (only one can exist per account per region)
+    setApiGateWayAccountCloudwatchRole: true
+    
+    # CloudWatch alarms for API health monitoring (using defaults)
+    alarms: {}
+
+  # =============================================================================
+  # WEBSOCKET API CONFIGURATION
+  # =============================================================================
+  # Real-time chat API using AppSync Events
+  #
+  # Choose ONE data source based on your use case:
+  # - bedrockRagDataSource: RAG with Knowledge Base (document Q&A, citations)
+  # - invokeModelDataSource: Direct model invocation (general chat, no KB needed)
+  # - customDataSource: Bring your own Lambda function
+  #
+  webSocketApi:
+    # =========================================================================
+    # OPTION 1: RAG WITH KNOWLEDGE BASE (Recommended for document Q&A)
+    # =========================================================================
+    # Uses Bedrock Knowledge Base for retrieval-augmented generation.
+    # Provides citations and source attribution from your documents.
+    bedrockRagDataSource:
+      # Guardrail for content safety (created by bedrock-builder module)
+      guardrailId: ssm:/{{org}}/{{domain}}/bedrock-builder/guardrail/chatbot-guardrail/id
+      guardrailKmsKeyArn: ssm:/{{org}}/{{domain}}/bedrock-builder/kms/arn
+      # guardrailVersion: "DRAFT"  # Optional: specific guardrail version
+      
+      # ========================================================================
+      # FOUNDATION MODEL SELECTION
+      # ========================================================================
+      # Choose based on your region and requirements:
+      #
+      # Cross-Region Inference Profiles (recommended for availability):
+      #   - "us.anthropic.claude-3-5-sonnet-20241022-v2:0"  # US regions
+      #   - "eu.anthropic.claude-3-5-sonnet-20241022-v2:0"  # EU regions
+      #
+      # Region-Specific Models:
+      #   us-east-1, us-west-2 (full availability):
+      #     - "anthropic.claude-3-5-sonnet-20241022-v2:0"   # Latest, best quality
+      #     - "anthropic.claude-3-5-haiku-20241022-v1:0"    # Fast, cost-effective
+      #     - "anthropic.claude-3-sonnet-20240229-v1:0"     # Stable
+      #
+      #   ca-central-1 (limited availability):
+      #     - "anthropic.claude-3-haiku-20240307-v1:0"      # Available
+      #     - "anthropic.claude-3-sonnet-20240229-v1:0"     # May need enablement
+      #     - "amazon.titan-text-express-v1"                # Always available
+      #
+      # Check model availability: https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html
+      modelId: "{{context:inference_model_arn}}"
+      
+      # Display inline citations in chat responses
+      displayInlineCitations: true
+      
+      # Lambda execution role
+      lambdaRole:
+        id: generated-role-id:bedrock-rag-datasource
+      
+      # Knowledge base retrieval settings
+      kbNumberOfResults: 8  # Number of chunks to retrieve (1-100)
+      
+      # ========================================================================
+      # MODEL INFERENCE PARAMETERS (Optional)
+      # ========================================================================
+      # Customize model behavior for response generation
+      # inferenceMaxTokens: 2000      # Max tokens in response (default varies by model)
+      # inferenceTemperature: 0.7     # Randomness: 0=deterministic, 1=creative
+      # inferenceTopP: 0.9            # Nucleus sampling threshold
+      
+      # ========================================================================
+      # ORCHESTRATION PARAMETERS (Optional - Advanced RAG)
+      # ========================================================================
+      # Customize query transformation and orchestration behavior
+      # orchestrationInferenceMaxTokens: 1000
+      # orchestrationInferenceTemperature: 0.5
+      # orchestrationInferenceTopP: 0.9
+      # orchestrationInferenceStopSequences: ["\n\nHuman:"]
+      # orchestrationPerformanceLatency: "standard"  # or "optimized"
+      # orchestrationQueryTransformationType: "QUERY_DECOMPOSITION"
+      
+      # ========================================================================
+      # CUSTOM PROMPTS (Optional)
+      # ========================================================================
+      # Query generation prompt (how to search the knowledge base):
+      # orchestrationPromptTemplate: |
+      #   You are a query creation agent. Create an optimized search query
+      #   based on the user's question to find relevant information.
+      #   
+      #   User question: $question$
+      #   
+      #   Generate a search query:
+      #
+      # Response formatting prompt:
+      # promptTemplate: |
+      #   You are a helpful AI assistant. Answer using only the search results.
+      #   If the results don't contain enough information, say so clearly.
+      #   
+      #   Search results:
+      #   $search_results$
+      #   
+      #   User question: $question$
+      #   
+      #   Your answer:
+      
+      # ========================================================================
+      # LAMBDA CONFIGURATION (Optional)
+      # ========================================================================
+      # These settings apply to the RAG handler Lambda function
+      # lambdaArchitecture: "X86_64"    # or "ARM_64" for cost savings
+      # pythonRuntime: "python3.13"     # Python runtime version
+      # lambdaTimeoutInSeconds: 600     # Lambda timeout (default: 600s / 10 min)
+      # lambdaMemorySize: 1024          # Lambda memory in MB (default: 1024)
+      # provisionedConcurrentExecutions: 2  # Pre-warm instances for lower latency
+      # reservedConcurrentExecutions: 10    # Reserved concurrent executions
+
+    # =========================================================================
+    # OPTION 2: DIRECT MODEL INVOCATION (Simpler, no Knowledge Base needed)
+    # =========================================================================
+    # Use this instead of bedrockRagDataSource when you don't need RAG.
+    # Best for: general chat, creative writing, code generation, summarization.
+    #
+    # To use: Comment out bedrockRagDataSource above and uncomment below.
+    #
+    # invokeModelDataSource:
+    #   # Bedrock model ID - same options as bedrockRagDataSource
+    #   modelId: "anthropic.claude-3-sonnet-20240229-v1:0"
+    #   
+    #   # Lambda execution role (needs bedrock:InvokeModelWithResponseStream permission)
+    #   lambdaRole:
+    #     id: generated-role-id:bedrock-invoke-model
+    #   
+    #   # ======================================================================
+    #   # LAMBDA CONFIGURATION (Optional)
+    #   # ======================================================================
+    #   # lambdaArchitecture: "X86_64"    # or "ARM_64" for cost savings
+    #   # pythonRuntime: "python3.13"     # Python runtime version
+    #   # lambdaTimeoutInSeconds: 600     # Lambda timeout (default: 600s / 10 min)
+    #   # lambdaMemorySize: 1024          # Lambda memory in MB (default: 1024)
+    #   # provisionedConcurrentExecutions: 2  # Pre-warm instances for lower latency
+    #   # reservedConcurrentExecutions: 10    # Reserved concurrent executions
+
+    # =========================================================================
+    # OPTION 3: CUSTOM DATA SOURCE (Bring Your Own Lambda)
+    # =========================================================================
+    # Use your own Lambda function for complete control over chat processing.
+    #
+    # customDataSource:
+    #   lambdaArn: "arn:aws:lambda:{{region}}:{{account}}:function:my-custom-handler"
+
+  # =============================================================================
+  # CLIENT UI CONFIGURATION
+  # =============================================================================
+  # User-facing chat interface (empty object required even if no customization)
+  clientUi: {}
+    # Custom domain configuration (requires ACM certificate in us-east-1)
+    # domainName: "chat.example.com"
+    # acmCertArn: arn:aws:acm:us-east-1:<account>:certificate/<id>
+
+  # =============================================================================
+  # ADMIN UI CONFIGURATION
+  # =============================================================================
+  # Administrative interface for managing the chatbot (empty object required)
+  adminUi: {}
+    # Custom domain configuration (requires ACM certificate in us-east-1)
+    # domainName: "admin.example.com"
+    # acmCertArn: arn:aws:acm:us-east-1:<account>:certificate/<id>

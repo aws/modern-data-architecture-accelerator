@@ -1,5 +1,9 @@
 # GAIA - GenAI Accelerator CDK L3 Construct
 
+> **:warning: Deprecated in favor of [`@aws-mdaa/gaia-v2-l3-construct`](../gaia-v2-l3-construct/README.md).**
+> New construct consumers should use `@aws-mdaa/gaia-v2-l3-construct`. This v1 construct remains published and functional for existing deployments but will not receive new features. It will be removed in a future major release.
+> See the [migration guide](../../../../apps/ai/gaia-app/MIGRATION_TO_V2.md) for guidance on migrating existing deployments.
+
 The GAIA L3 Construct is used to deploy sub L3 constructs and resources which support a foundational set of backends to implement various GenAI applications.
 
 ***

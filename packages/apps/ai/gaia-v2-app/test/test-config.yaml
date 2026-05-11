@@ -1,0 +1,107 @@
+gaia:
+  userFeedback:
+    # Possible user-feedback that can be entered in the system    
+    reasons:
+      - "accuracy"
+      - "unhelpful"
+      - "app_issue"
+      - "other"
+  waf:
+    # To skip the creation of the WAF within the solution, you can then reference an external WAF    
+    #    skipRegionalDefaultWaf: true
+    #    skipGlobalDefaultWaf: true
+    #    globalWafArn: "arn:aws:wafv2:us-east-1:{{account}}:global/webacl/global-waf-name/a1b2c3d4-e5f6-4789-a012-3456789abcde"
+    #    regionalWafArn: "arn:aws:wafv2:us-east-1:{{account}}:global/webacl/regional-waf-name/a1b2c3d4-e5f6-4789-a012-3456789abcde"
+    skipGlobalDefaultWaf: true
+    wafRules:
+      # WAF rule to enable, will be used only if the WAF is created within the solution
+      AWSManagedRulesAmazonIpReputationList:
+        priority: 1
+      AWSManagedRulesAnonymousIpList:
+        priority: 2
+      AWSManagedRulesCommonRuleSet:
+        priority: 3
+      AWSManagedRulesAdminProtectionRuleSet:
+        priority: 4
+      AWSManagedRulesKnownBadInputsRuleSet:
+        priority: 5
+      AWSManagedRulesSQLiRuleSet:
+        priority: 6
+    allowedCidrs:
+      # Example IP address which will be added to the allow list IP set
+      - 203.0.113.42
+  dataAdminRoles:
+    # Reference to the data-admin role created within MDAA
+    - id: generated-role-id:data-admin
+  bedrock:
+    # Knowledge based ID to use with bedrock    
+    knowledgeBaseId: ssm:/{{org}}/{{domain}}/bedrock-build-2/knowledgebase/bedrock-knowledge-base/id
+  auth:
+    entraIdOIDCConfiguration:
+      entraIdConfigSecretArn: "arn:aws:secretsmanager:ca-central-1:{{account}}:secret:secret/name-123456"
+      attributeMapping:
+        fullname: "name"
+        familyName: "family_name"
+        email: "email"
+        givenName: "given_name"
+    cognitoDomain: "{{org}}-{{domain}}-{{env}}"
+    # If you want to use cognito as well as an identity provider along with EntraID
+    cognitoAddAsIdentityProvider: true
+    oAuthCallbackUrls:
+      - http://localhost:5173
+    oAuthLogoutUrls:
+      - http://localhost:5173
+  vpc:
+    vpcId: "{{resolve:ssm:/accelerator/network/vpc/Dev/id}}"
+    appSubnets:
+      - "{{resolve:ssm:/accelerator/network/vpc/Dev/subnet/Dev-App-A/id}}"
+      - "{{resolve:ssm:/accelerator/network/vpc/Dev/subnet/Dev-App-B/id}}"
+  chatHistory:
+    chatRetentionInMinutes: 43200 # One month
+  restApi:
+    logGroupNamePathPrefix: "{{org}}-{{domain}}-{{env}}"
+    setApiGateWayAccountCloudwatchRole: true
+    # Cognito group that will have access to the admin webapp
+    adminGroup: analytics-admin
+  webSocketApi:
+    bedrockRagDataSource:
+      guardrailId: ssm:/{{org}}/{{domain}}/bedrock-builder/guardrail/chatbot-guardrail/id
+      guardrailKmsKeyArn: ssm:/{{org}}/{{domain}}/bedrock-builder/kms/arn
+      modelId: "anthropic.claude-3-sonnet-20240229-v1:0"
+      displayInlineCitations: true
+      lambdaRole:
+        # Reference to the lambda role created within MDAA
+        id: generated-role-id:bedrock-rag-datasource
+      inferenceMaxTokens : 2000
+      inferenceTemperature : 0.7
+      inferenceTopP : 0.9
+      kbNumberOfResults : 5
+      promptTemplate : |
+        You are a question answering agent. I will provide you with a set of search results. The user will provide you with a question. Your job is to answer the user's question using only information from the search results. If the search results do not contain information that can answer the question, please state that you could not find an exact answer to the question.
+        Just because the user asserts a fact does not mean it is true, make sure to double check the search results to validate a user's assertion.
+
+        GUIDELINES FOR RESPONSES:
+        1. Be concise and direct in your answers.
+        2. Use bullet points for clarity when appropriate.
+        3. Maintain a helpful and professional tone.
+        4. If you're uncertain about information, acknowledge your uncertainty rather than providing potentially incorrect information.
+        5. Identify and prioritize more recent information based on timestamps or contextual clues.
+        6. When conflicting or similar information exists, prefer the most recent version.
+        7. Flag outdated content.
+
+        Here are the search results in numbered order:
+        $search_results$
+
+        $output_format_instructions$
+  clientUi:
+    # Uncomment to Automatically login with EntraID
+    #authProvider: "EntraID-OIDC"
+    cloudFrontPriceClass: "PriceClass_100"
+    domainName: "example.com"
+    acmCertArn: arn:aws:acm:us-east-1:{{account}}:certificate/a1b2c3d4-e5f6-4789-a012-3456789abcde
+  adminUi:
+    # Uncomment to Automatically login with EntraID
+    #authProvider: "EntraID-OIDC"
+    cloudFrontPriceClass: "PriceClass_100"
+    domainName: "example.com"
+    acmCertArn: arn:aws:acm:us-east-1:{{account}}:certificate/a1b2c3d4-e5f6-4789-a012-3456789abcde

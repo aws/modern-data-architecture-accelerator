@@ -645,6 +645,9 @@ export class M2MApiL3Construct extends MdaaL3Construct {
     new CfnLoggingConfiguration(this, 'default-waf-logging-config', {
       logDestinationConfigs: [defaultWafLogGroup.logGroupArn],
       resourceArn: defaultWaf.attrArn,
+      // CDK uses objectToCloudFormation (pass-through) for singleHeader in
+      // CfnLoggingConfiguration.FieldToMatchProperty, so we must use CFN PascalCase directly.
+      redactedFields: [{ singleHeader: { Name: 'authorization' } }, { singleHeader: { Name: 'cookie' } }],
     });
 
     new CfnWebACLAssociation(this, `default-waf-association`, {

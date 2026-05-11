@@ -1,6 +1,7 @@
 {
   "name": "@aws-mdaa/gaia",
-  "description": "MDAA Generative AI module",
+  "description": "[DEPRECATED] MDAA Generative AI module. Use @aws-mdaa/gaia-v2 for new deployments. See MIGRATION_TO_V2.md.",
+  "deprecated": "Use @aws-mdaa/gaia-v2 for new deployments. Existing v1 deployments continue to function; v1 will be removed in a future release. See MIGRATION_TO_V2.md.",
   "author": {
     "name": "Amazon Web Services",
     "url": "https://aws.amazon.com/solutions"

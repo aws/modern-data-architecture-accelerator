@@ -1,0 +1,84 @@
+# Comprehensive sample config for the GAIA v2 module.
+# Covers all major configuration sections for baseline diff testing.
+
+gaia:
+  userFeedback:
+    reasons:
+      - "accuracy"
+      - "unhelpful"
+      - "app_issue"
+      - "other"
+  waf:
+    skipGlobalDefaultWaf: true
+    wafRules:
+      AWSManagedRulesAmazonIpReputationList:
+        priority: 1
+      AWSManagedRulesAnonymousIpList:
+        priority: 2
+      AWSManagedRulesCommonRuleSet:
+        priority: 3
+      AWSManagedRulesAdminProtectionRuleSet:
+        priority: 4
+      AWSManagedRulesKnownBadInputsRuleSet:
+        priority: 5
+      AWSManagedRulesSQLiRuleSet:
+        priority: 6
+    allowedCidrs:
+      - 203.0.113.42
+  dataAdminRoles:
+    - id: generated-role-id:data-admin
+  bedrock:
+    knowledgeBaseId: ssm:/{{org}}/{{domain}}/bedrock-build-2/knowledgebase/bedrock-knowledge-base/id
+  auth:
+    entraIdOIDCConfiguration:
+      entraIdConfigSecretArn: "arn:aws:secretsmanager:ca-central-1:{{account}}:secret:secret/name-123456"
+      attributeMapping:
+        fullname: "name"
+        familyName: "family_name"
+        email: "email"
+        givenName: "given_name"
+    cognitoDomain: "{{org}}-{{domain}}-{{env}}"
+    cognitoAddAsIdentityProvider: true
+    oAuthCallbackUrls:
+      - http://localhost:5173
+    oAuthLogoutUrls:
+      - http://localhost:5173
+  vpc:
+    vpcId: "{{resolve:ssm:/accelerator/network/vpc/Dev/id}}"
+    appSubnets:
+      - "{{resolve:ssm:/accelerator/network/vpc/Dev/subnet/Dev-App-A/id}}"
+      - "{{resolve:ssm:/accelerator/network/vpc/Dev/subnet/Dev-App-B/id}}"
+  chatHistory:
+    chatRetentionInMinutes: 43200
+  restApi:
+    logGroupNamePathPrefix: "{{org}}-{{domain}}-{{env}}"
+    setApiGateWayAccountCloudwatchRole: true
+    adminGroup: analytics-admin
+  webSocketApi:
+    bedrockRagDataSource:
+      guardrailId: ssm:/{{org}}/{{domain}}/bedrock-builder/guardrail/chatbot-guardrail/id
+      guardrailKmsKeyArn: ssm:/{{org}}/{{domain}}/bedrock-builder/kms/arn
+      modelId: "anthropic.claude-3-sonnet-20240229-v1:0"
+      displayInlineCitations: true
+      lambdaRole:
+        id: generated-role-id:bedrock-rag-datasource
+      inferenceMaxTokens: 2000
+      inferenceTemperature: 0.7
+      inferenceTopP: 0.9
+      kbNumberOfResults: 5
+      promptTemplate: |
+        You are a question answering agent. I will provide you with a set of search results. The user will provide you with a question. Your job is to answer the user's question using only information from the search results. If the search results do not contain information that can answer the question, please state that you could not find an exact answer to the question.
+        Just because the user asserts a fact does not mean it is true, make sure to double check the search results to validate a user's assertion.
+
+        Here are the search results in numbered order:
+        $search_results$
+
+        $output_format_instructions$
+  clientUi:
+    cloudFrontPriceClass: "PriceClass_100"
+    domainName: "example.com"
+    acmCertArn: arn:aws:acm:us-east-1:{{account}}:certificate/a1b2c3d4-e5f6-4789-a012-3456789abcde
+  adminUi:
+    cloudFrontPriceClass: "PriceClass_100"
+    domainName: "example.com"
+    acmCertArn: arn:aws:acm:us-east-1:{{account}}:certificate/a1b2c3d4-e5f6-4789-a012-3456789abcde

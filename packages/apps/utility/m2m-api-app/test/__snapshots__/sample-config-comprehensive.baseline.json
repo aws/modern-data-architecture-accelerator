@@ -1444,6 +1444,18 @@
             ]
           }
         ],
+        "RedactedFields": [
+          {
+            "SingleHeader": {
+              "Name": "authorization"
+            }
+          },
+          {
+            "SingleHeader": {
+              "Name": "cookie"
+            }
+          }
+        ],
         "ResourceArn": {
           "Fn::GetAtt": [
             "m2mapidefaultwaf8ACA500B",

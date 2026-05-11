@@ -1,0 +1,10 @@
+{
+  "ManagedLoginBranding": {
+    "ManagedLoginBrandingId": "66cd9c67-1996-41dc-80c9-eeee85ec82cf",
+    "UserPoolId": "ca-central-1_DQM0dZzSV",
+    "UseCognitoProvidedValues": true,
+    "Assets": [],
+    "CreationDate": "2025-09-17T08:54:32.344000-04:00",
+    "LastModifiedDate": "2025-09-17T08:54:32.344000-04:00"
+  }
+}

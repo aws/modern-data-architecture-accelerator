@@ -1,0 +1,188 @@
+# Vector store configuration for Bedrock Knowledge Base
+vectorStores:
+  knowledge-base-vector-store:
+    # VPC configuration for secure vector store deployment
+    vpcId: "{{context:vpc_id}}"
+    subnetIds:
+      - "{{context:data_subnet_id_1}}"
+      - "{{context:data_subnet_id_2}}"
+    engineVersion: '16.6'
+
+# Knowledge base configuration
+knowledgeBases:
+  bedrock-knowledge-base:
+    # Embedding model for vector generation
+    embeddingModel: "{{context:embedding_model}}"
+    
+    # IAM role for knowledge base operations
+    role:
+      id: generated-role-id:bedrock-knowledgebase
+    
+    # Optional: Supplemental bucket for multimodal content (images, diagrams)
+    # Uncomment if you need to process documents with embedded images
+    # supplementalBucketName: ssm:/{{org}}/{{domain}}/datalake/bucket/multimodal/name
+    
+    # S3 data sources for the knowledge base
+    s3DataSources:
+      # Primary data source with advanced chunking and parsing
+      knowledge-base-documents:
+        bucketName: ssm:/{{org}}/{{domain}}/datalake/bucket/knowledge-base/name
+        prefix: "data/bedrock-knowledge-base/"
+        
+        # Advanced vector ingestion configuration
+        vectorIngestionConfiguration:
+          # Hierarchical chunking for better context preservation
+          chunkingConfiguration:
+            chunkingStrategy: "HIERARCHICAL"
+            hierarchicalChunkingConfiguration:
+              levelConfigurations:
+                # Parent chunks for broader context
+                - { maxTokens: 2000 }
+                # Child chunks for precise retrieval
+                - { maxTokens: 300 }
+              # Overlap between chunks to maintain context continuity
+              overlapTokens: 60
+          
+          # Optional: Advanced parsing with foundation models
+          # Uncomment for documents with complex layouts, tables, or mixed content
+          # parsingConfiguration:
+          #   parsingStrategy: "BEDROCK_FOUNDATION_MODEL"
+          #   bedrockFoundationModelConfiguration:
+          #     modelArn: "{{context:inference_model_arn}}"
+          #     parsingModality: "MULTIMODAL"
+          #     parsingPromptText: "Extract and structure all text content from this document. Preserve formatting, tables, and key information while maintaining context and relationships between sections."
+    
+    # Vector store reference
+    vectorStore: knowledge-base-vector-store
+
+# Guardrails configuration for content safety and compliance
+guardrails:
+  chatbot-guardrail:
+    description: "Comprehensive guardrail for chatbot with content filtering and PII protection"
+    
+    # Custom messaging for blocked content
+    blockedInputMessaging: "I'm sorry, but I cannot process this request as it may contain inappropriate content."
+    blockedOutputsMessaging: "I'm sorry, but I cannot provide this response as it may contain inappropriate content."
+    
+    # Content filters for harmful categories
+    contentFilters:
+      # Sexual content filtering
+      sexual:
+        inputStrength: MEDIUM
+        outputStrength: MEDIUM
+      # Violence and gore
+      violence:
+        inputStrength: MEDIUM
+        outputStrength: MEDIUM
+      # Hate speech and discrimination
+      hate:
+        inputStrength: MEDIUM
+        outputStrength: MEDIUM
+      # Insults and profanity
+      insults:
+        inputStrength: MEDIUM
+        outputStrength: MEDIUM
+      # Misconduct and unethical behavior
+      misconduct:
+        inputStrength: MEDIUM
+        outputStrength: MEDIUM
+      # Prompt injection attacks
+      # Note: May need adjustment based on your use case
+      # promptAttack:
+      #   inputStrength: MEDIUM
+      #   outputStrength: NONE
+    
+    # Optional: Contextual grounding filters
+    # Uncomment to ensure responses stay relevant to knowledge base
+    # Note: This may restrict response length for multi-step procedures
+    # contextualGroundingFilters:
+    #   grounding: 0.95
+    #   relevance: 0.85
+    
+    # Sensitive information filters (PII protection)
+    sensitiveInformationFilters:
+      piiEntities:
+        # General PII - ANONYMIZE (mask but allow processing)
+        - type: 'NAME'
+          action: 'ANONYMIZE'
+        - type: 'AGE'
+          action: 'ANONYMIZE'
+        - type: 'EMAIL'
+          action: 'ANONYMIZE'
+        - type: 'PHONE'
+          action: 'ANONYMIZE'
+        - type: 'ADDRESS'
+          action: 'ANONYMIZE'
+        - type: 'USERNAME'
+          action: 'ANONYMIZE'
+        - type: 'DRIVER_ID'
+          action: 'ANONYMIZE'
+        - type: 'VEHICLE_IDENTIFICATION_NUMBER'
+          action: 'ANONYMIZE'
+        - type: 'LICENSE_PLATE'
+          action: 'ANONYMIZE'
+        
+        # Security-sensitive PII - BLOCK (reject entirely)
+        - type: 'PASSWORD'
+          action: 'BLOCK'
+        - type: 'AWS_ACCESS_KEY'
+          action: 'BLOCK'
+        - type: 'AWS_SECRET_KEY'
+          action: 'BLOCK'
+        
+        # Financial PII - BLOCK
+        - type: 'CREDIT_DEBIT_CARD_NUMBER'
+          action: 'BLOCK'
+        - type: 'CREDIT_DEBIT_CARD_CVV'
+          action: 'BLOCK'
+        - type: 'CREDIT_DEBIT_CARD_EXPIRY'
+          action: 'BLOCK'
+        - type: 'PIN'
+          action: 'BLOCK'
+        - type: 'US_BANK_ACCOUNT_NUMBER'
+          action: 'BLOCK'
+        - type: 'US_BANK_ROUTING_NUMBER'
+          action: 'BLOCK'
+        - type: 'INTERNATIONAL_BANK_ACCOUNT_NUMBER'
+          action: 'BLOCK'
+        - type: 'SWIFT_CODE'
+          action: 'BLOCK'
+        
+        # IT/Network PII - BLOCK
+        - type: 'IP_ADDRESS'
+          action: 'BLOCK'
+        - type: 'MAC_ADDRESS'
+          action: 'BLOCK'
+        
+        # Optional: Region-specific PII
+        # Uncomment based on your regulatory requirements
+        # US-specific:
+        # - type: 'US_SOCIAL_SECURITY_NUMBER'
+        #   action: 'BLOCK'
+        # Canada-specific:
+        # - type: 'CA_HEALTH_NUMBER'
+        #   action: 'BLOCK'
+        # - type: 'CA_SOCIAL_INSURANCE_NUMBER'
+        #   action: 'BLOCK'
+        # UK-specific:
+        # - type: 'UK_NATIONAL_HEALTH_SERVICE_NUMBER'
+        #   action: 'BLOCK'
+        # - type: 'UK_NATIONAL_INSURANCE_NUMBER'
+        #   action: 'BLOCK'
+      
+      # Custom regex patterns for organization-specific sensitive data
+      regexes:
+        # Example: Employee ID format
+        - name: 'EmployeeId'
+          pattern: 'EMP-\d{6}'
+          action: 'ANONYMIZE'
+          description: 'Company employee ID format'
+        # Example: Internal API keys
+        - name: 'InternalApiKey'
+          pattern: 'API_[A-Z0-9]{16}'
+          action: 'BLOCK'
+          description: 'Internal API key format'
+
+# Data admin roles for knowledge base management
+dataAdminRoles:
+  - id: generated-role-id:data-admin

@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { M2MApiL3Construct, M2MApiL3ConstructProps, M2MApiProps } from '../lib';
 
 describe('Mandatory Prop Tests', () => {
@@ -568,7 +568,7 @@ describe('Mandatory Prop Tests', () => {
     });
 
     // WAF Logging Configuration
-    test('WAF Logging Configuration', () => {
+    test('WAF Logging Configuration redacts authorization and cookie headers', () => {
       template.hasResourceProperties('AWS::WAFv2::LoggingConfiguration', {
         LogDestinationConfigs: [
           {
@@ -578,6 +578,10 @@ describe('Mandatory Prop Tests', () => {
         ResourceArn: {
           'Fn::GetAtt': ['teststackdefaultwaf4F859742', 'Arn'],
         },
+        RedactedFields: Match.arrayWith([
+          { SingleHeader: { Name: 'authorization' } },
+          { SingleHeader: { Name: 'cookie' } },
+        ]),
       });
     });
 

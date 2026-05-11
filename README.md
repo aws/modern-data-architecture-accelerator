@@ -217,7 +217,8 @@ MDAA is implemented as a set of compliant modules deployed via a unified orchest
 - [**SageMaker Unified Studio**](packages/apps/ai/sm-studio-domain-app/README.md) - Secured SageMaker Unified Studio.
 - [**SageMaker Notebooks**](packages/apps/ai/sm-notebook-app/README.md) - Secured SageMaker notebooks.
 - [**Data Science Team/Project**](packages/apps/ai/data-science-team-app/README.md) - Resources for team data science activities.
-- [**Generative AI Accelerator**](packages/apps/ai/gaia-app/README.md) - Authenticated GenAI-powered chatbot.
+- [**Generative AI Accelerator**](packages/apps/ai/gaia-v2-app/README.md) - Authenticated GenAI chatbot with WebSocket streaming, Bedrock Knowledge Base RAG, and admin and client UIs.
+- [**Generative AI Accelerator v1 (deprecated)**](packages/apps/ai/gaia-app/README.md) - Previous generation of the GenAI chatbot. New deployments should use `@aws-mdaa/gaia-v2`; v1 remains published for existing deployments and will be removed in a future release. See the [migration guide](packages/apps/ai/gaia-app/MIGRATION_TO_V2.md).
 - [**Bedrock AgentCore Runtime**](packages/apps/ai/bedrock-agentcore-runtime-app/README.md) - Deploy Amazon Bedrock AgentCore Runtimes with custom Docker containers.
 - [**Bedrock Builder**](packages/apps/ai/bedrock-builder-app/README.md) - Deploy secure Bedrock Agents, Knowledge Bases, and associated resources.
 - [**Bedrock Settings**](packages/apps/ai/bedrock-settings-app/README.md) - Configure Bedrock model invocation audit logging to S3 and CloudWatch.
