@@ -647,7 +647,8 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that authorization policies are created
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 2);
+      // 2 from the domain unit policy + 3 from cfn-exec (1) and data-admin (2) root auths
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 5);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_PROJECT',
       });
@@ -759,7 +760,8 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that nested authorization policies are created
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 2);
+      // 2 from the child domain unit policy + 3 from cfn-exec (1) and data-admin (2) root auths
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 5);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_ASSET_TYPE',
       });
@@ -867,7 +869,8 @@ describe('DataZone L3 Construct Tests', () => {
 
       // Verify group profile and policy are created
       template.resourceCountIs('AWS::DataZone::GroupProfile', 1);
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 2);
+      // 2 from the domain unit policy + 3 from cfn-exec (1) and data-admin (2) root auths
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 5);
     });
 
     test('should create associated account CDK users and owners', () => {
@@ -1010,6 +1013,406 @@ describe('DataZone L3 Construct Tests', () => {
 
       // Should not create a new execution role
       expect(template).toBeDefined();
+    });
+
+    test('authorizations.projectCreators creates CREATE_PROJECT policy for V1', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with projectCreators',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            users: { 'test-user': { iamRole: { name: 'test-user-role' } } },
+            authorizations: {
+              projectCreators: {
+                users: ['test-user'],
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      // V1 domains should get CREATE_PROJECT, not CREATE_PROJECT_FROM_PROJECT_PROFILE
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'CREATE_PROJECT',
+      });
+    });
+
+    test('authorizations.eligibleProjectMembers creates ADD_TO_PROJECT_MEMBER_POOL policy', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with eligibleProjectMembers',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            users: { 'test-user': { iamRole: { name: 'test-user-role' } } },
+            authorizations: {
+              eligibleProjectMembers: {
+                users: ['test-user'],
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'ADD_TO_PROJECT_MEMBER_POOL',
+      });
+    });
+
+    test('authorizations.eligibleProjectMembers.all creates allUsersGrantFilter policy', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with eligibleProjectMembers all',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            authorizations: {
+              eligibleProjectMembers: {
+                all: true,
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'ADD_TO_PROJECT_MEMBER_POOL',
+        Principal: {
+          User: {
+            AllUsersGrantFilter: {},
+          },
+        },
+      });
+    });
+
+    test('authorizations.domainUnitCreators creates CREATE_DOMAIN_UNIT policy', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with domainUnitCreators',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            users: { 'test-user': { iamRole: { name: 'test-user-role' } } },
+            authorizations: {
+              domainUnitCreators: {
+                users: ['test-user'],
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'CREATE_DOMAIN_UNIT',
+      });
+    });
+
+    test('authorizations.glossaryCreators creates CREATE_GLOSSARY policy', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with glossaryCreators',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            users: { 'test-user': { iamRole: { name: 'test-user-role' } } },
+            authorizations: {
+              glossaryCreators: {
+                users: ['test-user'],
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'CREATE_GLOSSARY',
+      });
+    });
+
+    test('authorizations.environmentCreators creates CREATE_ENVIRONMENT policy', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with environmentCreators',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            groups: { 'test-group': { ssoId: 'group-123' } },
+            authorizations: {
+              environmentCreators: {
+                groups: ['test-group'],
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'CREATE_ENVIRONMENT',
+      });
+    });
+
+    test('authorizations with multiple fields creates all corresponding policies', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with multiple authorizations',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            users: { 'test-user': { iamRole: { name: 'test-user-role' } } },
+            groups: { 'test-group': { ssoId: 'group-123' } },
+            authorizations: {
+              projectCreators: { users: ['test-user'] },
+              eligibleProjectMembers: { all: true },
+              domainUnitCreators: { groups: ['test-group'] },
+              glossaryCreators: { users: ['test-user'] },
+              environmentCreators: { groups: ['test-group'] },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      // 5 from authorizations + 3 from cfn-exec (1) and data-admin (2) root auths + 1 from custom-resource-role-auth
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 9);
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_PROJECT' });
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'ADD_TO_PROJECT_MEMBER_POOL' });
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_DOMAIN_UNIT' });
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_GLOSSARY' });
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_ENVIRONMENT' });
+    });
+
+    test('authorizations on domain unit creates policies on that unit', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with domain unit authorizations',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            users: { 'test-user': { iamRole: { name: 'test-user-role' } } },
+            domainUnits: {
+              unit1: {
+                description: 'Unit with authorizations',
+                authorizations: {
+                  projectCreators: { users: ['test-user'] },
+                  eligibleProjectMembers: { all: true },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_PROJECT' });
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'ADD_TO_PROJECT_MEMBER_POOL' });
+    });
+
+    test('authorizations on nested domain unit creates policies', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with nested unit authorizations',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            users: { 'test-user': { iamRole: { name: 'test-user-role' } } },
+            domainUnits: {
+              parent: {
+                description: 'Parent unit',
+                domainUnits: {
+                  child: {
+                    description: 'Child unit with authorizations',
+                    authorizations: {
+                      glossaryCreators: { users: ['test-user'] },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_GLOSSARY' });
+    });
+
+    test('empty authorizations object does not create extra policies', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with empty authorizations',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            authorizations: {},
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      // Only cfn-exec (1) + data-admin (2) + custom-resource-role-auth (1) = 4
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 4);
+    });
+
+    test('cdkRoleArn overrides the default cfn-exec role ARN in authorization policies', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with custom cdkRoleArn',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            cdkRoleArn: 'arn:test-partition:iam::123456789012:role/custom-cdk-role',
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'CREATE_PROJECT',
+        Principal: {
+          User: {
+            UserIdentifier: 'arn:test-partition:iam::123456789012:role/custom-cdk-role',
+          },
+        },
+      });
+    });
+
+    test('authorizations with userIdentifiers creates policies with direct user identifiers', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with userIdentifiers',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            authorizations: {
+              projectCreators: {
+                userIdentifiers: { 'direct-user': 'arn:test-partition:iam::123456789012:role/direct-role' },
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'CREATE_PROJECT',
+        Principal: {
+          User: {
+            UserIdentifier: 'arn:test-partition:iam::123456789012:role/direct-role',
+          },
+        },
+      });
+    });
+
+    test('authorizations with groupsIdentifiers creates policies with direct group identifiers', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain with groupsIdentifiers',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+            authorizations: {
+              domainUnitCreators: {
+                groupsIdentifiers: { 'direct-group': 'group-id-direct' },
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'CREATE_DOMAIN_UNIT',
+        Principal: {
+          Group: {
+            GroupIdentifier: 'group-id-direct',
+          },
+        },
+      });
     });
   });
 
@@ -1718,7 +2121,8 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that authorization policies are created
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 4);
+      // 2 from the domain unit policy + 2 from data-admin (2) root auths + 1 custom-resource-role-auth + 1 Tooling blueprint auth
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 6);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_PROJECT',
       });
@@ -1855,7 +2259,8 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that nested authorization policies are created
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 4);
+      // 2 from the child domain unit policy + 2 from data-admin (2) root auths + 1 custom-resource-role-auth + 1 Tooling blueprint auth
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 6);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_ASSET_TYPE',
       });
@@ -1978,7 +2383,8 @@ describe('DataZone L3 Construct Tests', () => {
 
       // Verify group profile and policy are created
       template.resourceCountIs('AWS::DataZone::GroupProfile', 1);
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 4);
+      // 2 from the domain unit policy + 2 from data-admin (2) root auths + 1 custom-resource-role-auth + 1 Tooling blueprint auth
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 6);
     });
 
     test('should create associated account CDK users and owners', () => {
@@ -2247,6 +2653,164 @@ describe('DataZone L3 Construct Tests', () => {
       expect(() => {
         new DataZoneL3Construct(stack, 'test-v2-custom-blueprints', props);
       }).toThrow('DataLake blueprint is automatically enabled and should not be included in enabledManagedBlueprints');
+    });
+
+    test('authorizations.projectCreators creates CREATE_PROJECT_FROM_PROJECT_PROFILE policy for V2', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        sageMakerDomains: {
+          'test-domain': {
+            description: 'V2 domain with projectCreators',
+            dataAdminRole: { name: 'admin' },
+            userAssignment: 'MANUAL',
+            tooling: { vpcId: 'test-vpc', subnetIds: ['subnet-1'] },
+            users: { 'test-user': { iamRole: { name: 'test-user-role' } } },
+            authorizations: {
+              projectCreators: {
+                users: ['test-user'],
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      // V2 domains should get CREATE_PROJECT_FROM_PROJECT_PROFILE, not CREATE_PROJECT
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'CREATE_PROJECT_FROM_PROJECT_PROFILE',
+      });
+    });
+
+    test('authorizations.eligibleProjectMembers.all creates allUsersGrantFilter policy for V2', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        sageMakerDomains: {
+          'test-domain': {
+            description: 'V2 domain with eligibleProjectMembers all',
+            dataAdminRole: { name: 'admin' },
+            userAssignment: 'MANUAL',
+            tooling: { vpcId: 'test-vpc', subnetIds: ['subnet-1'] },
+            authorizations: {
+              eligibleProjectMembers: {
+                all: true,
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'ADD_TO_PROJECT_MEMBER_POOL',
+        Principal: {
+          User: {
+            AllUsersGrantFilter: {},
+          },
+        },
+      });
+    });
+
+    test('authorizations with multiple fields creates all corresponding policies for V2', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        sageMakerDomains: {
+          'test-domain': {
+            description: 'V2 domain with multiple authorizations',
+            dataAdminRole: { name: 'admin' },
+            userAssignment: 'MANUAL',
+            tooling: { vpcId: 'test-vpc', subnetIds: ['subnet-1'] },
+            users: { 'test-user': { iamRole: { name: 'test-user-role' } } },
+            groups: { 'test-group': { ssoId: 'group-123' } },
+            authorizations: {
+              projectCreators: { users: ['test-user'] },
+              eligibleProjectMembers: { all: true },
+              domainUnitCreators: { groups: ['test-group'] },
+              glossaryCreators: { users: ['test-user'] },
+              environmentCreators: { groups: ['test-group'] },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      // 5 from authorizations + 2 from data-admin (2) + 2 Tooling/DataLake blueprint auths + 1 custom-resource-role-auth
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 10);
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'CREATE_PROJECT_FROM_PROJECT_PROFILE',
+      });
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'ADD_TO_PROJECT_MEMBER_POOL' });
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_DOMAIN_UNIT' });
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_GLOSSARY' });
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_ENVIRONMENT' });
+    });
+
+    test('authorizations on domain unit creates policies for V2', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        sageMakerDomains: {
+          'test-domain': {
+            description: 'V2 domain with domain unit authorizations',
+            dataAdminRole: { name: 'admin' },
+            userAssignment: 'MANUAL',
+            tooling: { vpcId: 'test-vpc', subnetIds: ['subnet-1'] },
+            users: { 'test-user': { iamRole: { name: 'test-user-role' } } },
+            domainUnits: {
+              unit1: {
+                description: 'Unit with authorizations',
+                authorizations: {
+                  projectCreators: { users: ['test-user'] },
+                  eligibleProjectMembers: { all: true },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'CREATE_PROJECT_FROM_PROJECT_PROFILE',
+      });
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'ADD_TO_PROJECT_MEMBER_POOL' });
+    });
+
+    test('empty authorizations object does not create extra policies for V2', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        sageMakerDomains: {
+          'test-domain': {
+            description: 'V2 domain with empty authorizations',
+            dataAdminRole: { name: 'admin' },
+            userAssignment: 'MANUAL',
+            tooling: { vpcId: 'test-vpc', subnetIds: ['subnet-1'] },
+            authorizations: {},
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      // data-admin (2) + Tooling/DataLake blueprint auths (2) + custom-resource-role-auth (1) = 5
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 5);
     });
   });
 });

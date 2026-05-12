@@ -279,37 +279,69 @@ export interface DomainUnit {
   readonly authorizationPolicies?: NamedAuthorizationPolicies;
 
   /**
-   * When true, all domain users are allowed access to this domain unit.
+   * Simplified authorizations for this domain unit. Provides a concise way to
+   * grant common permissions by specifying users and groups directly, without
+   * constructing full AuthorizationPolicy objects.
    *
-   * Use cases: Open-access domain units; Unrestricted project creation
+   * Supported fields: projectCreators, projectFromProfileCreators,
+   * eligibleProjectMembers, domainUnitCreators, glossaryCreators, environmentCreators.
    *
-   * AWS: DataZone domain unit access control
+   * Use cases: Quick project creation grants; Simple membership pool configuration;
+   * Delegated domain unit management; Glossary and environment provisioning
+   *
+   * AWS: DataZone authorization policies (CREATE_PROJECT,
+   * CREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,
+   * CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_ENVIRONMENT)
+   *
+   * Validation: Optional; Authorizations object
+   */
+  readonly authorizations?: Authorizations;
+
+  /**
+   * Deprecated. Use authorizations.eligibleProjectMembers or authorizationPolicies instead.
+   * When true, all domain users are added to the project member pool for this
+   * domain unit. This does not grant direct access to projects — it only makes
+   * users eligible to be added as project members. Translates to an
+   * ADD_TO_PROJECT_MEMBER_POOL policy with allUsersGrantFilter.
+   *
+   * Use cases: Open member pools; Making all users eligible for project membership
+   *
+   * AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy (allUsersGrantFilter)
    *
    * Validation: Optional; boolean
+   * @deprecated Use authorizations.eligibleProjectMembers.all: true or authorizationPolicies instead.
    */
   readonly allowAllUsers?: boolean;
 
   /**
-   * Specific user names allowed access to this domain unit. Names must match
-   * entries in the domain's users config.
+   * Deprecated. Use authorizations.eligibleProjectMembers or authorizationPolicies instead.
+   * Specific user names added to the project member pool for this domain unit.
+   * This does not grant direct access to projects — it only makes these users
+   * eligible to be added as project members. Names must match entries in the
+   * domain's users config. Translates to an ADD_TO_PROJECT_MEMBER_POOL policy.
    *
-   * Use cases: User-scoped domain unit access; Restricted project creation
+   * Use cases: User-scoped member pool; Restricting project membership eligibility
    *
-   * AWS: DataZone domain unit user access list
+   * AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy (userName principals)
    *
    * Validation: Optional; string array; names must match domain users keys
+   * @deprecated Use authorizations.eligibleProjectMembers or authorizationPolicies instead.
    */
   readonly allowedUsers?: string[];
 
   /**
-   * Specific group names allowed access to this domain unit. Names must match
-   * entries in the domain's groups config.
+   * Deprecated. Use authorizations.eligibleProjectMembers or authorizationPolicies instead.
+   * Specific group names added to the project member pool for this domain unit.
+   * This does not grant direct access to projects — it only makes these groups
+   * eligible to be added as project members. Names must match entries in the
+   * domain's groups config. Translates to an ADD_TO_PROJECT_MEMBER_POOL policy.
    *
-   * Use cases: Group-scoped domain unit access; Team-restricted project creation
+   * Use cases: Group-scoped member pool; Restricting project membership eligibility
    *
-   * AWS: DataZone domain unit group access list
+   * AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy (groupName principals)
    *
    * Validation: Optional; string array; names must match domain groups keys
+   * @deprecated Use authorizations.eligibleProjectMembers or authorizationPolicies instead.
    */
   readonly allowedGroups?: string[];
 }
@@ -430,6 +462,172 @@ export interface BaseDomainProps {
    * Validation: Optional; string array; names must match associatedAccounts keys
    */
   readonly ownerAccounts?: string[];
+
+  /**
+   * Fine-grained authorization policies for the root domain unit. Supports policy types
+   * like CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, and CREATE_PROJECT with user/group
+   * principals.
+   *
+   * Use cases: Permission scoping per domain unit; Policy-driven project creation control
+   *
+   * AWS: DataZone authorization policies (CREATE_DOMAIN_UNIT, CREATE_PROJECT, etc.)
+   *
+   * Validation: Optional; Record of AuthorizationPolicy objects
+   */
+  readonly authorizationPolicies?: NamedAuthorizationPolicies;
+
+  /**
+   * Simplified authorizations for the root domain unit. Provides a concise way to
+   * grant common permissions by specifying users and groups directly, without
+   * constructing full AuthorizationPolicy objects.
+   *
+   * Supported fields: projectCreators, projectFromProfileCreators,
+   * eligibleProjectMembers, domainUnitCreators, glossaryCreators, environmentCreators.
+   *
+   * Use cases: Quick project creation grants; Simple membership pool configuration;
+   * Delegated domain unit management; Glossary and environment provisioning
+   *
+   * AWS: DataZone authorization policies (CREATE_PROJECT,
+   * CREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,
+   * CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_ENVIRONMENT)
+   *
+   * Validation: Optional; Authorizations object
+   */
+  readonly authorizations?: Authorizations;
+
+  /**
+   * IAM role ARN of the CDK deployment role used in the domain's account.
+   * Override this when using a custom CDK bootstrap qualifier instead of the
+   * default. If omitted, defaults to the standard CDK bootstrap cfn-exec role
+   * (cdk-hnb659fds-cfn-exec-role-ACCOUNT-REGION).
+   *
+   * Use cases: Custom CDK bootstrap qualifier; Non-default CDK toolkit stack name
+   *
+   * AWS: IAM role for CloudFormation stack operations during CDK deployment
+   *
+   * Validation: Optional; valid IAM role ARN with CDK deployment permissions
+   */
+  readonly cdkRoleArn?: string;
+}
+
+export interface AuthorizationIdentities {
+  /**
+   * When true, grants this authorization to all domain users. Mutually exclusive
+   * with users, userIdentifiers, groups, and groupsIdentifiers — if all is set,
+   * individual principal fields should not be specified.
+   *
+   * Use cases: Open access to all domain members; Unrestricted authorization scope
+   *
+   * AWS: DataZone allUsersGrantFilter principal in authorization policies
+   *
+   * Validation: Optional; boolean; mutually exclusive with individual principal fields
+   */
+  readonly all?: boolean;
+  /**
+   * User names to include as principals. Names must match entries in the
+   * domain's users config. Resolved to user profile identifiers at deploy time.
+   *
+   * Use cases: Named user authorization; IAM or SSO user grants
+   *
+   * AWS: DataZone user profile principals in authorization policies
+   *
+   * Validation: Optional; string array; names must match domain users keys
+   */
+  readonly users?: string[];
+  /**
+   * User identifiers specified directly as name-to-identifier pairs, bypassing
+   * profile resolution. Use when the user identifier (IAM role ARN or SSO ID)
+   * is known at config time.
+   *
+   * Use cases: Direct identifier grants; Pre-resolved user references
+   *
+   * AWS: DataZone user identifier principals in authorization policies
+   *
+   * Validation: Optional; map of name to identifier string
+   */
+  readonly userIdentifiers?: { [name: string]: string };
+  /**
+   * Group names to include as principals. Names must match entries in the
+   * domain's groups config. Resolved to group profile identifiers at deploy time.
+   *
+   * Use cases: Team-based authorization; SSO group grants
+   *
+   * AWS: DataZone group profile principals in authorization policies
+   *
+   * Validation: Optional; string array; names must match domain groups keys
+   */
+  readonly groups?: string[];
+  /**
+   * Group identifiers specified directly as name-to-identifier pairs, bypassing
+   * profile resolution. Use when the group identifier (SSO group ID) is known
+   * at config time.
+   *
+   * Use cases: Direct identifier grants; Pre-resolved group references
+   *
+   * AWS: DataZone group identifier principals in authorization policies
+   *
+   * Validation: Optional; map of name to identifier string
+   */
+  readonly groupsIdentifiers?: { [name: string]: string };
+}
+
+export interface Authorizations {
+  /**
+   * Identities allowed to create projects. Grants CREATE_PROJECT on DataZone (V1)
+   * domains and CREATE_PROJECT_FROM_PROJECT_PROFILE on SageMaker Unified Studio (V2)
+   * domains.
+   *
+   * Use cases: Project creation for team leads; Self-service project provisioning
+   *
+   * AWS: DataZone CREATE_PROJECT or CREATE_PROJECT_FROM_PROJECT_PROFILE authorization policy
+   *
+   * Validation: Optional; AuthorizationIdentities object
+   */
+  readonly projectCreators?: AuthorizationIdentities;
+  /**
+   * Identities allowed to be added to project member pools within this scope.
+   * Grants the ADD_TO_PROJECT_MEMBER_POOL authorization policy.
+   *
+   * Use cases: Controlling who can be invited to projects; Member pool scoping
+   *
+   * AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy
+   *
+   * Validation: Optional; AuthorizationIdentities object
+   */
+  readonly eligibleProjectMembers?: AuthorizationIdentities;
+  /**
+   * Identities allowed to create child domain units under this scope.
+   * Grants the CREATE_DOMAIN_UNIT authorization policy.
+   *
+   * Use cases: Delegated organizational structure management; Team lead administration
+   *
+   * AWS: DataZone CREATE_DOMAIN_UNIT authorization policy
+   *
+   * Validation: Optional; AuthorizationIdentities object
+   */
+  readonly domainUnitCreators?: AuthorizationIdentities;
+  /**
+   * Identities allowed to create business glossaries within this scope.
+   * Grants the CREATE_GLOSSARY authorization policy.
+   *
+   * Use cases: Data steward glossary management; Business term definition
+   *
+   * AWS: DataZone CREATE_GLOSSARY authorization policy
+   *
+   * Validation: Optional; AuthorizationIdentities object
+   */
+  readonly glossaryCreators?: AuthorizationIdentities;
+  /**
+   * Identities allowed to create environments within this scope.
+   * Grants the CREATE_ENVIRONMENT authorization policy.
+   *
+   * Use cases: Self-service environment provisioning; Team environment management
+   *
+   * AWS: DataZone CREATE_ENVIRONMENT authorization policy
+   *
+   * Validation: Optional; AuthorizationIdentities object
+   */
+  readonly environmentCreators?: AuthorizationIdentities;
 }
 
 export interface ToolingBlueprintProps extends EnabledBlueprintProps {
@@ -716,6 +914,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     this.commonHelperProps = {
       naming: this.props.naming,
       roleHelper: this.props.roleHelper,
+      l3Construct: this,
       account: this.account,
       region: this.region,
       partition: this.partition,
@@ -744,11 +943,11 @@ export class DataZoneL3Construct extends MdaaL3Construct {
 
     if (this.props.dataZoneDomains) {
       Object.entries(this.props.dataZoneDomains).forEach(([domainName, domainProps]) => {
-        this.dataZoneHelper.createDataZoneDomain(this, domainName, domainProps, lakeformationManageAccessRole);
+        this.dataZoneHelper.createDataZoneDomain(domainName, domainProps, lakeformationManageAccessRole);
       });
     }
     if (this.props.sageMakerDomains) {
-      this.sageMakerHelper.createSageMakerDomains(this, this.props.sageMakerDomains, lakeformationManageAccessRole);
+      this.sageMakerHelper.createSageMakerDomains(this.props.sageMakerDomains, lakeformationManageAccessRole);
     }
   }
 }

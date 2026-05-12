@@ -68,4 +68,25 @@ export abstract class MdaaL3Construct extends Construct {
   protected get region(): string {
     return Stack.of(this).region;
   }
+
+  private readonly childStacks: { [id: string]: Stack } = {};
+
+  /**
+   * Creates or returns a child stack that inherits the parent stack's env
+   * (account and region). Subsequent calls with the same id return the
+   * previously created stack.
+   *
+   * @param id - Construct id for the child stack (must be unique within this construct's scope)
+   * @param stackName - CloudFormation stack name
+   */
+  public getChildStack(id: string, stackName: string): Stack {
+    if (!this.childStacks[id]) {
+      const parentStack = Stack.of(this);
+      this.childStacks[id] = new Stack(this, id, {
+        stackName,
+        env: { account: parentStack.account, region: parentStack.region },
+      });
+    }
+    return this.childStacks[id];
+  }
 }

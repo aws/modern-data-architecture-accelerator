@@ -47,16 +47,21 @@
   - Added optional CORS support - enable via corsRules property
 - CLI: added permission boundary name as an optional input to applied an IAM policy as permission boundary to all IAM roles
 - Data Warehouse app: Added `multiAz` (multi-AZ high availability) and `backupRegion` (cross-region snapshot copy) config options
-- Roles app: added an optional `additionalTrustedActions` for the role primary principal, allowing additional actions like 
-`sts:TagSession` to be added to the trust policy;
+- Roles app: added an optional `additionalTrustedActions` for the role primary principal, allowing additional actions like
+  `sts:TagSession` to be added to the trust policy;
 - Account-level modules (Glue Catalog, LakeFormation Settings, Macie Session, QuickSight Account) now create a static SSM parameter (`/account-module-lock/<module-name>`) that prevents multiple deployments of the same module to a single AWS account
+- DataZone/SMUS: added simplified `authorizations` interface for domain and domain unit configuration — supports `projectCreators`, `eligibleProjectMembers`, `domainUnitCreators`, `glossaryCreators`, and `environmentCreators` fields as a concise alternative to full `authorizationPolicies` objects
+- DataZone/SMUS: `authorizationPolicies` and `authorizations` are now supported on the root domain level (`BaseDomainProps`), not just on individual domain units
+- DataZone/SMUS: domain owners (users, groups, and associated account CDK users) now automatically receive version-aware project creation authorization policies in addition to `ADD_TO_PROJECT_MEMBER_POOL`
 
 ### Bug Fixes
 
 - Fixed IAM Policy cross-stack collision in `dataops-job` and `sm-studio-domain` caused by `BucketDeployment` adding inline policies to imported roles
 - Agentcore Runtime app: fixed missing ECR permissions when `containerUri` config param is used
--  Fix: Modifying [mutable SageMaker AI domain settings (default user settings, domain settings)](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-sagemaker-domain.html#aws-resource-sagemaker-domain-properties) no longer causes "resource already exists" deployment failures.
-Note: changing immutable properties (AuthMode, DomainName, KmsKeyId, VpcId) will still require manual domain recreation.
+- Fix: Modifying [mutable SageMaker AI domain settings (default user settings, domain settings)](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-sagemaker-domain.html#aws-resource-sagemaker-domain-properties) no longer causes "resource already exists" deployment failures.
+  Note: changing immutable properties (AuthMode, DomainName, KmsKeyId, VpcId) will still require manual domain recreation.
+- DataZone/SMUS: fixed 403 `PROJECT_CREATE_FAILED` error in same-account DataZone deployments by granting `CREATE_PROJECT` / `CREATE_PROJECT_FROM_PROJECT_PROFILE` and `ADD_TO_PROJECT_MEMBER_POOL` authorization policies to the cfn-exec role and data-admin role on the root domain unit
+- DataZone/SMUS: fixed SageMaker domain child stack not inheriting parent account and region, causing deployment failures in cross-account scenarios
 
 #### RDS Constructs (#752)
 
@@ -69,6 +74,8 @@ Note: changing immutable properties (AuthMode, DomainName, KmsKeyId, VpcId) will
 - Every app module now includes `sample-config-minimal.yaml` and `sample-config-comprehensive.yaml` with full schema coverage, inline documentation, and template variables for portability
 - All app module READMEs follow a consistent structure with architecture overview, configuration reference, and ordered sample config sections
 - Replaced Jest snapshot and synth tests with CDK diff-based baseline testing across all app modules, using the CDK toolkit's semantic diff engine to detect resource changes
+- DataZone/SMUS: deprecated `allowAllUsers`, `allowedUsers`, and `allowedGroups` on domain units in favor of `authorizations.eligibleProjectMembers` or `authorizationPolicies`
+  - Note, switching from these deprecated config properties to `authorizations.eligibleProjectMembers` or `authorizationPolicies` will require to first remove the deprecated properties, deploy, then add in the new configurations before redeploying. Otherwise PolicyGrant conflicts will occur.
 
 ## [1.5.0] - 2026-03-13
 
@@ -360,3 +367,4 @@ Note: changing immutable properties (AuthMode, DomainName, KmsKeyId, VpcId) will
 ### General Changes
 
 - Initial General Availability (GA) release
+

@@ -7,7 +7,6 @@ import { DataZoneDomainConstruct, DomainConfig } from '@aws-mdaa/datazone-constr
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 
 import { MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
-import { MdaaL3Construct } from '@aws-mdaa/l3-construct/lib/l3construct';
 import { CfnDomain } from 'aws-cdk-lib/aws-datazone';
 import { IRole, Role } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
@@ -22,11 +21,11 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
   }
 
   public createDataZoneDomain(
-    scope: Construct,
     domainName: string,
     domainProps: DataZoneDomainProps,
     lakeformationManageAccessRole: IRole,
   ) {
+    const scope = this.props.l3Construct;
     // Create KMS key and resolve admin role
     const { dataAdminRole, kmsKey } = this.createDomainInfrastructure(scope, domainName, domainProps);
     const executionRole = this.createExecutionRole(scope, domainName, kmsKey, 'V1');
@@ -108,7 +107,7 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
     );
 
     // Setup cross-account sharing
-    this.setupCrossAccountResources(scope, domainName, domainProps, {
+    this.setupCrossAccountResources(domainName, domainProps, {
       domain,
       domainConfig,
       policyNames: {
@@ -178,7 +177,6 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
   }
 
   private createDataZoneAssociatedAccountStackResources(
-    scope: Construct,
     domainName: string,
     associatedAccountName: string,
     associatedAccountProps: AssociatedAccountProps,
@@ -191,7 +189,7 @@ export class DataZoneDomainHelper extends CommonDomainHelper {
     },
   ) {
     const region = associatedAccountProps.region || this.props.region;
-    const crossAccountStack = (scope as MdaaL3Construct).getCrossAccountStack(associatedAccountProps.account, region);
+    const crossAccountStack = this.props.l3Construct.getCrossAccountStack(associatedAccountProps.account, region);
     if (!crossAccountStack) {
       throw new Error(
         `Cross account stack not defined for associated account ${associatedAccountName}/${associatedAccountProps.account} on domain ${domainName}. Cross account association will not work.`,

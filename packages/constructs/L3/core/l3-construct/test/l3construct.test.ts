@@ -20,6 +20,10 @@ class TestL3Construct extends MdaaL3Construct {
   public testGetFirstCrossAccountRegion(account: string) {
     return this.getFirstCrossAccountRegion(account);
   }
+
+  public testGetChildStack(id: string, stackName: string) {
+    return this.getChildStack(id, stackName);
+  }
 }
 
 describe('MdaaL3Construct', () => {
@@ -115,5 +119,30 @@ describe('MdaaL3Construct', () => {
       crossAccountStacks: { '123456789012': { 'us-west-2': crossAccountStack } },
     });
     expect(construct.testGetFirstCrossAccountRegion('123456789012')).toBe('us-west-2');
+  });
+
+  test('getChildStack creates a new child stack with correct stackName and env', () => {
+    const construct = new TestL3Construct(stack, 'test', props);
+    const childStack = construct.testGetChildStack('child-1', 'my-child-stack');
+    expect(childStack).toBeInstanceOf(Stack);
+    expect(childStack.stackName).toBe('my-child-stack');
+    expect(childStack.account).toBe('123456789012');
+    expect(childStack.region).toBe('us-east-1');
+  });
+
+  test('getChildStack returns the same cached stack on subsequent calls with the same id', () => {
+    const construct = new TestL3Construct(stack, 'test', props);
+    const first = construct.testGetChildStack('child-1', 'my-child-stack');
+    const second = construct.testGetChildStack('child-1', 'my-child-stack');
+    expect(second).toBe(first);
+  });
+
+  test('getChildStack creates separate stacks for different ids', () => {
+    const construct = new TestL3Construct(stack, 'test', props);
+    const stack1 = construct.testGetChildStack('child-1', 'stack-one');
+    const stack2 = construct.testGetChildStack('child-2', 'stack-two');
+    expect(stack1).not.toBe(stack2);
+    expect(stack1.stackName).toBe('stack-one');
+    expect(stack2.stackName).toBe('stack-two');
   });
 });

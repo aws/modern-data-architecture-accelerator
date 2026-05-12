@@ -18,7 +18,6 @@ import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, MdaaKmsKey, USER_ACTIONS } from '@aws
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { Stack } from 'aws-cdk-lib';
 
-import { MdaaL3Construct } from '@aws-mdaa/l3-construct/lib/l3construct';
 import { CfnDomain, CfnEnvironmentBlueprintConfiguration, CfnUserProfile } from 'aws-cdk-lib/aws-datazone';
 import {
   ArnPrincipal,
@@ -61,28 +60,25 @@ interface EnableBlueprintTargetEnv {
 }
 
 export class SageMakerDomainHelper extends CommonDomainHelper {
-  private secondStageStack?: Stack;
-
   constructor(props: CommonDomainHelperProps) {
     super(props);
   }
 
   public createSageMakerDomains(
-    scope: Construct,
     sageMakerDomainBuildProps: { [name: string]: SageMakerDomainProps },
     lakeformationManageAccessRole: IRole,
   ) {
     Object.entries(sageMakerDomainBuildProps).forEach(([domainName, domainProps]) => {
-      this.createSageMakerDomain(scope, domainName, domainProps, lakeformationManageAccessRole);
+      this.createSageMakerDomain(domainName, domainProps, lakeformationManageAccessRole);
     });
   }
 
   private createSageMakerDomain(
-    scope: Construct,
     domainName: string,
     domainProps: SageMakerDomainProps,
     lakeformationManageAccessRole: IRole,
   ) {
+    const scope = this.props.l3Construct;
     // Create KMS key and resolve admin role
     const { dataAdminRole, kmsKey } = this.createDomainInfrastructure(scope, domainName, domainProps);
     const executionRole = this.createExecutionRole(scope, domainName, kmsKey, 'V2');
@@ -221,13 +217,16 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
 
     // Setup cross-account sharing with second stage stack for user profiles
     if (domainProps.associatedAccounts) {
-      const secondStageStack = this.getSecondStageStack(scope);
+      const secondStageStack = this.props.l3Construct.getChildStack(
+        'user-profile-stack',
+        this.props.naming.stackName('user-profiles'),
+      );
       const secondStageStackDomainConfig = new DomainConfig(secondStageStack, `domain-config-${domainName}`, {
         ssmParamBase: domainConfig.ssmParamBase,
         naming: this.props.naming.withSuffix('user-profiles'),
       });
 
-      this.setupCrossAccountResources(scope, domainName, domainProps, {
+      this.setupCrossAccountResources(domainName, domainProps, {
         domain,
         domainConfig,
         policyNames: {
@@ -236,9 +235,8 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
           bucket: policies.domainBucketUsagePolicyName,
         },
         keyAccessAccounts: policies.keyAccessAccounts,
-        createAssociatedAccountResources: (scope, domainName, accountName, accountProps, resourceConfig) => {
+        createAssociatedAccountResources: (domainName, accountName, accountProps, resourceConfig) => {
           this.createSageMakerAssociatedAccountStackResources(
-            scope,
             domainName,
             domainProps,
             {
@@ -651,13 +649,6 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     return provisioningRole;
   }
 
-  private getSecondStageStack(scope: Construct): Stack {
-    this.secondStageStack ??= new Stack(scope, 'user-profile-stack', {
-      stackName: this.props.naming.stackName('user-profiles'),
-    });
-    return this.secondStageStack;
-  }
-
   private createBlueprintRegionalParams(
     blueprintProps: EnabledBlueprintProps,
     regionName: string,
@@ -742,7 +733,6 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
   }
 
   private createSageMakerAssociatedAccountStackResources(
-    scope: Construct,
     domainName: string,
     domainProps: SageMakerDomainProps,
     associatedAccountConfig: {
@@ -763,7 +753,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     const accountProps = associatedAccountConfig.accountProps;
     const secondStageStack = associatedAccountConfig.secondStageStack;
     const region = accountProps.region || this.props.region;
-    const crossAccountStack = (scope as MdaaL3Construct).getCrossAccountStack(accountProps.account, region);
+    const crossAccountStack = this.props.l3Construct.getCrossAccountStack(accountProps.account, region);
     if (!crossAccountStack) {
       throw new Error(
         `Cross account stack not defined for associated account ${accountName}/${accountProps.account} on domain ${domainName}. Cross account association will not work.`,

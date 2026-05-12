@@ -22,7 +22,8 @@ import { MdaaManagedPolicy, MdaaManagedPolicyProps, MdaaRole } from '@aws-mdaa/i
 import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaKmsKey, USER_ACTIONS } from '@aws-mdaa/kms-constructs';
 import { LakeFormationSettingsL3Construct } from '@aws-mdaa/lakeformation-settings-l3-construct';
-import { Duration } from 'aws-cdk-lib';
+import { MdaaL3Construct } from '@aws-mdaa/l3-construct';
+import { Annotations, Duration } from 'aws-cdk-lib';
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper/lib/rolehelper';
 import { IMdaaResourceNaming } from '@aws-mdaa/naming/lib/resource-naming';
@@ -48,7 +49,7 @@ import {
   NamedDomainUnits,
   SageMakerDomainProps,
 } from '../datazone-l3-construct';
-import { flattenDomainUnitPaths } from '../utils';
+import { convertAuthorizationsToNamedPolicies, flattenDomainUnitPaths } from '../utils';
 
 type DomainPropsWithAssociatedAccounts = DataZoneDomainProps | SageMakerDomainProps;
 export interface CreatedDomainUnit {
@@ -58,6 +59,7 @@ export interface CreatedDomainUnit {
 export interface CommonDomainHelperProps {
   readonly naming: IMdaaResourceNaming;
   readonly roleHelper: MdaaRoleHelper;
+  readonly l3Construct: MdaaL3Construct;
   readonly account: string;
   readonly region: string;
   readonly partition: string;
@@ -69,6 +71,52 @@ export class CommonDomainHelper {
 
   constructor(props: CommonDomainHelperProps) {
     this.props = props;
+  }
+
+  /**
+   * Builds the version-appropriate project creation policy
+   * (CREATE_PROJECT for V1, CREATE_PROJECT_FROM_PROJECT_PROFILE for V2)
+   * with includeChildDomainUnits enabled.
+   */
+  private static buildProjectCreationPolicy(
+    principal: PolicyPrincipal,
+    domainVersion: 'V1' | 'V2',
+  ): NamedAuthorizationPolicies {
+    return domainVersion === 'V1'
+      ? {
+          'create-project': {
+            policyType: 'CREATE_PROJECT',
+            principals: [principal],
+            includeChildDomainUnits: true,
+          },
+        }
+      : {
+          'create-project-from-profile': {
+            policyType: 'CREATE_PROJECT_FROM_PROJECT_PROFILE',
+            principals: [principal],
+            includeChildDomainUnits: true,
+          },
+        };
+  }
+
+  /**
+   * Builds the standard set of authorization policies automatically granted to owners.
+   * Owners receive ADD_TO_PROJECT_MEMBER_POOL and a version-appropriate project creation
+   * policy (CREATE_PROJECT for V1, CREATE_PROJECT_FROM_PROJECT_PROFILE for V2)
+   * with includeChildDomainUnits enabled.
+   */
+  private static buildOwnerAuthorizationPolicies(
+    principal: PolicyPrincipal,
+    domainVersion: 'V1' | 'V2',
+  ): NamedAuthorizationPolicies {
+    return {
+      'project-membership': {
+        policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
+        principals: [principal],
+        includeChildDomainUnits: true,
+      },
+      ...CommonDomainHelper.buildProjectCreationPolicy(principal, domainVersion),
+    };
   }
 
   // Creates KMS key with cross-account access policies for DataZone
@@ -279,17 +327,13 @@ export class CommonDomainHelper {
         },
       };
       new CfnOwner(domain, `owner-user-${ownerName}`, cfnOwnerProps);
-      const authorizonPolicy: AuthorizationPolicy = {
-        policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
-        principals: [{ userIdentifier: { name: ownerName, identifier: ownerUser.attrId } }],
-        includeChildDomainUnits: true,
-      };
+      const userPrincipal: PolicyPrincipal = { userIdentifier: { name: ownerName, identifier: ownerUser.attrId } };
       this.createAuthorizationPolicies(
         `owner-auths-${ownerName}`,
         domain,
         domain.attrId,
         domain.attrRootDomainUnitId,
-        { 'project-membership': authorizonPolicy },
+        CommonDomainHelper.buildOwnerAuthorizationPolicies(userPrincipal, domainVersion),
         domainProps,
       );
     });
@@ -311,20 +355,34 @@ export class CommonDomainHelper {
         },
       };
       new CfnOwner(domain, `owner-group-${ownerName}`, cfnOwnerProps);
-      const authorizonPolicy: AuthorizationPolicy = {
-        policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
-        principals: [{ groupIdentifier: { name: ownerName, identifier: ownerGroup.attrId } }],
-        includeChildDomainUnits: true,
-      };
+      const groupPrincipal: PolicyPrincipal = { groupIdentifier: { name: ownerName, identifier: ownerGroup.attrId } };
       this.createAuthorizationPolicies(
         `owner-auths-${ownerName}`,
         domain,
         domain.attrId,
         domain.attrRootDomainUnitId,
-        { 'project-membership': authorizonPolicy },
+        CommonDomainHelper.buildOwnerAuthorizationPolicies(groupPrincipal, domainVersion),
         domainProps,
       );
     });
+
+    // Apply simplified authorizations and explicit authorizationPolicies to root domain unit
+    const rootSimplifiedPolicies = convertAuthorizationsToNamedPolicies(domainProps.authorizations, domainVersion);
+    const rootAuthPolicies: NamedAuthorizationPolicies | undefined = {
+      ...rootSimplifiedPolicies,
+      ...domainProps.authorizationPolicies,
+    };
+    if (rootAuthPolicies && Object.keys(rootAuthPolicies).length > 0) {
+      this.createAuthorizationPolicies(
+        'root-authorization-policies',
+        domain,
+        domain.attrId,
+        domain.attrRootDomainUnitId,
+        rootAuthPolicies,
+        domainProps,
+      );
+    }
+
     return profileManagement;
   }
 
@@ -717,6 +775,17 @@ export class CommonDomainHelper {
           },
         };
         new CfnOwner(domain, `owner-cdk-user-${ownerName}`, cfnOwnerProps);
+        const accountPrincipal: PolicyPrincipal = {
+          userIdentifier: { name: ownerName, identifier: ownerUser.attrId },
+        };
+        this.createAuthorizationPolicies(
+          `owner-account-auths-${ownerName}`,
+          domain,
+          domain.attrId,
+          domain.attrRootDomainUnitId,
+          CommonDomainHelper.buildOwnerAuthorizationPolicies(accountPrincipal, domainVersion),
+          domainProps,
+        );
       });
       return associatedAccountCdkUserProfiles;
     }
@@ -782,9 +851,9 @@ export class CommonDomainHelper {
     userProfiles: {
       domainUsers: { [name: string]: CfnUserProfile };
       domainGroups: { [name: string]: CfnGroupProfile };
-      dataAdminUserProfile: CfnUserProfile;
       associatedAccountCdkUserProfiles: { [name: string]: CfnUserProfile };
     },
+    domainVersion: 'V1' | 'V2',
     domainUnits?: NamedDomainUnits,
     createdDomainUnits?: { [name: string]: CreatedDomainUnit },
     domainProps?: DataZoneDomainProps,
@@ -813,6 +882,26 @@ export class CommonDomainHelper {
         };
       });
 
+      // Emit deprecation warnings for legacy properties
+      if (domainUnitProps.allowAllUsers) {
+        Annotations.of(this.props.l3Construct).addWarningV2(
+          `@aws-mdaa/datazone-l3-construct:allowAllUsersDeprecated:${domainUnitName}`,
+          `Domain unit '${domainUnitName}': 'allowAllUsers' is deprecated and will be removed in v1.8.0. Use 'authorizations.eligibleProjectMembers.all: true' instead.`,
+        );
+      }
+      if (domainUnitProps.allowedUsers) {
+        Annotations.of(this.props.l3Construct).addWarningV2(
+          `@aws-mdaa/datazone-l3-construct:allowedUsersDeprecated:${domainUnitName}`,
+          `Domain unit '${domainUnitName}': 'allowedUsers' is deprecated and will be removed in v1.8.0. Use 'authorizations.eligibleProjectMembers.users' instead.`,
+        );
+      }
+      if (domainUnitProps.allowedGroups) {
+        Annotations.of(this.props.l3Construct).addWarningV2(
+          `@aws-mdaa/datazone-l3-construct:allowedGroupsDeprecated:${domainUnitName}`,
+          `Domain unit '${domainUnitName}': 'allowedGroups' is deprecated and will be removed in v1.8.0. Use 'authorizations.eligibleProjectMembers.groups' instead.`,
+        );
+      }
+
       const allowedUserGroupsPolicy: NamedAuthorizationPolicies | undefined =
         allowedUserPrincipals || allowedGroupsPrincipals || allowAllUsersPrincipal
           ? {
@@ -827,8 +916,48 @@ export class CommonDomainHelper {
               },
             }
           : undefined;
+      const simplifiedPolicies = convertAuthorizationsToNamedPolicies(domainUnitProps.authorizations, domainVersion);
+
+      // Build owner auto-grant policies for this domain unit
+      const ownerUserPolicies: NamedAuthorizationPolicies = Object.fromEntries(
+        (domainUnitProps.ownerUsers ?? []).flatMap(ownerName => {
+          const ownerUser = userProfiles.domainUsers[ownerName];
+          if (!ownerUser) return [];
+          const principal: PolicyPrincipal = { userIdentifier: { name: ownerName, identifier: ownerUser.attrId } };
+          return Object.entries(CommonDomainHelper.buildOwnerAuthorizationPolicies(principal, domainVersion)).map(
+            ([key, policy]) => [`owner-user-${ownerName}-${key}`, policy],
+          );
+        }),
+      );
+      const ownerGroupPolicies: NamedAuthorizationPolicies = Object.fromEntries(
+        (domainUnitProps.ownerGroups ?? []).flatMap(ownerName => {
+          const ownerGroup = userProfiles.domainGroups[ownerName];
+          if (!ownerGroup) return [];
+          const principal: PolicyPrincipal = {
+            groupIdentifier: { name: ownerName, identifier: ownerGroup.attrId },
+          };
+          return Object.entries(CommonDomainHelper.buildOwnerAuthorizationPolicies(principal, domainVersion)).map(
+            ([key, policy]) => [`owner-group-${ownerName}-${key}`, policy],
+          );
+        }),
+      );
+      const ownerAccountPolicies: NamedAuthorizationPolicies = Object.fromEntries(
+        (domainUnitProps.ownerAccounts ?? []).flatMap(ownerName => {
+          const ownerUser = userProfiles.associatedAccountCdkUserProfiles[ownerName];
+          if (!ownerUser) return [];
+          const principal: PolicyPrincipal = { userIdentifier: { name: ownerName, identifier: ownerUser.attrId } };
+          return Object.entries(CommonDomainHelper.buildOwnerAuthorizationPolicies(principal, domainVersion)).map(
+            ([key, policy]) => [`owner-account-${ownerName}-${key}`, policy],
+          );
+        }),
+      );
+
       const authPolicies: NamedAuthorizationPolicies | undefined = {
+        ...ownerUserPolicies,
+        ...ownerGroupPolicies,
+        ...ownerAccountPolicies,
         ...allowedUserGroupsPolicy,
+        ...simplifiedPolicies,
         ...domainUnitProps.authorizationPolicies,
       };
       // Create authorization policies for this domain unit
@@ -849,6 +978,7 @@ export class CommonDomainHelper {
           scope,
           domainId,
           userProfiles,
+          domainVersion,
           domainUnitProps.domainUnits,
           createdDomainUnits[domainUnitName].domainUnits,
           domainProps,
@@ -1029,6 +1159,42 @@ export class CommonDomainHelper {
     // Create user and group profiles with ownership
     const profileManagement = this.createDomainUsersGroupsOwners(scope, domainName, domainProps, domain, domainVersion);
 
+    // Build cfn-exec role principal — the service auto-creates this user profile,
+    // but it has no authorization policies by default
+    const cfnExecRoleArn =
+      domainProps.cdkRoleArn ??
+      `arn:${this.props.partition}:iam::${this.props.account}:role/cdk-hnb659fds-cfn-exec-role-${this.props.account}-${this.props.region}`;
+    const cfnExecPrincipal: PolicyPrincipal = {
+      userIdentifier: { name: 'cfn-exec', identifier: cfnExecRoleArn },
+    };
+
+    // Grant cfn-exec role project creation authorization on root domain unit (V1 only).
+    // The service auto-grants ADD_TO_PROJECT_MEMBER_POOL and, for V2 domains,
+    // CREATE_PROJECT_FROM_PROJECT_PROFILE to cfn-exec.
+    if (domainVersion === 'V1') {
+      this.createAuthorizationPolicies(
+        'cfn-exec-root-auths',
+        domain,
+        domain.attrId,
+        domain.attrRootDomainUnitId,
+        CommonDomainHelper.buildProjectCreationPolicy(cfnExecPrincipal, 'V1'),
+        domainProps,
+      );
+    }
+
+    // Grant data admin owner-level authorizations on root domain unit
+    const dataAdminPrincipal: PolicyPrincipal = {
+      userIdentifier: { name: 'data-admin', identifier: dataAdminUserProfile.attrId },
+    };
+    this.createAuthorizationPolicies(
+      'data-admin-root-auths',
+      domain,
+      domain.attrId,
+      domain.attrRootDomainUnitId,
+      CommonDomainHelper.buildOwnerAuthorizationPolicies(dataAdminPrincipal, domainVersion),
+      domainProps,
+    );
+
     // Create domain units hierarchy
     const createdDomainUnits = this.createDomainUnits(
       domain,
@@ -1051,9 +1217,9 @@ export class CommonDomainHelper {
       {
         domainUsers: profileManagement.userProfiles,
         domainGroups: profileManagement.groupProfiles,
-        dataAdminUserProfile: dataAdminUserProfile,
         associatedAccountCdkUserProfiles: associatedAccountCdkUserProfiles || {},
       },
+      domainVersion,
       domainProps.domainUnits,
       createdDomainUnits,
       domainProps,
@@ -1087,7 +1253,6 @@ export class CommonDomainHelper {
 
   // Sets up RAM sharing of domain config parameters with associated accounts
   protected setupCrossAccountResources(
-    scope: Construct,
     domainName: string,
     domainProps: DataZoneDomainProps,
     crossAccountConfig: {
@@ -1100,7 +1265,6 @@ export class CommonDomainHelper {
       };
       keyAccessAccounts: string[];
       createAssociatedAccountResources: (
-        scope: Construct,
         domainName: string,
         accountName: string,
         accountProps: AssociatedAccountProps,
@@ -1123,7 +1287,7 @@ export class CommonDomainHelper {
       principals: Object.entries(domainProps.associatedAccounts).map(x => x[1].account),
     };
     const configRamShare = new CfnResourceShare(
-      scope,
+      this.props.l3Construct,
       `domain-config-ram-share-${domainName}`,
       configParamRamShareProps,
     );
@@ -1136,7 +1300,7 @@ export class CommonDomainHelper {
         configRamShare,
         accountProps.account,
       );
-      crossAccountConfig.createAssociatedAccountResources(scope, domainName, accountName, accountProps, {
+      crossAccountConfig.createAssociatedAccountResources(domainName, accountName, accountProps, {
         domainConfig: crossAccountConfig.domainConfig,
         kmsUsagePolicyName: crossAccountConfig.policyNames.kmsUsagePolicyName,
         kmsAdminPolicyName: crossAccountConfig.policyNames.kmsAdminPolicyName,

@@ -47,19 +47,22 @@ Validation: Required; valid NamedDataZoneDomainProps
 | **Additional properties** | Not allowed                       |
 | **Defined in**            | #/definitions/DataZoneDomainProps |
 
-| Property                                                                  | Pattern | Type             | Deprecated | Definition                                       | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| ------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [associatedAccounts](#domains_additionalProperties_associatedAccounts ) | No      | object           | No         | In #/definitions/NamedDataZoneAssociatedAccounts | Additional AWS accounts associated with this domain for cross-account<br />data governance and resource sharing. Each account can have its own<br />Glue catalog encryption, LF roles, and CDK deployment configuration.<br /><br />Use cases: Multi-account data governance; Cross-account catalog sharing; Enterprise domain federation<br /><br />AWS: DataZone cross-account domain associations<br /><br />Validation: Optional; valid NamedDataZoneAssociatedAccounts |
-| + [dataAdminRole](#domains_additionalProperties_dataAdminRole )           | No      | object           | No         | In #/definitions/MdaaRoleRef                     | IAM role with administrative privileges over the domain. Used for user<br />management, resource configuration, and governance policy administration.<br />Resolved via MDAA role helper.<br /><br />Use cases: Domain administration; Governance policy management; Resource configuration<br /><br />AWS: IAM role granted DataZone domain admin permissions<br /><br />Validation: Required; valid MdaaRoleRef                                                           |
-| - [description](#domains_additionalProperties_description )               | No      | string           | No         | -                                                | Human-readable description of the domain's purpose and scope.<br /><br />Use cases: Domain documentation; Organizational context<br /><br />AWS: DataZone domain description<br /><br />Validation: Optional; string                                                                                                                                                                                                                                                        |
-| - [domainUnits](#domains_additionalProperties_domainUnits )               | No      | object           | No         | In #/definitions/NamedDomainUnits                | Hierarchical domain units for organizing projects and governance scopes<br />within the domain.<br /><br />Use cases: Organizational hierarchy; Project grouping; Governance scope isolation<br /><br />AWS: DataZone domain units<br /><br />Validation: Optional; valid NamedDomainUnits                                                                                                                                                                                  |
-| - [groups](#domains_additionalProperties_groups )                         | No      | object           | No         | In #/definitions/NamedDataZoneGroups             | Named groups to be added to the domain. Groups are SSO-only and identified<br />by a friendly name mapped to an SSO group ID.<br /><br />Use cases: Team-based domain access; SSO group provisioning<br /><br />AWS: DataZone group profiles (SSO)<br /><br />Validation: Optional; valid NamedDataZoneGroups                                                                                                                                                               |
-| - [ownerAccounts](#domains_additionalProperties_ownerAccounts )           | No      | array of string  | No         | -                                                | Associated account names granted ownership of the root domain unit,<br />allowing project creation at the domain root. Names must match entries<br />in the domain's associatedAccounts config.<br /><br />Use cases: Cross-account root ownership; Delegated domain administration<br /><br />AWS: DataZone root domain unit owner (account)<br /><br />Validation: Optional; string array; names must match associatedAccounts keys                                       |
-| - [ownerGroups](#domains_additionalProperties_ownerGroups )               | No      | array of string  | No         | -                                                | Group names granted ownership of the root domain unit. Names must match<br />entries in the domain's groups config.<br /><br />Use cases: Root-level domain administration; Team-based ownership<br /><br />AWS: DataZone root domain unit owner (group)<br /><br />Validation: Optional; string array; names must match domain groups keys                                                                                                                                 |
-| - [ownerUsers](#domains_additionalProperties_ownerUsers )                 | No      | array of string  | No         | -                                                | User names granted ownership of the root domain unit. Names must match<br />entries in the domain's users config.<br /><br />Use cases: Root-level domain administration; User-based ownership<br /><br />AWS: DataZone root domain unit owner (user)<br /><br />Validation: Optional; string array; names must match domain users keys                                                                                                                                     |
-| - [singleSignOnType](#domains_additionalProperties_singleSignOnType )     | No      | enum (of string) | No         | -                                                | SSO integration type for domain authentication. DISABLED uses IAM-only<br />authentication; IAM_IDC enables IAM Identity Center federation.<br /><br />Use cases: Federated authentication; IAM Identity Center integration; IAM-only domains<br /><br />AWS: DataZone domain SSO configuration<br /><br />Validation: Optional; 'DISABLED' \| 'IAM_IDC'                                                                                                                    |
-| - [userAssignment](#domains_additionalProperties_userAssignment )         | No      | enum (of string) | No         | -                                                | Controls how users are assigned to the domain. MANUAL requires explicit<br />assignment; AUTOMATIC assigns users based on organizational policies.<br /><br />Use cases: User provisioning control; Automated vs. manual user onboarding<br /><br />AWS: DataZone domain user assignment mode<br /><br />Validation: Optional; 'MANUAL' \| 'AUTOMATIC'                                                                                                                      |
-| - [users](#domains_additionalProperties_users )                           | No      | object           | No         | In #/definitions/NamedDataZoneUsers              | Named users to be added to the domain. Each user is identified by a<br />friendly name and can be IAM-based or SSO-based.<br /><br />Use cases: Individual domain access; IAM and SSO user provisioning<br /><br />AWS: DataZone user profiles (IAM or SSO)<br /><br />Validation: Optional; valid NamedDataZoneUsers                                                                                                                                                       |
+| Property                                                                        | Pattern | Type             | Deprecated | Definition                                       | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [associatedAccounts](#domains_additionalProperties_associatedAccounts )       | No      | object           | No         | In #/definitions/NamedDataZoneAssociatedAccounts | Additional AWS accounts associated with this domain for cross-account<br />data governance and resource sharing. Each account can have its own<br />Glue catalog encryption, LF roles, and CDK deployment configuration.<br /><br />Use cases: Multi-account data governance; Cross-account catalog sharing; Enterprise domain federation<br /><br />AWS: DataZone cross-account domain associations<br /><br />Validation: Optional; valid NamedDataZoneAssociatedAccounts                                                                                                                                                                                                                                                                                                                                            |
+| - [authorizationPolicies](#domains_additionalProperties_authorizationPolicies ) | No      | object           | No         | In #/definitions/NamedAuthorizationPolicies      | Fine-grained authorization policies for the root domain unit. Supports policy types<br />like CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, and CREATE_PROJECT with user/group<br />principals.<br /><br />Use cases: Permission scoping per domain unit; Policy-driven project creation control<br /><br />AWS: DataZone authorization policies (CREATE_DOMAIN_UNIT, CREATE_PROJECT, etc.)<br /><br />Validation: Optional; Record of AuthorizationPolicy objects                                                                                                                                                                                                                                                                                                                                                              |
+| - [authorizations](#domains_additionalProperties_authorizations )               | No      | object           | No         | In #/definitions/Authorizations                  | Simplified authorizations for the root domain unit. Provides a concise way to<br />grant common permissions by specifying users and groups directly, without<br />constructing full AuthorizationPolicy objects.<br /><br />Supported fields: projectCreators, projectFromProfileCreators,<br />eligibleProjectMembers, domainUnitCreators, glossaryCreators, environmentCreators.<br /><br />Use cases: Quick project creation grants; Simple membership pool configuration;<br />Delegated domain unit management; Glossary and environment provisioning<br /><br />AWS: DataZone authorization policies (CREATE_PROJECT,<br />CREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,<br />CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_ENVIRONMENT)<br /><br />Validation: Optional; Authorizations object |
+| - [cdkRoleArn](#domains_additionalProperties_cdkRoleArn )                       | No      | string           | No         | -                                                | IAM role ARN of the CDK deployment role used in the domain's account.<br />Override this when using a custom CDK bootstrap qualifier instead of the<br />default. If omitted, defaults to the standard CDK bootstrap cfn-exec role<br />(cdk-hnb659fds-cfn-exec-role-ACCOUNT-REGION).<br /><br />Use cases: Custom CDK bootstrap qualifier; Non-default CDK toolkit stack name<br /><br />AWS: IAM role for CloudFormation stack operations during CDK deployment<br /><br />Validation: Optional; valid IAM role ARN with CDK deployment permissions                                                                                                                                                                                                                                                                  |
+| + [dataAdminRole](#domains_additionalProperties_dataAdminRole )                 | No      | object           | No         | In #/definitions/MdaaRoleRef                     | IAM role with administrative privileges over the domain. Used for user<br />management, resource configuration, and governance policy administration.<br />Resolved via MDAA role helper.<br /><br />Use cases: Domain administration; Governance policy management; Resource configuration<br /><br />AWS: IAM role granted DataZone domain admin permissions<br /><br />Validation: Required; valid MdaaRoleRef                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [description](#domains_additionalProperties_description )                     | No      | string           | No         | -                                                | Human-readable description of the domain's purpose and scope.<br /><br />Use cases: Domain documentation; Organizational context<br /><br />AWS: DataZone domain description<br /><br />Validation: Optional; string                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [domainUnits](#domains_additionalProperties_domainUnits )                     | No      | object           | No         | In #/definitions/NamedDomainUnits                | Hierarchical domain units for organizing projects and governance scopes<br />within the domain.<br /><br />Use cases: Organizational hierarchy; Project grouping; Governance scope isolation<br /><br />AWS: DataZone domain units<br /><br />Validation: Optional; valid NamedDomainUnits                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [groups](#domains_additionalProperties_groups )                               | No      | object           | No         | In #/definitions/NamedDataZoneGroups             | Named groups to be added to the domain. Groups are SSO-only and identified<br />by a friendly name mapped to an SSO group ID.<br /><br />Use cases: Team-based domain access; SSO group provisioning<br /><br />AWS: DataZone group profiles (SSO)<br /><br />Validation: Optional; valid NamedDataZoneGroups                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [ownerAccounts](#domains_additionalProperties_ownerAccounts )                 | No      | array of string  | No         | -                                                | Associated account names granted ownership of the root domain unit,<br />allowing project creation at the domain root. Names must match entries<br />in the domain's associatedAccounts config.<br /><br />Use cases: Cross-account root ownership; Delegated domain administration<br /><br />AWS: DataZone root domain unit owner (account)<br /><br />Validation: Optional; string array; names must match associatedAccounts keys                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [ownerGroups](#domains_additionalProperties_ownerGroups )                     | No      | array of string  | No         | -                                                | Group names granted ownership of the root domain unit. Names must match<br />entries in the domain's groups config.<br /><br />Use cases: Root-level domain administration; Team-based ownership<br /><br />AWS: DataZone root domain unit owner (group)<br /><br />Validation: Optional; string array; names must match domain groups keys                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [ownerUsers](#domains_additionalProperties_ownerUsers )                       | No      | array of string  | No         | -                                                | User names granted ownership of the root domain unit. Names must match<br />entries in the domain's users config.<br /><br />Use cases: Root-level domain administration; User-based ownership<br /><br />AWS: DataZone root domain unit owner (user)<br /><br />Validation: Optional; string array; names must match domain users keys                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [singleSignOnType](#domains_additionalProperties_singleSignOnType )           | No      | enum (of string) | No         | -                                                | SSO integration type for domain authentication. DISABLED uses IAM-only<br />authentication; IAM_IDC enables IAM Identity Center federation.<br /><br />Use cases: Federated authentication; IAM Identity Center integration; IAM-only domains<br /><br />AWS: DataZone domain SSO configuration<br /><br />Validation: Optional; 'DISABLED' \| 'IAM_IDC'                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [userAssignment](#domains_additionalProperties_userAssignment )               | No      | enum (of string) | No         | -                                                | Controls how users are assigned to the domain. MANUAL requires explicit<br />assignment; AUTOMATIC assigns users based on organizational policies.<br /><br />Use cases: User provisioning control; Automated vs. manual user onboarding<br /><br />AWS: DataZone domain user assignment mode<br /><br />Validation: Optional; 'MANUAL' \| 'AUTOMATIC'                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [users](#domains_additionalProperties_users )                                 | No      | object           | No         | In #/definitions/NamedDataZoneUsers              | Named users to be added to the domain. Each user is identified by a<br />friendly name and can be IAM-based or SSO-based.<br /><br />Use cases: Individual domain access; IAM and SSO user provisioning<br /><br />AWS: DataZone user profiles (IAM or SSO)<br /><br />Validation: Optional; valid NamedDataZoneUsers                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 #### <a name="domains_additionalProperties_associatedAccounts"></a>1.1.1. Property `root > domains > additionalProperties > associatedAccounts`
 
@@ -201,7 +204,521 @@ AWS: Target region for cross-account DataZone resources
 
 Validation: Optional; valid AWS region identifier
 
-#### <a name="domains_additionalProperties_dataAdminRole"></a>1.1.2. Property `root > domains > additionalProperties > dataAdminRole`
+#### <a name="domains_additionalProperties_authorizationPolicies"></a>1.1.2. Property `root > domains > additionalProperties > authorizationPolicies`
+
+|                           |                                                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                        |
+| **Required**              | No                                                                                                                              |
+| **Additional properties** | [Each additional property must conform to the schema](#domains_additionalProperties_authorizationPolicies_additionalProperties) |
+| **Defined in**            | #/definitions/NamedAuthorizationPolicies                                                                                        |
+
+**Description:** Fine-grained authorization policies for the root domain unit. Supports policy types
+like CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, and CREATE_PROJECT with user/group
+principals.
+
+Use cases: Permission scoping per domain unit; Policy-driven project creation control
+
+AWS: DataZone authorization policies (CREATE_DOMAIN_UNIT, CREATE_PROJECT, etc.)
+
+Validation: Optional; Record of AuthorizationPolicy objects
+
+| Property                                                                        | Pattern | Type   | Deprecated | Definition                           | Title/Description |
+| ------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------ | ----------------- |
+| - [](#domains_additionalProperties_authorizationPolicies_additionalProperties ) | No      | object | No         | In #/definitions/AuthorizationPolicy | -                 |
+
+##### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties"></a>1.1.2.1. Property `root > domains > additionalProperties > authorizationPolicies > AuthorizationPolicy`
+
+|                           |                                   |
+| ------------------------- | --------------------------------- |
+| **Type**                  | `object`                          |
+| **Required**              | No                                |
+| **Additional properties** | Not allowed                       |
+| **Defined in**            | #/definitions/AuthorizationPolicy |
+
+| Property                                                                                                                       | Pattern | Type             | Deprecated | Definition                                    | Title/Description |
+| ------------------------------------------------------------------------------------------------------------------------------ | ------- | ---------------- | ---------- | --------------------------------------------- | ----------------- |
+| - [blueprintConfig](#domains_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig )                 | No      | object           | No         | In #/definitions/BlueprintAuthorizationConfig | -                 |
+| - [description](#domains_additionalProperties_authorizationPolicies_additionalProperties_description )                         | No      | string           | No         | -                                             | -                 |
+| - [domainUnitId](#domains_additionalProperties_authorizationPolicies_additionalProperties_domainUnitId )                       | No      | string           | No         | -                                             | -                 |
+| - [includeChildDomainUnits](#domains_additionalProperties_authorizationPolicies_additionalProperties_includeChildDomainUnits ) | No      | boolean          | No         | -                                             | -                 |
+| + [policyType](#domains_additionalProperties_authorizationPolicies_additionalProperties_policyType )                           | No      | enum (of string) | No         | In #/definitions/PolicyType                   | -                 |
+| + [principals](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals )                           | No      | array            | No         | -                                             | -                 |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig"></a>1.1.2.1.1. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > blueprintConfig`
+
+|                           |                                            |
+| ------------------------- | ------------------------------------------ |
+| **Type**                  | `object`                                   |
+| **Required**              | No                                         |
+| **Additional properties** | Not allowed                                |
+| **Defined in**            | #/definitions/BlueprintAuthorizationConfig |
+
+| Property                                                                                                                                       | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [includeChildDomainUnits](#domains_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig_includeChildDomainUnits ) | No      | boolean          | No         | -          | -                 |
+| - [projectDesignation](#domains_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig_projectDesignation )           | No      | enum (of string) | No         | -          | -                 |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig_includeChildDomainUnits"></a>1.1.2.1.1.1. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > blueprintConfig > includeChildDomainUnits`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig_projectDesignation"></a>1.1.2.1.1.2. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > blueprintConfig > projectDesignation`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "CONTRIBUTOR"
+* "OWNER"
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_description"></a>1.1.2.1.2. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > description`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_domainUnitId"></a>1.1.2.1.3. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > domainUnitId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_includeChildDomainUnits"></a>1.1.2.1.4. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > includeChildDomainUnits`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_policyType"></a>1.1.2.1.5. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > policyType`
+
+|                |                          |
+| -------------- | ------------------------ |
+| **Type**       | `enum (of string)`       |
+| **Required**   | Yes                      |
+| **Defined in** | #/definitions/PolicyType |
+
+Must be one of:
+* "ADD_TO_PROJECT_MEMBER_POOL"
+* "CREATE_ASSET_TYPE"
+* "CREATE_DOMAIN_UNIT"
+* "CREATE_ENVIRONMENT"
+* "CREATE_ENVIRONMENT_FROM_BLUEPRINT"
+* "CREATE_ENVIRONMENT_PROFILE"
+* "CREATE_FORM_TYPE"
+* "CREATE_GLOSSARY"
+* "CREATE_PROJECT"
+* "CREATE_PROJECT_FROM_PROJECT_PROFILE"
+* "DELEGATE_CREATE_ENVIRONMENT_PROFILE"
+* "OVERRIDE_DOMAIN_UNIT_OWNERS"
+* "OVERRIDE_PROJECT_OWNERS"
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_principals"></a>1.1.2.1.6. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > principals`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | Yes     |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                              | Description |
+| ------------------------------------------------------------------------------------------------------------ | ----------- |
+| [PolicyPrincipal](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items) | -           |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items"></a>1.1.2.1.6.1. root > domains > additionalProperties > authorizationPolicies > additionalProperties > principals > PolicyPrincipal
+
+|                           |                               |
+| ------------------------- | ----------------------------- |
+| **Type**                  | `object`                      |
+| **Required**              | No                            |
+| **Additional properties** | Not allowed                   |
+| **Defined in**            | #/definitions/PolicyPrincipal |
+
+| Property                                                                                                                                | Pattern | Type    | Deprecated | Definition                                                                                                                            | Title/Description |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| - [accountName](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_accountName )                 | No      | string  | No         | -                                                                                                                                     | -                 |
+| - [allUsersGrantFilter](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_allUsersGrantFilter ) | No      | boolean | No         | -                                                                                                                                     | -                 |
+| - [groupIdentifier](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier )         | No      | object  | No         | In #/definitions/NamedPrincipalIdentifier                                                                                             | -                 |
+| - [groupName](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupName )                     | No      | string  | No         | -                                                                                                                                     | -                 |
+| - [userIdentifier](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_userIdentifier )           | No      | object  | No         | Same as [groupIdentifier](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier ) | -                 |
+| - [userName](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_userName )                       | No      | string  | No         | -                                                                                                                                     | -                 |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_accountName"></a>1.1.2.1.6.1.1. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > accountName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_allUsersGrantFilter"></a>1.1.2.1.6.1.2. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > allUsersGrantFilter`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier"></a>1.1.2.1.6.1.3. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > groupIdentifier`
+
+|                           |                                        |
+| ------------------------- | -------------------------------------- |
+| **Type**                  | `object`                               |
+| **Required**              | No                                     |
+| **Additional properties** | Not allowed                            |
+| **Defined in**            | #/definitions/NamedPrincipalIdentifier |
+
+| Property                                                                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| + [identifier](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier_identifier ) | No      | string | No         | -          | -                 |
+| + [name](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier_name )             | No      | string | No         | -          | -                 |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier_identifier"></a>1.1.2.1.6.1.3.1. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > groupIdentifier > identifier`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier_name"></a>1.1.2.1.6.1.3.2. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > groupIdentifier > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupName"></a>1.1.2.1.6.1.4. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > groupName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_userIdentifier"></a>1.1.2.1.6.1.5. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > userIdentifier`
+
+|                           |                                                                                                                              |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                     |
+| **Required**              | No                                                                                                                           |
+| **Additional properties** | Not allowed                                                                                                                  |
+| **Same definition as**    | [groupIdentifier](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier) |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_principals_items_userName"></a>1.1.2.1.6.1.6. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > userName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="domains_additionalProperties_authorizations"></a>1.1.3. Property `root > domains > additionalProperties > authorizations`
+
+|                           |                              |
+| ------------------------- | ---------------------------- |
+| **Type**                  | `object`                     |
+| **Required**              | No                           |
+| **Additional properties** | Not allowed                  |
+| **Defined in**            | #/definitions/Authorizations |
+
+**Description:** Simplified authorizations for the root domain unit. Provides a concise way to
+grant common permissions by specifying users and groups directly, without
+constructing full AuthorizationPolicy objects.
+
+Supported fields: projectCreators, projectFromProfileCreators,
+eligibleProjectMembers, domainUnitCreators, glossaryCreators, environmentCreators.
+
+Use cases: Quick project creation grants; Simple membership pool configuration;
+Delegated domain unit management; Glossary and environment provisioning
+
+AWS: DataZone authorization policies (CREATE_PROJECT,
+CREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,
+CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_ENVIRONMENT)
+
+Validation: Optional; Authorizations object
+
+| Property                                                                                         | Pattern | Type   | Deprecated | Definition                                                                                     | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [domainUnitCreators](#domains_additionalProperties_authorizations_domainUnitCreators )         | No      | object | No         | In #/definitions/AuthorizationIdentities                                                       | Identities allowed to create child domain units under this scope.<br />Grants the CREATE_DOMAIN_UNIT authorization policy.<br /><br />Use cases: Delegated organizational structure management; Team lead administration<br /><br />AWS: DataZone CREATE_DOMAIN_UNIT authorization policy<br /><br />Validation: Optional; AuthorizationIdentities object                                                                                      |
+| - [eligibleProjectMembers](#domains_additionalProperties_authorizations_eligibleProjectMembers ) | No      | object | No         | Same as [domainUnitCreators](#domains_additionalProperties_authorizations_domainUnitCreators ) | Identities allowed to be added to project member pools within this scope.<br />Grants the ADD_TO_PROJECT_MEMBER_POOL authorization policy.<br /><br />Use cases: Controlling who can be invited to projects; Member pool scoping<br /><br />AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy<br /><br />Validation: Optional; AuthorizationIdentities object                                                                      |
+| - [environmentCreators](#domains_additionalProperties_authorizations_environmentCreators )       | No      | object | No         | Same as [domainUnitCreators](#domains_additionalProperties_authorizations_domainUnitCreators ) | Identities allowed to create environments within this scope.<br />Grants the CREATE_ENVIRONMENT authorization policy.<br /><br />Use cases: Self-service environment provisioning; Team environment management<br /><br />AWS: DataZone CREATE_ENVIRONMENT authorization policy<br /><br />Validation: Optional; AuthorizationIdentities object                                                                                                |
+| - [glossaryCreators](#domains_additionalProperties_authorizations_glossaryCreators )             | No      | object | No         | Same as [domainUnitCreators](#domains_additionalProperties_authorizations_domainUnitCreators ) | Identities allowed to create business glossaries within this scope.<br />Grants the CREATE_GLOSSARY authorization policy.<br /><br />Use cases: Data steward glossary management; Business term definition<br /><br />AWS: DataZone CREATE_GLOSSARY authorization policy<br /><br />Validation: Optional; AuthorizationIdentities object                                                                                                       |
+| - [projectCreators](#domains_additionalProperties_authorizations_projectCreators )               | No      | object | No         | Same as [domainUnitCreators](#domains_additionalProperties_authorizations_domainUnitCreators ) | Identities allowed to create projects. Grants CREATE_PROJECT on DataZone (V1)<br />domains and CREATE_PROJECT_FROM_PROJECT_PROFILE on SageMaker Unified Studio (V2)<br />domains.<br /><br />Use cases: Project creation for team leads; Self-service project provisioning<br /><br />AWS: DataZone CREATE_PROJECT or CREATE_PROJECT_FROM_PROJECT_PROFILE authorization policy<br /><br />Validation: Optional; AuthorizationIdentities object |
+
+##### <a name="domains_additionalProperties_authorizations_domainUnitCreators"></a>1.1.3.1. Property `root > domains > additionalProperties > authorizations > domainUnitCreators`
+
+|                           |                                       |
+| ------------------------- | ------------------------------------- |
+| **Type**                  | `object`                              |
+| **Required**              | No                                    |
+| **Additional properties** | Not allowed                           |
+| **Defined in**            | #/definitions/AuthorizationIdentities |
+
+**Description:** Identities allowed to create child domain units under this scope.
+Grants the CREATE_DOMAIN_UNIT authorization policy.
+
+Use cases: Delegated organizational structure management; Team lead administration
+
+AWS: DataZone CREATE_DOMAIN_UNIT authorization policy
+
+Validation: Optional; AuthorizationIdentities object
+
+| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [all](#domains_additionalProperties_authorizations_domainUnitCreators_all )                             | No      | boolean         | No         | -          | When true, grants this authorization to all domain users. Mutually exclusive<br />with users, userIdentifiers, groups, and groupsIdentifiers — if all is set,<br />individual principal fields should not be specified.<br /><br />Use cases: Open access to all domain members; Unrestricted authorization scope<br /><br />AWS: DataZone allUsersGrantFilter principal in authorization policies<br /><br />Validation: Optional; boolean; mutually exclusive with individual principal fields |
+| - [groups](#domains_additionalProperties_authorizations_domainUnitCreators_groups )                       | No      | array of string | No         | -          | Group names to include as principals. Names must match entries in the<br />domain's groups config. Resolved to group profile identifiers at deploy time.<br /><br />Use cases: Team-based authorization; SSO group grants<br /><br />AWS: DataZone group profile principals in authorization policies<br /><br />Validation: Optional; string array; names must match domain groups keys                                                                                                         |
+| - [groupsIdentifiers](#domains_additionalProperties_authorizations_domainUnitCreators_groupsIdentifiers ) | No      | object          | No         | -          | Group identifiers specified directly as name-to-identifier pairs, bypassing<br />profile resolution. Use when the group identifier (SSO group ID) is known<br />at config time.<br /><br />Use cases: Direct identifier grants; Pre-resolved group references<br /><br />AWS: DataZone group identifier principals in authorization policies<br /><br />Validation: Optional; map of name to identifier string                                                                                   |
+| - [userIdentifiers](#domains_additionalProperties_authorizations_domainUnitCreators_userIdentifiers )     | No      | object          | No         | -          | User identifiers specified directly as name-to-identifier pairs, bypassing<br />profile resolution. Use when the user identifier (IAM role ARN or SSO ID)<br />is known at config time.<br /><br />Use cases: Direct identifier grants; Pre-resolved user references<br /><br />AWS: DataZone user identifier principals in authorization policies<br /><br />Validation: Optional; map of name to identifier string                                                                             |
+| - [users](#domains_additionalProperties_authorizations_domainUnitCreators_users )                         | No      | array of string | No         | -          | User names to include as principals. Names must match entries in the<br />domain's users config. Resolved to user profile identifiers at deploy time.<br /><br />Use cases: Named user authorization; IAM or SSO user grants<br /><br />AWS: DataZone user profile principals in authorization policies<br /><br />Validation: Optional; string array; names must match domain users keys                                                                                                        |
+
+###### <a name="domains_additionalProperties_authorizations_domainUnitCreators_all"></a>1.1.3.1.1. Property `root > domains > additionalProperties > authorizations > domainUnitCreators > all`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** When true, grants this authorization to all domain users. Mutually exclusive
+with users, userIdentifiers, groups, and groupsIdentifiers — if all is set,
+individual principal fields should not be specified.
+
+Use cases: Open access to all domain members; Unrestricted authorization scope
+
+AWS: DataZone allUsersGrantFilter principal in authorization policies
+
+Validation: Optional; boolean; mutually exclusive with individual principal fields
+
+###### <a name="domains_additionalProperties_authorizations_domainUnitCreators_groups"></a>1.1.3.1.2. Property `root > domains > additionalProperties > authorizations > domainUnitCreators > groups`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Group names to include as principals. Names must match entries in the
+domain's groups config. Resolved to group profile identifiers at deploy time.
+
+Use cases: Team-based authorization; SSO group grants
+
+AWS: DataZone group profile principals in authorization policies
+
+Validation: Optional; string array; names must match domain groups keys
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                              | Description |
+| -------------------------------------------------------------------------------------------- | ----------- |
+| [groups items](#domains_additionalProperties_authorizations_domainUnitCreators_groups_items) | -           |
+
+###### <a name="domains_additionalProperties_authorizations_domainUnitCreators_groups_items"></a>1.1.3.1.2.1. root > domains > additionalProperties > authorizations > domainUnitCreators > groups > groups items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="domains_additionalProperties_authorizations_domainUnitCreators_groupsIdentifiers"></a>1.1.3.1.3. Property `root > domains > additionalProperties > authorizations > domainUnitCreators > groupsIdentifiers`
+
+|                           |                                                                                                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                      |
+| **Required**              | No                                                                                                                                                            |
+| **Additional properties** | [Each additional property must conform to the schema](#domains_additionalProperties_authorizations_domainUnitCreators_groupsIdentifiers_additionalProperties) |
+
+**Description:** Group identifiers specified directly as name-to-identifier pairs, bypassing
+profile resolution. Use when the group identifier (SSO group ID) is known
+at config time.
+
+Use cases: Direct identifier grants; Pre-resolved group references
+
+AWS: DataZone group identifier principals in authorization policies
+
+Validation: Optional; map of name to identifier string
+
+| Property                                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#domains_additionalProperties_authorizations_domainUnitCreators_groupsIdentifiers_additionalProperties ) | No      | string | No         | -          | -                 |
+
+###### <a name="domains_additionalProperties_authorizations_domainUnitCreators_groupsIdentifiers_additionalProperties"></a>1.1.3.1.3.1. Property `root > domains > additionalProperties > authorizations > domainUnitCreators > groupsIdentifiers > additionalProperties`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="domains_additionalProperties_authorizations_domainUnitCreators_userIdentifiers"></a>1.1.3.1.4. Property `root > domains > additionalProperties > authorizations > domainUnitCreators > userIdentifiers`
+
+|                           |                                                                                                                                                             |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                    |
+| **Required**              | No                                                                                                                                                          |
+| **Additional properties** | [Each additional property must conform to the schema](#domains_additionalProperties_authorizations_domainUnitCreators_userIdentifiers_additionalProperties) |
+
+**Description:** User identifiers specified directly as name-to-identifier pairs, bypassing
+profile resolution. Use when the user identifier (IAM role ARN or SSO ID)
+is known at config time.
+
+Use cases: Direct identifier grants; Pre-resolved user references
+
+AWS: DataZone user identifier principals in authorization policies
+
+Validation: Optional; map of name to identifier string
+
+| Property                                                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#domains_additionalProperties_authorizations_domainUnitCreators_userIdentifiers_additionalProperties ) | No      | string | No         | -          | -                 |
+
+###### <a name="domains_additionalProperties_authorizations_domainUnitCreators_userIdentifiers_additionalProperties"></a>1.1.3.1.4.1. Property `root > domains > additionalProperties > authorizations > domainUnitCreators > userIdentifiers > additionalProperties`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="domains_additionalProperties_authorizations_domainUnitCreators_users"></a>1.1.3.1.5. Property `root > domains > additionalProperties > authorizations > domainUnitCreators > users`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** User names to include as principals. Names must match entries in the
+domain's users config. Resolved to user profile identifiers at deploy time.
+
+Use cases: Named user authorization; IAM or SSO user grants
+
+AWS: DataZone user profile principals in authorization policies
+
+Validation: Optional; string array; names must match domain users keys
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                            | Description |
+| ------------------------------------------------------------------------------------------ | ----------- |
+| [users items](#domains_additionalProperties_authorizations_domainUnitCreators_users_items) | -           |
+
+###### <a name="domains_additionalProperties_authorizations_domainUnitCreators_users_items"></a>1.1.3.1.5.1. root > domains > additionalProperties > authorizations > domainUnitCreators > users > users items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="domains_additionalProperties_authorizations_eligibleProjectMembers"></a>1.1.3.2. Property `root > domains > additionalProperties > authorizations > eligibleProjectMembers`
+
+|                           |                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                              |
+| **Required**              | No                                                                                    |
+| **Additional properties** | Not allowed                                                                           |
+| **Same definition as**    | [domainUnitCreators](#domains_additionalProperties_authorizations_domainUnitCreators) |
+
+**Description:** Identities allowed to be added to project member pools within this scope.
+Grants the ADD_TO_PROJECT_MEMBER_POOL authorization policy.
+
+Use cases: Controlling who can be invited to projects; Member pool scoping
+
+AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy
+
+Validation: Optional; AuthorizationIdentities object
+
+##### <a name="domains_additionalProperties_authorizations_environmentCreators"></a>1.1.3.3. Property `root > domains > additionalProperties > authorizations > environmentCreators`
+
+|                           |                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                              |
+| **Required**              | No                                                                                    |
+| **Additional properties** | Not allowed                                                                           |
+| **Same definition as**    | [domainUnitCreators](#domains_additionalProperties_authorizations_domainUnitCreators) |
+
+**Description:** Identities allowed to create environments within this scope.
+Grants the CREATE_ENVIRONMENT authorization policy.
+
+Use cases: Self-service environment provisioning; Team environment management
+
+AWS: DataZone CREATE_ENVIRONMENT authorization policy
+
+Validation: Optional; AuthorizationIdentities object
+
+##### <a name="domains_additionalProperties_authorizations_glossaryCreators"></a>1.1.3.4. Property `root > domains > additionalProperties > authorizations > glossaryCreators`
+
+|                           |                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                              |
+| **Required**              | No                                                                                    |
+| **Additional properties** | Not allowed                                                                           |
+| **Same definition as**    | [domainUnitCreators](#domains_additionalProperties_authorizations_domainUnitCreators) |
+
+**Description:** Identities allowed to create business glossaries within this scope.
+Grants the CREATE_GLOSSARY authorization policy.
+
+Use cases: Data steward glossary management; Business term definition
+
+AWS: DataZone CREATE_GLOSSARY authorization policy
+
+Validation: Optional; AuthorizationIdentities object
+
+##### <a name="domains_additionalProperties_authorizations_projectCreators"></a>1.1.3.5. Property `root > domains > additionalProperties > authorizations > projectCreators`
+
+|                           |                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                              |
+| **Required**              | No                                                                                    |
+| **Additional properties** | Not allowed                                                                           |
+| **Same definition as**    | [domainUnitCreators](#domains_additionalProperties_authorizations_domainUnitCreators) |
+
+**Description:** Identities allowed to create projects. Grants CREATE_PROJECT on DataZone (V1)
+domains and CREATE_PROJECT_FROM_PROJECT_PROFILE on SageMaker Unified Studio (V2)
+domains.
+
+Use cases: Project creation for team leads; Self-service project provisioning
+
+AWS: DataZone CREATE_PROJECT or CREATE_PROJECT_FROM_PROJECT_PROFILE authorization policy
+
+Validation: Optional; AuthorizationIdentities object
+
+#### <a name="domains_additionalProperties_cdkRoleArn"></a>1.1.4. Property `root > domains > additionalProperties > cdkRoleArn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** IAM role ARN of the CDK deployment role used in the domain's account.
+Override this when using a custom CDK bootstrap qualifier instead of the
+default. If omitted, defaults to the standard CDK bootstrap cfn-exec role
+(cdk-hnb659fds-cfn-exec-role-ACCOUNT-REGION).
+
+Use cases: Custom CDK bootstrap qualifier; Non-default CDK toolkit stack name
+
+AWS: IAM role for CloudFormation stack operations during CDK deployment
+
+Validation: Optional; valid IAM role ARN with CDK deployment permissions
+
+#### <a name="domains_additionalProperties_dataAdminRole"></a>1.1.5. Property `root > domains > additionalProperties > dataAdminRole`
 
 |                           |                           |
 | ------------------------- | ------------------------- |
@@ -229,7 +746,7 @@ Validation: Required; valid MdaaRoleRef
 | - [refId](#domains_additionalProperties_dataAdminRole_refId )         | No      | string  | No         | -          | Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.<br /><br />Use cases: Role reference identification; Configuration deduplication; Role lookup key<br /><br />AWS: Logical identifier for IAM role references within MDAA configuration<br /><br />Validation: Optional; must be unique within the configuration scope if provided |
 | - [sso](#domains_additionalProperties_dataAdminRole_sso )             | No      | boolean | No         | -          | Flag indicating the role should be resolved as an AWS SSO auto-generated role.<br /><br />Use cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access<br /><br />AWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention<br /><br />Validation: Optional boolean; defaults to false                                           |
 
-##### <a name="domains_additionalProperties_dataAdminRole_arn"></a>1.1.2.1. Property `root > domains > additionalProperties > dataAdminRole > arn`
+##### <a name="domains_additionalProperties_dataAdminRole_arn"></a>1.1.5.1. Property `root > domains > additionalProperties > dataAdminRole > arn`
 
 |              |          |
 | ------------ | -------- |
@@ -244,7 +761,7 @@ AWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)
 
 Validation: Optional; must be a valid IAM role ARN if provided
 
-##### <a name="domains_additionalProperties_dataAdminRole_id"></a>1.1.2.2. Property `root > domains > additionalProperties > dataAdminRole > id`
+##### <a name="domains_additionalProperties_dataAdminRole_id"></a>1.1.5.2. Property `root > domains > additionalProperties > dataAdminRole > id`
 
 |              |          |
 | ------------ | -------- |
@@ -259,7 +776,7 @@ AWS: IAM role unique ID (e.g., AROA...)
 
 Validation: Optional; must be a valid IAM role unique ID if provided
 
-##### <a name="domains_additionalProperties_dataAdminRole_immutable"></a>1.1.2.3. Property `root > domains > additionalProperties > dataAdminRole > immutable`
+##### <a name="domains_additionalProperties_dataAdminRole_immutable"></a>1.1.5.3. Property `root > domains > additionalProperties > dataAdminRole > immutable`
 
 |              |           |
 | ------------ | --------- |
@@ -274,7 +791,7 @@ AWS: Controls whether MDAA attaches policies or modifies the referenced IAM role
 
 Validation: Optional boolean; defaults to false
 
-##### <a name="domains_additionalProperties_dataAdminRole_name"></a>1.1.2.4. Property `root > domains > additionalProperties > dataAdminRole > name`
+##### <a name="domains_additionalProperties_dataAdminRole_name"></a>1.1.5.4. Property `root > domains > additionalProperties > dataAdminRole > name`
 
 |              |          |
 | ------------ | -------- |
@@ -289,7 +806,7 @@ AWS: IAM role name resolved via GetRole within the deployment account
 
 Validation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution
 
-##### <a name="domains_additionalProperties_dataAdminRole_refId"></a>1.1.2.5. Property `root > domains > additionalProperties > dataAdminRole > refId`
+##### <a name="domains_additionalProperties_dataAdminRole_refId"></a>1.1.5.5. Property `root > domains > additionalProperties > dataAdminRole > refId`
 
 |              |          |
 | ------------ | -------- |
@@ -304,7 +821,7 @@ AWS: Logical identifier for IAM role references within MDAA configuration
 
 Validation: Optional; must be unique within the configuration scope if provided
 
-##### <a name="domains_additionalProperties_dataAdminRole_sso"></a>1.1.2.6. Property `root > domains > additionalProperties > dataAdminRole > sso`
+##### <a name="domains_additionalProperties_dataAdminRole_sso"></a>1.1.5.6. Property `root > domains > additionalProperties > dataAdminRole > sso`
 
 |              |           |
 | ------------ | --------- |
@@ -319,7 +836,7 @@ AWS: Resolves role via AWS SSO/Identity Center auto-generated role naming conven
 
 Validation: Optional boolean; defaults to false
 
-#### <a name="domains_additionalProperties_description"></a>1.1.3. Property `root > domains > additionalProperties > description`
+#### <a name="domains_additionalProperties_description"></a>1.1.6. Property `root > domains > additionalProperties > description`
 
 |              |          |
 | ------------ | -------- |
@@ -334,7 +851,7 @@ AWS: DataZone domain description
 
 Validation: Optional; string
 
-#### <a name="domains_additionalProperties_domainUnits"></a>1.1.4. Property `root > domains > additionalProperties > domainUnits`
+#### <a name="domains_additionalProperties_domainUnits"></a>1.1.7. Property `root > domains > additionalProperties > domainUnits`
 
 |                           |                                                                                                                       |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -356,7 +873,7 @@ Validation: Optional; valid NamedDomainUnits
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------- | ----------------- |
 | - [](#domains_additionalProperties_domainUnits_additionalProperties ) | No      | object | No         | In #/definitions/DomainUnit | -                 |
 
-##### <a name="domains_additionalProperties_domainUnits_additionalProperties"></a>1.1.4.1. Property `root > domains > additionalProperties > domainUnits > DomainUnit`
+##### <a name="domains_additionalProperties_domainUnits_additionalProperties"></a>1.1.7.1. Property `root > domains > additionalProperties > domainUnits > DomainUnit`
 
 |                           |                          |
 | ------------------------- | ------------------------ |
@@ -365,46 +882,54 @@ Validation: Optional; valid NamedDomainUnits
 | **Additional properties** | Not allowed              |
 | **Defined in**            | #/definitions/DomainUnit |
 
-| Property                                                                                                         | Pattern | Type            | Deprecated | Definition                                                        | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| ---------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [allowAllUsers](#domains_additionalProperties_domainUnits_additionalProperties_allowAllUsers )                 | No      | boolean         | No         | -                                                                 | When true, all domain users are allowed access to this domain unit.<br /><br />Use cases: Open-access domain units; Unrestricted project creation<br /><br />AWS: DataZone domain unit access control<br /><br />Validation: Optional; boolean                                                                                                                                                                                                        |
-| - [allowedGroups](#domains_additionalProperties_domainUnits_additionalProperties_allowedGroups )                 | No      | array of string | No         | -                                                                 | Specific group names allowed access to this domain unit. Names must match<br />entries in the domain's groups config.<br /><br />Use cases: Group-scoped domain unit access; Team-restricted project creation<br /><br />AWS: DataZone domain unit group access list<br /><br />Validation: Optional; string array; names must match domain groups keys                                                                                               |
-| - [allowedUsers](#domains_additionalProperties_domainUnits_additionalProperties_allowedUsers )                   | No      | array of string | No         | -                                                                 | Specific user names allowed access to this domain unit. Names must match<br />entries in the domain's users config.<br /><br />Use cases: User-scoped domain unit access; Restricted project creation<br /><br />AWS: DataZone domain unit user access list<br /><br />Validation: Optional; string array; names must match domain users keys                                                                                                         |
-| - [authorizationPolicies](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies ) | No      | object          | No         | In #/definitions/NamedAuthorizationPolicies                       | Fine-grained authorization policies for this domain unit. Supports policy types<br />like CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, and CREATE_PROJECT with user/group<br />principals.<br /><br />Use cases: Permission scoping per domain unit; Policy-driven project creation control<br /><br />AWS: DataZone authorization policies (CREATE_DOMAIN_UNIT, CREATE_PROJECT, etc.)<br /><br />Validation: Optional; Record of AuthorizationPolicy objects |
-| - [description](#domains_additionalProperties_domainUnits_additionalProperties_description )                     | No      | string          | No         | -                                                                 | Human-readable description of this domain unit's purpose and scope.<br /><br />Use cases: Organizational documentation; Domain unit identification<br /><br />AWS: DataZone domain unit description<br /><br />Validation: Optional; string                                                                                                                                                                                                           |
-| - [domainUnits](#domains_additionalProperties_domainUnits_additionalProperties_domainUnits )                     | No      | object          | No         | Same as [domainUnits](#domains_additionalProperties_domainUnits ) | Child domain units nested under this unit, enabling recursive hierarchical<br />organization. Each child inherits the parent's domain context.<br /><br />Use cases: Multi-level organizational hierarchy; Nested governance scopes<br /><br />AWS: DataZone nested domain units<br /><br />Validation: Optional; valid NamedDomainUnits; supports arbitrary nesting depth                                                                            |
-| - [ownerAccounts](#domains_additionalProperties_domainUnits_additionalProperties_ownerAccounts )                 | No      | array of string | No         | -                                                                 | Associated account names that receive ownership of this domain unit,<br />allowing project creation within it. Names must match entries in the<br />domain's associatedAccounts config.<br /><br />Use cases: Cross-account project creation; Delegated domain unit ownership<br /><br />AWS: DataZone domain unit owner (account-based)<br /><br />Validation: Optional; string array; names must match associatedAccounts keys                      |
-| - [ownerGroups](#domains_additionalProperties_domainUnits_additionalProperties_ownerGroups )                     | No      | array of string | No         | -                                                                 | Group names that receive ownership of this domain unit. Names must match<br />entries in the domain's groups config.<br /><br />Use cases: Team-based domain unit administration; Group ownership delegation<br /><br />AWS: DataZone domain unit owner (group-based)<br /><br />Validation: Optional; string array; names must match domain groups keys                                                                                              |
-| - [ownerUsers](#domains_additionalProperties_domainUnits_additionalProperties_ownerUsers )                       | No      | array of string | No         | -                                                                 | User names that receive ownership of this domain unit. Names must match<br />entries in the domain's users config.<br /><br />Use cases: User-based domain unit administration; Individual ownership delegation<br /><br />AWS: DataZone domain unit owner (user-based)<br /><br />Validation: Optional; string array; names must match domain users keys                                                                                             |
+| Property                                                                                                         | Pattern | Type            | Deprecated | Definition                                                                            | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [allowAllUsers](#domains_additionalProperties_domainUnits_additionalProperties_allowAllUsers )                 | No      | boolean         | No         | -                                                                                     | Deprecated. Use authorizations.eligibleProjectMembers or authorizationPolicies instead.<br />When true, all domain users are added to the project member pool for this<br />domain unit. This does not grant direct access to projects — it only makes<br />users eligible to be added as project members. Translates to an<br />ADD_TO_PROJECT_MEMBER_POOL policy with allUsersGrantFilter.<br /><br />Use cases: Open member pools; Making all users eligible for project membership<br /><br />AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy (allUsersGrantFilter)<br /><br />Validation: Optional; boolean                                                                                                                                                                                     |
+| - [allowedGroups](#domains_additionalProperties_domainUnits_additionalProperties_allowedGroups )                 | No      | array of string | No         | -                                                                                     | Deprecated. Use authorizations.eligibleProjectMembers or authorizationPolicies instead.<br />Specific group names added to the project member pool for this domain unit.<br />This does not grant direct access to projects — it only makes these groups<br />eligible to be added as project members. Names must match entries in the<br />domain's groups config. Translates to an ADD_TO_PROJECT_MEMBER_POOL policy.<br /><br />Use cases: Group-scoped member pool; Restricting project membership eligibility<br /><br />AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy (groupName principals)<br /><br />Validation: Optional; string array; names must match domain groups keys                                                                                                              |
+| - [allowedUsers](#domains_additionalProperties_domainUnits_additionalProperties_allowedUsers )                   | No      | array of string | No         | -                                                                                     | Deprecated. Use authorizations.eligibleProjectMembers or authorizationPolicies instead.<br />Specific user names added to the project member pool for this domain unit.<br />This does not grant direct access to projects — it only makes these users<br />eligible to be added as project members. Names must match entries in the<br />domain's users config. Translates to an ADD_TO_PROJECT_MEMBER_POOL policy.<br /><br />Use cases: User-scoped member pool; Restricting project membership eligibility<br /><br />AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy (userName principals)<br /><br />Validation: Optional; string array; names must match domain users keys                                                                                                                    |
+| - [authorizationPolicies](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies ) | No      | object          | No         | Same as [authorizationPolicies](#domains_additionalProperties_authorizationPolicies ) | Fine-grained authorization policies for this domain unit. Supports policy types<br />like CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, and CREATE_PROJECT with user/group<br />principals.<br /><br />Use cases: Permission scoping per domain unit; Policy-driven project creation control<br /><br />AWS: DataZone authorization policies (CREATE_DOMAIN_UNIT, CREATE_PROJECT, etc.)<br /><br />Validation: Optional; Record of AuthorizationPolicy objects                                                                                                                                                                                                                                                                                                                                                              |
+| - [authorizations](#domains_additionalProperties_domainUnits_additionalProperties_authorizations )               | No      | object          | No         | Same as [authorizations](#domains_additionalProperties_authorizations )               | Simplified authorizations for this domain unit. Provides a concise way to<br />grant common permissions by specifying users and groups directly, without<br />constructing full AuthorizationPolicy objects.<br /><br />Supported fields: projectCreators, projectFromProfileCreators,<br />eligibleProjectMembers, domainUnitCreators, glossaryCreators, environmentCreators.<br /><br />Use cases: Quick project creation grants; Simple membership pool configuration;<br />Delegated domain unit management; Glossary and environment provisioning<br /><br />AWS: DataZone authorization policies (CREATE_PROJECT,<br />CREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,<br />CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_ENVIRONMENT)<br /><br />Validation: Optional; Authorizations object |
+| - [description](#domains_additionalProperties_domainUnits_additionalProperties_description )                     | No      | string          | No         | -                                                                                     | Human-readable description of this domain unit's purpose and scope.<br /><br />Use cases: Organizational documentation; Domain unit identification<br /><br />AWS: DataZone domain unit description<br /><br />Validation: Optional; string                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [domainUnits](#domains_additionalProperties_domainUnits_additionalProperties_domainUnits )                     | No      | object          | No         | Same as [domainUnits](#domains_additionalProperties_domainUnits )                     | Child domain units nested under this unit, enabling recursive hierarchical<br />organization. Each child inherits the parent's domain context.<br /><br />Use cases: Multi-level organizational hierarchy; Nested governance scopes<br /><br />AWS: DataZone nested domain units<br /><br />Validation: Optional; valid NamedDomainUnits; supports arbitrary nesting depth                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [ownerAccounts](#domains_additionalProperties_domainUnits_additionalProperties_ownerAccounts )                 | No      | array of string | No         | -                                                                                     | Associated account names that receive ownership of this domain unit,<br />allowing project creation within it. Names must match entries in the<br />domain's associatedAccounts config.<br /><br />Use cases: Cross-account project creation; Delegated domain unit ownership<br /><br />AWS: DataZone domain unit owner (account-based)<br /><br />Validation: Optional; string array; names must match associatedAccounts keys                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [ownerGroups](#domains_additionalProperties_domainUnits_additionalProperties_ownerGroups )                     | No      | array of string | No         | -                                                                                     | Group names that receive ownership of this domain unit. Names must match<br />entries in the domain's groups config.<br /><br />Use cases: Team-based domain unit administration; Group ownership delegation<br /><br />AWS: DataZone domain unit owner (group-based)<br /><br />Validation: Optional; string array; names must match domain groups keys                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [ownerUsers](#domains_additionalProperties_domainUnits_additionalProperties_ownerUsers )                       | No      | array of string | No         | -                                                                                     | User names that receive ownership of this domain unit. Names must match<br />entries in the domain's users config.<br /><br />Use cases: User-based domain unit administration; Individual ownership delegation<br /><br />AWS: DataZone domain unit owner (user-based)<br /><br />Validation: Optional; string array; names must match domain users keys                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_allowAllUsers"></a>1.1.4.1.1. Property `root > domains > additionalProperties > domainUnits > additionalProperties > allowAllUsers`
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_allowAllUsers"></a>1.1.7.1.1. Property `root > domains > additionalProperties > domainUnits > additionalProperties > allowAllUsers`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** When true, all domain users are allowed access to this domain unit.
+**Description:** Deprecated. Use authorizations.eligibleProjectMembers or authorizationPolicies instead.
+When true, all domain users are added to the project member pool for this
+domain unit. This does not grant direct access to projects — it only makes
+users eligible to be added as project members. Translates to an
+ADD_TO_PROJECT_MEMBER_POOL policy with allUsersGrantFilter.
 
-Use cases: Open-access domain units; Unrestricted project creation
+Use cases: Open member pools; Making all users eligible for project membership
 
-AWS: DataZone domain unit access control
+AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy (allUsersGrantFilter)
 
 Validation: Optional; boolean
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_allowedGroups"></a>1.1.4.1.2. Property `root > domains > additionalProperties > domainUnits > additionalProperties > allowedGroups`
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_allowedGroups"></a>1.1.7.1.2. Property `root > domains > additionalProperties > domainUnits > additionalProperties > allowedGroups`
 
 |              |                   |
 | ------------ | ----------------- |
 | **Type**     | `array of string` |
 | **Required** | No                |
 
-**Description:** Specific group names allowed access to this domain unit. Names must match
-entries in the domain's groups config.
+**Description:** Deprecated. Use authorizations.eligibleProjectMembers or authorizationPolicies instead.
+Specific group names added to the project member pool for this domain unit.
+This does not grant direct access to projects — it only makes these groups
+eligible to be added as project members. Names must match entries in the
+domain's groups config. Translates to an ADD_TO_PROJECT_MEMBER_POOL policy.
 
-Use cases: Group-scoped domain unit access; Team-restricted project creation
+Use cases: Group-scoped member pool; Restricting project membership eligibility
 
-AWS: DataZone domain unit group access list
+AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy (groupName principals)
 
 Validation: Optional; string array; names must match domain groups keys
 
@@ -420,26 +945,29 @@ Validation: Optional; string array; names must match domain groups keys
 | --------------------------------------------------------------------------------------------------------- | ----------- |
 | [allowedGroups items](#domains_additionalProperties_domainUnits_additionalProperties_allowedGroups_items) | -           |
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_allowedGroups_items"></a>1.1.4.1.2.1. root > domains > additionalProperties > domainUnits > additionalProperties > allowedGroups > allowedGroups items
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_allowedGroups_items"></a>1.1.7.1.2.1. root > domains > additionalProperties > domainUnits > additionalProperties > allowedGroups > allowedGroups items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_allowedUsers"></a>1.1.4.1.3. Property `root > domains > additionalProperties > domainUnits > additionalProperties > allowedUsers`
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_allowedUsers"></a>1.1.7.1.3. Property `root > domains > additionalProperties > domainUnits > additionalProperties > allowedUsers`
 
 |              |                   |
 | ------------ | ----------------- |
 | **Type**     | `array of string` |
 | **Required** | No                |
 
-**Description:** Specific user names allowed access to this domain unit. Names must match
-entries in the domain's users config.
+**Description:** Deprecated. Use authorizations.eligibleProjectMembers or authorizationPolicies instead.
+Specific user names added to the project member pool for this domain unit.
+This does not grant direct access to projects — it only makes these users
+eligible to be added as project members. Names must match entries in the
+domain's users config. Translates to an ADD_TO_PROJECT_MEMBER_POOL policy.
 
-Use cases: User-scoped domain unit access; Restricted project creation
+Use cases: User-scoped member pool; Restricting project membership eligibility
 
-AWS: DataZone domain unit user access list
+AWS: DataZone ADD_TO_PROJECT_MEMBER_POOL authorization policy (userName principals)
 
 Validation: Optional; string array; names must match domain users keys
 
@@ -455,21 +983,21 @@ Validation: Optional; string array; names must match domain users keys
 | ------------------------------------------------------------------------------------------------------- | ----------- |
 | [allowedUsers items](#domains_additionalProperties_domainUnits_additionalProperties_allowedUsers_items) | -           |
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_allowedUsers_items"></a>1.1.4.1.3.1. root > domains > additionalProperties > domainUnits > additionalProperties > allowedUsers > allowedUsers items
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_allowedUsers_items"></a>1.1.7.1.3.1. root > domains > additionalProperties > domainUnits > additionalProperties > allowedUsers > allowedUsers items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies"></a>1.1.4.1.4. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies`
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies"></a>1.1.7.1.4. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies`
 
-|                           |                                                                                                                                                                  |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                         |
-| **Required**              | No                                                                                                                                                               |
-| **Additional properties** | [Each additional property must conform to the schema](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties) |
-| **Defined in**            | #/definitions/NamedAuthorizationPolicies                                                                                                                         |
+|                           |                                                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                        |
+| **Required**              | No                                                                                                                              |
+| **Additional properties** | [Each additional property must conform to the schema](#domains_additionalProperties_authorizationPolicies_additionalProperties) |
+| **Same definition as**    | [authorizationPolicies](#domains_additionalProperties_authorizationPolicies)                                                    |
 
 **Description:** Fine-grained authorization policies for this domain unit. Supports policy types
 like CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, and CREATE_PROJECT with user/group
@@ -481,207 +1009,32 @@ AWS: DataZone authorization policies (CREATE_DOMAIN_UNIT, CREATE_PROJECT, etc.)
 
 Validation: Optional; Record of AuthorizationPolicy objects
 
-| Property                                                                                                         | Pattern | Type   | Deprecated | Definition                           | Title/Description |
-| ---------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------ | ----------------- |
-| - [](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties ) | No      | object | No         | In #/definitions/AuthorizationPolicy | -                 |
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizations"></a>1.1.7.1.5. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizations`
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties"></a>1.1.4.1.4.1. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > AuthorizationPolicy`
+|                           |                                                                |
+| ------------------------- | -------------------------------------------------------------- |
+| **Type**                  | `object`                                                       |
+| **Required**              | No                                                             |
+| **Additional properties** | Not allowed                                                    |
+| **Same definition as**    | [authorizations](#domains_additionalProperties_authorizations) |
 
-|                           |                                   |
-| ------------------------- | --------------------------------- |
-| **Type**                  | `object`                          |
-| **Required**              | No                                |
-| **Additional properties** | Not allowed                       |
-| **Defined in**            | #/definitions/AuthorizationPolicy |
+**Description:** Simplified authorizations for this domain unit. Provides a concise way to
+grant common permissions by specifying users and groups directly, without
+constructing full AuthorizationPolicy objects.
 
-| Property                                                                                                                                                        | Pattern | Type             | Deprecated | Definition                                    | Title/Description |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | --------------------------------------------- | ----------------- |
-| - [blueprintConfig](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig )                 | No      | object           | No         | In #/definitions/BlueprintAuthorizationConfig | -                 |
-| - [description](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_description )                         | No      | string           | No         | -                                             | -                 |
-| - [domainUnitId](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_domainUnitId )                       | No      | string           | No         | -                                             | -                 |
-| - [includeChildDomainUnits](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_includeChildDomainUnits ) | No      | boolean          | No         | -                                             | -                 |
-| + [policyType](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_policyType )                           | No      | enum (of string) | No         | In #/definitions/PolicyType                   | -                 |
-| + [principals](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals )                           | No      | array            | No         | -                                             | -                 |
+Supported fields: projectCreators, projectFromProfileCreators,
+eligibleProjectMembers, domainUnitCreators, glossaryCreators, environmentCreators.
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig"></a>1.1.4.1.4.1.1. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > blueprintConfig`
+Use cases: Quick project creation grants; Simple membership pool configuration;
+Delegated domain unit management; Glossary and environment provisioning
 
-|                           |                                            |
-| ------------------------- | ------------------------------------------ |
-| **Type**                  | `object`                                   |
-| **Required**              | No                                         |
-| **Additional properties** | Not allowed                                |
-| **Defined in**            | #/definitions/BlueprintAuthorizationConfig |
+AWS: DataZone authorization policies (CREATE_PROJECT,
+CREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,
+CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_ENVIRONMENT)
 
-| Property                                                                                                                                                                        | Pattern | Type             | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
-| - [includeChildDomainUnits](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig_includeChildDomainUnits ) | No      | boolean          | No         | -          | -                 |
-| - [projectDesignation](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig_projectDesignation )           | No      | enum (of string) | No         | -          | -                 |
+Validation: Optional; Authorizations object
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig_includeChildDomainUnits"></a>1.1.4.1.4.1.1.1. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > blueprintConfig > includeChildDomainUnits`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig_projectDesignation"></a>1.1.4.1.4.1.1.2. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > blueprintConfig > projectDesignation`
-
-|              |                    |
-| ------------ | ------------------ |
-| **Type**     | `enum (of string)` |
-| **Required** | No                 |
-
-Must be one of:
-* "CONTRIBUTOR"
-* "OWNER"
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_description"></a>1.1.4.1.4.1.2. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > description`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_domainUnitId"></a>1.1.4.1.4.1.3. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > domainUnitId`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_includeChildDomainUnits"></a>1.1.4.1.4.1.4. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > includeChildDomainUnits`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_policyType"></a>1.1.4.1.4.1.5. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > policyType`
-
-|                |                          |
-| -------------- | ------------------------ |
-| **Type**       | `enum (of string)`       |
-| **Required**   | Yes                      |
-| **Defined in** | #/definitions/PolicyType |
-
-Must be one of:
-* "ADD_TO_PROJECT_MEMBER_POOL"
-* "CREATE_ASSET_TYPE"
-* "CREATE_DOMAIN_UNIT"
-* "CREATE_ENVIRONMENT"
-* "CREATE_ENVIRONMENT_FROM_BLUEPRINT"
-* "CREATE_ENVIRONMENT_PROFILE"
-* "CREATE_FORM_TYPE"
-* "CREATE_GLOSSARY"
-* "CREATE_PROJECT"
-* "CREATE_PROJECT_FROM_PROJECT_PROFILE"
-* "DELEGATE_CREATE_ENVIRONMENT_PROFILE"
-* "OVERRIDE_DOMAIN_UNIT_OWNERS"
-* "OVERRIDE_PROJECT_OWNERS"
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals"></a>1.1.4.1.4.1.6. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > principals`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | Yes     |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                                                               | Description |
-| --------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [PolicyPrincipal](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items) | -           |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items"></a>1.1.4.1.4.1.6.1. root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > principals > PolicyPrincipal
-
-|                           |                               |
-| ------------------------- | ----------------------------- |
-| **Type**                  | `object`                      |
-| **Required**              | No                            |
-| **Additional properties** | Not allowed                   |
-| **Defined in**            | #/definitions/PolicyPrincipal |
-
-| Property                                                                                                                                                                 | Pattern | Type    | Deprecated | Definition                                                                                                                                                             | Title/Description |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| - [accountName](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_accountName )                 | No      | string  | No         | -                                                                                                                                                                      | -                 |
-| - [allUsersGrantFilter](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_allUsersGrantFilter ) | No      | boolean | No         | -                                                                                                                                                                      | -                 |
-| - [groupIdentifier](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier )         | No      | object  | No         | In #/definitions/NamedPrincipalIdentifier                                                                                                                              | -                 |
-| - [groupName](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupName )                     | No      | string  | No         | -                                                                                                                                                                      | -                 |
-| - [userIdentifier](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_userIdentifier )           | No      | object  | No         | Same as [groupIdentifier](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier ) | -                 |
-| - [userName](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_userName )                       | No      | string  | No         | -                                                                                                                                                                      | -                 |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_accountName"></a>1.1.4.1.4.1.6.1.1. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > accountName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_allUsersGrantFilter"></a>1.1.4.1.4.1.6.1.2. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > allUsersGrantFilter`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier"></a>1.1.4.1.4.1.6.1.3. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > groupIdentifier`
-
-|                           |                                        |
-| ------------------------- | -------------------------------------- |
-| **Type**                  | `object`                               |
-| **Required**              | No                                     |
-| **Additional properties** | Not allowed                            |
-| **Defined in**            | #/definitions/NamedPrincipalIdentifier |
-
-| Property                                                                                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [identifier](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier_identifier ) | No      | string | No         | -          | -                 |
-| + [name](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier_name )             | No      | string | No         | -          | -                 |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier_identifier"></a>1.1.4.1.4.1.6.1.3.1. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > groupIdentifier > identifier`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier_name"></a>1.1.4.1.4.1.6.1.3.2. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > groupIdentifier > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupName"></a>1.1.4.1.4.1.6.1.4. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > groupName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_userIdentifier"></a>1.1.4.1.4.1.6.1.5. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > userIdentifier`
-
-|                           |                                                                                                                                                               |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                      |
-| **Required**              | No                                                                                                                                                            |
-| **Additional properties** | Not allowed                                                                                                                                                   |
-| **Same definition as**    | [groupIdentifier](#domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_groupIdentifier) |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_authorizationPolicies_additionalProperties_principals_items_userName"></a>1.1.4.1.4.1.6.1.6. Property `root > domains > additionalProperties > domainUnits > additionalProperties > authorizationPolicies > additionalProperties > principals > principals items > userName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_description"></a>1.1.4.1.5. Property `root > domains > additionalProperties > domainUnits > additionalProperties > description`
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_description"></a>1.1.7.1.6. Property `root > domains > additionalProperties > domainUnits > additionalProperties > description`
 
 |              |          |
 | ------------ | -------- |
@@ -696,7 +1049,7 @@ AWS: DataZone domain unit description
 
 Validation: Optional; string
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_domainUnits"></a>1.1.4.1.6. Property `root > domains > additionalProperties > domainUnits > additionalProperties > domainUnits`
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_domainUnits"></a>1.1.7.1.7. Property `root > domains > additionalProperties > domainUnits > additionalProperties > domainUnits`
 
 |                           |                                                                                                                       |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -714,7 +1067,7 @@ AWS: DataZone nested domain units
 
 Validation: Optional; valid NamedDomainUnits; supports arbitrary nesting depth
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerAccounts"></a>1.1.4.1.7. Property `root > domains > additionalProperties > domainUnits > additionalProperties > ownerAccounts`
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerAccounts"></a>1.1.7.1.8. Property `root > domains > additionalProperties > domainUnits > additionalProperties > ownerAccounts`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -743,14 +1096,14 @@ Validation: Optional; string array; names must match associatedAccounts keys
 | --------------------------------------------------------------------------------------------------------- | ----------- |
 | [ownerAccounts items](#domains_additionalProperties_domainUnits_additionalProperties_ownerAccounts_items) | -           |
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerAccounts_items"></a>1.1.4.1.7.1. root > domains > additionalProperties > domainUnits > additionalProperties > ownerAccounts > ownerAccounts items
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerAccounts_items"></a>1.1.7.1.8.1. root > domains > additionalProperties > domainUnits > additionalProperties > ownerAccounts > ownerAccounts items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerGroups"></a>1.1.4.1.8. Property `root > domains > additionalProperties > domainUnits > additionalProperties > ownerGroups`
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerGroups"></a>1.1.7.1.9. Property `root > domains > additionalProperties > domainUnits > additionalProperties > ownerGroups`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -778,14 +1131,14 @@ Validation: Optional; string array; names must match domain groups keys
 | ----------------------------------------------------------------------------------------------------- | ----------- |
 | [ownerGroups items](#domains_additionalProperties_domainUnits_additionalProperties_ownerGroups_items) | -           |
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerGroups_items"></a>1.1.4.1.8.1. root > domains > additionalProperties > domainUnits > additionalProperties > ownerGroups > ownerGroups items
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerGroups_items"></a>1.1.7.1.9.1. root > domains > additionalProperties > domainUnits > additionalProperties > ownerGroups > ownerGroups items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerUsers"></a>1.1.4.1.9. Property `root > domains > additionalProperties > domainUnits > additionalProperties > ownerUsers`
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerUsers"></a>1.1.7.1.10. Property `root > domains > additionalProperties > domainUnits > additionalProperties > ownerUsers`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -813,14 +1166,14 @@ Validation: Optional; string array; names must match domain users keys
 | --------------------------------------------------------------------------------------------------- | ----------- |
 | [ownerUsers items](#domains_additionalProperties_domainUnits_additionalProperties_ownerUsers_items) | -           |
 
-###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerUsers_items"></a>1.1.4.1.9.1. root > domains > additionalProperties > domainUnits > additionalProperties > ownerUsers > ownerUsers items
+###### <a name="domains_additionalProperties_domainUnits_additionalProperties_ownerUsers_items"></a>1.1.7.1.10.1. root > domains > additionalProperties > domainUnits > additionalProperties > ownerUsers > ownerUsers items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="domains_additionalProperties_groups"></a>1.1.5. Property `root > domains > additionalProperties > groups`
+#### <a name="domains_additionalProperties_groups"></a>1.1.8. Property `root > domains > additionalProperties > groups`
 
 |                           |                                                                                                                  |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -842,7 +1195,7 @@ Validation: Optional; valid NamedDataZoneGroups
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------ | ----------------- |
 | - [](#domains_additionalProperties_groups_additionalProperties ) | No      | object | No         | In #/definitions/DataZoneGroup | -                 |
 
-##### <a name="domains_additionalProperties_groups_additionalProperties"></a>1.1.5.1. Property `root > domains > additionalProperties > groups > DataZoneGroup`
+##### <a name="domains_additionalProperties_groups_additionalProperties"></a>1.1.8.1. Property `root > domains > additionalProperties > groups > DataZoneGroup`
 
 |                           |                             |
 | ------------------------- | --------------------------- |
@@ -855,7 +1208,7 @@ Validation: Optional; valid NamedDataZoneGroups
 | --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | + [ssoId](#domains_additionalProperties_groups_additionalProperties_ssoId ) | No      | string | No         | -          | IAM Identity Center (SSO) group ID for group-based domain access.<br />Groups are SSO-only; IAM role groups are not supported.<br /><br />Use cases: Team-based domain access; SSO group permissions; Collective governance<br /><br />AWS: DataZone SSO group profile linked to IAM Identity Center<br /><br />Validation: Required; valid SSO group ID; group must exist in SSO directory |
 
-###### <a name="domains_additionalProperties_groups_additionalProperties_ssoId"></a>1.1.5.1.1. Property `root > domains > additionalProperties > groups > additionalProperties > ssoId`
+###### <a name="domains_additionalProperties_groups_additionalProperties_ssoId"></a>1.1.8.1.1. Property `root > domains > additionalProperties > groups > additionalProperties > ssoId`
 
 |              |          |
 | ------------ | -------- |
@@ -871,7 +1224,7 @@ AWS: DataZone SSO group profile linked to IAM Identity Center
 
 Validation: Required; valid SSO group ID; group must exist in SSO directory
 
-#### <a name="domains_additionalProperties_ownerAccounts"></a>1.1.6. Property `root > domains > additionalProperties > ownerAccounts`
+#### <a name="domains_additionalProperties_ownerAccounts"></a>1.1.9. Property `root > domains > additionalProperties > ownerAccounts`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -900,14 +1253,14 @@ Validation: Optional; string array; names must match associatedAccounts keys
 | ------------------------------------------------------------------------ | ----------- |
 | [ownerAccounts items](#domains_additionalProperties_ownerAccounts_items) | -           |
 
-##### <a name="domains_additionalProperties_ownerAccounts_items"></a>1.1.6.1. root > domains > additionalProperties > ownerAccounts > ownerAccounts items
+##### <a name="domains_additionalProperties_ownerAccounts_items"></a>1.1.9.1. root > domains > additionalProperties > ownerAccounts > ownerAccounts items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="domains_additionalProperties_ownerGroups"></a>1.1.7. Property `root > domains > additionalProperties > ownerGroups`
+#### <a name="domains_additionalProperties_ownerGroups"></a>1.1.10. Property `root > domains > additionalProperties > ownerGroups`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -935,14 +1288,14 @@ Validation: Optional; string array; names must match domain groups keys
 | -------------------------------------------------------------------- | ----------- |
 | [ownerGroups items](#domains_additionalProperties_ownerGroups_items) | -           |
 
-##### <a name="domains_additionalProperties_ownerGroups_items"></a>1.1.7.1. root > domains > additionalProperties > ownerGroups > ownerGroups items
+##### <a name="domains_additionalProperties_ownerGroups_items"></a>1.1.10.1. root > domains > additionalProperties > ownerGroups > ownerGroups items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="domains_additionalProperties_ownerUsers"></a>1.1.8. Property `root > domains > additionalProperties > ownerUsers`
+#### <a name="domains_additionalProperties_ownerUsers"></a>1.1.11. Property `root > domains > additionalProperties > ownerUsers`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -970,14 +1323,14 @@ Validation: Optional; string array; names must match domain users keys
 | ------------------------------------------------------------------ | ----------- |
 | [ownerUsers items](#domains_additionalProperties_ownerUsers_items) | -           |
 
-##### <a name="domains_additionalProperties_ownerUsers_items"></a>1.1.8.1. root > domains > additionalProperties > ownerUsers > ownerUsers items
+##### <a name="domains_additionalProperties_ownerUsers_items"></a>1.1.11.1. root > domains > additionalProperties > ownerUsers > ownerUsers items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="domains_additionalProperties_singleSignOnType"></a>1.1.9. Property `root > domains > additionalProperties > singleSignOnType`
+#### <a name="domains_additionalProperties_singleSignOnType"></a>1.1.12. Property `root > domains > additionalProperties > singleSignOnType`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -998,7 +1351,7 @@ Must be one of:
 * "DISABLED"
 * "IAM_IDC"
 
-#### <a name="domains_additionalProperties_userAssignment"></a>1.1.10. Property `root > domains > additionalProperties > userAssignment`
+#### <a name="domains_additionalProperties_userAssignment"></a>1.1.13. Property `root > domains > additionalProperties > userAssignment`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -1019,7 +1372,7 @@ Must be one of:
 * "AUTOMATIC"
 * "MANUAL"
 
-#### <a name="domains_additionalProperties_users"></a>1.1.11. Property `root > domains > additionalProperties > users`
+#### <a name="domains_additionalProperties_users"></a>1.1.14. Property `root > domains > additionalProperties > users`
 
 |                           |                                                                                                                 |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
@@ -1041,7 +1394,7 @@ Validation: Optional; valid NamedDataZoneUsers
 | --------------------------------------------------------------- | ------- | ------ | ---------- | ----------------------------- | ----------------- |
 | - [](#domains_additionalProperties_users_additionalProperties ) | No      | object | No         | In #/definitions/DataZoneUser | -                 |
 
-##### <a name="domains_additionalProperties_users_additionalProperties"></a>1.1.11.1. Property `root > domains > additionalProperties > users > DataZoneUser`
+##### <a name="domains_additionalProperties_users_additionalProperties"></a>1.1.14.1. Property `root > domains > additionalProperties > users > DataZoneUser`
 
 |                           |                            |
 | ------------------------- | -------------------------- |
@@ -1055,7 +1408,7 @@ Validation: Optional; valid NamedDataZoneUsers
 | - [iamRole](#domains_additionalProperties_users_additionalProperties_iamRole ) | No      | object | No         | Same as [dataAdminRole](#domains_additionalProperties_dataAdminRole ) | IAM role reference for this user's domain access. The role is resolved via<br />MDAA role helper (by ARN, name, or SSM ref). Use this for IAM-based users;<br />mutually exclusive with ssoId.<br /><br />Use cases: IAM-based domain access; Role-based user identity; Non-SSO environments<br /><br />AWS: IAM role associated as a DataZone user profile<br /><br />Validation: Optional; valid MdaaRoleRef; mutually exclusive with ssoId |
 | - [ssoId](#domains_additionalProperties_users_additionalProperties_ssoId )     | No      | string | No         | -                                                                     | IAM Identity Center (SSO) user ID for federated domain access. Use this for<br />SSO-based users; mutually exclusive with iamRole.<br /><br />Use cases: SSO-based domain access; Federated identity; IAM Identity Center integration<br /><br />AWS: DataZone SSO user profile linked to IAM Identity Center<br /><br />Validation: Optional; valid SSO user ID; mutually exclusive with iamRole                                             |
 
-###### <a name="domains_additionalProperties_users_additionalProperties_iamRole"></a>1.1.11.1.1. Property `root > domains > additionalProperties > users > additionalProperties > iamRole`
+###### <a name="domains_additionalProperties_users_additionalProperties_iamRole"></a>1.1.14.1.1. Property `root > domains > additionalProperties > users > additionalProperties > iamRole`
 
 |                           |                                                              |
 | ------------------------- | ------------------------------------------------------------ |
@@ -1074,7 +1427,7 @@ AWS: IAM role associated as a DataZone user profile
 
 Validation: Optional; valid MdaaRoleRef; mutually exclusive with ssoId
 
-###### <a name="domains_additionalProperties_users_additionalProperties_ssoId"></a>1.1.11.1.2. Property `root > domains > additionalProperties > users > additionalProperties > ssoId`
+###### <a name="domains_additionalProperties_users_additionalProperties_ssoId"></a>1.1.14.1.2. Property `root > domains > additionalProperties > users > additionalProperties > ssoId`
 
 |              |          |
 | ------------ | -------- |

@@ -6,7 +6,6 @@
 import { MdaaConstructProps } from '@aws-mdaa/construct';
 import { CfnPolicyGrant } from 'aws-cdk-lib/aws-datazone';
 import { Construct } from 'constructs';
-import { RemovalPolicy } from 'aws-cdk-lib';
 import { validatePrincipal } from './utils';
 
 export type PolicyType =
@@ -107,74 +106,6 @@ export interface DataZoneAuthorizationConstructProps extends MdaaConstructProps 
   readonly groupIdentifiers?: NamedGroupIdentifiers;
   readonly accountIdentifiers?: NamedUserIdentifiers;
 }
-
-interface PolicyConfig {
-  readonly detailType: 'scoped' | 'targeted' | 'none';
-  readonly requiredFields: string[];
-  readonly compatibleEntities: string[];
-  readonly critical: boolean;
-}
-
-const POLICY_CONFIGS: Record<PolicyType, PolicyConfig> = {
-  CREATE_DOMAIN_UNIT: { detailType: 'scoped', requiredFields: [], compatibleEntities: ['DOMAIN_UNIT'], critical: true },
-  OVERRIDE_DOMAIN_UNIT_OWNERS: {
-    detailType: 'scoped',
-    requiredFields: [],
-    compatibleEntities: ['DOMAIN_UNIT'],
-    critical: true,
-  },
-  ADD_TO_PROJECT_MEMBER_POOL: {
-    detailType: 'scoped',
-    requiredFields: [],
-    compatibleEntities: ['DOMAIN_UNIT'],
-    critical: false,
-  },
-  OVERRIDE_PROJECT_OWNERS: {
-    detailType: 'scoped',
-    requiredFields: [],
-    compatibleEntities: ['DOMAIN_UNIT'],
-    critical: true,
-  },
-  CREATE_GLOSSARY: { detailType: 'scoped', requiredFields: [], compatibleEntities: ['DOMAIN_UNIT'], critical: false },
-  CREATE_FORM_TYPE: { detailType: 'scoped', requiredFields: [], compatibleEntities: ['DOMAIN_UNIT'], critical: false },
-  CREATE_ASSET_TYPE: {
-    detailType: 'scoped',
-    requiredFields: [],
-    compatibleEntities: ['DOMAIN_UNIT', 'ASSET_TYPE'],
-    critical: false,
-  },
-  CREATE_PROJECT: { detailType: 'scoped', requiredFields: [], compatibleEntities: ['DOMAIN_UNIT'], critical: true },
-  CREATE_ENVIRONMENT_PROFILE: {
-    detailType: 'targeted',
-    requiredFields: ['domainUnitId'],
-    compatibleEntities: ['DOMAIN_UNIT', 'ENVIRONMENT_PROFILE'],
-    critical: false,
-  },
-  DELEGATE_CREATE_ENVIRONMENT_PROFILE: {
-    detailType: 'targeted',
-    requiredFields: ['domainUnitId'],
-    compatibleEntities: ['DOMAIN_UNIT', 'ENVIRONMENT_PROFILE'],
-    critical: false,
-  },
-  CREATE_ENVIRONMENT: {
-    detailType: 'targeted',
-    requiredFields: ['domainUnitId'],
-    compatibleEntities: ['DOMAIN_UNIT', 'ENVIRONMENT_BLUEPRINT_CONFIGURATION', 'ENVIRONMENT_PROFILE'],
-    critical: false,
-  },
-  CREATE_ENVIRONMENT_FROM_BLUEPRINT: {
-    detailType: 'targeted',
-    requiredFields: ['domainUnitId'],
-    compatibleEntities: ['DOMAIN_UNIT', 'ENVIRONMENT_BLUEPRINT_CONFIGURATION'],
-    critical: false,
-  },
-  CREATE_PROJECT_FROM_PROJECT_PROFILE: {
-    detailType: 'scoped',
-    requiredFields: [],
-    compatibleEntities: ['DOMAIN_UNIT'],
-    critical: false,
-  },
-};
 
 export class PrincipalResolver {
   constructor(
@@ -407,9 +338,7 @@ export class DataZoneAuthorizationConstruct extends Construct {
 
     const detailValue: PolicyDetailValue = {};
 
-    if (policy.includeChildDomainUnits !== undefined) {
-      detailValue.includeChildDomainUnits = policy.includeChildDomainUnits;
-    }
+    detailValue.includeChildDomainUnits = policy.includeChildDomainUnits ?? false;
 
     // Note: domainUnitId is handled in createBlueprintPrincipal for blueprint policies
     // and should not be in the detail object
@@ -436,15 +365,11 @@ export class DataZoneAuthorizationConstruct extends Construct {
     policyName: string,
     principalName: string,
   ): void {
-    const config = POLICY_CONFIGS[policy.policyType];
-
     grant.addMetadata('PolicyType', policy.policyType);
     grant.addMetadata('PolicyName', policyName);
     grant.addMetadata('PrincipalName', principalName);
 
     if (policy.description) grant.addMetadata('Description', policy.description);
-
-    grant.applyRemovalPolicy(config.critical ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY);
   }
 
   public policyGrantsList(): CfnPolicyGrant[] {

@@ -8,7 +8,7 @@ domains:
   # Domain name (must be unique within the account)
   domain1:
     # Required - Description to give to the domain
-    description: "Basic SageMaker Unified Studio domain"
+    description: 'Basic SageMaker Unified Studio domain'
 
     # Optional - How users are assigned to domain (default: MANUAL)
     # MANUAL: Users must be explicitly added to the domain
@@ -40,17 +40,17 @@ domains:
     # Tooling includes compute resources like SageMaker notebooks, EMR clusters, etc.
     # These resources are deployed in the specified VPC for network isolation
     tooling:
-      vpcId: "{{context:enterprise_vpc_id}}"
+      vpcId: '{{context:enterprise_vpc_id}}'
       subnetIds:
-        - "{{context:enterprise_private_subnet_id1}}"
-        - "{{context:enterprise_private_subnet_id2}}"
+        - '{{context:enterprise_private_subnet_id1}}'
+        - '{{context:enterprise_private_subnet_id2}}'
 
     # Individual SSO users to add to the domain
     users:
       # A single admin user should exist in IAM Identity Center
       # This user can log into the SMUS UI and has administrative privileges
       admin1:
-        ssoId: "{{context:admin1_user_sso_id}}"
+        ssoId: '{{context:admin1_user_sso_id}}'
 
     # Admin will be added as domain root owner
     # Root owners have full control over the domain and all projects
@@ -63,15 +63,15 @@ domains:
       # An enterprise group which will have access to projects
       # in the enterprise account
       enterprise:
-        ssoId: "{{context:enterprise_group_sso_id}}"
+        ssoId: '{{context:enterprise_group_sso_id}}'
 
       # A group for the team1 team which will have access to team1 projects
       team1:
-        ssoId: "{{context:team1_group_sso_id}}"
+        ssoId: '{{context:team1_group_sso_id}}'
 
       # A group for the team2 team which will have access to team2 projects
       team2:
-        ssoId: "{{context:team2_group_sso_id}}"
+        ssoId: '{{context:team2_group_sso_id}}'
 
     # Additional accounts to associate with the domain
     # Each team gets its own AWS account for:
@@ -80,7 +80,7 @@ domains:
     # - Resource quotas (independent service limits)
     associatedAccounts:
       team1:
-        account: "{{context:team1_account}}"
+        account: '{{context:team1_account}}'
 
         # Create a domain user for the associated account
         # This CDK user allows deployment of SMUS resources (like Projects)
@@ -93,29 +93,29 @@ domains:
           # This role is provisioned in the roles module in the team1 account
           # Note: Associated account roles must be referred by name or ARN
           # (cannot use SSM param references like ssm-org:)
-          - name: "{{org}}-{{env}}-team1-com-roles-ddb-bp-prov"
+          - name: '{{org}}-{{env}}-team1-com-roles-ddb-bp-prov'
 
         # Each associated account has its own VPC and subnets for tooling
         # This provides network isolation between teams
         tooling:
-          vpcId: "{{context:team1_vpc_id}}"
+          vpcId: '{{context:team1_vpc_id}}'
           subnetIds:
-            - "{{context:team1_private_subnet_id1}}"
-            - "{{context:team1_private_subnet_id2}}"
+            - '{{context:team1_private_subnet_id1}}'
+            - '{{context:team1_private_subnet_id2}}'
 
       team2:
-        account: "{{context:team2_account}}"
+        account: '{{context:team2_account}}'
         createCdkUser: true
 
         # Blueprint provisioning roles for the team2 account
         blueprintProvisioningRoles:
-          - name: "{{org}}-{{env}}-team2-com-roles-ddb-bp-prov"
+          - name: '{{org}}-{{env}}-team2-com-roles-ddb-bp-prov'
 
         tooling:
-          vpcId: "{{context:team2_vpc_id}}"
+          vpcId: '{{context:team2_vpc_id}}'
           subnetIds:
-            - "{{context:team2_private_subnet_id1}}"
-            - "{{context:team2_private_subnet_id2}}"
+            - '{{context:team2_private_subnet_id1}}'
+            - '{{context:team2_private_subnet_id2}}'
 
     # Domain units create organizational hierarchy within the domain
     # They provide:
@@ -135,9 +135,11 @@ domains:
             ownerAccounts:
               - team1
 
-            # All users and groups are allowed to be added as members to projects
-            # within this domain unit. If false, only specific users/groups can be added.
-            allowAllUsers: true
+            # All domain users are eligible to be added as members to projects
+            # within this domain unit.
+            authorizations:
+              eligibleProjectMembers:
+                all: true
 
           # Team2 domain unit
           team2:
@@ -148,6 +150,8 @@ domains:
             ownerAccounts:
               - team2
 
-            # All users and groups are allowed to be added as members to projects
-            # within this domain unit
-            allowAllUsers: true
+            # All domain users are eligible to be added as members to projects
+            # within this domain unit.
+            authorizations:
+              eligibleProjectMembers:
+                all: true

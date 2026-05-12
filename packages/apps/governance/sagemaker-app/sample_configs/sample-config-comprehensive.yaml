@@ -36,6 +36,10 @@ domains:
     # Use AUTOMATIC for policy-based auto-assignment
     userAssignment: MANUAL
 
+    # (Optional) CDK deployment role ARN for this domain's account. Override when
+    # using a custom CDK bootstrap qualifier instead of the default.
+    cdkRoleArn: 'arn:{{partition}}:iam::{{account}}:role/custom-cdk-cfn-exec-role'
+
     # (Optional) Externally-defined roles for blueprint provisioning.
     # A base blueprint provisioning policy is attached; blueprint-specific
     # permissions must be attached directly to the role.
@@ -179,6 +183,57 @@ domains:
     ownerAccounts:
       - associated-account-name1
 
+    # (Optional) Simplified authorizations for the root domain unit.
+    # Provides a concise way to grant common permissions without constructing
+    # full AuthorizationPolicy objects.
+    authorizations:
+      # (Optional) Users/groups allowed to create projects
+      # (CREATE_PROJECT_FROM_PROJECT_PROFILE policy on V2 domains)
+      projectCreators:
+        users:
+          - sso-user-name
+        groups:
+          - test-sso-group1
+      # (Optional) Users/groups allowed to be added to project member pools
+      # (ADD_TO_PROJECT_MEMBER_POOL policy)
+      eligibleProjectMembers:
+        users:
+          - iam-user-name
+        groups:
+          - test-sso-group2
+      # (Optional) Users/groups allowed to create child domain units
+      # (CREATE_DOMAIN_UNIT policy)
+      domainUnitCreators:
+        users:
+          - sso-user-name
+      # (Optional) Users/groups allowed to create glossaries
+      # (CREATE_GLOSSARY policy)
+      glossaryCreators:
+        users:
+          - sso-user-name
+        groups:
+          - test-sso-group1
+      # (Optional) Users/groups allowed to create environments
+      # (CREATE_ENVIRONMENT policy)
+      environmentCreators:
+        groups:
+          - test-sso-group1
+
+    # (Optional) Fine-grained authorization policies for the root domain unit.
+    # Supports all PolicyType values with user/group/account principals.
+    authorizationPolicies:
+      root-create-project-policy:
+        policyType: 'CREATE_PROJECT'
+        principals:
+          - userName: iam-user-name
+          - groupName: test-sso-group1
+        includeChildDomainUnits: true
+      root-create-domain-unit-policy:
+        policyType: 'CREATE_DOMAIN_UNIT'
+        principals:
+          - userName: sso-user-name
+        includeChildDomainUnits: true
+
     # (Optional) Hierarchical domain units for organizing projects and
     # governance scopes within the domain
     domainUnits:
@@ -188,8 +243,33 @@ domains:
         ownerAccounts:
           - associated-account-name2
         description: testing
-        # When true, all domain users are allowed access
+        # (Optional, Deprecated) Use authorizations.eligibleProjectMembers instead.
+        # When true, all domain users are added to the project member pool
+        # (does not grant direct project access).
         allowAllUsers: true
+        # (Optional) Simplified authorizations for this domain unit
+        authorizations:
+          # (Optional) Users/groups allowed to create projects
+          # (CREATE_PROJECT_FROM_PROJECT_PROFILE policy on V2 domains)
+          projectCreators:
+            users:
+              - sso-user-name
+            groups:
+              - test-sso-group1
+          # (Optional) All domain users added to the project member pool.
+          # Replaces the deprecated allowAllUsers property.
+          eligibleProjectMembers:
+            all: true
+          # (Optional) Users/groups allowed to create child domain units
+          # (CREATE_DOMAIN_UNIT policy)
+          domainUnitCreators:
+            users:
+              - sso-user-name
+          # (Optional) Users/groups allowed to create glossaries
+          # (CREATE_GLOSSARY policy)
+          glossaryCreators:
+            groups:
+              - test-sso-group1
         # (Optional) Fine-grained authorization policies for this domain unit
         authorizationPolicies:
           # ── Policy: CREATE_DOMAIN_UNIT ──
@@ -279,10 +359,30 @@ domains:
             description: testing
             ownerGroups:
               - test-sso-group2
+            # (Optional, Deprecated) Use authorizations.eligibleProjectMembers instead.
+            # Specific user names added to the project member pool
+            # (does not grant direct project access).
             allowedUsers:
               - sso-user-name
+            # (Optional, Deprecated) Use authorizations.eligibleProjectMembers instead.
+            # Specific group names added to the project member pool
+            # (does not grant direct project access).
             allowedGroups:
               - test-sso-group1
+            # (Optional) Simplified authorizations for this child domain unit
+            authorizations:
+              # (Optional) Users/groups allowed to be added to project member pools
+              # (ADD_TO_PROJECT_MEMBER_POOL policy)
+              eligibleProjectMembers:
+                users:
+                  - sso-user-name
+                groups:
+                  - test-sso-group1
+              # (Optional) Users/groups allowed to create environments
+              # (CREATE_ENVIRONMENT policy)
+              environmentCreators:
+                users:
+                  - sso-user-name
             # Exercises CONTRIBUTOR projectDesignation (vs OWNER above)
             authorizationPolicies:
               contributor-project-policy:

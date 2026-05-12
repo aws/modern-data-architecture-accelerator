@@ -292,7 +292,7 @@ describe('DataZoneAuthorizationConstruct', () => {
     );
   });
 
-  it('should handle policies without detail', () => {
+  it('should handle policies without detail (includeChildDomainUnits defaults to false)', () => {
     const policies: Record<string, AuthorizationPolicy> = {
       'create-project-policy': {
         policyType: 'CREATE_PROJECT',
@@ -300,7 +300,7 @@ describe('DataZoneAuthorizationConstruct', () => {
       },
     };
 
-    const construct = new DataZoneAuthorizationConstruct(testApp.testStack, 'test-auth', {
+    new DataZoneAuthorizationConstruct(testApp.testStack, 'test-auth', {
       naming: testApp.naming,
       domainId: 'test-domain-id',
       entityId: 'test-entity-id',
@@ -311,8 +311,15 @@ describe('DataZoneAuthorizationConstruct', () => {
       accountIdentifiers: {},
     });
 
-    const grants = construct.policyGrantsList();
-    expect(grants).toHaveLength(1);
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+      PolicyType: 'CREATE_PROJECT',
+      Detail: {
+        CreateProject: {
+          IncludeChildDomainUnits: false,
+        },
+      },
+    });
   });
 
   it('should handle policies with domainUnitId', () => {
@@ -339,7 +346,7 @@ describe('DataZoneAuthorizationConstruct', () => {
     expect(grants).toHaveLength(1);
   });
 
-  it('should handle critical policies with RETAIN removal policy', () => {
+  it('should handle critical policies (configureGrant adds metadata without removal policy)', () => {
     const policies: Record<string, AuthorizationPolicy> = {
       'override-owners-policy': {
         policyType: 'OVERRIDE_DOMAIN_UNIT_OWNERS',

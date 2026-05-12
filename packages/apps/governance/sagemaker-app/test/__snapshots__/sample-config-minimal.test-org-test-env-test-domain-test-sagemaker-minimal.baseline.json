@@ -975,6 +975,84 @@
         }
       }
     },
+    "datazonetestdomaindomaindataadminrootauthspolicygrantprojectmembershipdataadminB1651535": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomain4A18F0C4",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomain4A18F0C4",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomaindomainadminuserprofile6F64060F",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "project-membership",
+        "PrincipalName": "data-admin"
+      }
+    },
+    "datazonetestdomaindomaindataadminrootauthspolicygrantcreateprojectfromprofiledataadmin89E45A91": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProjectFromProjectProfile": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomain4A18F0C4",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomain4A18F0C4",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT_FROM_PROJECT_PROFILE",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomaindomainadminuserprofile6F64060F",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT_FROM_PROJECT_PROFILE",
+        "PolicyName": "create-project-from-profile",
+        "PrincipalName": "data-admin"
+      }
+    },
     "datazonetestdomaindomaintestdomainprovisioningrole46803230": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -1665,8 +1743,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ENVIRONMENT_FROM_BLUEPRINT",
         "PolicyName": "blueprint-/root",
@@ -1742,8 +1818,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ENVIRONMENT_FROM_BLUEPRINT",
         "PolicyName": "blueprint-/root",
@@ -2016,8 +2090,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
         "PolicyName": "custom-resource-role-auth",

@@ -1037,6 +1037,84 @@
         }
       }
     },
+    "datazonetestdomaindomainowneraccountauthsassociatedaccountname1policygrantprojectmembershipassociatedaccountname175A87DEB": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomainassociatedaccountname1cdkuserprofile1F4DE3D5",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "project-membership",
+        "PrincipalName": "associated-account-name1"
+      }
+    },
+    "datazonetestdomaindomainowneraccountauthsassociatedaccountname1policygrantcreateprojectassociatedaccountname107CF5970": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomainassociatedaccountname1cdkuserprofile1F4DE3D5",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "create-project",
+        "PrincipalName": "associated-account-name1"
+      }
+    },
     "datazonetestdomaindomainowneruserssousername8A21A883": {
       "Type": "AWS::DataZone::Owner",
       "Properties": {
@@ -1098,11 +1176,48 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
         "PolicyName": "project-membership",
+        "PrincipalName": "sso-user-name"
+      }
+    },
+    "datazonetestdomaindomainownerauthsssousernamepolicygrantcreateprojectssousername96EB1859": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomainuserssousername95CF2FA0",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "create-project",
         "PrincipalName": "sso-user-name"
       }
     },
@@ -1167,12 +1282,691 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
         "PolicyName": "project-membership",
         "PrincipalName": "test-sso-group1"
+      }
+    },
+    "datazonetestdomaindomainownerauthstestssogroup1policygrantcreateprojecttestssogroup167886CEF": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "Group": {
+            "GroupIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomaingrouptestssogroup1F5BA8832",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "create-project",
+        "PrincipalName": "test-sso-group1"
+      }
+    },
+    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantsimplecreateprojectssousernameCD188DB9": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": "sso-user-id"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "simple-create-project",
+        "PrincipalName": "sso-user-name"
+      }
+    },
+    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantsimplecreateprojecttestssogroup13C0FCA7D": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "Group": {
+            "GroupIdentifier": "test"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "simple-create-project",
+        "PrincipalName": "test-sso-group1"
+      }
+    },
+    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantsimpleprojectmembershipiamusernameE30579C5": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "User": {
+            "UserIdentifier": "role-arn"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "simple-project-membership",
+        "PrincipalName": "iam-user-name"
+      }
+    },
+    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantsimpleprojectmembershiptestssogroup2FDFA1652": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "Group": {
+            "GroupIdentifier": "test2"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "simple-project-membership",
+        "PrincipalName": "test-sso-group2"
+      }
+    },
+    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantsimplecreatedomainunitssousernameB0AD0D70": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateDomainUnit": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_DOMAIN_UNIT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": "sso-user-id"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_DOMAIN_UNIT",
+        "PolicyName": "simple-create-domain-unit",
+        "PrincipalName": "sso-user-name"
+      }
+    },
+    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantsimplecreateglossaryssousername7BA0DA97": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateGlossary": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_GLOSSARY",
+        "Principal": {
+          "User": {
+            "UserIdentifier": "sso-user-id"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_GLOSSARY",
+        "PolicyName": "simple-create-glossary",
+        "PrincipalName": "sso-user-name"
+      }
+    },
+    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantsimplecreateglossarytestssogroup1DD89ACAD": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateGlossary": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_GLOSSARY",
+        "Principal": {
+          "Group": {
+            "GroupIdentifier": "test"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_GLOSSARY",
+        "PolicyName": "simple-create-glossary",
+        "PrincipalName": "test-sso-group1"
+      }
+    },
+    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantsimplecreateenvironmenttestssogroup1FF7B0803": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateEnvironment": {
+            "includeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_ENVIRONMENT",
+        "Principal": {
+          "Group": {
+            "GroupIdentifier": "test"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_ENVIRONMENT",
+        "PolicyName": "simple-create-environment",
+        "PrincipalName": "test-sso-group1"
+      }
+    },
+    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantrootcreateprojectpolicyiamusername6C59960E": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": "role-arn"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "root-create-project-policy",
+        "PrincipalName": "iam-user-name"
+      }
+    },
+    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantrootcreateprojectpolicytestssogroup19236FED9": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "Group": {
+            "GroupIdentifier": "test"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "root-create-project-policy",
+        "PrincipalName": "test-sso-group1"
+      }
+    },
+    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantrootcreatedomainunitpolicyssousername906FCB2F": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateDomainUnit": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_DOMAIN_UNIT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": "sso-user-id"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_DOMAIN_UNIT",
+        "PolicyName": "root-create-domain-unit-policy",
+        "PrincipalName": "sso-user-name"
+      }
+    },
+    "datazonetestdomaindomaincfnexecrootauthspolicygrantcreateprojectcfnexec13A43810": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": "arn:test-partition:iam::test-account:role/custom-cdk-cfn-exec-role"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "create-project",
+        "PrincipalName": "cfn-exec"
+      }
+    },
+    "datazonetestdomaindomaindataadminrootauthspolicygrantprojectmembershipdataadminA60ACB9D": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomainadminuserprofile68332B36",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "project-membership",
+        "PrincipalName": "data-admin"
+      }
+    },
+    "datazonetestdomaindomaindataadminrootauthspolicygrantcreateprojectdataadminF740A990": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomainadminuserprofile68332B36",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "create-project",
+        "PrincipalName": "data-admin"
+      }
+    },
+    "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantowneruserssousernameprojectmembershipssousername3B9AEDF2": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit14DA29677",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomainuserssousername95CF2FA0",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "owner-user-sso-user-name-project-membership",
+        "PrincipalName": "sso-user-name"
+      }
+    },
+    "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantowneruserssousernamecreateprojectssousernameD951B94B": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit14DA29677",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomainuserssousername95CF2FA0",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "owner-user-sso-user-name-create-project",
+        "PrincipalName": "sso-user-name"
+      }
+    },
+    "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantowneraccountassociatedaccountname2projectmembershipassociatedaccountname2F481B16D": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit14DA29677",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomainassociatedaccountname2cdkuserprofile5DA1E974",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "owner-account-associated-account-name2-project-membership",
+        "PrincipalName": "associated-account-name2"
+      }
+    },
+    "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantowneraccountassociatedaccountname2createprojectassociatedaccountname2BAB6A4EF": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit14DA29677",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomainassociatedaccountname2cdkuserprofile5DA1E974",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "owner-account-associated-account-name2-create-project",
+        "PrincipalName": "associated-account-name2"
       }
     },
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantallowedusersgroupsallusers14945818": {
@@ -1203,12 +1997,180 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
         "PolicyName": "allowed-users-groups",
         "PrincipalName": "all-users"
+      }
+    },
+    "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantsimplecreateprojectssousername292D063A": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit14DA29677",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": "sso-user-id"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "simple-create-project",
+        "PrincipalName": "sso-user-name"
+      }
+    },
+    "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantsimplecreateprojecttestssogroup1F046FB02": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit14DA29677",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "Group": {
+            "GroupIdentifier": "test"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "simple-create-project",
+        "PrincipalName": "test-sso-group1"
+      }
+    },
+    "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantsimpleprojectmembershipallusersEA086360": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit14DA29677",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "User": {
+            "AllUsersGrantFilter": {}
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "simple-project-membership",
+        "PrincipalName": "all-users"
+      }
+    },
+    "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantsimplecreatedomainunitssousername1555A9A0": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateDomainUnit": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit14DA29677",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_DOMAIN_UNIT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": "sso-user-id"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_DOMAIN_UNIT",
+        "PolicyName": "simple-create-domain-unit",
+        "PrincipalName": "sso-user-name"
+      }
+    },
+    "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantsimplecreateglossarytestssogroup1ED1AA36F": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateGlossary": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit14DA29677",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_GLOSSARY",
+        "Principal": {
+          "Group": {
+            "GroupIdentifier": "test"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_GLOSSARY",
+        "PolicyName": "simple-create-glossary",
+        "PrincipalName": "test-sso-group1"
       }
     },
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreatedomainunitpolicyssousername05E5702D": {
@@ -1239,8 +2201,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain",
       "Metadata": {
         "PolicyType": "CREATE_DOMAIN_UNIT",
         "PolicyName": "create-domain-unit-policy",
@@ -1276,8 +2236,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain",
       "Metadata": {
         "PolicyType": "CREATE_DOMAIN_UNIT",
         "PolicyName": "create-domain-unit-policy",
@@ -1288,6 +2246,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreateprojectpolicyiamusername6355E1A0": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1308,8 +2271,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain",
       "Metadata": {
         "PolicyType": "CREATE_PROJECT",
         "PolicyName": "create-project-policy",
@@ -1319,6 +2280,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreateprojectpolicytestssogroup16EBACEFC": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1339,8 +2305,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain",
       "Metadata": {
         "PolicyType": "CREATE_PROJECT",
         "PolicyName": "create-project-policy",
@@ -1350,6 +2314,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreateprojectpolicyallusersAF417FDF": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1370,8 +2339,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain",
       "Metadata": {
         "PolicyType": "CREATE_PROJECT",
         "PolicyName": "create-project-policy",
@@ -1381,6 +2348,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreateglossarypolicyssousernameED2471F5": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "CreateGlossary": {
+            "IncludeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1401,8 +2373,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_GLOSSARY",
         "PolicyName": "create-glossary-policy",
@@ -1412,6 +2382,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreateglossarypolicytestssogroup17B4F1395": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "CreateGlossary": {
+            "IncludeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1432,8 +2407,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_GLOSSARY",
         "PolicyName": "create-glossary-policy",
@@ -1443,6 +2416,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreateassettypepolicyssousernameB9EDD92D": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "CreateAssetType": {
+            "IncludeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1463,8 +2441,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ASSET_TYPE",
         "PolicyName": "create-asset-type-policy",
@@ -1474,6 +2450,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreateenvironmentpolicytestssogroup1F61F152C": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "CreateEnvironment": {
+            "includeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1494,8 +2475,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ENVIRONMENT",
         "PolicyName": "create-environment-policy",
@@ -1505,6 +2484,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreateenvfromblueprintpolicyiamusernameFD844D08": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "CreateEnvironmentFromBlueprint": {
+            "includeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1525,8 +2509,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ENVIRONMENT_FROM_BLUEPRINT",
         "PolicyName": "create-env-from-blueprint-policy",
@@ -1536,6 +2518,9 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreateenvprofilepolicyssousernameA533D243": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "CreateEnvironmentProfile": {}
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1556,8 +2541,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ENVIRONMENT_PROFILE",
         "PolicyName": "create-env-profile-policy",
@@ -1567,6 +2550,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreateformtypepolicytestssogroup272A0E639": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "CreateFormType": {
+            "IncludeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1587,8 +2575,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_FORM_TYPE",
         "PolicyName": "create-form-type-policy",
@@ -1598,6 +2584,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantaddtoprojectmemberpoolpolicyssousernameC275D820": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1618,8 +2609,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
         "PolicyName": "add-to-project-member-pool-policy",
@@ -1629,6 +2618,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantcreateprojectfromprofilepolicyallusers298C2541": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "CreateProjectFromProjectProfile": {
+            "IncludeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1649,8 +2643,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_PROJECT_FROM_PROJECT_PROFILE",
         "PolicyName": "create-project-from-profile-policy",
@@ -1660,6 +2652,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantdelegatecreateenvprofilepolicyassociatedaccountname192BD5ACD": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "DelegateCreateEnvironmentProfile": {
+            "includeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1680,8 +2677,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "DELEGATE_CREATE_ENVIRONMENT_PROFILE",
         "PolicyName": "delegate-create-env-profile-policy",
@@ -1691,6 +2686,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantoverridedomainunitownerspolicyssousername6FE3D32D": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "OverrideDomainUnitOwners": {
+            "IncludeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1711,8 +2711,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain",
       "Metadata": {
         "PolicyType": "OVERRIDE_DOMAIN_UNIT_OWNERS",
         "PolicyName": "override-domain-unit-owners-policy",
@@ -1722,6 +2720,11 @@
     "datazonetestdomaindomainparentdomainunittestunit1authorizationpoliciespolicygrantoverrideprojectownerspolicytestssogroup1D268E20C": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
+        "Detail": {
+          "OverrideProjectOwners": {
+            "IncludeChildDomainUnits": false
+          }
+        },
         "DomainIdentifier": {
           "Fn::GetAtt": [
             "datazonetestdomaindomainFE7E29F0",
@@ -1742,8 +2745,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain",
       "Metadata": {
         "PolicyType": "OVERRIDE_PROJECT_OWNERS",
         "PolicyName": "override-project-owners-policy",
@@ -1853,6 +2854,84 @@
         }
       }
     },
+    "datazonetestdomaindomaindomainunittestunit1parentdomainunittestunit2authorizationpoliciespolicygrantownergrouptestssogroup2projectmembershiptestssogroup21994179F": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit1domainunittestunit2F0CF2BF6",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "Group": {
+            "GroupIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomaingrouptestssogroup2FC690F20",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "owner-group-test-sso-group2-project-membership",
+        "PrincipalName": "test-sso-group2"
+      }
+    },
+    "datazonetestdomaindomaindomainunittestunit1parentdomainunittestunit2authorizationpoliciespolicygrantownergrouptestssogroup2createprojecttestssogroup225E736A9": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateProject": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit1domainunittestunit2F0CF2BF6",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_PROJECT",
+        "Principal": {
+          "Group": {
+            "GroupIdentifier": {
+              "Fn::GetAtt": [
+                "datazonetestdomaingrouptestssogroup2FC690F20",
+                "Id"
+              ]
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_PROJECT",
+        "PolicyName": "owner-group-test-sso-group2-create-project",
+        "PrincipalName": "test-sso-group2"
+      }
+    },
     "datazonetestdomaindomaindomainunittestunit1parentdomainunittestunit2authorizationpoliciespolicygrantallowedusersgroupsssousername88F521E7": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
@@ -1881,8 +2960,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
         "PolicyName": "allowed-users-groups",
@@ -1917,12 +2994,112 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
         "PolicyName": "allowed-users-groups",
         "PrincipalName": "test-sso-group1"
+      }
+    },
+    "datazonetestdomaindomaindomainunittestunit1parentdomainunittestunit2authorizationpoliciespolicygrantsimpleprojectmembershipssousernameBB99AAD8": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit1domainunittestunit2F0CF2BF6",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "User": {
+            "UserIdentifier": "sso-user-id"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "simple-project-membership",
+        "PrincipalName": "sso-user-name"
+      }
+    },
+    "datazonetestdomaindomaindomainunittestunit1parentdomainunittestunit2authorizationpoliciespolicygrantsimpleprojectmembershiptestssogroup161AC345C": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "AddToProjectMemberPool": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit1domainunittestunit2F0CF2BF6",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "Principal": {
+          "Group": {
+            "GroupIdentifier": "test"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
+        "PolicyName": "simple-project-membership",
+        "PrincipalName": "test-sso-group1"
+      }
+    },
+    "datazonetestdomaindomaindomainunittestunit1parentdomainunittestunit2authorizationpoliciespolicygrantsimplecreateenvironmentssousernameBD3F5848": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateEnvironment": {
+            "includeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomainFE7E29F0",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit1domainunittestunit2F0CF2BF6",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_ENVIRONMENT",
+        "Principal": {
+          "User": {
+            "UserIdentifier": "sso-user-id"
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_ENVIRONMENT",
+        "PolicyName": "simple-create-environment",
+        "PrincipalName": "sso-user-name"
       }
     },
     "datazonetestdomaindomaindomainunittestunit1domainunittestunit2F0CF2BF6": {
@@ -2282,8 +3459,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
         "PolicyName": "custom-resource-role-auth",

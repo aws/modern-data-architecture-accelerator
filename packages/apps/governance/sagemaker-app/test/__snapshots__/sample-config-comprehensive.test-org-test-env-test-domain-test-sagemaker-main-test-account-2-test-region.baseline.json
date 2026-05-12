@@ -2216,8 +2216,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ENVIRONMENT_FROM_BLUEPRINT",
         "PolicyName": "blueprint-/root",
@@ -2280,8 +2278,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ENVIRONMENT_FROM_BLUEPRINT",
         "PolicyName": "blueprint-/root",
@@ -2352,8 +2348,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ENVIRONMENT_FROM_BLUEPRINT",
         "PolicyName": "blueprint-/root",
@@ -2429,8 +2423,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ENVIRONMENT_FROM_BLUEPRINT",
         "PolicyName": "blueprint-/root",
@@ -2504,8 +2496,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ENVIRONMENT_FROM_BLUEPRINT",
         "PolicyName": "blueprint-/root",
@@ -2591,8 +2581,6 @@
           }
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
       "Metadata": {
         "PolicyType": "CREATE_ENVIRONMENT_FROM_BLUEPRINT",
         "PolicyName": "blueprint-/root",
