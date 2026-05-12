@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from review.doc_quality.doc_quality_review import has_code_changes, build_junit_entries
+from review.doc_quality.doc_quality_review import has_code_changes
 from review.doc_quality.post_doc_quality_threads import (
     SUMMARY_MARKER, build_file_groups, format_summary_body,
     format_file_thread,
@@ -70,7 +70,7 @@ class TestFormatFileThread:
         assert "<!-- docs-quality-file:CHANGELOG.md -->" in body
         assert "Documentation Review" in body
         assert "Documentation Gap: HIGH" in body
-        assert "rerun the `feature_merge_doc_quality_review`" in body
+        assert "Contributor: fix the issue" in body
 
     def test_update(self):
         group = {"file": "f.md", "risk_level": "LOW", "findings": [
@@ -100,15 +100,6 @@ class TestFindSummaryNote:
     def test_not_found(self):
         assert find_summary_note([{"id": "n1", "body": "nope"}], SUMMARY_MARKER) is None
 
-
-class TestBuildJunitEntries:
-    def test_fail(self):
-        result = {"risk_level": "HIGH", "risk_summary": "Missing CHANGELOG",
-                   "findings": [{"risk": "HIGH"}]}
-        assert build_junit_entries(result)[0]["status"] == "fail"
-    def test_info(self):
-        result = {"risk_level": "LOW", "risk_summary": "All good", "findings": []}
-        assert build_junit_entries(result)[0]["status"] == "info"
 
 
 from review.doc_quality.doc_quality_review import (

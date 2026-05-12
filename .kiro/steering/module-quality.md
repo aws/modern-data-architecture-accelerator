@@ -187,7 +187,7 @@ outside the JSON. The file must contain ONLY valid JSON.
   "findings": [
     {
       "risk": "HIGH | MEDIUM | LOW",
-      "category": "readme_gap | schema_coverage | config_usability | sample_config | jsdoc",
+      "category": "readme_gap | schema_coverage | config_usability | schema_design | sample_config | jsdoc",
       "file": "path/to/file",
       "property": "propertyName (if applicable, empty string otherwise)",
       "detail": "What's wrong and what should be done."
@@ -196,18 +196,61 @@ outside the JSON. The file must contain ONLY valid JSON.
 }
 ```
 
+### Config Schema Usability Conventions
+
+When reviewing config interfaces and generated schemas, check for these user-friendliness conventions:
+
+**1. Named object maps over arrays with name properties**
+
+Prefer `Record<string, T>` (renders as `additionalProperties` in JSON Schema) over `Array<T & { name: string }>`. Named maps let users reference resources by key in YAML, avoid ordering issues, and make diffs cleaner.
+
+Bad (array with name property):
+```yaml
+buckets:
+  - name: raw-data
+    encryption: true
+  - name: processed
+    encryption: true
+```
+
+Good (named map):
+```yaml
+buckets:
+  raw-data:
+    encryption: true
+  processed:
+    encryption: true
+```
+
+**2. Top-level extensibility**
+
+Module configs should allow new top-level schema elements for new resource types without breaking changes. The schema should be structured so adding a new resource category is additive — a new top-level key — rather than requiring changes to existing structures.
+
+**3. Multiple resources of the same type via named maps**
+
+When a module can deploy multiple instances of the same resource type (e.g., multiple buckets, multiple crawlers), the schema should use a named map at the top level for that resource type. This lets users define N resources with distinct names and configurations.
+
+**4. Strong type validation**
+
+Minimize use of `any`, `unknown`, `object` without properties, or `additionalProperties: true` without constraints. Every config property should have the tightest type possible so that schema validation catches misconfigurations before deployment. Prefer enums over free-form strings when the set of valid values is known.
+
+**5. Fast schema validation failure**
+
+Config errors should be caught at schema validation time (JSON Schema `required`, `enum`, `pattern`, `minLength`, `additionalProperties: false` where appropriate) rather than failing silently in construct code or at CloudFormation deployment time. If a property combination is invalid, express that constraint in the schema (`if`/`then`, `oneOf`, `dependencies`) rather than relying on runtime checks.
+
 ### Severity Classification for CI Agent
 
-- **HIGH:** Missing README, missing comprehensive sample config, required config property with no JSDoc (users can't configure without reading source), required property that should have a default
-- **MEDIUM:** README section missing or non-conforming, schema property not exercised in any sample config, inconsistent property naming, missing template variables (hardcoded account/region), sample config missing inline documentation comments
-- **LOW:** Minor documentation improvements, style issues in sample config comments, enum value not exercised (but covered by other configs), weak JSDoc that restates the property name
+- **HIGH:** Missing README, missing comprehensive sample config, required config property with no JSDoc (users can't configure without reading source), required property that should have a default, use of `any`/`unknown`/untyped `object` in a config-exposed interface where a specific type is feasible
+- **MEDIUM:** README section missing or non-conforming, schema property not exercised in any sample config, inconsistent property naming, missing template variables (hardcoded account/region), sample config missing inline documentation comments, array-with-name-property pattern where a named map would be more user-friendly, missing schema-level validation for constraints that are currently only enforced in code, `additionalProperties: true` on objects that have a known fixed set of keys
+- **LOW:** Minor documentation improvements, style issues in sample config comments, enum value not exercised (but covered by other configs), weak JSDoc that restates the property name, opportunities to tighten string types to enums or patterns
 
 ### Rules for CI Agent Findings
 
 - One finding per quality concern. Group related issues (e.g., multiple missing README sections) into one finding per category.
 - Every finding must include `file` pointing to the file with the issue.
-- For config usability and JSDoc findings, include the `property` name.
+- For config usability, schema design, and JSDoc findings, include the `property` name.
 - Only flag issues related to code that was CHANGED in this MR. Do not flag pre-existing quality gaps.
+- For schema design findings (`schema_design` category), flag new or modified interfaces that violate the Config Schema Usability Conventions (arrays-with-name instead of maps, untyped properties, missing schema-level validation). Pre-existing patterns in unchanged code are not flagged.
 - For L3 construct changes that affect the app module, check if the README's Deployed Resources and Security/Compliance sections still accurately reflect the construct's behavior.
 - Order findings: HIGH first, then MEDIUM, then LOW.
 - Use only ASCII characters in all string values.

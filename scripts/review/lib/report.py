@@ -1,61 +1,107 @@
 """
-JUnit XML report generation for review tools.
+Code Quality report generation for review tools.
+
+Generates GitLab Code Quality JSON reports from review agent findings.
+Findings appear inline on the MR diff in the Code Quality tab.
 """
 from __future__ import annotations
 
-import re
-from xml.etree.ElementTree import Element, SubElement, tostring
-from xml.dom.minidom import parseString
+import hashlib
+import json
+
+from review.lib.gitlab_threads import _parse_source_position
 
 
-def _sanitize_xml(text: str) -> str:
-    """Remove characters that are invalid in XML 1.0."""
-    return re.sub(
-        r'[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\U00010000-\U0010FFFF]',
-        '',
-        text,
-    )
+# Severity mapping from agent risk levels to GitLab Code Quality severity
+_SEVERITY_MAP = {
+    "BLOCKING": "blocker",
+    "HIGH": "critical",
+    "MEDIUM": "major",
+    "LOW": "minor",
+    "UNKNOWN": "info",
+}
 
 
-def to_junit_xml(
-    entries: list[dict],
-    suite_name: str = "Review",
-    failure_count: int | None = None,
-) -> str:
-    """Generate JUnit XML from a list of entry dicts.
+def to_codequality_json(entries: list[dict], agent_name: str = "review") -> str:
+    """Generate GitLab Code Quality report JSON from review findings.
 
     Each entry must have:
-      - name: testcase name (e.g., "module/config")
-      - file: file path
-      - status: "pass", "fail", or "info"
-      - message: failure message (only used when status is "fail")
-      - detail: failure detail text (only used when status is "fail")
-      - info: informational text (only used when status is "info")
-    """
-    if failure_count is None:
-        failure_count = sum(1 for e in entries if e.get("status") == "fail")
+      - package or module: package/module name
+      - findings: list of finding dicts, each with:
+        - file: source file path
+        - line: line number (0 means unknown)
+        - risk: severity level (BLOCKING, HIGH, MEDIUM, LOW)
+        - category: finding category
+        - detail: description of the issue
+        - source_hash: (optional) chunk content hash for stable fingerprint
 
-    testsuites = Element("testsuites")
-    testsuite = SubElement(testsuites, "testsuite", {
-        "name": suite_name,
-        "tests": str(len(entries)),
-        "failures": str(failure_count),
-    })
+    For baseline entries, findings have:
+      - source: "file:Lline" format
+      - resource: affected resource
+      - change: description
+      - risk: severity
+      - source_hash: chunk hash
+
+    Returns a JSON string in GitLab Code Quality format.
+    """
+    issues: list[dict] = []
 
     for entry in entries:
-        testcase = SubElement(testsuite, "testcase", {
-            "name": entry["name"],
-            "classname": suite_name.lower().replace(" ", "-"),
-            "file": entry.get("file", ""),
-        })
+        findings = entry.get("findings", [])
 
-        if entry.get("status") == "fail":
-            failure = SubElement(testcase, "failure", {
-                "message": entry.get("message", ""),
+        for finding in findings:
+            # Determine file and line
+            file_path = finding.get("file", "")
+            line = finding.get("line", 0)
+
+            # Baseline findings use "source" field instead of file/line
+            if not file_path and finding.get("source"):
+                source = finding["source"]
+                parsed = _parse_source_position(source)
+                if parsed:
+                    file_path, line = parsed
+                elif source != "Unknown - Please Investigate":
+                    file_path = source
+
+            if not file_path:
+                continue  # Can't create a code quality issue without a file
+
+            # Determine description
+            detail = finding.get("detail", finding.get("change", ""))
+            category = finding.get("category", "general")
+            resource = finding.get("resource", "")
+            if resource and not detail.startswith(resource):
+                detail = f"{resource}: {detail}"
+
+            # Prefix with agent name for identification in the Code Quality widget
+            description = f"[{agent_name}] {detail}"
+
+            # Severity
+            risk = finding.get("risk", "UNKNOWN").upper()
+            severity = _SEVERITY_MAP.get(risk, "info")
+
+            # Fingerprint — stable across runs using source_hash or content
+            source_hash = finding.get("source_hash", "")
+            if source_hash:
+                fingerprint = hashlib.md5(
+                    f"{file_path}:{source_hash}:{category}".encode()
+                ).hexdigest()
+            else:
+                fingerprint = hashlib.md5(
+                    f"{file_path}:{line}:{category}:{detail[:100]}".encode()
+                ).hexdigest()
+
+            issues.append({
+                "description": description,
+                "check_name": f"{agent_name}/{category}",
+                "fingerprint": fingerprint,
+                "severity": severity,
+                "location": {
+                    "path": file_path,
+                    "lines": {
+                        "begin": max(line, 1),  # GitLab requires >= 1
+                    },
+                },
             })
-            failure.text = _sanitize_xml(entry.get("detail", ""))
-        elif entry.get("status") == "info":
-            SubElement(testcase, "system-out").text = entry.get("info", "")
 
-    raw = tostring(testsuites, encoding="unicode")
-    return parseString(raw).toprettyxml(indent="  ", encoding=None)
+    return json.dumps(issues, indent=2)

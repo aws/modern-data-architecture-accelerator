@@ -41,13 +41,14 @@ from review.lib.gitlab_threads import (
     compute_hash,
 )
 from review.lib.thread_lifecycle import (
-    _now,
     _steering_link,
+    _action_context,
     post_or_update_summary,
     post_detail_threads,
     resolve_orphaned_threads,
     check_unresolved_and_exit,
     UnresolvedThreadsError,
+    _format_thread_footer,
 )
 
 SUMMARY_MARKER = "<!-- module-quality-summary -->"
@@ -85,8 +86,6 @@ def format_summary_body(entries: list[dict]) -> str:
         "_Reviews README documentation, sample config coverage, config schema usability, "
         "and JSDoc quality in app modules. "
         f"[Steering file]({_steering_link('module-quality.md')})_",
-        "",
-        f"_Last updated: {_now()}_",
         "",
         f"**Modules reviewed:** {len(entries)}",
         "",
@@ -147,7 +146,7 @@ def format_module_thread(
         "",
         f"**Module:** `{pkg_name}`",
         "",
-        f"_Last observed: {_now()}_",
+        f"_{_action_context()}_" if _action_context() else "",
         "",
     ]
 
@@ -164,12 +163,13 @@ def format_module_thread(
         "readme_gap": "README Gaps",
         "schema_coverage": "Schema Coverage",
         "config_usability": "Config Usability",
+        "schema_design": "Schema Design",
         "sample_config": "Sample Config Issues",
         "jsdoc": "JSDoc Quality",
         "other": "Other",
     }
 
-    for cat_key in ["readme_gap", "config_usability", "schema_coverage", "sample_config", "jsdoc", "other"]:
+    for cat_key in ["readme_gap", "config_usability", "schema_design", "schema_coverage", "sample_config", "jsdoc", "other"]:
         findings = categories.get(cat_key, [])
         if not findings:
             continue
@@ -195,8 +195,7 @@ def format_module_thread(
 
         lines.append("")
 
-    lines.append("_Resolve this thread to acknowledge the quality concern. "
-                 "Then rerun the `feature_merge_module_quality_review` job to pass the pipeline._")
+    lines.append(_format_thread_footer())
 
     return "\n".join(lines)
 
@@ -263,21 +262,22 @@ def main():
     )
 
     entries_with_findings = [e for e in entries if e.get("findings")]
-    if not entries_with_findings:
-        print("  No quality concerns to post threads for.")
-        print("Done.")
-        return
 
-    # Build groups keyed by package name
+    # Build groups keyed by package name (empty if no findings)
     groups = {e.get("package_name", "unknown"): e for e in entries_with_findings}
 
-    # Post detail threads
-    processed_keys = post_detail_threads(
-        project_id, mr_iid, token, discussions, groups,
-        PKG_PATTERN, format_module_thread, _compute_structural_hash, _get_position,
-    )
+    # Post detail threads (skipped if groups is empty)
+    processed_keys: set[str] = set()
+    if groups:
+        processed_keys = post_detail_threads(
+            project_id, mr_iid, token, discussions, groups,
+            PKG_PATTERN, format_module_thread, _compute_structural_hash, _get_position,
+        )
+    else:
+        print("  No quality concerns to post threads for.")
 
-    # Re-fetch after mutations, resolve orphans
+    # Re-fetch after mutations, resolve orphans (runs even with no findings
+    # so previously-opened threads get auto-resolved when concerns are fixed)
     discussions = get_mr_discussions(project_id, mr_iid, token)
     resolve_orphaned_threads(project_id, mr_iid, token, discussions, PKG_PATTERN, processed_keys)
 

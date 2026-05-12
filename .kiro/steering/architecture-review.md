@@ -81,9 +81,34 @@ outside the JSON. The file must contain ONLY valid JSON.
 
 ### Severity Classification for CI Agent
 
-- **HIGH:** Construct logic in app class, reverse dependency (L2 importing L3), construct IDs derived from user config values, undeclared dependency used in production code
-- **MEDIUM:** L2 construct only used by one module, L3 reimplementing L2 compliance controls, missing base class usage, `devDependency` used in `lib/` code, inconsistent `@aws-mdaa/*` versions
-- **LOW:** Minor separation of concerns suggestions, reusability improvements
+- **HIGH:** Construct logic in app class (code that creates AWS resources or implements business logic in an app module instead of the L3 construct), reverse dependency (L2 importing L3, L3 importing app), construct IDs derived from user config values (causes logical ID instability), undeclared dependency used in production code
+- **MEDIUM:** L2 construct only used by one module (may belong in L3), L3 reimplementing compliance controls that an existing L2 already provides, missing base class usage (`MdaaL3Construct`, `MdaaCdkApp`), `devDependency` used in `lib/` code, inconsistent `@aws-mdaa/*` versions across the monorepo
+- **LOW:** Reusability improvements (extracting shared logic into utilities), minor layering suggestions
+
+### Category Definitions
+
+Each category has a strict scope. Do NOT stretch categories to cover concerns handled by other agents.
+
+| Category | What it covers | What it does NOT cover |
+|----------|---------------|----------------------|
+| `layer_violation` | Code in the wrong layer: construct logic in app class, config parsing in L3, business logic in L2 | Missing JSDoc, missing documentation, config schema design |
+| `dependency_direction` | Import direction violations: L2→L3, L3→app, circular dependencies | Missing test imports, test file organization |
+| `construct_id_stability` | Construct IDs derived from user config values that would change logical IDs on config changes | Logical ID changes from refactoring (that's baseline review) |
+| `separation_of_concerns` | Mixed responsibilities within a single file/class: a construct doing both resource creation AND config parsing, or an app class containing resource creation logic | Missing documentation, JSDoc quality, config usability |
+| `reusability` | L2 constructs used by only one module, duplicated compliance logic across L3 constructs | Sample config coverage, README quality |
+| `dependency_declaration` | Imports in `lib/` without corresponding `dependencies` entry in package.json | Test dependencies, devDependency organization |
+| `version_consistency` | `@aws-mdaa/*` packages at different versions within the monorepo | External dependency version choices |
+
+### DO NOT flag (handled by other agents)
+
+- **Missing JSDoc or documentation** → Module Quality agent
+- **Config schema design** (named maps, type safety, validation) → Module Quality agent
+- **Sample config coverage or inline comments** → Module Quality agent
+- **README structure or content** → Module Quality agent
+- **Missing tests or test coverage** → Test Standards agent
+- **Encryption, IAM policies, security controls** → Compliance agent
+- **CDK Nag suppression quality** → Compliance agent
+- **Infrastructure diff risks** → Baseline Review agent
 
 ### Rules for CI Agent Findings
 
@@ -92,3 +117,21 @@ outside the JSON. The file must contain ONLY valid JSON.
 - Only flag issues related to code that was CHANGED in this MR.
 - Order findings: HIGH first, then MEDIUM, then LOW.
 - Use only ASCII characters in all string values.
+
+### Line Number Anchoring (CRITICAL for stability)
+
+Line numbers must be deterministic across runs. Incorrect line numbers cause duplicate review threads.
+
+**Core rule: always anchor to the first line in the new file immediately after the diff hunk that contains the issue.**
+
+This is the first context line (no `+` or `-` prefix) that follows the last changed line in the hunk. It always exists in the new file and is deterministic regardless of whether the change is an addition, deletion, or modification.
+
+To determine the new-file line number:
+1. Read the hunk header `@@ -old_start,old_count +new_start,new_count @@` — the `+new_start` is the new-file line number of the first line in the hunk.
+2. Count forward through the hunk: context lines and `+` lines increment the new-file counter. `-` lines do NOT increment it.
+3. The first context line after the last `+` or `-` line is your anchor.
+
+**Rules:**
+- NEVER use old-file line numbers for deletions — those lines don't exist in the new file
+- NEVER guess or estimate — count from the hunk header
+- If you cannot find the exact line, use `0`

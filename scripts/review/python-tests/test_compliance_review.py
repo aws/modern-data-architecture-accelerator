@@ -2,20 +2,12 @@
 
 from __future__ import annotations
 
-import json
-import os
 import sys
 from pathlib import Path
-from unittest.mock import patch
-
-import pytest
 
 # Add scripts/ to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from review.compliance.compliance_review import (
-    build_junit_entries,
-)
 from review.compliance.post_compliance_threads import (
     SUMMARY_MARKER,
     SOURCE_PATTERN,
@@ -91,6 +83,55 @@ class TestBuildFindingGroups:
         entries = [{"package": "pkg-a", "findings": []}]
         groups = build_finding_groups(entries)
         assert len(groups) == 0
+
+    def test_groups_by_chunk_hash_when_available(self):
+        """Findings with source_hash use file:chunk_hash as key."""
+        entries = [
+            {
+                "package": "pkg-a",
+                "findings": [
+                    {"file": "lib/a.ts", "line": 10, "risk": "HIGH", "category": "iam_policy", "source_hash": "abc123"},
+                    {"file": "lib/a.ts", "line": 10, "risk": "MEDIUM", "category": "logging", "source_hash": "abc123"},
+                ],
+            }
+        ]
+        groups = build_finding_groups(entries)
+        assert "lib/a.ts:abc123" in groups
+        assert len(groups["lib/a.ts:abc123"]["findings"]) == 2
+        assert groups["lib/a.ts:abc123"]["risk_level"] == "HIGH"
+        assert groups["lib/a.ts:abc123"]["source_hash"] == "abc123"
+
+    def test_different_chunks_separate_groups(self):
+        """Findings in different chunks get separate groups."""
+        entries = [
+            {
+                "package": "pkg-a",
+                "findings": [
+                    {"file": "lib/a.ts", "line": 10, "risk": "HIGH", "category": "iam_policy", "source_hash": "aaa"},
+                    {"file": "lib/a.ts", "line": 50, "risk": "MEDIUM", "category": "encryption", "source_hash": "bbb"},
+                ],
+            }
+        ]
+        groups = build_finding_groups(entries)
+        assert "lib/a.ts:aaa" in groups
+        assert "lib/a.ts:bbb" in groups
+        assert len(groups) == 2
+
+    def test_fallback_without_source_hash(self):
+        """Findings without source_hash fall back to compute_line_anchor."""
+        entries = [
+            {
+                "package": "pkg-a",
+                "findings": [
+                    {"file": "lib/a.ts", "line": 10, "risk": "HIGH", "category": "iam_policy"},
+                ],
+            }
+        ]
+        groups = build_finding_groups(entries)
+        # Key will be whatever compute_line_anchor returns
+        assert len(groups) == 1
+        key = list(groups.keys())[0]
+        assert key.startswith("lib/a.ts")
 
 
 class TestFormatSummaryBody:
@@ -183,31 +224,3 @@ class TestFindSummaryNote:
         assert find_summary_note(notes) is None
 
 
-class TestBuildJunitEntries:
-    """Test JUnit entry generation."""
-
-    def test_fail_entry(self):
-        entries = [{
-            "package": "pkg-a",
-            "root": "packages/constructs/L2/s3-constructs",
-            "type": "L2",
-            "risk_level": "HIGH",
-            "risk_summary": "Missing encryption",
-            "findings": [{"risk": "HIGH", "category": "encryption"}],
-        }]
-        junit = build_junit_entries(entries)
-        assert len(junit) == 1
-        assert junit[0]["status"] == "fail"
-        assert "HIGH" in junit[0]["message"]
-
-    def test_info_entry_no_findings(self):
-        entries = [{
-            "package": "pkg-a",
-            "root": "packages/constructs/L2/s3-constructs",
-            "type": "L2",
-            "risk_level": "LOW",
-            "risk_summary": "All good",
-            "findings": [],
-        }]
-        junit = build_junit_entries(entries)
-        assert junit[0]["status"] == "info"

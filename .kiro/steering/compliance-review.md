@@ -35,6 +35,7 @@ The compliance philosophy and construct patterns are defined in CONTRIBUTING.md 
 
 ### Security Patterns
 - IAM policies use resource-scoped permissions, not `*`
+- Large inline IAM policies should be extracted into managed policies — small inline policies are acceptable, but extremely large inline policies (many actions or statements) are harder to maintain, reuse, and audit
 - KMS key policies follow the admin/user separation pattern
 - Security groups follow least-privilege ingress/egress rules
 - Cross-account access uses proper trust relationships
@@ -112,7 +113,7 @@ outside the JSON. The file must contain ONLY valid JSON.
 
 - **BLOCKING:** Missing encryption on stateful resources (S3, DynamoDB, RDS, OpenSearch, EFS), removed security controls that were previously enforced, new resource created without any compliance controls
 - **HIGH:** Vague nag suppression reasons (no AWS service authorization reference), broad IAM wildcards (`Resource: '*'`) without justification, removed IAM conditions (`aws:SourceArn`, `aws:SourceAccount`)
-- **MEDIUM:** Nag suppressions with specific but improvable reasons, IAM policies that could be tighter, security group rules that could be narrower
+- **MEDIUM:** Nag suppressions with specific but improvable reasons, IAM policies that could be tighter, security group rules that could be narrower, extremely large inline IAM policies that should be refactored into managed policies (small inline policies are acceptable but large ones with many actions/statements hurt maintainability and auditability)
 - **LOW:** Minor documentation gaps on suppressions, style issues in suppression reason formatting
 
 ### Rules for CI Agent Findings
@@ -129,43 +130,34 @@ outside the JSON. The file must contain ONLY valid JSON.
 
 Line numbers must be deterministic across runs. **Incorrect line numbers cause duplicate review threads and block the pipeline.** You MUST follow these rules exactly:
 
-**Step 1: Identify the problematic statement.** Find the specific TypeScript statement that IS the compliance issue.
+**Core rule: always anchor to the first line in the new file immediately after the diff hunk that contains the issue.**
 
-**Step 2: Report the line number of THAT statement's opening keyword.** Not a nearby line. Not a related line. THE line.
+This is the first context line (no `+` or `-` prefix) that follows the last changed line in the hunk. It always exists in the new file and is deterministic regardless of whether the change is an addition, deletion, or modification.
 
-| Finding type | The line MUST contain |
-|---|---|
-| Nag suppression | `NagSuppressions.addResourceSuppressions(` or `MdaaNagSuppressions.addCodeResourceSuppressions(` or `addNagSuppression` |
-| IAM policy | `new PolicyStatement({` (the line with `new PolicyStatement`) |
-| Missing encryption | `new Bucket({` or `new Queue({` or `new Table({` (the resource constructor) |
-| Security group | `.addIngressRule(` or `new SecurityGroup({` |
-| Resource policy | `.addToResourcePolicy(` |
+To determine the new-file line number:
+1. Read the hunk header `@@ -old_start,old_count +new_start,new_count @@` — the `+new_start` is the new-file line number of the first line in the hunk.
+2. Count forward through the hunk: context lines and `+` lines increment the new-file counter. `-` lines do NOT increment it.
+3. The first context line after the last `+` or `-` line is your anchor.
 
-**Example:** Given this code:
+**Example:** Given this code diff:
 ```
-181  // Intentionally broad IAM policy
-182  const adminStatement = new PolicyStatement({
-183    sid: 'AdminAccess',
-184    effect: Effect.ALLOW,
-185    actions: ['sqs:*'],
-186    resources: ['*'],
-187  });
-188  adminStatement.addAnyPrincipal();
-189  this.addToResourcePolicy(adminStatement);
-190
-191  MdaaNagSuppressions.addCodeResourceSuppressions(
-192    this,
-193    [{ id: 'AwsSolutions-SQS4', reason: 'Required for functionality' }],
-194    true,
-195  );
+@@ -180,16 +180,16 @@ export class MdaaSqsQueue extends Construct {
+     // Intentionally broad IAM policy
+     const adminStatement = new PolicyStatement({
+       sid: 'AdminAccess',
+       effect: Effect.ALLOW,
+-      actions: ['sqs:*'],
++      actions: ['sqs:SendMessage', 'sqs:ReceiveMessage'],
+       resources: ['*'],
+     });
 ```
 
-- IAM policy finding → `"line": 182` (the `new PolicyStatement({` line)
-- Nag suppression finding → `"line": 191` (the `MdaaNagSuppressions.addCodeResourceSuppressions(` line)
-
-**WRONG answers:** 180 (super call), 181 (comment), 188 (addAnyPrincipal), 189 (addToResourcePolicy), 193 (suppression object)
+First line after the hunk's changes: `resources: ['*'],` at new-file line 186.
+Correct: `"line": 186`
+Wrong: `"line": 182` (the `new PolicyStatement({` — not the first line after)
+Wrong: `"line": 185` (the `+` line itself — not a context line)
 
 **Rules:**
-- NEVER use the line of `super(`, a comment, a closing brace, or a method call on the result
-- NEVER estimate — count from the source file content provided
+- NEVER use old-file line numbers for deletions — those lines don't exist in the new file
+- NEVER guess or estimate — count from the hunk header
 - If you cannot find the exact line, use `0`

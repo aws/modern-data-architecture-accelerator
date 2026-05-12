@@ -66,6 +66,57 @@ def _steering_link(steering_file: str) -> str:
     return f".kiro/steering/{steering_file}"
 
 
+def _job_link() -> str:
+    """Build a markdown link to the current CI job for retry instructions.
+
+    Uses CI_JOB_URL and CI_JOB_NAME if available (GitLab CI).
+    Falls back to just the job name as plain text outside CI.
+    """
+    job_url = os.environ.get("CI_JOB_URL", "")
+    job_name = os.environ.get("CI_JOB_NAME", "")
+    if job_url and job_name:
+        return f"[`{job_name}`]({job_url})"
+    if job_name:
+        return f"`{job_name}`"
+    return ""
+
+
+def _action_context() -> str:
+    """Build a context string linking to the job and commit that triggered this action.
+
+    Returns markdown lines like:
+      "job: [`review`](url)\ncommit: [`abc1234` — Fix bug](url)"
+    or empty string outside CI. Uses markdown line breaks for separate lines.
+    """
+    job_url = os.environ.get("CI_JOB_URL", "")
+    job_name = os.environ.get("CI_JOB_NAME", "")
+    project_url = os.environ.get("CI_PROJECT_URL", "")
+    commit_sha = os.environ.get("CI_COMMIT_SHA", "")
+    commit_title = os.environ.get("CI_COMMIT_TITLE", "")
+
+    parts = []
+    if job_url and job_name:
+        parts.append(f"job: [`{job_name}`]({job_url})")
+    elif job_name:
+        parts.append(f"job: `{job_name}`")
+
+    if project_url and commit_sha:
+        short_sha = commit_sha[:7]
+        commit_url = f"{project_url}/-/commit/{commit_sha}"
+        label = f"`{short_sha}`"
+        if commit_title:
+            # Truncate long commit messages
+            title = commit_title[:60] + ("..." if len(commit_title) > 60 else "")
+            label = f"`{short_sha}` — {title}"
+        parts.append(f"commit: [{label}]({commit_url})")
+    elif commit_sha:
+        parts.append(f"commit: `{commit_sha[:7]}`")
+
+    if parts:
+        return "\\\n".join(parts)
+    return ""
+
+
 def compute_line_anchor(file_path: str, line_number: int) -> str:
     """Compute a stable anchor from the content of a specific line in a file.
 
@@ -224,10 +275,18 @@ def post_detail_threads(
     Uses source-hash (hash of actual reviewed files) to determine if the
     underlying code changed. If source files are unchanged, skips the thread
     regardless of structural hash differences (Kiro variance).
+
+    Groups are processed in decreasing order of severity so that the most
+    critical threads appear first in the MR discussion list.
     """
+    risk_rank = {"BLOCKING": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3, "UNKNOWN": 4}
+    sorted_items = sorted(
+        thread_groups.items(),
+        key=lambda kv: (risk_rank.get(kv[1].get("risk_level", "UNKNOWN"), 4), kv[0]),
+    )
     processed_keys: set[str] = set()
 
-    for key, group in thread_groups.items():
+    for key, group in sorted_items:
         processed_keys.add(key)
         content_hash = compute_structural_hash(key, group)
         current_source_hash = group.get("source_hash", "")
@@ -246,7 +305,22 @@ def post_detail_threads(
             create_discussion(project_id, mr_iid, token, body, position=position)
 
         elif existing_hash == content_hash:
-            print(f"  Thread for '{key}' unchanged, skipping")
+            # Hash matches — check if thread was auto-resolved by a previous run
+            # AND is currently resolved. If so, the finding reappeared and we should reopen.
+            discussion_id = existing["id"]
+            notes = existing.get("notes", [])
+            is_currently_resolved = all(
+                n.get("resolved", True) for n in notes if n.get("resolvable", False)
+            )
+            if is_currently_resolved and _was_auto_resolved(existing):
+                print(f"  Reopening thread for '{key}' (finding reappeared after auto-resolve)")
+                add_note_to_discussion(
+                    project_id, mr_iid, discussion_id, token,
+                    f"_Finding reappeared on re-run. Previous auto-resolve was premature. Thread reopened._ {_action_context()}",
+                )
+                resolve_discussion(project_id, mr_iid, discussion_id, token, resolved=False)
+            else:
+                print(f"  Thread for '{key}' unchanged, skipping")
 
         elif current_source_hash and existing_source_hash == current_source_hash:
             # Source files unchanged — Kiro variance, not a real change
@@ -266,6 +340,11 @@ def post_detail_threads(
                 edit_note(project_id, mr_iid, discussion_id, first_note_id, token, body)
             else:
                 add_note_to_discussion(project_id, mr_iid, discussion_id, token, body)
+            # Add a reply comment explaining why the thread was reopened, then unresolve
+            add_note_to_discussion(
+                project_id, mr_iid, discussion_id, token,
+                f"_Findings have changed since last review. Thread reopened for re-acknowledgment._ {_action_context()}",
+            )
             resolve_discussion(project_id, mr_iid, discussion_id, token, resolved=False)
 
     return processed_keys
@@ -312,7 +391,7 @@ def resolve_orphaned_threads(
             print(f"  Auto-resolving orphaned thread for '{orphan_key}'")
             add_note_to_discussion(
                 project_id, mr_iid, discussion["id"], token,
-                "_This finding was resolved by code changes. Thread auto-resolved._",
+                f"_This finding was resolved by code changes. Thread auto-resolved._ {_action_context()}",
             )
             resolve_discussion(project_id, mr_iid, discussion["id"], token, resolved=True)
 
@@ -323,6 +402,41 @@ def _discussion_url(mr_iid: str, note_id: str) -> str:
     if project_url and note_id:
         return f"{project_url}/-/merge_requests/{mr_iid}#note_{note_id}"
     return ""
+
+
+_AUTO_RESOLVE_MARKER = "Thread auto-resolved."
+
+
+def _format_thread_footer() -> str:
+    """Format the standard thread footer with contributor/reviewer instructions."""
+    job = _job_link()
+    footer_lines = [
+        "_Contributor: fix the issue, or reply explaining why a fix won't be made._",
+        "_Reviewer: resolve this thread once addressed._",
+    ]
+    if job:
+        footer_lines.append(f"_Rerun {job} to pass the pipeline._")
+    return "\\\n".join(footer_lines)
+
+
+def _was_auto_resolved(discussion: dict) -> bool:
+    """Check if a thread was auto-resolved (not human-resolved).
+
+    Looks for the auto-resolve marker in the thread's notes. If the last
+    note containing a resolution action is the bot's auto-resolve comment,
+    the thread was auto-resolved and should be reopened if the finding reappears.
+    """
+    notes = discussion.get("notes", [])
+    # Walk notes in reverse to find the most recent resolution-related comment
+    for note in reversed(notes):
+        body = note.get("body", "")
+        if _AUTO_RESOLVE_MARKER in body:
+            return True
+        # If we find a human comment (not the bot's auto-resolve), stop looking
+        if body and _AUTO_RESOLVE_MARKER not in body and "<!-- " not in body:
+            # This is likely a human comment — thread was human-resolved
+            return False
+    return False
 
 
 def check_unresolved_and_exit(

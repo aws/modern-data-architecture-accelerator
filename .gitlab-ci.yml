@@ -483,6 +483,7 @@ feature_merge_baseline_review:
     - feature_merge_build_test
   needs:
     - feature_merge_build_test
+    - feature_check_target
   cache:
     key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
@@ -505,7 +506,7 @@ feature_merge_baseline_review:
     paths:
       - baseline-review/report.json
     reports:
-      junit: baseline-review/junit-report.xml
+      codequality: baseline-review/codequality-report.json
     when: always
 
 # Auto-populate MR description with change summary and narrative
@@ -521,6 +522,7 @@ feature_merge_mr_summary:
     - feature_merge_base_image
   needs:
     - feature_merge_base_image
+    - feature_check_target
   allow_failure: false
   variables:
     GIT_DEPTH: '0'
@@ -546,6 +548,7 @@ feature_merge_compliance_review:
     - feature_merge_build_test
   needs:
     - feature_merge_build_test
+    - feature_check_target
   cache:
     key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
@@ -566,7 +569,7 @@ feature_merge_compliance_review:
     paths:
       - compliance-review/report.json
     reports:
-      junit: compliance-review/junit-report.xml
+      codequality: compliance-review/codequality-report.json
     when: always
 
 # Review test standards alignment across changed packages
@@ -582,6 +585,7 @@ feature_merge_test_standards_review:
     - feature_merge_build_test
   needs:
     - feature_merge_build_test
+    - feature_check_target
   cache:
     key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
@@ -602,7 +606,7 @@ feature_merge_test_standards_review:
     paths:
       - test-standards-review/report.json
     reports:
-      junit: test-standards-review/junit-report.xml
+      codequality: test-standards-review/codequality-report.json
     when: always
 
 # Review app module quality (README, sample configs, config schema, JSDoc)
@@ -618,6 +622,7 @@ feature_merge_module_quality_review:
     - feature_merge_build_test
   needs:
     - feature_merge_build_test
+    - feature_check_target
   cache:
     key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
@@ -638,7 +643,7 @@ feature_merge_module_quality_review:
     paths:
       - module-quality-review/report.json
     reports:
-      junit: module-quality-review/junit-report.xml
+      codequality: module-quality-review/codequality-report.json
     when: always
 
 # Review code architecture (construct hierarchy, dependency direction, separation of concerns)
@@ -654,6 +659,7 @@ feature_merge_architecture_review:
     - feature_merge_build_test
   needs:
     - feature_merge_build_test
+    - feature_check_target
   cache:
     key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
@@ -674,7 +680,7 @@ feature_merge_architecture_review:
     paths:
       - architecture-review/report.json
     reports:
-      junit: architecture-review/junit-report.xml
+      codequality: architecture-review/codequality-report.json
     when: always
 
 # Review repo-wide documentation quality (CHANGELOG, SCHEMA.md, cross-references)
@@ -690,6 +696,7 @@ feature_merge_doc_quality_review:
     - feature_merge_build_test
   needs:
     - feature_merge_build_test
+    - feature_check_target
   cache:
     key: feature-merge-build-$CI_COMMIT_REF_SLUG
     paths:
@@ -709,7 +716,7 @@ feature_merge_doc_quality_review:
     paths:
       - doc-quality-review/report.json
     reports:
-      junit: doc-quality-review/junit-report.xml
+      codequality: doc-quality-review/codequality-report.json
     when: always
 
 # Scan the target branch (main) to establish the SonarQube baseline so
@@ -1189,7 +1196,7 @@ prerelease_baseline_review:
     paths:
       - baseline-review/report.json
     reports:
-      junit: baseline-review/junit-report.xml
+      codequality: baseline-review/codequality-report.json
     when: always
 
 # Run SonarQube analysis

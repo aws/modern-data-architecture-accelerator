@@ -48,7 +48,7 @@ def collect_files(
         rel = f.relative_to(PROJECT_ROOT)
         content = f.read_text()
         section = f"--- {rel} ---\n{content}\n"
-        if total + len(section) > max_chars:
+        if max_chars > 0 and total + len(section) > max_chars:
             parts.append("\n... (truncated)")
             break
         parts.append(section)

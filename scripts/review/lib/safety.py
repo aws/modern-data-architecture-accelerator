@@ -8,6 +8,7 @@ and changed-only.py returns empty despite actual code changes existing.
 from __future__ import annotations
 
 import subprocess
+from typing import Collection
 
 from review.lib.nx_graph import PROJECT_ROOT, _target_ref
 
@@ -29,11 +30,21 @@ class FalseNegativeError(Exception):
         )
 
 
-def verify_no_false_negative(path_prefix: str, extensions: list[str]) -> None:
+def verify_no_false_negative(
+    path_prefix: str,
+    extensions: list[str],
+    excluded_roots: Collection[str] | None = None,
+) -> None:
     """Fail the job if git shows relevant changes but package detection returned empty.
 
     This catches silent failures where the nx project graph is unavailable (cache miss)
     and changed-only.py returns empty despite actual code changes existing.
+
+    Args:
+        path_prefix: Directory prefix to check for changes (e.g. "packages/apps/").
+        extensions: File extensions to consider (e.g. [".ts"]).
+        excluded_roots: Package roots that are intentionally excluded from review.
+            Files under these roots are not considered when checking for false negatives.
 
     Raises:
         FalseNegativeError: if relevant file changes exist but no packages were detected.
@@ -44,5 +55,13 @@ def verify_no_false_negative(path_prefix: str, extensions: list[str]) -> None:
     )
     changed = [f.strip() for f in result.stdout.strip().split("\n") if f.strip()]
     relevant = [f for f in changed if any(f.endswith(ext) for ext in extensions)]
+
+    # Filter out files that belong to intentionally excluded package roots
+    if excluded_roots:
+        relevant = [
+            f for f in relevant
+            if not any(f.startswith(root + "/") for root in excluded_roots)
+        ]
+
     if relevant:
         raise FalseNegativeError(path_prefix, extensions, relevant)

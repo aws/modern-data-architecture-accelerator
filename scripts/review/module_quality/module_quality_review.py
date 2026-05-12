@@ -5,11 +5,10 @@ Module Quality Review — reviews changed app modules for configuration, documen
 1. Detects app packages under packages/apps/ with changed files (excluding core/app, core/devops, dataops-shared-app)
 2. For each module, collects README, config schema, sample configs, config interfaces, L3 construct source, and code diff
 3. Pipes context through Kiro headless for module quality assessment
-4. Produces a JSON report and JUnit XML for GitLab MR test summary
+4. Produces a JSON report and Code Quality report for GitLab MR
 
 Outputs:
   module-quality-review/report.json       - Full structured report with findings
-  module-quality-review/junit-report.xml  - JUnit XML for GitLab MR test reports
 
 Environment:
   KIRO_API_KEY                            - Required for assessment
@@ -40,7 +39,7 @@ from review.lib.kiro_integration import (
     _parse_risk_json,
     _parse_risk_level,
 )
-from review.lib.report import to_junit_xml
+from review.lib.report import to_codequality_json
 from review.lib.thread_lifecycle import compute_source_hash
 from review.lib.safety import verify_no_false_negative, FalseNegativeError
 from review.lib.file_collector import collect_files
@@ -91,6 +90,23 @@ Code diff (lib/ changes in this MR):
 ```diff
 {code_diff}
 ```
+
+In addition to README and sample config coverage, review the config schema design for
+user-friendliness. Pay special attention to the Config Schema Usability Conventions in
+the steering file:
+- Named object maps vs arrays with name properties
+- Top-level extensibility for new resource types
+- Support for multiple resources of the same type via named maps
+- Strong typing (no any/unknown/untyped object where avoidable)
+- Schema-level validation vs runtime-only checks
+
+Use the `schema_design` category for these findings.
+
+DO NOT flag these concerns (they are handled by other agents):
+- Import direction violations, cross-app imports, dependency layering → Architecture agent
+- Missing encryption, IAM policy issues, security controls → Compliance agent
+- Missing tests, test coverage, baseline gaps → Test Standards agent
+- Circular dependencies, construct hierarchy violations → Architecture agent
 
 Write your assessment to the file {output_file} as a JSON object following the schema
 in the CI Agent Usage section of the steering file. No preamble, no markdown fences,
@@ -299,24 +315,6 @@ def build_report(packages: list[dict]) -> list[dict]:
     return entries
 
 
-def build_junit_entries(entries: list[dict]) -> list[dict]:
-    """Convert report entries to JUnit XML format."""
-    junit_entries = []
-    for entry in entries:
-        risk = entry["risk_level"]
-        has_findings = bool(entry["findings"])
-
-        junit_entries.append({
-            "name": f"{entry['package_name']} ({entry['type']})",
-            "file": entry["root"],
-            "status": "fail" if has_findings else "info",
-            "message": f"Quality Concern {risk}: {entry.get('risk_summary', '')[:200]}" if has_findings else "",
-            "detail": json.dumps(entry["findings"], indent=2) if has_findings else "",
-            "info": f"Risk: {risk}. {entry.get('risk_summary', '')}" if not has_findings else "",
-        })
-
-    return junit_entries
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Module quality review report generator")
@@ -335,7 +333,7 @@ def main() -> None:
 
     if not packages:
         try:
-            verify_no_false_negative("packages/apps/", [".ts"])
+            verify_no_false_negative("packages/apps/", [".ts"], excluded_roots=EXCLUDED_ROOTS)
         except FalseNegativeError as e:
             print("\n" + "=" * 70)
             print("REVIEW AGENT FAILURE: Silent pass-through detected")
@@ -347,8 +345,7 @@ def main() -> None:
         print("No app package changes detected.")
         report_path = output_dir / "report.json"
         report_path.write_text("[]")
-        junit_path = output_dir / "junit-report.xml"
-        junit_path.write_text(to_junit_xml([], suite_name="Module Quality Review"))
+        (output_dir / "codequality-report.json").write_text("[]")
         print("Empty reports written. Thread posting will confirm agent ran.")
         return
 
@@ -362,10 +359,11 @@ def main() -> None:
     report_path.write_text(json.dumps(entries, indent=2))
     print(f"\nReport written to {report_path}")
 
-    junit_entries = build_junit_entries(entries)
-    junit_path = output_dir / "junit-report.xml"
-    junit_path.write_text(to_junit_xml(junit_entries, suite_name="Module Quality Review"))
-    print(f"JUnit report written to {junit_path}")
+
+    # Code Quality report
+    cq_path = output_dir / "codequality-report.json"
+    cq_path.write_text(to_codequality_json(entries, agent_name="module-quality"))
+    print(f"Code Quality report written to {cq_path}")
 
     risk_counts = {}
     for e in entries:

@@ -5,11 +5,10 @@ Documentation Quality Review — reviews repo-wide documentation for completenes
 1. Detects changed files and checks for documentation gaps
 2. Collects CHANGELOG, SCHEMA.md status, starter kit configs, mkdocs.yml, and changed markdown
 3. Pipes context through a single Kiro invocation for documentation assessment
-4. Produces a JSON report and JUnit XML for GitLab MR test summary
+4. Produces a JSON report and Code Quality report for GitLab MR
 
 Outputs:
   doc-quality-review/report.json       - Full structured report with findings
-  doc-quality-review/junit-report.xml  - JUnit XML for GitLab MR test reports
 
 Environment:
   KIRO_API_KEY                         - Required for assessment
@@ -31,7 +30,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from review.lib.nx_graph import PROJECT_ROOT, _target_ref
 from review.lib.kiro_integration import run_kiro_assessment, KiroError, _parse_risk_json, _parse_risk_level
-from review.lib.report import to_junit_xml
+from review.lib.report import to_codequality_json
 
 
 KIRO_PROMPT = """\
@@ -152,17 +151,6 @@ def run_assessment(changed_files: list[str]) -> dict:
     }
 
 
-def build_junit_entries(result: dict) -> list[dict]:
-    has_findings = bool(result["findings"])
-    return [{
-        "name": "Documentation Quality",
-        "file": "CHANGELOG.md",
-        "status": "fail" if has_findings else "info",
-        "message": f"Documentation Gap {result['risk_level']}: {result.get('risk_summary', '')[:200]}" if has_findings else "",
-        "detail": json.dumps(result["findings"], indent=2) if has_findings else "",
-        "info": f"Risk: {result['risk_level']}. {result.get('risk_summary', '')}" if not has_findings else "",
-    }]
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Documentation quality review")
@@ -178,7 +166,7 @@ def main() -> None:
     if not changed_files:
         print("No file changes detected.")
         (output_dir / "report.json").write_text("[]")
-        (output_dir / "junit-report.xml").write_text(to_junit_xml([], suite_name="Documentation Quality Review"))
+        (output_dir / "codequality-report.json").write_text("[]")
         print("Empty reports written. Thread posting will confirm agent ran.")
         return
 
@@ -201,9 +189,10 @@ def main() -> None:
     (output_dir / "report.json").write_text(json.dumps(report, indent=2))
     print(f"Report written to {output_dir / 'report.json'}")
 
-    junit_entries = build_junit_entries(result)
-    (output_dir / "junit-report.xml").write_text(to_junit_xml(junit_entries, suite_name="Documentation Quality Review"))
-    print(f"JUnit report written to {output_dir / 'junit-report.xml'}")
+    # Code Quality report
+    cq_path = output_dir / "codequality-report.json"
+    cq_path.write_text(to_codequality_json([result], agent_name="doc-quality"))
+    print(f"Code Quality report written to {cq_path}")
 
     print(f"\nResult: {result['risk_level']} ({len(result['findings'])} findings)")
 

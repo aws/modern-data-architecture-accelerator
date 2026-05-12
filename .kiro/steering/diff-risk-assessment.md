@@ -226,34 +226,52 @@ For every resource change, trace it back to the specific source file and line th
 
 #### Line Anchoring (CRITICAL for thread stability)
 
-The `source` field in findings uses `file:Lline` format. Inconsistent line numbers cause duplicate threads. The line MUST be the opening statement of the construct or call that caused the resource change.
+The `source` field in findings uses `file:Lline` format. Inconsistent line numbers cause duplicate threads. The line number MUST always refer to a line that **exists in the new (head) version of the file**.
 
-| Code pattern | Anchor to the line containing |
-|---|---|
-| New resource construct | `new MdaaBucket(`, `new MdaaKmsKey(`, `new MdaaSqsQueue(`, etc. |
-| Tag addition | `Tags.of(` |
-| Policy addition | `new PolicyStatement({` or `.addToResourcePolicy(` |
-| Nag suppression | `NagSuppressions.addResourceSuppressions(` or `MdaaNagSuppressions.addCodeResourceSuppressions(` |
-| Config property change | The `readonly propertyName` line in the config interface |
-| Method call | The method name line (`.createBucket(`, `.grantRead(`, etc.) |
+**Core rule: always anchor to the first line in the new file immediately after the diff hunk.**
 
-**NEVER anchor to:**
-- A comment line (`//` or `/**`)
-- A `super(` call
-- A closing brace `}`
-- A blank line
-- A property within a constructor (use the constructor's opening line)
+This is deterministic regardless of whether the change is an addition, deletion, or modification. The "first line after" is the first context line (no `+` or `-` prefix) that follows the last changed line in the hunk. It always exists in the new file and is always the same line regardless of how you interpret the change.
 
-**Example:** Given this diff:
+To determine the new-file line number:
+1. Read the hunk header `@@ -old_start,old_count +new_start,new_count @@` — the `+new_start` is the new-file line number of the first line in the hunk.
+2. Count forward through the hunk: context lines and `+` lines increment the new-file counter. `-` lines do NOT increment it.
+3. The first context line after the last `+` or `-` line is your anchor.
+
+**Example 1 — Addition:**
 ```
-+  354  // Tag each bucket with its data lake zone for operational visibility
-+  355  Tags.of(bucket).add('datalake:zone', bucketDefinition.bucketZone);
+@@ -352,3 +352,5 @@ export class DatalakeBucket extends MdaaL3Construct {
+     this.bucket = bucket;
++    // Tag each bucket with its data lake zone for operational visibility
++    Tags.of(bucket).add('datalake:zone', bucketDefinition.bucketZone);
+     return bucket;
+   }
 ```
 
-Correct source: `lib/datalake-bucket-l3-construct.ts:L355` (the `Tags.of(` line)
-Wrong: `lib/datalake-bucket-l3-construct.ts:L354` (the comment)
+First line after the hunk's changes: `return bucket;` at new-file line 356.
+Correct source: `lib/datalake-bucket-l3-construct.ts:L356`
 
-If you cannot determine the exact line, use `"source": "Unknown - Please Investigate"`.
+**Example 2 — Deletion:**
+```
+@@ -190,8 +190,6 @@ export class DataZoneAuthorization extends Construct {
+     const bucket = new MdaaBucket(this, 'auth-bucket', {
+       naming: this.naming,
+       encryption: BucketEncryption.KMS,
+-      removalPolicy: RemovalPolicy.DELETE,
+-      autoDeleteObjects: true,
+     });
+```
+
+First line after the hunk's changes: `});` at new-file line 193.
+Correct source: `lib/authorization.ts:L193`
+Wrong: `lib/authorization.ts:L194` (old-file line number — doesn't exist in new file)
+Wrong: `lib/authorization.ts:L195` (old-file line number — doesn't exist in new file)
+Wrong: `lib/authorization.ts:L190` (the constructor opening — not the first line after)
+
+**Rules:**
+- NEVER use old-file line numbers for deletions — those lines don't exist in the new file
+- NEVER guess or estimate — count from the hunk header
+- Multiple baselines affected by the same code change must all report the exact same source line
+- If you cannot determine the exact line, use `"source": "Unknown - Please Investigate"`
 
 ### 5. Produce Assessment
 

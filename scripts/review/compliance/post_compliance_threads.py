@@ -44,14 +44,15 @@ from review.lib.gitlab_threads import (
     _mr_changes_link,
 )
 from review.lib.thread_lifecycle import (
-    _now,
     _steering_link,
+    _action_context,
     compute_line_anchor,
     post_or_update_summary,
     post_detail_threads,
     resolve_orphaned_threads,
     check_unresolved_and_exit,
     UnresolvedThreadsError,
+    _format_thread_footer,
 )
 
 SUMMARY_MARKER = "<!-- compliance-summary -->"
@@ -67,17 +68,17 @@ ICON_MAP = {
 
 
 def build_finding_groups(entries: list[dict]) -> dict[str, dict]:
-    """Group findings by stable line-content anchor across all packages.
+    """Group findings by stable chunk content hash across all packages.
 
-    Key is file:hash_of_line_content — stable across line number shifts
-    caused by unrelated code changes. Falls back to file:line if the file
-    can't be read.
+    Key is file:chunk_content_hash when source_hash is available (from pre-parsed
+    diff chunks). Falls back to file:line_content_hash via compute_line_anchor
+    for legacy findings without source_hash.
 
     Returns dict keyed by anchor string, each containing:
       - source: display string (file:line for human readability)
       - risk_level: highest risk among findings in the group
       - findings: list of (package_name, finding) tuples
-      - source_hash: hash of the source files for the package
+      - source_hash: per-chunk content hash (or package-level fallback)
     """
     risk_rank = {"BLOCKING": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3, "UNKNOWN": 1}
     groups: dict[str, dict] = {}
@@ -93,18 +94,28 @@ def build_finding_groups(entries: list[dict]) -> dict[str, dict]:
         for finding in findings:
             source_file = finding.get("file", "Unknown")
             source_line = finding.get("line", 0)
-            # Stable key based on line content hash
-            key = compute_line_anchor(source_file, source_line)
+            finding_source_hash = finding.get("source_hash", "")
+            finding_risk = finding.get("risk", "UNKNOWN").upper()
+
             # Display source includes line number for human readability
             display_source = f"{source_file}:{source_line}" if source_line else source_file
-            finding_risk = finding.get("risk", "UNKNOWN").upper()
+
+            # Use file:chunk_content_hash as stable key when available
+            if finding_source_hash:
+                key = f"{source_file}:{finding_source_hash}"
+            else:
+                # Fallback to line content hash for legacy findings
+                key = compute_line_anchor(source_file, source_line)
+
+            # Use per-chunk hash if available, fall back to package-level
+            effective_source_hash = finding_source_hash or pkg_source_hash
 
             if key not in groups:
                 groups[key] = {
                     "source": display_source,
                     "risk_level": finding_risk,
                     "findings": [],
-                    "source_hash": pkg_source_hash,
+                    "source_hash": effective_source_hash,
                 }
 
             current_rank = risk_rank.get(groups[key]["risk_level"], 1)
@@ -141,8 +152,6 @@ def format_summary_body(entries: list[dict]) -> str:
         "_Reviews encryption, IAM policies, CDK Nag suppressions, and security controls "
         "in L2/L3 constructs. "
         f"[Steering file]({_steering_link('compliance-review.md')})_",
-        "",
-        f"_Last updated: {_now()}_",
         "",
         f"**Packages reviewed:** {len(entries)}",
         "",
@@ -225,7 +234,9 @@ def format_finding_thread(source: str, group: dict, content_hash: str, is_update
     else:
         lines.append(f"**Source:** `{display_source}`")
     lines.append("")
-    lines.append(f"_Last observed: {_now()}_")
+    ctx = _action_context()
+    if ctx:
+        lines.append(f"_{ctx}_")
     lines.append("")
 
     if is_update:
@@ -253,8 +264,7 @@ def format_finding_thread(source: str, group: dict, content_hash: str, is_update
         lines.append(f"**Affected packages:** {', '.join(f'`{p}`' for p in affected_pkgs)}")
         lines.append("")
 
-    lines.append("_Resolve this thread to acknowledge the compliance finding. "
-                 "Then rerun the `feature_merge_compliance_review` job to pass the pipeline._")
+    lines.append(_format_thread_footer())
 
     return "\n".join(lines)
 
@@ -317,6 +327,18 @@ def main() -> None:
             lambda: format_summary_body([]),
         )
         print("Creating compliance summary thread...")
+        # Resolve any orphaned threads from previous runs
+        discussions = get_mr_discussions(project_id, mr_iid, token)
+        resolve_orphaned_threads(project_id, mr_iid, token, discussions, SOURCE_PATTERN, set())
+        try:
+            check_unresolved_and_exit(
+                project_id, mr_iid, token, SOURCE_PATTERN,
+                agent_name="compliance",
+                finding_type="Compliance Risk",
+                job_name="feature_merge_compliance_review",
+            )
+        except UnresolvedThreadsError:
+            sys.exit(1)
         print("Done.")
         return
 

@@ -5,11 +5,10 @@ Compliance Review — reviews changed L2/L3 constructs for security and complian
 1. Detects L2/L3 construct packages with changed lib/ files
 2. For each package, collects the code diff, full source, test files, and dependency tree
 3. Pipes context through Kiro headless for compliance assessment
-4. Produces a JSON report and JUnit XML for GitLab MR test summary
+4. Produces a JSON report and Code Quality report for GitLab MR
 
 Outputs:
   compliance-review/report.json       - Full structured report with findings
-  compliance-review/junit-report.xml  - JUnit XML for GitLab MR test reports
 
 Environment:
   KIRO_API_KEY                        - Required for compliance assessment
@@ -40,10 +39,11 @@ from review.lib.kiro_integration import (
     _parse_risk_json,
     _parse_risk_level,
 )
-from review.lib.report import to_junit_xml
+from review.lib.report import to_codequality_json
 from review.lib.thread_lifecycle import compute_source_hash
 from review.lib.safety import verify_no_false_negative, FalseNegativeError
 from review.lib.file_collector import collect_files
+from review.lib.diff_parser import parse_diff_chunks, format_chunks_for_prompt, attach_source_hashes
 
 
 KIRO_PROMPT = """\
@@ -55,23 +55,47 @@ compliance rules, categories, and the CI Agent Usage section for output format.
 Package: {package_name}
 Package type: {package_type}
 
-Code diff (changes in this MR):
-```diff
-{code_diff}
-```
+## Step 1: Review all code diff chunks
 
-Full source code (current state of lib/ directory):
-```
-{full_source}
-```
+Read the diff chunks from: {code_chunks_file}
+
+This file contains ALL code changes in this MR for this package. Review every chunk
+for compliance concerns: encryption, access controls, IAM policies, security groups,
+nag suppressions, and logging. Each chunk has a header with File, Anchor, and Hash
+that you MUST copy into findings.
+
+## Step 2: Check source context (on demand)
+
+If you need to understand the surrounding code for any chunk (e.g., to see what
+resource a policy is attached to, or what encryption settings exist on a construct),
+read the full source from: {full_source_file}
+
+You do NOT need to read the full source upfront. Only read it when a diff chunk
+raises a question that requires surrounding context to answer.
+
+## Step 3: Verify test coverage exists
 
 Test files (to verify compliance assertions exist):
 ```
 {test_source}
 ```
 
+Note: Do NOT report missing tests — that is handled by the Test Standards agent.
+Only use test files to understand whether a compliance control has assertions.
+
+## Context
+
 Dependency tree (downstream consumers of this package):
 {dependency_tree}
+
+## Output
+
+CRITICAL — Line number rules:
+- The `line` field in each finding MUST be copied from the Anchor value of the chunk
+  that contains the issue. For example, if the chunk header says "Anchor: L193", use 193.
+- Do NOT compute your own line numbers. Copy from the chunk header.
+- If the issue spans multiple chunks, use the anchor of the most relevant chunk.
+- If the issue cannot be attributed to a specific chunk, use 0.
 
 Write your assessment to the file {output_file} as a JSON object following the schema
 in the CI Agent Usage section of the steering file. No preamble, no markdown fences,
@@ -118,7 +142,7 @@ def get_changed_construct_packages() -> list[dict]:
     return packages
 
 
-def collect_code_diff(package_root: str, max_chars: int = 15000) -> str:
+def collect_code_diff(package_root: str) -> str:
     """Get the git diff for a package's lib/ directory."""
     result = subprocess.run(
         ["git", "diff", _target_ref(), "--", f"{package_root}/lib/"],
@@ -127,15 +151,13 @@ def collect_code_diff(package_root: str, max_chars: int = 15000) -> str:
     diff = result.stdout.strip()
     if not diff:
         return "(no lib/ changes detected)"
-    if len(diff) > max_chars:
-        diff = diff[:max_chars] + f"\n\n... (truncated, {len(diff)} total chars)"
     return diff
 
 
-def collect_full_source(package_root: str, max_chars: int = 20000) -> str:
-    """Read all .ts files in the package's lib/ directory."""
+def collect_full_source(package_root: str) -> str:
+    """Read all .ts files in the package's lib/ directory (no truncation — read on demand by Kiro)."""
     return collect_files(
-        PROJECT_ROOT / package_root / "lib", "**/*.ts", max_chars,
+        PROJECT_ROOT / package_root / "lib", "**/*.ts", max_chars=0,
         empty_message="(no .ts files in lib/)",
     )
 
@@ -173,25 +195,41 @@ def assess_package(pkg: dict) -> dict:
     print(f"  [start] {name} ({pkg_type})")
 
     code_diff = collect_code_diff(root)
+    code_chunks = parse_diff_chunks(code_diff)
     full_source = collect_full_source(root)
     test_source = collect_test_source(root)
     dep_tree = get_dependency_tree(name)
 
-    prompt = KIRO_PROMPT.format(
-        package_name=name,
-        package_type=pkg_type,
-        code_diff=code_diff,
-        full_source=full_source,
-        test_source=test_source,
-        dependency_tree=dep_tree,
-        output_file="{output_file}",
-    )
+    # Write large content to temp files for Kiro to read incrementally
+    from review.lib.temp_files import temp_review_files
 
-    assessment = run_kiro_assessment(prompt, validate_json=True)
+    safe_name = name.replace("/", "_").replace("@", "")
+    chunks_text = format_chunks_for_prompt(code_chunks)
+
+    with temp_review_files(
+        {"chunks": chunks_text, "source": full_source},
+        prefix=f"{safe_name}-",
+        directory=str(PROJECT_ROOT),
+    ) as paths:
+        prompt = KIRO_PROMPT.format(
+            package_name=name,
+            package_type=pkg_type,
+            code_chunks_file=paths["chunks"],
+            full_source_file=paths["source"],
+            test_source=test_source,
+            dependency_tree=dep_tree,
+            output_file="{output_file}",
+        )
+
+        assessment = run_kiro_assessment(prompt, validate_json=True)
+
     parsed = _parse_risk_json(assessment)
     findings = parsed.get("findings", []) if parsed else []
     summary = parsed.get("summary", "") if parsed else ""
     risk_level = _parse_risk_level(assessment)
+
+    # Attach chunk content hashes to findings for per-chunk source tracking
+    attach_source_hashes(findings, code_chunks)
 
     print(f"  [done]  {name} — {risk_level} ({len(findings)} findings)")
 
@@ -239,31 +277,6 @@ def build_report(packages: list[dict]) -> list[dict]:
     return entries
 
 
-def build_junit_entries(entries: list[dict]) -> list[dict]:
-    """Convert report entries to JUnit XML format."""
-    junit_entries = []
-    for entry in entries:
-        risk = entry["risk_level"]
-        has_findings = bool(entry["findings"])
-
-        if risk == "LOW" and not has_findings:
-            status = "info"
-        elif has_findings:
-            status = "fail"
-        else:
-            status = "info"
-
-        junit_entries.append({
-            "name": f"{entry['package']} ({entry['type']})",
-            "file": entry["root"],
-            "status": status,
-            "message": f"Compliance {risk}: {entry.get('risk_summary', '')[:200]}" if status == "fail" else "",
-            "detail": json.dumps(entry["findings"], indent=2) if status == "fail" else "",
-            "info": f"Risk: {risk}. {entry.get('risk_summary', '')}" if status == "info" else "",
-        })
-
-    return junit_entries
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Compliance review report generator")
@@ -296,8 +309,7 @@ def main() -> None:
         print("No L2/L3 construct changes detected.")
         report_path = output_dir / "report.json"
         report_path.write_text("[]")
-        junit_path = output_dir / "junit-report.xml"
-        junit_path.write_text(to_junit_xml([], suite_name="Compliance Review"))
+        (output_dir / "codequality-report.json").write_text("[]")
         print("Empty reports written. Thread posting will confirm agent ran.")
         return
 
@@ -313,11 +325,11 @@ def main() -> None:
     report_path.write_text(json.dumps(entries, indent=2))
     print(f"\nReport written to {report_path}")
 
-    # Write JUnit XML
-    junit_entries = build_junit_entries(entries)
-    junit_path = output_dir / "junit-report.xml"
-    junit_path.write_text(to_junit_xml(junit_entries, suite_name="Compliance Review"))
-    print(f"JUnit report written to {junit_path}")
+
+    # Code Quality report
+    cq_path = output_dir / "codequality-report.json"
+    cq_path.write_text(to_codequality_json(entries, agent_name="compliance"))
+    print(f"Code Quality report written to {cq_path}")
 
     # Summary
     risk_counts = {}

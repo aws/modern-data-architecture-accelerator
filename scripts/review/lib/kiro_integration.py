@@ -37,6 +37,24 @@ class KiroTimeoutError(KiroError):
     pass
 
 
+def load_preamble() -> str:
+    """Load the shared review agent preamble from the steering file.
+
+    Reads .kiro/steering/review-agent-preamble.md, strips YAML front matter,
+    and returns the content with a trailing newline pair. Returns empty string
+    if the file doesn't exist.
+    """
+    preamble_path = PROJECT_ROOT / ".kiro" / "steering" / "review-agent-preamble.md"
+    if not preamble_path.is_file():
+        return ""
+    raw = preamble_path.read_text()
+    parts = raw.split("---", 2)
+    if len(parts) >= 3:
+        # Content after second --- (skip YAML front matter)
+        return parts[2].strip() + "\n\n"
+    return raw.strip() + "\n\n"
+
+
 def run_kiro_assessment(prompt: str, validate_json: bool = False) -> str:
     """Pipe a prompt through Kiro headless and return the assessment.
 
@@ -74,13 +92,27 @@ def run_kiro_assessment(prompt: str, validate_json: bool = False) -> str:
 
         formatted_prompt = prompt.replace("{output_file}", output_path)
 
+        # Prepend shared review agent preamble from steering file.
+        preamble = load_preamble()
+        formatted_prompt = preamble + formatted_prompt
+
+        # Write prompt to a temp file to avoid OS argument length limits.
+        # Large prompts (many diff chunks, full source) can exceed the ~2MB
+        # argv limit when passed as a command-line argument.
+        prompt_file = tempfile.NamedTemporaryFile(
+            mode="w", suffix=".md", delete=False, dir=str(PROJECT_ROOT)
+        )
+        prompt_file.write(formatted_prompt)
+        prompt_file.close()
+        prompt_path = prompt_file.name
+
         try:
             result = subprocess.run(
                 [
                     "kiro-cli", "chat",
                     "--no-interactive",
-                    "--trust-tools=write",
-                    formatted_prompt,
+                    "--trust-tools=read,write",
+                    f"Read and follow the instructions in {prompt_path}",
                 ],
                 capture_output=True,
                 text=True,
@@ -130,6 +162,8 @@ def run_kiro_assessment(prompt: str, validate_json: bool = False) -> str:
         finally:
             if os.path.isfile(output_path):
                 os.unlink(output_path)
+            if os.path.isfile(prompt_path):
+                os.unlink(prompt_path)
 
     # If we got output but it wasn't valid JSON, return it anyway
     if last_output:

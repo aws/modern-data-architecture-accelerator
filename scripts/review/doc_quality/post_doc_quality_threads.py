@@ -27,13 +27,14 @@ from review.lib.gitlab_threads import (
     get_mr_discussions, compute_hash, _build_diff_position,
 )
 from review.lib.thread_lifecycle import (
-    _now,
     _steering_link,
+    _action_context,
     post_or_update_summary,
     post_detail_threads,
     resolve_orphaned_threads,
     check_unresolved_and_exit,
     UnresolvedThreadsError,
+    _format_thread_footer,
 )
 
 SUMMARY_MARKER = "<!-- docs-quality-summary -->"
@@ -67,11 +68,11 @@ def format_summary_body(entries: list[dict]) -> str:
             risk_counts[r] = risk_counts.get(r, 0) + 1
             total += 1
     breakdown = [f"{c} {l}" for l in ["HIGH", "MEDIUM", "LOW"] if (c := risk_counts.get(l, 0))]
-    lines = [SUMMARY_MARKER, "", "## Documentation Quality Review Summary", "",
+    lines = [SUMMARY_MARKER, "", "## Repo Documentation Quality Review Summary", "",
              "_Reviews CHANGELOG updates, SCHEMA.md regeneration, starter kit docs, "
              "MkDocs nav, and cross-document links. "
+             "Does not review per-module documentation (covered by Module Quality agent). "
              f"[Steering file]({_steering_link('documentation-review.md')})_", "",
-             f"_Last updated: {_now()}_", "",
              f"**Total findings:** {total}", ""]
     if breakdown:
         lines.append(f"**Findings:** {', '.join(breakdown)}")
@@ -86,12 +87,13 @@ def format_summary_body(entries: list[dict]) -> str:
 def format_file_thread(file_path: str, group: dict, content_hash: str, is_update: bool = False) -> str:
     risk_level = group["risk_level"]
     icon = ICON_MAP.get(risk_level, "\u2753")
+    ctx = _action_context()
     lines = [
         f"<!-- docs-quality-file:{file_path} -->",
         f"<!-- docs-quality-hash:{content_hash} -->",
         "", f"## {icon} Documentation Review \u2014 Documentation Gap: {risk_level}",
         "", f"**File:** `{file_path}`", "",
-        f"_Last observed: {_now()}_", "",
+        f"_{ctx}_" if ctx else "", "",
     ]
     if is_update:
         lines.append("_Findings have changed since last review. Please re-acknowledge._")
@@ -102,8 +104,7 @@ def format_file_thread(file_path: str, group: dict, content_hash: str, is_update
         detail = finding.get("detail", "")
         lines.append(f"- **{risk}** [{cat}]: {detail}")
     lines.append("")
-    lines.append("_Resolve this thread to acknowledge the documentation gap. "
-                 "Then rerun the `feature_merge_doc_quality_review` job to pass the pipeline._")
+    lines.append(_format_thread_footer())
     return "\n".join(lines)
 
 
@@ -154,17 +155,18 @@ def main():
 
     # Build and post detail threads
     groups = build_file_groups(entries)
-    if not groups:
+
+    processed_keys: set[str] = set()
+    if groups:
+        processed_keys = post_detail_threads(
+            project_id, mr_iid, token, discussions, groups,
+            FILE_PATTERN, format_file_thread, _compute_hash, _get_position,
+        )
+    else:
         print("  No documentation findings to post.")
-        print("Done.")
-        return
 
-    processed_keys = post_detail_threads(
-        project_id, mr_iid, token, discussions, groups,
-        FILE_PATTERN, format_file_thread, _compute_hash, _get_position,
-    )
-
-    # Re-fetch after mutations, resolve orphans
+    # Re-fetch after mutations, resolve orphans (runs even with no findings
+    # so previously-opened threads get auto-resolved when gaps are fixed)
     discussions = get_mr_discussions(project_id, mr_iid, token)
     resolve_orphaned_threads(project_id, mr_iid, token, discussions, FILE_PATTERN, processed_keys)
 

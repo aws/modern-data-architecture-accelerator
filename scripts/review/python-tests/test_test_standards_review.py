@@ -15,7 +15,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from review.test_standards.test_standards_review import (
     classify_package,
-    build_junit_entries,
 )
 from review.test_standards.post_test_standards_threads import (
     SUMMARY_MARKER,
@@ -164,23 +163,3 @@ class TestFindSummaryNote:
         assert find_summary_note(notes) is None
 
 
-class TestBuildJunitEntries:
-    """Test JUnit entry generation."""
-
-    def test_fail_entry(self):
-        entries = [{
-            "package": "pkg-a", "root": "packages/constructs/L2/sqs-constructs",
-            "type": "L2", "risk_level": "HIGH", "risk_summary": "Missing test",
-            "findings": [{"risk": "HIGH", "category": "missing_test"}],
-        }]
-        junit = build_junit_entries(entries)
-        assert junit[0]["status"] == "fail"
-
-    def test_info_entry(self):
-        entries = [{
-            "package": "pkg-a", "root": "packages/constructs/L2/sqs-constructs",
-            "type": "L2", "risk_level": "LOW", "risk_summary": "All good",
-            "findings": [],
-        }]
-        junit = build_junit_entries(entries)
-        assert junit[0]["status"] == "info"

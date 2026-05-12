@@ -180,8 +180,13 @@ def _parse_source_position(source: str) -> tuple[str, int] | None:
 def _build_diff_position(file_path: str, line: int) -> dict | None:
     """Build a GitLab diff position object for an inline thread.
 
-    Parses the git diff to determine whether the target line is an addition
-    (new_line) or deletion (old_line) in the MR diff.
+    Parses the git diff to determine whether the target line is:
+    - An addition (+): set new_line only
+    - A deletion (-): set old_line only
+    - A context line (unchanged): set both old_line and new_line
+
+    GitLab requires both old_line and new_line for context lines to position
+    the thread correctly on the diff view.
     """
     base_sha = os.environ.get("CI_MERGE_REQUEST_DIFF_BASE_SHA")
     head_sha = os.environ.get("CI_COMMIT_SHA")
@@ -190,19 +195,18 @@ def _build_diff_position(file_path: str, line: int) -> dict | None:
     if not base_sha or not head_sha:
         return None
 
-    # Parse the diff to find whether this line is added or deleted
-    use_old_line = False
+    line_type = None  # "added", "deleted", "context", or None (not found)
+    old_line_at_target = 0
+
     try:
         result = subprocess.run(
             ["git", "diff", f"{base_sha}...{head_sha}", "--", file_path],
             capture_output=True, text=True, timeout=10,
         )
         if result.returncode == 0:
-            # Track old/new line numbers through diff hunks
             old_line_num = 0
             new_line_num = 0
             for diff_line in result.stdout.split("\n"):
-                # Parse hunk header: @@ -old_start,old_count +new_start,new_count @@
                 if diff_line.startswith("@@"):
                     hunk = re.match(r'^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@', diff_line)
                     if hunk:
@@ -211,18 +215,26 @@ def _build_diff_position(file_path: str, line: int) -> dict | None:
                 elif diff_line.startswith("-") and not diff_line.startswith("---"):
                     old_line_num += 1
                     if old_line_num == line:
-                        use_old_line = True
+                        line_type = "deleted"
                         break
                 elif diff_line.startswith("+") and not diff_line.startswith("+++"):
                     new_line_num += 1
                     if new_line_num == line:
-                        use_old_line = False
+                        line_type = "added"
                         break
                 elif not diff_line.startswith("\\"):
                     old_line_num += 1
                     new_line_num += 1
+                    if new_line_num == line:
+                        line_type = "context"
+                        old_line_at_target = old_line_num
+                        break
     except Exception as e:
         print(f"  Warning: diff position parsing failed for {file_path}:{line}: {e}", file=sys.stderr)
+
+    # If line wasn't found in any hunk, we can't position it inline
+    if line_type is None:
+        return None
 
     position = {
         "base_sha": base_sha,
@@ -233,9 +245,13 @@ def _build_diff_position(file_path: str, line: int) -> dict | None:
         "old_path": file_path,
     }
 
-    if use_old_line:
+    if line_type == "deleted":
         position["old_line"] = line
+    elif line_type == "added":
+        position["new_line"] = line
     else:
+        # Context line: GitLab requires both old and new line numbers
+        position["old_line"] = old_line_at_target
         position["new_line"] = line
 
     return position

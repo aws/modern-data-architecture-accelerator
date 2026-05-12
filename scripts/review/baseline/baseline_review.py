@@ -8,12 +8,11 @@ Baseline Review — detects baseline diffs, assesses risk via Kiro, and produces
 4. Pipes the CDK diff + code changes through Kiro headless for risk assessment
    using the diff-risk-assessment steering file
 5. Verifies every app package has a comprehensive baseline diff test
-6. Produces a JUnit XML report for GitLab MR test summary and a JSON report for
-   downstream CI consumption
+6. Produces a JSON report and Code Quality report for GitLab MR
 
 Outputs:
-  baseline-review/report.json       - Full structured report with CDK diff and risk assessment
-  baseline-review/junit-report.xml  - JUnit XML for GitLab MR test reports
+  baseline-review/report.json              - Full structured report with CDK diff and risk assessment
+  baseline-review/codequality-report.json  - GitLab Code Quality report
 
 Environment:
   KIRO_API_KEY                      - Required for risk assessment (Kiro headless auth)
@@ -38,13 +37,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from review.lib.nx_graph import PROJECT_ROOT, _get_transitive_deps, _target_ref
-from review.lib.report import to_junit_xml
+from review.lib.report import to_codequality_json
 from review.lib.kiro_integration import (
     run_kiro_assessment,
     _parse_risk_json,
     _parse_risk_level,
 )
 from review.lib.thread_lifecycle import compute_source_hash
+from review.lib.diff_parser import parse_diff_chunks, format_chunks_for_prompt
 
 DIFF_HELPER = PROJECT_ROOT / "scripts" / "test" / "baseline-diff-helper.mjs"
 
@@ -68,15 +68,27 @@ in the module's diff test are intentionally stripped from baselines. If a resour
 from the baseline and it matches a known ignore pattern, that removal is LOW — it means the
 resource was excluded from baseline tracking, not deleted from the deployed infrastructure.
 
-CDK Diff:
-```
-{cdk_diff}
-```
+## Step 1: Read the CDK diff
 
-Source changes (code and sample config changes that caused the infrastructure diff):
-```diff
-{code_diff}
-```
+Read the CDK diff from: {cdk_diff_file}
+
+This shows what infrastructure resources changed. Identify each resource change and its type
+(addition, deletion, property update, logical ID rename).
+
+## Step 2: Review all code diff chunks
+
+Read the code diff chunks from: {code_chunks_file}
+
+This file contains ALL code changes across this module and its dependencies that could have
+caused the infrastructure diff. Review every chunk to attribute resource changes to their
+source. Each chunk has a header with File, Anchor, and Hash — copy these into findings.
+
+## Step 3: Attribute and assess
+
+For each resource change in the CDK diff, determine:
+1. Which code chunk caused it
+2. The risk level based on the steering file rules
+3. The source attribution (copied from the chunk header)
 
 Ignore patterns configured for this module's diff tests (resources matching these are
 intentionally excluded from baselines — their removal from the baseline is LOW):
@@ -84,6 +96,8 @@ intentionally excluded from baselines — their removal from the baseline is LOW
 
 Dependency tree (only changes in these packages can affect this baseline):
 {dependency_tree}
+
+## Output
 
 Write your assessment to the file {output_file} as a JSON object. No preamble, no markdown
 fences, no explanation outside the JSON. The file must contain ONLY valid JSON.
@@ -98,15 +112,18 @@ Use this exact schema:
       "risk": "BLOCKING" | "HIGH" | "MEDIUM" | "LOW",
       "resource": "LogicalId (AWS::Service::Type)",
       "change": "One sentence: what changed and why it matters.",
-      "source": "path/to/file.ts:L42" or "sample_configs/name.yaml" or "Unknown - Please Investigate"
+      "chunk": "chunk-N or null if not attributable to a specific chunk",
+      "source": "Copy the File and Anchor from the chunk header, e.g. lib/auth.ts:L193. Use Unknown - Please Investigate if chunk is null.",
+      "source_hash": "Copy the Hash from the chunk header. Empty string if chunk is null."
     }}
   ]
 }}
 
-Additional rules:
+CRITICAL — Source attribution rules:
+- The `source` field MUST be copied exactly from the chunk header: File + ":L" + Anchor.
+- The `source_hash` field MUST be copied exactly from the chunk header's Hash value.
+- If a finding cannot be attributed to any chunk, use chunk: null, source: "Unknown - Please Investigate", source_hash: "".
 - Only include findings for resources that actually appear in THIS baseline's CDK diff.
-  Do not create findings for changes in other baselines or other modules, even if those
-  changes appear in the source code diff context provided.
 - One finding per resource change. If a resource has multiple concerns, pick the highest risk.
 - Omit LOW findings if there are BLOCKING or HIGH findings.
 - Order findings: BLOCKING first, then HIGH, then MEDIUM, then LOW.
@@ -195,11 +212,6 @@ def get_module_code_diff(baseline_path: str) -> str:
     code_diff = result.stdout.strip()
     if not code_diff:
         return "(no source code or sample config changes detected for this module)"
-
-    # Truncate if very large to stay within Kiro context limits
-    max_chars = 15000
-    if len(code_diff) > max_chars:
-        code_diff = code_diff[:max_chars] + f"\n\n... (truncated, {len(code_diff)} total chars)"
 
     return code_diff
 
@@ -368,13 +380,17 @@ def build_report(changed: list[str]) -> list[dict]:
         target_file = get_target_version(filepath)
 
         if target_file is None:
+            code_diff = get_module_code_diff(filepath)
+            code_chunks = parse_diff_chunks(code_diff)
             pending.append({
                 "file": filepath,
                 "module": module,
                 "config": config,
                 "change_type": "added",
                 "cdk_diff": "New baseline file (no previous version on target branch)",
-                "code_diff": get_module_code_diff(filepath),
+                "code_diff": code_diff,
+                "code_chunks": code_chunks,
+                "code_chunks_formatted": format_chunks_for_prompt(code_chunks),
                 "code_diff_paths": _get_diff_paths(filepath),
                 "risk_assessment": "New baseline — no existing infrastructure affected.",
             })
@@ -384,13 +400,17 @@ def build_report(changed: list[str]) -> list[dict]:
                 diff_output = run_cdk_diff(target_file, filepath)
             finally:
                 os.unlink(target_file)
+            code_diff = get_module_code_diff(filepath)
+            code_chunks = parse_diff_chunks(code_diff)
             pending.append({
                 "file": filepath,
                 "module": module,
                 "config": config,
                 "change_type": "modified",
                 "cdk_diff": diff_output,
-                "code_diff": get_module_code_diff(filepath),
+                "code_diff": code_diff,
+                "code_chunks": code_chunks,
+                "code_chunks_formatted": format_chunks_for_prompt(code_chunks),
                 "code_diff_paths": _get_diff_paths(filepath),
                 "ignore_patterns": _get_ignore_patterns(filepath),
                 "dependency_tree": get_module_dependency_tree(filepath),
@@ -407,10 +427,27 @@ def build_report(changed: list[str]) -> list[dict]:
             module = entry["module"]
             config = entry["config"]
             print(f"  [start] {module}/{config}")
+
+            # Write CDK diff and code chunks to temp files so Kiro can read
+            # them incrementally without prompt size limits.
+            cdk_diff_file = tempfile.NamedTemporaryFile(
+                mode="w", suffix=".diff", prefix=f"cdk-diff-{module.replace('/', '_')}-",
+                delete=False, dir=str(PROJECT_ROOT),
+            )
+            cdk_diff_file.write(entry["cdk_diff"])
+            cdk_diff_file.close()
+
+            code_chunks_file = tempfile.NamedTemporaryFile(
+                mode="w", suffix=".md", prefix=f"code-chunks-{module.replace('/', '_')}-",
+                delete=False, dir=str(PROJECT_ROOT),
+            )
+            code_chunks_file.write(entry["code_chunks_formatted"])
+            code_chunks_file.close()
+
             prompt = KIRO_RISK_PROMPT.format(
                 module=module,
-                cdk_diff=entry["cdk_diff"],
-                code_diff=entry["code_diff"],
+                cdk_diff_file=cdk_diff_file.name,
+                code_chunks_file=code_chunks_file.name,
                 output_file="{output_file}",
                 ignore_patterns=entry.get("ignore_patterns", "") or "(none configured)",
                 dependency_tree=entry.get("dependency_tree", "") or "(dependency tree not available)",
@@ -420,6 +457,11 @@ def build_report(changed: list[str]) -> list[dict]:
             except Exception as e:
                 print(f"  [error] {module}/{config}: {e}", file=sys.stderr)
                 result = f"(assessment failed: {e})"
+            finally:
+                # Clean up temp files
+                for f in [cdk_diff_file.name, code_chunks_file.name]:
+                    if os.path.isfile(f):
+                        os.unlink(f)
             print(f"  [done]  {module}/{config}")
             return entry, result
 
@@ -522,30 +564,6 @@ def _load_coverage_ignore() -> set[str]:
     return ignored
 
 
-def _to_junit_entries(entries: list[dict]) -> list[dict]:
-    """Convert baseline review entries to generic JUnit entry format."""
-    result = []
-    for entry in entries:
-        junit_entry = {
-            "name": f"{entry['module']}/{entry['config']}",
-            "file": entry["file"],
-        }
-        if entry["change_type"] == "added":
-            junit_entry["status"] = "info"
-            junit_entry["info"] = "New baseline (no previous version on target branch)"
-        elif entry["change_type"] == "modified":
-            junit_entry["status"] = "fail"
-            junit_entry["message"] = f"Infrastructure changes detected in {entry['module']} — review risk assessment in MR thread"
-            junit_entry["detail"] = entry["cdk_diff"]
-        elif entry["change_type"] == "missing_baseline":
-            junit_entry["status"] = "fail"
-            junit_entry["message"] = f"Missing comprehensive baseline coverage for {entry['module']}"
-            junit_entry["detail"] = entry["cdk_diff"]
-        else:
-            junit_entry["status"] = "pass"
-        result.append(junit_entry)
-    return result
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Baseline review report generator")
@@ -580,10 +598,10 @@ def main() -> None:
     report_path.write_text(json.dumps(all_entries, indent=2))
     print(f"\nReport written to {report_path}")
 
-    # JUnit XML report
-    junit_path = output_dir / "junit-report.xml"
-    junit_path.write_text(to_junit_xml(_to_junit_entries(all_entries), suite_name="Baseline Review"))
-    print(f"JUnit report written to {junit_path}")
+    # Code Quality report
+    cq_path = output_dir / "codequality-report.json"
+    cq_path.write_text(to_codequality_json(all_entries, agent_name="baseline"))
+    print(f"Code Quality report written to {cq_path}")
 
     # Summary
     added = sum(1 for e in all_entries if e["change_type"] == "added")

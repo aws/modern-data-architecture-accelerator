@@ -15,7 +15,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from review.module_quality.module_quality_review import (
     EXCLUDED_ROOTS,
     resolve_l3_construct_root,
-    build_junit_entries,
 )
 from review.module_quality.post_module_quality_threads import (
     SUMMARY_MARKER,
@@ -148,22 +147,59 @@ class TestFindSummaryNote:
         assert find_summary_note(notes) is None
 
 
-class TestBuildJunitEntries:
-    def test_fail_entry(self):
-        entries = [{
-            "package_name": "pkg-a", "root": "packages/apps/datalake/datalake-app",
-            "type": "app", "risk_level": "HIGH", "risk_summary": "Issues",
-            "findings": [{"risk": "HIGH", "category": "readme_gap"}],
-        }]
-        junit = build_junit_entries(entries)
-        assert junit[0]["status"] == "fail"
-        assert "Quality Concern" in junit[0]["message"]
 
-    def test_info_entry(self):
-        entries = [{
-            "package_name": "pkg-a", "root": "packages/apps/datalake/datalake-app",
-            "type": "app", "risk_level": "LOW", "risk_summary": "All good",
-            "findings": [],
-        }]
-        junit = build_junit_entries(entries)
-        assert junit[0]["status"] == "info"
+
+class TestSchemaDesignCategory:
+    """Tests for schema_design category rendering in format_module_thread."""
+
+    def test_schema_design_renders_correctly(self):
+        """schema_design findings render under 'Schema Design' heading."""
+        entry = {
+            "package_name": "my-app",
+            "type": "app",
+            "risk_level": "MEDIUM",
+            "findings": [
+                {
+                    "risk": "MEDIUM",
+                    "category": "schema_design",
+                    "file": "lib/config.ts",
+                    "property": "vpcConfig",
+                    "detail": "Schema uses overly permissive any type",
+                },
+            ],
+        }
+        body = format_module_thread("my-app", entry, "hash123")
+        assert "<!-- module-quality-pkg:my-app -->" in body
+        assert "Quality Concern: MEDIUM" in body
+        assert "### Schema Design" in body
+        assert "Schema uses overly permissive any type" in body
+        assert "vpcConfig" in body
+
+    def test_schema_design_mixed_with_other_categories(self):
+        """schema_design renders alongside other categories."""
+        entry = {
+            "package_name": "my-app",
+            "type": "app",
+            "risk_level": "HIGH",
+            "findings": [
+                {
+                    "risk": "HIGH",
+                    "category": "readme_gap",
+                    "file": "README.md",
+                    "property": "",
+                    "detail": "Missing architecture section",
+                },
+                {
+                    "risk": "MEDIUM",
+                    "category": "schema_design",
+                    "file": "lib/schema.ts",
+                    "property": "accessPolicies",
+                    "detail": "Array type lacks item validation",
+                },
+            ],
+        }
+        body = format_module_thread("my-app", entry, "hash456")
+        assert "### README Gaps" in body
+        assert "Missing architecture section" in body
+        assert "### Schema Design" in body
+        assert "Array type lacks item validation" in body

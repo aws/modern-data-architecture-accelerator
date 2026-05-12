@@ -79,11 +79,11 @@ Each agent uses distinct HTML comment markers to identify its threads. Markers m
 
 | Agent | Detail Marker | Summary Marker |
 |-------|--------------|----------------|
-| Baseline (existing) | `<!-- baseline-module:{key} -->` | `<!-- baseline-summary -->` |
+| Baseline (existing) | `<!-- baseline-source:{key} -->` | `<!-- baseline-summary -->` |
 | Compliance | `<!-- compliance-source:{file}:{line} -->` | `<!-- compliance-summary -->` |
 | Test Standards | `<!-- test-standards-pkg:{name} -->` | `<!-- test-standards-summary -->` |
 | Module Quality | `<!-- module-quality-pkg:{name} -->` | `<!-- module-quality-summary -->` |
-| Architecture | `<!-- architecture-file:{path} -->` | `<!-- architecture-summary -->` |
+| Architecture | `<!-- architecture-source:{file}:{hash} -->` | `<!-- architecture-summary -->` |
 | Documentation | `<!-- docs-quality-file:{path} -->` | `<!-- docs-quality-summary -->` |
 
 ## Two-Tier Thread Model

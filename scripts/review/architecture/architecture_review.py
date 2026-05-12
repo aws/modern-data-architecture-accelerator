@@ -5,11 +5,10 @@ Architecture Review — reviews changed packages for construct hierarchy and dep
 1. Detects L2/L3/app packages with changed lib/ files
 2. For each package, collects code diff, full source, package.json, and dependency tree
 3. Pipes context through Kiro headless for architecture assessment
-4. Produces a JSON report and JUnit XML for GitLab MR test summary
+4. Produces a JSON report and Code Quality report for GitLab MR
 
 Outputs:
   architecture-review/report.json       - Full structured report with findings
-  architecture-review/junit-report.xml  - JUnit XML for GitLab MR test reports
 
 Environment:
   KIRO_API_KEY                          - Required for assessment
@@ -34,11 +33,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from review.lib.nx_graph import PROJECT_ROOT, _target_ref, _load_project_graph, _get_transitive_deps
 from review.lib.kiro_integration import run_kiro_assessment, KiroError, _parse_risk_json, _parse_risk_level
-from review.lib.report import to_junit_xml
+from review.lib.report import to_codequality_json
 from review.lib.thread_lifecycle import compute_source_hash
 from review.lib.safety import verify_no_false_negative, FalseNegativeError
 from review.lib.package_utils import classify_package
 from review.lib.file_collector import collect_files
+from review.lib.diff_parser import parse_diff_chunks, format_chunks_for_prompt, attach_source_hashes
 
 
 KIRO_PROMPT = """\
@@ -50,15 +50,9 @@ architecture rules and the CI Agent Usage section for output format.
 Package: {package_name}
 Package type: {package_type}
 
-Code diff (lib/ changes in this MR):
-```diff
-{code_diff}
-```
+Code diff (pre-parsed diff chunks with pre-computed anchors and hashes) — read from: {code_chunks_file}
 
-Full source code (current state of lib/):
-```
-{full_source}
-```
+Full source code (current state of lib/) — read from: {full_source_file}
 
 package.json dependencies:
 ```json
@@ -67,6 +61,20 @@ package.json dependencies:
 
 Dependency tree (what this package depends on):
 {dependency_tree}
+
+CRITICAL — Scope boundaries:
+- This agent reviews ONLY structural architecture: layer violations, dependency direction,
+  construct ID stability, separation of concerns (code in wrong layer), reusability, and
+  dependency declarations.
+- Do NOT flag: missing JSDoc, missing documentation, config schema design, sample config
+  coverage, encryption/IAM/security controls, missing tests, or infrastructure diff risks.
+  Those are handled by other agents (module quality, compliance, test standards, baseline).
+
+CRITICAL — Line number rules:
+- The `line` field in each finding MUST be copied from the Anchor value of the chunk
+  that contains the issue. For example, if the chunk header says "Anchor: L42", use 42.
+- Do NOT compute your own line numbers. Copy from the chunk header.
+- If the issue cannot be attributed to a specific chunk, use 0.
 
 Write your assessment to the file {output_file} as a JSON object following the schema
 in the CI Agent Usage section of the steering file. No preamble, no markdown fences,
@@ -104,7 +112,7 @@ def get_changed_packages() -> list[dict]:
     return packages
 
 
-def collect_code_diff(package_root: str, max_chars: int = 15000) -> str:
+def collect_code_diff(package_root: str) -> str:
     result = subprocess.run(
         ["git", "diff", _target_ref(), "--", f"{package_root}/lib/"],
         capture_output=True, text=True, cwd=str(PROJECT_ROOT),
@@ -112,8 +120,6 @@ def collect_code_diff(package_root: str, max_chars: int = 15000) -> str:
     diff = result.stdout.strip()
     if not diff:
         return "(no lib/ changes)"
-    if len(diff) > max_chars:
-        diff = diff[:max_chars] + f"\n\n... (truncated, {len(diff)} total chars)"
     return diff
 
 
@@ -153,21 +159,40 @@ def assess_package(pkg: dict) -> dict:
 
     print(f"  [start] {name} ({pkg_type})")
 
-    prompt = KIRO_PROMPT.format(
-        package_name=name,
-        package_type=pkg_type,
-        code_diff=collect_code_diff(root),
-        full_source=collect_full_source(root),
-        package_json_deps=collect_package_json_deps(root),
-        dependency_tree=get_dependency_tree(name),
-        output_file="{output_file}",
-    )
+    code_diff = collect_code_diff(root)
+    code_chunks = parse_diff_chunks(code_diff)
+    full_source = collect_full_source(root)
 
-    assessment = run_kiro_assessment(prompt, validate_json=True)
+    # Write large content to temp files for Kiro to read incrementally
+    from review.lib.temp_files import temp_review_files
+
+    safe_name = name.replace("/", "_").replace("@", "")
+    chunks_text = format_chunks_for_prompt(code_chunks)
+
+    with temp_review_files(
+        {"chunks": chunks_text, "source": full_source},
+        prefix=f"{safe_name}-",
+        directory=str(PROJECT_ROOT),
+    ) as paths:
+        prompt = KIRO_PROMPT.format(
+            package_name=name,
+            package_type=pkg_type,
+            code_chunks_file=paths["chunks"],
+            full_source_file=paths["source"],
+            package_json_deps=collect_package_json_deps(root),
+            dependency_tree=get_dependency_tree(name),
+            output_file="{output_file}",
+        )
+
+        assessment = run_kiro_assessment(prompt, validate_json=True)
+
     parsed = _parse_risk_json(assessment)
     findings = parsed.get("findings", []) if parsed else []
     summary = parsed.get("summary", "") if parsed else ""
     risk_level = _parse_risk_level(assessment)
+
+    # Attach chunk content hashes to findings for per-chunk source tracking
+    attach_source_hashes(findings, code_chunks)
 
     print(f"  [done]  {name} — {risk_level} ({len(findings)} findings)")
 
@@ -210,20 +235,6 @@ def build_report(packages: list[dict]) -> list[dict]:
     return entries
 
 
-def build_junit_entries(entries: list[dict]) -> list[dict]:
-    junit_entries = []
-    for entry in entries:
-        has_findings = bool(entry["findings"])
-        junit_entries.append({
-            "name": f"{entry['package']} ({entry['type']})",
-            "file": entry["root"],
-            "status": "fail" if has_findings else "info",
-            "message": f"Architecture Misalignment {entry['risk_level']}: {entry.get('risk_summary', '')[:200]}" if has_findings else "",
-            "detail": json.dumps(entry["findings"], indent=2) if has_findings else "",
-            "info": f"Risk: {entry['risk_level']}. {entry.get('risk_summary', '')}" if not has_findings else "",
-        })
-    return junit_entries
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Architecture review report generator")
@@ -249,7 +260,7 @@ def main() -> None:
             sys.exit(1)
         print("No L2/L3/app package changes detected.")
         (output_dir / "report.json").write_text("[]")
-        (output_dir / "junit-report.xml").write_text(to_junit_xml([], suite_name="Architecture Review"))
+        (output_dir / "codequality-report.json").write_text("[]")
         print("Empty reports written. Thread posting will confirm agent ran.")
         return
 
@@ -262,9 +273,11 @@ def main() -> None:
     (output_dir / "report.json").write_text(json.dumps(entries, indent=2))
     print(f"\nReport written to {output_dir / 'report.json'}")
 
-    junit_entries = build_junit_entries(entries)
-    (output_dir / "junit-report.xml").write_text(to_junit_xml(junit_entries, suite_name="Architecture Review"))
-    print(f"JUnit report written to {output_dir / 'junit-report.xml'}")
+
+    # Code Quality report
+    cq_path = output_dir / "codequality-report.json"
+    cq_path.write_text(to_codequality_json(entries, agent_name="architecture"))
+    print(f"Code Quality report written to {cq_path}")
 
     risk_counts = {}
     for e in entries:

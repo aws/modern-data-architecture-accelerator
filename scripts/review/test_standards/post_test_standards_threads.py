@@ -13,7 +13,8 @@ Thread lifecycle:
   - New threads are created when a test gap first appears
   - Threads are updated and reopened when findings change (hash-based detection)
   - Threads that were resolved stay resolved if findings haven't changed
-  - Orphaned threads auto-resolve when findings disappear
+  - Orphaned threads auto-resolve when findings disappear (testing gaps fixed)
+  - When a package has no remaining findings, its thread is resolved with a note
 
 Requires environment variables:
   CI_API_V4_URL        - GitLab API base URL (set by GitLab CI)
@@ -42,13 +43,14 @@ from review.lib.gitlab_threads import (
     compute_hash,
 )
 from review.lib.thread_lifecycle import (
-    _now,
     _steering_link,
+    _action_context,
     post_or_update_summary,
     post_detail_threads,
     resolve_orphaned_threads,
     check_unresolved_and_exit,
     UnresolvedThreadsError,
+    _format_thread_footer,
 )
 
 SUMMARY_MARKER = "<!-- test-standards-summary -->"
@@ -86,8 +88,6 @@ def format_summary_body(entries: list[dict]) -> str:
         "_Reviews test coverage, naming conventions, baseline completeness, and CDK Nag "
         "compliance validation in changed packages. "
         f"[Steering file]({_steering_link('testing-standards.md')})_",
-        "",
-        f"_Last updated: {_now()}_",
         "",
         f"**Packages reviewed:** {len(entries)}",
         "",
@@ -151,7 +151,7 @@ def format_package_thread(
         "",
         f"**Package:** `{pkg_name}` ({pkg_type})",
         "",
-        f"_Last observed: {_now()}_",
+        f"_{_action_context()}_" if _action_context() else "",
         "",
     ]
 
@@ -192,8 +192,7 @@ def format_package_thread(
 
         lines.append("")
 
-    lines.append("_Resolve this thread to acknowledge the testing gap. "
-                 "Then rerun the `feature_merge_test_standards_review` job to pass the pipeline._")
+    lines.append(_format_thread_footer())
 
     return "\n".join(lines)
 
@@ -262,21 +261,22 @@ def main() -> None:
 
     # Post per-package threads for entries with findings
     entries_with_findings = [e for e in entries if e.get("findings")]
-    if not entries_with_findings:
-        print("  No test standards findings to post threads for.")
-        print("Done.")
-        return
 
-    # Build groups keyed by package name
+    # Build groups keyed by package name (empty if no findings)
     groups = {e.get("package", "unknown"): e for e in entries_with_findings}
 
-    # Post detail threads
-    processed_keys = post_detail_threads(
-        project_id, mr_iid, token, discussions, groups,
-        PKG_PATTERN, format_package_thread, _compute_structural_hash, _get_position,
-    )
+    # Post detail threads (skipped if groups is empty)
+    processed_keys: set[str] = set()
+    if groups:
+        processed_keys = post_detail_threads(
+            project_id, mr_iid, token, discussions, groups,
+            PKG_PATTERN, format_package_thread, _compute_structural_hash, _get_position,
+        )
+    else:
+        print("  No test standards findings to post threads for.")
 
-    # Re-fetch after mutations, resolve orphans
+    # Re-fetch after mutations, resolve orphans (runs even with no findings
+    # so previously-opened threads get auto-resolved when gaps are fixed)
     discussions = get_mr_discussions(project_id, mr_iid, token)
     resolve_orphaned_threads(project_id, mr_iid, token, discussions, PKG_PATTERN, processed_keys)
 
