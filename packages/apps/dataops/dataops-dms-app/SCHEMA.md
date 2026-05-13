@@ -1917,6 +1917,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 | - [dictPageSizeLimit](#dms_endpoints_additionalProperties_s3Settings_dictPageSizeLimit )                                       | No      | number  | No         | -          | Maximum dictionary page size limit for Parquet column encoding optimization                               |
 | - [enableStatistics](#dms_endpoints_additionalProperties_s3Settings_enableStatistics )                                         | No      | boolean | No         | -          | Flag to enable statistics collection for Parquet pages and row groups for query optimization              |
 | - [encodingType](#dms_endpoints_additionalProperties_s3Settings_encodingType )                                                 | No      | string  | No         | -          | Encoding type specification for Parquet file compression and storage optimization                         |
+| - [expectedBucketOwner](#dms_endpoints_additionalProperties_s3Settings_expectedBucketOwner )                                   | No      | string  | No         | -          | AWS account ID of the S3 bucket owner for cross-account access and bucket sniping prevention              |
 | - [externalTableDefinition](#dms_endpoints_additionalProperties_s3Settings_externalTableDefinition )                           | No      | string  | No         | -          | External table definition for S3 source configuration in data lake integration                            |
 | - [ignoreHeaderRows](#dms_endpoints_additionalProperties_s3Settings_ignoreHeaderRows )                                         | No      | number  | No         | -          | Number of header rows to ignore in CSV files for S3 source processing                                     |
 | - [includeOpForFullLoad](#dms_endpoints_additionalProperties_s3Settings_includeOpForFullLoad )                                 | No      | boolean | No         | -          | Flag to include INSERT operation indicators in full load CSV output for consistency with CDC operations   |
@@ -2139,7 +2140,16 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** Encoding type specification for Parquet file compression and storage optimization
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_externalTableDefinition"></a>3.4.1.16.24. Property `root > dms > endpoints > additionalProperties > s3Settings > externalTableDefinition`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_expectedBucketOwner"></a>3.4.1.16.24. Property `root > dms > endpoints > additionalProperties > s3Settings > expectedBucketOwner`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** AWS account ID of the S3 bucket owner for cross-account access and bucket sniping prevention
+
+###### <a name="dms_endpoints_additionalProperties_s3Settings_externalTableDefinition"></a>3.4.1.16.25. Property `root > dms > endpoints > additionalProperties > s3Settings > externalTableDefinition`
 
 |              |          |
 | ------------ | -------- |
@@ -2148,7 +2158,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** External table definition for S3 source configuration in data lake integration
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_ignoreHeaderRows"></a>3.4.1.16.25. Property `root > dms > endpoints > additionalProperties > s3Settings > ignoreHeaderRows`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_ignoreHeaderRows"></a>3.4.1.16.26. Property `root > dms > endpoints > additionalProperties > s3Settings > ignoreHeaderRows`
 
 |              |          |
 | ------------ | -------- |
@@ -2157,7 +2167,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** Number of header rows to ignore in CSV files for S3 source processing
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_includeOpForFullLoad"></a>3.4.1.16.26. Property `root > dms > endpoints > additionalProperties > s3Settings > includeOpForFullLoad`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_includeOpForFullLoad"></a>3.4.1.16.27. Property `root > dms > endpoints > additionalProperties > s3Settings > includeOpForFullLoad`
 
 |              |           |
 | ------------ | --------- |
@@ -2166,7 +2176,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** Flag to include INSERT operation indicators in full load CSV output for consistency with CDC operations
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_maxFileSize"></a>3.4.1.16.27. Property `root > dms > endpoints > additionalProperties > s3Settings > maxFileSize`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_maxFileSize"></a>3.4.1.16.28. Property `root > dms > endpoints > additionalProperties > s3Settings > maxFileSize`
 
 |              |          |
 | ------------ | -------- |
@@ -2175,7 +2185,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** Maximum CSV file size in KB for S3 target during full load migration operations
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_parquetTimestampInMillisecond"></a>3.4.1.16.28. Property `root > dms > endpoints > additionalProperties > s3Settings > parquetTimestampInMillisecond`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_parquetTimestampInMillisecond"></a>3.4.1.16.29. Property `root > dms > endpoints > additionalProperties > s3Settings > parquetTimestampInMillisecond`
 
 |              |           |
 | ------------ | --------- |
@@ -2184,7 +2194,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** Flag to set TIMESTAMP column precision to milliseconds in Parquet files for Athena and Glue compatibility
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_parquetVersion"></a>3.4.1.16.29. Property `root > dms > endpoints > additionalProperties > s3Settings > parquetVersion`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_parquetVersion"></a>3.4.1.16.30. Property `root > dms > endpoints > additionalProperties > s3Settings > parquetVersion`
 
 |              |          |
 | ------------ | -------- |
@@ -2193,7 +2203,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** Apache Parquet format version specification for S3 data lake columnar storage
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_preserveTransactions"></a>3.4.1.16.30. Property `root > dms > endpoints > additionalProperties > s3Settings > preserveTransactions`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_preserveTransactions"></a>3.4.1.16.31. Property `root > dms > endpoints > additionalProperties > s3Settings > preserveTransactions`
 
 |              |           |
 | ------------ | --------- |
@@ -2202,7 +2212,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** Flag to preserve transaction order for CDC loads in S3 target for data consistency
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_rfc4180"></a>3.4.1.16.31. Property `root > dms > endpoints > additionalProperties > s3Settings > rfc4180`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_rfc4180"></a>3.4.1.16.32. Property `root > dms > endpoints > additionalProperties > s3Settings > rfc4180`
 
 |              |           |
 | ------------ | --------- |
@@ -2211,7 +2221,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** Flag to enable RFC 4180 compliance for CSV quotation mark handling in S3 operations
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_rowGroupLength"></a>3.4.1.16.32. Property `root > dms > endpoints > additionalProperties > s3Settings > rowGroupLength`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_rowGroupLength"></a>3.4.1.16.33. Property `root > dms > endpoints > additionalProperties > s3Settings > rowGroupLength`
 
 |              |          |
 | ------------ | -------- |
@@ -2220,7 +2230,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** Number of rows in Parquet row group for read/write performance optimization
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_serverSideEncryptionKmsKeyId"></a>3.4.1.16.33. Property `root > dms > endpoints > additionalProperties > s3Settings > serverSideEncryptionKmsKeyId`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_serverSideEncryptionKmsKeyId"></a>3.4.1.16.34. Property `root > dms > endpoints > additionalProperties > s3Settings > serverSideEncryptionKmsKeyId`
 
 |              |          |
 | ------------ | -------- |
@@ -2229,7 +2239,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** KMS key ID for server-side encryption when using SSE_KMS encryption mode for S3 data lake security
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_serviceAccessRoleArn"></a>3.4.1.16.34. Property `root > dms > endpoints > additionalProperties > s3Settings > serviceAccessRoleArn`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_serviceAccessRoleArn"></a>3.4.1.16.35. Property `root > dms > endpoints > additionalProperties > s3Settings > serviceAccessRoleArn`
 
 |              |          |
 | ------------ | -------- |
@@ -2238,7 +2248,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** IAM role ARN for DMS service access to S3 bucket operations for data lake integration
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_timestampColumnName"></a>3.4.1.16.35. Property `root > dms > endpoints > additionalProperties > s3Settings > timestampColumnName`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_timestampColumnName"></a>3.4.1.16.36. Property `root > dms > endpoints > additionalProperties > s3Settings > timestampColumnName`
 
 |              |          |
 | ------------ | -------- |
@@ -2247,7 +2257,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** Timestamp column name for adding migration timing information to S3 data lake files
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_useCsvNoSupValue"></a>3.4.1.16.36. Property `root > dms > endpoints > additionalProperties > s3Settings > useCsvNoSupValue`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_useCsvNoSupValue"></a>3.4.1.16.37. Property `root > dms > endpoints > additionalProperties > s3Settings > useCsvNoSupValue`
 
 |              |           |
 | ------------ | --------- |
@@ -2256,7 +2266,7 @@ See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-
 
 **Description:** Flag to use CsvNoSupValue for columns not in supplemental log during CDC CSV operations
 
-###### <a name="dms_endpoints_additionalProperties_s3Settings_useTaskStartTimeForFullLoadTimestamp"></a>3.4.1.16.37. Property `root > dms > endpoints > additionalProperties > s3Settings > useTaskStartTimeForFullLoadTimestamp`
+###### <a name="dms_endpoints_additionalProperties_s3Settings_useTaskStartTimeForFullLoadTimestamp"></a>3.4.1.16.38. Property `root > dms > endpoints > additionalProperties > s3Settings > useTaskStartTimeForFullLoadTimestamp`
 
 |              |           |
 | ------------ | --------- |

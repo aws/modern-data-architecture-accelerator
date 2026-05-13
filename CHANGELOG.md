@@ -51,6 +51,7 @@
 - Roles app: added an optional `additionalTrustedActions` for the role primary principal, allowing additional actions like
   `sts:TagSession` to be added to the trust policy;
 - Account-level modules (Glue Catalog, LakeFormation Settings, Macie Session, QuickSight Account) now create a static SSM parameter (`/account-module-lock/<module-name>`) that prevents multiple deployments of the same module to a single AWS account
+- DMS Constructs: Added `expectedBucketOwner` support to S3 endpoint settings for cross-account bucket sniping prevention.
 - DataZone/SMUS: added simplified `authorizations` interface for domain and domain unit configuration — supports `projectCreators`, `eligibleProjectMembers`, `domainUnitCreators`, `glossaryCreators`, and `environmentCreators` fields as a concise alternative to full `authorizationPolicies` objects
 - DataZone/SMUS: `authorizationPolicies` and `authorizations` are now supported on the root domain level (`BaseDomainProps`), not just on individual domain units
 - DataZone/SMUS: domain owners (users, groups, and associated account CDK users) now automatically receive version-aware project creation authorization policies in addition to `ADD_TO_PROJECT_MEMBER_POOL`

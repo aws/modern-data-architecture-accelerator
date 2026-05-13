@@ -822,6 +822,7 @@
           "EnableStatistics": true,
           "EncodingType": "rle-dictionary",
           "EncryptionMode": "SSE_KMS",
+          "ExpectedBucketOwner": "test-account-2",
           "ExternalTableDefinition": "",
           "IgnoreHeaderRows": 1,
           "IncludeOpForFullLoad": true,

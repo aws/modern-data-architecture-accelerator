@@ -49,6 +49,36 @@ describe('Endpoint Compliance Tests', () => {
         },
       });
     });
+
+    test('Expected Bucket Owner', () => {
+      const testAppWithOwner = new MdaaTestApp();
+
+      const key = Key.fromKeyArn(
+        testAppWithOwner.testStack,
+        'testKey',
+        'arn:test-partition:kms:test-region:test-account:key/test-key',
+      );
+      const props: MdaaEndpointProps = {
+        endpointIdentifier: 'test-endpoint',
+        endpointType: 'target',
+        engineName: 's3',
+        kmsKey: key,
+        naming: testAppWithOwner.naming,
+        s3Settings: {
+          bucketName: 'test-bucket',
+          serverSideEncryptionKmsKeyId: 'test-key',
+          expectedBucketOwner: '123456789012',
+        },
+      };
+      new MdaaEndpoint(testAppWithOwner.testStack, 'test-endpoint', props);
+
+      const tmpl = Template.fromStack(testAppWithOwner.testStack);
+      tmpl.hasResourceProperties('AWS::DMS::Endpoint', {
+        S3Settings: {
+          ExpectedBucketOwner: '123456789012',
+        },
+      });
+    });
   });
 
   describe('Redshift Endpoint Compliance Tests', () => {

@@ -3567,6 +3567,10 @@
                     "description": "Encoding type specification for Parquet file compression and storage optimization",
                     "type": "string"
                 },
+                "expectedBucketOwner": {
+                    "description": "AWS account ID of the S3 bucket owner for cross-account access and bucket sniping prevention",
+                    "type": "string"
+                },
                 "externalTableDefinition": {
                     "description": "External table definition for S3 source configuration in data lake integration",
                     "type": "string"

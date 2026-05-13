@@ -175,6 +175,8 @@ export interface S3SettingsProperty {
   readonly enableStatistics?: boolean;
   /** Encoding type specification for Parquet file compression and storage optimization */
   readonly encodingType?: string;
+  /** AWS account ID of the S3 bucket owner for cross-account access and bucket sniping prevention */
+  readonly expectedBucketOwner?: string;
   /** External table definition for S3 source configuration in data lake integration */
   readonly externalTableDefinition?: string;
   /** Number of header rows to ignore in CSV files for S3 source processing */

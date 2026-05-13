@@ -165,6 +165,8 @@ dms:
         enableStatistics: true
         # Encoding type for Parquet.
         encodingType: rle-dictionary
+        # (Optional) AWS account ID of the S3 bucket owner for cross-account access.
+        expectedBucketOwner: '{{context:account-2}}'
         # External table definition for S3 source.
         externalTableDefinition: ''
         # Number of header rows to ignore in CSV.
