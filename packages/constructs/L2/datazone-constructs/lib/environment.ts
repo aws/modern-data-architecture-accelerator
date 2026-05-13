@@ -46,7 +46,7 @@ export class MdaaDatazoneEnvironment extends Construct {
     this.lakeformationManageAccessRole = props.lakeformationManageAccessRole;
     const subBucketLocation = props.envBucket.s3UrlForObject('/data/datazone');
     // Create the database
-    this.subDatabaseName = this.props.naming.resourceName('datazone-sub');
+    this.subDatabaseName = this.props.naming.resourceName('datazone-sub', 255);
     this.subDatabase = new CfnDatabase(Stack.of(this.constructScope), `datazone-sub-database`, {
       catalogId: props.account,
       databaseInput: {
@@ -59,7 +59,7 @@ export class MdaaDatazoneEnvironment extends Construct {
     const cfnEnvProps: CfnEnvironmentProps = {
       domainIdentifier: props.project.domainConfig.domainId,
       environmentProfileIdentifier: '',
-      name: this.props.naming.resourceName(),
+      name: this.props.naming.resourceName(undefined, 64),
       projectIdentifier: props.project.project.attrId,
     };
 
@@ -157,7 +157,7 @@ export class MdaaDatazoneEnvironment extends Construct {
       domainIdentifier: mdaaProject.project.domainIdentifier,
       environmentIdentifier: env.attrId,
       manageAccessRole: lakeformationManagedAccessRole.roleArn, //manage role
-      name: this.props.naming.resourceName(),
+      name: this.props.naming.resourceName(undefined, 256),
       subscriptionTargetConfig: [
         {
           content: `{"databaseName":"${subDatabaseName}"}`,
@@ -172,7 +172,7 @@ export class MdaaDatazoneEnvironment extends Construct {
   private createDatazoneUserManagedPolicy(projectBucket: IBucket, glueCatalogArns: string[]): ManagedPolicy {
     //Allow to access the glue catalog resources
     const userPolicy: ManagedPolicy = new ManagedPolicy(this.constructScope, 'datazone-user-access-policy', {
-      managedPolicyName: this.props.naming.resourceName('datazone-user-access-policy'),
+      managedPolicyName: this.props.naming.resourceName('datazone-user-access-policy', 128),
     });
 
     const datazoneStatement: PolicyStatement = new PolicyStatement({
