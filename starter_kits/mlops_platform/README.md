@@ -19,7 +19,6 @@ End-to-end ML lifecycle platform covering model training, deployment, and monito
 | **Seed Code** | |
 | `seed_code/training/` | ML scripts (preprocessing, evaluation) + static MDAA pipeline config |
 | `seed_code/deploy/` | Static MDAA configs for endpoint + monitoring |
-| `seed_code/batch_inference/` | Static MDAA config for batch transform inference pipeline |
 
 ## Key Design Principles
 
@@ -63,15 +62,6 @@ starter_kits/mlops_platform/
 │   │   │   ├── mdaa-endpoint.yaml  # MDAA routing for endpoint deployment
 │   │   │   └── mdaa-monitoring.yaml # MDAA routing for monitoring deployment
 │   │   └── buildspec.yml        # CodeBuild: mdaa deploy (endpoint + monitoring)
-│   └── batch_inference/
-│       ├── mdaa-config/
-│       │   ├── pipeline.yaml    # Batch inference pipeline config (static)
-│       │   └── mdaa.yaml        # MDAA deployment descriptor
-│       ├── buildspec.yml        # CodeBuild: upload scripts → mdaa deploy → start pipeline
-│       ├── source_scripts/      # Batch preprocessing script (preprocessing.py)
-│       ├── ml_pipelines/        # Pipeline definition helpers (create_pipeline.py, model_package.py)
-│       ├── tests/               # Unit tests (test_pipeline.py, test_model_package.py)
-│       └── pyproject.toml       # Python project config
 ├── docs/
 │   └── mlops.png                # Architecture diagram
 ├── tags.yaml
@@ -103,13 +93,9 @@ starter_kits/mlops_platform/
 6. Model is auto-approved and EventBridge triggers the deploy pipeline automatically
 7. After first endpoint is deployed, the monitoring schedule starts automatically (configured in `seed_code/deploy/mdaa-config/monitoring.yaml`)
 
-## Batch Inference
-
-Batch inference lives in `seed_code/batch_inference/` and is deployed independently from the unified training + deploy module. It uses `@aws-mdaa/sagemaker-pipeline` to create a SageMaker Pipeline with preprocessing + batch transform steps. To use batch inference, you need a separate CI/CD mechanism (e.g., a standalone CodePipeline or manual trigger) that runs the batch inference `buildspec.yml`.
-
 ## Updating Seed Code After Initial Deployment
 
-Seed code (`seed_code/training/`, `seed_code/deploy/`, `seed_code/batch_inference/`) is pushed to CodeCommit only during the initial `mdaa deploy` when the repositories are first created. Subsequent deploys do not update the CodeCommit repos — CloudFormation skips initial code on existing repositories.
+Seed code (`seed_code/training/`, `seed_code/deploy/`) is pushed to CodeCommit only during the initial `mdaa deploy` when the repositories are first created. Subsequent deploys do not update the CodeCommit repos — CloudFormation skips initial code on existing repositories.
 
 If you modify any seed code file (e.g., `buildspec.yml`, MDAA configs, ML scripts), you must push the changes to CodeCommit manually:
 
@@ -135,6 +121,3 @@ The L3 constructs pass these environment variables to CodeBuild, which are resol
 `MODEL_PACKAGE_GROUP_NAME`, `MODEL_BUCKET_NAME`, `MODEL_BUCKET_ARN`, `PROJECT_NAME`, `DEPLOY_STAGE`, `DEV_ACCOUNT_ID`, `DEV_REGION`, `ENABLE_NETWORK_ISOLATION`, `ENABLE_DATA_CAPTURE`, `SAGEMAKER_EXECUTION_ROLE_ARN`, `DEV_VPC_ID`, `DEV_SUBNET_IDS`, `DEV_SECURITY_GROUP_IDS`, `MDAA_ORG`
 
 Cross-account stages add: `PRE_PROD_ACCOUNT_ID`, `PRE_PROD_REGION`, `PRE_PROD_VPC_ID`, `PRE_PROD_SUBNET_IDS`, `PRE_PROD_SECURITY_GROUP_IDS`, `PROD_ACCOUNT_ID`, `PROD_REGION`, `PROD_VPC_ID`, `PROD_SUBNET_IDS`, `PROD_SECURITY_GROUP_IDS`
-
-### Batch Inference
-`SAGEMAKER_PROJECT_NAME`, `MODEL_PACKAGE_GROUP_NAME`, `ARTIFACT_BUCKET`, `ARTIFACT_BUCKET_KMS_ID`, `MODEL_BUCKET_NAME`, `BASE_JOB_PREFIX`, `INSTANCE_TYPE`, `INSTANCE_COUNT`, `INPUT_DATA_S3_URI`, `OUTPUT_DATA_S3_PREFIX`, `ENABLE_NETWORK_ISOLATION`, `SUBNET_IDS`, `SECURITY_GROUP_IDS`, `MDAA_ORG`, `TRAINING_PIPELINE_BUCKET`

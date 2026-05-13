@@ -63,5 +63,13 @@ def verify_no_false_negative(
             if not any(f.startswith(root + "/") for root in excluded_roots)
         ]
 
+    # If all relevant changes are deletions (files don't exist in HEAD),
+    # there's nothing to review — the pass-through is legitimate.
+    if relevant:
+        existing = [f for f in relevant if (PROJECT_ROOT / f).is_file()]
+        if not existing:
+            # All changes are deletions — nothing to review
+            return
+
     if relevant:
         raise FalseNegativeError(path_prefix, extensions, relevant)

@@ -42,7 +42,6 @@ This module deploys and integrates the following resources:
 
 - [SageMaker Endpoint](../sagemaker-endpoint-app/README.md) — Deploys real-time inference endpoints from model packages registered by this module's training pipeline
 - [SageMaker Model Monitoring](../sagemaker-model-monitoring-app/README.md) — Monitors endpoints deployed by this module for data quality, model quality, bias, and explainability drift
-- [SageMaker Batch Inference](../sagemaker-batch-inference-app/README.md) — Executes batch transform jobs against model packages from this module's model registry
 - [SageMaker Studio Domain](../sm-studio-domain-app/README.md) — Provides SageMaker domain tagging context for resource governance
 - [Data Lake](../../datalake/datalake-app/README.md) — Deploy data lake buckets that training jobs can read training data from
 
