@@ -66,4 +66,26 @@ describe('SageMaker MLOps Baseline Diff Tests', () => {
       },
     ),
   );
+
+  baselineDiffTestApp(
+    'MLOps Build Policies',
+    Create.appProvider(
+      context => {
+        const moduleApp = new SageMakerMLOpsApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-build-policies.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-mlops-build-policies',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
 });

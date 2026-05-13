@@ -57,15 +57,32 @@ training:
   # preProdAccountId: "<pre-prod-account-id>"
   # prodAccountId: "<prod-account-id>"
 
-  # Private CodeArtifact registry (optional)
-  # Pull @aws-mdaa packages from a private CodeArtifact repository instead of public npm.
-  # When set, the CodeBuild role gets CodeArtifact read permissions and the buildspec
-  # authenticates npm to the private registry before installing @aws-mdaa/cli.
-  # codeArtifact:
-  #   domain: "<codeartifact-domain>"
-  #   repository: "<codeartifact-repo>"
-  #   region: "<region>"          # optional — defaults to deployment region
-  #   version: "<semver>"         # optional — pins @aws-mdaa/cli version and default version of all the mdaa modules
+  # (Optional) Additional IAM policies for the build role.
+  # Use this to grant the build environment access to private registries
+  # (CodeArtifact, ECR), secrets, or other AWS services needed by the buildspec.
+  # Supports policyArn (reference existing) or policyDocument (inline statements).
+  #
+  # Example: CodeArtifact read access for private npm registry
+  # buildPolicies:
+  #   - policyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Action: codeartifact:GetAuthorizationToken
+  #           Resource: "arn:{{partition}}:codeartifact:{{region}}:{{account}}:domain/<domain>"
+  #         - Effect: Allow
+  #           Action:
+  #             - codeartifact:GetRepositoryEndpoint
+  #             - codeartifact:ReadFromRepository
+  #           Resource: "arn:{{partition}}:codeartifact:{{region}}:{{account}}:repository/<domain>/<repo>"
+  #         - Effect: Allow
+  #           Action: sts:GetServiceBearerToken
+  #           Resource: "*"
+  #           Condition:
+  #             StringEquals:
+  #               "sts:AWSServiceName": codeartifact.amazonaws.com
+  #     suppressions:
+  #       - id: AwsSolutions-IAM5
+  #         reason: "sts:GetServiceBearerToken requires Resource:* conditioned on sts:AWSServiceName=codeartifact.amazonaws.com"
 
 # ── Deployment pipeline ────────────────────────────────────────────────────
 # What it creates:
@@ -122,12 +139,32 @@ deploy:
     subnetIds: "{{context:subnet_ids}}"
     securityGroupIds: "{{context:security_group_ids}}"
 
-  # Private CodeArtifact registry (optional — same as training.codeArtifact)
-  # codeArtifact:
-  #   domain: "<codeartifact-domain>"
-  #   repository: "<codeartifact-repo>"
-  #   region: "<region>"
-  #   version: "<semver>"
+  # (Optional) Additional IAM policies for the build roles.
+  # Use this to grant the build environment access to private registries
+  # (CodeArtifact, ECR), secrets, or other AWS services needed by the buildspec.
+  # Supports policyArn (reference existing) or policyDocument (inline statements).
+  #
+  # Example: CodeArtifact read access for private npm registry
+  # buildPolicies:
+  #   - policyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Action: codeartifact:GetAuthorizationToken
+  #           Resource: "arn:{{partition}}:codeartifact:{{region}}:{{account}}:domain/<domain>"
+  #         - Effect: Allow
+  #           Action:
+  #             - codeartifact:GetRepositoryEndpoint
+  #             - codeartifact:ReadFromRepository
+  #           Resource: "arn:{{partition}}:codeartifact:{{region}}:{{account}}:repository/<domain>/<repo>"
+  #         - Effect: Allow
+  #           Action: sts:GetServiceBearerToken
+  #           Resource: "*"
+  #           Condition:
+  #             StringEquals:
+  #               "sts:AWSServiceName": codeartifact.amazonaws.com
+  #     suppressions:
+  #       - id: AwsSolutions-IAM5
+  #         reason: "sts:GetServiceBearerToken requires Resource:* conditioned on sts:AWSServiceName=codeartifact.amazonaws.com"
 
   # Cross-account deployment (optional)
   # When configured, the deploy pipeline adds PreProd and Prod stages.

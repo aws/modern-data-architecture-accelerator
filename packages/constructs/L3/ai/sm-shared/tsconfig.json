@@ -38,6 +38,9 @@
       "path": "../../../L2/construct"
     },
     {
+      "path": "../../../../utilities/mdaa-naming"
+    },
+    {
       "path": "../../../L2/iam-constructs"
     },
     {

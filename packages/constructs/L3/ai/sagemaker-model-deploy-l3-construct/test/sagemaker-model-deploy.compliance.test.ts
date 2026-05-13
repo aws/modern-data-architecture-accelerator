@@ -499,7 +499,7 @@ describe('SageMaker Model Deploy L3 Construct', () => {
     });
   });
 
-  describe('CodeArtifact Config', () => {
+  describe('Build Policies - Policy ARN', () => {
     const testApp = new MdaaTestApp();
     const stack = testApp.testStack;
     new SageMakerModelDeployL3Construct(stack, 'model-deploy-ca', {
@@ -509,24 +509,94 @@ describe('SageMaker Model Deploy L3 Construct', () => {
       seedCodePath: __dirname + '/test-seed-code.zip',
       modelPackageGroupName: 'test-mpg-ca',
       modelBucketName: 'test-model-bucket-ca',
-      codeArtifact: {
-        domain: 'my-domain',
-        repository: 'my-repo',
-        region: 'us-west-2',
-      },
+      buildPolicies: [
+        {
+          policyArn: 'arn:aws:iam::123456789012:policy/CodeArtifactReadOnly',
+        },
+      ],
     });
     testApp.checkCdkNagCompliance(stack);
     const template = Template.fromStack(stack);
 
-    test('Shared managed policy has CodeArtifact permissions', () => {
-      const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
-      const sharedPolicyJson = JSON.stringify(managedPolicies);
-      expect(sharedPolicyJson).toContain('codeartifact:GetAuthorizationToken');
-      expect(sharedPolicyJson).toContain('codeartifact:GetRepositoryEndpoint');
-      expect(sharedPolicyJson).toContain('codeartifact:ReadFromRepository');
-      expect(sharedPolicyJson).toContain('sts:GetServiceBearerToken');
-      expect(sharedPolicyJson).toContain('my-domain');
-      expect(sharedPolicyJson).toContain('my-domain/my-repo');
+    test('Stage roles have the imported managed policy attached', () => {
+      template.hasResourceProperties('AWS::IAM::Role', {
+        ManagedPolicyArns: Match.arrayWith(['arn:aws:iam::123456789012:policy/CodeArtifactReadOnly']),
+      });
+    });
+  });
+
+  describe('Build Policies - Inline Policy Document', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    new SageMakerModelDeployL3Construct(stack, 'model-deploy-inline', {
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      projectName: 'test-inline',
+      seedCodePath: __dirname + '/test-seed-code.zip',
+      modelPackageGroupName: 'test-mpg-inline',
+      modelBucketName: 'test-model-bucket-inline',
+      buildPolicies: [
+        {
+          policyDocument: {
+            Statement: [
+              {
+                Effect: 'Allow',
+                Action: 'codeartifact:GetAuthorizationToken',
+                Resource: 'arn:aws:codeartifact:us-east-1:123456789012:domain/test-domain',
+              },
+              {
+                Effect: 'Allow',
+                Action: ['codeartifact:GetRepositoryEndpoint', 'codeartifact:ReadFromRepository'],
+                Resource: 'arn:aws:codeartifact:us-east-1:123456789012:repository/test-domain/test-repo',
+              },
+              {
+                Effect: 'Allow',
+                Action: 'sts:GetServiceBearerToken',
+                Resource: '*',
+                Condition: { StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' } },
+              },
+            ],
+          },
+          suppressions: [
+            {
+              id: 'AwsSolutions-IAM5',
+              reason: 'sts:GetServiceBearerToken requires Resource:* conditioned on sts:AWSServiceName',
+            },
+          ],
+        },
+      ],
+    });
+    testApp.checkCdkNagCompliance(stack);
+    const template = Template.fromStack(stack);
+
+    test('Creates ManagedPolicy with inline statements from policyDocument', () => {
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        PolicyDocument: Match.objectLike({
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: 'codeartifact:GetAuthorizationToken',
+              Effect: 'Allow',
+              Resource: 'arn:aws:codeartifact:us-east-1:123456789012:domain/test-domain',
+            }),
+            Match.objectLike({
+              Action: Match.arrayWith(['codeartifact:GetRepositoryEndpoint', 'codeartifact:ReadFromRepository']),
+              Effect: 'Allow',
+              Resource: 'arn:aws:codeartifact:us-east-1:123456789012:repository/test-domain/test-repo',
+            }),
+            Match.objectLike({
+              Action: 'sts:GetServiceBearerToken',
+              Effect: 'Allow',
+              Resource: '*',
+            }),
+          ]),
+        }),
+      });
+    });
+
+    test('Inline policy is attached to stage roles', () => {
+      template.hasResourceProperties('AWS::IAM::Role', {
+        ManagedPolicyArns: Match.arrayWith([Match.objectLike({ Ref: Match.stringLikeRegexp('.*cbinlinepolicy.*') })]),
+      });
     });
   });
 

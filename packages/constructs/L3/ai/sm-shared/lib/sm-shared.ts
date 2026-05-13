@@ -15,60 +15,6 @@ import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
- * Configuration for pulling @aws-mdaa packages from a private CodeArtifact repository
- * instead of the public npm registry.
- *
- * When configured, the construct adds scoped IAM permissions and CodeBuild
- * environment variables so the buildspec can authenticate before `npm install`.
- */
-export interface CodeArtifactConfig {
-  /**
-   * CodeArtifact domain name that owns the repository.
-   *
-   * Use cases: Identifies the CodeArtifact domain for authentication and endpoint resolution
-   *
-   * AWS: CodeArtifact domain (codeartifact:GetAuthorizationToken)
-   *
-   * Validation: Required; string
-   */
-  readonly domain: string;
-
-  /**
-   * CodeArtifact repository name within the domain.
-   *
-   * Use cases: Identifies the specific npm repository to pull packages from
-   *
-   * AWS: CodeArtifact repository (codeartifact:ReadFromRepository)
-   *
-   * Validation: Required; string
-   */
-  readonly repository: string;
-
-  /**
-   * AWS region where the CodeArtifact domain is hosted.
-   *
-   * Use cases: Cross-region CodeArtifact access when the registry is in a different region than the deployment
-   *
-   * AWS: CodeArtifact region for API calls
-   *
-   * Validation: Optional; defaults to the deployment region (AWS_REGION)
-   * @default deployment region
-   */
-  readonly region?: string;
-
-  /**
-   * Pin @aws-mdaa/cli and module versions to a specific release.
-   *
-   * Use cases: Reproducible builds; testing a specific pre-release version; version governance
-   *
-   * AWS: N/A — controls npm package version resolution
-   *
-   * Validation: Optional; semver string (e.g., '1.5.0')
-   */
-  readonly version?: string;
-}
-
-/**
  * Source repository type for MLOps CI/CD pipelines.
  */
 export enum SourceType {

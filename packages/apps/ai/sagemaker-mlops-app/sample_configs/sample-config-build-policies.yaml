@@ -1,0 +1,44 @@
+# Config for the SageMaker MLOps module with custom build policies.
+# Uses buildPolicies to grant CodeBuild IAM permissions for accessing
+# a private npm registry (e.g. CodeArtifact) during npm install.
+# The registry authentication logic lives in the user's buildspec, not in MDAA.
+
+training:
+  projectName: test-training-bp
+
+  seedCodePath: '../test/test-seed-code.zip'
+
+  # Grant CodeBuild access to a private registry.
+  # The buildspec should call `aws codeartifact login` (or equivalent) before npm install.
+  buildPolicies:
+    - policyDocument:
+        Statement:
+          - Effect: Allow
+            Action: codeartifact:GetAuthorizationToken
+            Resource: 'arn:{{partition}}:codeartifact:{{region}}:{{account}}:domain/mdaa'
+          - Effect: Allow
+            Action:
+              - codeartifact:GetRepositoryEndpoint
+              - codeartifact:ReadFromRepository
+            Resource: 'arn:{{partition}}:codeartifact:{{region}}:{{account}}:repository/mdaa/mdaa-npm'
+          - Effect: Allow
+            Action: sts:GetServiceBearerToken
+            Resource: '*'
+            Condition:
+              StringEquals:
+                'sts:AWSServiceName': codeartifact.amazonaws.com
+      suppressions:
+        - id: AwsSolutions-IAM5
+          reason: 'sts:GetServiceBearerToken requires Resource:* conditioned on sts:AWSServiceName=codeartifact.amazonaws.com'
+
+deploy:
+  projectName: test-deploy-bp
+
+  modelPackageGroupName: test-mpg
+  modelBucketName: test-bucket
+
+  seedCodePath: '../test/test-seed-code.zip'
+
+  # Reference an existing managed policy by ARN.
+  buildPolicies:
+    - policyArn: 'arn:{{partition}}:iam::{{account}}:policy/CodeArtifactReadOnly'

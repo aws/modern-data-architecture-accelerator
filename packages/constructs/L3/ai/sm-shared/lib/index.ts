@@ -10,3 +10,5 @@ export * from './validation';
 export * from './iam-helpers';
 export * from './tags-helper';
 export * from './pipeline-helpers';
+export * from './build-policy-types';
+export * from './build-policy-helper';

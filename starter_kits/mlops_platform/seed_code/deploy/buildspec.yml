@@ -6,18 +6,15 @@ version: 0.2
 phases:
   install:
     commands:
-      # If CodeArtifact is configured, authenticate npm to the private registry before install.
-      # MDAA_CODEARTIFACT_DOMAIN is set by the L3 construct when codeArtifact config is present.
-      - |
-        if [ -n "${MDAA_CODEARTIFACT_DOMAIN:-}" ]; then
-          echo "Logging in to CodeArtifact: ${MDAA_CODEARTIFACT_DOMAIN}/${MDAA_CODEARTIFACT_REPO} (${MDAA_CODEARTIFACT_REGION})"
-          aws codeartifact login --tool npm \
-            --domain "${MDAA_CODEARTIFACT_DOMAIN}" \
-            --repository "${MDAA_CODEARTIFACT_REPO}" \
-            --region "${MDAA_CODEARTIFACT_REGION}" \
-            --namespace '@aws-mdaa'
-        fi
-      - npm install -g @aws-mdaa/cli${MDAA_VERSION:+@${MDAA_VERSION}}
+      # If using a private CodeArtifact registry, uncomment and configure the login below.
+      # The CodeBuild role must have the CodeArtifact read policy attached via buildPolicies.
+      # - |
+      #   aws codeartifact login --tool npm \
+      #     --domain "<your-domain>" \
+      #     --repository "<your-repo>" \
+      #     --region "<your-region>" \
+      #     --namespace '@aws-mdaa'
+      - npm install -g @aws-mdaa/cli
 
   pre_build:
     commands:

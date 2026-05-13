@@ -189,52 +189,6 @@ export function addCdkDeployPolicy(role: MdaaRole, orgPrefix: string, cdkBootstr
   );
 }
 
-/**
- * Adds CodeArtifact read permissions to a CodeBuild role.
- *
- * Grants:
- * - codeartifact:GetAuthorizationToken on the domain
- * - codeartifact:GetRepositoryEndpoint + codeartifact:ReadFromRepository on the repository
- * - sts:GetServiceBearerToken conditioned on codeartifact.amazonaws.com
- *   (required by the `aws codeartifact login` CLI command)
- *
- * @see https://docs.aws.amazon.com/codeartifact/latest/ug/auth-and-access-control-iam-identity-based-access-control.html
- */
-export function addCodeArtifactReadPolicy(role: MdaaRole, domain: string, repository: string, region?: string): void {
-  const caRegion = region ?? Aws.REGION;
-
-  // codeartifact:GetAuthorizationToken is scoped to the domain
-  role.addToPolicy(
-    new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ['codeartifact:GetAuthorizationToken'],
-      resources: [`arn:${Aws.PARTITION}:codeartifact:${caRegion}:${Aws.ACCOUNT_ID}:domain/${domain}`],
-    }),
-  );
-
-  // Repository-level read permissions
-  role.addToPolicy(
-    new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ['codeartifact:GetRepositoryEndpoint', 'codeartifact:ReadFromRepository'],
-      resources: [`arn:${Aws.PARTITION}:codeartifact:${caRegion}:${Aws.ACCOUNT_ID}:repository/${domain}/${repository}`],
-    }),
-  );
-
-  // sts:GetServiceBearerToken is required by `aws codeartifact login` to exchange
-  // STS credentials for a CodeArtifact auth token. Conditioned on the CodeArtifact service.
-  role.addToPolicy(
-    new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ['sts:GetServiceBearerToken'],
-      resources: ['*'],
-      conditions: {
-        StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' },
-      },
-    }),
-  );
-}
-
 export function addVpcNetworkPolicy(role: MdaaRole): void {
   // ec2:Describe* actions do not support resource-level permissions
   role.addToPolicy(

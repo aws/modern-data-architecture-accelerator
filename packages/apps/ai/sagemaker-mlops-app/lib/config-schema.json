@@ -55,6 +55,116 @@
             ],
             "type": "object"
         },
+        "BuildPolicyConfig": {
+            "additionalProperties": false,
+            "description": "Policy configuration for the build role. Supports managed policy ARNs or inline policy documents (mutually exclusive per entry).",
+            "properties": {
+                "policyArn": {
+                    "description": "ARN of an existing managed policy to attach to the build role. Mutually exclusive with policyDocument. The deployer is responsible for ensuring the referenced policy follows least-privilege principles — CDK Nag cannot inspect imported policies.",
+                    "type": "string"
+                },
+                "policyDocument": {
+                    "$ref": "#/definitions/BuildPolicyDocumentConfig",
+                    "description": "Inline policy document. The construct creates a managed policy from these statements. Mutually exclusive with policyArn."
+                },
+                "suppressions": {
+                    "description": "CDK Nag suppressions for rules triggered by this policy. Required when policyDocument uses wildcard resources. Deployers are responsible for ensuring suppression reasons are specific and auditable.",
+                    "items": {
+                        "$ref": "#/definitions/BuildPolicySuppressionConfig"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "BuildPolicyDocumentConfig": {
+            "additionalProperties": false,
+            "description": "Inline policy document for build role permissions.",
+            "properties": {
+                "Statement": {
+                    "items": {
+                        "$ref": "#/definitions/BuildPolicyStatementConfig"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "Statement"
+            ],
+            "type": "object"
+        },
+        "BuildPolicyStatementConfig": {
+            "additionalProperties": false,
+            "description": "IAM policy statement for build role permissions.",
+            "properties": {
+                "Action": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                },
+                "Condition": {
+                    "additionalProperties": {
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "type": "object"
+                    },
+                    "type": "object"
+                },
+                "Effect": {
+                    "type": "string"
+                },
+                "Resource": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                },
+                "Sid": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Action",
+                "Effect",
+                "Resource"
+            ],
+            "type": "object"
+        },
+        "BuildPolicySuppressionConfig": {
+            "additionalProperties": false,
+            "description": "CDK Nag suppression entry for build policies. Deployers are responsible for providing meaningful justifications that explain why the suppressed rule is acceptable for their use case. Vague reasons (e.g. 'needed') should be flagged during code review.",
+            "properties": {
+                "id": {
+                    "description": "CDK Nag rule ID to suppress (e.g. 'AwsSolutions-IAM5').",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "Justification for suppressing the rule. Should clearly explain why the broad permission is required and what constraints (e.g. Conditions) limit its scope.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "reason"
+            ],
+            "type": "object"
+        },
         "CfnAutoScalingReplacingUpdate": {
             "additionalProperties": false,
             "description": "Specifies whether an Auto Scaling group and the instances it contains are replaced during an update. During replacement,\nAWS CloudFormation retains the old group until it finishes creating the new one. If the update fails, AWS CloudFormation\ncan roll back to the old Auto Scaling group and delete the new Auto Scaling group.\n\nWhile AWS CloudFormation creates the new group, it doesn't detach or attach any instances. After successfully creating\nthe new Auto Scaling group, AWS CloudFormation deletes the old Auto Scaling group during the cleanup process.\n\nWhen you set the WillReplace parameter, remember to specify a matching CreationPolicy. If the minimum number of\ninstances (specified by the MinSuccessfulInstancesPercent property) don't signal success within the Timeout period\n(specified in the CreationPolicy policy), the replacement update fails and AWS CloudFormation rolls back to the old\nAuto Scaling group.",
@@ -407,34 +517,6 @@
                     "type": "boolean"
                 }
             },
-            "type": "object"
-        },
-        "CodeArtifactConfig": {
-            "additionalProperties": false,
-            "description": "Configuration for pulling",
-            "properties": {
-                "domain": {
-                    "description": "CodeArtifact domain name that owns the repository.\n\nUse cases: Identifies the CodeArtifact domain for authentication and endpoint resolution\n\nAWS: CodeArtifact domain (codeartifact:GetAuthorizationToken)\n\nValidation: Required; string",
-                    "type": "string"
-                },
-                "region": {
-                    "default": "deployment region",
-                    "description": "AWS region where the CodeArtifact domain is hosted.\n\nUse cases: Cross-region CodeArtifact access when the registry is in a different region than the deployment\n\nAWS: CodeArtifact region for API calls\n\nValidation: Optional; defaults to the deployment region (AWS_REGION)",
-                    "type": "string"
-                },
-                "repository": {
-                    "description": "CodeArtifact repository name within the domain.\n\nUse cases: Identifies the specific npm repository to pull packages from\n\nAWS: CodeArtifact repository (codeartifact:ReadFromRepository)\n\nValidation: Required; string",
-                    "type": "string"
-                },
-                "version": {
-                    "description": "Pin",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "domain",
-                "repository"
-            ],
             "type": "object"
         },
         "CodeStarConnectionConfig": {
@@ -2454,13 +2536,16 @@
         "SageMakerMLOpsDeployConfig": {
             "additionalProperties": false,
             "properties": {
+                "buildPolicies": {
+                    "description": "Additional IAM policies to attach to the build roles. Use this to grant the build environment access to private registries (CodeArtifact, ECR), secrets, or other AWS services needed by the buildspec.",
+                    "items": {
+                        "$ref": "#/definitions/BuildPolicyConfig"
+                    },
+                    "type": "array"
+                },
                 "cdkBootstrapQualifier": {
                     "description": "CDK bootstrap qualifier for cross-account role ARNs",
                     "type": "string"
-                },
-                "codeArtifact": {
-                    "$ref": "#/definitions/CodeArtifactConfig",
-                    "description": "Optional CodeArtifact config for pulling"
                 },
                 "codeStarConnection": {
                     "$ref": "#/definitions/CodeStarConnectionConfig",
@@ -2547,9 +2632,12 @@
                     "description": "Prefix used by seed code when naming SageMaker jobs (default: projectName). Used to scope IAM resource ARNs.",
                     "type": "string"
                 },
-                "codeArtifact": {
-                    "$ref": "#/definitions/CodeArtifactConfig",
-                    "description": "Optional CodeArtifact config for pulling"
+                "buildPolicies": {
+                    "description": "Additional IAM policies to attach to the build role. Use this to grant the build environment access to private registries (CodeArtifact, ECR), secrets, or other AWS services needed by the buildspec.",
+                    "items": {
+                        "$ref": "#/definitions/BuildPolicyConfig"
+                    },
+                    "type": "array"
                 },
                 "codeStarConnection": {
                     "$ref": "#/definitions/CodeStarConnectionConfig",

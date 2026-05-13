@@ -25,29 +25,321 @@
 
 **Description:** Deployment pipeline configuration
 
-| Property                                                        | Pattern | Type             | Deprecated | Definition                                        | Title/Description                                                                             |
-| --------------------------------------------------------------- | ------- | ---------------- | ---------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| - [cdkBootstrapQualifier](#deploy_cdkBootstrapQualifier )       | No      | string           | No         | -                                                 | CDK bootstrap qualifier for cross-account role ARNs                                           |
-| - [codeArtifact](#deploy_codeArtifact )                         | No      | object           | No         | In #/definitions/CodeArtifactConfig               | Optional CodeArtifact config for pulling                                                      |
-| - [codeStarConnection](#deploy_codeStarConnection )             | No      | object           | No         | In #/definitions/CodeStarConnectionConfig         | CodeStar Connections config for the deploy repo                                               |
-| - [devEnvironment](#deploy_devEnvironment )                     | No      | object           | No         | In #/definitions/DeployEnvironmentConfig          | Dev environment config                                                                        |
-| - [domainArn](#deploy_domainArn )                               | No      | string           | No         | -                                                 | SageMaker domain ARN                                                                          |
-| - [domainId](#deploy_domainId )                                 | No      | string           | No         | -                                                 | SageMaker domain ID                                                                           |
-| - [enableDataCapture](#deploy_enableDataCapture )               | No      | boolean          | No         | -                                                 | Enable data capture on deployed endpoints                                                     |
-| - [enableEventBridgeTrigger](#deploy_enableEventBridgeTrigger ) | No      | boolean          | No         | -                                                 | Enable EventBridge trigger on model package approval                                          |
-| - [enableManualApproval](#deploy_enableManualApproval )         | No      | boolean          | No         | -                                                 | Enable manual approval gate before production deployment                                      |
-| - [enableNetworkIsolation](#deploy_enableNetworkIsolation )     | No      | boolean          | No         | -                                                 | Enable network isolation for endpoints                                                        |
-| - [modelBucketName](#deploy_modelBucketName )                   | No      | string           | No         | -                                                 | Model bucket name (optional — auto-wired from training when both are in same app)             |
-| - [modelPackageGroupName](#deploy_modelPackageGroupName )       | No      | string           | No         | -                                                 | Model Package Group name (optional — auto-wired from training when both are in same app)      |
-| - [pipelineBucketName](#deploy_pipelineBucketName )             | No      | string           | No         | -                                                 | Pipeline bucket name for CfnPipeline-based training (model artifacts may live here)           |
-| - [pipelineKmsKeyArn](#deploy_pipelineKmsKeyArn )               | No      | string           | No         | -                                                 | KMS key ARN for pipeline bucket encryption (passed to endpoint execution role for decryption) |
-| - [preProdEnvironment](#deploy_preProdEnvironment )             | No      | object           | No         | Same as [devEnvironment](#deploy_devEnvironment ) | Pre-prod environment config                                                                   |
-| - [prodEnvironment](#deploy_prodEnvironment )                   | No      | object           | No         | Same as [devEnvironment](#deploy_devEnvironment ) | Prod environment config                                                                       |
-| + [projectName](#deploy_projectName )                           | No      | string           | No         | -                                                 | SageMaker project name for deployment                                                         |
-| - [seedCodePath](#deploy_seedCodePath )                         | No      | string           | No         | -                                                 | Path to deploy seed code directory or zip file                                                |
-| - [sourceType](#deploy_sourceType )                             | No      | enum (of string) | No         | -                                                 | Source repository type (default: CODECOMMIT)                                                  |
+| Property                                                        | Pattern | Type             | Deprecated | Definition                                        | Title/Description                                                                                                                                                                                       |
+| --------------------------------------------------------------- | ------- | ---------------- | ---------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [buildPolicies](#deploy_buildPolicies )                       | No      | array            | No         | -                                                 | Additional IAM policies to attach to the build roles. Use this to grant the build environment access to private registries (CodeArtifact, ECR), secrets, or other AWS services needed by the buildspec. |
+| - [cdkBootstrapQualifier](#deploy_cdkBootstrapQualifier )       | No      | string           | No         | -                                                 | CDK bootstrap qualifier for cross-account role ARNs                                                                                                                                                     |
+| - [codeStarConnection](#deploy_codeStarConnection )             | No      | object           | No         | In #/definitions/CodeStarConnectionConfig         | CodeStar Connections config for the deploy repo                                                                                                                                                         |
+| - [devEnvironment](#deploy_devEnvironment )                     | No      | object           | No         | In #/definitions/DeployEnvironmentConfig          | Dev environment config                                                                                                                                                                                  |
+| - [domainArn](#deploy_domainArn )                               | No      | string           | No         | -                                                 | SageMaker domain ARN                                                                                                                                                                                    |
+| - [domainId](#deploy_domainId )                                 | No      | string           | No         | -                                                 | SageMaker domain ID                                                                                                                                                                                     |
+| - [enableDataCapture](#deploy_enableDataCapture )               | No      | boolean          | No         | -                                                 | Enable data capture on deployed endpoints                                                                                                                                                               |
+| - [enableEventBridgeTrigger](#deploy_enableEventBridgeTrigger ) | No      | boolean          | No         | -                                                 | Enable EventBridge trigger on model package approval                                                                                                                                                    |
+| - [enableManualApproval](#deploy_enableManualApproval )         | No      | boolean          | No         | -                                                 | Enable manual approval gate before production deployment                                                                                                                                                |
+| - [enableNetworkIsolation](#deploy_enableNetworkIsolation )     | No      | boolean          | No         | -                                                 | Enable network isolation for endpoints                                                                                                                                                                  |
+| - [modelBucketName](#deploy_modelBucketName )                   | No      | string           | No         | -                                                 | Model bucket name (optional — auto-wired from training when both are in same app)                                                                                                                       |
+| - [modelPackageGroupName](#deploy_modelPackageGroupName )       | No      | string           | No         | -                                                 | Model Package Group name (optional — auto-wired from training when both are in same app)                                                                                                                |
+| - [pipelineBucketName](#deploy_pipelineBucketName )             | No      | string           | No         | -                                                 | Pipeline bucket name for CfnPipeline-based training (model artifacts may live here)                                                                                                                     |
+| - [pipelineKmsKeyArn](#deploy_pipelineKmsKeyArn )               | No      | string           | No         | -                                                 | KMS key ARN for pipeline bucket encryption (passed to endpoint execution role for decryption)                                                                                                           |
+| - [preProdEnvironment](#deploy_preProdEnvironment )             | No      | object           | No         | Same as [devEnvironment](#deploy_devEnvironment ) | Pre-prod environment config                                                                                                                                                                             |
+| - [prodEnvironment](#deploy_prodEnvironment )                   | No      | object           | No         | Same as [devEnvironment](#deploy_devEnvironment ) | Prod environment config                                                                                                                                                                                 |
+| + [projectName](#deploy_projectName )                           | No      | string           | No         | -                                                 | SageMaker project name for deployment                                                                                                                                                                   |
+| - [seedCodePath](#deploy_seedCodePath )                         | No      | string           | No         | -                                                 | Path to deploy seed code directory or zip file                                                                                                                                                          |
+| - [sourceType](#deploy_sourceType )                             | No      | enum (of string) | No         | -                                                 | Source repository type (default: CODECOMMIT)                                                                                                                                                            |
 
-### <a name="deploy_cdkBootstrapQualifier"></a>1.1. Property `root > deploy > cdkBootstrapQualifier`
+### <a name="deploy_buildPolicies"></a>1.1. Property `root > deploy > buildPolicies`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Additional IAM policies to attach to the build roles. Use this to grant the build environment access to private registries (CodeArtifact, ECR), secrets, or other AWS services needed by the buildspec.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                  | Description                                                                                                                      |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| [BuildPolicyConfig](#deploy_buildPolicies_items) | Policy configuration for the build role. Supports managed policy ARNs or inline policy documents (mutually exclusive per entry). |
+
+#### <a name="deploy_buildPolicies_items"></a>1.1.1. root > deploy > buildPolicies > BuildPolicyConfig
+
+|                           |                                 |
+| ------------------------- | ------------------------------- |
+| **Type**                  | `object`                        |
+| **Required**              | No                              |
+| **Additional properties** | Not allowed                     |
+| **Defined in**            | #/definitions/BuildPolicyConfig |
+
+**Description:** Policy configuration for the build role. Supports managed policy ARNs or inline policy documents (mutually exclusive per entry).
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                    |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [policyArn](#deploy_buildPolicies_items_policyArn )           | No      | string | No         | -                                          | ARN of an existing managed policy to attach to the build role. Mutually exclusive with policyDocument. The deployer is responsible for ensuring the referenced policy follows least-privilege principles — CDK Nag cannot inspect imported policies. |
+| - [policyDocument](#deploy_buildPolicies_items_policyDocument ) | No      | object | No         | In #/definitions/BuildPolicyDocumentConfig | Inline policy document. The construct creates a managed policy from these statements. Mutually exclusive with policyArn.                                                                                                                             |
+| - [suppressions](#deploy_buildPolicies_items_suppressions )     | No      | array  | No         | -                                          | CDK Nag suppressions for rules triggered by this policy. Required when policyDocument uses wildcard resources. Deployers are responsible for ensuring suppression reasons are specific and auditable.                                                |
+
+##### <a name="deploy_buildPolicies_items_policyArn"></a>1.1.1.1. Property `root > deploy > buildPolicies > buildPolicies items > policyArn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** ARN of an existing managed policy to attach to the build role. Mutually exclusive with policyDocument. The deployer is responsible for ensuring the referenced policy follows least-privilege principles — CDK Nag cannot inspect imported policies.
+
+##### <a name="deploy_buildPolicies_items_policyDocument"></a>1.1.1.2. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument`
+
+|                           |                                         |
+| ------------------------- | --------------------------------------- |
+| **Type**                  | `object`                                |
+| **Required**              | No                                      |
+| **Additional properties** | Not allowed                             |
+| **Defined in**            | #/definitions/BuildPolicyDocumentConfig |
+
+**Description:** Inline policy document. The construct creates a managed policy from these statements. Mutually exclusive with policyArn.
+
+| Property                                                             | Pattern | Type  | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------- | ------- | ----- | ---------- | ---------- | ----------------- |
+| + [Statement](#deploy_buildPolicies_items_policyDocument_Statement ) | No      | array | No         | -          | -                 |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement"></a>1.1.1.2.1. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | Yes     |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                          | Description                                      |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [BuildPolicyStatementConfig](#deploy_buildPolicies_items_policyDocument_Statement_items) | IAM policy statement for build role permissions. |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items"></a>1.1.1.2.1.1. root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > BuildPolicyStatementConfig
+
+|                           |                                          |
+| ------------------------- | ---------------------------------------- |
+| **Type**                  | `object`                                 |
+| **Required**              | No                                       |
+| **Additional properties** | Not allowed                              |
+| **Defined in**            | #/definitions/BuildPolicyStatementConfig |
+
+**Description:** IAM policy statement for build role permissions.
+
+| Property                                                                             | Pattern | Type        | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------ | ------- | ----------- | ---------- | ---------- | ----------------- |
+| + [Action](#deploy_buildPolicies_items_policyDocument_Statement_items_Action )       | No      | Combination | No         | -          | -                 |
+| - [Condition](#deploy_buildPolicies_items_policyDocument_Statement_items_Condition ) | No      | object      | No         | -          | -                 |
+| + [Effect](#deploy_buildPolicies_items_policyDocument_Statement_items_Effect )       | No      | string      | No         | -          | -                 |
+| + [Resource](#deploy_buildPolicies_items_policyDocument_Statement_items_Resource )   | No      | Combination | No         | -          | -                 |
+| - [Sid](#deploy_buildPolicies_items_policyDocument_Statement_items_Sid )             | No      | string      | No         | -          | -                 |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Action"></a>1.1.1.2.1.1.1. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Action`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | Yes              |
+| **Additional properties** | Any type allowed |
+
+| Any of(Option)                                                                       |
+| ------------------------------------------------------------------------------------ |
+| [item 0](#deploy_buildPolicies_items_policyDocument_Statement_items_Action_anyOf_i0) |
+| [item 1](#deploy_buildPolicies_items_policyDocument_Statement_items_Action_anyOf_i1) |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Action_anyOf_i0"></a>1.1.1.2.1.1.1.1. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Action > anyOf > item 0`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [item 0 items](#deploy_buildPolicies_items_policyDocument_Statement_items_Action_anyOf_i0_items) | -           |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Action_anyOf_i0_items"></a>1.1.1.2.1.1.1.1.1. root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Action > anyOf > item 0 > item 0 items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Action_anyOf_i1"></a>1.1.1.2.1.1.1.2. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Action > anyOf > item 1`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Condition"></a>1.1.1.2.1.1.2. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Condition`
+
+|                           |                                                                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                                                                         |
+| **Required**              | No                                                                                                                                               |
+| **Additional properties** | [Each additional property must conform to the schema](#deploy_buildPolicies_items_policyDocument_Statement_items_Condition_additionalProperties) |
+
+| Property                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#deploy_buildPolicies_items_policyDocument_Statement_items_Condition_additionalProperties ) | No      | object | No         | -          | -                 |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Condition_additionalProperties"></a>1.1.1.2.1.1.2.1. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Condition > additionalProperties`
+
+|                           |                                                                                                                                                                       |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                              |
+| **Required**              | No                                                                                                                                                                    |
+| **Additional properties** | [Each additional property must conform to the schema](#deploy_buildPolicies_items_policyDocument_Statement_items_Condition_additionalProperties_additionalProperties) |
+
+| Property                                                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#deploy_buildPolicies_items_policyDocument_Statement_items_Condition_additionalProperties_additionalProperties ) | No      | string | No         | -          | -                 |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Condition_additionalProperties_additionalProperties"></a>1.1.1.2.1.1.2.1.1. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Condition > additionalProperties > additionalProperties`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Effect"></a>1.1.1.2.1.1.3. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Effect`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Resource"></a>1.1.1.2.1.1.4. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Resource`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | Yes              |
+| **Additional properties** | Any type allowed |
+
+| Any of(Option)                                                                         |
+| -------------------------------------------------------------------------------------- |
+| [item 0](#deploy_buildPolicies_items_policyDocument_Statement_items_Resource_anyOf_i0) |
+| [item 1](#deploy_buildPolicies_items_policyDocument_Statement_items_Resource_anyOf_i1) |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Resource_anyOf_i0"></a>1.1.1.2.1.1.4.1. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Resource > anyOf > item 0`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                    | Description |
+| -------------------------------------------------------------------------------------------------- | ----------- |
+| [item 0 items](#deploy_buildPolicies_items_policyDocument_Statement_items_Resource_anyOf_i0_items) | -           |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Resource_anyOf_i0_items"></a>1.1.1.2.1.1.4.1.1. root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Resource > anyOf > item 0 > item 0 items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Resource_anyOf_i1"></a>1.1.1.2.1.1.4.2. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Resource > anyOf > item 1`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="deploy_buildPolicies_items_policyDocument_Statement_items_Sid"></a>1.1.1.2.1.1.5. Property `root > deploy > buildPolicies > buildPolicies items > policyDocument > Statement > Statement items > Sid`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="deploy_buildPolicies_items_suppressions"></a>1.1.1.3. Property `root > deploy > buildPolicies > buildPolicies items > suppressions`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** CDK Nag suppressions for rules triggered by this policy. Required when policyDocument uses wildcard resources. Deployers are responsible for ensuring suppression reasons are specific and auditable.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                | Description                                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [BuildPolicySuppressionConfig](#deploy_buildPolicies_items_suppressions_items) | CDK Nag suppression entry for build policies. Deployers are responsible for providing meaningful justifications that explain why the suppressed rule is acceptable for their use case. Vague reasons (e.g. 'needed') should be flagged during code review. |
+
+###### <a name="deploy_buildPolicies_items_suppressions_items"></a>1.1.1.3.1. root > deploy > buildPolicies > buildPolicies items > suppressions > BuildPolicySuppressionConfig
+
+|                           |                                            |
+| ------------------------- | ------------------------------------------ |
+| **Type**                  | `object`                                   |
+| **Required**              | No                                         |
+| **Additional properties** | Not allowed                                |
+| **Defined in**            | #/definitions/BuildPolicySuppressionConfig |
+
+**Description:** CDK Nag suppression entry for build policies. Deployers are responsible for providing meaningful justifications that explain why the suppressed rule is acceptable for their use case. Vague reasons (e.g. 'needed') should be flagged during code review.
+
+| Property                                                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                           |
+| ------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [id](#deploy_buildPolicies_items_suppressions_items_id )         | No      | string | No         | -          | CDK Nag rule ID to suppress (e.g. 'AwsSolutions-IAM5').                                                                                                     |
+| + [reason](#deploy_buildPolicies_items_suppressions_items_reason ) | No      | string | No         | -          | Justification for suppressing the rule. Should clearly explain why the broad permission is required and what constraints (e.g. Conditions) limit its scope. |
+
+###### <a name="deploy_buildPolicies_items_suppressions_items_id"></a>1.1.1.3.1.1. Property `root > deploy > buildPolicies > buildPolicies items > suppressions > suppressions items > id`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** CDK Nag rule ID to suppress (e.g. 'AwsSolutions-IAM5').
+
+###### <a name="deploy_buildPolicies_items_suppressions_items_reason"></a>1.1.1.3.1.2. Property `root > deploy > buildPolicies > buildPolicies items > suppressions > suppressions items > reason`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Justification for suppressing the rule. Should clearly explain why the broad permission is required and what constraints (e.g. Conditions) limit its scope.
+
+### <a name="deploy_cdkBootstrapQualifier"></a>1.2. Property `root > deploy > cdkBootstrapQualifier`
 
 |              |          |
 | ------------ | -------- |
@@ -55,79 +347,6 @@
 | **Required** | No       |
 
 **Description:** CDK bootstrap qualifier for cross-account role ARNs
-
-### <a name="deploy_codeArtifact"></a>1.2. Property `root > deploy > codeArtifact`
-
-|                           |                                  |
-| ------------------------- | -------------------------------- |
-| **Type**                  | `object`                         |
-| **Required**              | No                               |
-| **Additional properties** | Not allowed                      |
-| **Defined in**            | #/definitions/CodeArtifactConfig |
-
-**Description:** Optional CodeArtifact config for pulling
-
-| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                           |
-| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [domain](#deploy_codeArtifact_domain )         | No      | string | No         | -          | CodeArtifact domain name that owns the repository.<br /><br />Use cases: Identifies the CodeArtifact domain for authentication and endpoint resolution<br /><br />AWS: CodeArtifact domain (codeartifact:GetAuthorizationToken)<br /><br />Validation: Required; string                                     |
-| - [region](#deploy_codeArtifact_region )         | No      | string | No         | -          | AWS region where the CodeArtifact domain is hosted.<br /><br />Use cases: Cross-region CodeArtifact access when the registry is in a different region than the deployment<br /><br />AWS: CodeArtifact region for API calls<br /><br />Validation: Optional; defaults to the deployment region (AWS_REGION) |
-| + [repository](#deploy_codeArtifact_repository ) | No      | string | No         | -          | CodeArtifact repository name within the domain.<br /><br />Use cases: Identifies the specific npm repository to pull packages from<br /><br />AWS: CodeArtifact repository (codeartifact:ReadFromRepository)<br /><br />Validation: Required; string                                                        |
-| - [version](#deploy_codeArtifact_version )       | No      | string | No         | -          | Pin                                                                                                                                                                                                                                                                                                         |
-
-#### <a name="deploy_codeArtifact_domain"></a>1.2.1. Property `root > deploy > codeArtifact > domain`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
-
-**Description:** CodeArtifact domain name that owns the repository.
-
-Use cases: Identifies the CodeArtifact domain for authentication and endpoint resolution
-
-AWS: CodeArtifact domain (codeartifact:GetAuthorizationToken)
-
-Validation: Required; string
-
-#### <a name="deploy_codeArtifact_region"></a>1.2.2. Property `root > deploy > codeArtifact > region`
-
-|              |                       |
-| ------------ | --------------------- |
-| **Type**     | `string`              |
-| **Required** | No                    |
-| **Default**  | `"deployment region"` |
-
-**Description:** AWS region where the CodeArtifact domain is hosted.
-
-Use cases: Cross-region CodeArtifact access when the registry is in a different region than the deployment
-
-AWS: CodeArtifact region for API calls
-
-Validation: Optional; defaults to the deployment region (AWS_REGION)
-
-#### <a name="deploy_codeArtifact_repository"></a>1.2.3. Property `root > deploy > codeArtifact > repository`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
-
-**Description:** CodeArtifact repository name within the domain.
-
-Use cases: Identifies the specific npm repository to pull packages from
-
-AWS: CodeArtifact repository (codeartifact:ReadFromRepository)
-
-Validation: Required; string
-
-#### <a name="deploy_codeArtifact_version"></a>1.2.4. Property `root > deploy > codeArtifact > version`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Pin
 
 ### <a name="deploy_codeStarConnection"></a>1.3. Property `root > deploy > codeStarConnection`
 
@@ -7348,22 +7567,22 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Training pipeline configuration
 
-| Property                                                                      | Pattern | Type             | Deprecated | Definition                                                | Title/Description                                                                                            |
-| ----------------------------------------------------------------------------- | ------- | ---------------- | ---------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| - [baseJobPrefix](#training_baseJobPrefix )                                   | No      | string           | No         | -                                                         | Prefix used by seed code when naming SageMaker jobs (default: projectName). Used to scope IAM resource ARNs. |
-| - [codeArtifact](#training_codeArtifact )                                     | No      | object           | No         | Same as [codeArtifact](#deploy_codeArtifact )             | Optional CodeArtifact config for pulling                                                                     |
-| - [codeStarConnection](#training_codeStarConnection )                         | No      | object           | No         | Same as [codeStarConnection](#deploy_codeStarConnection ) | CodeStar Connections config for the training repo                                                            |
-| - [devEnvironment](#training_devEnvironment )                                 | No      | object           | No         | In #/definitions/ModelTrainingEnvironmentConfig           | Dev environment config (VPC, subnets, security groups)                                                       |
-| - [domainArn](#training_domainArn )                                           | No      | string           | No         | -                                                         | SageMaker domain ARN (SSM reference from sm-studio-domain-app)                                               |
-| - [domainId](#training_domainId )                                             | No      | string           | No         | -                                                         | SageMaker domain ID (SSM reference from sm-studio-domain-app)                                                |
-| - [enableInterContainerEncryption](#training_enableInterContainerEncryption ) | No      | boolean          | No         | -                                                         | Enable inter-container traffic encryption                                                                    |
-| - [enableNetworkIsolation](#training_enableNetworkIsolation )                 | No      | boolean          | No         | -                                                         | Enable network isolation for training jobs                                                                   |
-| - [preProdAccountId](#training_preProdAccountId )                             | No      | string           | No         | -                                                         | Pre-prod account ID for cross-account model registry access                                                  |
-| - [prodAccountId](#training_prodAccountId )                                   | No      | string           | No         | -                                                         | Prod account ID for cross-account model registry access                                                      |
-| + [projectName](#training_projectName )                                       | No      | string           | No         | -                                                         | SageMaker project name for training                                                                          |
-| - [seedCodePath](#training_seedCodePath )                                     | No      | string           | No         | -                                                         | Path to training seed code directory or zip file                                                             |
-| - [sourceType](#training_sourceType )                                         | No      | enum (of string) | No         | -                                                         | Source repository type (default: CODECOMMIT)                                                                 |
-| - [trainingDataPath](#training_trainingDataPath )                             | No      | string           | No         | -                                                         | Path to a local directory containing training data files to upload to the pipeline S3 bucket during deploy.  |
+| Property                                                                      | Pattern | Type             | Deprecated | Definition                                                | Title/Description                                                                                                                                                                                      |
+| ----------------------------------------------------------------------------- | ------- | ---------------- | ---------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [baseJobPrefix](#training_baseJobPrefix )                                   | No      | string           | No         | -                                                         | Prefix used by seed code when naming SageMaker jobs (default: projectName). Used to scope IAM resource ARNs.                                                                                           |
+| - [buildPolicies](#training_buildPolicies )                                   | No      | array            | No         | -                                                         | Additional IAM policies to attach to the build role. Use this to grant the build environment access to private registries (CodeArtifact, ECR), secrets, or other AWS services needed by the buildspec. |
+| - [codeStarConnection](#training_codeStarConnection )                         | No      | object           | No         | Same as [codeStarConnection](#deploy_codeStarConnection ) | CodeStar Connections config for the training repo                                                                                                                                                      |
+| - [devEnvironment](#training_devEnvironment )                                 | No      | object           | No         | In #/definitions/ModelTrainingEnvironmentConfig           | Dev environment config (VPC, subnets, security groups)                                                                                                                                                 |
+| - [domainArn](#training_domainArn )                                           | No      | string           | No         | -                                                         | SageMaker domain ARN (SSM reference from sm-studio-domain-app)                                                                                                                                         |
+| - [domainId](#training_domainId )                                             | No      | string           | No         | -                                                         | SageMaker domain ID (SSM reference from sm-studio-domain-app)                                                                                                                                          |
+| - [enableInterContainerEncryption](#training_enableInterContainerEncryption ) | No      | boolean          | No         | -                                                         | Enable inter-container traffic encryption                                                                                                                                                              |
+| - [enableNetworkIsolation](#training_enableNetworkIsolation )                 | No      | boolean          | No         | -                                                         | Enable network isolation for training jobs                                                                                                                                                             |
+| - [preProdAccountId](#training_preProdAccountId )                             | No      | string           | No         | -                                                         | Pre-prod account ID for cross-account model registry access                                                                                                                                            |
+| - [prodAccountId](#training_prodAccountId )                                   | No      | string           | No         | -                                                         | Prod account ID for cross-account model registry access                                                                                                                                                |
+| + [projectName](#training_projectName )                                       | No      | string           | No         | -                                                         | SageMaker project name for training                                                                                                                                                                    |
+| - [seedCodePath](#training_seedCodePath )                                     | No      | string           | No         | -                                                         | Path to training seed code directory or zip file                                                                                                                                                       |
+| - [sourceType](#training_sourceType )                                         | No      | enum (of string) | No         | -                                                         | Source repository type (default: CODECOMMIT)                                                                                                                                                           |
+| - [trainingDataPath](#training_trainingDataPath )                             | No      | string           | No         | -                                                         | Path to a local directory containing training data files to upload to the pipeline S3 bucket during deploy.                                                                                            |
 
 ### <a name="training_baseJobPrefix"></a>5.1. Property `root > training > baseJobPrefix`
 
@@ -7374,16 +7593,37 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Prefix used by seed code when naming SageMaker jobs (default: projectName). Used to scope IAM resource ARNs.
 
-### <a name="training_codeArtifact"></a>5.2. Property `root > training > codeArtifact`
+### <a name="training_buildPolicies"></a>5.2. Property `root > training > buildPolicies`
 
-|                           |                                      |
-| ------------------------- | ------------------------------------ |
-| **Type**                  | `object`                             |
-| **Required**              | No                                   |
-| **Additional properties** | Not allowed                          |
-| **Same definition as**    | [codeArtifact](#deploy_codeArtifact) |
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
 
-**Description:** Optional CodeArtifact config for pulling
+**Description:** Additional IAM policies to attach to the build role. Use this to grant the build environment access to private registries (CodeArtifact, ECR), secrets, or other AWS services needed by the buildspec.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                    | Description                                                                                                                      |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| [BuildPolicyConfig](#training_buildPolicies_items) | Policy configuration for the build role. Supports managed policy ARNs or inline policy documents (mutually exclusive per entry). |
+
+#### <a name="training_buildPolicies_items"></a>5.2.1. root > training > buildPolicies > BuildPolicyConfig
+
+|                           |                                                           |
+| ------------------------- | --------------------------------------------------------- |
+| **Type**                  | `object`                                                  |
+| **Required**              | No                                                        |
+| **Additional properties** | Not allowed                                               |
+| **Same definition as**    | [deploy_buildPolicies_items](#deploy_buildPolicies_items) |
+
+**Description:** Policy configuration for the build role. Supports managed policy ARNs or inline policy documents (mutually exclusive per entry).
 
 ### <a name="training_codeStarConnection"></a>5.3. Property `root > training > codeStarConnection`
 

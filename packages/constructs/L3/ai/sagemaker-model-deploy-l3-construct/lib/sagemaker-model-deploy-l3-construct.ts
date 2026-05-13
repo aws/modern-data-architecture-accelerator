@@ -38,7 +38,8 @@ import {
   validateAccountId,
   SourceType,
   CodeStarConnectionConfig,
-  CodeArtifactConfig,
+  BuildPolicyConfig,
+  buildManagedPolicies,
 } from '@aws-mdaa/sm-shared';
 
 const MAX_REPO_NAME_LENGTH = 100;
@@ -95,8 +96,8 @@ export interface SageMakerModelDeployL3ConstructProps extends MdaaL3ConstructPro
   readonly codeStarConnection?: CodeStarConnectionConfig;
   /** CDK bootstrap qualifier for cross-account role ARNs (default: 'hnb659fds') */
   readonly cdkBootstrapQualifier?: string;
-  /** Optional CodeArtifact config for pulling @aws-mdaa packages from a private repository instead of public npm. */
-  readonly codeArtifact?: CodeArtifactConfig;
+  /** Additional IAM policies to attach to the build roles. Use this to grant the build environment access to private registries (CodeArtifact, ECR), secrets, or other AWS services needed by the buildspec. */
+  readonly buildPolicies?: BuildPolicyConfig[];
 }
 
 /**
@@ -274,11 +275,20 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
     const cdkRoleSuffixes = ['deploy-role', 'file-publishing-role', 'lookup-role'];
     const org = props.naming.props.org;
 
+    const buildPolicyManagedPolicies = buildManagedPolicies({
+      scope: this,
+      naming: props.naming,
+      policyNamePrefix: 'deploy-cb',
+      projectName: props.projectName,
+      buildPolicies: props.buildPolicies,
+    });
+
     for (const stage of stages) {
       const role = new MdaaRole(this, `deploy-${stage.name}-codebuild-role`, {
         naming: props.naming,
         roleName: `deploy-cb-${stage.name}-${projectName}`,
         assumedBy: new ServicePrincipal('codebuild.amazonaws.com'),
+        managedPolicies: buildPolicyManagedPolicies,
       });
 
       role.addManagedPolicy(this.sharedPolicy);
@@ -428,34 +438,6 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
     // Grant pipeline bucket and KMS access via the shared policy
     this.pipelineBucket.grantReadWrite(this.sharedPolicy);
     this.kmsKey.grantEncryptDecrypt(this.sharedPolicy);
-
-    if (props.codeArtifact) {
-      const caRegion = props.codeArtifact.region ?? Aws.REGION;
-      this.sharedPolicy.addStatements(
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['codeartifact:GetAuthorizationToken'],
-          resources: [
-            `arn:${Aws.PARTITION}:codeartifact:${caRegion}:${Aws.ACCOUNT_ID}:domain/${props.codeArtifact.domain}`,
-          ],
-        }),
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['codeartifact:GetRepositoryEndpoint', 'codeartifact:ReadFromRepository'],
-          resources: [
-            `arn:${Aws.PARTITION}:codeartifact:${caRegion}:${Aws.ACCOUNT_ID}:repository/${props.codeArtifact.domain}/${props.codeArtifact.repository}`,
-          ],
-        }),
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['sts:GetServiceBearerToken'],
-          resources: ['*'],
-          conditions: {
-            StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' },
-          },
-        }),
-      );
-    }
   }
 
   private addDeployEnvVars(
@@ -514,15 +496,6 @@ export class SageMakerModelDeployL3Construct extends MdaaL3Construct {
     }
     if (props.preProdEnvironment) this.addDeployEnvVars(envVars, 'PRE_PROD', props.preProdEnvironment);
     if (props.prodEnvironment) this.addDeployEnvVars(envVars, 'PROD', props.prodEnvironment);
-
-    if (props.codeArtifact) {
-      envVars['MDAA_CODEARTIFACT_DOMAIN'] = { value: props.codeArtifact.domain };
-      envVars['MDAA_CODEARTIFACT_REPO'] = { value: props.codeArtifact.repository };
-      envVars['MDAA_CODEARTIFACT_REGION'] = { value: props.codeArtifact.region ?? Aws.REGION };
-      if (props.codeArtifact.version) {
-        envVars['MDAA_VERSION'] = { value: props.codeArtifact.version };
-      }
-    }
 
     let repoName: string;
     let codeCommitRepo: Repository | undefined;

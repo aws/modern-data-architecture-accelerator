@@ -110,3 +110,13 @@ Use this as a reference when you need cross-account model promotion, manual appr
 ```yaml
 --8<-- "target/docs/packages/apps/ai/sagemaker-mlops-app/sample_configs/sample-config-comprehensive.yaml"
 ```
+
+#### Build Policies (Private Registry)
+
+Use this variant when the CodeBuild pipelines need access to a private npm registry (e.g. CodeArtifact) or other AWS services during `npm install`. Demonstrates both inline policy documents and managed policy ARN references.
+
+[sample-config-build-policies.yaml](sample_configs/sample-config-build-policies.yaml)
+
+```yaml
+--8<-- "target/docs/packages/apps/ai/sagemaker-mlops-app/sample_configs/sample-config-build-policies.yaml"
+```

@@ -365,7 +365,7 @@ describe('SageMaker Model Training L3 Construct', () => {
     });
   });
 
-  describe('CodeArtifact npm Registry', () => {
+  describe('Build Policies - Inline Policy Document', () => {
     const testApp = new MdaaTestApp();
     const stack = testApp.testStack;
     new SageMakerModelTrainingL3Construct(stack, 'model-training-ca', {
@@ -373,72 +373,69 @@ describe('SageMaker Model Training L3 Construct', () => {
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
       projectName: 'test-ca',
       seedCodePath: __dirname + '/test-seed-code.zip',
-      codeArtifact: {
-        domain: 'mdaa',
-        repository: 'mdaa-npm',
-        region: 'us-east-2',
-        version: '1.5.0',
-      },
+      buildPolicies: [
+        {
+          policyDocument: {
+            Statement: [
+              {
+                Effect: 'Allow',
+                Action: 'codeartifact:GetAuthorizationToken',
+                Resource: 'arn:aws:codeartifact:us-east-2:123456789012:domain/mdaa',
+              },
+              {
+                Effect: 'Allow',
+                Action: ['codeartifact:GetRepositoryEndpoint', 'codeartifact:ReadFromRepository'],
+                Resource: 'arn:aws:codeartifact:us-east-2:123456789012:repository/mdaa/mdaa-npm',
+              },
+              {
+                Effect: 'Allow',
+                Action: 'sts:GetServiceBearerToken',
+                Resource: '*',
+                Condition: { StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' } },
+              },
+            ],
+          },
+          suppressions: [
+            {
+              id: 'AwsSolutions-IAM5',
+              reason: 'sts:GetServiceBearerToken requires Resource:* conditioned on sts:AWSServiceName',
+            },
+          ],
+        },
+      ],
     });
     testApp.checkCdkNagCompliance(stack);
     const template = Template.fromStack(stack);
 
-    test('CodeBuild has CodeArtifact env vars', () => {
-      template.hasResourceProperties('AWS::CodeBuild::Project', {
-        Environment: Match.objectLike({
-          EnvironmentVariables: Match.arrayWith([
-            Match.objectLike({ Name: 'MDAA_CODEARTIFACT_DOMAIN', Value: 'mdaa' }),
-            Match.objectLike({ Name: 'MDAA_CODEARTIFACT_REPO', Value: 'mdaa-npm' }),
-            Match.objectLike({ Name: 'MDAA_CODEARTIFACT_REGION', Value: 'us-east-2' }),
-            Match.objectLike({ Name: 'MDAA_VERSION', Value: '1.5.0' }),
+    test('Creates ManagedPolicy with inline statements from policyDocument', () => {
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        PolicyDocument: Match.objectLike({
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: 'codeartifact:GetAuthorizationToken',
+              Effect: 'Allow',
+              Resource: 'arn:aws:codeartifact:us-east-2:123456789012:domain/mdaa',
+            }),
+            Match.objectLike({
+              Action: Match.arrayWith(['codeartifact:GetRepositoryEndpoint', 'codeartifact:ReadFromRepository']),
+              Effect: 'Allow',
+              Resource: 'arn:aws:codeartifact:us-east-2:123456789012:repository/mdaa/mdaa-npm',
+            }),
+            Match.objectLike({
+              Action: 'sts:GetServiceBearerToken',
+              Effect: 'Allow',
+              Resource: '*',
+            }),
           ]),
         }),
       });
     });
 
-    test('CodeBuild role has CodeArtifact permissions', () => {
-      template.hasResourceProperties(
-        'AWS::IAM::Policy',
-        Match.objectLike({
-          PolicyDocument: Match.objectLike({
-            Statement: Match.arrayWith([
-              Match.objectLike({
-                Action: 'codeartifact:GetAuthorizationToken',
-              }),
-            ]),
-          }),
-        }),
-      );
-      template.hasResourceProperties(
-        'AWS::IAM::Policy',
-        Match.objectLike({
-          PolicyDocument: Match.objectLike({
-            Statement: Match.arrayWith([
-              Match.objectLike({
-                Action: Match.arrayWith(['codeartifact:GetRepositoryEndpoint', 'codeartifact:ReadFromRepository']),
-              }),
-            ]),
-          }),
-        }),
-      );
-    });
-
-    test('CodeBuild role has sts:GetServiceBearerToken for CodeArtifact', () => {
-      template.hasResourceProperties(
-        'AWS::IAM::Policy',
-        Match.objectLike({
-          PolicyDocument: Match.objectLike({
-            Statement: Match.arrayWith([
-              Match.objectLike({
-                Action: 'sts:GetServiceBearerToken',
-                Condition: Match.objectLike({
-                  StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' },
-                }),
-              }),
-            ]),
-          }),
-        }),
-      );
+    test('Passes CDK Nag with suppressions applied to wildcard resource', () => {
+      // The checkCdkNagCompliance call above verifies that the AwsSolutions-IAM5
+      // suppression is correctly applied — without it, the wildcard Resource:'*'
+      // would fail CDK Nag.
+      expect(template.findResources('AWS::IAM::ManagedPolicy')).toBeDefined();
     });
   });
 });
