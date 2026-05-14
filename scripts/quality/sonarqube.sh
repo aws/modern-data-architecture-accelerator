@@ -17,42 +17,42 @@ if [ "${CI_PIPELINE_SOURCE}" = "merge_request_event" ] || [ -n "${CI_MERGE_REQUE
   # Sanitize the source branch name for use in a SonarQube project key.
   # SonarQube keys allow alphanumerics, hyphens, underscores, periods, and colons.
   SANITIZED_BRANCH=$(echo "${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}" | sed 's/[^a-zA-Z0-9._:-]/_/g')
+  SANITIZED_TARGET=$(echo "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-main}" | sed 's/[^a-zA-Z0-9._:-]/_/g')
 
-  # Use a dedicated MR project so the main project stays untouched.
-  PROJECT_KEY="${BASE_PROJECT_KEY}-mr-${SANITIZED_BRANCH}"
+  # Include target branch in key so retargeting an MR triggers a fresh baseline.
+  PROJECT_KEY="${BASE_PROJECT_KEY}-mr-${SANITIZED_BRANCH}-to-${SANITIZED_TARGET}"
   echo "Merge Request detected (MR !${CI_MERGE_REQUEST_IID}, branch: ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}) - using project key: ${PROJECT_KEY}"
 
-  VERSION_ARGS="-Dsonar.projectVersion=${CI_COMMIT_SHORT_SHA}"
+  # Static version "mr" — paired with the baseline's "baseline" version,
+  # this creates a permanent new code boundary via "Previous Version."
+  # The boundary never resets because both versions are static strings.
+  VERSION_ARGS="-Dsonar.projectVersion=mr"
 
-  # Scope the scan to the same changed packages as the target baseline job.
-  # Both jobs use sonar-scope.sh with the same commit refs so the
-  # file sets match exactly, ensuring correct new-code classification.
-  source ./scripts/quality/sonar-scope.sh
+  # Check if the MR contains any TypeScript changes. If not, skip —
+  # there's nothing for SonarQube to gate on.
+  TARGET_REF="origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-main}"
+  MERGE_BASE=$(git merge-base "${TARGET_REF}" HEAD)
+  TS_CHANGES=$(git diff --name-only "${MERGE_BASE}" HEAD -- '*.ts' | grep -v '\.d\.ts$' | grep -v '/test/' | head -1)
 
-  if [ "${SONAR_SCOPE_SKIP}" = "true" ]; then
-    echo "No affected packages found, skipping SonarQube scan"
+  if [ -z "${TS_CHANGES}" ]; then
+    echo "No TypeScript source changes detected — skipping SonarQube scan."
     exit 0
   fi
 
-  SCOPE_ARGS="${SONAR_SCOPE_ARGS} -Dsonar.scm.disabled=true -Dsonar.scanner.skipSystemTruststore=true"
+  # Full unscoped scan with SCM enabled. Blame dates on MR-authored lines
+  # are newer than the baseline, so issues on those lines are "new."
+  SCOPE_ARGS=""
 else
   # Main branch analysis - use the canonical project key
   PROJECT_KEY="${BASE_PROJECT_KEY}"
   echo "Main branch analysis - using project key: ${PROJECT_KEY}"
 
-  # For main branch, pass the project version from lerna.json (if available)
-  # so the "Previous Version" new code definition works correctly across releases.
-  if [ -f "lerna.json" ]; then
-    LERNA_VERSION=$(jq -r .version < lerna.json 2>/dev/null || echo "")
-    if [ -n "${LERNA_VERSION}" ] && [ "${LERNA_VERSION}" != "null" ]; then
-      VERSION_ARGS="-Dsonar.projectVersion=${LERNA_VERSION}"
-      echo "Setting project version from lerna.json: ${LERNA_VERSION}"
-    else
-      VERSION_ARGS=""
-    fi
-  else
-    VERSION_ARGS=""
-  fi
+  # No projectVersion — with "Previous Version" new code definition and
+  # no version transitions, the new code period anchors to the first
+  # unversioned analysis. All issues introduced after that point are
+  # permanently "new" and must be fixed. This prevents issues from being
+  # grandfathered in by version bumps.
+  VERSION_ARGS=""
 
   # Main branch scans the full repo
   SCOPE_ARGS=""
@@ -67,3 +67,10 @@ sonar-scanner \
   -Dsonar.sourceEncoding=utf-8 \
   ${VERSION_ARGS} \
   ${SCOPE_ARGS}
+
+# Enforce that no issues are suppressed via the SonarQube UI.
+# All issues must be fixed in code or suppressed inline with rationale
+# (e.g., //NOSONAR). UI-based resolutions (won't fix, false positive,
+# accepted) are not permitted. Fails closed on any error.
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+python3 "${SCRIPT_DIR}/sonar_check_suppressions.py" "${PROJECT_KEY}"
