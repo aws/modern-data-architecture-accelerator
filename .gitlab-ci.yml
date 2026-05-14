@@ -1243,7 +1243,7 @@ prerelease_analyze:
 
 # Package JSII distributions
 prerelease_package:
-  extends: .size_xlarge
+  extends: .size_3xlarge
   tags:
     - arch:amd64
   only:
@@ -1963,7 +1963,7 @@ rollback_delete_release_packages:
 
 # Build Cornerstone solution distributions (manual trigger)
 cornerstone_build_distributions:
-  extends: .size_xlarge
+  extends: .size_3xlarge
   interruptible: false
   when: manual
   manual_confirmation: 'This will build, package, and upload the Cornerstone distribution. Continue?'
@@ -2006,7 +2006,7 @@ cornerstone_build_distributions:
 
 # Package Cornerstone artifact as a zip archive
 cornerstone_package_artifact:
-  extends: .size_large
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
@@ -2065,7 +2065,7 @@ cornerstone_package_artifact:
 
 # Upload Cornerstone artifact to S3
 cornerstone_upload:
-  extends: .size_large
+  extends: .size_medium
   interruptible: false
   tags:
     - arch:amd64
