@@ -2,5 +2,5 @@ aws_lambda_powertools==2.43.1
 pytest==8.3.4
 moto==5.0.23
 coverage==7.6.9
-langchain==0.3.27
-langchain-core==0.3.81
+langchain==0.3.30
+langchain-core==0.3.85
