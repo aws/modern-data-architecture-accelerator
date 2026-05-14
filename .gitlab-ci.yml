@@ -1243,7 +1243,7 @@ prerelease_analyze:
 
 # Package JSII distributions
 prerelease_package:
-  extends: .size_large
+  extends: .size_xlarge
   tags:
     - arch:amd64
   only:
@@ -1280,47 +1280,6 @@ prerelease_package:
     - ./scripts/build/package_repo.sh
 
 # --- prerelease_publish stage ---
-
-# Generate and deploy HTML documentation to GitLab Pages
-prerelease_generate_html_docs:
-  extends: .size_medium
-  interruptible: false
-  tags:
-    - arch:amd64
-  except:
-    variables:
-      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
-    refs:
-      - tags
-  only:
-    refs:
-      - main
-  stage: prerelease_publish
-  cache:
-    key: prerelease-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-      - .nx/
-    policy: pull
-  artifacts:
-    untracked: false
-    paths:
-      - target/docs_site
-    exclude:
-      - '**/node_modules/**'
-  needs:
-    - prerelease_version
-    - prerelease_analyze
-  dependencies:
-    - prerelease_version
-    - prerelease_analyze
-  allow_failure: false
-  script:
-    - source ./scripts/generate_docs/prepare.sh
-    - ./scripts/generate_docs/typedocs.sh
-    - ./scripts/generate_docs/mkdocs.sh
-    - ./scripts/generate_docs/deploy_gitlab.sh docs_prerelease
 
 # Publish NPM packages to prerelease CodeArtifact repo
 prerelease_publish_npm:
@@ -1765,49 +1724,6 @@ release_publish_s3:
     AWS_DEFAULT_REGION: us-east-1
   script:
     - ./scripts/publish/publish_s3.sh $MDAA_RELEASE_PACKAGE_BUCKET
-
-# Generate and deploy release HTML documentation
-release_generate_html_docs:
-  extends: .size_medium
-  interruptible: false
-  tags:
-    - arch:amd64
-  environment: release_html_docs
-  except:
-    variables:
-      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
-    refs:
-      - tags
-  only:
-    refs:
-      - main
-  stage: release_publish
-  cache:
-    key: release-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-    policy: pull
-  artifacts:
-    untracked: false
-    paths:
-      - target/docs_site
-      - solution-manifest.yaml
-    exclude:
-      - '**/node_modules/**'
-  dependencies:
-    - release_version_package
-  needs:
-    - release
-    - release_version_package
-    - prerelease_analyze
-  allow_failure: false
-  script:
-    - source ./scripts/generate_docs/prepare.sh
-    - ./scripts/generate_docs/typedocs.sh
-    - ./scripts/generate_docs/mkdocs.sh
-    - ./scripts/generate_docs/deploy_gitlab.sh docs_prerelease
-    - ./scripts/generate_docs/deploy_gitlab.sh docs_release
 
 # --- post_release stage ---
 
