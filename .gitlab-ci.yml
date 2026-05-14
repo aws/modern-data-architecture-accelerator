@@ -786,42 +786,6 @@ feature_merge_sonarqube:
       fi
       echo "MERGE_PIPELINE_RUN_ALL is not set — merge is allowed."
 
-# Risk assessment (currently disabled)
-feature_merge_risk_assessment:
-  extends: .size_large
-  interruptible: true
-  rules:
-    - when: never
-  tags:
-    - arch:amd64
-  # only:
-  #   - merge_requests
-  stage: analyze
-  dependencies:
-    - feature_merge_build_test
-  needs:
-    - feature_merge_build_test
-  cache:
-    key: feature-merge-build-$CI_COMMIT_REF_SLUG
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-      - .nx/
-    policy: pull
-  allow_failure: true
-  variables:
-    DIFF_OUTPUT_PATH: './diff-output'
-    ASSESSMENT_TIMEOUT: '300'
-    BASELINE_BUCKET_REGION: 'us-east-1'
-    AWS_CREDS_TARGET_ROLE: '${TESTING_ROLE_ARN}'
-    AWS_DEFAULT_REGION: us-east-1
-  script:
-    - ./scripts/quality/risk_assessment.sh
-  artifacts:
-    paths:
-      - diff-output/
-    when: always
-
 # =============================================================================
 # Pipeline 2: Feature Branch Pipeline (non-merge feature branches)
 # =============================================================================

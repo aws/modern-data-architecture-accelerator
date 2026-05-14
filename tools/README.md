@@ -16,4 +16,4 @@ CI/CD entry points remain in `scripts/` as thin wrappers that delegate to the to
 
 | Tool | Description |
 |------|-------------|
-| [change-risk-assessor](./change-risk-assessor/) | GenAI-powered infrastructure change risk assessment for merge request pipelines |
+

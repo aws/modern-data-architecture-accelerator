@@ -13,5 +13,7 @@ COPY shared/layers/python-sdk/python/genai_core ${LAMBDA_TASK_ROOT}/genai_core
 # Copy function code
 COPY model-interfaces/langchain/functions/request-handler/ ${LAMBDA_TASK_ROOT}
 
+USER 993
+
 # Set the CMD to your handler
 CMD ["index.handler"]

@@ -46,6 +46,7 @@ Resources:
             VolumeSize: 100
             VolumeType: gp3
             DeleteOnTermination: true
+            Encrypted: true
       SecurityGroups:
         - !Ref InstanceSecurityGroup
       UserData:

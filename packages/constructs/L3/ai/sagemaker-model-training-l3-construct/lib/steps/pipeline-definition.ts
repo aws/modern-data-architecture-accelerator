@@ -129,13 +129,13 @@ function coerceParameterDefault(
   type: PipelineParameterType,
 ): string | number | boolean {
   if (type === 'Integer' && typeof value === 'string') {
-    const n = parseInt(value, 10);
-    if (!isNaN(n)) return n;
+    const n = Number.parseInt(value, 10);
+    if (!Number.isNaN(n)) return n;
     throw new Error(`Parameter default '${value}' cannot be coerced to Integer.`);
   }
   if (type === 'Float' && typeof value === 'string') {
-    const n = parseFloat(value);
-    if (!isNaN(n)) return n;
+    const n = Number.parseFloat(value);
+    if (!Number.isNaN(n)) return n;
     throw new Error(`Parameter default '${value}' cannot be coerced to Float.`);
   }
   if (type === 'Boolean' && typeof value === 'string') {

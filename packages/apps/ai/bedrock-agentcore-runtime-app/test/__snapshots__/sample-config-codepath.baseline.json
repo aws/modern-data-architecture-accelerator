@@ -306,7 +306,7 @@
         "AgentRuntimeArtifact": {
           "ContainerConfiguration": {
             "ContainerUri": {
-              "Fn::Sub": "test-account.dkr.ecr.test-region.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-test-account-test-region:83d3745cbead11bcfbf64206a60a258ba3fb5221ae8f9fe92319f4cf9c64badc"
+              "Fn::Sub": "test-account.dkr.ecr.test-region.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-test-account-test-region:9ede0ecef21341e9155e0bd3e8fd9260f8000b403e738ea5c454a7c65b0086d9"
             }
           }
         },
