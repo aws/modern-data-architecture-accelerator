@@ -12,6 +12,7 @@
 
 ### New Features
 
+- **S3 Constructs**: Added `publicAccessBlockManagedExternally` option to skip the explicit `BlockPublicAccess` setting on S3 buckets. Set globally via CDK context (`@aws-mdaa/publicAccessBlockManagedExternally: true`) or as a per-module config property in the datawarehouse app (`@aws-mdaa/datawarehouse`)
 - **SageMaker MLOps — `buildPolicies` config** (`@aws-mdaa/sagemaker-mlops`, `@aws-mdaa/sagemaker-model-training-l3-construct`, `@aws-mdaa/sagemaker-model-deploy-l3-construct`): Generic mechanism for attaching custom IAM policies to CodeBuild pipeline roles. Replaces the CodeArtifact-specific `codeArtifact` prop with a flexible `buildPolicies` array supporting managed policy ARNs (`policyArn`) and inline policy documents (`policyDocument`) with optional CDK Nag suppressions. Registry authentication (CodeArtifact, Artifactory, GitLab, etc.) is now handled entirely in the user's buildspec. The `mlops_platform` starter kit is updated with commented examples.
 - **Generative AI Accelerator v2** (`@aws-mdaa/gaia-v2`): Authenticated GenAI chatbot platform, successor to `@aws-mdaa/gaia`
   - AppSync Events API for real-time bidirectional streaming to client UIs, fronted by Cognito User Pool authentication (with optional external OIDC such as Entra ID)

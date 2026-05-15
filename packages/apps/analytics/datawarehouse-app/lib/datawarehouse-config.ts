@@ -315,6 +315,20 @@ export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
    * Validation: Optional; valid AWS region string, must differ from the deployment region
    */
   readonly backupRegion?: string;
+  /**
+   * When true, omits the explicit blockPublicAccess setting on S3 buckets so CDK does not emit
+   * a PutBucketPublicAccessBlock API call. Use when public access block is managed externally
+   * (e.g., by AWS account-level settings and/or SCPs that deny s3:PutBucketPublicAccessBlock).
+   *
+   * Use cases: SCP-restricted environments; Externally managed public access block;
+   * Organizations enforcing account-level S3 Block Public Access
+   *
+   * AWS: S3 PutBucketPublicAccessBlock
+   *
+   * Validation: Optional; boolean; default false
+   * @default false
+   */
+  readonly publicAccessBlockManagedExternally?: boolean;
 }
 
 export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouseConfigContents> {
@@ -348,6 +362,7 @@ export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouse
   public readonly redshiftManageMasterPassword?: boolean;
   public readonly multiAz?: boolean;
   public readonly backupRegion?: string;
+  public readonly publicAccessBlockManagedExternally?: boolean;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -387,5 +402,6 @@ export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouse
     this.redshiftManageMasterPassword = this.configContents.redshiftManageMasterPassword;
     this.multiAz = this.configContents.multiAz;
     this.backupRegion = this.configContents.backupRegion;
+    this.publicAccessBlockManagedExternally = this.configContents.publicAccessBlockManagedExternally;
   }
 }

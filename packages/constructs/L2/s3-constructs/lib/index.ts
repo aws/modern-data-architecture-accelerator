@@ -21,6 +21,23 @@ import {
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
+const PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON =
+  'publicAccessBlockManagedExternally is enabled. Block public access is managed externally via AWS account-level settings and/or SCPs. See https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html';
+
+/** CDK-nag suppressions to apply when publicAccessBlockManagedExternally is enabled. */
+export const PUBLIC_ACCESS_BLOCK_NAG_SUPPRESSIONS = [
+  { id: 'AwsSolutions-S2', reason: PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON },
+  { id: 'NIST.800.53.R5-S3BucketLevelPublicAccessProhibited', reason: PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON },
+  { id: 'NIST.800.53.R5-S3BucketPublicReadProhibited', reason: PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON },
+  { id: 'NIST.800.53.R5-S3BucketPublicWriteProhibited', reason: PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON },
+  { id: 'HIPAA.Security-S3BucketLevelPublicAccessProhibited', reason: PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON },
+  { id: 'HIPAA.Security-S3BucketPublicReadProhibited', reason: PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON },
+  { id: 'HIPAA.Security-S3BucketPublicWriteProhibited', reason: PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON },
+  { id: 'PCI.DSS.321-S3BucketLevelPublicAccessProhibited', reason: PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON },
+  { id: 'PCI.DSS.321-S3BucketPublicReadProhibited', reason: PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON },
+  { id: 'PCI.DSS.321-S3BucketPublicWriteProhibited', reason: PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON },
+];
+
 export interface MdaaBucketProps extends mdaa_construct.MdaaConstructProps {
   readonly additionalKmsKeyArns?: string[];
   readonly enforceExclusiveKmsKeys?: boolean;
@@ -41,6 +58,15 @@ export interface MdaaBucketProps extends mdaa_construct.MdaaConstructProps {
   readonly corsRules?: CorsRule[];
 
   readonly uniqueBucketName?: boolean;
+
+  /**
+   * When true, omits the explicit blockPublicAccess setting so CDK does not emit
+   * a PutBucketPublicAccessBlock API call. Use this when public access block is
+   * managed externally (e.g., by AWS defaults and/or SCPs that deny
+   * s3:PutBucketPublicAccessBlock).
+   * @default false
+   */
+  readonly publicAccessBlockManagedExternally?: boolean;
 }
 
 /**
@@ -58,6 +84,8 @@ export type IMdaaBucket = IBucket;
  */
 export class MdaaBucket extends Bucket implements IMdaaBucket {
   public static readonly UNIQUE_NAME_CONTEXT_KEY = '@aws-mdaa/enableUniqueBucketNames';
+  public static readonly PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_CONTEXT_KEY =
+    '@aws-mdaa/publicAccessBlockManagedExternally';
 
   private static setProps(props: MdaaBucketProps, scope: Construct): BucketProps {
     const uniqueBucketNamePrefixContext = scope.node.tryGetContext(MdaaBucket.UNIQUE_NAME_CONTEXT_KEY);
@@ -66,17 +94,23 @@ export class MdaaBucket extends Bucket implements IMdaaBucket {
       props.uniqueBucketName?.valueOf() ||
       (uniqueBucketNamePrefixContext ? Boolean(uniqueBucketNamePrefixContext) : false);
 
+    const publicAccessBlockManagedExternallyContext = scope.node.tryGetContext(
+      MdaaBucket.PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_CONTEXT_KEY,
+    );
+    const publicAccessBlockManagedExternally =
+      props.publicAccessBlockManagedExternally ??
+      (publicAccessBlockManagedExternallyContext ? Boolean(publicAccessBlockManagedExternallyContext) : false);
+
     const stackId = Fn.select(0, Fn.split('-', Fn.select(2, Fn.split('/', Stack.of(scope).stackId))));
     const prefix = props.bucketName
       ? stackId + '-' + props.naming.resourceName(props.bucketName, 62 - stackId.length)
       : stackId;
     const bucketName = uniqueBucketNamePrefix ? prefix : props.naming.resourceName(props.bucketName, 63);
 
-    const overrideProps = {
+    const overrideProps: Record<string, unknown> = {
       bucketName: bucketName,
       encryption: BucketEncryption.KMS,
       encryptionKey: props.encryptionKey,
-      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       versioned: true,
       autoDeleteObjects: false,
       removalPolicy: RemovalPolicy.RETAIN,
@@ -84,10 +118,22 @@ export class MdaaBucket extends Bucket implements IMdaaBucket {
       bucketKeyEnabled: true,
       cors: props.corsRules,
     };
+
+    if (!publicAccessBlockManagedExternally) {
+      overrideProps.blockPublicAccess = BlockPublicAccess.BLOCK_ALL;
+    }
+
     return { ...props, ...overrideProps };
   }
   constructor(scope: Construct, id: string, props: MdaaBucketProps) {
     super(scope, id, MdaaBucket.setProps(props, scope));
+
+    const publicAccessBlockManagedExternallyContext = scope.node.tryGetContext(
+      MdaaBucket.PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_CONTEXT_KEY,
+    );
+    const publicAccessBlockManagedExternally =
+      props.publicAccessBlockManagedExternally ??
+      (publicAccessBlockManagedExternallyContext ? Boolean(publicAccessBlockManagedExternallyContext) : false);
 
     this.policy?.applyRemovalPolicy(RemovalPolicy.RETAIN);
 
@@ -116,6 +162,10 @@ export class MdaaBucket extends Bucket implements IMdaaBucket {
       ],
       true,
     );
+
+    if (publicAccessBlockManagedExternally) {
+      MdaaNagSuppressions.addCodeResourceSuppressions(this, PUBLIC_ACCESS_BLOCK_NAG_SUPPRESSIONS, true);
+    }
 
     if (props.enforceExclusiveKmsKeys == undefined || props.enforceExclusiveKmsKeys.valueOf()) {
       /**

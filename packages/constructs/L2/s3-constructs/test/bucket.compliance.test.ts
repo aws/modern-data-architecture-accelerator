@@ -382,3 +382,80 @@ describe('CORS Configuration', () => {
     });
   });
 });
+
+describe('publicAccessBlockManagedExternally', () => {
+  const testApp = new MdaaTestApp({
+    '@aws-mdaa/publicAccessBlockManagedExternally': 'true',
+  });
+  const testKey = MdaaKmsKey.fromKeyArn(
+    testApp.testStack,
+    'pab-test-key',
+    'arn:test-partition:kms:test-region:test-account:key/test-key',
+  );
+
+  new MdaaBucket(testApp.testStack, 'pab-bucket', {
+    naming: testApp.naming,
+    bucketName: 'pab-test',
+    encryptionKey: testKey,
+  });
+
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('When enabled via context, PublicAccessBlockConfiguration is absent', () => {
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketName: testApp.naming.resourceName('pab-test'),
+      PublicAccessBlockConfiguration: Match.absent(),
+    });
+  });
+
+  describe('When enabled via prop', () => {
+    const propApp = new MdaaTestApp();
+    const propKey = MdaaKmsKey.fromKeyArn(
+      propApp.testStack,
+      'pab-prop-key',
+      'arn:test-partition:kms:test-region:test-account:key/test-key',
+    );
+
+    new MdaaBucket(propApp.testStack, 'pab-prop-bucket', {
+      naming: propApp.naming,
+      bucketName: 'pab-prop-test',
+      encryptionKey: propKey,
+      publicAccessBlockManagedExternally: true,
+    });
+
+    propApp.checkCdkNagCompliance(propApp.testStack);
+    const propTemplate = Template.fromStack(propApp.testStack);
+
+    test('PublicAccessBlockConfiguration is absent', () => {
+      propTemplate.hasResourceProperties('AWS::S3::Bucket', {
+        PublicAccessBlockConfiguration: Match.absent(),
+      });
+    });
+  });
+
+  test('When disabled (default), PublicAccessBlockConfiguration is present', () => {
+    const defaultApp = new MdaaTestApp();
+    const defaultKey = MdaaKmsKey.fromKeyArn(
+      defaultApp.testStack,
+      'pab-default-key',
+      'arn:test-partition:kms:test-region:test-account:key/test-key',
+    );
+
+    new MdaaBucket(defaultApp.testStack, 'pab-default-bucket', {
+      naming: defaultApp.naming,
+      bucketName: 'pab-default-test',
+      encryptionKey: defaultKey,
+    });
+
+    const defaultTemplate = Template.fromStack(defaultApp.testStack);
+    defaultTemplate.hasResourceProperties('AWS::S3::Bucket', {
+      PublicAccessBlockConfiguration: {
+        BlockPublicAcls: true,
+        BlockPublicPolicy: true,
+        IgnorePublicAcls: true,
+        RestrictPublicBuckets: true,
+      },
+    });
+  });
+});

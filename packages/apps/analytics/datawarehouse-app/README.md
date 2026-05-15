@@ -129,6 +129,17 @@ Deploys a multi-node Redshift cluster with SAML federation, scheduled pause/resu
 --8<-- "target/docs/packages/apps/analytics/datawarehouse-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
+#### External Public Access Block Management
+
+Deploys a Redshift cluster with S3 bucket public access block management delegated externally — for example, via account-level S3 settings or SCPs. When `publicAccessBlockManagedExternally` is set to `true`, CDK omits the `PutBucketPublicAccessBlock` API call on provisioned S3 buckets, avoiding conflicts in environments where SCPs restrict that action. Use this variant when your organization enforces public access restrictions at the account or organizational level rather than per-bucket.
+
+[sample-config-public-access-block-external.yaml](sample_configs/sample-config-public-access-block-external.yaml)
+
+```yaml
+# Contents available via above link
+--8<-- "target/docs/packages/apps/analytics/datawarehouse-app/sample_configs/sample-config-public-access-block-external.yaml"
+```
+
 ---
 
 [Config Schema Docs](SCHEMA.md)

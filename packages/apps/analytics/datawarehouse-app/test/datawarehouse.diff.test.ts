@@ -55,4 +55,31 @@ describe('Data Warehouse Baseline Diff Tests', () => {
       },
     ),
   );
+
+  baselineDiffTestApp(
+    'Data Warehouse Public Access Block External',
+    Create.appProvider(
+      context => {
+        const moduleApp = new DataWarehouseCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(
+              __dirname,
+              '..',
+              'sample_configs',
+              'sample-config-public-access-block-external.yaml',
+            ),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-datawarehouse-public-access-block-external',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
 });

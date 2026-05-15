@@ -3552,27 +3552,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -3630,27 +3630,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -3713,27 +3713,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -3817,27 +3817,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -3942,27 +3942,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -4033,27 +4033,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -4166,27 +4166,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -4249,27 +4249,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -4368,27 +4368,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -4488,27 +4488,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -4598,27 +4598,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -4717,27 +4717,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -4835,27 +4835,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -4967,27 +4967,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -5045,27 +5045,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -5128,27 +5128,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -5224,27 +5224,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -5349,27 +5349,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -5440,27 +5440,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -5573,27 +5573,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {
@@ -5656,27 +5656,27 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Custom Resource Provider role uses wildcard resource (*) for redshift-data:DescribeStatement and redshift-data:ExecuteStatement actions. These actions do not support resource-level permissions per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonredshiftdata.html. Role is scoped to deployment lifecycle only.",
               "id": "AwsSolutions-IAM5"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "AwsSolutions-L1"
             },
             {

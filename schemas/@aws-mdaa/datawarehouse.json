@@ -3020,6 +3020,11 @@
             "description": "Weekly maintenance window in ddd:hh24:mi-ddd:hh24:mi format (UTC).\nExample: 'Sun:23:45-Mon:00:15'.\n\nUse cases: Maintenance scheduling; Business continuity; Downtime management\n\nAWS: Redshift preferred maintenance window\n\nValidation: Required; valid time window format",
             "type": "string"
         },
+        "publicAccessBlockManagedExternally": {
+            "default": false,
+            "description": "When true, omits the explicit blockPublicAccess setting on S3 buckets so CDK does not emit\na PutBucketPublicAccessBlock API call. Use when public access block is managed externally\n(e.g., by AWS account-level settings and/or SCPs that deny s3:PutBucketPublicAccessBlock).\n\nUse cases: SCP-restricted environments; Externally managed public access block;\nOrganizations enforcing account-level S3 Block Public Access\n\nAWS: S3 PutBucketPublicAccessBlock\n\nValidation: Optional; boolean; default false",
+            "type": "boolean"
+        },
         "redshiftManageMasterPassword": {
             "type": "boolean"
         },

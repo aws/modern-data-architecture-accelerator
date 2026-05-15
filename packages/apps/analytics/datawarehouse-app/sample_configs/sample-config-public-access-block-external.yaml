@@ -1,0 +1,31 @@
+# Redshift Data Warehouse module configuration exercising
+# publicAccessBlockManagedExternally: true.
+# This omits the explicit blockPublicAccess setting on S3 buckets
+# so CDK does not emit a PutBucketPublicAccessBlock API call.
+
+adminUsername: admin
+adminPasswordRotationDays: 30
+
+dataAdminRoles:
+  - arn: arn:{{partition}}:iam::{{account}}:role/Admin
+
+enableAuditLoggingToS3: true
+
+nodeType: RA3_4XLARGE
+numberOfNodes: 2
+
+preferredMaintenanceWindow: Sun:23:45-Mon:00:15
+
+securityGroupIngress:
+  ipv4:
+    - 172.31.0.0/16
+
+subnetIds:
+  - subnet-12312312421
+  - subnet-12312321412
+
+vpcId: vpc-12321421412
+
+# Omit explicit blockPublicAccess on S3 buckets; managed externally via
+# AWS account-level settings and/or SCPs.
+publicAccessBlockManagedExternally: true

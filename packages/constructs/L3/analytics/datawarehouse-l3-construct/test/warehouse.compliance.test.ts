@@ -108,6 +108,20 @@ describe('MDAA Compliance Stack Tests', () => {
       template.resourceCountIs('AWS::Redshift::EventSubscription', 2);
     });
 
+    test('S3 logging bucket HAS PublicAccessBlockConfiguration when publicAccessBlockManagedExternally is unset', () => {
+      const buckets = template.findResources('AWS::S3::Bucket');
+      const loggingBucketKey = Object.keys(buckets).find(key => key.toLowerCase().includes('logging'));
+      expect(loggingBucketKey).toBeDefined();
+      const loggingBucketProps = buckets[loggingBucketKey!].Properties;
+      expect(loggingBucketProps.PublicAccessBlockConfiguration).toBeDefined();
+      expect(loggingBucketProps.PublicAccessBlockConfiguration).toEqual({
+        BlockPublicAcls: true,
+        BlockPublicPolicy: true,
+        IgnorePublicAcls: true,
+        RestrictPublicBuckets: true,
+      });
+    });
+
     test('Redshift cluster properties', () => {
       template.hasResourceProperties('AWS::Redshift::Cluster', {
         ClusterType: 'multi-node',
@@ -592,6 +606,62 @@ describe('MDAA Compliance Stack Tests', () => {
         multiAz: false,
       };
       expect(() => new DataWarehouseL3Construct(stack, 'teststack', constructProps)).not.toThrow();
+    });
+  });
+});
+
+describe('publicAccessBlockManagedExternally Tests', () => {
+  const securityGroupIngresProps: SecurityGroupIngressProps = {
+    ipv4: ['127.0.0.1/24'],
+  };
+
+  const dataAdminRoleRef: MdaaRoleRef = {
+    id: 'testdataAdminRole',
+    arn: 'arn:test-partition:iam::test-account:role/TestAccess',
+  };
+
+  describe('when publicAccessBlockManagedExternally is true with audit logging to S3', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const constructProps: DataWarehouseL3ConstructProps = {
+      adminUsername: 'admin',
+      adminPasswordRotationDays: 10,
+      dataAdminRoleRefs: [dataAdminRoleRef],
+      vpcId: 'vpcId',
+      subnetIds: ['test1'],
+      securityGroupIngress: securityGroupIngresProps,
+      nodeType: 'RA3_LARGE',
+      numberOfNodes: 4,
+      enableAuditLoggingToS3: true,
+      clusterPort: 5440,
+      preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+      multiNode: true,
+      parameterGroupParams: { key1: 'value1' },
+      workloadManagement: [{ key1: 'value1' }],
+      publicAccessBlockManagedExternally: true,
+    };
+    new DataWarehouseL3Construct(stack, 'teststack', constructProps);
+    testApp.checkCdkNagCompliance(testApp.testStack);
+    const template = Template.fromStack(testApp.testStack);
+
+    test('S3 logging bucket does NOT have PublicAccessBlockConfiguration in synthesized template', () => {
+      // When publicAccessBlockManagedExternally is true, the construct omits the explicit
+      // blockPublicAccess prop so that CDK does not emit a PutBucketPublicAccessBlock API call
+      // that would conflict with externally managed settings (e.g., SCPs).
+      const buckets = template.findResources('AWS::S3::Bucket');
+      const loggingBucketKey = Object.keys(buckets).find(key => key.toLowerCase().includes('logging'));
+      expect(loggingBucketKey).toBeDefined();
+      const loggingBucketProps = buckets[loggingBucketKey!].Properties;
+      expect(loggingBucketProps.PublicAccessBlockConfiguration).toBeUndefined();
+    });
+
+    test('CDK Nag compliance passes with public access block suppressions applied', () => {
+      // The checkCdkNagCompliance call above will throw if any unsuppressed nag errors exist.
+      // Reaching this point confirms the PUBLIC_ACCESS_BLOCK_NAG_SUPPRESSIONS are correctly applied
+      // to the logging bucket when publicAccessBlockManagedExternally is true.
+      expect(true).toBe(true);
     });
   });
 });
