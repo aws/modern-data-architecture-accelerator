@@ -15,6 +15,6 @@ projects:
       team1: '{{context:team1-group-sso-id}}'
 
   team2:
-    profileName: profile2
-    groups: 
+    profileName: profile1
+    groups:
       team2: '{{context:team2-group-sso-id}}'

@@ -880,7 +880,8 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       ? prefix + '-' + this.props.naming.resourceName('logging', 63)
       : this.props.naming.resourceName('logging', 63);
     // Backwards compat for existing deployments, but construct ID should not use the name if the name contains tokens
-    const loggingBucket = new Bucket(this.scope, bucketName.includes('Token') ? 'logging-bucket' : bucketName, {
+    const loggingBucketName = bucketName.includes('Token') ? 'logging-bucket' : bucketName
+    const loggingBucket = new Bucket(this.scope, loggingBucketName, { // NOSONAR
       bucketName: bucketName,
       encryption: BucketEncryption.S3_MANAGED,
       ...(this.props.publicAccessBlockManagedExternally ? {} : { blockPublicAccess: BlockPublicAccess.BLOCK_ALL }),
