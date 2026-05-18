@@ -237,7 +237,7 @@ export interface FunctionProps extends FunctionOptions {
   readonly srcDir: string;
   /** Lambda function handler (e.g., 'index.handler'). */
   readonly handler?: string;
-  /** Lambda runtime (e.g., python3.9, nodejs18.x). */
+  /** Lambda runtime (e.g., python3.13, nodejs22.x). */
   readonly runtime?: string;
   /** When true, srcDir must contain a Dockerfile for container image deployment. */
   readonly dockerBuild?: boolean;

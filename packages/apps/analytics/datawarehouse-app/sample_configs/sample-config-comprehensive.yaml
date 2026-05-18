@@ -203,7 +203,7 @@ multiAz: true
 # (Optional) Target region for cross-region snapshot copies.
 # When set, enables automatic cross-region snapshot copy to this region.
 # Must differ from the cluster's deployment region.
-backupRegion: us-east-1
+backupRegion: us-west-2
 
 # (Optional) When true, omits the explicit blockPublicAccess setting on S3
 # buckets so CDK does not emit a PutBucketPublicAccessBlock API call. Use in

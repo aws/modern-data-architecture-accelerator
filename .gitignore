@@ -82,3 +82,5 @@ project-doc/
 
 temp_configs
 *.code-workspace
+
+.gitlab/issues

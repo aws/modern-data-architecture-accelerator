@@ -254,6 +254,7 @@ gaia:
     # Example SSM: ssm:/path/to/subnet/id
     appSubnets:
       - subnet1
+      - subnet1b
     # Security group ID for data tier components
     # Often created by your VPC/networking stack.
     # Example SSM: ssm:/path/to/security-group/id
@@ -263,3 +264,4 @@ gaia:
     # Example SSM: ssm:/path/to/subnet/id
     dataSubnets:
       - subnet2
+      - subnet2b

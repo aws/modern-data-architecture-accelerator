@@ -1043,7 +1043,7 @@
                     "type": "string"
                 },
                 "runtime": {
-                    "description": "Lambda runtime (e.g., python3.9, nodejs18.x).",
+                    "description": "Lambda runtime (e.g., python3.13, nodejs22.x).",
                     "type": "string"
                 },
                 "srcDir": {

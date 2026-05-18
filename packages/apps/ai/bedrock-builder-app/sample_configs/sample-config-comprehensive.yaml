@@ -45,7 +45,7 @@ lambdaFunctions:
       srcDir: ./src/function
       # Lambda function handler (e.g., 'index.handler')
       handler: test.lambda_handler
-      # Lambda runtime (e.g., python3.9, nodejs18.x)
+      # Lambda runtime (e.g., python3.13, nodejs22.x)
       runtime: python3.13
       # IAM role ARN for Lambda function execution
       roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-lambda-role'

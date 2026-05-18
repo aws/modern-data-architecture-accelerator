@@ -35,6 +35,9 @@
   ],
   "references": [
     {
+      "path": "../../../../utilities/ai-helper"
+    },
+    {
       "path": "../../../L2/iam-constructs"
     },
     {

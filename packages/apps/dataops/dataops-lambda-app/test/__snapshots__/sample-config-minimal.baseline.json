@@ -260,7 +260,7 @@
         "Role": {
           "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter"
         },
-        "Runtime": "python3.8",
+        "Runtime": "python3.13",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",

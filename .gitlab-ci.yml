@@ -873,6 +873,8 @@ feature_build_test:
     exclude:
       - '**/node_modules/**'
   allow_failure: false
+  variables:
+    NX_RUN_ALL: 'true'
   script:
     - npm run build
     - ./scripts/ci/check_schema_drift.sh
@@ -920,7 +922,7 @@ feature_python_test:
 feature_package:
   extends:
     - .feature_branch_template
-    - .size_large
+    - .size_3xlarge
   tags:
     - arch:amd64
   stage: package
@@ -971,13 +973,16 @@ feature_publish_npm:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
   script:
+    - FEATURE_VERSION=$(jq -r .version < lerna.json)
+    - echo "Deleting existing version $FEATURE_VERSION from CodeArtifact for idempotency"
+    - ./scripts/publish/delete_codeartifact_version.sh $FEATURE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE || true
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
 
 # Verify published NPM packages are installable
 feature_test_published_npm:
   extends:
     - .feature_branch_template
-    - .size_medium
+    - .size_3xlarge
   tags:
     - arch:amd64
   stage: prerelease_publish
@@ -994,6 +999,11 @@ feature_test_published_npm:
     - feature_package
     - feature_publish_npm
   allow_failure: false
+  artifacts:
+    paths:
+      - publish-validation-artifacts/
+    when: on_failure
+    expire_in: 7 days
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
@@ -1505,11 +1515,14 @@ release_publish_npm_prerelease:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
   script:
+    - RELEASE_VERSION=$(jq -r .version < lerna.json)
+    - echo "Deleting existing version $RELEASE_VERSION from CodeArtifact for idempotency"
+    - ./scripts/publish/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE || true
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest
 
 # Verify published NPM packages pass readiness checks
 release_npm_readiness_check:
-  extends: .size_medium
+  extends: .size_3xlarge
   interruptible: false
   tags:
     - arch:amd64
@@ -1537,6 +1550,11 @@ release_npm_readiness_check:
     - prerelease_analyze
     - release_publish_npm_prerelease
   allow_failure: false
+  artifacts:
+    paths:
+      - publish-validation-artifacts/
+    when: on_failure
+    expire_in: 7 days
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
@@ -1593,6 +1611,9 @@ release_publish_npm:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
   script:
+    - RELEASE_VERSION=$(jq -r .version < lerna.json)
+    - echo "Deleting existing version $RELEASE_VERSION from CodeArtifact for idempotency"
+    - ./scripts/publish/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT $MDAA_CODEARTIFACT_RELEASE_REGION $MDAA_CODEARTIFACT_RELEASE_NAMESPACE || true
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT latest
 
 # Publish Python packages to production CodeArtifact repo

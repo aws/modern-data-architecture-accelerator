@@ -2595,7 +2595,7 @@ Validation: srcDir must exist; runtime must be valid Lambda runtime; handler mus
 | - [reservedConcurrentExecutions](#lambdaFunctions_functions_items_reservedConcurrentExecutions )   | No      | number          | No         | -                                 | Reserved concurrent executions for capacity management.                                        |
 | - [retryAttempts](#lambdaFunctions_functions_items_retryAttempts )                                 | No      | number          | No         | -                                 | Maximum retry attempts for failed executions (0-2).                                            |
 | + [roleArn](#lambdaFunctions_functions_items_roleArn )                                             | No      | string          | No         | -                                 | IAM role ARN for Lambda function execution.                                                    |
-| - [runtime](#lambdaFunctions_functions_items_runtime )                                             | No      | string          | No         | -                                 | Lambda runtime (e.g., python3.9, nodejs18.x).                                                  |
+| - [runtime](#lambdaFunctions_functions_items_runtime )                                             | No      | string          | No         | -                                 | Lambda runtime (e.g., python3.13, nodejs22.x).                                                 |
 | + [srcDir](#lambdaFunctions_functions_items_srcDir )                                               | No      | string          | No         | -                                 | Source code directory path containing Lambda function code.                                    |
 | - [timeoutSeconds](#lambdaFunctions_functions_items_timeoutSeconds )                               | No      | number          | No         | -                                 | Function timeout in seconds.                                                                   |
 | - [vpcConfig](#lambdaFunctions_functions_items_vpcConfig )                                         | No      | object          | No         | In #/definitions/VpcConfigProps   | VPC configuration for network deployment.                                                      |
@@ -4140,7 +4140,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Lambda runtime (e.g., python3.9, nodejs18.x).
+**Description:** Lambda runtime (e.g., python3.13, nodejs22.x).
 
 ##### <a name="lambdaFunctions_functions_items_srcDir"></a>7.1.1.21. Property `root > lambdaFunctions > functions > functions items > srcDir`
 

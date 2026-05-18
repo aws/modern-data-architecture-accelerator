@@ -1667,7 +1667,7 @@
         "ClusterIdentifier": {
           "Ref": "cluster611F8AFF"
         },
-        "DestinationRegion": "us-east-1"
+        "DestinationRegion": "us-west-2"
       },
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete"

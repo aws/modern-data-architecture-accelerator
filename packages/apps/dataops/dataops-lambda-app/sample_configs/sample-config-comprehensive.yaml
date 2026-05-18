@@ -34,7 +34,7 @@ functions:
     handler: test.lambda_handler
 
     # The runtime for the function source code.
-    runtime: python3.8
+    runtime: python3.13
 
     # The role with which the Lambda function will be executed
     roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
@@ -129,7 +129,7 @@ functions:
   - functionName: testfunvpc
     srcDir: ./src/lambda/test
     handler: test.lambda_handler
-    runtime: python3.9
+    runtime: python3.13
     roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
     # If vpcConfig is specified, Lambda will be VPC bound
     vpcConfig:
@@ -178,7 +178,7 @@ functions:
   - functionName: testfunvpcexistingsg
     srcDir: ./src/lambda/test
     handler: test.lambda_handler
-    runtime: python3.9
+    runtime: python3.13
     roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
     # If vpcConfig is specified, Lambda will be VPC bound
     vpcConfig:
@@ -195,7 +195,7 @@ functions:
   - functionName: testlayerfunction
     srcDir: ./src/lambda/test
     handler: test.lambda_handler
-    runtime: python3.9
+    runtime: python3.13
     roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
     layerArns:
       some-existing-layer: some-existing-layer-arn
@@ -214,7 +214,7 @@ functions:
   - functionName: testobservabilityfunction
     srcDir: ./src/lambda/test
     handler: test.lambda_handler
-    runtime: python3.9
+    runtime: python3.13
     roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
     description: Function with CloudWatch observability features
 

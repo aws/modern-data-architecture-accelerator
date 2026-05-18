@@ -443,7 +443,7 @@
           "mdaa_org": "test-org"
         },
         "Type": "String",
-        "Value": "{\"dataAdminRoles\":[{\"name\":\"Admin\"},{\"arn\":\"arn:test-partition:iam::test-account:role/test-admin-role\"}],\"prefix\":\"testing\",\"powertoolsDevLogging\":\"true\",\"mainDomain\":\"test-domain.example.com\",\"bedrock\":{\"enabled\":true,\"region\":\"ca-central-1\",\"roleArn\":\"arn:test-partition:iam::test-account:role/test-bedrock-role\"},\"llms\":{\"huggingFaceApiToken\":\"hf_test_token_placeholder\",\"sagemaker\":[{\"model\":\"FalconLite\",\"instanceType\":\"ml.g5.2xlarge\",\"initialInstanceCount\":1,\"minimumInstanceCount\":1,\"maximumInstanceCount\":2},{\"model\":\"Llama2_13b_Chat\"},{\"model\":\"Mistral7b_Instruct2\"}]},\"rag\":{\"engines\":{\"sagemaker\":{\"instanceType\":\"ml.inf1.xlarge\",\"initialInstanceCount\":1,\"minInstanceCount\":1,\"maxInstanceCount\":2},\"aurora\":{\"minCapacity\":0.5,\"maxCapacity\":4,\"createSeparateSecurityGroup\":true},\"kendra\":{\"createIndex\":true,\"s3DataSourceConfig\":{\"bucketName\":\"test-kendra-bucket\",\"includedDirectories\":[\"documents/\"],\"kmsKeyArn\":\"arn:test-partition:kms:test-region:test-account:key/test-kendra-key\",\"metadataDirectory\":\"metadata/\"},\"external\":[{\"kendraId\":\"test-kendra-index-id\",\"name\":\"test-external-kendra\",\"region\":\"ca-central-1\",\"roleArn\":\"arn:test-partition:iam::test-account:role/test-kendra-role\"}]},\"knowledgeBase\":{\"external\":[{\"kbId\":\"test-kb-id\",\"name\":\"test-external-kb\",\"region\":\"ca-central-1\",\"roleArn\":\"arn:test-partition:iam::test-account:role/test-kb-role\"}]}},\"embeddingsModels\":[{\"provider\":\"bedrock\",\"name\":\"amazon.titan-embed-text-v2:0\",\"dimensions\":1024,\"isDefault\":true},{\"provider\":\"sagemaker\",\"name\":\"test-sagemaker-embedding-model\",\"dimensions\":768},{\"provider\":\"openai\",\"name\":\"text-embedding-3-large\",\"dimensions\":3072}],\"crossEncoderModels\":[{\"provider\":\"bedrock\",\"name\":\"test-cross-encoder-model\",\"isDefault\":true},{\"provider\":\"sagemaker\",\"name\":\"test-sagemaker-cross-encoder\"}]},\"concurrency\":{\"modelInterfaceConcurrentLambdas\":10,\"restApiConcurrentLambdas\":10,\"websocketConcurrentLambdas\":10},\"auth\":{\"authType\":\"email_pass\",\"cognitoDomain\":\"some-unique-pool-domain-name\"},\"setApiGateWayAccountCloudwatchRole\":true,\"skipApiGatewayDefaultWaf\":true,\"vpc\":{\"vpcId\":\"XXXXXXXX\",\"appSecurityGroupId\":\"sg-12345351356\",\"appSubnets\":[\"subnet1\"],\"dataSecurityGroupId\":\"sg-46576878787\",\"dataSubnets\":[\"subnet2\"]}}"
+        "Value": "{\"dataAdminRoles\":[{\"name\":\"Admin\"},{\"arn\":\"arn:test-partition:iam::test-account:role/test-admin-role\"}],\"prefix\":\"testing\",\"powertoolsDevLogging\":\"true\",\"mainDomain\":\"test-domain.example.com\",\"bedrock\":{\"enabled\":true,\"region\":\"ca-central-1\",\"roleArn\":\"arn:test-partition:iam::test-account:role/test-bedrock-role\"},\"llms\":{\"huggingFaceApiToken\":\"hf_test_token_placeholder\",\"sagemaker\":[{\"model\":\"FalconLite\",\"instanceType\":\"ml.g5.2xlarge\",\"initialInstanceCount\":1,\"minimumInstanceCount\":1,\"maximumInstanceCount\":2},{\"model\":\"Llama2_13b_Chat\"},{\"model\":\"Mistral7b_Instruct2\"}]},\"rag\":{\"engines\":{\"sagemaker\":{\"instanceType\":\"ml.inf1.xlarge\",\"initialInstanceCount\":1,\"minInstanceCount\":1,\"maxInstanceCount\":2},\"aurora\":{\"minCapacity\":0.5,\"maxCapacity\":4,\"createSeparateSecurityGroup\":true},\"kendra\":{\"createIndex\":true,\"s3DataSourceConfig\":{\"bucketName\":\"test-kendra-bucket\",\"includedDirectories\":[\"documents/\"],\"kmsKeyArn\":\"arn:test-partition:kms:test-region:test-account:key/test-kendra-key\",\"metadataDirectory\":\"metadata/\"},\"external\":[{\"kendraId\":\"test-kendra-index-id\",\"name\":\"test-external-kendra\",\"region\":\"ca-central-1\",\"roleArn\":\"arn:test-partition:iam::test-account:role/test-kendra-role\"}]},\"knowledgeBase\":{\"external\":[{\"kbId\":\"test-kb-id\",\"name\":\"test-external-kb\",\"region\":\"ca-central-1\",\"roleArn\":\"arn:test-partition:iam::test-account:role/test-kb-role\"}]}},\"embeddingsModels\":[{\"provider\":\"bedrock\",\"name\":\"amazon.titan-embed-text-v2:0\",\"dimensions\":1024,\"isDefault\":true},{\"provider\":\"sagemaker\",\"name\":\"test-sagemaker-embedding-model\",\"dimensions\":768},{\"provider\":\"openai\",\"name\":\"text-embedding-3-large\",\"dimensions\":3072}],\"crossEncoderModels\":[{\"provider\":\"bedrock\",\"name\":\"test-cross-encoder-model\",\"isDefault\":true},{\"provider\":\"sagemaker\",\"name\":\"test-sagemaker-cross-encoder\"}]},\"concurrency\":{\"modelInterfaceConcurrentLambdas\":10,\"restApiConcurrentLambdas\":10,\"websocketConcurrentLambdas\":10},\"auth\":{\"authType\":\"email_pass\",\"cognitoDomain\":\"some-unique-pool-domain-name\"},\"setApiGateWayAccountCloudwatchRole\":true,\"skipApiGatewayDefaultWaf\":true,\"vpc\":{\"vpcId\":\"XXXXXXXX\",\"appSecurityGroupId\":\"sg-12345351356\",\"appSubnets\":[\"subnet1\",\"subnet1b\"],\"dataSecurityGroupId\":\"sg-46576878787\",\"dataSubnets\":[\"subnet2\",\"subnet2b\"]}}"
       },
       "Metadata": {
         "cdk_nag": {
@@ -754,7 +754,8 @@
             "sg-12345351356"
           ],
           "SubnetIds": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -1822,7 +1823,8 @@
             "sg-12345351356"
           ],
           "Subnets": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -2096,7 +2098,8 @@
             "sg-12345351356"
           ],
           "Subnets": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -3199,7 +3202,8 @@
       "Properties": {
         "DBSubnetGroupDescription": "Subnets for aurora-postgres-pgvector database",
         "SubnetIds": [
-          "subnet2"
+          "subnet2",
+          "subnet2b"
         ],
         "Tags": [
           {
@@ -4027,7 +4031,7 @@
             ]
           },
           "functionName": "esAuroraPgVectoraurorapostgrespgvectorRotationSingleUserED1D0B15",
-          "vpcSubnetIds": "subnet2",
+          "vpcSubnetIds": "subnet2,subnet2b",
           "vpcSecurityGroupIds": {
             "Fn::GetAtt": [
               "gaiaRagEnginesAuroraPgVectoraurorapostgrespgvectorRotationSingleUserSecurityGroup936994EE",
@@ -4551,7 +4555,8 @@
             "sg-12345351356"
           ],
           "SubnetIds": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -7722,7 +7727,8 @@
             }
           ],
           "SubnetIds": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -8850,7 +8856,8 @@
             }
           ],
           "SubnetIds": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -9589,7 +9596,8 @@
             }
           ],
           "SubnetIds": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -11372,7 +11380,8 @@
             "sg-12345351356"
           ],
           "SubnetIds": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -13497,7 +13506,8 @@
             "sg-12345351356"
           ],
           "SubnetIds": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -13798,7 +13808,8 @@
             "sg-12345351356"
           ],
           "SubnetIds": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -14740,7 +14751,8 @@
             "sg-12345351356"
           ],
           "SubnetIds": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -16433,7 +16445,8 @@
             }
           ],
           "SubnetIds": [
-            "subnet1"
+            "subnet1",
+            "subnet1b"
           ]
         }
       },
@@ -17448,7 +17461,8 @@
             }
           ],
           "SubnetIds": [
-            "subnet2"
+            "subnet2",
+            "subnet2b"
           ]
         }
       },
