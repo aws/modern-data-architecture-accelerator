@@ -85,8 +85,8 @@ export class SeedCodeHelper {
     if (fs.existsSync(seedCodePath) && fs.statSync(seedCodePath).isDirectory()) {
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'mdaa-seed-'));
       const zipPath = path.join(tmpDir, 'seed_code.zip');
-      execSync(
-        // NOSONAR - zipPath is derived from os.tmpdir() (not user input) and seedCodePath is passed via cwd to avoid shell injection
+      // prettier-ignore
+      execSync( //NOSONAR - zipPath from os.tmpdir(), seedCodePath passed via cwd
         `zip -r ${JSON.stringify(zipPath)} . -x '*.pyc' '__pycache__/*' '.git/*' '*.egg-info/*' '.venv/*' 'node_modules/*' '.tox/*' '.pytest_cache/*'`,
         { stdio: 'pipe', cwd: seedCodePath },
       );

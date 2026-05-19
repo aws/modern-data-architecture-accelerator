@@ -303,13 +303,13 @@ export class RestApi extends MdaaL3Construct {
     // Configure API routes - all requests go through a single Lambda proxy
     const v1Resource = chatBotApi.root.addResource('v1');
     const v1ProxyResource = v1Resource.addResource('{proxy+}');
+    // prettier-ignore
     v1ProxyResource.addMethod(
-      // NOSONAR - Cognito auth is inherited from defaultMethodOptions set on the RestApi
       'ANY', // Handle all HTTP methods
       new apigateway.LambdaIntegration(apiHandler, {
         proxy: true,
       }),
-      {
+      { //NOSONAR - Cognito auth is inherited from defaultMethodOptions set on the RestApi
         requestValidatorOptions: {
           validateRequestParameters: true,
           validateRequestBody: true,
@@ -383,7 +383,6 @@ export class RestApi extends MdaaL3Construct {
     let policyDocument: iam.PolicyDocument | undefined = undefined;
     if (endpointType === apigateway.EndpointType.PRIVATE) {
       // Private APIs require explicit resource policies
-      // NOSONAR - AnyPrincipal is required for private API Gateway resource policies.
       // Access is restricted to specific VPC endpoints via a DENY statement below, and
       // method-level Cognito authorization is enforced on all routes.
       // See: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-private-apis.html#apigateway-private-api-set-up-resource-policy
@@ -392,7 +391,7 @@ export class RestApi extends MdaaL3Construct {
           new iam.PolicyStatement({
             actions: ['execute-api:Invoke'],
             effect: iam.Effect.ALLOW,
-            principals: [new iam.AnyPrincipal()],
+            principals: [new iam.AnyPrincipal()], //NOSONAR - AnyPrincipal required for private API Gateway resource policies
             resources: ['execute-api:/*/*/*'],
           }),
         ],

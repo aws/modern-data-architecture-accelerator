@@ -91,7 +91,8 @@ export interface MdaaSqsQueueProps extends MdaaConstructProps {
 export class MdaaSqsQueue extends Queue {
   private static setProps(props: MdaaSqsQueueProps): QueueProps {
     const overrideProps = {
-      encyption: QueueEncryption.KMS,
+      // KMS mode is already inferred from the required encryptionMasterKey prop, but this is belt and suspenders
+      encryption: QueueEncryption.KMS,
       queueName: props.naming.resourceName(props.queueName, 80),
     };
     return { ...props, ...overrideProps };
