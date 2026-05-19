@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Stack } from 'aws-cdk-lib';
 import { DataZoneL3Construct, DataZoneL3ConstructProps } from '../lib';
 
@@ -2811,6 +2811,34 @@ describe('DataZone L3 Construct Tests', () => {
 
       // data-admin (2) + Tooling/DataLake blueprint auths (2) + custom-resource-role-auth (1) = 5
       template.resourceCountIs('AWS::DataZone::PolicyGrant', 5);
+    });
+
+    test('AOSS encryption policy is pre-created with broad collection/bedrock-ide-* pattern', () => {
+      new DataZoneL3Construct(stack, 'test-aoss-policy', {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        sageMakerDomains: {
+          'test-domain': {
+            description: 'Test domain',
+            dataAdminRole: { name: 'admin' },
+            userAssignment: 'MANUAL',
+            tooling: {
+              vpcId: 'test-vpc',
+              subnetIds: ['subnet-id-1'],
+            },
+          },
+        },
+      });
+      const template = Template.fromStack(stack);
+
+      template.resourceCountIs('AWS::OpenSearchServerless::SecurityPolicy', 1);
+      template.hasResourceProperties('AWS::OpenSearchServerless::SecurityPolicy', {
+        Type: 'encryption',
+        Policy: Match.objectLike({
+          'Fn::Join': Match.arrayWith([Match.arrayWith([Match.stringLikeRegexp('collection/bedrock-ide-\\*')])]),
+        }),
+      });
     });
   });
 });
