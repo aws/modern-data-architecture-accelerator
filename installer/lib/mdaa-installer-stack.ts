@@ -169,6 +169,7 @@ export class MdaaInstallerStack extends cdk.Stack {
               'find ${SAMPLE_CONFIG_FOLDER}/${SAMPLE_NAME}/ -type f \\( -name "*.yaml" -o -name "*.yml" \\) -exec sed -i \'s/<your vpc id>/\'"$VPC_ID"\'/g\' {} \\;',
               'find ${SAMPLE_CONFIG_FOLDER}/${SAMPLE_NAME}/ -type f \\( -name "*.yaml" -o -name "*.yml" \\) -exec sed -i \'s/<your subnet id>/\'"$SUBNET_ID"\'/g\' {} \\;',
               'find ${SAMPLE_CONFIG_FOLDER}/${SAMPLE_NAME}/ -type f \\( -name "*.yaml" -o -name "*.yml" \\) -exec sed -i \'s/<your datascience team name>/\'"$ORG_NAME"\'-datascience-team/g\' {} \\;',
+              "sed -i 's/^region: default$/region: '\"$CDK_DEFAULT_REGION\"'/' ${SAMPLE_CONFIG_FOLDER}/${SAMPLE_NAME}/mdaa.yaml",
               'mdaa -c ${SAMPLE_CONFIG_FOLDER}/${SAMPLE_NAME}/mdaa.yaml --mdaa_version ${MDAA_VERSION} deploy',
               'echo "Deployment completed successfully"',
             ],
