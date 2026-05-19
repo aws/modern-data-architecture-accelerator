@@ -432,6 +432,29 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
+  test('SmusUserRoleDeploymentRead', () => {
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Sid: 'SmusUserRoleDeploymentRead',
+            Effect: 'Allow',
+            Action: 's3:GetObject*',
+            Principal: { AWS: '*' },
+            Resource: {
+              'Fn::Join': ['', [{ 'Fn::GetAtt': ['BucketprojectAACC6DD8', 'Arn'] }, '/deployment/*']],
+            },
+            Condition: {
+              StringLike: {
+                'aws:PrincipalArn': Match.stringLikeRegexp('datazone_usr_role_\\*$'),
+              },
+            },
+          }),
+        ]),
+      },
+    });
+  });
+
   test('DeploymentRoleReadWrite', () => {
     template.hasResourceProperties('AWS::S3::BucketPolicy', {
       PolicyDocument: {
