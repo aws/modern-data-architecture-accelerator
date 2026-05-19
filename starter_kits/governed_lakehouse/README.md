@@ -125,7 +125,7 @@ This configuration is designed for:
 
 ## Usage Instructions
 
-Once the MDAA deployment is complete, follow the following steps to interact with the governed data lake.
+Once the MDAA deployment is complete, follow these steps to interact with the governed data lake.
 
 1. **Assume the data-admin role** created by the MDAA deployment. This role is configured with AssumeRole trust to the local account by default. Note that this role is the only role configured with write access to the data lake. All other roles (including existing administrator roles in the account) will be denied write access.
 

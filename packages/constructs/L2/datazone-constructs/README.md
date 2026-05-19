@@ -1,6 +1,6 @@
 # Construct Overview
 
-Opinionated implementation of the Layer 2 CDK Constructs for Datazone.
+Opinionated implementation of the Layer 2 CDK Constructs for DataZone.
 
 ## Security/Compliance
 

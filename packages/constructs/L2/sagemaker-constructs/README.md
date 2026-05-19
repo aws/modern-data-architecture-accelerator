@@ -11,7 +11,7 @@ Opinionated L2 Constructs for SageMaker.
 
 ### SageMaker Notebooks
 * Enforce notebook names
-* Enforce KMS CMK encryption at reset
+* Enforce KMS CMK encryption at rest
 * Enforce disable direct internet access
 
 ### SageMaker Project Template

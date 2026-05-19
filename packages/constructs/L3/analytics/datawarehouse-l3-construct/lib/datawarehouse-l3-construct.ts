@@ -41,24 +41,19 @@ import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Construct } from 'constructs';
 import { ensureNodeType, sanitizeScheduledActionName } from './utils';
 
+const COMPLIANCE_FRAMEWORKS = ['NIST.800.53.R5', 'HIPAA.Security', 'PCI.DSS.321'];
+
 const REDSHIFT_CUSTOM_RESOURCE_NAG_SUPPRESSIONS = [
   {
     id: 'AwsSolutions-IAM4',
     reason:
       'Custom Resource Provider role uses AWSLambdaBasicExecutionRole managed policy for CloudWatch Logs access (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). These are standard Lambda execution permissions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html',
   },
-  {
-    id: 'NIST.800.53.R5-IAMNoInlinePolicy',
-    reason: 'Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.',
-  },
-  {
-    id: 'HIPAA.Security-IAMNoInlinePolicy',
-    reason: 'Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.',
-  },
-  {
-    id: 'PCI.DSS.321-IAMNoInlinePolicy',
-    reason: 'Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.',
-  },
+  ...COMPLIANCE_FRAMEWORKS.map(fw => ({
+    id: `${fw}-IAMNoInlinePolicy`,
+    reason:
+      'Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html',
+  })),
   {
     id: 'AwsSolutions-IAM5',
     reason:
@@ -69,51 +64,23 @@ const REDSHIFT_CUSTOM_RESOURCE_NAG_SUPPRESSIONS = [
     reason:
       'Lambda runtime version is controlled by the aws-redshift-alpha CDK module and cannot be overridden by the consumer. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html',
   },
-  {
-    id: 'NIST.800.53.R5-LambdaDLQ',
-    reason:
-      'Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation',
-  },
-  {
-    id: 'NIST.800.53.R5-LambdaInsideVPC',
-    reason:
-      'Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager',
-  },
-  {
-    id: 'NIST.800.53.R5-LambdaConcurrency',
-    reason:
-      'Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.',
-  },
-  {
-    id: 'HIPAA.Security-LambdaDLQ',
-    reason:
-      'Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation',
-  },
-  {
-    id: 'PCI.DSS.321-LambdaDLQ',
-    reason:
-      'Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation',
-  },
-  {
-    id: 'HIPAA.Security-LambdaInsideVPC',
-    reason:
-      'Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager',
-  },
-  {
-    id: 'PCI.DSS.321-LambdaInsideVPC',
-    reason:
-      'Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager',
-  },
-  {
-    id: 'HIPAA.Security-LambdaConcurrency',
-    reason:
-      'Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.',
-  },
-  {
-    id: 'PCI.DSS.321-LambdaConcurrency',
-    reason:
-      'Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.',
-  },
+  ...COMPLIANCE_FRAMEWORKS.flatMap(fw => [
+    {
+      id: `${fw}-LambdaDLQ`,
+      reason:
+        'Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html',
+    },
+    {
+      id: `${fw}-LambdaInsideVPC`,
+      reason:
+        'Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html',
+    },
+    {
+      id: `${fw}-LambdaConcurrency`,
+      reason:
+        'Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html',
+    },
+  ]),
 ];
 
 /**
@@ -371,8 +338,8 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
   protected readonly props: DataWarehouseL3ConstructProps;
   public static readonly defaultClusterPort = 5440;
 
-  private dataAdminRoleIds: string[];
-  private bucketUserRoleIds: string[];
+  private readonly dataAdminRoleIds: string[];
+  private readonly bucketUserRoleIds: string[];
   constructor(scope: Construct, id: string, props: DataWarehouseL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
@@ -880,7 +847,8 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       ? prefix + '-' + this.props.naming.resourceName('logging', 63)
       : this.props.naming.resourceName('logging', 63);
     // Backwards compat for existing deployments, but construct ID should not use the name if the name contains tokens
-    const loggingBucketName = bucketName.includes('Token') ? 'logging-bucket' : bucketName
+    const loggingBucketName = bucketName.includes('Token') ? 'logging-bucket' : bucketName;
+    // prettier-ignore
     const loggingBucket = new Bucket(this.scope, loggingBucketName, { // NOSONAR
       bucketName: bucketName,
       encryption: BucketEncryption.S3_MANAGED,

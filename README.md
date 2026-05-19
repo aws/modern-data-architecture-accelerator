@@ -2,7 +2,7 @@
 
 **Note:** All documentation in this repo is available as rendered/searchable HTML [here](https://aws.github.io/modern-data-architecture-accelerator/).
 
-The Modern Data Architecture Accelerator (MDAA) helps organizations deploy secure, compliant data analytics and AI environments on Amazon Web Services (AWS) through simple YAML configuration files. Whether you need a basic data lake, a full data science platform, Sagemaker unified studio or a generative AI solution, MDAA provides prepackaged starter kits and reusable infrastructure components that handle security compliance out of the box. It supports teams of all sizes, from small organizations looking for code-free deployment to large enterprises building complex Lake House or Data Mesh architectures.
+The Modern Data Architecture Accelerator (MDAA) helps organizations deploy secure, compliant data analytics and AI environments on Amazon Web Services (AWS) through simple YAML configuration files. Whether you need a basic data lake, a full data science platform, SageMaker Unified Studio or a generative AI solution, MDAA provides prepackaged starter kits and reusable infrastructure components that handle security compliance out of the box. It supports teams of all sizes, from small organizations looking for code-free deployment to large enterprises building complex Lake House or Data Mesh architectures.
 
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 ![Version](https://img.shields.io/badge/version-1.4.0-green.svg)
@@ -45,7 +45,7 @@ The Modern Data Architecture Accelerator (MDAA) helps organizations deploy secur
 
 MDAA is designed as a set of modules. Each module configures and deploys a set of resources which constitute the data analytics environment. Modules may have dependencies on each other, and may also leverage non-MDAA resources deployed within the environment.
 
-While MDAA can be used to implement a comprehensive, end-to-end modern data architecutre, it does not result in a closed system. MDAA may be freely integrated with non-MDAA deployed platform elements and data capabilities. Any individual module of MDAA can be replaced by a non-MDAA component, and the remaining modules will continue to function.
+While MDAA can be used to implement a comprehensive, end-to-end modern data architecture, it does not result in a closed system. MDAA may be freely integrated with non-MDAA deployed platform elements and data capabilities. Any individual module of MDAA can be replaced by a non-MDAA component, and the remaining modules will continue to function.
 
 ![MDAA Architecture](docs/MDAA-Logical.png)
 
@@ -160,6 +160,7 @@ Starter kits provide secure, prepackaged foundations for common use cases:
 | [Governed Lakehouse](starter_kits/governed_lakehouse/README.md)                 | DataZone-governed lakehouse with fine-grained access control                                             | ~20–25 min       |
 | [Health Data Accelerator](starter_kits/health_data_accelerator/README.md)       | Healthcare data lake with DMS (Database Migration Service) integration                                   | ~30–45 min       |
 | [SMUS Research Environment](starter_kits/smus_research_environment/README.md)   | A SageMaker Unified Studio-enabled architecture suitable for facilitating team-based research activities | ~20–25 min       |
+| [SMUS Data Mesh](starter_kits/smus_data_mesh/README.md)                         | Multi-account SageMaker Unified Studio deployment with cross-account data sharing and custom blueprints  | ~30–45 min       |
 | [MLOps Platform](starter_kits/mlops_platform/README.md)                         | End-to-end ML lifecycle platform with training, deployment, and monitoring pipelines                      | ~20–30 min       |
 
 ## Sample Configurations
@@ -207,7 +208,7 @@ MDAA is implemented as a set of compliant modules deployed via a unified orchest
 ### Data Analytics Modules
 
 - [**Redshift Data Warehouse**](packages/apps/analytics/datawarehouse-app/README.md) - Secure Redshift data warehouse clusters.
-- [**Opensearch Domain**](packages/apps/analytics/opensearch-app/README.md) - Secure Opensearch domains and dashboards.
+- [**OpenSearch Domain**](packages/apps/analytics/opensearch-app/README.md) - Secure OpenSearch domains and dashboards.
 - [**QuickSight Account**](packages/apps/analytics/quicksight-account-app/README.md) - Deploy QuickSight account resources.
 - [**QuickSight Namespace**](packages/apps/analytics/quicksight-namespace-app/README.md) - QuickSight namespaces for multi-tenancy.
 - [**QuickSight Project**](packages/apps/analytics/quicksight-project-app/README.md) - QuickSight shared folders and permissions.
@@ -219,6 +220,11 @@ MDAA is implemented as a set of compliant modules deployed via a unified orchest
 - [**Data Science Team/Project**](packages/apps/ai/data-science-team-app/README.md) - Resources for team data science activities.
 - [**Generative AI Accelerator**](packages/apps/ai/gaia-v2-app/README.md) - Authenticated GenAI chatbot with WebSocket streaming, Bedrock Knowledge Base RAG, and admin and client UIs.
 - [**Generative AI Accelerator v1 (deprecated)**](packages/apps/ai/gaia-app/README.md) - Previous generation of the GenAI chatbot. New deployments should use `@aws-mdaa/gaia-v2`; v1 remains published for existing deployments and will be removed in a future release. See the [migration guide](packages/apps/ai/gaia-app/MIGRATION_TO_V2.md).
+- [**SageMaker Ground Truth**](packages/apps/ai/sagemaker-ground-truth-app/README.md) - Automated continuous data labeling pipeline with Ground Truth and Feature Store integration.
+- [**SageMaker MLOps**](packages/apps/ai/sagemaker-mlops-app/README.md) - Unified ML training and deployment pipeline with cross-account model promotion.
+- [**SageMaker Pipeline**](packages/apps/ai/sagemaker-pipeline-app/README.md) - Declarative SageMaker Pipeline defined in CDK/CloudFormation with no seed code required.
+- [**SageMaker Endpoint**](packages/apps/ai/sagemaker-endpoint-app/README.md) - Real-time SageMaker inference endpoint from an approved model package.
+- [**SageMaker Model Monitoring**](packages/apps/ai/sagemaker-model-monitoring-app/README.md) - Continuous monitoring of production inference endpoints for drift, degradation, and bias.
 - [**Bedrock AgentCore Runtime**](packages/apps/ai/bedrock-agentcore-runtime-app/README.md) - Deploy Amazon Bedrock AgentCore Runtimes with custom Docker containers.
 - [**Bedrock Builder**](packages/apps/ai/bedrock-builder-app/README.md) - Deploy secure Bedrock Agents, Knowledge Bases, and associated resources.
 - [**Bedrock Settings**](packages/apps/ai/bedrock-settings-app/README.md) - Configure Bedrock model invocation audit logging to S3 and CloudWatch.

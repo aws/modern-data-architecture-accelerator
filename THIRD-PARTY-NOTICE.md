@@ -1,6 +1,6 @@
-# Third Party Depedencies
+# Third Party Dependencies
 
-The following third-party dependecies are used by MDAA:
+The following third-party dependencies are used by MDAA:
 
 ## ajv - [MIT](https://github.com/ajv-validator/ajv/blob/master/LICENSE)
 

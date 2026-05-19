@@ -13,7 +13,7 @@ This blueprint may be suitable when:
 
 ## Usage Instructions
 
-The following instructions assume you have already deployed your Data Lake (possibly using MDAA). Note: Additional configuration may be required if LakeFormation is in use on the data lake. These instructions assume the blueprint will be deployed independantly of any exising MDAA deployment. Alternatively, these blueprint configs can be merged into an existing MDAA deployment.
+The following instructions assume you have already deployed your Data Lake (possibly using MDAA). Note: Additional configuration may be required if LakeFormation is in use on the data lake. These instructions assume the blueprint will be deployed independently of any existing MDAA deployment. Alternatively, these blueprint configs can be merged into an existing MDAA deployment.
 
 1. Deploy sample configurations into the specified directory structure (or obtain from the MDAA repo under `sample_blueprints/basic_crawler`).
 
@@ -39,7 +39,7 @@ Additional MDAA deployment commands/procedures can be reviewed in [DEPLOYMENT](.
 
 ## Configurations
 
-The sample configurations for this blueprint are provided below. They are also available under sample_blueprints/basic_crawler whithin the MDAA repo.
+The sample configurations for this blueprint are provided below. They are also available under sample_blueprints/basic_crawler within the MDAA repo.
 
 ### Config Directory Structure
 

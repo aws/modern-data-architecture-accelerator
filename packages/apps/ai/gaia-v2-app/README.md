@@ -15,7 +15,7 @@ The architecture consists of four main layers:
 1. **Presentation Layer**: Client and Admin UIs with CloudFront distribution
 2. **API Layer**: REST and WebSocket APIs with WAF protection and Cognito authentication
 3. **Processing Layer**: Lambda functions
-4. **Data Layer**: DynamoDB tables, S3 buckets, and optional RAG engines (i.e. : Aurora PgVector/OpenSearch)
+4. **Data Layer**: DynamoDB tables, S3 buckets, and optional RAG engines (e.g., Aurora PgVector/OpenSearch)
 
 ### Deployed Resources and Compliance Details
 
@@ -88,9 +88,9 @@ graph LR
 
 **WebSocket API Components:**
 - **WAF (Web Application Firewall)**: Provides the first line of defense with configurable CIDR-based access control and custom rules
-- **AppSync Events**: WebSocket API which handle Authorization configuration with Cognito
+- **AppSync Events**: WebSocket API which handles authorization configuration with Cognito
 - **AppSync Namespace**: Namespace used for ingress or egress communication
-- **AppSync Data Sources Lambda with LLM Model Interface**: Process incoming messages and send responses
+- **AppSync Data Sources Lambda with LLM Model Interface**: Processes incoming messages and sends responses
 
 **Message Flow:**
 1. Client establishes WebSocket connection using AppSync Event

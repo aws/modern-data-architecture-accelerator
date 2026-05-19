@@ -6,6 +6,6 @@ Opinionated implementation of the Layer 2 CDK Construct for CloudWatch.
 
 ### CloudWatch LogGroups
 * Enforce LogGroup Name
-* Enforces KMS CMK Encryption LogGroup
+* Enforces KMS CMK Encryption of LogGroup
 * Enforces specification of LogGroup Retention
 * Enforces LogGroup retention on stack deletion

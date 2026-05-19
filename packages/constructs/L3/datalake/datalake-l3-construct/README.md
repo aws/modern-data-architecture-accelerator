@@ -1,6 +1,6 @@
 # Construct Overview
 
-This Data Lake CDK L3 construct is used to configure deploy the resources required to define a secure S3-based Data Lake on AWS.
+This Data Lake CDK L3 construct is used to configure and deploy the resources required to define a secure S3-based Data Lake on AWS.
 
 ***
 

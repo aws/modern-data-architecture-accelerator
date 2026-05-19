@@ -17,11 +17,11 @@ SageMaker Project L3 CDK Construct is used to configure and deploy SageMaker Pro
 
 * **Data Lake Blueprint** - Data Lake Blueprint (id: DefaultDataLake) specific to each domain.
 
-* **Data Lake Manage Access Role** - An IAM Role used by the Data Lake Blueprint and it's specific to each domain.
+* **Data Lake Manage Access Role** - An IAM Role used by the Data Lake Blueprint, specific to each domain.
 
 * **Data Warehouse Blueprint** - Data Warehouse Blueprint (id: DefaultDataWarehouse) specific to each domain.
 
-* **Data Warehouse Manage Access Role** - An IAM Role use by the Data Warehouse blueprint and it's specific to each domain.
+* **Data Warehouse Manage Access Role** - An IAM Role used by the Data Warehouse blueprint, specific to each domain.
 
 ## DataZone Personas
 ![datazone-personas](docs/DataZone-Personas.png)

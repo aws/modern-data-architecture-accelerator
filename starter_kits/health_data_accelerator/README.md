@@ -9,7 +9,7 @@ This HDA configuration illustrates how to create a healthcare datalake on AWS. A
 ## Deployment Instructions
 
 ### Prerequisites
-1. Secrets manager secret for storing source database.
+1. Secrets Manager secret for storing the source database credentials.
 2. KMS key that this secret is using to encrypt the secrets.
 3. VPC for hosting the DMS task instances. For best practices on what VPC to deploy, consider using the [Landing Zone Accelerator](https://aws.amazon.com/solutions/implementations/landing-zone-accelerator-on-aws/).
 4. The source database server must allow connection from DMS.
@@ -185,12 +185,12 @@ This configuration will create Glue crawlers using the DataOps Crawler module.
 
 ## Usage Instructions
 
-Once the HDA deployment is complete, follow the following steps to interact with the data lake.
+Once the HDA deployment is complete, follow these steps to interact with the data lake.
 
 1. Go to the DMS Console page
-   - Ensure that the source status is status for the source endpoint connection is "Successful"
+   - Ensure that the status for the source endpoint connection is "Successful"
    - Start the task
-2. Wait until the file processor and the transformer step function are complete. They are run 3AM and 4AM, respective.
+2. Wait until the file processor and the transformer step function are complete. They are run at 3AM and 4AM, respectively.
 3. If all run as expected, you should see your data in the curated bucket.
 
 ***

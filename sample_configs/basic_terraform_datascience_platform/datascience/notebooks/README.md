@@ -1,8 +1,8 @@
 # Test Notebook(s)
-Contains collection of jupyter notebooks to test various scenarios
+Contains a collection of Jupyter notebooks to test various scenarios
 
 ## Prerequisites
-Sagemaker Domain will be deployed within a VPC/Subnet. Ensure that the Security Group Ingress/Egress rules allow required connectivity to the AWS/OnPrem/Target Network resources
+SageMaker Domain will be deployed within a VPC/Subnet. Ensure that the Security Group Ingress/Egress rules allow required connectivity to the AWS/OnPrem/Target Network resources
 
 VPC Endpoints to be in place such as:
 * "com.amazonaws.<REGION>.kms"
@@ -18,12 +18,12 @@ VPC Endpoints to be in place such as:
 
 
 ## General Instructions
-Data Scientist/AI engineer who has access to the SSO Group should be able to launch the Sagemaker Studio or `Application` directly from the SSO Login page.
+Data Scientist/AI engineer who has access to the SSO Group should be able to launch the SageMaker Studio or `Application` directly from the SSO Login page.
 * Once logged in, go to AWS Access Portal
-* Select 'Applicaitons' Tab
-* Hover over the applications to see which `domain` do they belong to (in case you see multiple applicaitons)
+* Select 'Applications' Tab
+* Hover over the applications to see which `domain` they belong to (in case you see multiple applications)
 * Refer to `Domain >> ID`. Request your Administrator to provide this id. (Example: *d-bdmy11uf4r3o*)
-* It will launch your `Sagemaker Studio` in a new tab
+* It will launch your `SageMaker Studio` in a new tab
 * Click on `JupyterLab` and then click `Create Jupyter Lab Space`
 * Provide an appropriate name and click "Create Space"
 * Wait for Space to be created and then Click "Start"
@@ -35,6 +35,6 @@ Data Scientist/AI engineer who has access to the SSO Group should be able to lau
 
 ## 1. Notebook: basic_test.ipynb
 This is a notebook to test the following:
-1. Running within Sagemaker Studio, using the execution role
+1. Running within SageMaker Studio, using the execution role
 2. No Internet connectivity - should be able to use pre-installed modules
 3. Should be able to read/write to S3-Bucket 

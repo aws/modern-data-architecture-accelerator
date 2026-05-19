@@ -1,6 +1,6 @@
 ---
 inclusion: fileMatch
-fileMatchPattern: 'packages/apps/**/README.md,packages/apps/**/sample-config*.yaml,packages/apps/**/config-schema.json'
+fileMatchPattern: 'packages/apps/**/README.md,packages/apps/**/sample-config*.yaml,packages/apps/**/config-schema.json,packages/constructs/**/README.md,packages/utilities/**/README.md'
 ---
 
 # Module Quality - Steering Guide
@@ -15,16 +15,28 @@ The standards for READMEs and sample configs are defined in CONTRIBUTING.md. Thi
 ## Scope
 
 - **App modules**: `packages/apps/{category}/{module}-app/`
-- **READMEs**: `README.md` in each module root
-- **Sample configs**: `sample_configs/sample-config*.yaml`
-- **Config schemas**: `lib/config-schema.json` (JSON Schema draft-07, auto-generated from TypeScript interfaces)
+- **Construct packages**: `packages/constructs/L2/*/` and `packages/constructs/L3/{category}/*/`
+- **Utility packages**: `packages/utilities/*/`
+- **READMEs**: `README.md` in each module/package root
+- **Sample configs**: `sample_configs/sample-config*.yaml` (app modules only)
+- **Config schemas**: `lib/config-schema.json` (JSON Schema draft-07, auto-generated from TypeScript interfaces; app modules only)
 - **Architecture diagrams**: `packages/constructs/L3/{category}/{module-l3-construct}/docs/`
+
+For construct and utility packages, only spelling, grammar, and AWS capitalization checks apply (sections 2.Quality Checks). The full README structure audit (sections, sample config coverage, schema assessment) applies only to app modules.
 
 ### Excluded Modules
 
 - `packages/apps/core/app/` — base app class, not a deployable module
 - `packages/apps/core/devops/` — CI/CD pipeline scaffolding
 - `packages/apps/dataops/dataops-shared-app/` — shared config parser base class
+
+### Out of Scope
+
+Documentation outside `packages/` is NOT reviewed by this agent — that is handled by the Documentation Quality Review agent. Do NOT review or flag issues in:
+- `starter_kits/*/README.md`
+- `sample_blueprints/*/README.md`
+- `sample_configs/*/README.md` (top-level sample configs, not module `sample_configs/` subdirectories)
+- Root-level docs (`README.md`, `CONTRIBUTING.md`, `DEPLOYMENT.md`, etc.)
 
 ## Process
 
@@ -60,6 +72,8 @@ Score each module against the required structure from CONTRIBUTING.md:
 - No compliance language in Deployed Resources (grep for "MDAA configures", "securely managed", "encrypted using")
 - Sample config descriptions use user-facing language
 - All `sample_configs/*.yaml` files are represented in the README
+- No spelling mistakes in prose (technical terms, AWS service names, and code identifiers are excluded)
+- No grammatical errors — check for subject-verb agreement, correct article usage (a/an/the), proper pluralization, and awkward phrasing (e.g., "follow the following" → "follow these")
 
 ### 3. Assess Sample Config Coverage
 

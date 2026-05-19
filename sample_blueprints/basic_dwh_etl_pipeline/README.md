@@ -7,7 +7,7 @@ files are being regularly uploaded to the data lake, and need to be periodically
 
 While the blueprint doesn't immediately handle partitioning, or additional transformation, the Glue ETL Job can be easily extended to provide these capabilities.
 
-![Glue CSV Parqet Transformer](docs/basic_dwh_etl_pipeline.png)
+![Glue CSV Parquet Transformer](docs/basic_dwh_etl_pipeline.png)
 
 ***
 
@@ -19,7 +19,7 @@ The following instructions assume you have already deployed your Data Lake (poss
 
 2. Edit the `mdaa.yaml` to specify an organization name to replace `<unique-org-name>`. This must be a globally unique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
 
-3. Review and Edit the `*.yaml` files to specify values for atttributes marked in angle brackets `<>` e.g. `<your-glue-catalog-database-name-for-raw-datasets>`.
+3. Review and Edit the `*.yaml` files to specify values for attributes marked in angle brackets `<>` e.g. `<your-glue-catalog-database-name-for-raw-datasets>`.
 
 4. Edit `basic_dwh_etl_pipeline/basic_etl_pipeline/src/glue/curate-dataset-*.py` to add your processing logic.
 
@@ -39,7 +39,7 @@ Additional MDAA deployment commands/procedures can be reviewed in [DEPLOYMENT](.
 
 ## Configurations
 
-The sample configurations for this blueprint are provided below. They are also available under sample_blueprints/basic_dwh_etl_pipeline whithin the MDAA repo.
+The sample configurations for this blueprint are provided below. They are also available under sample_blueprints/basic_dwh_etl_pipeline within the MDAA repo.
 
 ### Config Directory Structure
 
@@ -48,7 +48,7 @@ basic_dwh_etl_pipeline
 │   mdaa.yaml
 │   tags.yaml
 │
-└───gbasic_etl_pipeline
+└───basic_etl_pipeline
     └───roles.yaml
     └───project.yaml
     └───crawlers.yaml

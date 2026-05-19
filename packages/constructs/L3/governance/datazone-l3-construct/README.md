@@ -17,11 +17,11 @@ DataZone L3 CDK Construct is used to configure and deploy DataZone Domains.
 
 * **Data Lake Blueprint** - Data Lake Blueprint (id: DefaultDataLake) specific to each domain.
 
-* **Data Lake Manage Access Role** - An IAM Role used by the Data Lake Blueprint and it's specific to each domain.
+* **Data Lake Manage Access Role** - An IAM Role used by the Data Lake Blueprint, specific to each domain.
 
 * **Data Warehouse Blueprint** - Data Warehouse Blueprint (id: DefaultDataWarehouse) specific to each domain.
 
-* **Data Warehouse Manage Access Role** - An IAM Role use by the Data Warehouse blueprint and it's specific to each domain.
+* **Data Warehouse Manage Access Role** - An IAM Role used by the Data Warehouse blueprint, specific to each domain.
 
 * **Authorization Policy Grants** - Fine-grained authorization policies applied to domain units that control user and role permissions. Supports policy types including CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_PROJECT, and others. Principals can be either IAM users (`user: username`) or IAM roles (`role: rolename`) depending on how they're defined in the domain configuration.
 

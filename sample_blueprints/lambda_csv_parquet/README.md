@@ -1,6 +1,6 @@
 # Lambda CSV Parquet Transformer
 
-This blueprint illustrates how to use an EventBridge-triggered DataOps Lambda function to transform small CSV files into parqeut, as they are uploaded into an S3 data lake.
+This blueprint illustrates how to use an EventBridge-triggered DataOps Lambda function to transform small CSV files into parquet, as they are uploaded into an S3 data lake.
 
 This blueprint may be suitable when:
 
@@ -8,7 +8,7 @@ This blueprint may be suitable when:
 
 While the blueprint doesn't immediately handle partitioning, or additional transformation, the Lambda function can be easily extended to provide these capabilities.
 
-![Lambda CSV Parqet Transformer](docs/lambda_csv_parquet.png)
+![Lambda CSV Parquet Transformer](docs/lambda_csv_parquet.png)
 
 ***
 
@@ -23,7 +23,7 @@ The following instructions assume you have already deployed your Data Lake (poss
 3. Edit the `mdaa.yaml` to specify a project name which is unique within your organization, replacing `<your-project-name>`.
 
 4. Edit the `mdaa.yaml` to specify appropriate context values for your environment.
-5. Optionally, edit `lambda_csv_parquet/lambda_csv_parquet/src/lambda/lambda_csv_parquet/lambda_csv_parqet.py` to handle additional transformation and partitioning.
+5. Optionally, edit `lambda_csv_parquet/lambda_csv_parquet/src/lambda/lambda_csv_parquet/lambda_csv_parquet.py` to handle additional transformation and partitioning.
 
 6. Ensure you are authenticated to your target AWS account.
 
@@ -41,7 +41,7 @@ Additional MDAA deployment commands/procedures can be reviewed in [DEPLOYMENT](.
 
 ## Configurations
 
-The sample configurations for this blueprint are provided below. They are also available under sample_blueprints/lambda_csv_parquet whithin the MDAA repo.
+The sample configurations for this blueprint are provided below. They are also available under sample_blueprints/lambda_csv_parquet within the MDAA repo.
 
 ### Config Directory Structure
 

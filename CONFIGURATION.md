@@ -7,8 +7,8 @@ Once a platform architecture is defined, the next step is to translate the archi
 MDAA is designed to deploy data environments across multiple domains and environments. Each domain/environment is constituted by one or more configured MDAA modules. Each MDAA module references a CDK app and corresponding configuration. During deployment, MDAA executes a module's underlying CDK application, providing all necessary configuration details as CDK context.
 
 - **Domain** - A data environment can be organized into one or more _domains_, which may align to organizational units such as line of business, directorate, etc. Domains may be spread across one or more accounts. When spread across multiple accounts, each domain becomes a potential node in a data mesh architecture.
-- **Environment** - An domain can be deployed across multiple _environments_ (such as DEV/TEST/PROD). Each environment may deployed in a separate account.
-- **Module** - A _module_ specifies which CDK App and corresponding configuration will be deployed within an data environment domain/environment. During deployment, modules will be deployed in stages according to dependencies between modules.
+- **Environment** - A domain can be deployed across multiple _environments_ (such as DEV/TEST/PROD). Each environment may be deployed in a separate account.
+- **Module** - A _module_ specifies which CDK App and corresponding configuration will be deployed within a data environment domain/environment. During deployment, modules will be deployed in stages according to dependencies between modules.
 - **CDK App** - A _CDK App_ is built, executed, and deployed using the AWS CDK framework. The CDK app will be forked from the MDAA orchestrator and executed as a regular CDK application. Each CDK produces one or more CloudFormation stacks, which in turn deploy the cloud resources which will constitute the data environment. Alternatively, instead of deploying resources directly to the environment, they can instead be published as Service Catalog products, to be deployed on a self-service basis by users within the accounts.
 
 ### Direct Configuration and Deployment
@@ -34,6 +34,9 @@ Starter kits provide secure, prepackaged foundations for common use cases:
 - [GenAI Accelerator](starter_kits/genai_accelerator/README.md) - Enterprise-ready GenAI platform with Bedrock Builder
 - [Governed Lakehouse](starter_kits/governed_lakehouse/README.md) - DataZone-governed Lakehouse with fine-grained access control
 - [Health Data Accelerator](starter_kits/health_data_accelerator/README.md) - Healthcare datalake with DMS integration
+- [SMUS Research Environment](starter_kits/smus_research_environment/README.md) - A SageMaker Unified Studio-enabled architecture for team-based research activities
+- [SMUS Data Mesh](starter_kits/smus_data_mesh/README.md) - Multi-account SageMaker Unified Studio deployment with cross-account data sharing and custom blueprints
+- [MLOps Platform](starter_kits/mlops_platform/README.md) - End-to-end ML lifecycle platform with training, deployment, and monitoring pipelines
 
 ### Sample Configurations
 
@@ -90,7 +93,7 @@ root_folder
 
 ### Multiple domains, single MDAA config
 
-In this scenario, multiple domains are in the same MDAA Config/
+In this scenario, multiple domains are in the same MDAA config.
 
 ```text
 root_folder
@@ -107,7 +110,7 @@ root_folder
     │   ...
 ```
 
-### Multiple domains, Multple MDAA config
+### Multiple domains, Multiple MDAA config
 
 In this scenario, each domain is in its own MDAA config.
 
@@ -136,13 +139,13 @@ root_folder2
 
 ```yaml
 # All resources will be deployed to the default region specified in the environment or AWS configurations.
-# Can optional specify a specific AWS Region Name.
+# Can optionally specify a specific AWS Region Name.
 # Target region can be defined globally, per domain, per env, or per module, with lower-level specifications
 # overriding higher-level configs.
 region: default
 
 # All resources will be deployed to the default account specified in the environment or AWS configurations.
-# Can optional specify a specific AWS account number.
+# Can optionally specify a specific AWS account number.
 # Target account can be defined globally, per domain, per env, or per module, with lower-level specifications
 # overriding higher-level configs.
 # Note that CDK trust must be established (using CDK Bootstrap) between the local account
@@ -229,13 +232,13 @@ domains:
   # The domain name can be referenced within MDAA CDK App configs via the inline {{domain}} syntax.
   shared:
     # All resources will be deployed to the default region specified in the environment or AWS configurations.
-    # Can optional specify a specific AWS Region Name.
+    # Can optionally specify a specific AWS Region Name.
     # Target region can be defined globally, per domain, per env, or per module, with lower-level specifications
     # overriding higher-level configs.
     region: default
 
     # All resources will be deployed to the default account specified in the environment or AWS configurations.
-    # Can optional specify a specific AWS account number.
+    # Can optionally specify a specific AWS account number.
     # Target account can be defined globally, per domain, per env, or per module, with lower-level specifications
     # overriding higher-level configs.
     # Note that CDK trust must be established (using CDK Bootstrap) between the local account
@@ -249,19 +252,19 @@ domains:
     # One or more tag files containing tags which will be applied to all deployed resources in this domain
     tag_configs:
       - domain_tags.yaml
-    # One ore more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
+    # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
     environments:
-      # The environment name will be incorporate into resource name prefixes by the default naming implementation.
+      # The environment name will be incorporated into resource name prefixes by the default naming implementation.
       # It can also be referenced within MDAA CDK App configs via the inline {{env}} syntax.
       dev:
         # All resources will be deployed to the default region specified in the environment or AWS configurations.
-        # Can optional specify a specific AWS Region Name.
+        # Can optionally specify a specific AWS Region Name.
         # Target region can be defined globally, per domain, per env, or per module, with lower-level specifications
         # overriding higher-level configs.
         region: default
 
         # All resources will be deployed to the default account specified in the environment or AWS configurations.
-        # Can optional specify a specific AWS account number.
+        # Can optionally specify a specific AWS account number.
         # Target account can be defined globally, per domain, per env, or per module, with lower-level specifications
         # overriding higher-level configs.
         # Note that CDK trust must be established (using CDK Bootstrap) between the local account

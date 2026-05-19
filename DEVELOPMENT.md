@@ -29,7 +29,7 @@ MDAA development follows a working-backwards process, starting from the user exp
 ### Prerequisites
 
 - **Node.js 22.x** and **npm 10.x** — See the [Node.js downloads page](https://nodejs.org/).
-- **Python 3** , **pip**, **uv** — Required for Python virtual environment, dependency management, schema doc generation and tests. See the [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/).
+- **Python 3**, **pip**, **uv** — Required for Python virtual environment, dependency management, schema doc generation, and tests. See the [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/).
 
 ### Quick Start
 

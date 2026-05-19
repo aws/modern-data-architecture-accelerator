@@ -10,13 +10,25 @@ Review repo-wide documentation quality — CHANGELOG updates, SCHEMA.md regenera
 
 ## Scope
 
+**In scope** (this agent reviews these):
+- **All README.md and documentation files in the repository**, except those under `packages/` (see Out of scope below)
 - **CHANGELOG.md** — must be updated when code changes are present
 - **SCHEMA.md** — must be regenerated when `config-schema.json` changes
-- **Starter kit READMEs** — `starter_kits/*/README.md` must reflect current module names and configs
 - **MkDocs nav** — `mkdocs.yml` must include entries for new modules
 - **Cross-references** — links in changed markdown files must point to files that exist
 
+**Out of scope** (handled by the Module Quality agent — do NOT review these):
+- `packages/apps/**/README.md` — app module READMEs
+- `packages/constructs/**/README.md` — construct READMEs
+- `packages/utilities/**/README.md` — utility package READMEs
+
 ## What to Review
+
+### Spelling and Grammar
+- All prose in in-scope documentation files (any README.md or markdown file NOT under `packages/`) must be free of spelling mistakes (technical terms, AWS service names, code identifiers, and CLI commands are excluded)
+- Check for common grammatical errors: subject-verb disagreement, incorrect articles (a/an/the), missing articles, incorrect pluralization, dangling modifiers, and awkward repetition (e.g., "follow the following" → "follow these")
+- AWS product names must use correct capitalization (e.g., "SageMaker" not "Sagemaker", "CloudFormation" not "Cloudformation")
+- Do not flag code blocks, YAML snippets, file paths, or command examples
 
 ### CHANGELOG
 - CHANGELOG.md should be updated only for user-impacting changes: new app modules, new or changed configuration properties, bug fixes affecting deployed behavior, breaking changes, deprecations
@@ -59,7 +71,7 @@ outside the JSON. The file must contain ONLY valid JSON.
   "findings": [
     {
       "risk": "HIGH | MEDIUM | LOW",
-      "category": "changelog | schema_md | starter_kit | mkdocs_nav | cross_reference",
+      "category": "changelog | schema_md | starter_kit | mkdocs_nav | cross_reference | spelling_grammar",
       "file": "path/to/file",
       "detail": "What's missing or wrong."
     }
@@ -70,8 +82,8 @@ outside the JSON. The file must contain ONLY valid JSON.
 ### Severity Classification
 
 - **HIGH:** CHANGELOG not updated for user-impacting changes (new app modules, config property changes, bug fixes, breaking changes), SCHEMA.md out of sync with config-schema.json, broken links in changed docs
-- **MEDIUM:** Starter kit README references outdated module config, MkDocs nav missing new module, CHANGELOG entry doesn't match MR changes
-- **LOW:** Minor formatting issues, stale links in unchanged docs adjacent to changed content
+- **MEDIUM:** Starter kit README references outdated module config, MkDocs nav missing new module, CHANGELOG entry doesn't match MR changes, spelling mistakes in user-facing documentation, grammatical errors that affect clarity
+- **LOW:** Minor formatting issues, stale links in unchanged docs adjacent to changed content, minor grammatical style preferences (e.g., Oxford comma)
 
 ### Rules
 

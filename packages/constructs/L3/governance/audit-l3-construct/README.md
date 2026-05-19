@@ -1,6 +1,6 @@
 # Construct Overview
 
-This Audit CDK L3 construct is used to configure deploy the resources required to define a secure S3-based bucket on AWS for use as a Cloudtrail or S3 Inventory target.
+This Audit CDK L3 construct is used to configure and deploy the resources required to define a secure S3-based bucket on AWS for use as a CloudTrail or S3 Inventory target.
 
 ***
 

@@ -153,7 +153,7 @@ Ensure to modify the user profile config to specify an appropriate userid. This 
 
 ### governance/audit.yaml
 
-This configuration will be used by the MDAA audit module to deploy the resources required to define a secure S3-based bucket on AWS for use as a Cloudtrail or S3 Inventory target.
+This configuration will be used by the MDAA audit module to deploy the resources required to define a secure S3-based bucket on AWS for use as a CloudTrail or S3 Inventory target.
 
 
 
@@ -167,7 +167,7 @@ This configuration will be used by the MDAA audit module to deploy the resources
 This configuration will be used by the MDAA Audit trail module to deploy the resources required to define a secure S3-based Audit Trail on AWS.
 
 ```yaml
-# Contents available in goveranance/audit-trail.yaml
+# Contents available in governance/audit-trail.yaml
 --8<-- "target/docs/starter_kits/basic_datascience_platform/governance/audit-trail.yaml"
 ```
 
@@ -175,7 +175,7 @@ This configuration will be used by the MDAA Audit trail module to deploy the res
 
 ## Usage Instructions
 
-Once the MDAA deployment is complete, follow the following steps to interact with the data lake.
+Once the MDAA deployment is complete, follow these steps to interact with the data lake.
 
 1. Check the `DATASETS.md` file in the same directory to create a sample_data folder
 

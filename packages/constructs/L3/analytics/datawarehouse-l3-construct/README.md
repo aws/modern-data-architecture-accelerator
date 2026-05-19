@@ -20,7 +20,7 @@ The Data Warehouse CDK L3 construct is used to deploy resources required for a s
 
 * **Warehouse Subnet Group** - Controls which subnets the cluster will be deployed on.
 
-* **Warehouse Parameter Group** - Contains cluster config parameters required to control cluster behaviour and ensure secure operation.
+* **Warehouse Parameter Group** - Contains cluster config parameters required to control cluster behavior and ensure secure operation.
 
 * **Warehouse Cluster** - A Redshift cluster conforming to the specified configuration and security controls. Supports optional multi-AZ deployment for high availability and cross-region snapshot copy for disaster recovery.
 

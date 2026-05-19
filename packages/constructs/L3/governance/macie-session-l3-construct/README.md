@@ -1,5 +1,5 @@
 # Construct Overview
-This Macie Session CDK L3 construct is used to configure the macie session which is an account wise configuration
+This Macie Session CDK L3 construct is used to configure the Macie session which is an account-wise configuration
 
 
 ***

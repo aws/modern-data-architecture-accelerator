@@ -1,6 +1,6 @@
 # Construct Overview
 
-The Lake Formation Access Control CDK L3 construct is used to deploy Lakeformation fine-grained access controls in the form of grant statements for users or groups to Lakeformation-control data assets.
+The Lake Formation Access Control CDK L3 construct is used to deploy Lake Formation fine-grained access controls in the form of grant statements for users or groups to Lake Formation-controlled data assets.
 
 ***
 

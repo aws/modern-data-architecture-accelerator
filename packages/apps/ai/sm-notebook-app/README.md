@@ -18,7 +18,7 @@ This module deploys and integrates the following resources:
 
 **Notebook Security Group** - Controls network access for notebook instances.
 
-![Mdaa Sagemaker Notebook](../../../constructs/L3/ai/sm-notebook-l3-construct/docs/sm-notebook.png)
+![Mdaa SageMaker Notebook](../../../constructs/L3/ai/sm-notebook-l3-construct/docs/sm-notebook.png)
 
 ---
 

@@ -1,9 +1,9 @@
 # Step Function Orchestrator
 
-This blueprint illustrates how to use an Step Function that can be triggered on S3 file uploads to orchestrate different AWS Services, example in this blueprint a Lambda Function that transforms small to medium sized CSV Files to parquet and then sends an Passed or Failed status via an SNS Notification Step.
+This blueprint illustrates how to use a Step Function that can be triggered on S3 file uploads to orchestrate different AWS Services, for example, in this blueprint, a Lambda Function that transforms small to medium sized CSV Files to parquet and then sends a Passed or Failed status via an SNS Notification Step.
 
 This blueprint may be suitable when:
-there is a need for an orchestrator, example orchestrating multiple lambda functions or multiple glue jobs or a mix of different AWS Services.
+there is a need for an orchestrator, for example orchestrating multiple lambda functions or multiple glue jobs or a mix of different AWS Services.
 
 ![Step Function Orchestrator](docs/stepfunction_orchestrator.png)
 
@@ -38,7 +38,7 @@ Additional MDAA deployment commands/procedures can be reviewed in [DEPLOYMENT](.
 
 ## Configurations
 
-The sample configurations for this blueprint are provided below. They are also available under sample_blueprints/stepfunction_orchestrator whithin the MDAA repo.
+The sample configurations for this blueprint are provided below. They are also available under sample_blueprints/stepfunction_orchestrator within the MDAA repo.
 
 ### Config Directory Structure
 

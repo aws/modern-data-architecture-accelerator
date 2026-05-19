@@ -1,6 +1,6 @@
 # SageMaker Unified Studio Research Environment
 
-This is a starter MDAA configuration for deploying a SageMaker Unified Studio-based Research Environment. This architectyre is appropriate for organizations with multiple teams operating within a single AWS account, and where data assets will be created and consumed entirely within SageMaker Unified Studio. For more complex organizations with teams operating across multiple account, and/or with custom research compute needs (via SMUS custom blueprints), see the SMUS Data Mesh sample configs.
+This is a starter MDAA configuration for deploying a SageMaker Unified Studio-based Research Environment. This architecture is appropriate for organizations with multiple teams operating within a single AWS account, and where data assets will be created and consumed entirely within SageMaker Unified Studio. For more complex organizations with teams operating across multiple accounts, and/or with custom research compute needs (via SMUS custom blueprints), see the SMUS Data Mesh sample configs.
 
 ![SageMaker Unified Studio Research Environment](docs/smus_research_environment.png)
 
@@ -50,17 +50,17 @@ More predeployment info and procedures are available in [PREDEPLOYMENT](../../PR
 
 - An organization name. This must be a globally unique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
 - `context:` values specific to your environment:
-- - Vpd Id
-- - Subnet Ids - Theses should be private subnets with routed connectivity to public service endpoints or via VPC endpoints
+- - VPC Id
+- - Subnet Ids - These should be private subnets with routed connectivity to public service endpoints or via VPC endpoints
 - - Team group SSO ids (`team1-group-sso-id`/`team2-group-sso-id`). These will be the names of the SSO groups created in step 1.
 
-3. Ensure you are authenticated to your target AWS account with credentials derived from IAM Identity Center (required for DataZone PolicyGrant operations). This can be SSO credentials configured via `aws configure sso` or temporary credentials provided by your organization's authentication system.
+3. Ensure you are authenticated to your target AWS account with credentials derived from IAM Identity Center (required for DataZone PolicyGrant operations). These can be SSO credentials configured via `aws configure sso` or temporary credentials provided by your organization's authentication system.
 
 4. Optionally, run `<path_to_mdaa_repo>/bin/mdaa ls` from the directory containing `mdaa.yaml` to understand what stacks will be deployed.
 
 5. Optionally, run `<path_to_mdaa_repo>/bin/mdaa synth` from the directory containing `mdaa.yaml` and review the produced templates.
 
-6. Run `<path_to_mdaa_repo>/bin/mdaa deploy` from the directory containing `mdaa.yaml` to deploy all modules in order they appear in the config
+6. Run `<path_to_mdaa_repo>/bin/mdaa deploy` from the directory containing `mdaa.yaml` to deploy all modules in the order they appear in the config
 
 Additional MDAA deployment commands/procedures can be reviewed in [DEPLOYMENT](../../DEPLOYMENT.md).
 

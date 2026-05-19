@@ -1,6 +1,6 @@
 ## SageMaker Model Construct
 
-A prupose-built CDK Construct, [SageMakerModel](./index.ts), which helps facilitate the deployment of model to SageMaker, you can use this layer to deploy:
+A purpose-built CDK Construct, [SageMakerModel](./index.ts), which helps facilitate the deployment of models to SageMaker, you can use this layer to deploy:
 - Models from SageMaker Foundation Models
 - Models from SageMaker Jumpstart.
 - Model supported by [HuggingFace LLM Inference container](https://huggingface.co/blog/sagemaker-huggingface-llm).
@@ -24,11 +24,11 @@ You might consider requesting an increase in service quota for specific SageMake
 
 - **Foundation Models Preview Access**
 If you are looking to deploy models from SageMaker foundation models, you need to request preview access from the AWS console.
-Futhermore, make sure which regions are currently supported for SageMaker foundation models.
+Furthermore, make sure which regions are currently supported for SageMaker foundation models.
 
 ## HuggingFace Authentication
 
-Some models hosted on HuggingFace require an API key for access, for example MistralAI and Meta models have now changed to be gated behind accepting their EULA
+Some models hosted on HuggingFace require an API key for access. For example, MistralAI and Meta models have now changed to be gated behind accepting their EULA.
 
 If you wish to continue using these models or access other models on HuggingFace which require authentication you can now supply this HF token as part of the installer.
 
@@ -64,7 +64,7 @@ The `container-arn` of interest can be found in different places:
 
 - For SM Foundation Models, some model cards exposes the ARN, otherwise you need to deploy one manually from the console and copy the `ModelPackage` ARN from `SageMaker -> Models -> Deployed model` in the console
 
-- For SM Jumpstart Models, at the moment, you need to deploy the model of insterest from SageMaker Studio and then from the console and copy the `ModelPackage` ARN from `SageMaker -> Models -> Deployed model` in the console.
+- For SM Jumpstart Models, at the moment, you need to deploy the model of interest from SageMaker Studio and then from the console and copy the `ModelPackage` ARN from `SageMaker -> Models -> Deployed model` in the console.
 
 
 ## Hugging Face LLM Inference Container
@@ -87,7 +87,7 @@ new SageMakerModel(this, 'HFModel', {
 ```
 
 ## Models with custom inference
-While the options above are preferred, for broader compatibility, the sample also showcases deployment of all other models from Hugging Face not supported by HuggingFace LLM Infernce container using custom inference code. This process is powered by **AWS CodeBuild**.
+While the options above are preferred, for broader compatibility, the sample also showcases deployment of all other models from Hugging Face not supported by HuggingFace LLM Inference container using custom inference code. This process is powered by **AWS CodeBuild**.
 
 For this kind of deployment you need to choose the right container for your model from this list of [AWS Deep Learning Containers](https://github.com/aws/deep-learning-containers/blob/master/available_images.md). Based on PyTorch/Transformers versions, Python version etc.
 
@@ -106,4 +106,4 @@ new SageMakerModel(this, 'ModelId', {
 });
 ```
 
-An example of how this deployment type is used in this repo can be found [here](../rag-sources/aurora-pgvector/index.ts#L120), where it's used to deploy an embedding model from HuggingFace.
+An example of how this deployment type is used in this repo can be found [here](../rag-engines/aurora-pgvector/index.ts#L120), where it's used to deploy an embedding model from HuggingFace.

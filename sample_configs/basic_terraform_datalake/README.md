@@ -67,7 +67,7 @@ This configuration specifies the global, domain, env, and module configurations 
 
 ### datalake/main.tf
 
-This terrafrom module will consume the MDAA DataLake TF module to create a datalake.
+This Terraform module will consume the MDAA DataLake TF module to create a datalake.
 
 ```yaml
 # Contents available in datalake/main.tf
@@ -76,7 +76,7 @@ This terrafrom module will consume the MDAA DataLake TF module to create a datal
 
 ### glue-catalog/main.tf
 
-This terrafrom module will consume the MDAA GlueCatalog TF module to create a datalake.
+This Terraform module will consume the MDAA GlueCatalog TF module to create a datalake.
 
 ```yaml
 # Contents available in glue-catalog/main.tf

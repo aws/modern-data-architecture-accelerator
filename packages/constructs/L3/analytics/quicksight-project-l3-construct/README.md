@@ -1,13 +1,13 @@
 # Construct Overview
 
-The QuickSight Project CDK L3 construct is used to configure and deploy below resources in Quicksight:
+The QuickSight Project CDK L3 construct is used to configure and deploy the following resources in QuickSight:
 1. SharedFolders
 2. QS Data Sources
 
 ***
 
 ## Deployed Resources
-**QuickSight Permmissions: End to End Flow**
+**QuickSight Permissions: End to End Flow**
 
 ![quicksight-project-high-level](docs/quicksight-project-high-level.png)
 

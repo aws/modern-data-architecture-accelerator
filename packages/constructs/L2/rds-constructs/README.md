@@ -8,5 +8,5 @@ Opinionated L2 constructs for RDS.
 * Enforce Cluster Name
 * Enforce KMS CMK encryption at rest
 * Enforce retention on stack deletion
-* Enforce admin crentials stored in Secret
+* Enforce admin credentials stored in Secret
 * Enforce admin credentials rotation

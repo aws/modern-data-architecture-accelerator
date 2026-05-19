@@ -122,7 +122,7 @@ ENV_VARS_MAP = [
 This:
 1. Ensures CDK bootstrap stack exists
 2. Deploys the fixture stack (~5-10 min first time)
-3. Exports `INTEG_*` environment variables as Cloudformation Outputs
+3. Exports `INTEG_*` environment variables as CloudFormation Outputs
 
 ### Run tests
 
@@ -252,7 +252,7 @@ All helpers are imported from `@aws-mdaa/testing/lib/integ`.
 ### Key rules
 
 1. **File naming**: Use `<name>.integ.ts` pattern in `test/integ/` directory
-2. **Stack naming**: Use `getIntegNaming` helper from '@aws-mdaa/testing/lib/integ'` for consistent namings
+2. **Stack naming**: Use `getIntegNaming` helper from `@aws-mdaa/testing/lib/integ` for consistent naming
 3. **ForceDestroy aspect**: Always apply to ensure cleanup works
 4. **Use fixture helpers**: Call `getFixtureKmsKey()` or `getFixtureResources()` instead of creating new infrastructure
 5. **Keep it fast**: Target < 5 min deploy + destroy cycle

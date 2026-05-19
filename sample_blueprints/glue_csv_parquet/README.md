@@ -1,15 +1,15 @@
 # Glue CSV Parquet Transformer
 
-This blueprint illustrates how to use an Scheduled Glue Workflow to trigger an DataOps Glue ETL Job to transform large CSV files into parqeut.
+This blueprint illustrates how to use a Scheduled Glue Workflow to trigger a DataOps Glue ETL Job to transform large CSV files into parquet.
 
 This blueprint may be suitable when:
 files are being regularly uploaded to the data lake, and need to be quickly transformed into parquet, perhaps in a standardized zone of the lake.
 
-* Medium-Large sized csv files in the datalake needs to be transformed into parquet, perhaps in a standardized zone of the lake.
+* Medium-Large sized CSV files in the datalake need to be transformed into parquet, perhaps in a standardized zone of the lake.
 
 While the blueprint doesn't immediately handle partitioning, or additional transformation, the Glue ETL Job can be easily extended to provide these capabilities.
 
-![Glue CSV Parqet Transformer](docs/glue_csv_parquet.png)
+![Glue CSV Parquet Transformer](docs/glue_csv_parquet.png)
 
 ***
 
@@ -42,7 +42,7 @@ Additional MDAA deployment commands/procedures can be reviewed in [DEPLOYMENT](.
 
 ## Configurations
 
-The sample configurations for this blueprint are provided below. They are also available under sample_blueprints/glue_csv_parquet whithin the MDAA repo.
+The sample configurations for this blueprint are provided below. They are also available under sample_blueprints/glue_csv_parquet within the MDAA repo.
 
 ### Config Directory Structure
 

@@ -1,5 +1,7 @@
 # Generative AI Accelerator (GAIA)
 
+> **Deprecated:** GAIA v1 is deprecated. New deployments should use [Generative AI Accelerator v2 (gaia-v2)](../../packages/apps/ai/gaia-v2-app/README.md). This sample configuration will be removed in a future release. See the [migration guide](../../packages/apps/ai/gaia-app/MIGRATION_TO_V2.md).
+
 This is a sample basic GenAI Accelerator architecture which can be implemented using MDAA. This platform is centered around establishing an easy Generative AI on AWS adoption starting point.  Built on previous experience delivering GenAI capabilities, this stack aims to automate the infrastructure and layout foundations to experiment and customize use cases around state of the art models while fully owning the code.  GAIA is adaptable with usable built in code and optional code overriding where customization is required.
 
 ![Gaia](docs/gaia.png)
@@ -82,7 +84,7 @@ Ensure to modify the context for VPC specific details at least per environment t
 
 ## Usage Instructions
 
-Once the MDAA deployment is complete, follow the following steps to interact with the GAIA.
+Once the MDAA deployment is complete, follow these steps to interact with GAIA.
 
 1. Retrieve the X-Verify-Origin secret value and test backend calls from the API Gateway console.
 
@@ -100,8 +102,8 @@ codeOverwrites:
   pgVectorDbSetupCodePath: The setup function for Aurora PgVector store.  This is only applicable if Aurora is enabled for RAG.  Useful for very specific metadata setup.
   createAuroraWorkspaceCodePath: The function that handles setting up a workspace.  This entails some Vector store operations depending on RAG engine along with DynamoDB read/writes
   dataImportUploadHandlerCodePath: The function that consumes the SQS Data Ingestion Queue events and triggers the step functions for the respective ingestion workflow.  To customize data ingestion orchestration flows, this would be a good part to override.
-  websiteParserCodePath: The function in charge or handling website crawling including sitemap and maintaining a priority tree in cases where follow link is enabled.  To handle more complex website crawling use cases, this is a good starting point.
-  deleteWorkspaceHandlerCodePath: The function in charge or handling transactions to delete workspaces.  By default this cleans up entries in Vector stores and DynamoDB workspaces and documents tables.  If further complex use cases or steps are needed, this is a good entry point.
+  websiteParserCodePath: The function in charge of handling website crawling including sitemap and maintaining a priority tree in cases where follow link is enabled.  To handle more complex website crawling use cases, this is a good starting point.
+  deleteWorkspaceHandlerCodePath: The function in charge of handling transactions to delete workspaces.  By default this cleans up entries in Vector stores and DynamoDB workspaces and documents tables.  If further complex use cases or steps are needed, this is a good entry point.
   webSocketConnectionHandlerCodePath: The function in charge of checking connections in the DynamoDB and resolves finding the connection or setting up a new one.  For advanced connection logic, this is a good entry point.
   webSocketAuthorizerFunctionCodePath: The custom authorizer function that verifies the tokens of incoming requests for interactions with LLM interfaces.  By default the token is expected in the query parameters and only Authentication is performed.  For further customizations like Authorization, this is a good entry point.
   webSocketIncomingMessageHandlerCodePath: After the Authorizer and Connection handlers, this function is in charge of orchestrating which session, connection and model interface the message will go to and submits it to the correct SQS queue accordingly.  For advanced and more interface handling, this is a good entry point.
@@ -110,4 +112,4 @@ codeOverwrites:
 
 ```
 
-5. Further details on Sagemaker model hosting can be found [here](../../packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/README.md)
+5. Further details on SageMaker model hosting can be found [here](../../packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/README.md)

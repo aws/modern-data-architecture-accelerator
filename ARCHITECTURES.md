@@ -36,14 +36,14 @@ Hub and Spoke is a hybrid model between a fully centralized LakeHouse, and a ful
 
 ## Detailed Architecture
 
-MDAA is designed to be able to implement the following detailed reference architecture (or any derivite/subset of), which is a practical implementation of the AWS Modern Data Architecture (LakeHouse). The key platform functions/capabilties represented are:
+MDAA is designed to be able to implement the following detailed reference architecture (or any derivative/subset of), which is a practical implementation of the AWS Modern Data Architecture (LakeHouse). The key platform functions/capabilities represented are:
 
 * **Data Ingest** - All of the capabilities required to ingest data into the platform, including from structured, unstructured, batch and streaming data sources.
-* **S3 Data Lake/Persistence** - Provides secure, scalable storage at the core of the architecture, able to accomodate data of virtually any volume and variety.
+* **S3 Data Lake/Persistence** - Provides secure, scalable storage at the core of the architecture, able to accommodate data of virtually any volume and variety.
 * **Governance** - Provides the governance functions of the platform, such as cataloging and fine-grained access control.
 * **Processing/Curation (DataOps)** - Provides the seamless movement of data throughout the platform, as well as capabilities required for data curation, data quality, and enrichment.
 * **Analytics, Query, and Consumption** - Provides capabilities to analyze, query, and consume data from the platform into a wide variety of tools for the purpose of data product development.
-* **Data Science, AI/ML**- Provides capabilities to support sophisticated exploratory analytis, data science, machine learning, and artifical intelligence.
+* **Data Science, AI/ML** - Provides capabilities to support sophisticated exploratory analytics, data science, machine learning, and artificial intelligence.
 * **Visualization**- Provides capabilities to visualize data in support of traditional presentation analytics.
 
 ![MDAA Reference Architecture](docs/MDAA-ReferenceArchitecture.png)

@@ -73,9 +73,9 @@ The following VPC endpoints may be required if public AWS service endpoint conne
 
 ### Prerequisite
 
-- VPC Endpoint for DataSync service. The security group of the VPC Endpoint must allow control traffic from the DataSync agent on TCP port range 1024-1064. Refer to [Network requirements for VPC endpoints](https://docs.aws.amazon.com/datasync/latest/userguide/datasync-network.html#using-vpc-endpoint) for detail network requirement.
+- VPC Endpoint for DataSync service. The security group of the VPC Endpoint must allow control traffic from the DataSync agent on TCP port range 1024-1064. Refer to [Network requirements for VPC endpoints](https://docs.aws.amazon.com/datasync/latest/userguide/datasync-network.html#using-vpc-endpoint) for detailed network requirements.
 - A security group for DataSync tasks. When DataSync tasks are running, DataSync agents will transfer data to DataSync service via ENIs on TLS traffic port 443. The security group must allow TCP inbound traffic on port 443 from the agent hosts.
-- For SMB and cloud-based storage location types, a secret in Secrets Manager is needed to store credentials. The secret must contain values in below format:
+- For SMB and cloud-based storage location types, a secret in Secrets Manager is needed to store credentials. The secret must contain values in the format below:
   - For SMB location: {user:< username >,password:< pwd >}
   - For cloud-based object storage: {"accessKey":< access_key >","secretKey":"< secret_key >"}
 
@@ -92,7 +92,7 @@ This process must be completed prior to DataSync deployment using MDAA.
 
 ![Pre-DeploymentTask](../../../constructs/L3/utility/datasync-l3-construct/docs/DataSync-pre-deployment.png)
 
-1. Deploy DataSync agent in the platform of choice. You may deploy it on EC2 using DataSync AMI or another hypervisor platform. Refer to [Deploy your AWS DataSync agent](https://docs.aws.amazon.com/datasync/latest/userguide/deploy-agents.html) for detail guideline.
+1. Deploy DataSync agent in the platform of choice. You may deploy it on EC2 using DataSync AMI or another hypervisor platform. Refer to [Deploy your AWS DataSync agent](https://docs.aws.amazon.com/datasync/latest/userguide/deploy-agents.html) for detailed guidelines.
 
 2. Gather information that will be needed to retrieve the agent activation key in the next step:
    - The IP address of the DataSync Agent host (deployed in step 1)

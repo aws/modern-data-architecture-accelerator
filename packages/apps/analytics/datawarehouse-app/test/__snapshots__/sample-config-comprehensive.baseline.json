@@ -3556,15 +3556,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -3576,39 +3576,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -3634,15 +3634,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -3654,39 +3654,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -3717,15 +3717,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -3737,39 +3737,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -3821,15 +3821,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -3841,39 +3841,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -3946,15 +3946,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -3966,39 +3966,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -4037,15 +4037,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -4057,39 +4057,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -4170,15 +4170,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -4190,39 +4190,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -4253,15 +4253,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -4273,39 +4273,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -4372,15 +4372,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -4392,39 +4392,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -4492,15 +4492,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -4512,39 +4512,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -4602,15 +4602,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -4622,39 +4622,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -4721,15 +4721,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -4741,39 +4741,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -4839,15 +4839,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -4859,39 +4859,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -4971,15 +4971,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -4991,39 +4991,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -5049,15 +5049,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -5069,39 +5069,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -5132,15 +5132,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -5152,39 +5152,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -5228,15 +5228,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -5248,39 +5248,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -5353,15 +5353,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -5373,39 +5373,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -5444,15 +5444,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -5464,39 +5464,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -5577,15 +5577,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -5597,39 +5597,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]
@@ -5660,15 +5660,15 @@
               "id": "AwsSolutions-IAM4"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "NIST.800.53.R5-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "HIPAA.Security-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy automatically added by CDK framework.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Role is for Custom Resource Provider. Inline policy is automatically added by the CDK framework for custom resource providers and cannot be converted to a managed policy. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html",
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
@@ -5680,39 +5680,39 @@
               "id": "AwsSolutions-L1"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "NIST.800.53.R5-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaDLQ"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaInsideVPC"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "HIPAA.Security-LambdaConcurrency"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. Error handling is managed by CloudFormation. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It interacts only with Redshift/SecretsManager. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts] Lambda Function is created by aws-redshift-alpha CDK module with no consumer override available. It only executes during stack deployment; reserved concurrency not appropriate. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslambda.html",
               "id": "PCI.DSS.321-LambdaConcurrency"
             }
           ]

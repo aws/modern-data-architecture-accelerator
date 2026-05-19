@@ -1,6 +1,6 @@
 # Construct Overview
 
-This Event Bridge CDK L3 construct is used to configure deploy the resources required to define a secure Event Bridge on AWS.
+This EventBridge CDK L3 construct is used to configure and deploy the resources required to define a secure EventBridge on AWS.
 
 ***
 
@@ -8,4 +8,4 @@ This Event Bridge CDK L3 construct is used to configure deploy the resources req
 
 ![EventBridge](docs/EventBridge.png)
 
-* **Event Bridge Custom Event Bus** - Custom EventBridge Event Bus
+* **EventBridge Custom Event Bus** - Custom EventBridge Event Bus

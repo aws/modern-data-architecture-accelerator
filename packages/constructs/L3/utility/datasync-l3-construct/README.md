@@ -9,7 +9,7 @@ The DataSync CDK L3 construct is used to deploy the resources for an DataSync do
 
 ![DataSync](docs/DataSync-Deployment.png)
 
-* **DataSync Agent Activation** - An AWS DataSync agent is a virtual machine (VM) that you own. The type of agent you needs depends on the hypervisor you're using and where you're copying data (such as on-premises or cloud storage systems). You can reuse an agent if it can access your storage system and has been activated in the same AWS Region.
+* **DataSync Agent Activation** - An AWS DataSync agent is a virtual machine (VM) that you own. The type of agent you need depends on the hypervisor you're using and where you're copying data (such as on-premises or cloud storage systems). You can reuse an agent if it can access your storage system and has been activated in the same AWS Region.
 After you deploy your AWS DataSync agent and specify the service endpoint that it will connect to, you need to activate the agent. This process associates the agent with your AWS account.
 
 

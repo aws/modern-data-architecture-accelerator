@@ -1,6 +1,6 @@
 # Construct Overview
 
-This Audit Trail CDK L3 construct is used to configure deploy the resources required to define a secure S3-based Audit Trail on AWS.
+This Audit Trail CDK L3 construct is used to configure and deploy the resources required to define a secure S3-based Audit Trail on AWS.
 
 ***
 

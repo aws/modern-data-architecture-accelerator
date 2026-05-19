@@ -22,7 +22,7 @@ This module deploys and integrates the following resources:
 
 **Warehouse Subnet Group** - Controls which subnets the cluster is deployed on.
 
-**Warehouse Parameter Group** - Cluster configuration parameters controlling cluster behaviour.
+**Warehouse Parameter Group** - Cluster configuration parameters controlling cluster behavior.
 
 **Warehouse Cluster** - Redshift cluster conforming to the specified configuration.
 

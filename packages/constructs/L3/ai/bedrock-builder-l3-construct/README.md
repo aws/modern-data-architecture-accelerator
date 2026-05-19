@@ -7,7 +7,7 @@ The Bedrock Builder CDK L3 construct is used to configure and deploy a secure Be
 
 ![bedrock-builder](docs/bedrock-builder.png)
 
-* **Bedrock Builder**: Deploys Amazon Bedrock Components(s) to streamline workflows and/or automate repetitive tasks using Foundational Models
+* **Bedrock Builder**: Deploys Amazon Bedrock Component(s) to streamline workflows and/or automate repetitive tasks using Foundational Models
 * **Bedrock Execution Policies**: For Knowledge Bases, the construct creates consolidated IAM policies per execution role:
   * **Vector Store Policy**: Permissions for Aurora PostgreSQL (rds-data, secretsmanager) or OpenSearch Serverless (aoss:APIAccessAll)
   * **Foundation Model Policy**: Permissions to invoke embedding and parsing models (bedrock:InvokeModel)
@@ -16,10 +16,10 @@ The Bedrock Builder CDK L3 construct is used to configure and deploy a secure Be
   *Policies are consolidated per role - multiple KBs sharing the same role share the same 3 policies to avoid hitting the AWS limit of 10 managed policies per role.*
 * **Bedrock Execution Role**: Execution policies are attached to the KB execution role. This role should have Bedrock Service as a Trusted Principal. 
 * **Bedrock KMS Key**: Encrypt Bedrock resources with the KMS Key. One will be generated if a KMS key is not provided as part of Configuration
-* **Lambdas**: (Optional) Allows you to generate Lambda Layer, Lambda Function or both, which can be associate with Agent Action Group. (*Refer: [MDAA DataOps-LambdaFunctions](../../dataops/dataops-lambda-l3-construct/README.md)*)
+* **Lambdas**: (Optional) Allows you to generate Lambda Layer, Lambda Function or both, which can be associated with Agent Action Group. (*Refer: [MDAA DataOps-LambdaFunctions](../../dataops/dataops-lambda-l3-construct/README.md)*)
   * **Lambda Layers** - Lambda layers which can be used in Lambda functions (inside or outside of this config).
   * **Lambda Functions** - Lambda function(s) for Agent Action Group(s)
-    * May be optionally VPC bound with configurable VPC, Subnet, and Security Group Paramters
+    * May be optionally VPC bound with configurable VPC, Subnet, and Security Group Parameters
 
     * Can use an existing security group (from Project, for instance), or create a new security group per function
     * If creating a per-function security group:
@@ -28,7 +28,7 @@ The Bedrock Builder CDK L3 construct is used to configure and deploy a secure Be
       * No ingress allowed (not configurable)
 * **Action Group(s)**: Create Agent Action group for Bedrock Agent. It allows you to either use an existing Lambda function (by providing its ARN directly) or create a new one as part of the agent configuration. The `generated-function:` prefix tells the system to use the Lambda that was created from the configuration rather than looking for an existing function ARN
 
-* **Bedrock Guardrail**: (Optional) If Bedrock Guardrail is mentioned in the configuration, the Agent will be associate with Bedrock Guardrail. 
+* **Bedrock Guardrail**: (Optional) If Bedrock Guardrail is mentioned in the configuration, the Agent will be associated with Bedrock Guardrail. 
   
   *Bedrock execution policy will also be updated to allow `ApplyGuardrail` permission on the provided `GuardrailID`*
 
