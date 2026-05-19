@@ -701,14 +701,15 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     const cloudwatchStatement = new PolicyStatement({
       sid: 'CloudWatchLogsEncryption',
       effect: Effect.ALLOW,
-      actions: [...DECRYPT_ACTIONS, ...ENCRYPT_ACTIONS],
+      actions: [...DECRYPT_ACTIONS, ...ENCRYPT_ACTIONS, 'kms:DescribeKey'],
       principals: [new ServicePrincipal(`logs.${this.props.region}.amazonaws.com`)],
       resources: ['*'],
       conditions: {
-        ArnEquals: {
+        ArnLike: {
           'kms:EncryptionContext:aws:logs:arn': [
             `arn:${this.props.partition}:logs:${region}:${account}:log-group:datazone-*`,
             `arn:${this.props.partition}:logs:${region}:${account}:log-group:airflow-*`,
+            `arn:${this.props.partition}:logs:${region}:${account}:log-group:/aws/lambda/amazon-bedrock-ide-*`,
           ],
         },
       },
