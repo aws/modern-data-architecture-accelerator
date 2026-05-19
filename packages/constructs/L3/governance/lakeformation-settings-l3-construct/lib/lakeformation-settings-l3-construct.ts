@@ -95,7 +95,7 @@ export class LakeFormationSettingsL3Construct extends MdaaL3Construct {
       effect: Effect.ALLOW,
       resources: [
         idcInstanceArn,
-        `arn:${this.partition}:sso::${this.account}:application/${this.props.iamIdentityCenter.instanceId}/*`,
+        `arn:${this.partition}:sso::*:application/${this.props.iamIdentityCenter.instanceId}/*`,
         'arn:aws:sso::aws:applicationProvider/*',
       ],
       actions: [

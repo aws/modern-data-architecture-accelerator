@@ -4,7 +4,7 @@
  */
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 
 import { LakeFormationSettingsL3ConstructProps, LakeFormationSettingsL3Construct } from '../lib';
@@ -35,8 +35,6 @@ describe('MDAA Compliance Stack Tests', () => {
   new LakeFormationSettingsL3Construct(stack, 'teststack', constructProps);
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
-
-  console.log(JSON.stringify(template, undefined, 2));
 
   test('LakeFormationSettings', () => {
     template.hasResourceProperties('Custom::lakeformation-settings', {
@@ -84,6 +82,22 @@ describe('MDAA Compliance Stack Tests', () => {
       ],
     });
   });
+
+  test('LF-IdC Lambda execution role uses wildcard account in SSO application ARN', () => {
+    // SSO app ARNs carry the management-account ID, not the deploying account — wildcard is required
+    template.hasResourceProperties('AWS::IAM::Policy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Action: Match.arrayWith(['sso:PutApplicationAssignmentConfiguration']),
+            Resource: Match.arrayWith(['arn:test-partition:sso::*:application/test-sso-instance/*']),
+          }),
+        ]),
+      },
+    });
+  });
+
   test('DZ Management Role', () => {
     template.hasResourceProperties('AWS::IAM::Role', {
       AssumeRolePolicyDocument: {
