@@ -772,6 +772,13 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
+  test('DataZone project ID SSM parameter published for cross-module use', () => {
+    template.hasResourceProperties('AWS::SSM::Parameter', {
+      Name: Match.stringLikeRegexp('sagemaker/project/id/default'),
+      Type: 'String',
+    });
+  });
+
   test('LakeFormationTagAssociation', () => {
     template.hasResourceProperties('AWS::LakeFormation::TagAssociation', {
       LFTags: [

@@ -258,6 +258,11 @@ describe('MDAA Compliance Stack Tests', () => {
         RetentionInDays: Match.absent(),
       });
     });
+    test('Job has AmazonDataZoneProject tag when projectName is set', () => {
+      template.hasResourceProperties('AWS::Glue::Job', {
+        Tags: Match.objectLike({ AmazonDataZoneProject: Match.anyValue() }),
+      });
+    });
   });
 
   describe('MDAA with input parameters', () => {
