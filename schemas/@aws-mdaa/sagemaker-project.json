@@ -1546,7 +1546,7 @@
                 },
                 "_currentVersion": {},
                 "_functionUrlInvocationGrants": {
-                    "$ref": "#/definitions/Record<string,Grant>",
+                    "$ref": "#/definitions/Record%3Cstring%2CGrant%3E",
                     "description": "Mapping of function URL invocation principals to grants. Used to de-dupe `grantInvokeUrl()` calls."
                 },
                 "_hasAddedArrayTokenStatements": {
@@ -1556,7 +1556,7 @@
                     "description": "Track whether we've added statements with literal resources to the role's default policy"
                 },
                 "_invocationGrants": {
-                    "$ref": "#/definitions/Record<string,Grant>",
+                    "$ref": "#/definitions/Record%3Cstring%2CGrant%3E",
                     "description": "Mapping of invocation principals to grants. Used to de-dupe `grantInvoke()` calls."
                 },
                 "_latestVersion": {},
@@ -2772,7 +2772,7 @@
                     "description": "Actual connections object for this Lambda\n\nMay be unset, in which case this Lambda is not configured use in a VPC."
                 },
                 "_functionUrlInvocationGrants": {
-                    "$ref": "#/definitions/Record<string,Grant>",
+                    "$ref": "#/definitions/Record%3Cstring%2CGrant%3E",
                     "description": "Mapping of function URL invocation principals to grants. Used to de-dupe `grantInvokeUrl()` calls."
                 },
                 "_hasAddedArrayTokenStatements": {
@@ -2782,7 +2782,7 @@
                     "description": "Track whether we've added statements with literal resources to the role's default policy"
                 },
                 "_invocationGrants": {
-                    "$ref": "#/definitions/Record<string,Grant>",
+                    "$ref": "#/definitions/Record%3Cstring%2CGrant%3E",
                     "description": "Mapping of invocation principals to grants. Used to de-dupe `grantInvoke()` calls."
                 },
                 "_latestVersion": {},
