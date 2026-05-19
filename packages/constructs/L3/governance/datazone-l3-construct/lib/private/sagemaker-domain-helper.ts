@@ -390,6 +390,8 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       domainName,
     );
     domainDefaultBlueprintProvisioningRole.addManagedPolicy(policies.domainKmsUsagePolicy);
+    // kms:CreateGrant required so the Bedrock CF resource handler can create service grants on the tooling key
+    domainDefaultBlueprintProvisioningRole.addManagedPolicy(policies.domainKmsAdminPolicy);
     domainDefaultBlueprintProvisioningRole.addManagedPolicy(policies.domainBucketUsagePolicy);
 
     const toolingProvisioningRole = domainProps.tooling.provisioningRole
@@ -689,10 +691,13 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
         sid: 'ToolingKmsCreateGrant',
         effect: Effect.ALLOW,
         resources: [kmsKey.keyArn],
-        actions: ['kms:CreateGrant'],
+        actions: ['kms:CreateGrant', 'kms:RetireGrant'],
         conditions: {
-          StringLike: {
+          StringEquals: {
             'kms:CallerAccount': account,
+          },
+          Bool: {
+            'kms:GrantIsForAWSResource': 'true',
           },
         },
       }),
@@ -714,6 +719,27 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       },
     });
     kmsKey.addToResourcePolicy(cloudwatchStatement);
+
+    // The AmazonBedrockGuardrail (and other Bedrock) blueprints create resources encrypted with
+    // this KMS key. Bedrock calls kms:GenerateDataKey / kms:Decrypt as the bedrock service
+    // principal on behalf of the provisioning role. Without this grant the CreateGuardrail CF
+    // resource handler fails with "You don't have sufficient permissions for this KMS key."
+    // aws:SourceAccount scopes the grant to this account. aws:SourceArn is not added because
+    // Bedrock does not consistently populate it for all resource types (Guardrails, KnowledgeBases,
+    // Agents, etc.), and a condition that is never present would silently deny all Bedrock calls.
+    const bedrockStatement = new PolicyStatement({
+      sid: 'BedrockEncryption',
+      effect: Effect.ALLOW,
+      actions: [...DECRYPT_ACTIONS, ...ENCRYPT_ACTIONS, 'kms:DescribeKey'],
+      principals: [new ServicePrincipal('bedrock.amazonaws.com')],
+      resources: ['*'],
+      conditions: {
+        StringEquals: {
+          'aws:SourceAccount': account,
+        },
+      },
+    });
+    kmsKey.addToResourcePolicy(bedrockStatement);
 
     const toolingBucket = new MdaaBucket(scope, `${domainName}-tooling-bucket`, {
       naming: this.props.naming,
