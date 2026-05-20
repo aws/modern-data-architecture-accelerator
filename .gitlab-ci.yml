@@ -42,6 +42,9 @@ variables:
 image: ${BASE_IMAGE_TAG}
 
 before_script:
+  # Helper container clones the repo as root; reclaim ownership for pipelineuser (UID 1001)
+  # so npm ci / chmod / git operations don't hit EPERM. sudo is scoped to /bin/chown only.
+  - sudo chown -R 1001:1001 "$CI_PROJECT_DIR"
   - git config advice.addIgnoredFile false
   - git config --global user.name "CICD"
   - git config --global user.email "ci@example.com"

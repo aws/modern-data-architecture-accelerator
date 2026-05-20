@@ -6,6 +6,11 @@ ENV NPM_VERSION="10.x"
 ENV LERNA_VERSION="9.x"
 ENV NODE_OPTIONS=--max_old_space_size=4096
 
+# Create non-root user
+RUN groupadd -r -g 1001 pipelineuser && useradd -r -u 1001 -g 1001 -m pipelineuser
+
+############ Installed from root scope ############
+
 # Update package lists and install security updates
 RUN apt-get update -y && apt-get upgrade -y
 
@@ -27,6 +32,7 @@ RUN apt-get install -y --no-install-recommends \
     make \
     build-essential \
     jq \
+    sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # Install AWS CLI v2
@@ -34,11 +40,6 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
     unzip awscliv2.zip && \
     ./aws/install && \
     rm -rf aws awscliv2.zip
-
-# Install UV  for python testing
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
-    ln -sf /root/.local/bin/uv /usr/local/bin/uv && \
-    ln -sf /root/.local/bin/uvx /usr/local/bin/uvx
 
 # Install git-secrets
 RUN git clone https://github.com/awslabs/git-secrets.git /tmp/git-secrets && \
@@ -56,7 +57,7 @@ RUN npm install -g \
 
 # Install Python packages
 COPY requirements-dev.txt /tmp/requirements-dev.txt
-RUN uv pip install --system --break-system-packages -r /tmp/requirements-dev.txt && \
+RUN python3 -m pip install --break-system-packages -r /tmp/requirements-dev.txt && \
     rm /tmp/requirements-dev.txt
 
 # Install SonarQube scanner
@@ -72,12 +73,22 @@ RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/shar
     apt-get install -y --no-install-recommends terraform && \
     rm -rf /var/lib/apt/lists/*
 
-ENV PATH="/opt/sonar-scanner/bin:$PATH"
+# GitLab Runner's helper container clones the repo as root; pipelineuser then needs to
+# reclaim ownership before npm ci (which chmods workspace bin files and requires owner UID).
+# Scope sudo to chown only so this stays narrow.
+RUN echo "pipelineuser ALL=(root) NOPASSWD: /bin/chown" > /etc/sudoers.d/pipelineuser-chown && \
+    chmod 440 /etc/sudoers.d/pipelineuser-chown
+
+USER pipelineuser
+
+############ Installed from pipelineuser scope ############
+
+# Install UV for python testing
+# Note: it needs dash (e.g. $ sh) according to the docs
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Install Kiro CLI for headless risk assessment in CI
-RUN curl --proto '=https' --tlsv1.2 -sSf \
-    'https://desktop-release.q.us-east-1.amazonaws.com/latest/kirocli-x86_64-linux.zip' -o kirocli.zip && \
-    unzip -q kirocli.zip && \
-    ./kirocli/install.sh --force --no-confirm && \
-    rm -rf kirocli kirocli.zip
-ENV PATH="/root/.local/bin:$PATH"
+# Note: it needs $ bash according to the docs
+RUN curl -LsSf https://cli.kiro.dev/install | bash
+
+ENV PATH="/home/pipelineuser/.local/bin:/opt/sonar-scanner/bin:$PATH"
