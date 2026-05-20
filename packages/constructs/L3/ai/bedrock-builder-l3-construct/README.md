@@ -68,4 +68,4 @@ vectorStores:
 - The existing VPC endpoint must be configured for OpenSearch Serverless service
 - The security group must allow appropriate network access for your use case
 
-To get started, see [starter_kits/genai_accelerator/ai/bedrock-builder.yaml](../../../../../starter_kits/genai_accelerator/ai/bedrock-builder.yaml).
+To get started, see the [sample configurations](../../../../apps/ai/bedrock-builder-app/sample_configs/).

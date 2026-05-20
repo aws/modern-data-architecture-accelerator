@@ -31,12 +31,10 @@ Starter kits provide secure, prepackaged foundations for common use cases:
 
 - [Basic DataLake with Glue](starter_kits/basic_datalake/README.md) - A basic S3 Data Lake with Glue database and crawler
 - [Data Science Platform](starter_kits/basic_datascience_platform/README.md) - A standalone SageMaker Studio Data Science Platform
-- [GenAI Accelerator](starter_kits/genai_accelerator/README.md) - Enterprise-ready GenAI platform with Bedrock Builder
 - [Governed Lakehouse](starter_kits/governed_lakehouse/README.md) - DataZone-governed Lakehouse with fine-grained access control
 - [Health Data Accelerator](starter_kits/health_data_accelerator/README.md) - Healthcare datalake with DMS integration
 - [SMUS Research Environment](starter_kits/smus_research_environment/README.md) - A SageMaker Unified Studio-enabled architecture for team-based research activities
 - [SMUS Data Mesh](starter_kits/smus_data_mesh/README.md) - Multi-account SageMaker Unified Studio deployment with cross-account data sharing and custom blueprints
-- [MLOps Platform](starter_kits/mlops_platform/README.md) - End-to-end ML lifecycle platform with training, deployment, and monitoring pipelines
 
 ### Sample Configurations
 

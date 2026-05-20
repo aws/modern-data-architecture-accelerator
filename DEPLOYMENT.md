@@ -213,7 +213,6 @@ Deployment times vary based on the number of modules and the complexity of the r
 |---|---|---|---|
 | Basic DataLake | ~10 | Low | ~15–20 min |
 | Basic DataScience Platform | ~12 | Medium | ~20–30 min |
-| GenAI Accelerator | ~4 | Low | ~10–15 min |
 | Governed Lakehouse | ~9 | Medium | ~20–25 min |
 | Health Data Accelerator | ~15 | High | ~30–45 min |
 
@@ -326,7 +325,6 @@ Each starter kit provides a preconfigured `mdaa.yaml` for a common use case. Ref
 |---|---|---|
 | **Basic DataLake** | Foundational data lake with S3 storage, Glue catalog, and Athena query access | [README](starter_kits/basic_datalake/README.md) |
 | **Basic DataScience Platform** | Data science environment with SageMaker notebooks and shared data access | [README](starter_kits/basic_datascience_platform/README.md) |
-| **GenAI Accelerator** | Generative AI stack with Bedrock integration and knowledge base support | [README](starter_kits/genai_accelerator/README.md) |
 | **Governed Lakehouse** | Lake Formation–governed lakehouse with fine-grained access controls | [README](starter_kits/governed_lakehouse/README.md) |
 | **Health Data Accelerator** | Healthcare-focused data platform with compliance-oriented configurations | [README](starter_kits/health_data_accelerator/README.md) |
 

@@ -156,12 +156,10 @@ Starter kits provide secure, prepackaged foundations for common use cases:
 | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------- |
 | [Basic DataLake](starter_kits/basic_datalake/README.md)                         | A secure S3 data lake with Glue databases and crawlers                                                   | ~15–20 min       |
 | [Basic DataScience Platform](starter_kits/basic_datascience_platform/README.md) | A standalone SageMaker AI Studio data science environment                                                | ~20–30 min       |
-| [GenAI Accelerator](starter_kits/genai_accelerator/README.md)                   | Enterprise-ready generative AI platform with Amazon Bedrock                                              | ~10–15 min       |
 | [Governed Lakehouse](starter_kits/governed_lakehouse/README.md)                 | DataZone-governed lakehouse with fine-grained access control                                             | ~20–25 min       |
 | [Health Data Accelerator](starter_kits/health_data_accelerator/README.md)       | Healthcare data lake with DMS (Database Migration Service) integration                                   | ~30–45 min       |
 | [SMUS Research Environment](starter_kits/smus_research_environment/README.md)   | A SageMaker Unified Studio-enabled architecture suitable for facilitating team-based research activities | ~20–25 min       |
 | [SMUS Data Mesh](starter_kits/smus_data_mesh/README.md)                         | Multi-account SageMaker Unified Studio deployment with cross-account data sharing and custom blueprints  | ~30–45 min       |
-| [MLOps Platform](starter_kits/mlops_platform/README.md)                         | End-to-end ML lifecycle platform with training, deployment, and monitoring pipelines                      | ~20–30 min       |
 
 ## Sample Configurations
 
