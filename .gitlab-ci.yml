@@ -725,7 +725,7 @@ feature_merge_doc_quality_review:
 # Scan the target branch (main) to establish the SonarQube baseline so
 # that MR changes are correctly classified as "new code".
 feature_merge_sonarqube_target:
-  extends: .size_large
+  extends: .size_xlarge
   interruptible: true
   tags:
     - arch:amd64
@@ -753,7 +753,7 @@ feature_merge_sonarqube_target:
 
 # Run SonarQube analysis
 feature_merge_sonarqube:
-  extends: .size_large
+  extends: .size_xlarge
   interruptible: true
   tags:
     - arch:amd64
@@ -1178,7 +1178,7 @@ prerelease_baseline_review:
 
 # Run SonarQube analysis
 prerelease_analyze:
-  extends: .size_large
+  extends: .size_xlarge
   tags:
     - arch:amd64
   only:
