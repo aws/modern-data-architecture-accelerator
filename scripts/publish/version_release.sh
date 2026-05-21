@@ -50,5 +50,22 @@ if [ -f "README.md" ]; then
   sed -i "s/version-${CURRENT_VERSION}-green/version-${NEW_VERSION}-green/" README.md
 fi
 
+# Substitute the CHANGELOG release placeholders with the new version and today's UTC date.
+# The Unreleased section is authored with NEXT_RELEASE_VERSION / NEXT_RELEASE_DATE markers
+# (see CHANGELOG.md heading) so the release pipeline can stamp the section without manual edits.
+if [ -f "CHANGELOG.md" ]; then
+  RELEASE_DATE=$(date -u +%Y-%m-%d)
+  if grep -q "NEXT_RELEASE_VERSION" CHANGELOG.md; then
+    echo "Stamping CHANGELOG.md release heading with version $NEW_VERSION and date $RELEASE_DATE"
+    sed -i "s/^## \[NEXT_RELEASE_VERSION\] - NEXT_RELEASE_DATE$/## [${NEW_VERSION}] - ${RELEASE_DATE}/" CHANGELOG.md
+    if grep -q "NEXT_RELEASE_VERSION\|NEXT_RELEASE_DATE" CHANGELOG.md; then
+      echo "ERROR: CHANGELOG.md still contains release placeholders after substitution." >&2
+      exit 1
+    fi
+  else
+    echo "WARNING: CHANGELOG.md has no NEXT_RELEASE_VERSION placeholder; skipping release-heading substitution." >&2
+  fi
+fi
+
 npm install
 

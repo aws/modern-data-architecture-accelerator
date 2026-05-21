@@ -1,84 +1,139 @@
 # Change Log
 
-## [Unreleased]
-
-### Deprecations
-
-- **`@aws-mdaa/gaia` and `@aws-mdaa/gaia-l3-construct` (GAIA v1) are deprecated** in favor of `@aws-mdaa/gaia-v2` and `@aws-mdaa/gaia-v2-l3-construct`.
-  - v1 packages remain published and functional for existing deployments but will not receive new features.
-  - v1 packages will be removed in a future major release; no removal date is committed yet.
-  - v2 is a re-architected GAIA backend (Cognito, AppSync Events, CloudFront) and is **not** a drop-in replacement. See [MIGRATION_TO_V2.md](packages/apps/ai/gaia-app/MIGRATION_TO_V2.md) for guidance.
-  - The `genai_accelerator` starter kit now deploys v2.
+## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
 
 ### New Features
 
-- **S3 Constructs**: Added `publicAccessBlockManagedExternally` option to skip the explicit `BlockPublicAccess` setting on S3 buckets. Set globally via CDK context (`@aws-mdaa/publicAccessBlockManagedExternally: true`) or as a per-module config property in the datawarehouse app (`@aws-mdaa/datawarehouse`)
-- **SageMaker MLOps — `buildPolicies` config** (`@aws-mdaa/sagemaker-mlops`, `@aws-mdaa/sagemaker-model-training-l3-construct`, `@aws-mdaa/sagemaker-model-deploy-l3-construct`): Generic mechanism for attaching custom IAM policies to CodeBuild pipeline roles. Replaces the CodeArtifact-specific `codeArtifact` prop with a flexible `buildPolicies` array supporting managed policy ARNs (`policyArn`) and inline policy documents (`policyDocument`) with optional CDK Nag suppressions. Registry authentication (CodeArtifact, Artifactory, GitLab, etc.) is now handled entirely in the user's buildspec. The `mlops_platform` starter kit is updated with commented examples.
-- **Generative AI Accelerator v2** (`@aws-mdaa/gaia-v2`): Authenticated GenAI chatbot platform, successor to `@aws-mdaa/gaia`
-  - AppSync Events API for real-time bidirectional streaming to client UIs, fronted by Cognito User Pool authentication (with optional external OIDC such as Entra ID)
-  - REST API (API Gateway + Lambda) for session management, feedback, and administrative endpoints
-  - Pluggable data source model: Bedrock Knowledge Base RAG (via `@aws-mdaa/bedrock-builder`), direct Bedrock model invocation with streaming, or customer-provided Lambda — exactly one per deployment
-  - Optional client and admin CloudFront UIs with KMS-encrypted logging, Origin Access Control, HTTPS-only enforcement (TLS 1.2), and custom-domain + ACM certificate support
-  - Chat history, feedback collection, and service-interruption banner managed via DynamoDB tables with KMS encryption and TTL
-  - X-Origin verification secret (KMS-encrypted Secrets Manager) to validate that API traffic flows through CloudFront
-  - WAF protection (regional + global), VPC-attached Lambda execution, and full CDK Nag compliance
-  - Runtime validation rejects misconfigurations at synth time: exactly one data source, Knowledge Base required when `bedrockRagDataSource` is set, authentication requires at least one of `cognitoDomain` or `entraIdOIDCConfiguration`, and `vpc.appSubnets` must be non-empty
-  - The `genai_accelerator` starter kit deploys v2 by default
-- **SageMaker Ground Truth App** (`@aws-mdaa/sagemaker-ground-truth`): Automated, continuous data labeling pipeline
-  - EventBridge + SQS + Step Functions architecture for continuous S3 ingestion → batched labeling
-  - Upload/Output S3 buckets with KMS encryption and EventBridge notifications
-  - SQS queue with DLQ and CloudWatch alarms for failed items
-  - Step Functions state machine orchestrating: poll SQS → create labeling job → wait for completion → (optional) verification job → update Feature Store → return rejected items to queue
-  - 5-6 Lambda functions powering the state machine steps
-  - SageMaker Feature Group integration for persisting labeled data
-  - EventBridge Scheduler for configurable workflow triggers
-  - Optional verification labeling job with automatic re-queue of rejected items
-  - Full MDAA compliance: MdaaRole, MdaaKmsKey, MdaaBucket, MdaaManagedPolicy, CDK Nag, SSM parameter exports
-  - Comprehensive and minimal sample configs with inline documentation
-- Added SageMaker L2 constructs: `MdaaSageMakerProjectTemplate`, `MdaaGroundTruth`, and `MdaaModelMonitor` for ML lifecycle management (project templates, data labeling, model monitoring)
-- Data Quality App:
-  - Added multi-source support for data quality rulesets — each ruleset can now specify a `source` block with `sourceType` (glue, s3, redshift), connection details, and S3 paths. Source metadata is published to SSM for downstream DQ evaluation jobs.
-  - Added `smusAssetId` per-ruleset field for mapping DQ results to DataZone assets
-  - Added recommendation-based rulesets via `recommendationRunId` — delegates rule generation to Glue DQ recommendations instead of requiring explicit DQDL rules (metadata-only, no CfnDataQualityRuleset created)
-  - Added dynamic target discovery via `dynamicTargets` — configure S3 directories for runtime dataset enumeration by DQ evaluation jobs
-  - Added `smusPublishing` configuration for publishing data quality metrics to SageMaker Unified Studio (DataZone)
-- Agentcore Runtime app: added enableTransactionSearch(boolean) config param to optionally prevent creation of X-Ray Transaction Search Config if it already exists
-- Dataops Job app: added pre-built data quality evaluation scripts enabling users to deploy a working DQ evaluation Glue job without writing any code
-- Datalake app:
-  - Added optional S3 Storage Lens support — enable via storageLensEnabled: true
-  - Added optional CORS support - enable via corsRules property
-- CLI: added permission boundary name as an optional input to applied an IAM policy as permission boundary to all IAM roles
-- Data Warehouse app: Added `multiAz` (multi-AZ high availability) and `backupRegion` (cross-region snapshot copy) config options
-- Roles app: added an optional `additionalTrustedActions` for the role primary principal, allowing additional actions like
-  `sts:TagSession` to be added to the trust policy;
-- Account-level modules (Glue Catalog, LakeFormation Settings, Macie Session, QuickSight Account) now create a static SSM parameter (`/account-module-lock/<module-name>`) that prevents multiple deployments of the same module to a single AWS account
-- DMS Constructs: Added `expectedBucketOwner` support to S3 endpoint settings for cross-account bucket sniping prevention.
-- DataZone/SMUS: added simplified `authorizations` interface for domain and domain unit configuration — supports `projectCreators`, `eligibleProjectMembers`, `domainUnitCreators`, `glossaryCreators`, and `environmentCreators` fields as a concise alternative to full `authorizationPolicies` objects
-- DataZone/SMUS: `authorizationPolicies` and `authorizations` are now supported on the root domain level (`BaseDomainProps`), not just on individual domain units
-- DataZone/SMUS: domain owners (users, groups, and associated account CDK users) now automatically receive version-aware project creation authorization policies in addition to `ADD_TO_PROJECT_MEMBER_POOL`
+#### Generative AI Accelerator v2 Module
 
-### Bug Fixes
+- New `@aws-mdaa/gaia-v2` app and `@aws-mdaa/gaia-v2-l3-construct` providing an authenticated GenAI chatbot platform; successor to `@aws-mdaa/gaia`
+- AppSync Events API for real-time bidirectional streaming, fronted by Cognito User Pool authentication with optional external OIDC (e.g., Entra ID)
+- Pluggable data source model — exactly one of Bedrock Knowledge Base RAG, direct Bedrock model invocation with streaming, or customer-provided Lambda
+- Optional client and admin CloudFront UIs with custom-domain and ACM certificate support
+- Chat history, feedback, and service-interruption banner backed by KMS-encrypted DynamoDB tables
+- WAF protection (regional and global), VPC-attached Lambda execution, and synth-time validation of misconfigurations
 
-- Fixed IAM Policy cross-stack collision in `dataops-job` and `sm-studio-domain` caused by `BucketDeployment` adding inline policies to imported roles
-- Agentcore Runtime app: fixed missing ECR permissions when `containerUri` config param is used
-- Fix: Modifying [mutable SageMaker AI domain settings (default user settings, domain settings)](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-sagemaker-domain.html#aws-resource-sagemaker-domain-properties) no longer causes "resource already exists" deployment failures.
-  Note: changing immutable properties (AuthMode, DomainName, KmsKeyId, VpcId) will still require manual domain recreation.
-- DataZone/SMUS: fixed 403 `PROJECT_CREATE_FAILED` error in same-account DataZone deployments by granting `CREATE_PROJECT` / `CREATE_PROJECT_FROM_PROJECT_PROFILE` and `ADD_TO_PROJECT_MEMBER_POOL` authorization policies to the cfn-exec role and data-admin role on the root domain unit
-- DataZone/SMUS: fixed SageMaker domain child stack not inheriting parent account and region, causing deployment failures in cross-account scenarios
+#### SageMaker Ground Truth Module
 
-#### RDS Constructs (#752)
+- New `@aws-mdaa/sagemaker-ground-truth` app for automated, continuous data labeling pipelines
+- EventBridge + SQS + Step Functions architecture for continuous S3 ingestion to batched labeling jobs
+- SageMaker Feature Group integration for persisting labeled data
+- Optional verification labeling job with automatic re-queue of rejected items
+- Configurable EventBridge Scheduler triggers, DLQ with CloudWatch alarms
 
-- `MdaaAuroraPgVector`: Engine version is now configurable via the `engineVersion` prop (default: `16.6`). The default is deprecated and will be removed in a future release — explicitly set the engine version to avoid breakage.
-- `MdaaRdsServerlessCluster`: Reader instance count is now configurable via the `numberOfReaderInstances` prop (default: `1`).
-- `BedrockKnowledgeBase` L3 construct: `engineVersion` from vector store config is now passed through to the Aurora PgVector cluster.
+#### SageMaker MLOps Module
 
-### General Enhancements
+- New `@aws-mdaa/sagemaker-mlops` app for training, deployment, batch inference, and monitoring pipelines
+- New `@aws-mdaa/sagemaker-endpoint` app for deploying SageMaker model endpoints
+- Generic `buildPolicies` configuration for attaching custom IAM policies (managed policy ARNs or inline policy documents) to CodeBuild pipeline roles, with optional CDK Nag suppressions
+- Registry authentication for CodeArtifact, Artifactory, GitLab, etc. is now handled entirely in user buildspecs
+- Optional CodeArtifact integration alongside public npm support
+
+#### SageMaker L2 Constructs
+
+- Added `MdaaSageMakerProjectTemplate`, `MdaaGroundTruth`, and `MdaaModelMonitor` for ML lifecycle management
+
+### Data Science/AI/ML Changes
+
+#### Data Science Team Module
+
+- Added optional MLflow tracking server configuration to the team's SageMaker Studio domain for experiment tracking
+- Added per-user JupyterLab space provisioning via the new `jupyterLab` configuration
+
+#### Bedrock AgentCore Runtime Module
+
+- Added `enableTransactionSearch` configuration parameter to optionally skip X-Ray Transaction Search Config creation when the resource already exists
+- Added `protocolConfiguration` configuration parameter for runtime protocol selection
+- Removed unneeded resource policy from the runtime construct
+
+#### RDS Constructs
+
+- `MdaaAuroraPgVector`: engine version is now configurable via the `engineVersion` prop (default `16.6`). The default is provided for backward compatibility but is not maintained long-term — explicitly set the engine version to avoid future breakage
+- `MdaaRdsServerlessCluster`: reader instance count is now configurable via the `numberOfReaderInstances` prop (default `1`)
+- `BedrockKnowledgeBase` L3 construct: `engineVersion` from vector store config is now passed through to the Aurora PgVector cluster
+
+### DataOps Module Changes
+
+#### Data Quality Module
+
+- Added multi-source support for rulesets — each ruleset can specify Glue, S3, or Redshift as its data source via a `source` block, with metadata published to SSM for downstream DQ evaluation jobs
+- Added recommendation-based rulesets via `recommendationRunId`, delegating rule generation to Glue DQ recommendations
+- Added dynamic target discovery via `dynamicTargets` for runtime dataset enumeration by DQ evaluation jobs
+- Added `smusPublishing` configuration for publishing data quality metrics to SageMaker Unified Studio (DataZone)
+- Added `smusAssetId` per-ruleset field for mapping DQ results to DataZone assets
+
+#### DataOps Job Module
+
+- Added pre-built data quality evaluation scripts (`dq-main.py`, `dq_config.py`, `smus.py`) enabling deployment of a working DQ evaluation Glue job without writing any code
+
+#### DMS Constructs
+
+- Added `expectedBucketOwner` support to S3 endpoint settings for cross-account bucket protection
+
+### Data Lake Changes
+
+- Added optional S3 Storage Lens support — enable via `storageLensEnabled`
+- Added optional CORS support — configure via `corsRules`
+
+### Data Analytics Changes
+
+#### Data Warehouse Module
+
+- Added `multiAz` (multi-AZ high availability) and `backupRegion` (cross-region snapshot copy) configuration options
+- Added `publicAccessBlockManagedExternally` option to skip the explicit `BlockPublicAccess` setting on S3 buckets; settable globally via CDK context (`@aws-mdaa/publicAccessBlockManagedExternally: true`) or as a per-module property
+- Fixed type for `parameterGroupParams` configuration
+
+### Governance Module Changes
+
+#### DataZone/SMUS Modules
+
+- Added simplified `authorizations` interface for domain and domain unit configuration, supporting `projectCreators`, `eligibleProjectMembers`, `domainUnitCreators`, `glossaryCreators`, and `environmentCreators` as a concise alternative to full `authorizationPolicies` objects
+- `authorizationPolicies` and `authorizations` are now supported at the root domain level (`BaseDomainProps`), not just on individual domain units
+- Domain owners (users, groups, and associated account CDK users) now automatically receive version-aware project creation authorization policies in addition to `ADD_TO_PROJECT_MEMBER_POOL`
+- Deprecated `allowAllUsers`, `allowedUsers`, and `allowedGroups` on domain units in favor of `authorizations.eligibleProjectMembers` or `authorizationPolicies`. Switching from these deprecated properties requires a two-step migration: first remove the deprecated properties and deploy, then add the new configuration and redeploy. A single-step migration will produce `PolicyGrant` conflicts.
+
+#### Account-Level Modules
+
+- Glue Catalog, LakeFormation Settings, Macie Session, and QuickSight Account modules now create a static SSM parameter (`/account-module-lock/<module-name>`) that prevents multiple deployments of the same module to a single AWS account
+
+#### Roles Module
+
+- Added optional `additionalTrustedActions` for the role primary principal, allowing extra actions like `sts:TagSession` to be added to the trust policy
+
+### Utility Module Changes
+
+#### CLI
+
+- Added optional permission boundary name input to apply an IAM policy as permission boundary to all IAM roles
+
+### Deprecations
+
+- `@aws-mdaa/gaia` and `@aws-mdaa/gaia-l3-construct` (GAIA v1) are deprecated in favor of `@aws-mdaa/gaia-v2` and `@aws-mdaa/gaia-v2-l3-construct`
+  - v1 packages remain published and functional for existing deployments but will not receive new features
+  - v1 packages will be removed in a future major release
+  - v2 is a re-architected GAIA backend (Cognito, AppSync Events, CloudFront) and is not a drop-in replacement. See [MIGRATION_TO_V2.md](packages/apps/ai/gaia-app/MIGRATION_TO_V2.md) for guidance
+
+### General Changes
 
 - Every app module now includes `sample-config-minimal.yaml` and `sample-config-comprehensive.yaml` with full schema coverage, inline documentation, and template variables for portability
 - All app module READMEs follow a consistent structure with architecture overview, configuration reference, and ordered sample config sections
 - Replaced Jest snapshot and synth tests with CDK diff-based baseline testing across all app modules, using the CDK toolkit's semantic diff engine to detect resource changes
-- DataZone/SMUS: deprecated `allowAllUsers`, `allowedUsers`, and `allowedGroups` on domain units in favor of `authorizations.eligibleProjectMembers` or `authorizationPolicies`
-  - Note, switching from these deprecated config properties to `authorizations.eligibleProjectMembers` or `authorizationPolicies` will require to first remove the deprecated properties, deploy, then add in the new configurations before redeploying. Otherwise PolicyGrant conflicts will occur.
+- Updated dependencies to address CVEs (`pyjwt`, `ts-jest`, `lodash`, `ajv`, and others)
+
+### Bug Fixes
+
+- Fixed IAM Policy cross-stack collision in `dataops-job` and `sm-studio-domain` caused by `BucketDeployment` adding inline policies to imported roles
+- Fixed construct ID collision when multiple security groups are defined in a DataOps project
+- Fixed model deploy stage IAM policy size overflow in SageMaker MLOps by separating account role responsibilities
+- Fixed `MdaaSqsQueue` mis-spelled `encyption` property that prevented the explicit KMS encryption mode from being applied
+- Fixed missing ECR permissions in Bedrock AgentCore Runtime when `containerUri` configuration parameter is used
+- Fixed SageMaker AI Domain updates failing with "resource already exists" when only mutable settings (default user settings, domain settings) change. Note: changing immutable properties (`AuthMode`, `DomainName`, `KmsKeyId`, `VpcId`) still requires manual domain recreation
+- Fixed 403 `PROJECT_CREATE_FAILED` error in same-account DataZone deployments by granting `CREATE_PROJECT` / `CREATE_PROJECT_FROM_PROJECT_PROFILE` and `ADD_TO_PROJECT_MEMBER_POOL` authorization policies to the cfn-exec role and data-admin role on the root domain unit
+- Fixed DataZone SageMaker domain child stack not inheriting parent account and region, which caused failures in cross-account deployments
+- Fixed DataZone environment naming to use the naming helper with `maxLength` enforcement
+- Fixed unique-environment generation in SageMaker projects when the user supplies tooling
+- Fixed Lambda Alias `CurrentVersion` no longer being incorrectly flagged by CDK diff baseline testing
+- Fixed SageMaker endpoint construct using a non-fixed model name to avoid update conflicts
 
 ## [1.5.0] - 2026-03-13
 

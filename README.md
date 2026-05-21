@@ -5,7 +5,7 @@
 The Modern Data Architecture Accelerator (MDAA) helps organizations deploy secure, compliant data analytics and AI environments on Amazon Web Services (AWS) through simple YAML configuration files. Whether you need a basic data lake, a full data science platform, SageMaker Unified Studio or a generative AI solution, MDAA provides prepackaged starter kits and reusable infrastructure components that handle security compliance out of the box. It supports teams of all sizes, from small organizations looking for code-free deployment to large enterprises building complex Lake House or Data Mesh architectures.
 
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
-![Version](https://img.shields.io/badge/version-1.4.0-green.svg)
+![Version](https://img.shields.io/badge/version-1.5.0-green.svg)
 ![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)
 
 ## Table of Contents
