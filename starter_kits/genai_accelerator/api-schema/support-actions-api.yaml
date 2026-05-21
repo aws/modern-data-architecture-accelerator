@@ -1,0 +1,119 @@
+openapi: 3.0.0
+info:
+  title: "Customer Support API"
+  version: "1.0.0"
+  description: "API for customer support functions"
+paths:
+  /getAccountInfo:
+    post:
+      operationId: getAccountInfo
+      description: "Get customer account information"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountId:
+                  type: string
+                  description: "The customer's account ID"
+              required:
+                - accountId
+      responses:
+        "200":
+          description: "Account information retrieved successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accountId:
+                    type: string
+                  accountName:
+                    type: string
+                  accountType:
+                    type: string
+                  creationDate:
+                    type: string
+                  status:
+                    type: string
+  /createSupportTicket:
+    post:
+      operationId: createSupportTicket
+      description: "Create a new support ticket"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountId:
+                  type: string
+                  description: "The customer's account ID"
+                subject:
+                  type: string
+                  description: "The subject of the ticket"
+                description:
+                  type: string
+                  description: "Detailed description of the issue"
+                priority:
+                  type: string
+                  description: "Priority level of the ticket"
+                  enum: ["low", "medium", "high", "critical"]
+              required:
+                - accountId
+                - subject
+                - description
+                - priority
+      responses:
+        "200":
+          description: "Support ticket created successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticketId:
+                    type: string
+                  status:
+                    type: string
+                  createdAt:
+                    type: string
+  /getTicketStatus:
+    post:
+      operationId: getTicketStatus
+      description: "Get the status of an existing support ticket"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ticketId:
+                  type: string
+                  description: "The ID of the support ticket"
+              required:
+                - ticketId
+      responses:
+        "200":
+          description: "Ticket status retrieved successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticketId:
+                    type: string
+                  status:
+                    type: string
+                  lastUpdated:
+                    type: string
+                  assignedTo:
+                    type: string
+                  comments:
+                    type: array
+                    items:
+                      type: object
