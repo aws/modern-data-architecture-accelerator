@@ -6,6 +6,7 @@ python3 ./scripts/test/mergelcov.py
 
 echo "Running Sonar Scanner"
 export SONAR_SCANNER_JAVA_OPTS="-Xmx1024m"
+unset NODE_OPTIONS
 
 # Determine the base project key
 BASE_PROJECT_KEY=${SONAR_PROJECT_KEY:-${CI_PROJECT_PATH_SLUG}}
@@ -61,6 +62,7 @@ fi
 sonar-scanner \
   -Dsonar.projectKey=${PROJECT_KEY} \
   -Dsonar.javascript.lcov.reportPaths=./coverage/merged_lcov.info \
+  -Dsonar.javascript.node.maxspace=${SONAR_NODE_MAXSPACE:-8192} \
   -Dsonar.qualitygate.wait=true \
   -Dsonar.host.url=${SONAR_SERVER} \
   -Dsonar.token=${SONAR_LOGIN} \

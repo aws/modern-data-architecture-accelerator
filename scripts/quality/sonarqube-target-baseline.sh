@@ -98,6 +98,7 @@ unset MDAA_BUILD_CODE_ONLY
 
 echo "Running baseline SonarQube scan from ${TARGET_REF}..."
 export SONAR_SCANNER_JAVA_OPTS="-Xmx1024m"
+unset NODE_OPTIONS
 
 # Full unscoped scan with SCM enabled. Static version "baseline" creates
 # the anchor point for "Previous Version" new code definition. The MR
@@ -107,6 +108,7 @@ export SONAR_SCANNER_JAVA_OPTS="-Xmx1024m"
 sonar-scanner \
   -Dsonar.projectKey="${PROJECT_KEY}" \
   -Dsonar.projectVersion=baseline \
+  -Dsonar.javascript.node.maxspace=${SONAR_NODE_MAXSPACE:-8192} \
   -Dsonar.host.url="${SONAR_SERVER}" \
   -Dsonar.token="${SONAR_LOGIN}" \
   -Dsonar.sourceEncoding=utf-8 \
