@@ -18,8 +18,10 @@ from review.lib.thread_lifecycle import (
     resolve_orphaned_threads,
     check_unresolved_and_exit,
     find_thread_by_marker,
+    compute_file_source_hash,
     _job_link,
     _was_auto_resolved,
+    _is_human_locked,
     _format_thread_footer,
 )
 from review.lib.gitlab_threads import _build_diff_position
@@ -92,9 +94,12 @@ class TestPostDetailThreads:
     @patch("review.lib.thread_lifecycle.add_note_to_discussion")
     @patch("review.lib.thread_lifecycle.edit_note")
     def test_updates_changed_thread(self, mock_edit, mock_add_note, mock_resolve):
+        # Thread is currently unresolved — drift should update body and post reopen note
         discussions = [{"id": "d1", "notes": [{
             "id": "n1",
             "body": "<!-- test-pkg:pkg-a -->\n<!-- test-hash:oldhash -->\nOld",
+            "resolvable": True,
+            "resolved": False,
         }]}]
         groups = {"pkg-a": {"risk_level": "HIGH", "source_hash": ""}}
         keys = post_detail_threads(
@@ -109,6 +114,92 @@ class TestPostDetailThreads:
         assert "Findings have changed since last review" in call_args[4]
         assert "Thread reopened" in call_args[4]
         mock_resolve.assert_called_once_with("1", "10", "d1", "tok", resolved=False)
+
+    @patch("review.lib.thread_lifecycle.resolve_discussion")
+    @patch("review.lib.thread_lifecycle.add_note_to_discussion")
+    @patch("review.lib.thread_lifecycle.edit_note")
+    def test_preserves_human_resolved_on_hash_drift(
+        self, mock_edit, mock_add_note, mock_resolve,
+    ):
+        """Hash drift on a human-resolved thread updates body but preserves resolution."""
+        discussions = [{"id": "d1", "notes": [
+            {
+                "id": "n1",
+                "body": "<!-- test-pkg:pkg-a -->\n<!-- test-hash:oldhash -->\nOld",
+                "resolvable": True,
+                "resolved": True,
+            },
+            {"id": "n2", "body": "Won't fix, this is intentional."},
+        ]}]
+        groups = {"pkg-a": {"risk_level": "HIGH", "source_hash": ""}}
+        keys = post_detail_threads(
+            "1", "10", "tok", discussions, groups, DETAIL_PATTERN,
+            self._format, self._hash,
+        )
+        assert keys == {"pkg-a"}
+        # Body is updated so latest findings are visible
+        mock_edit.assert_called_once()
+        # An informational note is posted
+        mock_add_note.assert_called_once()
+        call_args = mock_add_note.call_args[0]
+        assert "Resolved status preserved" in call_args[4]
+        assert "Findings metadata updated" in call_args[4]
+        # But the thread is NOT unresolved
+        mock_resolve.assert_not_called()
+
+    @patch("review.lib.thread_lifecycle.resolve_discussion")
+    @patch("review.lib.thread_lifecycle.add_note_to_discussion")
+    @patch("review.lib.thread_lifecycle.edit_note")
+    def test_reopens_auto_resolved_on_hash_drift(
+        self, mock_edit, mock_add_note, mock_resolve,
+    ):
+        """Hash drift on a bot-auto-resolved thread reopens (no human ack to preserve)."""
+        discussions = [{"id": "d1", "notes": [
+            {
+                "id": "n1",
+                "body": "<!-- test-pkg:pkg-a -->\n<!-- test-hash:oldhash -->\nOld",
+                "resolvable": True,
+                "resolved": True,
+            },
+            {"id": "n2", "body": "_This finding was resolved by code changes. Thread auto-resolved._"},
+        ]}]
+        groups = {"pkg-a": {"risk_level": "HIGH", "source_hash": ""}}
+        post_detail_threads(
+            "1", "10", "tok", discussions, groups, DETAIL_PATTERN,
+            self._format, self._hash,
+        )
+        mock_edit.assert_called_once()
+        mock_add_note.assert_called_once()
+        call_args = mock_add_note.call_args[0]
+        assert "Findings have changed since last review" in call_args[4]
+        mock_resolve.assert_called_once_with("1", "10", "d1", "tok", resolved=False)
+
+    @patch("review.lib.thread_lifecycle.resolve_discussion")
+    @patch("review.lib.thread_lifecycle.add_note_to_discussion")
+    @patch("review.lib.thread_lifecycle.edit_note")
+    @patch("review.lib.thread_lifecycle.create_discussion")
+    def test_lock_marker_skips_all_updates(
+        self, mock_create, mock_edit, mock_add_note, mock_resolve,
+    ):
+        """A `[review-bot:lock]` reply on a thread suppresses every post-existing path."""
+        discussions = [{"id": "d1", "notes": [
+            {
+                "id": "n1",
+                "body": "<!-- test-pkg:pkg-a -->\n<!-- test-hash:oldhash -->\nOld",
+                "resolvable": True,
+                "resolved": False,
+            },
+            {"id": "n2", "body": "[review-bot:lock] won't fix"},
+        ]}]
+        groups = {"pkg-a": {"risk_level": "HIGH", "source_hash": "src999"}}
+        post_detail_threads(
+            "1", "10", "tok", discussions, groups, DETAIL_PATTERN,
+            self._format, self._hash,
+        )
+        mock_create.assert_not_called()
+        mock_edit.assert_not_called()
+        mock_add_note.assert_not_called()
+        mock_resolve.assert_not_called()
 
     @patch("review.lib.thread_lifecycle.create_discussion")
     def test_skips_when_source_unchanged(self, mock_create):
@@ -240,6 +331,18 @@ class TestResolveOrphanedThreads:
             "1", "10", "tok", discussions, DETAIL_PATTERN, set(),
             source_hashes={"pkg-old": "abc123"},
         )
+        mock_add.assert_not_called()
+        mock_resolve.assert_not_called()
+
+    @patch("review.lib.thread_lifecycle.resolve_discussion")
+    @patch("review.lib.thread_lifecycle.add_note_to_discussion")
+    def test_keeps_locked_orphan(self, mock_add, mock_resolve):
+        """A locked thread is never auto-resolved as an orphan."""
+        discussions = [{"id": "d1", "notes": [
+            {"id": "n1", "body": "<!-- test-pkg:pkg-old -->\nContent"},
+            {"id": "n2", "body": "[review-bot:lock] keep this"},
+        ]}]
+        resolve_orphaned_threads("1", "10", "tok", discussions, DETAIL_PATTERN, set())
         mock_add.assert_not_called()
         mock_resolve.assert_not_called()
 
@@ -404,3 +507,60 @@ class TestLoadPreamble:
         # The "# Review Agent Preamble" header should be included (it's after ---)
         # but the front matter keys should not
         assert "inclusion:" not in preamble
+
+
+class TestIsHumanLocked:
+    """Test _is_human_locked detection."""
+
+    def test_locked_by_human_reply(self):
+        discussion = {"notes": [
+            {"body": "<!-- test-pkg:a -->\nFinding content"},
+            {"body": "[review-bot:lock] this is intentional"},
+        ]}
+        assert _is_human_locked(discussion) is True
+
+    def test_no_lock_marker(self):
+        discussion = {"notes": [
+            {"body": "<!-- test-pkg:a -->\nFinding content"},
+            {"body": "Looking into it"},
+        ]}
+        assert _is_human_locked(discussion) is False
+
+    def test_lock_phrase_in_bot_reopen_note_does_not_count(self):
+        """A bot note that quotes the lock phrase isn't a real lock."""
+        discussion = {"notes": [
+            {"body": "<!-- test-pkg:a -->\nReply [review-bot:lock] to suppress further reopens."},
+        ]}
+        assert _is_human_locked(discussion) is False
+
+    def test_lock_phrase_in_auto_resolve_note_does_not_count(self):
+        discussion = {"notes": [
+            {"body": "<!-- test-pkg:a -->\nFinding"},
+            {"body": "_This finding was resolved by code changes. Thread auto-resolved._ [review-bot:lock]"},
+        ]}
+        assert _is_human_locked(discussion) is False
+
+    def test_empty_notes(self):
+        assert _is_human_locked({"notes": []}) is False
+
+
+class TestComputeFileSourceHash:
+    """Test compute_file_source_hash helper."""
+
+    def test_hashes_existing_file(self, tmp_path):
+        f = tmp_path / "sample.md"
+        f.write_text("hello world")
+        h = compute_file_source_hash(str(f))
+        assert h
+        assert len(h) == 12
+
+    def test_returns_empty_for_missing_file(self):
+        assert compute_file_source_hash("/no/such/file/should/exist.md") == ""
+
+    def test_changes_when_content_changes(self, tmp_path):
+        f = tmp_path / "sample.md"
+        f.write_text("first")
+        h1 = compute_file_source_hash(str(f))
+        f.write_text("second")
+        h2 = compute_file_source_hash(str(f))
+        assert h1 != h2

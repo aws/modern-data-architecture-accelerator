@@ -29,6 +29,7 @@ from review.lib.gitlab_threads import (
 from review.lib.thread_lifecycle import (
     _steering_link,
     _action_context,
+    compute_file_source_hash,
     post_or_update_summary,
     post_detail_threads,
     resolve_orphaned_threads,
@@ -50,7 +51,12 @@ def build_file_groups(entries: list[dict]) -> dict[str, dict]:
             file_path = finding.get("file", "Unknown")
             finding_risk = finding.get("risk", "UNKNOWN").upper()
             if file_path not in groups:
-                groups[file_path] = {"file": file_path, "risk_level": finding_risk, "findings": []}
+                groups[file_path] = {
+                    "file": file_path,
+                    "risk_level": finding_risk,
+                    "findings": [],
+                    "source_hash": compute_file_source_hash(file_path),
+                }
             current = risk_rank.get(groups[file_path]["risk_level"], 1)
             new = risk_rank.get(finding_risk, 1)
             if new < current:
@@ -168,7 +174,11 @@ def main():
     # Re-fetch after mutations, resolve orphans (runs even with no findings
     # so previously-opened threads get auto-resolved when gaps are fixed)
     discussions = get_mr_discussions(project_id, mr_iid, token)
-    resolve_orphaned_threads(project_id, mr_iid, token, discussions, FILE_PATTERN, processed_keys)
+    source_hashes = {key: group.get("source_hash", "") for key, group in groups.items()}
+    resolve_orphaned_threads(
+        project_id, mr_iid, token, discussions, FILE_PATTERN, processed_keys,
+        source_hashes=source_hashes,
+    )
 
     try:
         check_unresolved_and_exit(

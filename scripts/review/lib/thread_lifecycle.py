@@ -183,6 +183,24 @@ def compute_source_hash(package_root: str, extensions: list[str] | None = None) 
     return hasher.hexdigest()[:12]
 
 
+def compute_file_source_hash(file_path: str) -> str:
+    """Compute a deterministic hash of a single file's content.
+
+    Returns a 12-char hex digest. If the file doesn't exist or can't be read,
+    returns an empty string. Path may be absolute or relative to PROJECT_ROOT.
+    """
+    try:
+        full_path = Path(file_path)
+        if not full_path.is_absolute():
+            from review.lib.nx_graph import PROJECT_ROOT
+            full_path = PROJECT_ROOT / file_path
+        if not full_path.is_file():
+            return ""
+        return hashlib.sha256(full_path.read_bytes()).hexdigest()[:12]
+    except Exception:
+        return ""
+
+
 def _extract_markers(notes: list[dict]) -> tuple[str | None, str | None]:
     """Extract the latest structural hash and source hash from thread notes."""
     latest_hash = None
@@ -303,8 +321,13 @@ def post_detail_threads(
                 body += f"\n<!-- source-hash:{current_source_hash} -->"
             position = get_position(key) if get_position else None
             create_discussion(project_id, mr_iid, token, body, position=position)
+            continue
 
-        elif existing_hash == content_hash:
+        if _is_human_locked(existing):
+            print(f"  Thread for '{key}' locked by reviewer, skipping")
+            continue
+
+        if existing_hash == content_hash:
             # Hash matches — check if thread was auto-resolved by a previous run
             # AND is currently resolved. If so, the finding reappeared and we should reopen.
             discussion_id = existing["id"]
@@ -321,31 +344,53 @@ def post_detail_threads(
                 resolve_discussion(project_id, mr_iid, discussion_id, token, resolved=False)
             else:
                 print(f"  Thread for '{key}' unchanged, skipping")
+            continue
 
-        elif current_source_hash and existing_source_hash == current_source_hash:
+        if current_source_hash and existing_source_hash == current_source_hash:
             # Source files unchanged — Kiro variance, not a real change
             print(f"  Thread for '{key}' source unchanged, skipping (Kiro variance)")
+            continue
 
-        else:
-            risk_level = group.get("risk_level", "UNKNOWN")
-            print(f"  Updating thread for '{key}' (findings changed, severity: {risk_level})")
-            url = _discussion_url(mr_iid, first_note_id) if first_note_id else ""
+        # Findings drifted. Update the body so the latest text is visible, but
+        # only unresolve when the thread is currently unresolved or was previously
+        # auto-resolved by the bot. A deliberate human resolve survives drift.
+        risk_level = group.get("risk_level", "UNKNOWN")
+        url = _discussion_url(mr_iid, first_note_id) if first_note_id else ""
+        body = format_thread(key, group, content_hash, True)
+        if current_source_hash:
+            body += f"\n<!-- source-hash:{current_source_hash} -->"
+        discussion_id = existing["id"]
+        notes = existing.get("notes", [])
+        is_currently_resolved = all(
+            n.get("resolved", True) for n in notes if n.get("resolvable", False)
+        )
+
+        if is_currently_resolved and not _was_auto_resolved(existing):
+            print(f"  Thread for '{key}' human-resolved, preserving resolution (severity: {risk_level})")
             if url:
                 print(f"    {url}")
-            body = format_thread(key, group, content_hash, True)
-            if current_source_hash:
-                body += f"\n<!-- source-hash:{current_source_hash} -->"
-            discussion_id = existing["id"]
             if first_note_id:
                 edit_note(project_id, mr_iid, discussion_id, first_note_id, token, body)
             else:
                 add_note_to_discussion(project_id, mr_iid, discussion_id, token, body)
-            # Add a reply comment explaining why the thread was reopened, then unresolve
             add_note_to_discussion(
                 project_id, mr_iid, discussion_id, token,
-                f"_Findings have changed since last review. Thread reopened for re-acknowledgment._ {_action_context()}",
+                f"_Findings metadata updated since this thread was resolved. Resolved status preserved._ {_action_context()}",
             )
-            resolve_discussion(project_id, mr_iid, discussion_id, token, resolved=False)
+            continue
+
+        print(f"  Updating thread for '{key}' (findings changed, severity: {risk_level})")
+        if url:
+            print(f"    {url}")
+        if first_note_id:
+            edit_note(project_id, mr_iid, discussion_id, first_note_id, token, body)
+        else:
+            add_note_to_discussion(project_id, mr_iid, discussion_id, token, body)
+        add_note_to_discussion(
+            project_id, mr_iid, discussion_id, token,
+            f"_Findings have changed since last review. Thread reopened for re-acknowledgment._ {_action_context()}",
+        )
+        resolve_discussion(project_id, mr_iid, discussion_id, token, resolved=False)
 
     return processed_keys
 
@@ -373,6 +418,10 @@ def resolve_orphaned_threads(
         match = detail_pattern.search(first_body)
         if match and match.group(1) not in current_keys:
             orphan_key = match.group(1)
+
+            if _is_human_locked(discussion):
+                print(f"  Thread for '{orphan_key}' locked by reviewer, skipping")
+                continue
 
             # If we have source hashes, check if source actually changed
             if source_hashes is not None:
@@ -405,6 +454,7 @@ def _discussion_url(mr_iid: str, note_id: str) -> str:
 
 
 _AUTO_RESOLVE_MARKER = "Thread auto-resolved."
+_LOCK_MARKER = "[review-bot:lock]"
 
 
 def _format_thread_footer() -> str:
@@ -412,7 +462,8 @@ def _format_thread_footer() -> str:
     job = _job_link()
     footer_lines = [
         "_Contributor: fix the issue, or reply explaining why a fix won't be made._",
-        "_Reviewer: resolve this thread once addressed._",
+        "_Reviewer: resolve this thread once addressed. Future re-runs preserve your resolution unless the underlying source file changes._",
+        f"_Stuck in a reopen loop? Reply `{_LOCK_MARKER}` to suppress further reopens of this thread._",
     ]
     if job:
         footer_lines.append(f"_Rerun {job} to pass the pipeline._")
@@ -436,6 +487,28 @@ def _was_auto_resolved(discussion: dict) -> bool:
         if body and _AUTO_RESOLVE_MARKER not in body and "<!-- " not in body:
             # This is likely a human comment — thread was human-resolved
             return False
+    return False
+
+
+def _is_human_locked(discussion: dict) -> bool:
+    """Check whether a human reviewer has locked this thread against further reopens.
+
+    A thread is locked if any non-bot note contains the literal `[review-bot:lock]`
+    marker. The bot never emits this marker, so its presence is an unambiguous
+    reviewer signal. Reviewers can release the lock by editing or deleting their
+    lock comment.
+    """
+    notes = discussion.get("notes", [])
+    for note in notes:
+        body = note.get("body", "")
+        if _LOCK_MARKER not in body:
+            continue
+        # Bot-authored notes always include either the auto-resolve marker or an
+        # HTML comment marker. A note with the lock phrase that lacks both is
+        # human-authored.
+        if _AUTO_RESOLVE_MARKER in body or "<!-- " in body:
+            continue
+        return True
     return False
 
 

@@ -111,9 +111,44 @@ Copy the lifecycle logic from `post_baseline_threads.py`:
 
 1. **Compute structural hash** from finding data (excludes prose descriptions)
 2. **Find existing thread** via HTML comment marker
-3. **If no existing thread** → create new, position inline if possible
-4. **If existing thread, hash matches** → skip (no update needed)
-5. **If existing thread, hash differs** → edit note in place, unresolve thread with "_Findings have changed since last review. Please re-acknowledge._"
+3. **If thread is locked** (`[review-bot:lock]` reply by a human) → skip everything
+4. **If no existing thread** → create new, position inline if possible
+5. **If existing thread, hash matches** → skip (no update needed) unless it was auto-resolved by the bot and the finding has reappeared (then reopen)
+6. **If existing thread, source hash matches** → skip (Kiro variance, not a real change)
+7. **If existing thread, hash differs and thread is human-resolved** → edit note in place and post a "_Findings metadata updated since this thread was resolved. Resolved status preserved._" reply, but do NOT unresolve
+8. **If existing thread, hash differs otherwise** → edit note in place, unresolve thread with "_Findings have changed since last review. Please re-acknowledge._"
+
+### Source-hash safety net (REQUIRED)
+
+Every post script MUST populate `source_hash` on each finding group dict and pass a
+`{key: source_hash}` map to `resolve_orphaned_threads(..., source_hashes=...)`. The
+shared lifecycle uses these to suppress hash-drift reopens and orphan auto-resolves
+when the underlying source files have not changed (Kiro/LLM variance).
+
+Helpers in `review/lib/thread_lifecycle.py`:
+
+- `compute_source_hash(package_root)` — directory hash, used by package-scoped agents
+  (compliance, architecture, baseline, module-quality, test-standards).
+- `compute_file_source_hash(file_path)` — single-file hash, used by file-scoped
+  agents (doc-quality).
+
+### Human resolves are durable
+
+A reviewer's "Resolve thread" click is a deliberate acknowledgment that survives
+hash drift. The lifecycle distinguishes human resolves from bot auto-resolves via
+`_was_auto_resolved()` and only reopens the latter when findings reappear or
+metadata drifts.
+
+### `[review-bot:lock]` escape hatch
+
+If a thread keeps getting reopened despite the source-hash safety net (e.g., the
+file legitimately changed for unrelated reasons but the finding remains a
+"won't fix"), a reviewer can reply with `[review-bot:lock]` on the thread.
+Subsequent CI runs will skip the thread entirely — no body update, no reopen,
+no orphan resolution. Editing or deleting the lock comment releases the lock.
+
+This phrase is advertised in the standard thread footer so reviewers don't need
+to read steering docs to discover it.
 
 ## CI Job Template
 

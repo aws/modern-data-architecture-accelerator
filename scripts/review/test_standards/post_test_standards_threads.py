@@ -278,7 +278,14 @@ def main() -> None:
     # Re-fetch after mutations, resolve orphans (runs even with no findings
     # so previously-opened threads get auto-resolved when gaps are fixed)
     discussions = get_mr_discussions(project_id, mr_iid, token)
-    resolve_orphaned_threads(project_id, mr_iid, token, discussions, PKG_PATTERN, processed_keys)
+    source_hashes = {
+        e.get("package", "unknown"): e.get("source_hash", "")
+        for e in entries
+    }
+    resolve_orphaned_threads(
+        project_id, mr_iid, token, discussions, PKG_PATTERN, processed_keys,
+        source_hashes=source_hashes,
+    )
 
     try:
         check_unresolved_and_exit(

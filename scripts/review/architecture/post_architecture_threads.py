@@ -254,7 +254,11 @@ def main():
     # Re-fetch after mutations, resolve orphans (runs even with no findings
     # so previously-opened threads get auto-resolved when issues are fixed)
     discussions = get_mr_discussions(project_id, mr_iid, token)
-    resolve_orphaned_threads(project_id, mr_iid, token, discussions, SOURCE_PATTERN, processed_keys)
+    source_hashes = {key: group.get("source_hash", "") for key, group in groups.items()}
+    resolve_orphaned_threads(
+        project_id, mr_iid, token, discussions, SOURCE_PATTERN, processed_keys,
+        source_hashes=source_hashes,
+    )
 
     try:
         check_unresolved_and_exit(
