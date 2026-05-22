@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Stack } from 'aws-cdk-lib';
 import { DataZoneL3Construct, DataZoneL3ConstructProps } from '../lib';
 
@@ -2624,6 +2624,48 @@ describe('DataZone L3 Construct Tests', () => {
       // Should create blueprint configurations for non-Tooling blueprints
       const blueprintConfigs = template.findResources('AWS::DataZone::EnvironmentBlueprintConfiguration');
       expect(Object.keys(blueprintConfigs).length).toBeGreaterThanOrEqual(2);
+    });
+
+    test('tooling KMS key CloudWatchLogsEncryption statement uses ArnLike with specific log group prefixes', () => {
+      new DataZoneL3Construct(stack, 'test-cw-logs-condition', {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        sageMakerDomains: {
+          'test-domain': {
+            description: 'Test domain',
+            dataAdminRole: { name: 'admin' },
+            userAssignment: 'MANUAL',
+            tooling: {
+              vpcId: 'test-vpc',
+              subnetIds: ['subnet-id-1'],
+            },
+          },
+        },
+      });
+      const template = Template.fromStack(stack);
+
+      template.hasResourceProperties('AWS::KMS::Key', {
+        KeyPolicy: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'CloudWatchLogsEncryption',
+              Effect: 'Allow',
+              Principal: { Service: Match.stringLikeRegexp('logs\\..*\\.amazonaws\\.com') },
+              Action: Match.arrayWith(['kms:DescribeKey']),
+              Condition: {
+                ArnLike: {
+                  'kms:EncryptionContext:aws:logs:arn': Match.arrayWith([
+                    Match.stringLikeRegexp(':log-group:datazone-'),
+                    Match.stringLikeRegexp(':log-group:airflow-'),
+                    Match.stringLikeRegexp(':log-group:/aws/lambda/amazon-bedrock-ide-'),
+                  ]),
+                },
+              },
+            }),
+          ]),
+        },
+      });
     });
 
     test('should throw if Tooling/DataLake are in enabledManagedBlueprints', () => {
