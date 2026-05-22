@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/ec2-constructs",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "MDAA ec2 Constructs",
   "license": "Apache-2.0",
   "author": {
@@ -24,11 +24,11 @@
     "test:package-docs": "../../../../scripts/generate_docs/test_package_docs.sh"
   },
   "devDependencies": {
-    "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/custom-constructs": "1.5.0",
-    "@aws-mdaa/iam-constructs": "1.5.0",
-    "@aws-mdaa/kms-constructs": "1.5.0",
-    "@aws-mdaa/testing": "1.5.0",
+    "@aws-mdaa/construct": "1.6.0",
+    "@aws-mdaa/custom-constructs": "1.6.0",
+    "@aws-mdaa/iam-constructs": "1.6.0",
+    "@aws-mdaa/kms-constructs": "1.6.0",
+    "@aws-mdaa/testing": "1.6.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -42,20 +42,20 @@
     "typescript-json-schema": "0.67.4"
   },
   "dependencies": {
-    "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/custom-constructs": "1.5.0",
-    "@aws-mdaa/iam-constructs": "1.5.0",
-    "@aws-mdaa/kms-constructs": "1.5.0",
+    "@aws-mdaa/construct": "1.6.0",
+    "@aws-mdaa/custom-constructs": "1.6.0",
+    "@aws-mdaa/iam-constructs": "1.6.0",
+    "@aws-mdaa/kms-constructs": "1.6.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96",
     "lodash": "4.18.1"
   },
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/custom-constructs": "1.5.0",
-    "@aws-mdaa/iam-constructs": "1.5.0",
-    "@aws-mdaa/kms-constructs": "1.5.0",
+    "@aws-mdaa/construct": "1.6.0",
+    "@aws-mdaa/custom-constructs": "1.6.0",
+    "@aws-mdaa/iam-constructs": "1.6.0",
+    "@aws-mdaa/kms-constructs": "1.6.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96"

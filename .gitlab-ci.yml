@@ -1961,6 +1961,8 @@ cornerstone_build_distributions:
     refs:
       - main
   except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
     refs:
       - tags
   stage: post_release
@@ -2002,6 +2004,8 @@ cornerstone_package_artifact:
     refs:
       - main
   except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
     refs:
       - tags
   stage: post_release
@@ -2061,6 +2065,8 @@ cornerstone_upload:
     refs:
       - main
   except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
     refs:
       - tags
   stage: post_release

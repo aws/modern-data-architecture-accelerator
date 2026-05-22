@@ -8,7 +8,7 @@
   "bin": {
     "gaia-v2-cdk": "bin/gaia.js"
   },
-  "version": "1.5.0",
+  "version": "1.6.0",
   "license": "Apache-2.0",
   "scripts": {
     "build": "../../../../scripts/build/build_package.sh GAIAConfigContents",
@@ -22,7 +22,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/testing": "1.5.0",
+    "@aws-mdaa/testing": "1.6.0",
     "@types/jest": "29.5.0",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -37,12 +37,12 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-mdaa/app": "1.5.0",
-    "@aws-mdaa/config": "1.5.0",
-    "@aws-mdaa/datalake-l3-construct": "1.5.0",
-    "@aws-mdaa/gaia-v2-l3-construct": "1.5.0",
-    "@aws-mdaa/iam-role-helper": "1.5.0",
-    "@aws-mdaa/l3-construct": "1.5.0",
+    "@aws-mdaa/app": "1.6.0",
+    "@aws-mdaa/config": "1.6.0",
+    "@aws-mdaa/datalake-l3-construct": "1.6.0",
+    "@aws-mdaa/gaia-v2-l3-construct": "1.6.0",
+    "@aws-mdaa/iam-role-helper": "1.6.0",
+    "@aws-mdaa/l3-construct": "1.6.0",
     "ajv": "8.18.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",

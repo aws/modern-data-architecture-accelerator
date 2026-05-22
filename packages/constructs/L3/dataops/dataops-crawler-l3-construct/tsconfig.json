@@ -35,6 +35,9 @@
   ],
   "references": [
     {
+      "path": "../../../../utilities/mdaa-config"
+    },
+    {
       "path": "../dataops-project-l3-construct"
     },
     {
@@ -51,9 +54,6 @@
     },
     {
       "path": "../../../L2/sns-constructs"
-    },
-    {
-      "path": "../../../../utilities/mdaa-config"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

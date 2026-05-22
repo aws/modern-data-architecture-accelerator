@@ -35,6 +35,9 @@
   ],
   "references": [
     {
+      "path": "../../../../utilities/mdaa-config"
+    },
+    {
       "path": "../../../L2/construct"
     },
     {
@@ -48,9 +51,6 @@
     },
     {
       "path": "../../../L2/quicksight-constructs"
-    },
-    {
-      "path": "../../../../utilities/mdaa-config"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

@@ -8,7 +8,7 @@
   "bin": {
     "devops-cdk": "bin/devops.js"
   },
-  "version": "1.5.0",
+  "version": "1.6.0",
   "license": "Apache-2.0",
   "scripts": {
     "build": "../../../../scripts/build/build_package.sh DevOpsConfigContents",
@@ -31,11 +31,11 @@
     "typescript-json-schema": "0.67.4"
   },
   "dependencies": {
-    "@aws-mdaa/app": "1.5.0",
-    "@aws-mdaa/iam-constructs": "1.5.0",
-    "@aws-mdaa/kms-constructs": "1.5.0",
-    "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/s3-constructs": "1.5.0",
+    "@aws-mdaa/app": "1.6.0",
+    "@aws-mdaa/iam-constructs": "1.6.0",
+    "@aws-mdaa/kms-constructs": "1.6.0",
+    "@aws-mdaa/l3-construct": "1.6.0",
+    "@aws-mdaa/s3-constructs": "1.6.0",
     "ajv": "8.18.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",

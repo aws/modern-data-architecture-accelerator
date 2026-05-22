@@ -38,6 +38,9 @@
       "path": "../../../L2/cloudwatch-constructs"
     },
     {
+      "path": "../../../../utilities/mdaa-config"
+    },
+    {
       "path": "../../../L2/construct"
     },
     {
@@ -63,9 +66,6 @@
     },
     {
       "path": "../../../L2/sns-constructs"
-    },
-    {
-      "path": "../../../../utilities/mdaa-config"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

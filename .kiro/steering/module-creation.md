@@ -62,7 +62,7 @@ packages/apps/{category}/{module}-app/
 {
   "name": "@aws-mdaa/{module}",
   "description": "MDAA {Module Display Name} module",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "license": "Apache-2.0",
   "author": {
     "name": "Amazon Web Services",
@@ -86,11 +86,11 @@ packages/apps/{category}/{module}-app/
     "test:update-baselines": "UPDATE_BASELINES=true jest --passWithNoTests --testPathPattern='.*\\.diff\\.test\\.ts'"
   },
   "dependencies": {
-    "@aws-mdaa/app": "1.5.0",
-    "@aws-mdaa/config": "1.5.0",
-    "@aws-mdaa/iam-role-helper": "1.5.0",
-    "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
+    "@aws-mdaa/app": "1.6.0",
+    "@aws-mdaa/config": "1.6.0",
+    "@aws-mdaa/iam-role-helper": "1.6.0",
+    "@aws-mdaa/l3-construct": "1.6.0",
+    "@aws-mdaa/naming": "1.6.0",
     "ajv": "8.18.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
@@ -99,7 +99,7 @@ packages/apps/{category}/{module}-app/
     "yaml": "1.10.2"
   },
   "devDependencies": {
-    "@aws-mdaa/testing": "1.5.0",
+    "@aws-mdaa/testing": "1.6.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -338,7 +338,7 @@ export * from './{module}-construct';
 ```json
 {
   "name": "@aws-mdaa/{module}-l3-construct",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "MDAA {Module Display Name} L3 Construct",
   "license": "Apache-2.0",
   "scripts": {

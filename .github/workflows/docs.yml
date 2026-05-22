@@ -56,8 +56,9 @@ jobs:
 
       - name: Generate documentation
         run: |
-          chmod +x ./scripts/generate_docs.sh
-          ./scripts/generate_docs.sh gh-pages github
+          source ./scripts/generate_docs/prepare.sh
+          ./scripts/generate_docs/typedocs.sh
+          ./scripts/generate_docs/mkdocs.sh
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

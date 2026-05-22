@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/installer",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "license": "Apache-2.0",
   "solution_id": "SO0320",
   "solution_name": "Modern Data Architecture Accelerator",

@@ -8,7 +8,7 @@
   "bin": {
     "bedrock-settings-cdk": "bin/bedrock-settings.js"
   },
-  "version": "1.5.0",
+  "version": "1.6.0",
   "license": "Apache-2.0",
   "scripts": {
     "build": "../../../../scripts/build/build_package.sh BedrockSettingsConfigContents",
@@ -22,7 +22,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/testing": "1.5.0",
+    "@aws-mdaa/testing": "1.6.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -33,9 +33,9 @@
     "typescript-json-schema": "0.67.4"
   },
   "dependencies": {
-    "@aws-mdaa/app": "1.5.0",
-    "@aws-mdaa/bedrock-settings-l3-construct": "1.5.0",
-    "@aws-mdaa/l3-construct": "1.5.0",
+    "@aws-mdaa/app": "1.6.0",
+    "@aws-mdaa/bedrock-settings-l3-construct": "1.6.0",
+    "@aws-mdaa/l3-construct": "1.6.0",
     "ajv": "8.18.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",

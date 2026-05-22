@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/iam-role-helper",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "MDAA Role Utilities",
   "license": "Apache-2.0",
   "author": {
@@ -23,8 +23,8 @@
     "test:package-docs": "../../../scripts/generate_docs/test_package_docs.sh"
   },
   "devDependencies": {
-    "@aws-mdaa/naming": "1.5.0",
-    "@aws-mdaa/testing": "1.5.0",
+    "@aws-mdaa/naming": "1.6.0",
+    "@aws-mdaa/testing": "1.6.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -37,13 +37,13 @@
     "typescript-json-schema": "0.67.4"
   },
   "peerDependencies": {
-    "@aws-mdaa/naming": "1.5.0",
+    "@aws-mdaa/naming": "1.6.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "10.0.96"
   },
   "dependencies": {
-    "@aws-mdaa/lambda-constructs": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
+    "@aws-mdaa/lambda-constructs": "1.6.0",
+    "@aws-mdaa/naming": "1.6.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96"

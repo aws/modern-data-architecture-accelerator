@@ -5,7 +5,7 @@
     "name": "Amazon Web Services",
     "url": "https://aws.amazon.com/solutions"
   },
-  "version": "1.5.0",
+  "version": "1.6.0",
   "license": "Apache-2.0",
   "solution_id": "SO0320",
   "solution_name": "Modern Data Architecture Accelerator",
@@ -20,8 +20,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/datazone-constructs": "1.5.0",
-    "@aws-mdaa/testing": "1.5.0",
+    "@aws-mdaa/datazone-constructs": "1.6.0",
+    "@aws-mdaa/testing": "1.6.0",
     "@types/jest": "29.5.14",
     "@types/lodash": "4.17.23",
     "@types/node": "22.9.0",
@@ -33,15 +33,15 @@
     "typescript-json-schema": "0.67.4"
   },
   "peerDependencies": {
-    "@aws-mdaa/datazone-constructs": "1.5.0"
+    "@aws-mdaa/datazone-constructs": "1.6.0"
   },
   "dependencies": {
-    "@aws-mdaa/config": "1.5.0",
-    "@aws-mdaa/construct": "1.5.0",
-    "@aws-mdaa/datazone-constructs": "1.5.0",
-    "@aws-mdaa/iam-role-helper": "1.5.0",
-    "@aws-mdaa/l3-construct": "1.5.0",
-    "@aws-mdaa/naming": "1.5.0",
+    "@aws-mdaa/config": "1.6.0",
+    "@aws-mdaa/construct": "1.6.0",
+    "@aws-mdaa/datazone-constructs": "1.6.0",
+    "@aws-mdaa/iam-role-helper": "1.6.0",
+    "@aws-mdaa/l3-construct": "1.6.0",
+    "@aws-mdaa/naming": "1.6.0",
     "ajv": "8.18.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
