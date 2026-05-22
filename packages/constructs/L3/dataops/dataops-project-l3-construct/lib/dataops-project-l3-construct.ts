@@ -1501,12 +1501,25 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     });
     tempPolicy.statements().forEach(statement => projectBucket.addToResourcePolicy(statement));
 
+    // SMUS creates per-user roles named datazone_usr_role_<projectId>_<userId> at session time.
+    // These are not known to MDAA at deploy time so they cannot be added to roleExcludeIds.
+    const smusUserRoleArnPattern = `arn:aws:iam::${this.account}:role/datazone_usr_role_*`;
+    const smusUserRoleDeploymentRead = new PolicyStatement({
+      sid: 'SmusUserRoleDeploymentRead',
+      effect: Effect.ALLOW,
+      actions: RestrictObjectPrefixToRoles.READ_ACTIONS,
+      resources: [projectBucket.arnForObjects('deployment/*')],
+      conditions: { StringLike: { 'aws:PrincipalArn': smusUserRoleArnPattern } },
+    });
+    smusUserRoleDeploymentRead.addAnyPrincipal();
+    projectBucket.addToResourcePolicy(smusUserRoleDeploymentRead);
+
     //Default Deny Policy
     //Any role not specified in props is explicitely denied access to the bucket
     const bucketRestrictPolicy = new RestrictBucketToRoles({
       s3Bucket: projectBucket,
       roleExcludeIds: [...this.getAllRoleIds(), lakeFormationRole.roleId, datazoneUserRole.roleId],
-      principalExcludes: [projectDeploymentRole.roleArn],
+      principalExcludes: [projectDeploymentRole.roleArn, smusUserRoleArnPattern],
     });
     projectBucket.addToResourcePolicy(bucketRestrictPolicy.denyStatement);
     projectBucket.addToResourcePolicy(bucketRestrictPolicy.allowStatement);
