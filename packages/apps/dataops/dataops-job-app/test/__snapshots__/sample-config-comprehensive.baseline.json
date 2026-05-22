@@ -25,6 +25,10 @@
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/test-org/test-domain/dataops-project-test/kmsArn/default"
     },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestsagemakerprojectiddefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-test/sagemaker/project/id/default"
+    },
     "BootstrapVersion": {
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -551,6 +555,9 @@
           "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
         },
         "Tags": {
+          "AmazonDataZoneProject": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsagemakerprojectiddefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
           "mdaa_cdk_app": "dataops-job",
           "mdaa_domain": "test-domain",
           "mdaa_env": "test-env",
@@ -1406,6 +1413,9 @@
           "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
         },
         "Tags": {
+          "AmazonDataZoneProject": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsagemakerprojectiddefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
           "mdaa_cdk_app": "dataops-job",
           "mdaa_domain": "test-domain",
           "mdaa_env": "test-env",
@@ -2183,6 +2193,9 @@
           "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
         },
         "Tags": {
+          "AmazonDataZoneProject": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsagemakerprojectiddefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
           "mdaa_cdk_app": "dataops-job",
           "mdaa_domain": "test-domain",
           "mdaa_env": "test-env",
@@ -2609,6 +2622,9 @@
           "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
         },
         "Tags": {
+          "AmazonDataZoneProject": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsagemakerprojectiddefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
           "mdaa_cdk_app": "dataops-job",
           "mdaa_domain": "test-domain",
           "mdaa_env": "test-env",
@@ -3221,6 +3237,9 @@
           "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
         },
         "Tags": {
+          "AmazonDataZoneProject": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsagemakerprojectiddefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
           "mdaa_cdk_app": "dataops-job",
           "mdaa_domain": "test-domain",
           "mdaa_env": "test-env",
