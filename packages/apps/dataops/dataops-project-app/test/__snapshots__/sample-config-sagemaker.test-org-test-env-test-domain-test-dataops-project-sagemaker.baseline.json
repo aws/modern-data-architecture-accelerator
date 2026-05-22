@@ -1816,6 +1816,33 @@
               "Sid": "/temp_ReadWrite"
             },
             {
+              "Action": "s3:GetObject*",
+              "Condition": {
+                "StringLike": {
+                  "aws:PrincipalArn": "arn:aws:iam::test-account:role/datazone_usr_role_*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BucketprojectAACC6DD8",
+                        "Arn"
+                      ]
+                    },
+                    "/deployment/*"
+                  ]
+                ]
+              },
+              "Sid": "SmusUserRoleDeploymentRead"
+            },
+            {
               "Action": [
                 "s3:PutObject*",
                 "s3:GetObject*",
@@ -1901,7 +1928,8 @@
                         "projectdeploymentrole542A1AAB",
                         "Arn"
                       ]
-                    }
+                    },
+                    "arn:aws:iam::test-account:role/datazone_usr_role_*"
                   ]
                 }
               },
