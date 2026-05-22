@@ -10,14 +10,14 @@ import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { CfnJob } from 'aws-cdk-lib/aws-glue';
+import { Fn, Tags } from 'aws-cdk-lib';
+import { MdaaNagSuppressions, MdaaStringParameter } from '@aws-mdaa/construct'; //NOSONAR
 import { BucketDeployment, ISource, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import * as path from 'path';
 import { SnsTopic } from 'aws-cdk-lib/aws-events-targets';
 import { MdaaSnsTopic } from '@aws-mdaa/sns-constructs';
 import { Rule } from 'aws-cdk-lib/aws-events';
-import { Fn } from 'aws-cdk-lib';
 import { ConfigurationElement } from '@aws-mdaa/config';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
@@ -504,6 +504,16 @@ export class GlueJobL3Construct extends MdaaL3Construct {
         `job/name/${jobName}`,
         job.name,
       );
+
+      // Apply AmazonDataZoneProject tag so the job appears in the SMUS project UI.
+      // The DataZone project ID is published to SSM by the dataops-project module.
+      const projectIdSsmPath = this.props.naming.ssmPath(
+        `${this.props.projectName}/sagemaker/project/id/default`,
+        false,
+        false,
+      );
+      const datazoneProjectId = MdaaStringParameter.valueForStringParameter(this.scope, projectIdSsmPath);
+      Tags.of(job).add('AmazonDataZoneProject', datazoneProjectId);
 
       const eventRule = this.createJobMonitoringEventRule(`${jobName}-monitor`, [job.name]);
       if (!this.props.notificationTopicArn) {

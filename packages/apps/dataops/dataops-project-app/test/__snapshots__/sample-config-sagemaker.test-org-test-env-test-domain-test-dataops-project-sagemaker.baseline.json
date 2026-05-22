@@ -4227,6 +4227,26 @@
         }
       }
     },
+    "ssmsagemakerprojectidFE5981B8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-sagemaker/sagemaker/project/id/default",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-sagemaker",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructsagemakerprojectdataopsproject7423C7DC",
+            "Id"
+          ]
+        }
+      }
+    },
     "securityconfig6DD90031": {
       "Type": "AWS::Glue::SecurityConfiguration",
       "Properties": {
