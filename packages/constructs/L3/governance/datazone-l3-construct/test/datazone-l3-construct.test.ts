@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Stack } from 'aws-cdk-lib';
 import { DataZoneL3Construct, DataZoneL3ConstructProps } from '../lib';
 
@@ -2624,6 +2624,89 @@ describe('DataZone L3 Construct Tests', () => {
       // Should create blueprint configurations for non-Tooling blueprints
       const blueprintConfigs = template.findResources('AWS::DataZone::EnvironmentBlueprintConfiguration');
       expect(Object.keys(blueprintConfigs).length).toBeGreaterThanOrEqual(2);
+    });
+
+    test('tooling KMS key includes BedrockEncryption statement for bedrock.amazonaws.com', () => {
+      new DataZoneL3Construct(stack, 'test-bedrock-kms', {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        sageMakerDomains: {
+          'test-domain': {
+            description: 'Test domain',
+            dataAdminRole: { name: 'admin' },
+            userAssignment: 'MANUAL',
+            tooling: {
+              vpcId: 'test-vpc',
+              subnetIds: ['subnet-id-1'],
+            },
+          },
+        },
+      });
+      const template = Template.fromStack(stack);
+
+      // Bedrock blueprint environments (e.g. AmazonBedrockGuardrail) call kms:GenerateDataKey /
+      // kms:Decrypt as bedrock.amazonaws.com when creating CMK-encrypted resources. Without this
+      // statement the CF resource handler fails with AccessDenied on the key policy.
+      template.hasResourceProperties('AWS::KMS::Key', {
+        KeyPolicy: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'BedrockEncryption',
+              Effect: 'Allow',
+              Principal: { Service: 'bedrock.amazonaws.com' },
+              Action: Match.arrayWith(['kms:Decrypt', 'kms:GenerateDataKey', 'kms:DescribeKey']),
+              Condition: {
+                StringEquals: { 'aws:SourceAccount': Match.anyValue() },
+              },
+            }),
+          ]),
+        },
+      });
+    });
+
+    test('default provisioning role has kms:CreateGrant (kms-admin policy) attached', () => {
+      // Use tooling without an explicit provisioningRole to exercise domainDefaultBlueprintProvisioningRole.
+      // kms:CreateGrant is required so the Bedrock CF resource handler can create a service grant
+      // allowing bedrock.amazonaws.com to use the tooling key for CMK-encrypted resource operations.
+      new DataZoneL3Construct(stack, 'test-provisioning-kms-admin', {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        sageMakerDomains: {
+          'test-domain': {
+            description: 'Test domain',
+            dataAdminRole: { name: 'admin' },
+            userAssignment: 'MANUAL',
+            tooling: {
+              vpcId: 'test-vpc',
+              subnetIds: ['subnet-id-1'],
+            },
+          },
+        },
+      });
+      const template = Template.fromStack(stack);
+
+      // Locate the kms-admin managed policy by its ToolingKmsCreateGrant statement.
+      const kmsAdminPolicies = template.findResources('AWS::IAM::ManagedPolicy', {
+        Properties: {
+          PolicyDocument: {
+            Statement: Match.arrayWith([
+              Match.objectLike({
+                Sid: 'ToolingKmsCreateGrant',
+                Action: Match.arrayWith(['kms:CreateGrant', 'kms:RetireGrant']),
+              }),
+            ]),
+          },
+        },
+      });
+      const kmsAdminPolicyLogicalIds = Object.keys(kmsAdminPolicies);
+      expect(kmsAdminPolicyLogicalIds.length).toBeGreaterThanOrEqual(1);
+
+      // The default provisioning role must reference this policy in its ManagedPolicyArns.
+      template.hasResourceProperties('AWS::IAM::Role', {
+        ManagedPolicyArns: Match.arrayWith([Match.objectLike({ Ref: kmsAdminPolicyLogicalIds[0] })]),
+      });
     });
 
     test('should throw if Tooling/DataLake are in enabledManagedBlueprints', () => {
