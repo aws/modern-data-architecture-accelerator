@@ -1086,10 +1086,16 @@
               "Sid": "DomainKmsCreateGrant"
             },
             {
-              "Action": "kms:CreateGrant",
+              "Action": [
+                "kms:CreateGrant",
+                "kms:RetireGrant"
+              ],
               "Condition": {
-                "StringLike": {
+                "StringEquals": {
                   "kms:CallerAccount": "test-account-2"
+                },
+                "Bool": {
+                  "kms:GrantIsForAWSResource": "true"
                 }
               },
               "Effect": "Allow",
@@ -1823,6 +1829,30 @@
               },
               "Resource": "*",
               "Sid": "CloudWatchLogsEncryption"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account-2"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "BedrockEncryption"
             }
           ],
           "Version": "2012-10-17"
