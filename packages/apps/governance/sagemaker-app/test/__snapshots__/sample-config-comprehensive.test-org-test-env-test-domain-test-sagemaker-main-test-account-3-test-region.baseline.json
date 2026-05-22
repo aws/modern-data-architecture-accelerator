@@ -1637,13 +1637,15 @@
                 "kms:GenerateDataKey",
                 "kms:GenerateDataKeyWithoutPlaintext",
                 "kms:GenerateDataKeyPair",
-                "kms:GenerateDataKeyPairWithoutPlaintext"
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey"
               ],
               "Condition": {
-                "ArnEquals": {
+                "ArnLike": {
                   "kms:EncryptionContext:aws:logs:arn": [
                     "arn:test-partition:logs:test-region:test-account-3:log-group:datazone-*",
-                    "arn:test-partition:logs:test-region:test-account-3:log-group:airflow-*"
+                    "arn:test-partition:logs:test-region:test-account-3:log-group:airflow-*",
+                    "arn:test-partition:logs:test-region:test-account-3:log-group:/aws/lambda/amazon-bedrock-ide-*"
                   ]
                 }
               },
