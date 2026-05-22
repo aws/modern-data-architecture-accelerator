@@ -1199,7 +1199,7 @@
               "Effect": "Allow",
               "Resource": [
                 "arn:test-partition:sso:::instance/ssoins-test-instance-id",
-                "arn:test-partition:sso::test-account:application/ssoins-test-instance-id/*",
+                "arn:test-partition:sso::*:application/ssoins-test-instance-id/*",
                 "arn:aws:sso::aws:applicationProvider/*"
               ]
             },
