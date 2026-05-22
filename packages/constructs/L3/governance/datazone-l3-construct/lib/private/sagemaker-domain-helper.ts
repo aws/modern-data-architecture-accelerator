@@ -16,9 +16,10 @@ import {
 import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, MdaaKmsKey, USER_ACTIONS } from '@aws-mdaa/kms-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
-import { Stack } from 'aws-cdk-lib';
+import { Fn, Stack } from 'aws-cdk-lib';
 
 import { CfnDomain, CfnEnvironmentBlueprintConfiguration, CfnUserProfile } from 'aws-cdk-lib/aws-datazone';
+import { CfnSecurityPolicy } from 'aws-cdk-lib/aws-opensearchserverless';
 import {
   ArnPrincipal,
   Conditions,
@@ -406,6 +407,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       domainProps.tooling,
       policies.domainKmsUsagePolicy,
       policies.domainKmsAdminPolicy,
+      domainResources.domain.attrId,
     );
     const toolingParams = { ...domainProps.tooling?.parameterValues, ...toolingResourceParams };
 
@@ -670,6 +672,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     toolingProps: ToolingBlueprintProps,
     domainKmsUsagePolicy: ManagedPolicy,
     domainKmsAdminPolicy: ManagedPolicy,
+    domainId?: string,
   ): { [paramName: string]: string } {
     const kmsKey = new MdaaKmsKey(scope, `${domainName}-tooling-kms`, {
       naming: this.props.naming,
@@ -722,6 +725,21 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       createParams: false,
       createOutputs: false,
     });
+
+    // DataZone auto-creates this policy at domain setup time with a broken resource pattern
+    // that never matches actual collection names. Pre-creating it here prevents that.
+    if (domainId) {
+      const domainIdSuffix = Fn.select(1, Fn.split('dzd-', domainId));
+      new CfnSecurityPolicy(scope, `${domainName}-bedrock-ide-aoss-encryption`, {
+        name: Fn.join('', ['bedrock-ide-', domainIdSuffix]),
+        type: 'encryption',
+        policy: Stack.of(scope).toJsonString({
+          Rules: [{ Resource: ['collection/bedrock-ide-*'], ResourceType: 'collection' }],
+          AWSOwnedKey: false,
+          KmsARN: kmsKey.keyArn,
+        }),
+      });
+    }
 
     const forcedParams = {
       KmsKeyArn: kmsKey.keyArn,
