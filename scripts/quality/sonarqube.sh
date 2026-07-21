@@ -73,6 +73,7 @@ else
   SCOPE_ARGS=""
 fi
 
+GATE_FAILED=""
 sonar-scanner \
   -Dsonar.projectKey=${PROJECT_KEY} \
   -Dsonar.javascript.lcov.reportPaths=./coverage/merged_lcov.info \
@@ -82,7 +83,20 @@ sonar-scanner \
   -Dsonar.token=${SONAR_TOKEN} \
   -Dsonar.sourceEncoding=utf-8 \
   ${VERSION_ARGS} \
-  ${SCOPE_ARGS}
+  ${SCOPE_ARGS} || GATE_FAILED=true
+
+# Always print quality gate details (conditions + issues on failure)
+python3 "${SCRIPT_DIR}/sonar_quality_gate.py" "${PROJECT_KEY}" || true
+
+# Post SonarQube findings as MR discussion threads (MR pipelines only)
+if [ -n "${CI_MERGE_REQUEST_IID}" ]; then
+  python3 ./scripts/review/sonar/post_sonar_threads.py "${PROJECT_KEY}" || true
+fi
+
+# If the gate failed, exit after printing details
+if [ "${GATE_FAILED}" = "true" ]; then
+  exit 1
+fi
 
 # Enforce that no issues are suppressed via the SonarQube UI.
 # All issues must be fixed in code or suppressed inline with rationale
