@@ -37,18 +37,15 @@
     "ts-jest": "29.4.9",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
-    "typescript-json-schema": "0.67.4"
+    "typescript-json-schema": "0.67.4",
+    "@aws-mdaa/s3-helpers": "1.7.0"
   },
-  "bundledDependencies": [
-    "@aws-mdaa/s3-audit-helper",
-    "@aws-mdaa/s3-bucketpolicy-helper",
-    "@aws-mdaa/s3-inventory-helper"
-  ],
   "peerDependencies": {
     "@aws-mdaa/construct": "1.7.0",
     "@aws-mdaa/iam-role-helper": "1.7.0",
     "@aws-mdaa/l3-construct": "1.7.0",
     "@aws-mdaa/naming": "1.7.0",
+    "@aws-mdaa/s3-helpers": "1.7.0",
     "aws-cdk-lib": "2.258.0",
     "constructs": "10.6.0"
   },
@@ -59,10 +56,8 @@
     "@aws-mdaa/kms-constructs": "1.7.0",
     "@aws-mdaa/l3-construct": "1.7.0",
     "@aws-mdaa/naming": "1.7.0",
-    "@aws-mdaa/s3-audit-helper": "1.7.0",
-    "@aws-mdaa/s3-bucketpolicy-helper": "1.7.0",
     "@aws-mdaa/s3-constructs": "1.7.0",
-    "@aws-mdaa/s3-inventory-helper": "1.7.0",
+    "@aws-mdaa/s3-helpers": "1.7.0",
     "aws-cdk-lib": "2.258.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.6.0"

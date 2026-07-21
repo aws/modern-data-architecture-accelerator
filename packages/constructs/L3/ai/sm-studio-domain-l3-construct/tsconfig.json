@@ -53,7 +53,7 @@
       "path": "../../core/l3-construct"
     },
     {
-      "path": "../../../../utilities/s3-bucketpolicy-helper"
+      "path": "../../../../utilities/s3-helpers"
     },
     {
       "path": "../../../L2/s3-constructs"

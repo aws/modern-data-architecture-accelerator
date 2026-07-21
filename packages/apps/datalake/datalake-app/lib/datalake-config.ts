@@ -5,13 +5,8 @@
 
 import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
 
-import {
-  AccessPolicyProps,
-  BucketDefinition,
-  InventoryDefinition,
-  LifecycleConfigurationRuleProps,
-  LifecycleTransitionProps,
-} from '@aws-mdaa/datalake-l3-construct';
+import { AccessPolicyProps, BucketDefinition, InventoryDefinition } from '@aws-mdaa/datalake-l3-construct';
+import { LifecycleConfigurationRuleProps, LifecycleTransitionProps } from '@aws-mdaa/s3-helpers';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';

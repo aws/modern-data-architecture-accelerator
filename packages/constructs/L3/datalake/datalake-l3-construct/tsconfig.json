@@ -56,13 +56,10 @@
       "path": "../../../../utilities/mdaa-naming"
     },
     {
-      "path": "../../../../utilities/s3-bucketpolicy-helper"
-    },
-    {
       "path": "../../../L2/s3-constructs"
     },
     {
-      "path": "../../../../utilities/s3-inventory-helper"
+      "path": "../../../../utilities/s3-helpers"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

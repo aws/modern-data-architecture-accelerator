@@ -41,7 +41,7 @@ import {
 } from '@aws-mdaa/lakeformation-access-control-l3-construct';
 import { LakeFormationSettingsL3Construct } from '@aws-mdaa/lakeformation-settings-l3-construct';
 import { LakeFormationTagsL3Construct, LFTagConfig } from '@aws-mdaa/lakeformation-tags-l3-construct';
-import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
+import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-helpers';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import {
   SagemakerProjectL3Construct,

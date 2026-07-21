@@ -27,7 +27,6 @@ describe('Test BucketPolicy Helper', () => {
         readRoleIds: ['test-role-id-1', 'test-role-id-2'],
       };
       const restriction = new RestrictObjectPrefixToRoles(testProps);
-      // console.log( JSON.stringify( restriction.statements()[ 0 ], undefined, 2 ) )
       expect(restriction.statements().length).toBe(1);
       expect(restriction.readStatements().length).toBe(1);
       expect(restriction.readWriteSuperStatements().length).toBe(0);
@@ -50,7 +49,6 @@ describe('Test BucketPolicy Helper', () => {
         readWriteRoleIds: ['test-role-id-1', 'test-role-id-2'],
       };
       const restriction = new RestrictObjectPrefixToRoles(testProps);
-      // console.log( JSON.stringify( restriction.statements()[ 0 ], undefined, 2 ) )
       expect(restriction.statements().length).toBe(1);
       expect(restriction.readWriteStatements().length).toBe(1);
       expect(restriction.readStatements().length).toBe(0);
@@ -74,7 +72,6 @@ describe('Test BucketPolicy Helper', () => {
         readWriteSuperRoleIds: ['test-role-id-1', 'test-role-id-2'],
       };
       const restriction = new RestrictObjectPrefixToRoles(testProps);
-      // console.log( JSON.stringify( restriction.statements()[ 0 ], undefined, 2 ) )
       expect(restriction.statements().length).toBe(1);
       expect(restriction.readWriteSuperStatements().length).toBe(1);
       expect(restriction.readStatements().length).toBe(0);
@@ -99,7 +96,6 @@ describe('Test BucketPolicy Helper', () => {
         readPrincipals: [new ArnPrincipal('test-role-arn-1')],
       };
       const restriction = new RestrictObjectPrefixToRoles(testProps);
-      // console.log( JSON.stringify( restriction.statements()[ 0 ], undefined, 2 ) )
       expect(restriction.statements().length).toBe(1);
       expect(restriction.readStatements().length).toBe(1);
       expect(restriction.readWriteSuperStatements().length).toBe(0);
@@ -121,7 +117,6 @@ describe('Test BucketPolicy Helper', () => {
         readWritePrincipals: [new ArnPrincipal('test-role-arn-1')],
       };
       const restriction = new RestrictObjectPrefixToRoles(testProps);
-      // console.log( JSON.stringify( restriction.statements()[ 0 ], undefined, 2 ) )
       expect(restriction.statements().length).toBe(1);
       expect(restriction.readWriteStatements().length).toBe(1);
       expect(restriction.readStatements().length).toBe(0);
@@ -148,7 +143,6 @@ describe('Test BucketPolicy Helper', () => {
         readWriteSuperPrincipals: [new ArnPrincipal('test-role-arn-1')],
       };
       const restriction = new RestrictObjectPrefixToRoles(testProps);
-      // console.log( JSON.stringify( restriction.statements()[ 0 ], undefined, 2 ) )
       expect(restriction.statements().length).toBe(1);
       expect(restriction.readStatements().length).toBe(0);
       expect(restriction.readWriteStatements().length).toBe(0);
@@ -183,7 +177,6 @@ describe('Test BucketPolicy Helper', () => {
         ...baseTestProps,
       };
       const restriction = new RestrictBucketToRoles(testProps);
-      console.log(JSON.stringify(restriction.allowStatement, undefined, 2));
       expect(restriction.allowStatement.actions).toStrictEqual(['s3:List*', 's3:GetBucket*']);
       expect(restriction.allowStatement.effect).toBe('Allow');
       expect(restriction.allowStatement.conditions).toStrictEqual({
@@ -201,7 +194,6 @@ describe('Test BucketPolicy Helper', () => {
         ...baseTestProps,
       };
       const restriction = new RestrictBucketToRoles(testProps);
-      console.log(JSON.stringify(restriction.denyStatement, undefined, 2));
       expect(restriction.denyStatement.actions).toStrictEqual(['s3:PutObject*', 's3:GetObject*', 's3:DeleteObject*']);
       expect(restriction.denyStatement.effect).toBe('Deny');
       expect(restriction.denyStatement.conditions).toStrictEqual({
@@ -210,6 +202,81 @@ describe('Test BucketPolicy Helper', () => {
           'aws:PrincipalArn': ['test-arn'],
         },
       });
+    });
+
+    test('Deny uses resources (not notResources) when no prefixExcludes', () => {
+      const testProps: IRestrictBucketToRoles = {
+        s3Bucket: testBucket,
+        roleExcludeIds: ['test-role-id-1'],
+      };
+      const restriction = new RestrictBucketToRoles(testProps);
+      expect(restriction.denyStatement.resources).toStrictEqual(['arn:test-partition:s3:::test-bucket/*']);
+    });
+
+    test('Deny uses notResources when prefixExcludes provided', () => {
+      const testProps: IRestrictBucketToRoles = {
+        s3Bucket: testBucket,
+        roleExcludeIds: ['test-role-id-1'],
+        prefixExcludes: ['admin/'],
+      };
+      const restriction = new RestrictBucketToRoles(testProps);
+      expect(restriction.denyStatement.notResources).toStrictEqual(['arn:test-partition:s3:::test-bucket/admin/*']);
+    });
+
+    test('Deny uses StringNotLike (not ForAnyValue) when no principalExcludes', () => {
+      const testProps: IRestrictBucketToRoles = {
+        s3Bucket: testBucket,
+        roleExcludeIds: ['test-role-id-1'],
+      };
+      const restriction = new RestrictBucketToRoles(testProps);
+      expect(restriction.denyStatement.conditions).toStrictEqual({
+        StringNotLike: {
+          'aws:userId': ['test-role-id-1:*'],
+        },
+      });
+    });
+
+    test('Deny defaults resource to bucketArn/* when no prefixIncludes', () => {
+      const testProps: IRestrictBucketToRoles = {
+        s3Bucket: testBucket,
+        roleExcludeIds: ['test-role-id-1'],
+        principalExcludes: ['arn:aws:iam::123456789012:role/admin'],
+      };
+      const restriction = new RestrictBucketToRoles(testProps);
+      expect(restriction.denyStatement.resources).toStrictEqual(['arn:test-partition:s3:::test-bucket/*']);
+      expect(restriction.denyStatement.conditions).toStrictEqual({
+        'ForAnyValue:StringNotLike': {
+          'aws:userId': ['test-role-id-1:*'],
+          'aws:PrincipalArn': ['arn:aws:iam::123456789012:role/admin'],
+        },
+      });
+    });
+  });
+
+  describe('formatS3Prefix', () => {
+    const restriction = new RestrictObjectPrefixToRoles({
+      s3Bucket: testBucket,
+      s3Prefix: 'dummy',
+    });
+
+    test('strips leading slash', () => {
+      expect(restriction.formatS3Prefix('/leading')).toBe('leading');
+    });
+
+    test('strips trailing slash', () => {
+      expect(restriction.formatS3Prefix('trailing/')).toBe('trailing');
+    });
+
+    test('strips both leading and trailing slashes', () => {
+      expect(restriction.formatS3Prefix('/both/')).toBe('both');
+    });
+
+    test('handles root prefix /', () => {
+      expect(restriction.formatS3Prefix('/')).toBe('');
+    });
+
+    test('leaves clean prefix unchanged', () => {
+      expect(restriction.formatS3Prefix('data/raw')).toBe('data/raw');
     });
   });
 });

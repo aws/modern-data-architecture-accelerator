@@ -7,9 +7,7 @@ import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaKmsKey, ENCRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
-import { AuditHelper } from '@aws-mdaa/s3-audit-helper';
-import { RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
-import { InventoryHelper } from '@aws-mdaa/s3-inventory-helper';
+import { AuditHelper, InventoryHelper, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-helpers';
 import { Database } from '@aws-cdk/aws-glue-alpha';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR

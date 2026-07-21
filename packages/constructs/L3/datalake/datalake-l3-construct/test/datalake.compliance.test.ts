@@ -7,14 +7,8 @@ import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
-import {
-  AccessPolicyProps,
-  BucketDefinition,
-  DataLakeL3ConstructProps,
-  LifecycleConfigurationRuleProps,
-  LifecycleTransitionProps,
-  S3DatalakeBucketL3Construct,
-} from '../lib';
+import { AccessPolicyProps, BucketDefinition, DataLakeL3ConstructProps, S3DatalakeBucketL3Construct } from '../lib';
+import { LifecycleConfigurationRuleProps, LifecycleTransitionProps } from '@aws-mdaa/s3-helpers';
 
 describe('MDAA Compliance Stack Tests', () => {
   const testApp = new MdaaTestApp();

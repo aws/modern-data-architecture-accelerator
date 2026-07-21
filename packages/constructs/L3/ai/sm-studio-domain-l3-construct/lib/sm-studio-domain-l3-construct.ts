@@ -9,7 +9,7 @@ import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
-import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
+import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-helpers';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import {
   LifecycleConfigAppType,

@@ -21,7 +21,7 @@ import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaRedshiftCluster, MdaaRedshiftClusterParameterGroup } from '@aws-mdaa/redshift-constructs';
 import { MultiAzValidationError } from '@aws-mdaa/redshift-constructs/lib/utils';
-import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
+import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-helpers';
 import { MdaaBucket, PUBLIC_ACCESS_BLOCK_NAG_SUPPRESSIONS } from '@aws-mdaa/s3-constructs';
 import { MdaaSnsTopic } from '@aws-mdaa/sns-constructs';
 import { Duration, Fn, RemovalPolicy, Stack } from 'aws-cdk-lib';

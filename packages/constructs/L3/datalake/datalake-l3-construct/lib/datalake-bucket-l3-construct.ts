@@ -9,9 +9,15 @@ import { ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-construc
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { IMdaaResourceNaming, MdaaResourceType } from '@aws-mdaa/naming';
-import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
+import {
+  BucketInventory,
+  InventoryHelper,
+  LifecycleConfigurationRuleProps,
+  LifecycleTransitionProps,
+  RestrictBucketToRoles,
+  RestrictObjectPrefixToRoles,
+} from '@aws-mdaa/s3-helpers';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
-import { BucketInventory, InventoryHelper } from '@aws-mdaa/s3-inventory-helper';
 import { Database } from '@aws-cdk/aws-glue-alpha';
 import { CustomResource, Duration } from 'aws-cdk-lib';
 import { Effect, IRole, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
@@ -141,25 +147,6 @@ interface AccessPolicyResolved {
   readonly readWriteRoleIds: string[];
   readonly readWriteSuperRoleIds: string[];
   readonly defaultDeny?: boolean;
-}
-export interface LifecycleTransitionProps {
-  readonly days: number;
-  readonly storageClass: string;
-  readonly newerNoncurrentVersions?: number;
-}
-export interface LifecycleConfigurationRuleProps {
-  readonly id: string;
-  readonly status: string;
-  readonly prefix?: string;
-  readonly objectSizeGreaterThan?: number;
-  readonly objectSizeLessThan?: number;
-  readonly abortIncompleteMultipartUploadAfter?: number;
-  readonly transitions?: LifecycleTransitionProps[];
-  readonly expirationdays?: number;
-  readonly expiredObjectDeleteMarker?: boolean;
-  readonly noncurrentVersionTransitions?: LifecycleTransitionProps[];
-  readonly noncurrentVersionExpirationDays?: number;
-  readonly noncurrentVersionsToRetain?: number;
 }
 
 export interface DataLakeL3ConstructProps extends MdaaL3ConstructProps {

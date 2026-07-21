@@ -6,7 +6,7 @@
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
-import { AuditHelper } from '@aws-mdaa/s3-audit-helper';
+import { AuditHelper } from '@aws-mdaa/s3-helpers';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Annotations } from 'aws-cdk-lib';
 import { Construct } from 'constructs';

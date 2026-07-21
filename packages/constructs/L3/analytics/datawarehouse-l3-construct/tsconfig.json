@@ -62,7 +62,7 @@
       "path": "../../../L2/redshift-constructs"
     },
     {
-      "path": "../../../../utilities/s3-bucketpolicy-helper"
+      "path": "../../../../utilities/s3-helpers"
     },
     {
       "path": "../../../L2/s3-constructs"

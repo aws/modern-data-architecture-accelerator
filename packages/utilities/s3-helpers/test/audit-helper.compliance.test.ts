@@ -8,6 +8,7 @@ import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
+import { Database } from '@aws-cdk/aws-glue-alpha';
 import { AuditHelper } from '../lib';
 
 describe('MDAA Compliance Stack Tests', () => {
@@ -57,8 +58,6 @@ describe('MDAA Compliance Stack Tests', () => {
   );
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
-
-  // console.log( JSON.stringify( template, undefined, 2 ) )
 
   test('Resource Count', () => {
     template.resourceCountIs('AWS::CloudTrail::Trail', 2);
@@ -114,6 +113,63 @@ describe('MDAA Compliance Stack Tests', () => {
           ],
         }),
       ]),
+    });
+  });
+});
+
+describe('AuditHelper.createGlueAuditTable', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const testBucket = Bucket.fromBucketName(stack, 'audit-bucket', 'audit-data-bucket');
+  const database = new Database(stack, 'audit-db', { databaseName: 'audit_database' });
+
+  AuditHelper.createGlueAuditTable(
+    stack,
+    testBucket,
+    database,
+    ['111122223333', '444455556666'],
+    ['us-east-1', 'us-west-2'],
+  );
+
+  const template = Template.fromStack(stack);
+
+  test('creates Glue table resource', () => {
+    template.resourceCountIs('AWS::Glue::Table', 1);
+  });
+
+  test('table name is cloudtrail_audit', () => {
+    template.hasResourceProperties('AWS::Glue::Table', {
+      TableInput: Match.objectLike({
+        Name: 'cloudtrail_audit',
+      }),
+    });
+  });
+
+  test('table has partition projection parameters', () => {
+    template.hasResourceProperties('AWS::Glue::Table', {
+      TableInput: Match.objectLike({
+        Parameters: Match.objectLike({
+          'projection.enabled': 'true',
+          'projection.account.type': 'enum',
+          'projection.account.values': '111122223333,444455556666',
+          'projection.region.type': 'enum',
+          'projection.region.values': 'us-east-1,us-west-2',
+          'projection.timestamp.type': 'date',
+        }),
+      }),
+    });
+  });
+
+  test('table has partition keys', () => {
+    template.hasResourceProperties('AWS::Glue::Table', {
+      TableInput: Match.objectLike({
+        PartitionKeys: Match.arrayWith([
+          Match.objectLike({ Name: 'timestamp', Type: 'string' }),
+          Match.objectLike({ Name: 'region', Type: 'string' }),
+          Match.objectLike({ Name: 'account', Type: 'string' }),
+        ]),
+      }),
     });
   });
 });

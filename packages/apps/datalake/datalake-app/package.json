@@ -42,7 +42,8 @@
     "cdk-nag": "2.37.55",
     "constructs": "10.6.0",
     "source-map-support": "0.5.21",
-    "yaml": "1.10.3"
+    "yaml": "1.10.3",
+    "@aws-mdaa/s3-helpers": "1.7.0"
   },
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
   "repository": {
