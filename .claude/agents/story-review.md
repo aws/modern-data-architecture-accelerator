@@ -36,15 +36,15 @@ Spawn these in parallel using the Agent tool:
 
 | Sub-agent | Steering file(s) | Gets these changed files |
 |-----------|-----------------|------------------------|
-| Compliance | `.kiro/steering/compliance-review.md` | L2/L3 construct `lib/` files |
-| Architecture | `.kiro/steering/architecture-review.md` | All `lib/` files, `package.json`, `tsconfig.json` |
-| Testing | `.kiro/steering/testing-standards.md` | Test files, their corresponding source files, AND new L3 construct `lib/` files (to verify required test files exist) |
-| Module Quality | `.kiro/steering/module-quality.md` | App module files (config, README, sample configs, schema) |
-| Documentation | `.kiro/steering/documentation-review.md` | CHANGELOG.md, SCHEMA.md, mkdocs.yml, markdown files + summary of user-impacting code changes (even when no docs files are in the diff) |
-| Diff Risk | `.kiro/steering/diff-risk-assessment.md` | Baseline `.json` files |
-| Coding Standards | `.kiro/steering/coding-standards.md` | All changed `.ts`, `.py`, `requirements.txt`, `package.json` files |
-| Code Review | `.kiro/steering/code-review.md` + language-specific file (see below) | All changed `.ts`, `.py` files |
-| Starter Kit Quality | `.kiro/steering/starter-kit-standards.md` | Changed files under `starter_kits/<kit>/` (README, mdaa.yaml, roles config, all kit YAML) |
+| Compliance | `agent_rules/review-compliance.md` | L2/L3 construct `lib/` files |
+| Architecture | `agent_rules/review-architecture.md` | All `lib/` files, `package.json`, `tsconfig.json` |
+| Testing | `agent_rules/review-testing-standards.md` | Test files, their corresponding source files, AND new L3 construct `lib/` files (to verify required test files exist) |
+| Module Quality | `agent_rules/review-module-quality.md` | App module files (config, README, sample configs, schema) |
+| Documentation | `agent_rules/review-documentation.md` | CHANGELOG.md, SCHEMA.md, mkdocs.yml, markdown files + summary of user-impacting code changes (even when no docs files are in the diff) |
+| Diff Risk | `agent_rules/review-diff-risk.md` | Baseline `.json` files |
+| Coding Standards | `agent_rules/developer-coding-standards.md` | All changed `.ts`, `.py`, `requirements.txt`, `package.json` files |
+| Code Review | `agent_rules/developer-code-review.md` + language-specific file (see below) | All changed `.ts`, `.py` files |
+| Starter Kit Quality | `agent_rules/review-starter-kit-standards.md` | Changed files under `starter_kits/<kit>/` (README, mdaa.yaml, roles config, all kit YAML) |
 
 **Sub-agent prompt template:**
 
@@ -58,7 +58,7 @@ Spawn these in parallel using the Agent tool:
 
 **Module Quality sub-agent:** When any app-module-related file is changed (sample configs, config interfaces, L3 construct source), the sub-agent must also read the module's README.md and list all sample configs — even if those files are not in the diff. This catches staleness (e.g., new sample config not referenced in README, new resources not listed in Deployed Resources). Its prompt should be:
 
-> You are reviewing module quality. Read the steering file at `.kiro/steering/module-quality.md` completely. The following files were changed on this branch: {file_list}. Read the git diff with `git diff origin/main -- {files}`.
+> You are reviewing module quality. Read the steering file at `agent_rules/review-module-quality.md` completely. The following files were changed on this branch: {file_list}. Read the git diff with `git diff origin/main -- {files}`.
 >
 > Additionally, for each affected app module, ALWAYS read these files regardless of whether they changed:
 > - The module's `README.md`
@@ -73,15 +73,15 @@ Spawn these in parallel using the Agent tool:
 
 **Documentation sub-agent:** When no documentation files appear in the diff, this agent still receives the list of user-impacting code changes (new/changed config properties, new modules, bug fixes) and checks whether CHANGELOG.md, SCHEMA.md, README, or mkdocs.yml *should* have been updated. Its prompt should be:
 
-> You are reviewing documentation completeness. Read the steering file at `.kiro/steering/documentation-review.md` completely. The following user-impacting code changes were made on this branch: {summary of new config properties, modules, or bug fixes}. The following documentation files were changed (if any): {doc_file_list}. Run `git diff origin/main -- CHANGELOG.md SCHEMA.md mkdocs.yml` to see what documentation was updated. Also check whether CHANGELOG.md, SCHEMA.md, and mkdocs.yml *exist* and whether they *should* have been updated given the code changes.
+> You are reviewing documentation completeness. Read the steering file at `agent_rules/review-documentation.md` completely. The following user-impacting code changes were made on this branch: {summary of new config properties, modules, or bug fixes}. The following documentation files were changed (if any): {doc_file_list}. Run `git diff origin/main -- CHANGELOG.md SCHEMA.md mkdocs.yml` to see what documentation was updated. Also check whether CHANGELOG.md, SCHEMA.md, and mkdocs.yml *exist* and whether they *should* have been updated given the code changes.
 >
 > Apply ONLY the rules from the steering file. Report findings as a list with: risk level (HIGH/MEDIUM/LOW), file path, and one-sentence detail. Flag both issues in changed documentation AND missing documentation updates. If no issues found, say "No findings."
 
-**Code Review sub-agent:** This agent reads multiple steering files. Always include `.kiro/steering/code-review.md` (generic rules), then add the language-specific file based on changed file types:
-- If `.py` files changed: also read `.kiro/steering/code-review-python.md`
-- If `.ts`/`.tsx` files changed: also read `.kiro/steering/code-review-typescript.md`
+**Code Review sub-agent:** This agent reads multiple steering files. Always include `agent_rules/developer-code-review.md` (generic rules), then add the language-specific file based on changed file types:
+- If `.py` files changed: also read `agent_rules/developer-code-review-python.md`
+- If `.ts`/`.tsx` files changed: also read `agent_rules/developer-code-review-typescript.md`
 
-MDAA-specific construct rules (MDAA wrapper usage, layer/dependency direction, naming) are owned by the Architecture sub-agent (`architecture-review.md`); config-interface conventions (JSDoc, sample-config coverage, safe boolean defaults) are owned by the Coding Standards and Module Quality sub-agents. The Code Review sub-agent does not duplicate them.
+MDAA-specific construct rules (MDAA wrapper usage, layer/dependency direction, naming) are owned by the Architecture sub-agent (`review-architecture.md`); config-interface conventions (JSDoc, sample-config coverage, safe boolean defaults) are owned by the Coding Standards and Module Quality sub-agents. The Code Review sub-agent does not duplicate them.
 
 The Code Review sub-agent prompt should be:
 
@@ -91,7 +91,7 @@ The Code Review sub-agent prompt should be:
 
 **Starter Kit Quality sub-agent:** Spawn one per changed starter kit (a subdirectory of `starter_kits/` with an `mdaa.yaml` that has changed files). This mirrors the CI `feature_merge_starter_kit_quality_review` job, which reviews kit standards compliance against the same steering file. Its prompt should be:
 
-> You are reviewing starter kit quality for the kit `starter_kits/{kit_name}/`. Read the steering file at `.kiro/steering/starter-kit-standards.md` completely. Then read the kit's `README.md`, `USAGE.md` (check the kit root and `docs/`), `mdaa.yaml`, roles config, and every YAML file in the kit directory. Also read the git diff with `git diff origin/main -- starter_kits/{kit_name}/`.
+> You are reviewing starter kit quality for the kit `starter_kits/{kit_name}/`. Read the steering file at `agent_rules/review-starter-kit-standards.md` completely. Then read the kit's `README.md`, `USAGE.md` (check the kit root and `docs/`), `mdaa.yaml`, roles config, and every YAML file in the kit directory. Also read the git diff with `git diff origin/main -- starter_kits/{kit_name}/`.
 >
 > Review with a customer-first mindset and apply ONLY the rules from the steering file. In particular: (1) README sections match the required order; (2) every config file path referenced in `mdaa.yaml` exists in the kit; (3) every `# yaml-language-server: $schema=` directive is on line 1 of each YAML file and points to a schema file that exists under `schemas/`; (4) environment-specific values (account/VPC/subnet IDs) are centralized in `mdaa.yaml` context, not scattered across module configs; (5) every customer-decision config property has a preceding explanatory comment; (6) TODOs and `<YOUR_...>` placeholders clearly state what the customer must provide; (7) SSM cross-module references (`ssm-org:`, `ssm-domain:`, `domainConfigSSMParam`, `{{resolve:ssm:...}}`, `generated-role-id:`) have a producing module deployed in this kit's `mdaa.yaml` — flag dangling references, but when the producer mapping is ambiguous from the YAML alone, do not flag (the synth-time baseline tests are the authoritative gate).
 >

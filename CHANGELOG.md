@@ -1,5 +1,13 @@
 # Change Log
 
+## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
+
+### New Features
+
+#### Naming
+
+- Added the `@mdaaIncludeEnvInSsmPath` opt-in flag, which enables deploying multiple MDAA environments to the same AWS account by including `env` in SSM parameter paths and CloudFormation export names. Defaults to `false`; enabling it on an existing deployment is **not backwards compatible** — see [packages/utilities/mdaa-naming/README.md](packages/utilities/mdaa-naming/README.md) for migration steps.
+
 ## [1.7.0] - 2026-07-16
 
 ### New Starter Kits

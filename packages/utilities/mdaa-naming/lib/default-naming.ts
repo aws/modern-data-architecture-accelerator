@@ -11,6 +11,14 @@ import { validateResourceName } from './utils';
  * A default MDAA Naming implementation
  */
 export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
+  /**
+   * When set to `true` (or the string `"true"`), `env` is included in SSM parameter paths and
+   * CloudFormation export names. This prevents collisions when the same module is deployed to
+   * multiple environments within a single AWS account. Defaults to false when absent; any value
+   * other than `true`/`false` is rejected as an error.
+   */
+  public static readonly INCLUDE_ENV_IN_SSM_PATH_CONTEXT_KEY = '@mdaaIncludeEnvInSsmPath';
+
   public readonly props: MdaaResourceNamingConfig;
 
   constructor(props: MdaaResourceNamingConfig) {
@@ -114,10 +122,16 @@ export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
   }
 
   /**
-   * Generates a ssm param name in the format of /<org>/<env>/<domain>/<module_name>
+   * Generates a ssm param name in the format of /<org>/<domain>/<module_name>.
+   * When the `@mdaaIncludeEnvInSsmPath` context flag is enabled, `env` is inserted after
+   * `domain`, producing /<org>/<domain>/<env>/<module_name> to avoid cross-environment
+   * collisions when the same module is deployed to multiple environments in one account.
    */
   public ssmPath(path: string, includeModuleName = true, lowerCase = true): string {
     let name = `/${this.props.org}/${this.props.domain}`;
+    if (this.includeEnvInSsmPath()) {
+      name = `${name}/${this.props.env}`;
+    }
     if (includeModuleName) {
       name = `${name}/${this.props.moduleName}`;
     }
@@ -125,11 +139,43 @@ export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
   }
 
   /**
-   * Generates a export name in the format of <org>:<env>:<domain>:<module_name>
+   * Generates a export name in the format of <org>:<domain>:<module_name>.
+   * When the `@mdaaIncludeEnvInSsmPath` context flag is enabled, `env` is inserted after
+   * `domain`, producing <org>:<domain>:<env>:<module_name> to keep export names parallel
+   * with `ssmPath()` and avoid cross-environment collisions within one account.
    */
   public exportName(path: string): string {
-    const name = `${this.props.org}:${this.props.domain}:${this.props.moduleName}`;
+    let name = `${this.props.org}:${this.props.domain}`;
+    if (this.includeEnvInSsmPath()) {
+      name = `${name}:${this.props.env}`;
+    }
+    name = `${name}:${this.props.moduleName}`;
     return this.lowerCase(`${name}:${path}`);
+  }
+
+  /**
+   * Reads the `@mdaaIncludeEnvInSsmPath` CDK context flag. The value must be exactly the
+   * boolean `true`/`false` or the string `"true"`/`"false"`. When the flag is absent, it
+   * defaults to false. Any other value is an error, to avoid silently misinterpreting a
+   * typo (e.g. `"yes"`, `"1"`) as enabled or disabled.
+   */
+  private includeEnvInSsmPath(): boolean {
+    const contextValue = this.props.cdkNode.tryGetContext(
+      MdaaDefaultResourceNaming.INCLUDE_ENV_IN_SSM_PATH_CONTEXT_KEY,
+    );
+    if (contextValue === undefined) {
+      return false;
+    }
+    if (contextValue === true || contextValue === 'true') {
+      return true;
+    }
+    if (contextValue === false || contextValue === 'false') {
+      return false;
+    }
+    throw new Error(
+      `Invalid value for context flag ${MdaaDefaultResourceNaming.INCLUDE_ENV_IN_SSM_PATH_CONTEXT_KEY}: ` +
+        `'${String(contextValue)}'. Expected 'true' or 'false'.`,
+    );
   }
 
   /**

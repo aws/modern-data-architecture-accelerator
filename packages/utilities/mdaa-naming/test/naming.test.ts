@@ -110,4 +110,62 @@ describe('MdaaDefaultResourceNaming', () => {
     });
     expect(specialNaming.stackName()).toBe('test-org-test-env-test-domain-test-module');
   });
+
+  describe('@mdaaIncludeEnvInSsmPath flag', () => {
+    const namingWithEnvFlag = (env: string, flagValue: unknown = true) =>
+      new MdaaDefaultResourceNaming({
+        cdkNode: new App({ context: { '@mdaaIncludeEnvInSsmPath': flagValue } }).node,
+        org: 'test-org',
+        env,
+        domain: 'test-domain',
+        moduleName: 'test-module',
+      });
+
+    test('ssmPath includes env after domain when flag is true', () => {
+      const envNaming = namingWithEnvFlag('dev');
+      expect(envNaming.ssmPath('test-path')).toBe('/test-org/test-domain/dev/test-module/test-path');
+      expect(envNaming.ssmPath('test-path', false)).toBe('/test-org/test-domain/dev/test-path');
+      expect(envNaming.ssmPath('TEST-PATH', true, false)).toBe('/test-org/test-domain/dev/test-module/TEST-PATH');
+    });
+
+    test('exportName includes env after domain when flag is true', () => {
+      const envNaming = namingWithEnvFlag('dev');
+      expect(envNaming.exportName('test-path')).toBe('test-org:test-domain:dev:test-module:test-path');
+    });
+
+    test('flag accepts the string "true" as well as boolean true', () => {
+      const stringNaming = namingWithEnvFlag('dev', 'true');
+      expect(stringNaming.ssmPath('test-path')).toBe('/test-org/test-domain/dev/test-module/test-path');
+      expect(stringNaming.exportName('test-path')).toBe('test-org:test-domain:dev:test-module:test-path');
+    });
+
+    test('flag is off for boolean false, string "false", and absent', () => {
+      // Boolean false
+      const falseNaming = namingWithEnvFlag('dev', false);
+      expect(falseNaming.ssmPath('test-path')).toBe('/test-org/test-domain/test-module/test-path');
+      expect(falseNaming.exportName('test-path')).toBe('test-org:test-domain:test-module:test-path');
+      // String "false"
+      const falseStringNaming = namingWithEnvFlag('dev', 'false');
+      expect(falseStringNaming.ssmPath('test-path')).toBe('/test-org/test-domain/test-module/test-path');
+      // Absent (no context key at all)
+      expect(naming.ssmPath('test-path')).toBe('/test-org/test-domain/test-module/test-path');
+      expect(naming.exportName('test-path')).toBe('test-org:test-domain:test-module:test-path');
+    });
+
+    test('flag throws on any value other than true/false', () => {
+      for (const bad of ['yes', '1', 'True', 'TRUE', ' true ', 'enabled']) {
+        const badNaming = namingWithEnvFlag('dev', bad);
+        expect(() => badNaming.ssmPath('test-path')).toThrow(/Expected 'true' or 'false'/);
+      }
+    });
+
+    test('two environments of the same module do not collide when flag is true', () => {
+      const devNaming = namingWithEnvFlag('dev');
+      const prodNaming = namingWithEnvFlag('prod');
+      expect(devNaming.ssmPath('kms/cmk/arn')).toBe('/test-org/test-domain/dev/test-module/kms/cmk/arn');
+      expect(prodNaming.ssmPath('kms/cmk/arn')).toBe('/test-org/test-domain/prod/test-module/kms/cmk/arn');
+      expect(devNaming.ssmPath('kms/cmk/arn')).not.toBe(prodNaming.ssmPath('kms/cmk/arn'));
+      expect(devNaming.exportName('kms:cmk:arn')).not.toBe(prodNaming.exportName('kms:cmk:arn'));
+    });
+  });
 });
