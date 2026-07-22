@@ -263,8 +263,10 @@ databases:
       createSuperGrantsForDataAdminRoles: true
       # Auto-create read grants for data engineer roles
       createReadGrantsForDataEngineerRoles: true
-      # Auto-create read/write grants for project execution roles
-      createReadWriteGrantsForProjectExecutionRoles: true
+      # Auto-create grants for project execution roles. Accepts a boolean or a
+      # permission level (read | write | super). The 'super' level grants
+      # ALTER/DROP for ETL jobs that replace or recreate tables.
+      createReadWriteGrantsForProjectExecutionRoles: super
       # Target account numbers for cross-account resource link creation
       createCrossAccountResourceLinkAccounts:
         - '{{context:account-2}}'

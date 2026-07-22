@@ -855,3 +855,242 @@ describe('Multiple Security Groups Tests', () => {
     template.resourceCountIs('AWS::EC2::SecurityGroup', 2);
   });
 });
+
+describe('ExecutionRole Grant Permission Levels', () => {
+  // Reference id of the (single) project execution role principal in the synthesized template.
+  const EX_ROLE_PRINCIPAL = { 'Fn::GetAtt': ['RoleResProjectExRoles0', 'arn'] };
+  // Fully-qualified database name produced by the test naming implementation for `test_db`.
+  const DB_NAME = 'test-org-test-env-test-domain-test-module-test_db';
+
+  // Synthesizes a fresh stack with a single located database whose execution-role grant flag
+  // is set to `flagValue`. Passing `undefined` omits the flag entirely (empty lakeFormation config).
+  const buildTemplate = (flagValue?: boolean | 'read' | 'write' | 'super'): Template => {
+    const app = new MdaaTestApp();
+    const props: DataOpsProjectL3ConstructProps = {
+      naming: app.naming,
+      roleHelper: new MdaaRoleHelper(
+        app.testStack,
+        app.naming,
+        path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
+      ),
+      projectExecutionRoleRefs: [{ id: 'test-glue-role-id' }],
+      dataEngineerRoleRefs: [{ id: 'test-eng-super-role-id' }],
+      dataAdminRoleRefs: [{ id: 'test-admin-role-id' }],
+      databases: {
+        test_db: {
+          description: 'test_db',
+          locationBucketName: 'test-bucket-name',
+          locationPrefix: 'test-prefix',
+          lakeFormation: flagValue === undefined ? {} : { createReadWriteGrantsForProjectExecutionRoles: flagValue },
+        },
+      },
+    };
+    new DataOpsProjectL3Construct(app.testStack, 'test-stack', props);
+    return Template.fromStack(app.testStack);
+  };
+
+  // Property 2: Permission sets are exactly the mapped level (Requirement 8.1).
+  const grantCases: {
+    label: string;
+    flag: boolean | 'read' | 'write' | 'super';
+    dbPermissions: string[];
+    tablePermissions: string[];
+  }[] = [
+    {
+      label: 'true',
+      flag: true,
+      dbPermissions: ['DESCRIBE', 'CREATE_TABLE', 'ALTER'],
+      tablePermissions: ['SELECT', 'DESCRIBE', 'INSERT', 'DELETE'],
+    },
+    {
+      label: 'write',
+      flag: 'write',
+      dbPermissions: ['DESCRIBE', 'CREATE_TABLE', 'ALTER'],
+      tablePermissions: ['SELECT', 'DESCRIBE', 'INSERT', 'DELETE'],
+    },
+    {
+      label: 'read',
+      flag: 'read',
+      dbPermissions: ['DESCRIBE'],
+      tablePermissions: ['SELECT', 'DESCRIBE'],
+    },
+    {
+      label: 'super',
+      flag: 'super',
+      dbPermissions: ['DESCRIBE', 'CREATE_TABLE', 'ALTER', 'DROP'],
+      tablePermissions: ['SELECT', 'DESCRIBE', 'INSERT', 'DELETE', 'ALTER', 'DROP'],
+    },
+  ];
+
+  describe.each(grantCases)(
+    'flag=$label grants exactly the mapped permission sets',
+    ({ flag, dbPermissions, tablePermissions }) => {
+      const template = buildTemplate(flag);
+
+      test('grants exactly the mapped database permissions to the execution role', () => {
+        template.hasResourceProperties('AWS::LakeFormation::PrincipalPermissions', {
+          Permissions: dbPermissions,
+          PermissionsWithGrantOption: [],
+          Principal: {
+            DataLakePrincipalIdentifier: EX_ROLE_PRINCIPAL,
+          },
+          Resource: {
+            Database: {
+              CatalogId: 'test-account',
+              Name: DB_NAME,
+            },
+          },
+        });
+      });
+
+      test('grants exactly the mapped table permissions to the execution role', () => {
+        template.hasResourceProperties('AWS::LakeFormation::PrincipalPermissions', {
+          Permissions: tablePermissions,
+          PermissionsWithGrantOption: [],
+          Principal: {
+            DataLakePrincipalIdentifier: EX_ROLE_PRINCIPAL,
+          },
+          Resource: {
+            Table: {
+              CatalogId: 'test-account',
+              DatabaseName: DB_NAME,
+              TableWildcard: {},
+            },
+          },
+        });
+      });
+    },
+  );
+
+  // Property 3: Disabled flag produces no grants (Requirement 8.2).
+  const noGrantCases: { label: string; flag: boolean | undefined }[] = [
+    { label: 'false', flag: false },
+    { label: 'omitted', flag: undefined },
+  ];
+
+  describe.each(noGrantCases)('flag=$label produces no execution-role grants', ({ flag }) => {
+    const template = buildTemplate(flag);
+
+    test('creates no PrincipalPermissions grant (database, table, or data-location) for the execution role', () => {
+      template.resourcePropertiesCountIs(
+        'AWS::LakeFormation::PrincipalPermissions',
+        {
+          Principal: {
+            DataLakePrincipalIdentifier: EX_ROLE_PRINCIPAL,
+          },
+        },
+        0,
+      );
+    });
+  });
+
+  // Property 5: Data-location access only for write and super (Requirement 8.3).
+  // The test database has a registered S3 location (locationBucketName/locationPrefix),
+  // so a DATA_LOCATION_ACCESS grant is expected for write/super and never for read.
+  const dataLocationPresentCases: { label: string; flag: boolean | 'write' | 'super' }[] = [
+    { label: 'true', flag: true },
+    { label: 'write', flag: 'write' },
+    { label: 'super', flag: 'super' },
+  ];
+
+  describe.each(dataLocationPresentCases)(
+    'flag=$label grants data-location access to the execution role',
+    ({ flag }) => {
+      const template = buildTemplate(flag);
+
+      test('creates exactly one DATA_LOCATION_ACCESS grant for the execution role', () => {
+        template.resourcePropertiesCountIs(
+          'AWS::LakeFormation::PrincipalPermissions',
+          {
+            Permissions: ['DATA_LOCATION_ACCESS'],
+            Principal: {
+              DataLakePrincipalIdentifier: EX_ROLE_PRINCIPAL,
+            },
+          },
+          1,
+        );
+      });
+    },
+  );
+
+  describe('flag=read grants no data-location access to the execution role', () => {
+    const template = buildTemplate('read');
+
+    test('creates no DATA_LOCATION_ACCESS grant for the execution role', () => {
+      template.resourcePropertiesCountIs(
+        'AWS::LakeFormation::PrincipalPermissions',
+        {
+          Permissions: ['DATA_LOCATION_ACCESS'],
+          Principal: {
+            DataLakePrincipalIdentifier: EX_ROLE_PRINCIPAL,
+          },
+        },
+        0,
+      );
+    });
+  });
+
+  // Property 4: Single principal-permission resource per role (Requirement 8.5).
+  // For every level-granting flag value there must be exactly one database-level
+  // PrincipalPermissions targeting the execution-role principal (the
+  // `execution-roles-${databaseName}` grant), so combining custom + auto grants
+  // can never produce a duplicate CloudFormation resource for the same principal.
+  const singleDatabaseGrantCases: { label: string; flag: boolean | 'write' | 'super' }[] = [
+    { label: 'true', flag: true },
+    { label: 'write', flag: 'write' },
+    { label: 'super', flag: 'super' },
+  ];
+
+  describe.each(singleDatabaseGrantCases)(
+    'flag=$label creates exactly one database-level execution-role grant',
+    ({ flag }) => {
+      const template = buildTemplate(flag);
+
+      test('creates exactly one database-level PrincipalPermissions for the execution-role principal', () => {
+        template.resourcePropertiesCountIs(
+          'AWS::LakeFormation::PrincipalPermissions',
+          {
+            Resource: {
+              Database: {
+                CatalogId: 'test-account',
+                Name: DB_NAME,
+              },
+            },
+            Principal: {
+              DataLakePrincipalIdentifier: EX_ROLE_PRINCIPAL,
+            },
+          },
+          1,
+        );
+      });
+    },
+  );
+
+  // Property 1: Boolean-true and write equivalence (Requirement 8.4).
+  // Because `true` normalizes to `write`, the execution-role grants (database, table,
+  // and data-location) synthesized under both flag values must be identical. Identical
+  // config yields identical logical ids, so the filtered findResources maps compare equal.
+  describe('flag=true grants equal flag=write grants for the execution role', () => {
+    const exRolePrincipalFilter = {
+      Properties: {
+        Principal: {
+          DataLakePrincipalIdentifier: EX_ROLE_PRINCIPAL,
+        },
+      },
+    };
+
+    test('produces identical execution-role PrincipalPermissions resources under true and write', () => {
+      const trueGrants = buildTemplate(true).findResources(
+        'AWS::LakeFormation::PrincipalPermissions',
+        exRolePrincipalFilter,
+      );
+      const writeGrants = buildTemplate('write').findResources(
+        'AWS::LakeFormation::PrincipalPermissions',
+        exRolePrincipalFilter,
+      );
+
+      expect(Object.keys(trueGrants).length).toBeGreaterThan(0);
+      expect(trueGrants).toEqual(writeGrants);
+    });
+  });
+});

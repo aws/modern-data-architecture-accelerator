@@ -1168,7 +1168,8 @@
         "Permissions": [
           "DESCRIBE",
           "CREATE_TABLE",
-          "ALTER"
+          "ALTER",
+          "DROP"
         ],
         "PermissionsWithGrantOption": [],
         "Principal": {
@@ -1198,7 +1199,9 @@
           "SELECT",
           "DESCRIBE",
           "INSERT",
-          "DELETE"
+          "DELETE",
+          "ALTER",
+          "DROP"
         ],
         "PermissionsWithGrantOption": [],
         "Principal": {
@@ -1228,7 +1231,8 @@
         "Permissions": [
           "DESCRIBE",
           "CREATE_TABLE",
-          "ALTER"
+          "ALTER",
+          "DROP"
         ],
         "PermissionsWithGrantOption": [],
         "Principal": {
@@ -1261,7 +1265,9 @@
           "SELECT",
           "DESCRIBE",
           "INSERT",
-          "DELETE"
+          "DELETE",
+          "ALTER",
+          "DROP"
         ],
         "PermissionsWithGrantOption": [],
         "Principal": {

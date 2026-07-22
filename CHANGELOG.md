@@ -8,6 +8,10 @@
 
 - Added the `@mdaaIncludeEnvInSsmPath` opt-in flag, which enables deploying multiple MDAA environments to the same AWS account by including `env` in SSM parameter paths and CloudFormation export names. Defaults to `false`; enabling it on an existing deployment is **not backwards compatible** — see [packages/utilities/mdaa-naming/README.md](packages/utilities/mdaa-naming/README.md) for migration steps.
 
+#### DataOps Project Module
+
+- **DataOps Project — Execution Role Permission Levels** (`@aws-mdaa/dataops-project`): `createReadWriteGrantsForProjectExecutionRoles` now accepts the case-sensitive permission-level strings `read`, `write`, and `super` in addition to boolean values. Boolean `true` remains equivalent to `write` and is fully backward compatible. The new `super` level grants ALTER and DROP on tables and DROP on the database, enabling ETL jobs that replace or recreate tables to run within infrastructure-as-code.
+
 ## [1.7.0] - 2026-07-16
 
 ### New Starter Kits

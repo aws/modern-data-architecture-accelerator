@@ -16,7 +16,7 @@ This module deploys and integrates the following resources:
 
 **Glue Databases** - Catalog databases for crawled/generated tables.
 
-**LakeFormation Grants** - Data lake location and read/write permission grants for project roles, with optional cross-account resource links and tag-based access control.
+**LakeFormation Grants** - Data lake location and read/write permission grants for project roles, with optional cross-account resource links and tag-based access control. The `createReadWriteGrantsForProjectExecutionRoles` flag accepts the case-sensitive permission levels `read`, `write`, and `super` in addition to boolean values, where `true` is equivalent to `write` and `super` additionally grants table `ALTER`/`DROP` and database `DROP`. Select `super` only for execution roles whose ETL jobs must replace or recreate catalog objects; because `ALTER`/`DROP` are destructive privileges that expand the role's blast radius, prefer `read` or `write` (the least-privilege levels) by default and reserve `super` for roles that genuinely require it.
 
 **Project Glue Security Config** - Encrypts all job output, logging, and bookmark data with the project KMS key.
 

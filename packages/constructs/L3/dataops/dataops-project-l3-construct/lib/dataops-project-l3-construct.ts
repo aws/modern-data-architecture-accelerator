@@ -115,6 +115,9 @@ export interface DatabaseGrantProps {
   readonly principalArns?: NamedPrincipalArnProps;
 }
 
+/** Canonical Lake Formation permission level selectable for project execution role grants. */
+export type ExecutionRoleGrantLevel = 'read' | 'write' | 'super';
+
 /**
  * Lake Formation database permissions configuration for automatic grant management on project databases.
  *
@@ -131,8 +134,24 @@ export interface DatabaseLakeFormationProps {
   /** Auto-create read grants for data engineer roles on this database. */
   readonly createReadGrantsForDataEngineerRoles?: boolean;
 
-  /** Auto-create read/write grants for project execution roles on this database and S3 locations. */
-  readonly createReadWriteGrantsForProjectExecutionRoles?: boolean;
+  /**
+   * Auto-create Lake Formation grants for project execution roles on this database and its S3 locations.
+   *
+   * Accepts a boolean or a permission level. `true` is equivalent to `'write'` (backward compatible).
+   * `false` or omitted creates no grants. `'read'` grants read-only access and no data-location access.
+   * `'write'` grants read/write. `'super'` additionally grants table ALTER/DROP and database DROP for
+   * ETL jobs that replace or recreate tables; because these are destructive privileges that expand the
+   * role's blast radius, prefer `'read'`/`'write'` by default and select `'super'` only for roles that
+   * genuinely require it.
+   *
+   * Use cases: Read-only ETL roles; standard read/write ETL; table-replacing/recreating ETL (super); disabling grants
+   *
+   * AWS: AWS Lake Formation database and table permissions, plus DATA_LOCATION_ACCESS, for project execution roles
+   *
+   * Validation: Optional; boolean OR one of the case-sensitive strings 'read' | 'write' | 'super'
+   * @default undefined (no grants created)
+   */
+  readonly createReadWriteGrantsForProjectExecutionRoles?: boolean | 'read' | 'write' | 'super';
 
   /** Target account numbers for cross-account resource link creation. */
   readonly createCrossAccountResourceLinkAccounts?: string[];
@@ -1123,6 +1142,23 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     datasource.addDependency(database);
   }
 
+  /**
+   * Normalizes the createReadWriteGrantsForProjectExecutionRoles flag to a permission level.
+   * `true` maps to 'write' (backward compatible); `false`/undefined map to undefined (no grant);
+   * the string levels pass through unchanged.
+   */
+  private normalizeExecutionRoleGrantLevel(
+    flag: boolean | 'read' | 'write' | 'super' | undefined,
+  ): ExecutionRoleGrantLevel | undefined {
+    if (flag === true) {
+      return 'write';
+    }
+    if (flag === false || flag === undefined) {
+      return undefined;
+    }
+    return flag;
+  }
+
   private createDatabaseLakeFormationConstruct(
     databaseName: string,
     dbResourceName: string,
@@ -1132,9 +1168,15 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     datazoneResources?: DatazoneResources,
     locationArn?: string,
   ) {
+    const grantLevel = this.normalizeExecutionRoleGrantLevel(
+      databaseLakeFormationProps.createReadWriteGrantsForProjectExecutionRoles,
+    );
+
     // Provide Project Execution Roles (principal) data location permissions to create data catalog
-    // tables that point to specified data-locations
-    if (databaseLakeFormationProps.createReadWriteGrantsForProjectExecutionRoles && locationArn) {
+    // tables that point to specified data-locations. Data-location access lets execution roles create
+    // Data Catalog tables that point at the registered S3 location. Read-only roles do not create table
+    // pointers, so 'read' is excluded.
+    if (grantLevel && grantLevel !== 'read' && locationArn) {
       this.projectExecutionRoles.forEach(role => {
         const grantId = LakeFormationAccessControlL3Construct.generateIdentifier(databaseName, role.refId());
         const grant = new CfnPrincipalPermissions(this, `lf-data-location-grant-${grantId}`, {
@@ -1198,10 +1240,10 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       };
     }
 
-    if (databaseLakeFormationProps.createReadWriteGrantsForProjectExecutionRoles) {
+    if (grantLevel) {
       projectRoleGrantProps[`execution-roles-${databaseName}`] = {
         database: dbResourceName,
-        databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_WRITE_PERMISSIONS,
+        databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_PERMISSIONS_MAP[grantLevel],
         principals: Object.fromEntries(
           this.projectExecutionRoles.map(x => {
             return [
@@ -1216,7 +1258,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
             ];
           }),
         ),
-        tablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_WRITE_PERMISSIONS,
+        tablePermissions: LakeFormationAccessControlL3Construct.TABLE_PERMISSIONS_MAP[grantLevel],
       };
     }
 

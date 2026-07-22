@@ -957,8 +957,15 @@
                     "type": "boolean"
                 },
                 "createReadWriteGrantsForProjectExecutionRoles": {
-                    "description": "Auto-create read/write grants for project execution roles on this database and S3 locations.",
-                    "type": "boolean"
+                    "default": "undefined (no grants created)",
+                    "description": "Auto-create Lake Formation grants for project execution roles on this database and its S3 locations.\n\nAccepts a boolean or a permission level. `true` is equivalent to `'write'` (backward compatible).\n`false` or omitted creates no grants. `'read'` grants read-only access and no data-location access.\n`'write'` grants read/write. `'super'` additionally grants table ALTER/DROP and database DROP for\nETL jobs that replace or recreate tables; because these are destructive privileges that expand the\nrole's blast radius, prefer `'read'`/`'write'` by default and select `'super'` only for roles that\ngenuinely require it.\n\nUse cases: Read-only ETL roles; standard read/write ETL; table-replacing/recreating ETL (super); disabling grants\n\nAWS: AWS Lake Formation database and table permissions, plus DATA_LOCATION_ACCESS, for project execution roles\n\nValidation: Optional; boolean OR one of the case-sensitive strings 'read' | 'write' | 'super'",
+                    "enum": [
+                        false,
+                        "read",
+                        "super",
+                        true,
+                        "write"
+                    ]
                 },
                 "createSuperGrantsForDataAdminRoles": {
                     "description": "Auto-create super grants for data admin roles on this database.",
