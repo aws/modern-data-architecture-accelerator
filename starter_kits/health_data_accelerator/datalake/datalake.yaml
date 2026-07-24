@@ -11,6 +11,8 @@ roles:
     - id: generated-role-id:dms
   FileProcessorRole:
     - id: generated-role-id:file-processor-glue-job-role
+  TransformationRole:
+    - id: generated-role-id:transformation-glue-job-role
 
 # Definitions of access policies which grant access to S3 paths for specified Logical Config Roles.
 # These Access Policies can then be applied to Data Lake buckets (they will be injected into the corresponding bucket policies.)
@@ -59,6 +61,16 @@ accessPolicies:
       ReadRoles:
         - GlueETLRole
         - DataUserRole
+        - TransformationRole
+
+  # Grants the transformation Glue jobs (vitals, surveys) write access to the
+  # curated bucket. Iceberg data files are written to the bucket root
+  # (write.data.path), so this policy is applied at prefix '/'.
+  TransformationWritePolicy:
+    rule:
+      prefix: /
+      ReadWriteSuperRoles:
+        - TransformationRole
 
 # The set of S3 buckets which will be created, and the access policies which will be applied.
 buckets:
@@ -86,3 +98,4 @@ buckets:
     accessPolicies:
       - RootPolicy
       - DataReadPolicy
+      - TransformationWritePolicy

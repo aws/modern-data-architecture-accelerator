@@ -25,6 +25,10 @@
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/test-org/shared/generated-role/file-processor-glue-job-role/id"
     },
+    "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/shared/generated-role/transformation-glue-job-role/id"
+    },
     "BootstrapVersion": {
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -376,6 +380,17 @@
                         [
                           {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedroledataadminidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
                         ]
@@ -1204,6 +1219,51 @@
               "Sid": "/_ReadWriteSuper"
             },
             {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject",
+                "s3:DeleteObjectVersion"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketcurated81D6F3A3",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "/_ReadWriteSuper"
+            },
+            {
               "Action": "s3:GetObject*",
               "Condition": {
                 "StringLike": {
@@ -1225,6 +1285,17 @@
                         [
                           {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedroledatauseridC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
                         ]
@@ -1317,6 +1388,17 @@
                         "",
                         [
                           {
+                            "Ref": "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedroleglueetlidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
@@ -1394,6 +1476,17 @@
                         [
                           {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedroledataadminidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
                         ]
@@ -1884,6 +1977,17 @@
                           ":*"
                         ]
                       ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
                     }
                   ]
                 }
@@ -1999,6 +2103,17 @@
                           ":*"
                         ]
                       ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
                     }
                   ]
                 }
@@ -2093,6 +2208,17 @@
                         [
                           {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedroledatauseridC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
                         ]
@@ -2600,6 +2726,17 @@
                           ":*"
                         ]
                       ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
                     }
                   ]
                 }
@@ -2742,6 +2879,17 @@
                           ":*"
                         ]
                       ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
                     }
                   ]
                 }
@@ -2847,6 +2995,17 @@
                         [
                           {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedroledatauseridC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgsharedgeneratedroletransformationgluejobroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
                         ]

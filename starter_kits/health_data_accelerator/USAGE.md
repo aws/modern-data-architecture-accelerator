@@ -29,17 +29,17 @@ Once deployed, you should see the following in your AWS account:
 ### 1. Verify DynamoDB Configuration Tables
 
 The deployment hooks automatically populate DynamoDB configuration tables:
-- `load_table_info.sh table_config.json` runs as a **predeploy** hook on the `dms-shared` module
-- `load_batch_config.sh` runs as a **postdeploy** hook on the `file-workflow` module
+- `load_table_info.sh table_config.json <org>` runs as a **predeploy** hook on the `dms-shared` module
+- `load_batch_config.sh <org>` runs as a **postdeploy** hook on the `file-workflow` module
 
 These scripts are idempotent. You only need to re-run them manually if you update configuration after the initial deploy:
 
 ```bash
 # Re-load table configuration after editing table_config.json
-./dataops/scripts/load_table_info.sh table_config.json
+./dataops/scripts/load_table_info.sh table_config.json <org>
 
 # Re-load batch processing configuration after editing batch config
-./dataops/scripts/load_batch_config.sh
+./dataops/scripts/load_batch_config.sh <org>
 ```
 
 ### 2. Start the DMS Replication Task
