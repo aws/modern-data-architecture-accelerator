@@ -239,13 +239,17 @@
                 "stack": {
                     "$ref": "#/definitions/Stack",
                     "description": "The stack in which this element is defined. CfnElements must be defined within a stack scope (directly or indirectly)."
+                },
+                "synthesizeLogicalId": {
+                    "description": "Called during synthesize to render the logical ID of this element. If\n`overrideLogicalId` was it will be used, otherwise, we will allocate the\nlogical ID through the stack."
                 }
             },
             "required": [
                 "creationStack",
                 "logicalId",
                 "node",
-                "stack"
+                "stack",
+                "synthesizeLogicalId"
             ],
             "type": "object"
         },
@@ -292,20 +296,6 @@
                     "type": "boolean"
                 }
             },
-            "type": "object"
-        },
-        "CfnFunction.TenancyConfigProperty": {
-            "additionalProperties": false,
-            "description": "Specifies the tenant isolation mode configuration for a Lambda function.\n\nThis allows you to configure specific tenant isolation strategies for your function invocations. Tenant isolation configuration cannot be modified after function creation.",
-            "properties": {
-                "tenantIsolationMode": {
-                    "description": "Tenant isolation mode allows for invocation to be sent to a corresponding execution environment dedicated to a specific tenant ID.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "tenantIsolationMode"
-            ],
             "type": "object"
         },
         "CfnParameterProps": {
@@ -378,15 +368,6 @@
                 "_cfnProperties": {
                     "description": "AWS CloudFormation resource properties.\n\nThis object is returned via cfnProperties"
                 },
-                "_crossStackReferenceStrength": {},
-                "_crossStackReferenceStrengthOverride": {
-                    "enum": [
-                        "both",
-                        "strong",
-                        "weak"
-                    ],
-                    "type": "string"
-                },
                 "_logicalIdLocked": {
                     "description": "If the logicalId is locked then it can no longer be overridden.\nThis is needed for cases where the logicalId is consumed prior to synthesis\n(i.e. Stack.exportValue)."
                 },
@@ -401,9 +382,6 @@
                     "additionalProperties": {},
                     "type": "object"
                 },
-                "cfnPropertyNames": {
-                    "$ref": "#/definitions/Record%3Cstring%2Cstring%3E"
-                },
                 "cfnResourceType": {
                     "description": "AWS resource type.",
                     "type": "string"
@@ -416,9 +394,6 @@
                 },
                 "dependsOn": {
                     "description": "Logical IDs of dependencies.\n\nIs filled during prepare()."
-                },
-                "env": {
-                    "$ref": "#/definitions/ResourceEnvironment"
                 },
                 "logicalId": {
                     "description": "The logical ID for this CloudFormation stack element. The logical ID of the element\nis calculated from the path of the resource node in the construct tree.\n\nTo override this value, use `overrideLogicalId(newLogicalId)`.",
@@ -439,6 +414,9 @@
                     "$ref": "#/definitions/Stack",
                     "description": "The stack in which this element is defined. CfnElements must be defined within a stack scope (directly or indirectly)."
                 },
+                "synthesizeLogicalId": {
+                    "description": "Called during synthesize to render the logical ID of this element. If\n`overrideLogicalId` was it will be used, otherwise, we will allocate the\nlogical ID through the stack."
+                },
                 "updatedProperites": {
                     "additionalProperties": {},
                     "description": "Deprecated",
@@ -452,19 +430,17 @@
             },
             "required": [
                 "_cfnProperties",
-                "_crossStackReferenceStrengthOverride",
                 "cfnOptions",
                 "cfnProperties",
-                "cfnPropertyNames",
                 "cfnResourceType",
                 "creationStack",
                 "dependsOn",
-                "env",
                 "logicalId",
                 "node",
                 "rawOverrides",
                 "ref",
                 "stack",
+                "synthesizeLogicalId",
                 "updatedProperites",
                 "updatedProperties"
             ],
@@ -1295,37 +1271,6 @@
             ],
             "type": "object"
         },
-        "IArrayBox<ILayerVersion>": {
-            "additionalProperties": false,
-            "description": "A mutable box specialized for arrays, extending `Box<Array<A>>` with `push`.\n\nUnlike `set` (which replaces all stack traces), `push` *appends* a new stack\ntrace to the existing list. This means that each element addition is tracked\nindividually, and the resulting metadata will contain one entry per `push` call\n(plus one for the initial construction or last `set`, if any).",
-            "properties": {
-                "creationStack": {
-                    "description": "The creation stack of this resolvable which will be appended to errors\nthrown during resolution.\n\nThis may return an array with a single informational element indicating how\nto get this property populated, if it was skipped for performance reasons.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "length": {
-                    "description": "Returns the number of elements in the array.",
-                    "type": "number"
-                },
-                "typeHint": {
-                    "description": "The type that this token will likely resolve to.",
-                    "enum": [
-                        "number",
-                        "string",
-                        "string-list"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "creationStack",
-                "length"
-            ],
-            "type": "object"
-        },
         "ICfnConditionExpression": {
             "additionalProperties": false,
             "description": "Represents a CloudFormation element that can be used within a Condition.\n\nYou can use intrinsic functions, such as ``Fn.conditionIf``,\n``Fn.conditionEquals``, and ``Fn.conditionNot``, to conditionally create\nstack resources. These conditions are evaluated based on input parameters\nthat you declare when you create or update a stack. After you define all your\nconditions, you can associate them with resources or resource properties in\nthe Resources and Outputs sections of a template.\n\nYou define all conditions in the Conditions section of a template except for\n``Fn.conditionIf`` conditions. You can use the ``Fn.conditionIf`` condition\nin the metadata attribute, update policy attribute, and property values in\nthe Resources section and Outputs sections of a template.\n\nYou might use conditions when you want to reuse a template that can create\nresources in different contexts, such as a test environment versus a\nproduction environment. In your template, you can add an EnvironmentType\ninput parameter, which accepts either prod or test as inputs. For the\nproduction environment, you might include Amazon EC2 instances with certain\ncapabilities; however, for the test environment, you want to use less\ncapabilities to save costs. With conditions, you can define which resources\nare created and how they're configured for each environment type.\n\nYou can use `toString` when you wish to embed a condition expression\nin a property value that accepts a `string`. For example:\n\n```ts\nnew sqs.Queue(this, 'MyQueue', {\n  queueName: Fn.conditionIf('Condition', 'Hello', 'World').toString()\n});\n```",
@@ -1430,7 +1375,7 @@
                 },
                 "env": {
                     "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this resource belongs to.\n\nFor resources that are created and managed in a Stack (those created by\ncreating new class instances like `new Role()`, `new Bucket()`, etc.), this\nis always the same as the environment of the stack they belong to.\n\nFor referenced resources (those obtained from referencing methods like\n`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be\ndifferent than the stack they were imported into."
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
                 },
                 "functionArn": {
                     "description": "The ARN of the function.",
@@ -1478,10 +1423,6 @@
                 "stack": {
                     "$ref": "#/definitions/Stack",
                     "description": "The stack in which this resource is defined."
-                },
-                "tenancyConfig": {
-                    "$ref": "#/definitions/TenancyConfig",
-                    "description": "The tenancy configuration for this function."
                 }
             },
             "required": [
@@ -1507,7 +1448,7 @@
             "properties": {
                 "env": {
                     "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this resource belongs to.\n\nFor resources that are created and managed in a Stack (those created by\ncreating new class instances like `new Role()`, `new Bucket()`, etc.), this\nis always the same as the environment of the stack they belong to.\n\nFor referenced resources (those obtained from referencing methods like\n`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be\ndifferent than the stack they were imported into."
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
                 },
                 "keyArn": {
                     "description": "The ARN of the key.",
@@ -1540,12 +1481,53 @@
             ],
             "type": "object"
         },
+        "ILayerVersion": {
+            "additionalProperties": false,
+            "properties": {
+                "compatibleRuntimes": {
+                    "default": "- All supported runtimes. Setting this to Runtime.ALL is equivalent to leaving it undefined.",
+                    "description": "The runtimes compatible with this Layer.",
+                    "items": {
+                        "$ref": "#/definitions/Runtime"
+                    },
+                    "type": "array"
+                },
+                "env": {
+                    "$ref": "#/definitions/ResourceEnvironment",
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
+                },
+                "layerVersionArn": {
+                    "description": "The ARN of the Lambda Layer version that this Layer defines.",
+                    "type": "string"
+                },
+                "layerVersionRef": {
+                    "$ref": "#/definitions/LayerVersionReference",
+                    "description": "A reference to a LayerVersion resource."
+                },
+                "node": {
+                    "$ref": "#/definitions/Node",
+                    "description": "The tree node."
+                },
+                "stack": {
+                    "$ref": "#/definitions/Stack",
+                    "description": "The stack in which this resource is defined."
+                }
+            },
+            "required": [
+                "env",
+                "layerVersionArn",
+                "layerVersionRef",
+                "node",
+                "stack"
+            ],
+            "type": "object"
+        },
         "ILogGroup": {
             "additionalProperties": false,
             "properties": {
                 "env": {
                     "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this resource belongs to.\n\nFor resources that are created and managed in a Stack (those created by\ncreating new class instances like `new Role()`, `new Bucket()`, etc.), this\nis always the same as the environment of the stack they belong to.\n\nFor referenced resources (those obtained from referencing methods like\n`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be\ndifferent than the stack they were imported into."
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
                 },
                 "logGroupArn": {
                     "description": "The ARN of this log group, with ':*' appended",
@@ -1554,10 +1536,6 @@
                 "logGroupName": {
                     "description": "The name of this log group",
                     "type": "string"
-                },
-                "logGroupRef": {
-                    "$ref": "#/definitions/LogGroupReference",
-                    "description": "A reference to a LogGroup resource."
                 },
                 "node": {
                     "$ref": "#/definitions/Node",
@@ -1572,7 +1550,6 @@
                 "env",
                 "logGroupArn",
                 "logGroupName",
-                "logGroupRef",
                 "node",
                 "stack"
             ],
@@ -1639,7 +1616,7 @@
                 },
                 "env": {
                     "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this resource belongs to.\n\nFor resources that are created and managed in a Stack (those created by\ncreating new class instances like `new Role()`, `new Bucket()`, etc.), this\nis always the same as the environment of the stack they belong to.\n\nFor referenced resources (those obtained from referencing methods like\n`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be\ndifferent than the stack they were imported into."
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
                 },
                 "fifo": {
                     "description": "Whether this queue is an Amazon SQS FIFO queue. If false, this is a standard queue.",
@@ -1657,10 +1634,6 @@
                     "description": "The name of this queue",
                     "type": "string"
                 },
-                "queueRef": {
-                    "$ref": "#/definitions/QueueReference",
-                    "description": "A reference to a Queue resource."
-                },
                 "queueUrl": {
                     "description": "The URL of this queue",
                     "type": "string"
@@ -1676,7 +1649,6 @@
                 "node",
                 "queueArn",
                 "queueName",
-                "queueRef",
                 "queueUrl",
                 "stack"
             ],
@@ -1718,7 +1690,7 @@
                 },
                 "env": {
                     "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this resource belongs to.\n\nFor resources that are created and managed in a Stack (those created by\ncreating new class instances like `new Role()`, `new Bucket()`, etc.), this\nis always the same as the environment of the stack they belong to.\n\nFor referenced resources (those obtained from referencing methods like\n`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be\ndifferent than the stack they were imported into."
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
                 },
                 "grantPrincipal": {
                     "$ref": "#/definitions/IPrincipal",
@@ -1784,7 +1756,7 @@
                 },
                 "env": {
                     "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this resource belongs to.\n\nFor resources that are created and managed in a Stack (those created by\ncreating new class instances like `new Role()`, `new Bucket()`, etc.), this\nis always the same as the environment of the stack they belong to.\n\nFor referenced resources (those obtained from referencing methods like\n`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be\ndifferent than the stack they were imported into."
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
                 },
                 "node": {
                     "$ref": "#/definitions/Node",
@@ -1827,11 +1799,6 @@
                 "bootstrapQualifier": {
                     "default": "- no qualifier",
                     "description": "The qualifier used to bootstrap this stack",
-                    "type": "string"
-                },
-                "cloudFormationExecutionRole": {
-                    "default": "- no role",
-                    "description": "The role that is passed to CloudFormation to execute the change set",
                     "type": "string"
                 },
                 "lookupRole": {
@@ -1879,7 +1846,7 @@
                 },
                 "env": {
                     "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this resource belongs to.\n\nFor resources that are created and managed in a Stack (those created by\ncreating new class instances like `new Role()`, `new Bucket()`, etc.), this\nis always the same as the environment of the stack they belong to.\n\nFor referenced resources (those obtained from referencing methods like\n`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be\ndifferent than the stack they were imported into."
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
                 },
                 "fifo": {
                     "description": "Whether this topic is an Amazon SNS FIFO queue. If false, this is a standard topic.",
@@ -1905,10 +1872,6 @@
                 "topicName": {
                     "description": "The name of the topic",
                     "type": "string"
-                },
-                "topicRef": {
-                    "$ref": "#/definitions/TopicReference",
-                    "description": "A reference to a Topic resource."
                 }
             },
             "required": [
@@ -1918,8 +1881,7 @@
                 "node",
                 "stack",
                 "topicArn",
-                "topicName",
-                "topicRef"
+                "topicName"
             ],
             "type": "object"
         },
@@ -1940,7 +1902,7 @@
                 },
                 "env": {
                     "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this resource belongs to.\n\nFor resources that are created and managed in a Stack (those created by\ncreating new class instances like `new Role()`, `new Bucket()`, etc.), this\nis always the same as the environment of the stack they belong to.\n\nFor referenced resources (those obtained from referencing methods like\n`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be\ndifferent than the stack they were imported into."
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
                 },
                 "functionArn": {
                     "description": "The ARN of the function.",
@@ -1992,10 +1954,6 @@
                 "stack": {
                     "$ref": "#/definitions/Stack",
                     "description": "The stack in which this resource is defined."
-                },
-                "tenancyConfig": {
-                    "$ref": "#/definitions/TenancyConfig",
-                    "description": "The tenancy configuration for this function."
                 },
                 "version": {
                     "description": "The most recently deployed version of this function.",
@@ -2102,22 +2060,105 @@
             },
             "type": "object"
         },
-        "LogGroupReference": {
+        "LifecycleConfigurationRuleConfig": {
             "additionalProperties": false,
-            "description": "A reference to a LogGroup resource.",
+            "description": "S3 lifecycle rule for automated storage class transitions and expiration on the project bucket.\n\nUse cases: Automated archival; Cost optimization; Data retention enforcement\n\nAWS: S3 lifecycle rule\n\nValidation: id and status required; all other fields optional",
             "properties": {
-                "logGroupArn": {
-                    "description": "The ARN of the LogGroup resource.",
+                "id": {
+                    "description": "Unique identifier for this lifecycle rule.",
                     "type": "string"
                 },
-                "logGroupName": {
-                    "description": "The LogGroupName of the LogGroup resource.",
+                "status": {
+                    "description": "Whether this lifecycle rule is active: 'Enabled' or 'Disabled'.",
+                    "type": "string"
+                },
+                "prefix": {
+                    "description": "S3 prefix filter for rule application.",
+                    "type": "string"
+                },
+                "objectSizeGreaterThan": {
+                    "description": "Minimum object size in bytes for rule application.",
+                    "type": "number"
+                },
+                "objectSizeLessThan": {
+                    "description": "Maximum object size in bytes for rule application.",
+                    "type": "number"
+                },
+                "abortIncompleteMultipartUploadAfter": {
+                    "description": "Days after which incomplete multipart uploads are aborted.",
+                    "type": "number"
+                },
+                "expirationdays": {
+                    "description": "Days after creation when current object versions expire.",
+                    "type": "number"
+                },
+                "expiredObjectDeleteMarker": {
+                    "description": "Remove expired object delete markers.",
+                    "type": "boolean"
+                },
+                "noncurrentVersionExpirationDays": {
+                    "description": "Days after which noncurrent versions expire.",
+                    "type": "number"
+                },
+                "noncurrentVersionsToRetain": {
+                    "description": "Number of noncurrent versions to retain.",
+                    "type": "number"
+                },
+                "transitions": {
+                    "description": "Storage class transitions for current object versions.",
+                    "items": {
+                        "$ref": "#/definitions/LifecycleTransitionConfig"
+                    },
+                    "type": "array"
+                },
+                "noncurrentVersionTransitions": {
+                    "description": "Storage class transitions for noncurrent object versions.",
+                    "items": {
+                        "$ref": "#/definitions/LifecycleTransitionConfig"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "id",
+                "status"
+            ],
+            "type": "object"
+        },
+        "LifecycleTransitionConfig": {
+            "additionalProperties": false,
+            "description": "Storage class transition rule specifying when objects move to a different tier.\n\nUse cases: Progressive archival (IA to Glacier to Deep Archive); Version-aware transitions\n\nAWS: S3 lifecycle transition rule\n\nValidation: days and storageClass required; newerNoncurrentVersions optional",
+            "properties": {
+                "days": {
+                    "description": "Number of days after object creation to trigger the transition.",
+                    "type": "number"
+                },
+                "storageClass": {
+                    "description": "Target S3 storage class (e.g., GLACIER, STANDARD_IA, DEEP_ARCHIVE).",
+                    "type": "string"
+                },
+                "newerNoncurrentVersions": {
+                    "description": "Number of newer noncurrent versions to retain before transition.",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "days",
+                "storageClass"
+            ],
+            "type": "object"
+        },
+        "LayerVersionReference": {
+            "additionalProperties": false,
+            "description": "A reference to a LayerVersion resource.",
+            "properties": {
+                "layerVersionArn": {
+                    "description": "The LayerVersionArn of the LayerVersion resource.",
                     "type": "string"
                 }
             },
             "required": [
-                "logGroupArn",
-                "logGroupName"
+                "layerVersionArn"
             ],
             "type": "object"
         },
@@ -2181,24 +2222,10 @@
             "additionalProperties": false,
             "properties": {
                 "_allowCrossEnvironment": {},
-                "_customAccount": {
-                    "description": "Account given in the constructor, if any. Will be same as Stack if not supplied."
-                },
-                "_customRegion": {
-                    "description": "Account given in the constructor, if any. Will be same as Stack if not supplied."
-                },
-                "_generatedPhysicalName": {
-                    "description": "The generated physical name, in case of cross-env access"
-                },
-                "_givenPhysicalName": {
-                    "description": "The physicalName supplied into the constructor"
-                },
-                "_physicalNameMode": {
-                    "description": "What we are doing for the physical name"
-                },
+                "_physicalName": {},
                 "env": {
                     "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this resource belongs to.\n\nFor resources that are created and managed in a Stack (those created by\ncreating new class instances like `new Role()`, `new Bucket()`, etc.), this\nis always the same as the environment of the stack they belong to.\n\nFor referenced resources (those obtained from referencing methods like\n`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be\ndifferent than the stack they were imported into."
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
                 },
                 "handlerFunction": {
                     "$ref": "#/definitions/MdaaLambdaFunction"
@@ -2223,11 +2250,7 @@
             },
             "required": [
                 "_allowCrossEnvironment",
-                "_customAccount",
-                "_customRegion",
-                "_generatedPhysicalName",
-                "_givenPhysicalName",
-                "_physicalNameMode",
+                "_physicalName",
                 "env",
                 "handlerFunction",
                 "node",
@@ -2249,21 +2272,9 @@
                     "description": "Actual connections object for this Lambda\n\nMay be unset, in which case this Lambda is not configured use in a VPC."
                 },
                 "_currentVersion": {},
-                "_customAccount": {
-                    "description": "Account given in the constructor, if any. Will be same as Stack if not supplied."
-                },
-                "_customRegion": {
-                    "description": "Account given in the constructor, if any. Will be same as Stack if not supplied."
-                },
                 "_functionUrlInvocationGrants": {
                     "$ref": "#/definitions/Record%3Cstring%2CGrant%3E",
                     "description": "Mapping of function URL invocation principals to grants. Used to de-dupe `grantInvokeUrl()` calls."
-                },
-                "_generatedPhysicalName": {
-                    "description": "The generated physical name, in case of cross-env access"
-                },
-                "_givenPhysicalName": {
-                    "description": "The physicalName supplied into the constructor"
                 },
                 "_hasAddedArrayTokenStatements": {
                     "description": "Track whether we've added statements with array token resources to the role's default policy"
@@ -2277,16 +2288,17 @@
                 },
                 "_latestVersion": {},
                 "_layers": {
-                    "$ref": "#/definitions/IArrayBox%3CILayerVersion%3E"
+                    "items": {
+                        "$ref": "#/definitions/ILayerVersion"
+                    },
+                    "type": "array"
                 },
                 "_logGroup": {},
                 "_logRetention": {
                     "$ref": "#/definitions/LogRetention",
                     "description": "Creates a custom resource to control the retention policy of a CloudWatch Logs\nlog group. The log group is created if it doesn't already exist. The policy\nis removed when `retentionDays` is `undefined` or equal to `Infinity`.\nLog group can be created in the region that is different from stack region by\nspecifying `logGroupRegion`"
                 },
-                "_physicalNameMode": {
-                    "description": "What we are doing for the physical name"
-                },
+                "_physicalName": {},
                 "_policyCounter": {
                     "description": "The number of permissions added to this function"
                 },
@@ -2343,7 +2355,7 @@
                 },
                 "env": {
                     "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this resource belongs to.\n\nFor resources that are created and managed in a Stack (those created by\ncreating new class instances like `new Role()`, `new Bucket()`, etc.), this\nis always the same as the environment of the stack they belong to.\n\nFor referenced resources (those obtained from referencing methods like\n`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be\ndifferent than the stack they were imported into."
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
                 },
                 "environment": {
                     "description": "Environment variables for this function"
@@ -2398,10 +2410,8 @@
                     "description": "Returns a string-encoded token that resolves to the physical name that\nshould be passed to the CloudFormation resource.\n\nThis value will resolve to one of the following:\n- a concrete value (e.g. `\"my-awesome-bucket\"`)\n- `undefined`, when a name should be generated by CloudFormation\n- a concrete name generated automatically during synthesis, in\n  cross-environment scenarios.",
                     "type": "string"
                 },
-                "renderDurableConfig": {},
                 "renderEnvironment": {},
                 "renderLayers": {},
-                "resource": {},
                 "resourceArnsForGrantInvoke": {
                     "description": "The ARN(s) to put into the resource field of the generated IAM policy for grantInvoke()",
                     "items": {
@@ -2424,10 +2434,6 @@
                 "statementHasArrayTokens": {
                     "description": "Check if a policy statement contains array tokens that would cause CloudFormation\nresolution conflicts when mixed with literal arrays in the same policy document.\n\nArray tokens are created by CloudFormation intrinsic functions that return arrays,\nsuch as Fn::Split, Fn::GetAZs, etc. These cannot be safely merged with literal\nresource arrays due to CloudFormation's token resolution limitations.\n\nIndividual string tokens within literal arrays (e.g., `[\"arn:${token}:...\"]`) are\nsafe and do not cause conflicts, so they are not detected by this method."
                 },
-                "tenancyConfig": {
-                    "$ref": "#/definitions/TenancyConfig",
-                    "description": "The tenancy configuration for this function."
-                },
                 "timeout": {
                     "$ref": "#/definitions/Duration",
                     "description": "The timeout configured for this lambda."
@@ -2438,16 +2444,12 @@
             },
             "required": [
                 "_allowCrossEnvironment",
-                "_customAccount",
-                "_customRegion",
                 "_functionUrlInvocationGrants",
-                "_generatedPhysicalName",
-                "_givenPhysicalName",
                 "_hasAddedArrayTokenStatements",
                 "_hasAddedLiteralStatements",
                 "_invocationGrants",
                 "_layers",
-                "_physicalNameMode",
+                "_physicalName",
                 "_policyCounter",
                 "_warnIfCurrentVersionCalled",
                 "architecture",
@@ -2480,10 +2482,8 @@
                 "parsePermissionPrincipal",
                 "permissionsNode",
                 "physicalName",
-                "renderDurableConfig",
                 "renderEnvironment",
                 "renderLayers",
-                "resource",
                 "resourceArnsForGrantInvoke",
                 "runtime",
                 "stack",
@@ -3058,7 +3058,7 @@
                     "description": "Adds a child construct to this node."
                 },
                 "addr": {
-                    "description": "Returns an opaque tree-unique address for this construct.\n\nAddresses are 42 characters hexadecimal strings. They begin with \"c8\"\nfollowed by 40 lowercase hexadecimal characters (0-9a-f).\n\nAddresses are calculated using a SHA-1 of the components of the construct\npath.\n\nTo enable refactoring of construct trees, constructs with the ID `Default`\nwill be excluded from the calculation. In those cases constructs in the\nsame tree may have the same address.",
+                    "description": "Returns an opaque tree-unique address for this construct.\n\nAddresses are 42 characters hexadecimal strings. They begin with \"c8\"\nfollowed by 40 lowercase hexadecimal characters (0-9a-f).\n\nAddresses are calculated using a SHA-1 of the components of the construct\npath.\n\nTo enable refactorings of construct trees, constructs with the ID `Default`\nwill be excluded from the calculation. In those cases constructs in the\nsame tree may have the same addreess.",
                     "type": "string"
                 },
                 "children": {
@@ -3070,7 +3070,7 @@
                 },
                 "defaultChild": {
                     "$ref": "#/definitions/IConstruct",
-                    "description": "Returns the child construct that has the id `Default` or `Resource`.\nThis is usually the construct that provides the bulk of the underlying functionality.\nUseful for modifications of the underlying construct that are not available at the higher levels.\nOverride the defaultChild property.\n\nThis should only be used in the cases where the correct\ndefault child is not named 'Resource' or 'Default' as it\nshould be.\n\nIf you set this to undefined, the default behavior of finding\nthe child named 'Resource' or 'Default' will be used."
+                    "description": "Returns the child construct that has the id `Default` or `Resource\"`.\nThis is usually the construct that provides the bulk of the underlying functionality.\nUseful for modifications of the underlying construct that are not available at the higher levels.\nOverride the defaultChild property.\n\nThis should only be used in the cases where the correct\ndefault child is not named 'Resource' or 'Default' as it\nshould be.\n\nIf you set this to undefined, the default behavior of finding\nthe child named 'Resource' or 'Default' will be used."
                 },
                 "dependencies": {
                     "description": "Return all dependencies registered on this node (non-recursive).",
@@ -3081,7 +3081,7 @@
                 },
                 "host": {},
                 "id": {
-                    "description": "The id of this construct within the current scope.\n\nThis is a scope-unique id. To obtain an app-unique id for this construct, use `addr`.",
+                    "description": "The id of this construct within the current scope.\n\nThis is a a scope-unique id. To obtain an app-unique id for this construct, use `addr`.",
                     "type": "string"
                 },
                 "locked": {
@@ -3216,30 +3216,7 @@
             },
             "type": "object"
         },
-        "QueueReference": {
-            "additionalProperties": false,
-            "description": "A reference to a Queue resource.",
-            "properties": {
-                "queueArn": {
-                    "description": "The ARN of the Queue resource.",
-                    "type": "string"
-                },
-                "queueUrl": {
-                    "description": "The QueueUrl of the Queue resource.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "queueArn",
-                "queueUrl"
-            ],
-            "type": "object"
-        },
         "Record<string,Grant>": {
-            "additionalProperties": false,
-            "type": "object"
-        },
-        "Record<string,string>": {
             "additionalProperties": false,
             "type": "object"
         },
@@ -3259,14 +3236,14 @@
         },
         "ResourceEnvironment": {
             "additionalProperties": false,
-            "description": "Represents the environment a given resource lives in.\n\nUsed as the return value for the `IEnvironmentAware.env` property.",
+            "description": "Represents the environment a given resource lives in.\nUsed as the return value for the `IResource.env` property.",
             "properties": {
                 "account": {
-                    "description": "The AWS Account ID that this resource belongs to.\n\nSince this can be a Token (for example, when the account is\nCloudFormation's `AWS::AccountId` intrinsic), make sure to use\n`Token.compareStrings()` instead of comparing the values with direct\nstring equality.",
+                    "description": "The AWS account ID that this resource belongs to.\nSince this can be a Token\n(for example, when the account is CloudFormation's AWS::AccountId intrinsic),\nmake sure to use Token.compareStrings()\ninstead of just comparing the values for equality.",
                     "type": "string"
                 },
                 "region": {
-                    "description": "The AWS Region that this resource belongs to.\n\nSince this can be a Token (for example, when the region is CloudFormation's\n`AWS::Region` intrinsic), make sure to use `Token.compareStrings()` instead\nof comparing the values with direct string equality.",
+                    "description": "The AWS region that this resource belongs to.\nSince this can be a Token\n(for example, when the region is CloudFormation's AWS::Region intrinsic),\nmake sure to use Token.compareStrings()\ninstead of just comparing the values for equality.",
                     "type": "string"
                 }
             },
@@ -3297,7 +3274,7 @@
         },
         "Runtime": {
             "additionalProperties": false,
-            "description": "Lambda function runtime environment.\n\nIf you need to use a runtime name that doesn't exist as a static member, you\ncan instantiate a `Runtime` object, e.g: `new Runtime('nodejs99.99')`.\n\nFor NodeJS lambda functions, it is recommended to use the latest LTS NodeJS runtime available\n(`Runtime.NODEJS_LATEST`) to keep the lambda function up-to-date.",
+            "description": "Lambda function runtime environment.\n\nIf you need to use a runtime name that doesn't exist as a static member, you\ncan instantiate a `Runtime` object, e.g: `new Runtime('nodejs99.99')`.",
             "properties": {
                 "bundlingImage": {
                     "$ref": "#/definitions/DockerImage",
@@ -3501,10 +3478,6 @@
                     },
                     "type": "array"
                 },
-                "env": {
-                    "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this Stack deploys to"
-                },
                 "environment": {
                     "description": "The environment coordinates in which this stack is deployed. In the form\n`aws://account/region`. Use `stack.account` and `stack.region` to obtain\nthe specific values, no need to parse.\n\nYou can use this value to determine if two stacks are targeting the same\nenvironment.\n\nIf either `stack.account` or `stack.region` are not concrete values (e.g.\n`Aws.ACCOUNT_ID` or `Aws.REGION`) the special strings `unknown-account` and/or\n`unknown-region` will be used respectively to indicate this stack is\nregion/account-agnostic.",
                     "type": "string"
@@ -3522,12 +3495,12 @@
                     "description": "Maximum number of resources in the stack\n\nSet to 0 to mean \"unlimited\"."
                 },
                 "nested": {
-                    "description": "Indicates if this is a nested stack, in which case `parentStack` will include a reference to its parent.",
+                    "description": "Indicates if this is a nested stack, in which case `parentStack` will include a reference to it's parent.",
                     "type": "boolean"
                 },
                 "nestedStackParent": {
                     "$ref": "#/definitions/Stack",
-                    "description": "If this is a nested stack, returns its parent stack."
+                    "description": "If this is a nested stack, returns it's parent stack."
                 },
                 "nestedStackResource": {
                     "$ref": "#/definitions/CfnResource",
@@ -3610,7 +3583,6 @@
                 "availabilityZones",
                 "bundlingRequired",
                 "dependencies",
-                "env",
                 "environment",
                 "generateStackArtifactId",
                 "generateStackId",
@@ -3718,34 +3690,6 @@
             ],
             "type": "object"
         },
-        "TenancyConfig": {
-            "additionalProperties": false,
-            "description": "Specify the tenant isolation mode for Lambda functions.\n\nThis is incompatible with:\n- SnapStart\n- Provisioned Concurrency\n- Function URLs\n- Most Event sources (only API Gateway is supported)",
-            "properties": {
-                "tenancyConfigProperty": {
-                    "$ref": "#/definitions/CfnFunction.TenancyConfigProperty",
-                    "description": "The CloudFormation property for tenancy configuration."
-                }
-            },
-            "required": [
-                "tenancyConfigProperty"
-            ],
-            "type": "object"
-        },
-        "TopicReference": {
-            "additionalProperties": false,
-            "description": "A reference to a Topic resource.",
-            "properties": {
-                "topicArn": {
-                    "description": "The TopicArn of the Topic resource.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "topicArn"
-            ],
-            "type": "object"
-        },
         "Version": {
             "additionalProperties": false,
             "description": "Tag the current state of a Function with a Version number\n\nAvoid using this resource directly. If you need a Version object, use\n`function.currentVersion` instead. That will add a Version object to your\ntemplate, and make sure the Version is invalidated whenever the Function\nobject changes. If you use the `Version` resource directly, you are\nresponsible for making sure it is invalidated (by changing its\nlogical ID) whenever necessary.\n\nVersion resources can then be used in `Alias` resources to refer to a\nparticular deployment of a Lambda.\n\nIf you want to ensure that you're associating the right version with\nthe right deployment, specify the `codeSha256` property while\ncreating the `Version.",
@@ -3755,21 +3699,9 @@
                     "$ref": "#/definitions/Connections",
                     "description": "Actual connections object for this Lambda\n\nMay be unset, in which case this Lambda is not configured use in a VPC."
                 },
-                "_customAccount": {
-                    "description": "Account given in the constructor, if any. Will be same as Stack if not supplied."
-                },
-                "_customRegion": {
-                    "description": "Account given in the constructor, if any. Will be same as Stack if not supplied."
-                },
                 "_functionUrlInvocationGrants": {
                     "$ref": "#/definitions/Record%3Cstring%2CGrant%3E",
                     "description": "Mapping of function URL invocation principals to grants. Used to de-dupe `grantInvokeUrl()` calls."
-                },
-                "_generatedPhysicalName": {
-                    "description": "The generated physical name, in case of cross-env access"
-                },
-                "_givenPhysicalName": {
-                    "description": "The physicalName supplied into the constructor"
                 },
                 "_hasAddedArrayTokenStatements": {
                     "description": "Track whether we've added statements with array token resources to the role's default policy"
@@ -3782,9 +3714,7 @@
                     "description": "Mapping of invocation principals to grants. Used to de-dupe `grantInvoke()` calls."
                 },
                 "_latestVersion": {},
-                "_physicalNameMode": {
-                    "description": "What we are doing for the physical name"
-                },
+                "_physicalName": {},
                 "_policyCounter": {
                     "description": "The number of permissions added to this function"
                 },
@@ -3819,7 +3749,7 @@
                 },
                 "env": {
                     "$ref": "#/definitions/ResourceEnvironment",
-                    "description": "The environment this resource belongs to.\n\nFor resources that are created and managed in a Stack (those created by\ncreating new class instances like `new Role()`, `new Bucket()`, etc.), this\nis always the same as the environment of the stack they belong to.\n\nFor referenced resources (those obtained from referencing methods like\n`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be\ndifferent than the stack they were imported into."
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
                 },
                 "functionArn": {
                     "description": "The ARN fo the function.",
@@ -3833,7 +3763,6 @@
                     "$ref": "#/definitions/FunctionReference",
                     "description": "A reference to a Function resource."
                 },
-                "getFunctionScalingConfig": {},
                 "grant": {},
                 "grantPrincipal": {
                     "$ref": "#/definitions/IPrincipal",
@@ -3889,10 +3818,6 @@
                 "statementHasArrayTokens": {
                     "description": "Check if a policy statement contains array tokens that would cause CloudFormation\nresolution conflicts when mixed with literal arrays in the same policy document.\n\nArray tokens are created by CloudFormation intrinsic functions that return arrays,\nsuch as Fn::Split, Fn::GetAZs, etc. These cannot be safely merged with literal\nresource arrays due to CloudFormation's token resolution limitations.\n\nIndividual string tokens within literal arrays (e.g., `[\"arn:${token}:...\"]`) are\nsafe and do not cause conflicts, so they are not detected by this method."
                 },
-                "tenancyConfig": {
-                    "$ref": "#/definitions/TenancyConfig",
-                    "description": "The tenancy configuration for this function."
-                },
                 "validateConditionCombinations": {},
                 "validateConditions": {},
                 "version": {
@@ -3906,15 +3831,11 @@
             },
             "required": [
                 "_allowCrossEnvironment",
-                "_customAccount",
-                "_customRegion",
                 "_functionUrlInvocationGrants",
-                "_generatedPhysicalName",
-                "_givenPhysicalName",
                 "_hasAddedArrayTokenStatements",
                 "_hasAddedLiteralStatements",
                 "_invocationGrants",
-                "_physicalNameMode",
+                "_physicalName",
                 "_policyCounter",
                 "_warnIfCurrentVersionCalled",
                 "architecture",
@@ -3926,7 +3847,6 @@
                 "functionArn",
                 "functionName",
                 "functionRef",
-                "getFunctionScalingConfig",
                 "grant",
                 "grantPrincipal",
                 "isBoundToVpc",
@@ -4005,6 +3925,13 @@
         "lakeFormation": {
             "$ref": "#/definitions/LakeFormationConfig",
             "description": "Project-level Lake Formation configuration for centralized tag-based access control.\nDefines project-wide LF-tag vocabulary shared across all databases.\n\nUse cases: Centralized tag management; Project-wide TBAC; Shared governance\n\nAWS: Lake Formation project-level configuration\n\nValidation: Optional; valid LakeFormationConfig"
+        },
+        "lifecycleRules": {
+            "items": {
+                "$ref": "#/definitions/LifecycleConfigurationRuleConfig"
+            },
+            "description": "S3 lifecycle rules for automated storage class transitions and expiration on the project bucket.\n\nUse cases: Automated archival; Cost optimization; Data retention enforcement\n\nAWS: S3 lifecycle rules\n\nValidation: Optional; array of LifecycleConfigurationRuleConfig",
+            "type": "array"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",

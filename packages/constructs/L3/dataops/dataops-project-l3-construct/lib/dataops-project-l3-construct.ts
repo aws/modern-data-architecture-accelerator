@@ -49,14 +49,20 @@ import {
   SageMakerProjectProps,
 } from '@aws-mdaa/sagemaker-project-l3-construct';
 import { MdaaSnsTopic, MdaaSnsTopicProps } from '@aws-mdaa/sns-constructs';
-import { Arn, ArnComponents, ArnFormat, BOOTSTRAP_QUALIFIER_CONTEXT, DefaultStackSynthesizer, Tags } from 'aws-cdk-lib';
+import { Arn, ArnComponents, ArnFormat, BOOTSTRAP_QUALIFIER_CONTEXT, DefaultStackSynthesizer, Duration, Tags } from 'aws-cdk-lib';
 import { CfnDataSource, CfnDataSourceProps } from 'aws-cdk-lib/aws-datazone';
 import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { CfnClassifier, CfnConnection, CfnCrawler, CfnDatabase } from 'aws-cdk-lib/aws-glue';
 import { AccountPrincipal, Effect, IRole, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { CfnPrincipalPermissions, CfnResource } from 'aws-cdk-lib/aws-lakeformation';
-import { IBucket } from 'aws-cdk-lib/aws-s3';
+import {
+  IBucket,
+  LifecycleRule,
+  NoncurrentVersionTransition,
+  StorageClass,
+  Transition,
+} from 'aws-cdk-lib/aws-s3';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Construct } from 'constructs';
 import { LakeFormationConfig, NamedTagBasedGrants } from './lake-formation-props';
@@ -382,6 +388,25 @@ export interface ConnectionProps {
   readonly physicalConnectionRequirements?: ConnectionPhysical;
 }
 
+export interface LifecycleTransitionProps {
+  readonly days: number;
+  readonly storageClass: string;
+  readonly newerNoncurrentVersions?: number;
+}
+export interface LifecycleConfigurationRuleProps {
+  readonly id: string;
+  readonly status: string;
+  readonly prefix?: string;
+  readonly objectSizeGreaterThan?: number;
+  readonly objectSizeLessThan?: number;
+  readonly abortIncompleteMultipartUploadAfter?: number;
+  readonly transitions?: LifecycleTransitionProps[];
+  readonly expirationdays?: number;
+  readonly expiredObjectDeleteMarker?: boolean;
+  readonly noncurrentVersionTransitions?: LifecycleTransitionProps[];
+  readonly noncurrentVersionExpirationDays?: number;
+  readonly noncurrentVersionsToRetain?: number;
+}
 export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
   /** Existing KMS key ARN for S3 output encryption. Creates a new key if not provided. */
   readonly s3OutputKmsKeyArn?: string;
@@ -407,6 +432,9 @@ export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
   readonly datazone?: DataOpsDatazoneProps;
   /** SageMaker configuration for data governance and catalog integration. */
   readonly sagemaker?: DataOpsSageMakerProps;
+
+  /** S3 lifecycle rules for automated storage class transitions and expiration on the project bucket. */
+  readonly lifecycleRules?: LifecycleConfigurationRuleProps[];
 
   /** Project-level Lake Formation configuration for centralized tag-based access control. */
   readonly lakeFormation?: LakeFormationConfig;
@@ -1464,6 +1492,13 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       naming: this.props.naming,
     });
 
+    // Add S3 Lifecycle Policy if lifecycle rules are defined
+    if (this.props.lifecycleRules) {
+      this.resolveLifecycleConfigurationRules(this.props.lifecycleRules).forEach(lifecycleRule => {
+        projectBucket.addLifecycleRule(lifecycleRule);
+      });
+    }
+
     //Data Admins can read/write the entire bucket
     //Data Engineers can read the entire bucket
     const rootPolicy = new RestrictObjectPrefixToRoles({
@@ -1573,6 +1608,61 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     new MdaaStringParameter(this.scope, paramId, {
       parameterName: this.props.naming.ssmPath(ssmPath, true, false),
       stringValue: paramValue,
+    });
+  }
+
+  private resolveTransitions(transitionsWithName: LifecycleTransitionProps[]): Transition[] {
+    return transitionsWithName.map(transition => {
+      const lifecycleTransitionResolved: Transition = {
+        storageClass: new StorageClass(transition.storageClass),
+        transitionAfter: Duration.days(transition.days),
+      };
+      return lifecycleTransitionResolved;
+    });
+  }
+
+  private resolveNoncurrentVersionTransitions(
+    transitionsWithName: LifecycleTransitionProps[],
+  ): NoncurrentVersionTransition[] {
+    return transitionsWithName.map(transition => {
+      const lifecycleTransitionResolved: NoncurrentVersionTransition = {
+        storageClass: new StorageClass(transition.storageClass),
+        transitionAfter: Duration.days(transition.days),
+        noncurrentVersionsToRetain: transition.newerNoncurrentVersions ? transition.newerNoncurrentVersions : undefined,
+      };
+      return lifecycleTransitionResolved;
+    });
+  }
+
+  private resolveLifecycleConfigurationRules(
+    lifecycleConfigurationRulesWithName: LifecycleConfigurationRuleProps[],
+  ): LifecycleRule[] {
+    return lifecycleConfigurationRulesWithName.map(lifecycleConfigurationRule => {
+      const lifecycleConfigurationRuleResolved: LifecycleRule = {
+        ...lifecycleConfigurationRule,
+        ...{
+          enabled: lifecycleConfigurationRule.status.toLowerCase() === 'enabled',
+          abortIncompleteMultipartUploadAfter: lifecycleConfigurationRule.abortIncompleteMultipartUploadAfter
+            ? Duration.days(lifecycleConfigurationRule.abortIncompleteMultipartUploadAfter)
+            : undefined,
+          transitions: lifecycleConfigurationRule.transitions
+            ? this.resolveTransitions(lifecycleConfigurationRule.transitions)
+            : undefined,
+          expiration: lifecycleConfigurationRule.expirationdays
+            ? Duration.days(lifecycleConfigurationRule.expirationdays)
+            : undefined,
+          noncurrentVersionExpiration: lifecycleConfigurationRule.noncurrentVersionExpirationDays
+            ? Duration.days(lifecycleConfigurationRule.noncurrentVersionExpirationDays)
+            : undefined,
+          noncurrentVersionsToRetain: lifecycleConfigurationRule.noncurrentVersionsToRetain
+            ? lifecycleConfigurationRule.noncurrentVersionsToRetain
+            : undefined,
+          noncurrentVersionTransitions: lifecycleConfigurationRule.noncurrentVersionTransitions
+            ? this.resolveNoncurrentVersionTransitions(lifecycleConfigurationRule.noncurrentVersionTransitions)
+            : undefined,
+        },
+      };
+      return lifecycleConfigurationRuleResolved;
     });
   }
 }

@@ -7,7 +7,13 @@ import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
-import { DataOpsProjectL3Construct, DataOpsProjectL3ConstructProps, NamedDatabaseGrantProps } from '../lib';
+import {
+  DataOpsProjectL3Construct,
+  DataOpsProjectL3ConstructProps,
+  LifecycleConfigurationRuleProps,
+  LifecycleTransitionProps,
+  NamedDatabaseGrantProps,
+} from '../lib';
 // nosemgrep
 import * as path from 'path';
 import { Protocol } from 'aws-cdk-lib/aws-ec2';
@@ -853,5 +859,76 @@ describe('Multiple Security Groups Tests', () => {
     new DataOpsProjectL3Construct(testApp.testStack, 'multi-sg-stack', constructProps);
     const template = Template.fromStack(testApp.testStack);
     template.resourceCountIs('AWS::EC2::SecurityGroup', 2);
+  });
+});
+
+describe('Lifecycle Configuration Tests', () => {
+  const lifecycleTestApp = new MdaaTestApp();
+
+  const testAdminRoleRef: MdaaRoleRef = {
+    id: 'test-admin-role-id',
+  };
+
+  const testEngRoleRef: MdaaRoleRef = {
+    id: 'test-eng-role-id',
+  };
+
+  const testLifecycleTransition: LifecycleTransitionProps = {
+    days: 30,
+    storageClass: 'GLACIER',
+  };
+
+  const testNonCurrentVersionsLifecycleTransition: LifecycleTransitionProps = {
+    days: 30,
+    storageClass: 'GLACIER',
+  };
+
+  const testLifecycleConfiguration: LifecycleConfigurationRuleProps = {
+    id: 'test-lifecycle-configuration-id',
+    prefix: 'test-prefix',
+    status: 'Enabled',
+    expirationdays: 270,
+    transitions: [testLifecycleTransition],
+    noncurrentVersionTransitions: [testNonCurrentVersionsLifecycleTransition],
+  };
+
+  const lifecycleConstructProps: DataOpsProjectL3ConstructProps = {
+    naming: lifecycleTestApp.naming,
+    roleHelper: new MdaaRoleHelper(lifecycleTestApp.testStack, lifecycleTestApp.naming),
+    dataAdminRoleRefs: [testAdminRoleRef],
+    dataEngineerRoleRefs: [testEngRoleRef],
+    projectExecutionRoleRefs: [testEngRoleRef],
+    lifecycleRules: [testLifecycleConfiguration],
+  };
+
+  new DataOpsProjectL3Construct(lifecycleTestApp.testStack, 'test-lifecycle-stack', lifecycleConstructProps);
+  lifecycleTestApp.checkCdkNagCompliance(lifecycleTestApp.testStack);
+  const lifecycleTemplate = Template.fromStack(lifecycleTestApp.testStack);
+
+  test('LifecycleConfiguration', () => {
+    lifecycleTemplate.hasResourceProperties('AWS::S3::Bucket', {
+      LifecycleConfiguration: {
+        Rules: Match.arrayWith([
+          Match.objectLike({
+            Id: 'test-lifecycle-configuration-id',
+            ExpirationInDays: 270,
+            Prefix: 'test-prefix',
+            Status: 'Enabled',
+            Transitions: [
+              {
+                TransitionInDays: 30,
+                StorageClass: 'GLACIER',
+              },
+            ],
+            NoncurrentVersionTransitions: [
+              {
+                TransitionInDays: 30,
+                StorageClass: 'GLACIER',
+              },
+            ],
+          }),
+        ]),
+      },
+    });
   });
 });
