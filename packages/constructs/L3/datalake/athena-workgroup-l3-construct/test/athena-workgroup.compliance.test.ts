@@ -6,8 +6,7 @@
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Match } from 'aws-cdk-lib/assertions';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { AthenaWorkgroupL3Construct, AthenaWorkgroupL3ConstructProps } from '../lib/athena-workgroup-l3-construct';
 
 describe('MDAA Compliance Stack Tests', () => {
@@ -142,6 +141,60 @@ describe('MDAA Compliance Stack Tests', () => {
           }),
         ]),
       },
+    });
+  });
+});
+
+describe('Athena Workgroup Lifecycle Configuration', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const constructProps: AthenaWorkgroupL3ConstructProps = {
+    dataAdminRoles: [{ id: 'admin-role', arn: 'arn:test-partition:iam::test-account:role/Admin' }],
+    athenaUserRoles: [{ id: 'user-role', arn: 'arn:test-partition:iam::test-account:role/User' }],
+    lifecycleConfiguration: [
+      { id: 'expire-results', status: 'Enabled', expirationdays: 7, abortIncompleteMultipartUploadAfter: 1 },
+      {
+        id: 'archive-large',
+        status: 'Enabled',
+        prefix: 'custom/',
+        transitions: [{ days: 30, storageClass: 'GLACIER' }],
+      },
+    ],
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+  };
+
+  new AthenaWorkgroupL3Construct(stack, 'lifecycle-test', constructProps);
+  const template = Template.fromStack(stack);
+
+  test('auto-prefixes rules without explicit prefix to athena-results/', () => {
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      LifecycleConfiguration: Match.objectLike({
+        Rules: Match.arrayWith([
+          Match.objectLike({
+            Id: 'expire-results',
+            Prefix: 'athena-results/',
+            Status: 'Enabled',
+            ExpirationInDays: 7,
+          }),
+        ]),
+      }),
+    });
+  });
+
+  test('preserves explicit prefix as-is', () => {
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      LifecycleConfiguration: Match.objectLike({
+        Rules: Match.arrayWith([
+          Match.objectLike({
+            Id: 'archive-large',
+            Prefix: 'custom/',
+            Status: 'Enabled',
+            Transitions: [{ StorageClass: 'GLACIER', TransitionInDays: 30 }],
+          }),
+        ]),
+      }),
     });
   });
 });

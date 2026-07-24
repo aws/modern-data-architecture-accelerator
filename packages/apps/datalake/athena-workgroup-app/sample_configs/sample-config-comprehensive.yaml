@@ -38,3 +38,40 @@ workgroupConfiguration:
 # Verbatim policy name prefix bypassing MDAA naming conventions.
 # Useful for cross-account policy portability and SSO permission set integration.
 verbatimPolicyNamePrefix: 'some-prefix'
+
+# S3 lifecycle rules applied to the workgroup results bucket.
+# Rules without a prefix are automatically scoped to the results location (athena-results/).
+# Rules with an explicit prefix are applied as-is.
+# CTAS tables should use external_location to write elsewhere; these rules target query results only.
+lifecycleConfiguration:
+  # Expire query results after 7 days and clean up incomplete uploads.
+  # Automatically scoped to athena-results/ since no prefix is specified.
+  - id: expire-query-results
+    status: Enabled
+    expirationdays: 7
+    abortIncompleteMultipartUploadAfter: 1
+  # Clean up expired object delete markers left by versioned deletions.
+  - id: remove-delete-markers
+    status: Enabled
+    expiredObjectDeleteMarker: true
+  # Archive large result sets (>1MB but <5GB) to cheaper storage before expiration.
+  - id: archive-large-results
+    status: Enabled
+    objectSizeGreaterThan: 1048576
+    objectSizeLessThan: 5368709120
+    transitions:
+      - days: 3
+        storageClass: STANDARD_IA
+    # Manage noncurrent versions of large results
+    noncurrentVersionTransitions:
+      - days: 7
+        storageClass: GLACIER
+        newerNoncurrentVersions: 2
+    noncurrentVersionExpirationDays: 30
+    noncurrentVersionsToRetain: 3
+  # Explicit prefix example — applies as-is without auto-scoping to athena-results/
+  - id: cleanup-staging
+    status: Enabled
+    prefix: staging/
+    expirationdays: 1
+    abortIncompleteMultipartUploadAfter: 1

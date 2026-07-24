@@ -5,6 +5,7 @@
 
 import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { LifecycleConfigurationRuleProps } from '@aws-mdaa/s3-helpers';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
@@ -55,6 +56,18 @@ export interface AthenaWorkgroupConfigContents extends MdaaBaseConfigContents {
    * Validation: Optional; string prefix used instead of MDAA naming for policy names
    */
   readonly verbatimPolicyNamePrefix?: string;
+  /**
+   * S3 lifecycle rules applied to the workgroup results bucket.
+   * Rules without a prefix are automatically scoped to the results location (athena-results/).
+   * Rules with an explicit prefix are applied as-is.
+   *
+   * Use cases: Expire ephemeral query results; Archive large result sets to cheaper storage
+   *
+   * AWS: S3 Bucket Lifecycle Rules
+   *
+   * Validation: Optional; array of LifecycleConfigurationRuleProps
+   */
+  readonly lifecycleConfiguration?: LifecycleConfigurationRuleProps[];
 }
 
 /**
@@ -85,6 +98,7 @@ export class AthenaWorkgroupConfigParser extends MdaaAppConfigParser<AthenaWorkg
   public readonly athenaUserRoles: MdaaRoleRef[];
   public readonly workgroupConfiguration: WorkgroupConfigurationConfig;
   public readonly verbatimPolicyNamePrefix?: string;
+  public readonly lifecycleConfiguration?: LifecycleConfigurationRuleProps[];
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
 
@@ -94,5 +108,6 @@ export class AthenaWorkgroupConfigParser extends MdaaAppConfigParser<AthenaWorkg
       ? this.configContents.workgroupConfiguration
       : {};
     this.verbatimPolicyNamePrefix = this.configContents.verbatimPolicyNamePrefix;
+    this.lifecycleConfiguration = this.configContents.lifecycleConfiguration;
   }
 }

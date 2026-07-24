@@ -13,7 +13,7 @@ import {
   BucketInventory,
   InventoryHelper,
   LifecycleConfigurationRuleProps,
-  LifecycleTransitionProps,
+  LifecycleHelper,
   RestrictBucketToRoles,
   RestrictObjectPrefixToRoles,
 } from '@aws-mdaa/s3-helpers';
@@ -24,17 +24,7 @@ import { Effect, IRole, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aw
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { CfnResource } from 'aws-cdk-lib/aws-lakeformation';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
-import {
-  Bucket,
-  CfnBucket,
-  CfnStorageLens,
-  CorsRule,
-  IBucket,
-  LifecycleRule,
-  NoncurrentVersionTransition,
-  StorageClass,
-  Transition,
-} from 'aws-cdk-lib/aws-s3';
+import { Bucket, CfnBucket, CfnStorageLens, CorsRule, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Provider } from 'aws-cdk-lib/custom-resources';
 import { MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
@@ -272,61 +262,6 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     );
   }
 
-  private resolveTransitions(transitionsWithName: LifecycleTransitionProps[]): Transition[] {
-    return Object.entries(transitionsWithName).map(transitionWithName => {
-      const transition = transitionWithName[1];
-      const lifecycleTransitionResolved: Transition = {
-        storageClass: new StorageClass(transition.storageClass),
-        transitionAfter: Duration.days(transition.days),
-      };
-      return lifecycleTransitionResolved;
-    });
-  }
-
-  private resolveNoncurrentVersionTransitions(
-    transitionsWithName: LifecycleTransitionProps[],
-  ): NoncurrentVersionTransition[] {
-    return Object.entries(transitionsWithName).map(transitionWithName => {
-      const transition = transitionWithName[1];
-      const lifecycleTransitionResolved: NoncurrentVersionTransition = {
-        storageClass: new StorageClass(transition.storageClass),
-        transitionAfter: Duration.days(transition.days),
-        noncurrentVersionsToRetain: transition.newerNoncurrentVersions ? transition.newerNoncurrentVersions : undefined,
-      };
-      return lifecycleTransitionResolved;
-    });
-  }
-
-  private resolveLifecycleConfigurationRules(
-    lifecycleConfigurationRulesWithName: LifecycleConfigurationRuleProps[],
-  ): LifecycleRule[] {
-    return Object.entries(lifecycleConfigurationRulesWithName).map(lifecycleConfigurationRuleWithName => {
-      const lifecycleConfigurationRule = lifecycleConfigurationRuleWithName[1];
-      const lifecycleConfigurationRuleResolved: LifecycleRule = {
-        ...lifecycleConfigurationRule,
-        ...{
-          enabled: lifecycleConfigurationRule.status.toLowerCase() === 'enabled',
-          abortIncompleteMultipartUploadAfter: lifecycleConfigurationRule.abortIncompleteMultipartUploadAfter
-            ? Duration.days(lifecycleConfigurationRule.abortIncompleteMultipartUploadAfter)
-            : undefined,
-          transitions: lifecycleConfigurationRule.transitions
-            ? this.resolveTransitions(lifecycleConfigurationRule.transitions)
-            : undefined,
-          expiration: lifecycleConfigurationRule.expirationdays
-            ? Duration.days(lifecycleConfigurationRule.expirationdays)
-            : undefined,
-          noncurrentVersionTransitions: lifecycleConfigurationRule.noncurrentVersionTransitions
-            ? this.resolveNoncurrentVersionTransitions(lifecycleConfigurationRule.noncurrentVersionTransitions)
-            : undefined,
-          noncurrentVersionExpiration: lifecycleConfigurationRule.noncurrentVersionExpirationDays
-            ? Duration.days(lifecycleConfigurationRule.noncurrentVersionExpirationDays)
-            : undefined,
-        },
-      };
-      return lifecycleConfigurationRuleResolved;
-    });
-  }
-
   private createBucket(
     bucketDefinition: BucketDefinition,
     encryptionKey: IMdaaKmsKey,
@@ -396,7 +331,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
   private addBucketLifecyclePolicy(bucketDefinition: BucketDefinition, bucket: Bucket) {
     // Add S3 Lifecycle Policy
     if (bucketDefinition.lifecycleConfiguration) {
-      this.resolveLifecycleConfigurationRules(bucketDefinition.lifecycleConfiguration).forEach(lifecycleRule => {
+      LifecycleHelper.resolveLifecycleRules(bucketDefinition.lifecycleConfiguration).forEach(lifecycleRule => {
         bucket.addLifecycleRule(lifecycleRule);
       });
     }

@@ -6,7 +6,7 @@
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Stack } from 'aws-cdk-lib';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { DataOpsProjectL3Construct, DataOpsProjectL3ConstructProps } from '../lib';
 import { DataOpsProjectUtils } from '../lib/dataops-project-utils';
 // nosemgrep
@@ -113,6 +113,94 @@ describe('DataOps Project Edge Cases', () => {
     expect(() => {
       new DataOpsProjectL3Construct(stack, 'test-construct', props);
     }).toThrow('DataZone/SageMaker Project must be defined if creating a DataZone Data Source');
+  });
+
+  test('applies S3 lifecycle rules to the project bucket when lifecycleConfiguration is provided', () => {
+    const app = new MdaaTestApp();
+    const stack = new Stack(app, 'test-lifecycle-stack');
+    const roleHelper = new MdaaRoleHelper(
+      stack,
+      app.naming,
+      path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
+    );
+
+    const props: DataOpsProjectL3ConstructProps = {
+      naming: testApp.naming,
+      roleHelper,
+      projectExecutionRoleRefs: [testGlueRoleRef],
+      dataEngineerRoleRefs: [],
+      dataAdminRoleRefs: [],
+      lifecycleConfiguration: [
+        {
+          id: 'expire-temp',
+          status: 'Enabled',
+          prefix: 'temp/',
+          expirationdays: 7,
+          abortIncompleteMultipartUploadAfter: 7,
+        },
+        {
+          id: 'archive-data',
+          status: 'Enabled',
+          prefix: 'data/',
+          transitions: [
+            { days: 90, storageClass: 'STANDARD_IA' },
+            { days: 365, storageClass: 'GLACIER' },
+          ],
+          noncurrentVersionExpirationDays: 90,
+          noncurrentVersionsToRetain: 3,
+        },
+      ],
+    };
+
+    new DataOpsProjectL3Construct(stack, 'test-construct', props);
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      LifecycleConfiguration: {
+        Rules: Match.arrayWith([
+          Match.objectLike({
+            Id: 'expire-temp',
+            Status: 'Enabled',
+            Prefix: 'temp/',
+            ExpirationInDays: 7,
+            AbortIncompleteMultipartUpload: { DaysAfterInitiation: 7 },
+          }),
+          Match.objectLike({
+            Id: 'archive-data',
+            Status: 'Enabled',
+            Prefix: 'data/',
+            Transitions: Match.arrayWith([
+              Match.objectLike({ StorageClass: 'STANDARD_IA', TransitionInDays: 90 }),
+              Match.objectLike({ StorageClass: 'GLACIER', TransitionInDays: 365 }),
+            ]),
+            NoncurrentVersionExpiration: Match.objectLike({ NoncurrentDays: 90, NewerNoncurrentVersions: 3 }),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('project bucket has no lifecycle configuration when none is provided', () => {
+    const app = new MdaaTestApp();
+    const stack = new Stack(app, 'test-no-lifecycle-stack');
+    const roleHelper = new MdaaRoleHelper(
+      stack,
+      app.naming,
+      path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
+    );
+
+    const props: DataOpsProjectL3ConstructProps = {
+      naming: testApp.naming,
+      roleHelper,
+      projectExecutionRoleRefs: [testGlueRoleRef],
+      dataEngineerRoleRefs: [],
+      dataAdminRoleRefs: [],
+    };
+
+    new DataOpsProjectL3Construct(stack, 'test-construct', props);
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties('AWS::S3::Bucket', Match.objectLike({ LifecycleConfiguration: Match.absent() }));
   });
 
   test('should create SageMaker resources when sagemaker prop is defined', () => {

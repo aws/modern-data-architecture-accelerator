@@ -107,7 +107,7 @@ Contains only the required property (dataAdminRoles) plus one database to demons
 
 #### Comprehensive Configuration
 
-Covers all available configuration options using the SageMaker integration path. Start here when evaluating all available options for databases, connections, classifiers, Lake Formation grants, and SageMaker integration.
+Covers all available configuration options using the SageMaker integration path. Start here when evaluating all available options for databases, connections, classifiers, Lake Formation grants, SageMaker integration, and S3 lifecycle rules for the project bucket (expiring transient temp/query data and aging cold data to cheaper storage classes).
 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 

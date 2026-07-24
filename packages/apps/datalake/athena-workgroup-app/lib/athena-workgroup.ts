@@ -26,6 +26,7 @@ export class AthenaWorkgroupCDKApp extends MdaaCdkApp {
         athenaUserRoles: appConfig.athenaUserRoles,
         workgroupConfiguration: appConfig.workgroupConfiguration,
         verbatimPolicyNamePrefix: appConfig.verbatimPolicyNamePrefix,
+        lifecycleConfiguration: appConfig.lifecycleConfiguration,
       },
       ...l3ConstructProps,
     };

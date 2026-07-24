@@ -41,7 +41,12 @@ import {
 } from '@aws-mdaa/lakeformation-access-control-l3-construct';
 import { LakeFormationSettingsL3Construct } from '@aws-mdaa/lakeformation-settings-l3-construct';
 import { LakeFormationTagsL3Construct, LFTagConfig } from '@aws-mdaa/lakeformation-tags-l3-construct';
-import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-helpers';
+import {
+  LifecycleConfigurationRuleProps,
+  LifecycleHelper,
+  RestrictBucketToRoles,
+  RestrictObjectPrefixToRoles,
+} from '@aws-mdaa/s3-helpers';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import {
   SagemakerProjectL3Construct,
@@ -429,6 +434,9 @@ export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
 
   /** Project-level Lake Formation configuration for centralized tag-based access control. */
   readonly lakeFormation?: LakeFormationConfig;
+
+  /** S3 lifecycle rules applied to the project bucket for storage-class transitions and expiration. */
+  readonly lifecycleConfiguration?: LifecycleConfigurationRuleProps[];
 }
 
 /**
@@ -1504,6 +1512,9 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       encryptionKey: kmsKey,
       additionalKmsKeyArns: [s3OutputKmsKey.keyArn],
       naming: this.props.naming,
+      lifecycleRules: this.props.lifecycleConfiguration
+        ? LifecycleHelper.resolveLifecycleRules(this.props.lifecycleConfiguration)
+        : undefined,
     });
 
     //Data Admins can read/write the entire bucket

@@ -17,6 +17,7 @@
 | - [failureNotifications](#failureNotifications )                     | No      | object | No         | In #/definitions/FailureNotificationsProps          | Failure notification configuration for Glue job monitoring and alerting.<br /><br />Use cases: Job failure alerts; Operational monitoring<br /><br />AWS: SNS/CloudWatch integration for Glue job notifications<br /><br />Validation: Optional; valid FailureNotificationsProps                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [glueCatalogKmsKeyArn](#glueCatalogKmsKeyArn )                     | No      | string | No         | -                                                   | KMS key ARN for Glue Catalog metadata encryption.<br /><br />Use cases: Catalog metadata protection; Encryption compliance<br /><br />AWS: KMS key for Glue Catalog encryption<br /><br />Validation: Optional; valid KMS key ARN                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | - [lakeFormation](#lakeFormation )                                   | No      | object | No         | In #/definitions/LakeFormationConfig                | Project-level Lake Formation configuration for centralized tag-based access control.<br />Defines project-wide LF-tag vocabulary shared across all databases.<br /><br />Use cases: Centralized tag management; Project-wide TBAC; Shared governance<br /><br />AWS: Lake Formation project-level configuration<br /><br />Validation: Optional; valid LakeFormationConfig                                                                                                                                                                                                                                                                                                              |
+| - [lifecycleConfiguration](#lifecycleConfiguration )                 | No      | array  | No         | -                                                   | S3 lifecycle rules applied to the project bucket for automated storage-class<br />transitions and object expiration. Each rule targets an optional key prefix<br />(e.g. temp/ or athena-results/) so cold or transient data can be aged to<br />cheaper storage or expired without affecting primary project data.<br /><br />Use cases: Cost optimization for transient query/temp data; Retention/expiration<br />policies; Archiving cold data to Glacier<br /><br />AWS: S3 Bucket Lifecycle Configuration on the project bucket<br /><br />Validation: Optional; array of LifecycleConfigurationRuleProps                                                                         |
 | - [nag_suppressions](#nag_suppressions )                             | No      | object | No         | In #/definitions/MdaaNagSuppressionConfigs          | Q-ENHANCED-PROPERTY<br />Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.<br /><br />Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions<br /><br />AWS: CDK Nag suppressions for compliance rule management and security exception documentation<br /><br />Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management          |
 | - [projectExecutionRoles](#projectExecutionRoles )                   | No      | array  | No         | -                                                   | Pre-defined execution roles for project resource operations (jobs, crawlers).<br /><br />Use cases: Standardized execution roles; Cross-component role coordination<br /><br />AWS: IAM execution roles<br /><br />Validation: Optional; array of MdaaRoleRef                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [s3OutputKmsKeyArn](#s3OutputKmsKeyArn )                           | No      | string | No         | -                                                   | KMS key ARN for encrypting S3 output data from project operations.<br /><br />Use cases: Output data encryption; Data protection compliance<br /><br />AWS: KMS key for S3 encryption<br /><br />Validation: Optional; valid KMS key ARN                                                                                                                                                                                                                                                                                                                                                                                                                                                |
@@ -8287,7 +8288,329 @@ Validation: Tag keys must be unique; tag values must be non-empty arrays; tags a
 | **Additional properties** | Not allowed                                                                                                                                   |
 | **Same definition as**    | [databases_additionalProperties_lakeFormation_databaseTagValues_items](#databases_additionalProperties_lakeFormation_databaseTagValues_items) |
 
-## <a name="nag_suppressions"></a>10. Property `root > nag_suppressions`
+## <a name="lifecycleConfiguration"></a>10. Property `root > lifecycleConfiguration`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** S3 lifecycle rules applied to the project bucket for automated storage-class
+transitions and object expiration. Each rule targets an optional key prefix
+(e.g. temp/ or athena-results/) so cold or transient data can be aged to
+cheaper storage or expired without affecting primary project data.
+
+Use cases: Cost optimization for transient query/temp data; Retention/expiration
+policies; Archiving cold data to Glacier
+
+AWS: S3 Bucket Lifecycle Configuration on the project bucket
+
+Validation: Optional; array of LifecycleConfigurationRuleProps
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                  | Description                                                                                                  |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| [LifecycleConfigurationRuleProps](#lifecycleConfiguration_items) | A single S3 lifecycle rule controlling storage-class transitions and expiration for objects in a bucket. ... |
+
+### <a name="lifecycleConfiguration_items"></a>10.1. root > lifecycleConfiguration > LifecycleConfigurationRuleProps
+
+|                           |                                               |
+| ------------------------- | --------------------------------------------- |
+| **Type**                  | `object`                                      |
+| **Required**              | No                                            |
+| **Additional properties** | Not allowed                                   |
+| **Defined in**            | #/definitions/LifecycleConfigurationRuleProps |
+
+**Description:** A single S3 lifecycle rule controlling storage-class transitions and expiration for objects in a bucket.
+
+Use cases: Automated cost optimization; Data retention/expiration policies; Cleaning up incomplete multipart uploads and old versions
+
+AWS: S3 Bucket Lifecycle Rule
+
+Validation: id and status required; remaining fields optional
+
+| Property                                                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                 |
+| ----------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [abortIncompleteMultipartUploadAfter](#lifecycleConfiguration_items_abortIncompleteMultipartUploadAfter ) | No      | number  | No         | -          | Days after which incomplete multipart uploads are aborted.<br /><br />AWS: S3 Lifecycle Rule AbortIncompleteMultipartUpload DaysAfterInitiation<br /><br />Validation: Optional; positive integer                 |
+| - [expirationdays](#lifecycleConfiguration_items_expirationdays )                                           | No      | number  | No         | -          | Days after object creation before current versions expire (are deleted).<br /><br />AWS: S3 Lifecycle Rule Expiration ExpirationInDays<br /><br />Validation: Optional; positive integer                          |
+| - [expiredObjectDeleteMarker](#lifecycleConfiguration_items_expiredObjectDeleteMarker )                     | No      | boolean | No         | -          | Whether to remove expired object delete markers.<br /><br />AWS: S3 Lifecycle Rule Expiration ExpiredObjectDeleteMarker<br /><br />Validation: Optional; boolean                                                  |
+| + [id](#lifecycleConfiguration_items_id )                                                                   | No      | string  | No         | -          | Unique identifier for the lifecycle rule.<br /><br />AWS: S3 Lifecycle Rule ID<br /><br />Validation: Required; unique within the bucket                                                                          |
+| - [noncurrentVersionExpirationDays](#lifecycleConfiguration_items_noncurrentVersionExpirationDays )         | No      | number  | No         | -          | Days after a version becomes noncurrent before it expires (is deleted).<br /><br />AWS: S3 Lifecycle Rule NoncurrentVersionExpiration NoncurrentDays<br /><br />Validation: Optional; positive integer            |
+| - [noncurrentVersionTransitions](#lifecycleConfiguration_items_noncurrentVersionTransitions )               | No      | array   | No         | -          | Storage-class transitions applied to noncurrent object versions.<br /><br />AWS: S3 Lifecycle Rule NoncurrentVersionTransitions<br /><br />Validation: Optional; array of LifecycleTransitionProps                |
+| - [noncurrentVersionsToRetain](#lifecycleConfiguration_items_noncurrentVersionsToRetain )                   | No      | number  | No         | -          | Number of newer noncurrent versions to retain before expiring older ones.<br /><br />AWS: S3 Lifecycle Rule NoncurrentVersionExpiration NewerNoncurrentVersions<br /><br />Validation: Optional; positive integer |
+| - [objectSizeGreaterThan](#lifecycleConfiguration_items_objectSizeGreaterThan )                             | No      | number  | No         | -          | Only apply the rule to objects larger than this size in bytes.<br /><br />AWS: S3 Lifecycle Rule Filter ObjectSizeGreaterThan<br /><br />Validation: Optional; positive integer (bytes)                           |
+| - [objectSizeLessThan](#lifecycleConfiguration_items_objectSizeLessThan )                                   | No      | number  | No         | -          | Only apply the rule to objects smaller than this size in bytes.<br /><br />AWS: S3 Lifecycle Rule Filter ObjectSizeLessThan<br /><br />Validation: Optional; positive integer (bytes)                             |
+| - [prefix](#lifecycleConfiguration_items_prefix )                                                           | No      | string  | No         | -          | Object key prefix the rule applies to. When omitted, the rule applies to all objects in the bucket.<br /><br />AWS: S3 Lifecycle Rule Filter Prefix<br /><br />Validation: Optional; S3 key prefix                |
+| + [status](#lifecycleConfiguration_items_status )                                                           | No      | string  | No         | -          | Whether the rule is active.<br /><br />AWS: S3 Lifecycle Rule Status<br /><br />Validation: Required; one of 'Enabled' or 'Disabled' (case-insensitive)                                                           |
+| - [transitions](#lifecycleConfiguration_items_transitions )                                                 | No      | array   | No         | -          | Storage-class transitions applied to current object versions.<br /><br />AWS: S3 Lifecycle Rule Transitions<br /><br />Validation: Optional; array of LifecycleTransitionProps                                    |
+
+#### <a name="lifecycleConfiguration_items_abortIncompleteMultipartUploadAfter"></a>10.1.1. Property `root > lifecycleConfiguration > lifecycleConfiguration items > abortIncompleteMultipartUploadAfter`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** Days after which incomplete multipart uploads are aborted.
+
+AWS: S3 Lifecycle Rule AbortIncompleteMultipartUpload DaysAfterInitiation
+
+Validation: Optional; positive integer
+
+#### <a name="lifecycleConfiguration_items_expirationdays"></a>10.1.2. Property `root > lifecycleConfiguration > lifecycleConfiguration items > expirationdays`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** Days after object creation before current versions expire (are deleted).
+
+AWS: S3 Lifecycle Rule Expiration ExpirationInDays
+
+Validation: Optional; positive integer
+
+#### <a name="lifecycleConfiguration_items_expiredObjectDeleteMarker"></a>10.1.3. Property `root > lifecycleConfiguration > lifecycleConfiguration items > expiredObjectDeleteMarker`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Whether to remove expired object delete markers.
+
+AWS: S3 Lifecycle Rule Expiration ExpiredObjectDeleteMarker
+
+Validation: Optional; boolean
+
+#### <a name="lifecycleConfiguration_items_id"></a>10.1.4. Property `root > lifecycleConfiguration > lifecycleConfiguration items > id`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Unique identifier for the lifecycle rule.
+
+AWS: S3 Lifecycle Rule ID
+
+Validation: Required; unique within the bucket
+
+#### <a name="lifecycleConfiguration_items_noncurrentVersionExpirationDays"></a>10.1.5. Property `root > lifecycleConfiguration > lifecycleConfiguration items > noncurrentVersionExpirationDays`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** Days after a version becomes noncurrent before it expires (is deleted).
+
+AWS: S3 Lifecycle Rule NoncurrentVersionExpiration NoncurrentDays
+
+Validation: Optional; positive integer
+
+#### <a name="lifecycleConfiguration_items_noncurrentVersionTransitions"></a>10.1.6. Property `root > lifecycleConfiguration > lifecycleConfiguration items > noncurrentVersionTransitions`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Storage-class transitions applied to noncurrent object versions.
+
+AWS: S3 Lifecycle Rule NoncurrentVersionTransitions
+
+Validation: Optional; array of LifecycleTransitionProps
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                              | Description                                                        |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [LifecycleTransitionProps](#lifecycleConfiguration_items_noncurrentVersionTransitions_items) | A single storage-class transition within an S3 lifecycle rule. ... |
+
+##### <a name="lifecycleConfiguration_items_noncurrentVersionTransitions_items"></a>10.1.6.1. root > lifecycleConfiguration > lifecycleConfiguration items > noncurrentVersionTransitions > LifecycleTransitionProps
+
+|                           |                                        |
+| ------------------------- | -------------------------------------- |
+| **Type**                  | `object`                               |
+| **Required**              | No                                     |
+| **Additional properties** | Not allowed                            |
+| **Defined in**            | #/definitions/LifecycleTransitionProps |
+
+**Description:** A single storage-class transition within an S3 lifecycle rule.
+
+Use cases: Cost optimization by aging objects to cheaper storage; Archiving cold data
+
+AWS: S3 Lifecycle Transition (current or noncurrent version)
+
+Validation: days required; storageClass required
+
+| Property                                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                         |
+| ---------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [days](#lifecycleConfiguration_items_noncurrentVersionTransitions_items_days )                                       | No      | number | No         | -          | Number of days after object creation (or after becoming noncurrent) before the transition applies.<br /><br />AWS: S3 Lifecycle Transition TransitionInDays / NoncurrentDays<br /><br />Validation: Required; positive integer                            |
+| - [newerNoncurrentVersions](#lifecycleConfiguration_items_noncurrentVersionTransitions_items_newerNoncurrentVersions ) | No      | number | No         | -          | For noncurrent version transitions, the number of newer noncurrent versions to retain before transitioning older ones.<br /><br />AWS: S3 Lifecycle NoncurrentVersionTransition NewerNoncurrentVersions<br /><br />Validation: Optional; positive integer |
+| + [storageClass](#lifecycleConfiguration_items_noncurrentVersionTransitions_items_storageClass )                       | No      | string | No         | -          | Target S3 storage class for the transition.<br /><br />AWS: S3 storage class<br /><br />Validation: Required; valid S3 storage class (e.g. STANDARD_IA, INTELLIGENT_TIERING, ONEZONE_IA, GLACIER_IR, GLACIER, DEEP_ARCHIVE)                               |
+
+###### <a name="lifecycleConfiguration_items_noncurrentVersionTransitions_items_days"></a>10.1.6.1.1. Property `root > lifecycleConfiguration > lifecycleConfiguration items > noncurrentVersionTransitions > noncurrentVersionTransitions items > days`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | Yes      |
+
+**Description:** Number of days after object creation (or after becoming noncurrent) before the transition applies.
+
+AWS: S3 Lifecycle Transition TransitionInDays / NoncurrentDays
+
+Validation: Required; positive integer
+
+###### <a name="lifecycleConfiguration_items_noncurrentVersionTransitions_items_newerNoncurrentVersions"></a>10.1.6.1.2. Property `root > lifecycleConfiguration > lifecycleConfiguration items > noncurrentVersionTransitions > noncurrentVersionTransitions items > newerNoncurrentVersions`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** For noncurrent version transitions, the number of newer noncurrent versions to retain before transitioning older ones.
+
+AWS: S3 Lifecycle NoncurrentVersionTransition NewerNoncurrentVersions
+
+Validation: Optional; positive integer
+
+###### <a name="lifecycleConfiguration_items_noncurrentVersionTransitions_items_storageClass"></a>10.1.6.1.3. Property `root > lifecycleConfiguration > lifecycleConfiguration items > noncurrentVersionTransitions > noncurrentVersionTransitions items > storageClass`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Target S3 storage class for the transition.
+
+AWS: S3 storage class
+
+Validation: Required; valid S3 storage class (e.g. STANDARD_IA, INTELLIGENT_TIERING, ONEZONE_IA, GLACIER_IR, GLACIER, DEEP_ARCHIVE)
+
+#### <a name="lifecycleConfiguration_items_noncurrentVersionsToRetain"></a>10.1.7. Property `root > lifecycleConfiguration > lifecycleConfiguration items > noncurrentVersionsToRetain`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** Number of newer noncurrent versions to retain before expiring older ones.
+
+AWS: S3 Lifecycle Rule NoncurrentVersionExpiration NewerNoncurrentVersions
+
+Validation: Optional; positive integer
+
+#### <a name="lifecycleConfiguration_items_objectSizeGreaterThan"></a>10.1.8. Property `root > lifecycleConfiguration > lifecycleConfiguration items > objectSizeGreaterThan`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** Only apply the rule to objects larger than this size in bytes.
+
+AWS: S3 Lifecycle Rule Filter ObjectSizeGreaterThan
+
+Validation: Optional; positive integer (bytes)
+
+#### <a name="lifecycleConfiguration_items_objectSizeLessThan"></a>10.1.9. Property `root > lifecycleConfiguration > lifecycleConfiguration items > objectSizeLessThan`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+**Description:** Only apply the rule to objects smaller than this size in bytes.
+
+AWS: S3 Lifecycle Rule Filter ObjectSizeLessThan
+
+Validation: Optional; positive integer (bytes)
+
+#### <a name="lifecycleConfiguration_items_prefix"></a>10.1.10. Property `root > lifecycleConfiguration > lifecycleConfiguration items > prefix`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Object key prefix the rule applies to. When omitted, the rule applies to all objects in the bucket.
+
+AWS: S3 Lifecycle Rule Filter Prefix
+
+Validation: Optional; S3 key prefix
+
+#### <a name="lifecycleConfiguration_items_status"></a>10.1.11. Property `root > lifecycleConfiguration > lifecycleConfiguration items > status`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Whether the rule is active.
+
+AWS: S3 Lifecycle Rule Status
+
+Validation: Required; one of 'Enabled' or 'Disabled' (case-insensitive)
+
+#### <a name="lifecycleConfiguration_items_transitions"></a>10.1.12. Property `root > lifecycleConfiguration > lifecycleConfiguration items > transitions`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Storage-class transitions applied to current object versions.
+
+AWS: S3 Lifecycle Rule Transitions
+
+Validation: Optional; array of LifecycleTransitionProps
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                             | Description                                                        |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [LifecycleTransitionProps](#lifecycleConfiguration_items_transitions_items) | A single storage-class transition within an S3 lifecycle rule. ... |
+
+##### <a name="lifecycleConfiguration_items_transitions_items"></a>10.1.12.1. root > lifecycleConfiguration > lifecycleConfiguration items > transitions > LifecycleTransitionProps
+
+|                           |                                                                                                                                     |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                            |
+| **Required**              | No                                                                                                                                  |
+| **Additional properties** | Not allowed                                                                                                                         |
+| **Same definition as**    | [lifecycleConfiguration_items_noncurrentVersionTransitions_items](#lifecycleConfiguration_items_noncurrentVersionTransitions_items) |
+
+**Description:** A single storage-class transition within an S3 lifecycle rule.
+
+Use cases: Cost optimization by aging objects to cheaper storage; Archiving cold data
+
+AWS: S3 Lifecycle Transition (current or noncurrent version)
+
+Validation: days required; storageClass required
+
+## <a name="nag_suppressions"></a>11. Property `root > nag_suppressions`
 
 |                           |                                         |
 | ------------------------- | --------------------------------------- |
@@ -8309,7 +8632,7 @@ Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structu
 | --------------------------------------- | ------- | ----- | ---------- | ---------- | ------------------------------------------------------------------------------------------ |
 | + [by_path](#nag_suppressions_by_path ) | No      | array | No         | -          | Array of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted |
 
-### <a name="nag_suppressions_by_path"></a>10.1. Property `root > nag_suppressions > by_path`
+### <a name="nag_suppressions_by_path"></a>11.1. Property `root > nag_suppressions > by_path`
 
 |              |         |
 | ------------ | ------- |
@@ -8330,7 +8653,7 @@ Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structu
 | ----------------------------------------------------------- | ----------- |
 | [MdaaNagSuppressionByPath](#nag_suppressions_by_path_items) | -           |
 
-#### <a name="nag_suppressions_by_path_items"></a>10.1.1. root > nag_suppressions > by_path > MdaaNagSuppressionByPath
+#### <a name="nag_suppressions_by_path_items"></a>11.1.1. root > nag_suppressions > by_path > MdaaNagSuppressionByPath
 
 |                           |                                        |
 | ------------------------- | -------------------------------------- |
@@ -8344,7 +8667,7 @@ Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structu
 | + [path](#nag_suppressions_by_path_items_path )                 | No      | string          | No         | -          | CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed |
 | + [suppressions](#nag_suppressions_by_path_items_suppressions ) | No      | array of object | No         | -          | Array of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance |
 
-##### <a name="nag_suppressions_by_path_items_path"></a>10.1.1.1. Property `root > nag_suppressions > by_path > by_path items > path`
+##### <a name="nag_suppressions_by_path_items_path"></a>11.1.1.1. Property `root > nag_suppressions > by_path > by_path items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -8353,7 +8676,7 @@ Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structu
 
 **Description:** CloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed
 
-##### <a name="nag_suppressions_by_path_items_suppressions"></a>10.1.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions`
+##### <a name="nag_suppressions_by_path_items_suppressions"></a>11.1.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8374,7 +8697,7 @@ Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structu
 | ------------------------------------------------------------------------ | ----------- |
 | [suppressions items](#nag_suppressions_by_path_items_suppressions_items) | -           |
 
-###### <a name="nag_suppressions_by_path_items_suppressions_items"></a>10.1.1.2.1. root > nag_suppressions > by_path > by_path items > suppressions > suppressions items
+###### <a name="nag_suppressions_by_path_items_suppressions_items"></a>11.1.1.2.1. root > nag_suppressions > by_path > by_path items > suppressions > suppressions items
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -8387,21 +8710,21 @@ Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structu
 | + [id](#nag_suppressions_by_path_items_suppressions_items_id )         | No      | string | No         | -          | -                 |
 | + [reason](#nag_suppressions_by_path_items_suppressions_items_reason ) | No      | string | No         | -          | -                 |
 
-###### <a name="nag_suppressions_by_path_items_suppressions_items_id"></a>10.1.1.2.1.1. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > id`
+###### <a name="nag_suppressions_by_path_items_suppressions_items_id"></a>11.1.1.2.1.1. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > id`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="nag_suppressions_by_path_items_suppressions_items_reason"></a>10.1.1.2.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > reason`
+###### <a name="nag_suppressions_by_path_items_suppressions_items_reason"></a>11.1.1.2.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > reason`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-## <a name="projectExecutionRoles"></a>11. Property `root > projectExecutionRoles`
+## <a name="projectExecutionRoles"></a>12. Property `root > projectExecutionRoles`
 
 |              |         |
 | ------------ | ------- |
@@ -8428,7 +8751,7 @@ Validation: Optional; array of MdaaRoleRef
 | ------------------------------------------- | ----------- |
 | [MdaaRoleRef](#projectExecutionRoles_items) | -           |
 
-### <a name="projectExecutionRoles_items"></a>11.1. root > projectExecutionRoles > MdaaRoleRef
+### <a name="projectExecutionRoles_items"></a>12.1. root > projectExecutionRoles > MdaaRoleRef
 
 |                           |                                               |
 | ------------------------- | --------------------------------------------- |
@@ -8437,7 +8760,7 @@ Validation: Optional; array of MdaaRoleRef
 | **Additional properties** | Not allowed                                   |
 | **Same definition as**    | [dataAdminRoles_items](#dataAdminRoles_items) |
 
-## <a name="s3OutputKmsKeyArn"></a>12. Property `root > s3OutputKmsKeyArn`
+## <a name="s3OutputKmsKeyArn"></a>13. Property `root > s3OutputKmsKeyArn`
 
 |              |          |
 | ------------ | -------- |
@@ -8452,7 +8775,7 @@ AWS: KMS key for S3 encryption
 
 Validation: Optional; valid KMS key ARN
 
-## <a name="sagemaker"></a>13. Property `root > sagemaker`
+## <a name="sagemaker"></a>14. Property `root > sagemaker`
 
 |                           |                                     |
 | ------------------------- | ----------------------------------- |
@@ -8468,7 +8791,7 @@ Validation: Optional; valid KMS key ARN
 | - [domainConfigSSMParam](#sagemaker_domainConfigSSMParam )   | No      | string  | No         | -                                               | SSM parameter name containing domain configuration.      |
 | + [project](#sagemaker_project )                             | No      | object  | No         | In #/definitions/SageMakerProjectProps          | SageMaker project configuration for DataOps integration. |
 
-### <a name="sagemaker_createDataAdminOwners"></a>13.1. Property `root > sagemaker > createDataAdminOwners`
+### <a name="sagemaker_createDataAdminOwners"></a>14.1. Property `root > sagemaker > createDataAdminOwners`
 
 |              |           |
 | ------------ | --------- |
@@ -8477,7 +8800,7 @@ Validation: Optional; valid KMS key ARN
 
 **Description:** Auto-assign data admin roles as project owners.
 
-### <a name="sagemaker_domainConfig"></a>13.2. Property `root > sagemaker > domainConfig`
+### <a name="sagemaker_domainConfig"></a>14.2. Property `root > sagemaker > domainConfig`
 
 |                           |                                        |
 | ------------------------- | -------------------------------------- |
@@ -8488,7 +8811,7 @@ Validation: Optional; valid KMS key ARN
 
 **Description:** Direct domain configuration object.
 
-### <a name="sagemaker_domainConfigSSMParam"></a>13.3. Property `root > sagemaker > domainConfigSSMParam`
+### <a name="sagemaker_domainConfigSSMParam"></a>14.3. Property `root > sagemaker > domainConfigSSMParam`
 
 |              |          |
 | ------------ | -------- |
@@ -8497,7 +8820,7 @@ Validation: Optional; valid KMS key ARN
 
 **Description:** SSM parameter name containing domain configuration.
 
-### <a name="sagemaker_project"></a>13.4. Property `root > sagemaker > project`
+### <a name="sagemaker_project"></a>14.4. Property `root > sagemaker > project`
 
 |                           |                                     |
 | ------------------------- | ----------------------------------- |
@@ -8519,7 +8842,7 @@ Validation: Optional; valid KMS key ARN
 | + [profileName](#sagemaker_project_profileName )               | No      | string | No         | -          | Name of the project profile to use for this project. The profile must<br />target the same account as the project.<br /><br />Use cases: Profile-based project creation; Environment template selection<br /><br />AWS: DataZone project profile reference<br /><br />Validation: Required; string; must match a key in projectProfiles config                                                                                                                                                           |
 | - [users](#sagemaker_project_users )                           | No      | object | No         | -          | MDAA user configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: User-based project contribution; Standard project access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                           |
 
-#### <a name="sagemaker_project_dataSources"></a>13.4.1. Property `root > sagemaker > project > dataSources`
+#### <a name="sagemaker_project_dataSources"></a>14.4.1. Property `root > sagemaker > project > dataSources`
 
 |                           |                                                                                                            |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -8541,7 +8864,7 @@ Validation: Optional; map of data source name to DataSourceProps
 | ---------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------- | ----------------- |
 | - [](#sagemaker_project_dataSources_additionalProperties ) | No      | object | No         | In #/definitions/DataSourceProps | -                 |
 
-##### <a name="sagemaker_project_dataSources_additionalProperties"></a>13.4.1.1. Property `root > sagemaker > project > dataSources > DataSourceProps`
+##### <a name="sagemaker_project_dataSources_additionalProperties"></a>14.4.1.1. Property `root > sagemaker > project > dataSources > DataSourceProps`
 
 |                           |                               |
 | ------------------------- | ----------------------------- |
@@ -8554,7 +8877,7 @@ Validation: Optional; map of data source name to DataSourceProps
 | ----------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | + [databaseName](#sagemaker_project_dataSources_additionalProperties_databaseName ) | No      | string | No         | -          | Glue database name to use as the data source. The project's environment user<br />will be granted Lake Formation read permissions on this database and its tables.<br /><br />Use cases: Glue database import; Data asset registration<br /><br />AWS: Glue database referenced as a DataZone data source<br /><br />Validation: Required; valid Glue database name |
 
-###### <a name="sagemaker_project_dataSources_additionalProperties_databaseName"></a>13.4.1.1.1. Property `root > sagemaker > project > dataSources > additionalProperties > databaseName`
+###### <a name="sagemaker_project_dataSources_additionalProperties_databaseName"></a>14.4.1.1.1. Property `root > sagemaker > project > dataSources > additionalProperties > databaseName`
 
 |              |          |
 | ------------ | -------- |
@@ -8570,7 +8893,7 @@ AWS: Glue database referenced as a DataZone data source
 
 Validation: Required; valid Glue database name
 
-#### <a name="sagemaker_project_domainUnit"></a>13.4.2. Property `root > sagemaker > project > domainUnit`
+#### <a name="sagemaker_project_domainUnit"></a>14.4.2. Property `root > sagemaker > project > domainUnit`
 
 |              |          |
 | ------------ | -------- |
@@ -8585,7 +8908,7 @@ AWS: DataZone domain unit for project placement
 
 Validation: Optional; slash-delimited domain unit path
 
-#### <a name="sagemaker_project_environmentConfigs"></a>13.4.3. Property `root > sagemaker > project > environmentConfigs`
+#### <a name="sagemaker_project_environmentConfigs"></a>14.4.3. Property `root > sagemaker > project > environmentConfigs`
 
 |                           |                                                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -8605,7 +8928,7 @@ Validation: Optional; map of environment name to ProjectEnvironmentConfiguration
 | ----------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------ | ----------------- |
 | - [](#sagemaker_project_environmentConfigs_additionalProperties ) | No      | object | No         | In #/definitions/ProjectEnvironmentConfiguration | -                 |
 
-##### <a name="sagemaker_project_environmentConfigs_additionalProperties"></a>13.4.3.1. Property `root > sagemaker > project > environmentConfigs > ProjectEnvironmentConfiguration`
+##### <a name="sagemaker_project_environmentConfigs_additionalProperties"></a>14.4.3.1. Property `root > sagemaker > project > environmentConfigs > ProjectEnvironmentConfiguration`
 
 |                           |                                               |
 | ------------------------- | --------------------------------------------- |
@@ -8618,7 +8941,7 @@ Validation: Optional; map of environment name to ProjectEnvironmentConfiguration
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [parameters](#sagemaker_project_environmentConfigs_additionalProperties_parameters ) | No      | object | No         | -          | -                 |
 
-###### <a name="sagemaker_project_environmentConfigs_additionalProperties_parameters"></a>13.4.3.1.1. Property `root > sagemaker > project > environmentConfigs > additionalProperties > parameters`
+###### <a name="sagemaker_project_environmentConfigs_additionalProperties_parameters"></a>14.4.3.1.1. Property `root > sagemaker > project > environmentConfigs > additionalProperties > parameters`
 
 |                           |                                                                                                                                                   |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -8630,14 +8953,14 @@ Validation: Optional; map of environment name to ProjectEnvironmentConfiguration
 | ------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#sagemaker_project_environmentConfigs_additionalProperties_parameters_additionalProperties ) | No      | string | No         | -          | -                 |
 
-###### <a name="sagemaker_project_environmentConfigs_additionalProperties_parameters_additionalProperties"></a>13.4.3.1.1.1. Property `root > sagemaker > project > environmentConfigs > additionalProperties > parameters > additionalProperties`
+###### <a name="sagemaker_project_environmentConfigs_additionalProperties_parameters_additionalProperties"></a>14.4.3.1.1.1. Property `root > sagemaker > project > environmentConfigs > additionalProperties > parameters > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="sagemaker_project_groups"></a>13.4.4. Property `root > sagemaker > project > groups`
+#### <a name="sagemaker_project_groups"></a>14.4.4. Property `root > sagemaker > project > groups`
 
 |                           |                                                                                                       |
 | ------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -8658,14 +8981,14 @@ Validation: Optional; map of ID to group config name; names must exist in module
 | ----------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#sagemaker_project_groups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="sagemaker_project_groups_additionalProperties"></a>13.4.4.1. Property `root > sagemaker > project > groups > additionalProperties`
+##### <a name="sagemaker_project_groups_additionalProperties"></a>14.4.4.1. Property `root > sagemaker > project > groups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="sagemaker_project_ownerGroups"></a>13.4.5. Property `root > sagemaker > project > ownerGroups`
+#### <a name="sagemaker_project_ownerGroups"></a>14.4.5. Property `root > sagemaker > project > ownerGroups`
 
 |                           |                                                                                                            |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -8687,14 +9010,14 @@ Validation: Optional; map of ID to group config name; names must exist in module
 | ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#sagemaker_project_ownerGroups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="sagemaker_project_ownerGroups_additionalProperties"></a>13.4.5.1. Property `root > sagemaker > project > ownerGroups > additionalProperties`
+##### <a name="sagemaker_project_ownerGroups_additionalProperties"></a>14.4.5.1. Property `root > sagemaker > project > ownerGroups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="sagemaker_project_ownerUsers"></a>13.4.6. Property `root > sagemaker > project > ownerUsers`
+#### <a name="sagemaker_project_ownerUsers"></a>14.4.6. Property `root > sagemaker > project > ownerUsers`
 
 |                           |                                                                                                           |
 | ------------------------- | --------------------------------------------------------------------------------------------------------- |
@@ -8716,14 +9039,14 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#sagemaker_project_ownerUsers_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="sagemaker_project_ownerUsers_additionalProperties"></a>13.4.6.1. Property `root > sagemaker > project > ownerUsers > additionalProperties`
+##### <a name="sagemaker_project_ownerUsers_additionalProperties"></a>14.4.6.1. Property `root > sagemaker > project > ownerUsers > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="sagemaker_project_profileName"></a>13.4.7. Property `root > sagemaker > project > profileName`
+#### <a name="sagemaker_project_profileName"></a>14.4.7. Property `root > sagemaker > project > profileName`
 
 |              |          |
 | ------------ | -------- |
@@ -8739,7 +9062,7 @@ AWS: DataZone project profile reference
 
 Validation: Required; string; must match a key in projectProfiles config
 
-#### <a name="sagemaker_project_users"></a>13.4.8. Property `root > sagemaker > project > users`
+#### <a name="sagemaker_project_users"></a>14.4.8. Property `root > sagemaker > project > users`
 
 |                           |                                                                                                      |
 | ------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -8760,14 +9083,14 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#sagemaker_project_users_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="sagemaker_project_users_additionalProperties"></a>13.4.8.1. Property `root > sagemaker > project > users > additionalProperties`
+##### <a name="sagemaker_project_users_additionalProperties"></a>14.4.8.1. Property `root > sagemaker > project > users > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="sagemakerBlueprint"></a>14. Property `root > sagemakerBlueprint`
+## <a name="sagemakerBlueprint"></a>15. Property `root > sagemakerBlueprint`
 
 |                           |                                                  |
 | ------------------------- | ------------------------------------------------ |
@@ -8798,7 +9121,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | - [parameters](#sagemakerBlueprint_parameters )                       | No      | object          | No         | -                                                      | Q-ENHANCED-PROPERTY<br />Optional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.<br /><br />Use cases: Product parameterization; User input collection; Deployment customization<br /><br />AWS: AWS SageMaker blueprint parameters for user-configurable deployment options<br /><br />Validation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided<br />  *                                                       |
 | + [provisioningRole](#sagemakerBlueprint_provisioningRole )           | No      | object          | No         | Same as [dataAdminRoles_items](#dataAdminRoles_items ) | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
-### <a name="sagemakerBlueprint_additionalAccounts"></a>14.1. Property `root > sagemakerBlueprint > additionalAccounts`
+### <a name="sagemakerBlueprint_additionalAccounts"></a>15.1. Property `root > sagemakerBlueprint > additionalAccounts`
 
 |                           |                                                                                                                    |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -8819,7 +9142,7 @@ Validation: Must be object with string keys and valid account configuration valu
 | ------------------------------------------------------------------ | ------- | ------ | ---------- | ------------------------------------------- | ----------------- |
 | - [](#sagemakerBlueprint_additionalAccounts_additionalProperties ) | No      | object | No         | In #/definitions/AdditionalBlueprintAccount | -                 |
 
-#### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties"></a>14.1.1. Property `root > sagemakerBlueprint > additionalAccounts > AdditionalBlueprintAccount`
+#### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties"></a>15.1.1. Property `root > sagemakerBlueprint > additionalAccounts > AdditionalBlueprintAccount`
 
 |                           |                                          |
 | ------------------------- | ---------------------------------------- |
@@ -8836,14 +9159,14 @@ Validation: Must be object with string keys and valid account configuration valu
 | - [parameters](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters )                       | No      | object          | No         | -                                                      | -                 |
 | + [provisioningRole](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole )           | No      | object          | No         | Same as [dataAdminRoles_items](#dataAdminRoles_items ) | -                 |
 
-##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_account"></a>14.1.1.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > account`
+##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_account"></a>15.1.1.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > account`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_authorizedDomainUnits"></a>14.1.1.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > authorizedDomainUnits`
+##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_authorizedDomainUnits"></a>15.1.1.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > authorizedDomainUnits`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8862,14 +9185,14 @@ Validation: Must be object with string keys and valid account configuration valu
 | ---------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [authorizedDomainUnits items](#sagemakerBlueprint_additionalAccounts_additionalProperties_authorizedDomainUnits_items) | -           |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_authorizedDomainUnits_items"></a>14.1.1.2.1. root > sagemakerBlueprint > additionalAccounts > additionalProperties > authorizedDomainUnits > authorizedDomainUnits items
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_authorizedDomainUnits_items"></a>15.1.1.2.1. root > sagemakerBlueprint > additionalAccounts > additionalProperties > authorizedDomainUnits > authorizedDomainUnits items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_enabledRegions"></a>14.1.1.3. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > enabledRegions`
+##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_enabledRegions"></a>15.1.1.3. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > enabledRegions`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8888,14 +9211,14 @@ Validation: Must be object with string keys and valid account configuration valu
 | -------------------------------------------------------------------------------------------------------- | ----------- |
 | [enabledRegions items](#sagemakerBlueprint_additionalAccounts_additionalProperties_enabledRegions_items) | -           |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_enabledRegions_items"></a>14.1.1.3.1. root > sagemakerBlueprint > additionalAccounts > additionalProperties > enabledRegions > enabledRegions items
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_enabledRegions_items"></a>15.1.1.3.1. root > sagemakerBlueprint > additionalAccounts > additionalProperties > enabledRegions > enabledRegions items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters"></a>14.1.1.4. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters`
+##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters"></a>15.1.1.4. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters`
 
 |                           |                                                                                                                                                    |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -8907,7 +9230,7 @@ Validation: Must be object with string keys and valid account configuration valu
 | -------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------ | ----------------- |
 | - [](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties ) | No      | object | No         | In #/definitions/MdaaSageMakerBluePrintParameterConfig | -                 |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties"></a>14.1.1.4.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > MdaaSageMakerBluePrintParameterConfig`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties"></a>15.1.1.4.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > MdaaSageMakerBluePrintParameterConfig`
 
 |                           |                                                     |
 | ------------------------- | --------------------------------------------------- |
@@ -8921,7 +9244,7 @@ Validation: Must be object with string keys and valid account configuration valu
 | + [blueprintParamProps](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps ) | No      | object | No         | In #/definitions/MdaaSageMakerBluePrintParameterProps | -                 |
 | - [cfnParamProps](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps )             | No      | object | No         | In #/definitions/CfnParameterProps                    | -                 |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps"></a>14.1.1.4.1.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps"></a>15.1.1.4.1.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps`
 
 |                           |                                                    |
 | ------------------------- | -------------------------------------------------- |
@@ -8939,49 +9262,49 @@ Validation: Must be object with string keys and valid account configuration valu
 | - [isOptional](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isOptional )               | No      | boolean | No         | -          | -                 |
 | - [isUpdateSupported](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isUpdateSupported ) | No      | boolean | No         | -          | -                 |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_defaultValue"></a>14.1.1.4.1.1.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > defaultValue`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_defaultValue"></a>15.1.1.4.1.1.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > defaultValue`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_description"></a>14.1.1.4.1.1.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > description`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_description"></a>15.1.1.4.1.1.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_fieldType"></a>14.1.1.4.1.1.3. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > fieldType`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_fieldType"></a>15.1.1.4.1.1.3. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > fieldType`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isEditable"></a>14.1.1.4.1.1.4. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > isEditable`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isEditable"></a>15.1.1.4.1.1.4. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > isEditable`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isOptional"></a>14.1.1.4.1.1.5. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > isOptional`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isOptional"></a>15.1.1.4.1.1.5. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > isOptional`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isUpdateSupported"></a>14.1.1.4.1.1.6. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > isUpdateSupported`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_blueprintParamProps_isUpdateSupported"></a>15.1.1.4.1.1.6. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > blueprintParamProps > isUpdateSupported`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps"></a>14.1.1.4.1.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps"></a>15.1.1.4.1.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps`
 
 |                           |                                 |
 | ------------------------- | ------------------------------- |
@@ -9004,7 +9327,7 @@ Validation: Must be object with string keys and valid account configuration valu
 | - [noEcho](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_noEcho )                               | No      | boolean         | No         | -          | Whether to mask the parameter value when anyone makes a call that describes the stack.<br />If you set the value to \`\`true\`\`, the parameter value is masked with asterisks (\`\`*****\`\`).                                                                           |
 | - [type](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_type )                                   | No      | string          | No         | -          | The data type for the parameter (DataType).                                                                                                                                                                                                                               |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedPattern"></a>14.1.1.4.1.2.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > allowedPattern`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedPattern"></a>15.1.1.4.1.2.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > allowedPattern`
 
 |              |                                                         |
 | ------------ | ------------------------------------------------------- |
@@ -9014,7 +9337,7 @@ Validation: Must be object with string keys and valid account configuration valu
 
 **Description:** A regular expression that represents the patterns to allow for String types.
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedValues"></a>14.1.1.4.1.2.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > allowedValues`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedValues"></a>15.1.1.4.1.2.2. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > allowedValues`
 
 |              |                                                       |
 | ------------ | ----------------------------------------------------- |
@@ -9036,14 +9359,14 @@ Validation: Must be object with string keys and valid account configuration valu
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [allowedValues items](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedValues_items) | -           |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedValues_items"></a>14.1.1.4.1.2.2.1. root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > allowedValues > allowedValues items
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_allowedValues_items"></a>15.1.1.4.1.2.2.1. root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > allowedValues > allowedValues items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_constraintDescription"></a>14.1.1.4.1.2.3. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > constraintDescription`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_constraintDescription"></a>15.1.1.4.1.2.3. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > constraintDescription`
 
 |              |                                                                                        |
 | ------------ | -------------------------------------------------------------------------------------- |
@@ -9056,7 +9379,7 @@ For example, without a constraint description, a parameter that has an allowed
 pattern of [A-Za-z0-9]+ displays the following error message when the user specifies
 an invalid value:
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_default"></a>14.1.1.4.1.2.4. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > default`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_default"></a>15.1.1.4.1.2.4. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > default`
 
 |                           |                                       |
 | ------------------------- | ------------------------------------- |
@@ -9069,7 +9392,7 @@ an invalid value:
 when a stack is created. If you define constraints for the parameter, you must specify
 a value that adheres to those constraints.
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_description"></a>14.1.1.4.1.2.5. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > description`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_description"></a>15.1.1.4.1.2.5. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > description`
 
 |              |                                         |
 | ------------ | --------------------------------------- |
@@ -9079,7 +9402,7 @@ a value that adheres to those constraints.
 
 **Description:** A string of up to 4000 characters that describes the parameter.
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_maxLength"></a>14.1.1.4.1.2.6. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > maxLength`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_maxLength"></a>15.1.1.4.1.2.6. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > maxLength`
 
 |              |             |
 | ------------ | ----------- |
@@ -9089,7 +9412,7 @@ a value that adheres to those constraints.
 
 **Description:** An integer value that determines the largest number of characters you want to allow for String types.
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_maxValue"></a>14.1.1.4.1.2.7. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > maxValue`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_maxValue"></a>15.1.1.4.1.2.7. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > maxValue`
 
 |              |             |
 | ------------ | ----------- |
@@ -9099,7 +9422,7 @@ a value that adheres to those constraints.
 
 **Description:** A numeric value that determines the largest numeric value you want to allow for Number types.
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_minLength"></a>14.1.1.4.1.2.8. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > minLength`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_minLength"></a>15.1.1.4.1.2.8. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > minLength`
 
 |              |             |
 | ------------ | ----------- |
@@ -9109,7 +9432,7 @@ a value that adheres to those constraints.
 
 **Description:** An integer value that determines the smallest number of characters you want to allow for String types.
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_minValue"></a>14.1.1.4.1.2.9. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > minValue`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_minValue"></a>15.1.1.4.1.2.9. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > minValue`
 
 |              |             |
 | ------------ | ----------- |
@@ -9119,7 +9442,7 @@ a value that adheres to those constraints.
 
 **Description:** A numeric value that determines the smallest numeric value you want to allow for Number types.
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_noEcho"></a>14.1.1.4.1.2.10. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > noEcho`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_noEcho"></a>15.1.1.4.1.2.10. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > noEcho`
 
 |              |                                        |
 | ------------ | -------------------------------------- |
@@ -9130,7 +9453,7 @@ a value that adheres to those constraints.
 **Description:** Whether to mask the parameter value when anyone makes a call that describes the stack.
 If you set the value to ``true``, the parameter value is masked with asterisks (``*****``).
 
-###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_type"></a>14.1.1.4.1.2.11. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > type`
+###### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps_type"></a>15.1.1.4.1.2.11. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > parameters > additionalProperties > cfnParamProps > type`
 
 |              |            |
 | ------------ | ---------- |
@@ -9140,7 +9463,7 @@ If you set the value to ``true``, the parameter value is masked with asterisks (
 
 **Description:** The data type for the parameter (DataType).
 
-##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole"></a>14.1.1.5. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > provisioningRole`
+##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole"></a>15.1.1.5. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > provisioningRole`
 
 |                           |                                               |
 | ------------------------- | --------------------------------------------- |
@@ -9149,7 +9472,7 @@ If you set the value to ``true``, the parameter value is masked with asterisks (
 | **Additional properties** | Not allowed                                   |
 | **Same definition as**    | [dataAdminRoles_items](#dataAdminRoles_items) |
 
-### <a name="sagemakerBlueprint_authorizedDomainUnits"></a>14.2. Property `root > sagemakerBlueprint > authorizedDomainUnits`
+### <a name="sagemakerBlueprint_authorizedDomainUnits"></a>15.2. Property `root > sagemakerBlueprint > authorizedDomainUnits`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -9168,21 +9491,21 @@ If you set the value to ``true``, the parameter value is masked with asterisks (
 | ------------------------------------------------------------------------------ | ----------- |
 | [authorizedDomainUnits items](#sagemakerBlueprint_authorizedDomainUnits_items) | -           |
 
-#### <a name="sagemakerBlueprint_authorizedDomainUnits_items"></a>14.2.1. root > sagemakerBlueprint > authorizedDomainUnits > authorizedDomainUnits items
+#### <a name="sagemakerBlueprint_authorizedDomainUnits_items"></a>15.2.1. root > sagemakerBlueprint > authorizedDomainUnits > authorizedDomainUnits items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="sagemakerBlueprint_blueprintName"></a>14.3. Property `root > sagemakerBlueprint > blueprintName`
+### <a name="sagemakerBlueprint_blueprintName"></a>15.3. Property `root > sagemakerBlueprint > blueprintName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="sagemakerBlueprint_description"></a>14.4. Property `root > sagemakerBlueprint > description`
+### <a name="sagemakerBlueprint_description"></a>15.4. Property `root > sagemakerBlueprint > description`
 
 |              |          |
 | ------------ | -------- |
@@ -9198,14 +9521,14 @@ AWS: AWS SageMaker blueprint name for user interface display
 
 Validation: Must be non-empty string suitable for SageMaker blueprint naming
 
-### <a name="sagemakerBlueprint_domainBucketName"></a>14.5. Property `root > sagemakerBlueprint > domainBucketName`
+### <a name="sagemakerBlueprint_domainBucketName"></a>15.5. Property `root > sagemakerBlueprint > domainBucketName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="sagemakerBlueprint_domainConfig"></a>14.6. Property `root > sagemakerBlueprint > domainConfig`
+### <a name="sagemakerBlueprint_domainConfig"></a>15.6. Property `root > sagemakerBlueprint > domainConfig`
 
 |                           |                                        |
 | ------------------------- | -------------------------------------- |
@@ -9214,7 +9537,7 @@ Validation: Must be non-empty string suitable for SageMaker blueprint naming
 | **Additional properties** | Not allowed                            |
 | **Same definition as**    | [domainConfig](#datazone_domainConfig) |
 
-### <a name="sagemakerBlueprint_domainConfigSSMParam"></a>14.7. Property `root > sagemakerBlueprint > domainConfigSSMParam`
+### <a name="sagemakerBlueprint_domainConfigSSMParam"></a>15.7. Property `root > sagemakerBlueprint > domainConfigSSMParam`
 
 |              |          |
 | ------------ | -------- |
@@ -9230,7 +9553,7 @@ AWS: AWS Systems Manager parameter for DataZone domain configuration reference
 
 Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration
 
-### <a name="sagemakerBlueprint_enabledRegions"></a>14.8. Property `root > sagemakerBlueprint > enabledRegions`
+### <a name="sagemakerBlueprint_enabledRegions"></a>15.8. Property `root > sagemakerBlueprint > enabledRegions`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -9249,14 +9572,14 @@ Validation: Must be valid SSM parameter name if provided; parameter must contain
 | ---------------------------------------------------------------- | ----------- |
 | [enabledRegions items](#sagemakerBlueprint_enabledRegions_items) | -           |
 
-#### <a name="sagemakerBlueprint_enabledRegions_items"></a>14.8.1. root > sagemakerBlueprint > enabledRegions > enabledRegions items
+#### <a name="sagemakerBlueprint_enabledRegions_items"></a>15.8.1. root > sagemakerBlueprint > enabledRegions > enabledRegions items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="sagemakerBlueprint_parameters"></a>14.9. Property `root > sagemakerBlueprint > parameters`
+### <a name="sagemakerBlueprint_parameters"></a>15.9. Property `root > sagemakerBlueprint > parameters`
 
 |                           |                                                                                                            |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -9278,7 +9601,7 @@ Validation: Must be object with string keys and valid MdaaServiceCatalogParamete
 | ---------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
 | - [](#sagemakerBlueprint_parameters_additionalProperties ) | No      | object | No         | Same as [sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties ) | -                 |
 
-#### <a name="sagemakerBlueprint_parameters_additionalProperties"></a>14.9.1. Property `root > sagemakerBlueprint > parameters > MdaaSageMakerBluePrintParameterConfig`
+#### <a name="sagemakerBlueprint_parameters_additionalProperties"></a>15.9.1. Property `root > sagemakerBlueprint > parameters > MdaaSageMakerBluePrintParameterConfig`
 
 |                           |                                                                                                                                                                                           |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -9287,7 +9610,7 @@ Validation: Must be object with string keys and valid MdaaServiceCatalogParamete
 | **Additional properties** | Not allowed                                                                                                                                                                               |
 | **Same definition as**    | [sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties) |
 
-### <a name="sagemakerBlueprint_provisioningRole"></a>14.10. Property `root > sagemakerBlueprint > provisioningRole`
+### <a name="sagemakerBlueprint_provisioningRole"></a>15.10. Property `root > sagemakerBlueprint > provisioningRole`
 
 |                           |                                               |
 | ------------------------- | --------------------------------------------- |
@@ -9296,7 +9619,7 @@ Validation: Must be object with string keys and valid MdaaServiceCatalogParamete
 | **Additional properties** | Not allowed                                   |
 | **Same definition as**    | [dataAdminRoles_items](#dataAdminRoles_items) |
 
-## <a name="securityGroupConfigs"></a>15. Property `root > securityGroupConfigs`
+## <a name="securityGroupConfigs"></a>16. Property `root > securityGroupConfigs`
 
 |                           |                                                                                                   |
 | ------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -9317,7 +9640,7 @@ Validation: Optional; valid NamedSecurityGroupConfigProps
 | ------------------------------------------------- | ------- | ------ | ---------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [](#securityGroupConfigs_additionalProperties ) | No      | object | No         | In #/definitions/SecurityGroupConfigProps | Configuration for a project security group with VPC placement and egress rules.<br /><br />Use cases: Network security configuration; VPC security groups; Egress rule management; Network access control; Infrastructure security; Secure communication<br /><br />AWS: EC2 security groups with VPC placement and configurable egress rules for DataOps project network security and access control<br /><br />Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be valid MdaaSecurityGroupRuleProps if specified; egress rules must be properly configured |
 
-### <a name="securityGroupConfigs_additionalProperties"></a>15.1. Property `root > securityGroupConfigs > SecurityGroupConfigProps`
+### <a name="securityGroupConfigs_additionalProperties"></a>16.1. Property `root > securityGroupConfigs > SecurityGroupConfigProps`
 
 |                           |                                        |
 | ------------------------- | -------------------------------------- |
@@ -9339,7 +9662,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | - [securityGroupEgressRules](#securityGroupConfigs_additionalProperties_securityGroupEgressRules ) | No      | object | No         | In #/definitions/MdaaSecurityGroupRuleProps | Egress rules for outbound traffic control. |
 | + [vpcId](#securityGroupConfigs_additionalProperties_vpcId )                                       | No      | string | No         | -                                           | VPC ID for security group deployment.      |
 
-#### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules"></a>15.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules`
+#### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules"></a>16.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules`
 
 |                           |                                          |
 | ------------------------- | ---------------------------------------- |
@@ -9356,7 +9679,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | - [prefixList](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList ) | No      | array | No         | -          | Prefix list rules for security group traffic control defining managed prefix list-based access restrictions     |
 | - [sg](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg )                 | No      | array | No         | -          | Security group rules for cross-security group traffic control defining security group-based access restrictions |
 
-##### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4"></a>15.1.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4`
+##### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4"></a>16.1.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4`
 
 |              |         |
 | ------------ | ------- |
@@ -9377,7 +9700,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | ---------------------------------------------------------------------------------------------- | ----------- |
 | [MdaaCidrPeer](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items) | -           |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items"></a>15.1.1.1.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > MdaaCidrPeer
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items"></a>16.1.1.1.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > MdaaCidrPeer
 
 |                           |                            |
 | ------------------------- | -------------------------- |
@@ -9395,7 +9718,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | - [suppressions](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions ) | No      | array  | No         | -          | -                                                                                             |
 | - [toPort](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_toPort )             | No      | number | No         | -          | The ending port number for the security group rule defining the upper bound of the port range |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_cidr"></a>15.1.1.1.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > cidr`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_cidr"></a>16.1.1.1.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > cidr`
 
 |              |          |
 | ------------ | -------- |
@@ -9404,28 +9727,28 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** CIDR block specification for network access control in security group rules enabling IP
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_description"></a>15.1.1.1.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > description`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_description"></a>16.1.1.1.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_port"></a>15.1.1.1.1.3. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > port`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_port"></a>16.1.1.1.1.3. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > port`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_protocol"></a>15.1.1.1.1.4. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > protocol`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_protocol"></a>16.1.1.1.1.4. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > protocol`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions"></a>15.1.1.1.1.5. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions"></a>16.1.1.1.1.5. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions`
 
 |              |         |
 | ------------ | ------- |
@@ -9444,7 +9767,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | [NagPackSuppression](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items) | Interface for creating a rule suppression |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items"></a>15.1.1.1.1.5.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > NagPackSuppression
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items"></a>16.1.1.1.1.5.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > NagPackSuppression
 
 |                           |                                  |
 | ------------------------- | -------------------------------- |
@@ -9461,7 +9784,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | + [id](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_id )               | No      | string | No         | -          | The id of the rule to ignore                          |
 | + [reason](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_reason )       | No      | string | No         | -          | The reason to ignore the rule (minimum 10 characters) |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo"></a>15.1.1.1.1.5.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo"></a>16.1.1.1.1.5.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo`
 
 |              |         |
 | ------------ | ------- |
@@ -9482,7 +9805,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- |
 | [NagPackSuppressionAppliesTo](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items) | A granular suppression |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items"></a>15.1.1.1.1.5.1.1.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > NagPackSuppressionAppliesTo
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items"></a>16.1.1.1.1.5.1.1.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > NagPackSuppressionAppliesTo
 
 |                           |                                           |
 | ------------------------- | ----------------------------------------- |
@@ -9498,7 +9821,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | [RegexAppliesTo](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0) |
 | [item 1](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i1)         |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0"></a>15.1.1.1.1.5.1.1.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > RegexAppliesTo`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0"></a>16.1.1.1.1.5.1.1.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > RegexAppliesTo`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -9513,7 +9836,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | -------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | + [regex](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0_regex ) | No      | string | No         | -          | An ECMA-262 regex string |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0_regex"></a>15.1.1.1.1.5.1.1.1.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 0 > regex`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0_regex"></a>16.1.1.1.1.5.1.1.1.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 0 > regex`
 
 |              |          |
 | ------------ | -------- |
@@ -9522,14 +9845,14 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** An ECMA-262 regex string
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i1"></a>15.1.1.1.1.5.1.1.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 1`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i1"></a>16.1.1.1.1.5.1.1.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_id"></a>15.1.1.1.1.5.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > id`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_id"></a>16.1.1.1.1.5.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > id`
 
 |              |          |
 | ------------ | -------- |
@@ -9538,7 +9861,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** The id of the rule to ignore
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_reason"></a>15.1.1.1.1.5.1.3. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > reason`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_suppressions_items_reason"></a>16.1.1.1.1.5.1.3. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > reason`
 
 |              |          |
 | ------------ | -------- |
@@ -9547,7 +9870,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** The reason to ignore the rule (minimum 10 characters)
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_toPort"></a>15.1.1.1.1.6. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > toPort`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_ipv4_items_toPort"></a>16.1.1.1.1.6. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > ipv4 > ipv4 items > toPort`
 
 |              |          |
 | ------------ | -------- |
@@ -9556,7 +9879,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** The ending port number for the security group rule defining the upper bound of the port range
 
-##### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList"></a>15.1.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList`
+##### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList"></a>16.1.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList`
 
 |              |         |
 | ------------ | ------- |
@@ -9577,7 +9900,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | ---------------------------------------------------------------------------------------------------------- | ----------- |
 | [MdaaPrefixListPeer](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items) | -           |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items"></a>15.1.1.2.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > MdaaPrefixListPeer
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items"></a>16.1.1.2.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > MdaaPrefixListPeer
 
 |                           |                                  |
 | ------------------------- | -------------------------------- |
@@ -9595,21 +9918,21 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | - [suppressions](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_suppressions ) | No      | array  | No         | -          | -                                                                                             |
 | - [toPort](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_toPort )             | No      | number | No         | -          | The ending port number for the security group rule defining the upper bound of the port range |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_description"></a>15.1.1.2.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > description`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_description"></a>16.1.1.2.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_port"></a>15.1.1.2.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > port`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_port"></a>16.1.1.2.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > port`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_prefixList"></a>15.1.1.2.1.3. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > prefixList`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_prefixList"></a>16.1.1.2.1.3. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > prefixList`
 
 |              |          |
 | ------------ | -------- |
@@ -9618,14 +9941,14 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** Prefix list identifier for managed IP range access control in security group rules enabling
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_protocol"></a>15.1.1.2.1.4. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > protocol`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_protocol"></a>16.1.1.2.1.4. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > protocol`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_suppressions"></a>15.1.1.2.1.5. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > suppressions`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_suppressions"></a>16.1.1.2.1.5. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > suppressions`
 
 |              |         |
 | ------------ | ------- |
@@ -9644,7 +9967,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | [NagPackSuppression](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_suppressions_items) | Interface for creating a rule suppression |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_suppressions_items"></a>15.1.1.2.1.5.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > suppressions > NagPackSuppression
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_suppressions_items"></a>16.1.1.2.1.5.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > suppressions > NagPackSuppression
 
 |                           |                                                                                                                                                                                                       |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -9655,7 +9978,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** Interface for creating a rule suppression
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_toPort"></a>15.1.1.2.1.6. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > toPort`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_prefixList_items_toPort"></a>16.1.1.2.1.6. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > prefixList > prefixList items > toPort`
 
 |              |          |
 | ------------ | -------- |
@@ -9664,7 +9987,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** The ending port number for the security group rule defining the upper bound of the port range
 
-##### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg"></a>15.1.1.3. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg`
+##### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg"></a>16.1.1.3. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg`
 
 |              |         |
 | ------------ | ------- |
@@ -9685,7 +10008,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | ----------------------------------------------------------------------------------------------------- | ----------- |
 | [MdaaSecurityGroupPeer](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items) | -           |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items"></a>15.1.1.3.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > MdaaSecurityGroupPeer
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items"></a>16.1.1.3.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > MdaaSecurityGroupPeer
 
 |                           |                                     |
 | ------------------------- | ----------------------------------- |
@@ -9703,28 +10026,28 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | - [suppressions](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_suppressions ) | No      | array  | No         | -          | -                                                                                             |
 | - [toPort](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_toPort )             | No      | number | No         | -          | The ending port number for the security group rule defining the upper bound of the port range |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_description"></a>15.1.1.3.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > description`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_description"></a>16.1.1.3.1.1. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_port"></a>15.1.1.3.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > port`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_port"></a>16.1.1.3.1.2. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > port`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_protocol"></a>15.1.1.3.1.3. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > protocol`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_protocol"></a>16.1.1.3.1.3. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > protocol`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_sgId"></a>15.1.1.3.1.4. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > sgId`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_sgId"></a>16.1.1.3.1.4. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > sgId`
 
 |              |          |
 | ------------ | -------- |
@@ -9733,7 +10056,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** Security group identifier for security group-based access control in network rules enabling
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_suppressions"></a>15.1.1.3.1.5. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > suppressions`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_suppressions"></a>16.1.1.3.1.5. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > suppressions`
 
 |              |         |
 | ------------ | ------- |
@@ -9752,7 +10075,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | [NagPackSuppression](#securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_suppressions_items) | Interface for creating a rule suppression |
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_suppressions_items"></a>15.1.1.3.1.5.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > suppressions > NagPackSuppression
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_suppressions_items"></a>16.1.1.3.1.5.1. root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > suppressions > NagPackSuppression
 
 |                           |                                                                                                                                                                                                       |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -9763,7 +10086,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** Interface for creating a rule suppression
 
-###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_toPort"></a>15.1.1.3.1.6. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > toPort`
+###### <a name="securityGroupConfigs_additionalProperties_securityGroupEgressRules_sg_items_toPort"></a>16.1.1.3.1.6. Property `root > securityGroupConfigs > additionalProperties > securityGroupEgressRules > sg > sg items > toPort`
 
 |              |          |
 | ------------ | -------- |
@@ -9772,7 +10095,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** The ending port number for the security group rule defining the upper bound of the port range
 
-#### <a name="securityGroupConfigs_additionalProperties_vpcId"></a>15.1.2. Property `root > securityGroupConfigs > additionalProperties > vpcId`
+#### <a name="securityGroupConfigs_additionalProperties_vpcId"></a>16.1.2. Property `root > securityGroupConfigs > additionalProperties > vpcId`
 
 |              |          |
 | ------------ | -------- |
@@ -9781,7 +10104,7 @@ Validation: vpcId must be valid VPC identifier; securityGroupEgressRules must be
 
 **Description:** VPC ID for security group deployment.
 
-## <a name="service_catalog_product_config"></a>16. Property `root > service_catalog_product_config`
+## <a name="service_catalog_product_config"></a>17. Property `root > service_catalog_product_config`
 
 |                           |                                               |
 | ------------------------- | --------------------------------------------- |
@@ -9808,7 +10131,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | + [portfolio_arn](#service_catalog_product_config_portfolio_arn )                 | No      | string | No         | -          | ARN of the AWS Service Catalog portfolio where the product will be associated                                 |
 | + [portfolio_bucket_name](#service_catalog_product_config_portfolio_bucket_name ) | No      | string | No         | -          | -                                                                                                             |
 
-### <a name="service_catalog_product_config_launch_role_name"></a>16.1. Property `root > service_catalog_product_config > launch_role_name`
+### <a name="service_catalog_product_config_launch_role_name"></a>17.1. Property `root > service_catalog_product_config > launch_role_name`
 
 |              |          |
 | ------------ | -------- |
@@ -9817,7 +10140,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** IAM role name that will be used to launch the Service Catalog product
 
-### <a name="service_catalog_product_config_name"></a>16.2. Property `root > service_catalog_product_config > name`
+### <a name="service_catalog_product_config_name"></a>17.2. Property `root > service_catalog_product_config > name`
 
 |              |          |
 | ------------ | -------- |
@@ -9826,7 +10149,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Display name for the Service Catalog product that will be visible to end users in the Service Catalog console
 
-### <a name="service_catalog_product_config_owner"></a>16.3. Property `root > service_catalog_product_config > owner`
+### <a name="service_catalog_product_config_owner"></a>17.3. Property `root > service_catalog_product_config > owner`
 
 |              |          |
 | ------------ | -------- |
@@ -9835,7 +10158,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Owner identifier for the Service Catalog product, typically representing the team or organization
 
-### <a name="service_catalog_product_config_parameters"></a>16.4. Property `root > service_catalog_product_config > parameters`
+### <a name="service_catalog_product_config_parameters"></a>17.4. Property `root > service_catalog_product_config > parameters`
 
 |                           |                                                                                                                        |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -9849,7 +10172,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | ---------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------------- | ----------------- |
 | - [](#service_catalog_product_config_parameters_additionalProperties ) | No      | object | No         | In #/definitions/MdaaServiceCatalogParameterConfig | -                 |
 
-#### <a name="service_catalog_product_config_parameters_additionalProperties"></a>16.4.1. Property `root > service_catalog_product_config > parameters > MdaaServiceCatalogParameterConfig`
+#### <a name="service_catalog_product_config_parameters_additionalProperties"></a>17.4.1. Property `root > service_catalog_product_config > parameters > MdaaServiceCatalogParameterConfig`
 
 |                           |                                                 |
 | ------------------------- | ----------------------------------------------- |
@@ -9863,7 +10186,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | - [constraints](#service_catalog_product_config_parameters_additionalProperties_constraints ) | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintConfig                                                                                 | Constraint configuration that defines additional validation rules for the Service Catalog product parameter |
 | + [props](#service_catalog_product_config_parameters_additionalProperties_props )             | No      | object | No         | Same as [cfnParamProps](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters_additionalProperties_cfnParamProps ) | CloudFormation parameter properties that define the parameter characteristics including type,               |
 
-##### <a name="service_catalog_product_config_parameters_additionalProperties_constraints"></a>16.4.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints`
+##### <a name="service_catalog_product_config_parameters_additionalProperties_constraints"></a>17.4.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints`
 
 |                           |                                                  |
 | ------------------------- | ------------------------------------------------ |
@@ -9879,7 +10202,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | + [description](#service_catalog_product_config_parameters_additionalProperties_constraints_description ) | No      | string | No         | -          | Human-readable description explaining the purpose and scope of the Service Catalog constraint                    |
 | + [rules](#service_catalog_product_config_parameters_additionalProperties_constraints_rules )             | No      | object | No         | -          | Object containing named constraint rules that define the validation logic for Service Catalog product parameters |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_description"></a>16.4.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > description`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_description"></a>17.4.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > description`
 
 |              |          |
 | ------------ | -------- |
@@ -9888,7 +10211,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Human-readable description explaining the purpose and scope of the Service Catalog constraint
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules"></a>16.4.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules"></a>17.4.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules`
 
 |                           |                                                                                                                                                               |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -9902,7 +10225,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------- | ----------------- |
 | - [](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties ) | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintRuleConfig | -                 |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties"></a>16.4.1.1.2.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > MdaaServiceCatalogConstraintRuleConfig`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties"></a>17.4.1.1.2.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > MdaaServiceCatalogConstraintRuleConfig`
 
 |                           |                                                      |
 | ------------------------- | ---------------------------------------------------- |
@@ -9916,7 +10239,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | + [assertions](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions ) | No      | array  | No         | -                                                                  | Array of constraint assertions that define the validation logic to be applied when the condition is met |
 | + [condition](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition )   | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig | Condition configuration that determines when the constraint rule assertions should be evaluated         |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions"></a>16.4.1.1.2.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions"></a>17.4.1.1.2.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions`
 
 |              |         |
 | ------------ | ------- |
@@ -9937,7 +10260,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [MdaaServiceCatalogConstraintRuleAssertionConfig](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items) | -           |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items"></a>16.4.1.1.2.1.1.1. root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > MdaaServiceCatalogConstraintRuleAssertionConfig
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items"></a>17.4.1.1.2.1.1.1. root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > MdaaServiceCatalogConstraintRuleAssertionConfig
 
 |                           |                                                               |
 | ------------------------- | ------------------------------------------------------------- |
@@ -9951,7 +10274,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | + [assert](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert )           | No      | string | No         | -          | Constraint assertion expression that defines the validation logic for Service Catalog product parameters |
 | + [description](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description ) | No      | string | No         | -          | Human-readable description explaining the purpose and requirements of the constraint assertion           |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert"></a>16.4.1.1.2.1.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > assert`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert"></a>17.4.1.1.2.1.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > assert`
 
 |              |          |
 | ------------ | -------- |
@@ -9960,7 +10283,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Constraint assertion expression that defines the validation logic for Service Catalog product parameters
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description"></a>16.4.1.1.2.1.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > description`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description"></a>17.4.1.1.2.1.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > description`
 
 |              |          |
 | ------------ | -------- |
@@ -9969,7 +10292,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Human-readable description explaining the purpose and requirements of the constraint assertion
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition"></a>16.4.1.1.2.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > condition`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition"></a>17.4.1.1.2.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > condition`
 
 |                           |                                                                 |
 | ------------------------- | --------------------------------------------------------------- |
@@ -9980,7 +10303,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** Condition configuration that determines when the constraint rule assertions should be evaluated
 
-##### <a name="service_catalog_product_config_parameters_additionalProperties_props"></a>16.4.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > props`
+##### <a name="service_catalog_product_config_parameters_additionalProperties_props"></a>17.4.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > props`
 
 |                           |                                                                                                                            |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
@@ -9991,7 +10314,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** CloudFormation parameter properties that define the parameter characteristics including type,
 
-### <a name="service_catalog_product_config_portfolio_arn"></a>16.5. Property `root > service_catalog_product_config > portfolio_arn`
+### <a name="service_catalog_product_config_portfolio_arn"></a>17.5. Property `root > service_catalog_product_config > portfolio_arn`
 
 |              |          |
 | ------------ | -------- |
@@ -10000,7 +10323,7 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 
 **Description:** ARN of the AWS Service Catalog portfolio where the product will be associated
 
-### <a name="service_catalog_product_config_portfolio_bucket_name"></a>16.6. Property `root > service_catalog_product_config > portfolio_bucket_name`
+### <a name="service_catalog_product_config_portfolio_bucket_name"></a>17.6. Property `root > service_catalog_product_config > portfolio_bucket_name`
 
 |              |          |
 | ------------ | -------- |

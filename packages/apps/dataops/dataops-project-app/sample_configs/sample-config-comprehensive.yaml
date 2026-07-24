@@ -70,6 +70,45 @@ s3OutputKmsKeyArn: ssm:/sample-org/instance1/datalake/kms/id
 # KMS key ARN for Glue Catalog metadata encryption.
 glueCatalogKmsKeyArn: ssm:/sample-org/shared/glue-catalog/kms/arn
 
+# S3 lifecycle rules applied to the project bucket. Each rule targets a key prefix
+# so transient data is expired and cold data is aged to cheaper storage without
+# affecting primary project data. Rules here are sensible defaults; tune days,
+# storage classes, and prefixes to your retention and cost requirements.
+lifecycleConfiguration:
+  # Expire transient scratch data under temp/ and clean up failed uploads.
+  - # Unique lifecycle rule identifier
+    id: expire-temp
+    # Rule state (enum: Enabled, Disabled)
+    status: Enabled
+    # Key prefix the rule applies to
+    prefix: temp/
+    # Days after creation before current objects expire (deleted)
+    expirationdays: 7
+    # Days after which incomplete multipart uploads are aborted
+    abortIncompleteMultipartUploadAfter: 7
+  # Expire Athena query results, which are reproducible and short-lived.
+  - id: expire-athena-results
+    status: Enabled
+    prefix: athena-results/
+    expirationdays: 30
+    abortIncompleteMultipartUploadAfter: 7
+  # Age cold project data to cheaper storage and prune old noncurrent versions.
+  - id: archive-data
+    status: Enabled
+    prefix: data/
+    # Storage-class transitions for current object versions
+    transitions:
+      # Days after creation before transitioning (enum storageClass: STANDARD_IA,
+      # ONEZONE_IA, INTELLIGENT_TIERING, GLACIER_IR, GLACIER, DEEP_ARCHIVE)
+      - days: 90
+        storageClass: STANDARD_IA
+      - days: 365
+        storageClass: GLACIER
+    # Days after a version becomes noncurrent before it expires
+    noncurrentVersionExpirationDays: 90
+    # Number of newer noncurrent versions to retain before expiring older ones
+    noncurrentVersionsToRetain: 3
+
 # Project-level Lake Formation configuration for centralized tag-based access control.
 lakeFormation:
   # Lake Formation tag definitions (key + allowed values) shared across all project databases

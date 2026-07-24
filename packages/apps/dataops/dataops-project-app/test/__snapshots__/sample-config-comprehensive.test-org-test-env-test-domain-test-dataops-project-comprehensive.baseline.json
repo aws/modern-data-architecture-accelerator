@@ -3136,6 +3136,47 @@
           ]
         },
         "BucketName": "test-org-test-env-test-domain-test-dataops-project-co--1ba5ad1b",
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "AbortIncompleteMultipartUpload": {
+                "DaysAfterInitiation": 7
+              },
+              "ExpirationInDays": 7,
+              "Id": "expire-temp",
+              "Prefix": "temp/",
+              "Status": "Enabled"
+            },
+            {
+              "AbortIncompleteMultipartUpload": {
+                "DaysAfterInitiation": 7
+              },
+              "ExpirationInDays": 30,
+              "Id": "expire-athena-results",
+              "Prefix": "athena-results/",
+              "Status": "Enabled"
+            },
+            {
+              "Id": "archive-data",
+              "NoncurrentVersionExpiration": {
+                "NewerNoncurrentVersions": 3,
+                "NoncurrentDays": 90
+              },
+              "Prefix": "data/",
+              "Status": "Enabled",
+              "Transitions": [
+                {
+                  "StorageClass": "STANDARD_IA",
+                  "TransitionInDays": 90
+                },
+                {
+                  "StorageClass": "GLACIER",
+                  "TransitionInDays": 365
+                }
+              ]
+            }
+          ]
+        },
         "PublicAccessBlockConfiguration": {
           "BlockPublicAcls": true,
           "BlockPublicPolicy": true,

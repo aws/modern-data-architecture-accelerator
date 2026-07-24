@@ -10,7 +10,12 @@
 
 #### DataOps Project Module
 
+- **S3 Lifecycle Policies** (`@aws-mdaa/dataops-project`, `@aws-mdaa/dataops-project-l3-construct`): Added optional `lifecycleConfiguration` to the dataops-project module, enabling S3 lifecycle rules on the project bucket for automated storage-class transitions, object expiration, incomplete-multipart upload cleanup, and noncurrent-version management. Each rule targets an optional key prefix (e.g. `temp/`, `athena-results/`, `data/`) so transient or cold data can be aged to cheaper storage independently. When omitted, the project bucket has no lifecycle rules (existing behavior preserved).
 - **DataOps Project — Execution Role Permission Levels** (`@aws-mdaa/dataops-project`): `createReadWriteGrantsForProjectExecutionRoles` now accepts the case-sensitive permission-level strings `read`, `write`, and `super` in addition to boolean values. Boolean `true` remains equivalent to `write` and is fully backward compatible. The new `super` level grants ALTER and DROP on tables and DROP on the database, enabling ETL jobs that replace or recreate tables to run within infrastructure-as-code.
+
+#### Athena Workgroup Module
+
+- **S3 Lifecycle Policies** (`@aws-mdaa/athena-workgroup`, `@aws-mdaa/athena-workgroup-l3-construct`): Added optional `lifecycleConfiguration` to the athena-workgroup module, enabling S3 lifecycle rules on the workgroup results bucket. Rules without an explicit prefix are automatically scoped to the `athena-results/` prefix; rules with an explicit prefix are applied as-is. When omitted, the results bucket has no lifecycle rules (existing behavior preserved).
 
 ## [1.7.0] - 2026-07-16
 

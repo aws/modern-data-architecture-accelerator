@@ -9,7 +9,12 @@ import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaResourceType } from '@aws-mdaa/naming';
-import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-helpers';
+import {
+  LifecycleConfigurationRuleProps,
+  LifecycleHelper,
+  RestrictBucketToRoles,
+  RestrictObjectPrefixToRoles,
+} from '@aws-mdaa/s3-helpers';
 import { IMdaaBucket, MdaaBucket } from '@aws-mdaa/s3-constructs';
 
 import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
@@ -27,6 +32,14 @@ export interface AthenaWorkgroupL3ConstructProps extends MdaaL3ConstructProps {
   readonly workgroupKmsKeyArn?: string;
   // Verbatim policy name prefix for cross-account portability
   readonly verbatimPolicyNamePrefix?: string;
+  /**
+   * S3 lifecycle rules applied to the workgroup results bucket. Rules without a prefix
+   * are automatically scoped to the results location (athena-results/). Rules with an
+   * explicit prefix are applied as-is.
+   *
+   * Validation: Optional; array of LifecycleConfigurationRuleProps
+   */
+  readonly lifecycleConfiguration?: LifecycleConfigurationRuleProps[];
 }
 
 export interface MdaaAthenaWorkgroupConfigurationProps {
@@ -156,10 +169,21 @@ export class AthenaWorkgroupL3Construct extends MdaaL3Construct {
     dataAdminRoles: string[],
     athenaUserRoles: string[],
   ): MdaaBucket {
+    // Auto-prefix lifecycle rules: rules without a prefix target the results location
+    const resolvedLifecycleRules = this.props.lifecycleConfiguration
+      ? LifecycleHelper.resolveLifecycleRules(
+          this.props.lifecycleConfiguration.map(rule => ({
+            ...rule,
+            prefix: rule.prefix ?? 'athena-results/',
+          })),
+        )
+      : undefined;
+
     //This workgroup bucket will be used for all workgroup projects and workgroup-specific data
     const workgroupBucket = new MdaaBucket(this.scope, `Bucketworkgroup`, {
       encryptionKey: workgroupKmsKey,
       naming: this.props.naming,
+      lifecycleRules: resolvedLifecycleRules,
     });
 
     //Allow data admins to manage the bucket

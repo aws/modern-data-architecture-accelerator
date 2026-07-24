@@ -15,6 +15,7 @@ import {
   DataOpsSageMakerProps,
 } from '@aws-mdaa/dataops-project-l3-construct';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { LifecycleConfigurationRuleProps } from '@aws-mdaa/s3-helpers';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
@@ -148,6 +149,21 @@ export interface DataOpsProjectConfigContents extends MdaaBaseConfigContents {
    * Validation: Optional; valid LakeFormationConfig
    */
   readonly lakeFormation?: LakeFormationConfig;
+
+  /**
+   * S3 lifecycle rules applied to the project bucket for automated storage-class
+   * transitions and object expiration. Each rule targets an optional key prefix
+   * (e.g. temp/ or athena-results/) so cold or transient data can be aged to
+   * cheaper storage or expired without affecting primary project data.
+   *
+   * Use cases: Cost optimization for transient query/temp data; Retention/expiration
+   * policies; Archiving cold data to Glacier
+   *
+   * AWS: S3 Bucket Lifecycle Configuration on the project bucket
+   *
+   * Validation: Optional; array of LifecycleConfigurationRuleProps
+   */
+  readonly lifecycleConfiguration?: LifecycleConfigurationRuleProps[];
 }
 
 export class DataOpsProjectConfigParser extends MdaaAppConfigParser<DataOpsProjectConfigContents> {
@@ -164,6 +180,7 @@ export class DataOpsProjectConfigParser extends MdaaAppConfigParser<DataOpsProje
   public readonly datazone?: DataOpsDatazoneProps;
   public readonly sagemaker?: DataOpsSageMakerProps;
   public readonly lakeFormation?: LakeFormationConfig;
+  public readonly lifecycleConfiguration?: LifecycleConfigurationRuleProps[];
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -180,6 +197,7 @@ export class DataOpsProjectConfigParser extends MdaaAppConfigParser<DataOpsProje
     this.securityGroupConfigs = this.configContents.securityGroupConfigs;
     this.datazone = this.configContents.datazone;
     this.lakeFormation = this.configContents.lakeFormation;
+    this.lifecycleConfiguration = this.configContents.lifecycleConfiguration;
     if (this.configContents.datazone && this.configContents.sagemaker) {
       throw new Error('Only one of datazone or sageMaker can be specified');
     } else if (this.configContents.datazone) {

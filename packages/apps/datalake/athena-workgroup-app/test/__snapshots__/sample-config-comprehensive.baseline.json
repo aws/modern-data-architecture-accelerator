@@ -404,6 +404,58 @@
           ]
         },
         "BucketName": "test-org-test-env-test-domain-test-athena-workgroup-main",
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "AbortIncompleteMultipartUpload": {
+                "DaysAfterInitiation": 1
+              },
+              "ExpirationInDays": 7,
+              "Id": "expire-query-results",
+              "Prefix": "athena-results/",
+              "Status": "Enabled"
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "Id": "remove-delete-markers",
+              "Prefix": "athena-results/",
+              "Status": "Enabled"
+            },
+            {
+              "Id": "archive-large-results",
+              "NoncurrentVersionExpiration": {
+                "NewerNoncurrentVersions": 3,
+                "NoncurrentDays": 30
+              },
+              "NoncurrentVersionTransitions": [
+                {
+                  "NewerNoncurrentVersions": 2,
+                  "StorageClass": "GLACIER",
+                  "TransitionInDays": 7
+                }
+              ],
+              "ObjectSizeGreaterThan": 1048576,
+              "ObjectSizeLessThan": 5368709120,
+              "Prefix": "athena-results/",
+              "Status": "Enabled",
+              "Transitions": [
+                {
+                  "StorageClass": "STANDARD_IA",
+                  "TransitionInDays": 3
+                }
+              ]
+            },
+            {
+              "AbortIncompleteMultipartUpload": {
+                "DaysAfterInitiation": 1
+              },
+              "ExpirationInDays": 1,
+              "Id": "cleanup-staging",
+              "Prefix": "staging/",
+              "Status": "Enabled"
+            }
+          ]
+        },
         "PublicAccessBlockConfiguration": {
           "BlockPublicAcls": true,
           "BlockPublicPolicy": true,

@@ -2109,6 +2109,94 @@
             },
             "type": "object"
         },
+        "LifecycleConfigurationRuleProps": {
+            "additionalProperties": false,
+            "description": "A single S3 lifecycle rule controlling storage-class transitions and expiration for objects in a bucket.\n\nUse cases: Automated cost optimization; Data retention/expiration policies; Cleaning up incomplete multipart uploads and old versions\n\nAWS: S3 Bucket Lifecycle Rule\n\nValidation: id and status required; remaining fields optional",
+            "properties": {
+                "abortIncompleteMultipartUploadAfter": {
+                    "description": "Days after which incomplete multipart uploads are aborted.\n\nAWS: S3 Lifecycle Rule AbortIncompleteMultipartUpload DaysAfterInitiation\n\nValidation: Optional; positive integer",
+                    "type": "number"
+                },
+                "expirationdays": {
+                    "description": "Days after object creation before current versions expire (are deleted).\n\nAWS: S3 Lifecycle Rule Expiration ExpirationInDays\n\nValidation: Optional; positive integer",
+                    "type": "number"
+                },
+                "expiredObjectDeleteMarker": {
+                    "description": "Whether to remove expired object delete markers.\n\nAWS: S3 Lifecycle Rule Expiration ExpiredObjectDeleteMarker\n\nValidation: Optional; boolean",
+                    "type": "boolean"
+                },
+                "id": {
+                    "description": "Unique identifier for the lifecycle rule.\n\nAWS: S3 Lifecycle Rule ID\n\nValidation: Required; unique within the bucket",
+                    "type": "string"
+                },
+                "noncurrentVersionExpirationDays": {
+                    "description": "Days after a version becomes noncurrent before it expires (is deleted).\n\nAWS: S3 Lifecycle Rule NoncurrentVersionExpiration NoncurrentDays\n\nValidation: Optional; positive integer",
+                    "type": "number"
+                },
+                "noncurrentVersionTransitions": {
+                    "description": "Storage-class transitions applied to noncurrent object versions.\n\nAWS: S3 Lifecycle Rule NoncurrentVersionTransitions\n\nValidation: Optional; array of LifecycleTransitionProps",
+                    "items": {
+                        "$ref": "#/definitions/LifecycleTransitionProps"
+                    },
+                    "type": "array"
+                },
+                "noncurrentVersionsToRetain": {
+                    "description": "Number of newer noncurrent versions to retain before expiring older ones.\n\nAWS: S3 Lifecycle Rule NoncurrentVersionExpiration NewerNoncurrentVersions\n\nValidation: Optional; positive integer",
+                    "type": "number"
+                },
+                "objectSizeGreaterThan": {
+                    "description": "Only apply the rule to objects larger than this size in bytes.\n\nAWS: S3 Lifecycle Rule Filter ObjectSizeGreaterThan\n\nValidation: Optional; positive integer (bytes)",
+                    "type": "number"
+                },
+                "objectSizeLessThan": {
+                    "description": "Only apply the rule to objects smaller than this size in bytes.\n\nAWS: S3 Lifecycle Rule Filter ObjectSizeLessThan\n\nValidation: Optional; positive integer (bytes)",
+                    "type": "number"
+                },
+                "prefix": {
+                    "description": "Object key prefix the rule applies to. When omitted, the rule applies to all objects in the bucket.\n\nAWS: S3 Lifecycle Rule Filter Prefix\n\nValidation: Optional; S3 key prefix",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Whether the rule is active.\n\nAWS: S3 Lifecycle Rule Status\n\nValidation: Required; one of 'Enabled' or 'Disabled' (case-insensitive)",
+                    "type": "string"
+                },
+                "transitions": {
+                    "description": "Storage-class transitions applied to current object versions.\n\nAWS: S3 Lifecycle Rule Transitions\n\nValidation: Optional; array of LifecycleTransitionProps",
+                    "items": {
+                        "$ref": "#/definitions/LifecycleTransitionProps"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "id",
+                "status"
+            ],
+            "type": "object"
+        },
+        "LifecycleTransitionProps": {
+            "additionalProperties": false,
+            "description": "A single storage-class transition within an S3 lifecycle rule.\n\nUse cases: Cost optimization by aging objects to cheaper storage; Archiving cold data\n\nAWS: S3 Lifecycle Transition (current or noncurrent version)\n\nValidation: days required; storageClass required",
+            "properties": {
+                "days": {
+                    "description": "Number of days after object creation (or after becoming noncurrent) before the transition applies.\n\nAWS: S3 Lifecycle Transition TransitionInDays / NoncurrentDays\n\nValidation: Required; positive integer",
+                    "type": "number"
+                },
+                "newerNoncurrentVersions": {
+                    "description": "For noncurrent version transitions, the number of newer noncurrent versions to retain before transitioning older ones.\n\nAWS: S3 Lifecycle NoncurrentVersionTransition NewerNoncurrentVersions\n\nValidation: Optional; positive integer",
+                    "type": "number"
+                },
+                "storageClass": {
+                    "description": "Target S3 storage class for the transition.\n\nAWS: S3 storage class\n\nValidation: Required; valid S3 storage class (e.g. STANDARD_IA, INTELLIGENT_TIERING, ONEZONE_IA, GLACIER_IR, GLACIER, DEEP_ARCHIVE)",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "days",
+                "storageClass"
+            ],
+            "type": "object"
+        },
         "LogGroupReference": {
             "additionalProperties": false,
             "description": "A reference to a LogGroup resource.",
@@ -4012,6 +4100,13 @@
         "lakeFormation": {
             "$ref": "#/definitions/LakeFormationConfig",
             "description": "Project-level Lake Formation configuration for centralized tag-based access control.\nDefines project-wide LF-tag vocabulary shared across all databases.\n\nUse cases: Centralized tag management; Project-wide TBAC; Shared governance\n\nAWS: Lake Formation project-level configuration\n\nValidation: Optional; valid LakeFormationConfig"
+        },
+        "lifecycleConfiguration": {
+            "description": "S3 lifecycle rules applied to the project bucket for automated storage-class\ntransitions and object expiration. Each rule targets an optional key prefix\n(e.g. temp/ or athena-results/) so cold or transient data can be aged to\ncheaper storage or expired without affecting primary project data.\n\nUse cases: Cost optimization for transient query/temp data; Retention/expiration\npolicies; Archiving cold data to Glacier\n\nAWS: S3 Bucket Lifecycle Configuration on the project bucket\n\nValidation: Optional; array of LifecycleConfigurationRuleProps",
+            "items": {
+                "$ref": "#/definitions/LifecycleConfigurationRuleProps"
+            },
+            "type": "array"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
