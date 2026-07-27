@@ -4,6 +4,7 @@
  */
 
 export * from './loggroup';
+export * from './vended-log-delivery';
 export * from './log-insights-query';
 export * from './metric-filter';
 export * from './alarm';

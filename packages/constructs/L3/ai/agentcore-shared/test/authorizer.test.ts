@@ -3,41 +3,41 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { buildCustomJwtAuthorizer, resolveAgentcoreAuthorizerType, validateCustomJwt } from '../lib';
+import { buildCustomJwtAuthorizer, resolveAuthorizerType, validateCustomJwtAuthorizer } from '../lib';
 
 const VALID_DISCOVERY_URL = 'https://example.com/.well-known/openid-configuration';
 
-describe('resolveAgentcoreAuthorizerType', () => {
+describe('resolveAuthorizerType', () => {
   it('resolves customJwt to CUSTOM_JWT', () => {
-    expect(resolveAgentcoreAuthorizerType({ customJwt: { discoveryUrl: VALID_DISCOVERY_URL } })).toBe('CUSTOM_JWT');
+    expect(resolveAuthorizerType({ customJwt: { discoveryUrl: VALID_DISCOVERY_URL } })).toBe('CUSTOM_JWT');
   });
 
   it('falls back to AWS_IAM when customJwt is omitted', () => {
-    expect(resolveAgentcoreAuthorizerType({})).toBe('AWS_IAM');
+    expect(resolveAuthorizerType({})).toBe('AWS_IAM');
   });
 
   it('falls back to AWS_IAM when config is undefined', () => {
-    expect(resolveAgentcoreAuthorizerType()).toBe('AWS_IAM');
+    expect(resolveAuthorizerType()).toBe('AWS_IAM');
   });
 });
 
-describe('validateCustomJwt', () => {
+describe('validateCustomJwtAuthorizer', () => {
   it('accepts a valid discoveryUrl', () => {
-    expect(() => validateCustomJwt({ discoveryUrl: VALID_DISCOVERY_URL })).not.toThrow();
+    expect(() => validateCustomJwtAuthorizer({ discoveryUrl: VALID_DISCOVERY_URL })).not.toThrow();
   });
 
   it('throws when discoveryUrl is missing', () => {
-    expect(() => validateCustomJwt({ discoveryUrl: '' })).toThrow(/DiscoveryUrl is required/);
+    expect(() => validateCustomJwtAuthorizer({ discoveryUrl: '' })).toThrow(/DiscoveryUrl is required/);
   });
 
   it('throws when discoveryUrl does not match the OIDC pattern', () => {
-    expect(() => validateCustomJwt({ discoveryUrl: 'https://example.com/invalid' })).toThrow(
+    expect(() => validateCustomJwtAuthorizer({ discoveryUrl: 'https://example.com/invalid' })).toThrow(
       /DiscoveryUrl must match pattern/,
     );
   });
 
   it('does not require allowedAudience or allowedClients', () => {
-    expect(() => validateCustomJwt({ discoveryUrl: VALID_DISCOVERY_URL })).not.toThrow();
+    expect(() => validateCustomJwtAuthorizer({ discoveryUrl: VALID_DISCOVERY_URL })).not.toThrow();
   });
 });
 

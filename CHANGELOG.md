@@ -16,6 +16,16 @@
 #### Athena Workgroup Module
 
 - **S3 Lifecycle Policies** (`@aws-mdaa/athena-workgroup`, `@aws-mdaa/athena-workgroup-l3-construct`): Added optional `lifecycleConfiguration` to the athena-workgroup module, enabling S3 lifecycle rules on the workgroup results bucket. Rules without an explicit prefix are automatically scoped to the `athena-results/` prefix; rules with an explicit prefix are applied as-is. When omitted, the results bucket has no lifecycle rules (existing behavior preserved).
+### Data Science/AI/ML Changes
+
+#### Bedrock Builder Module
+
+- Added AgentCore Gateway orchestration via new top-level `gateways` and `gatewayTargets` configuration properties: deploy compliant AgentCore Gateways (MCP servers) with Lambda tool targets and REQUEST/RESPONSE interceptors, reusing the shared `lambdaFunctions` pool via `generated-function:<name>` references. Upgrade impact: additive only — created only when the new properties are set; existing configurations are unaffected.
+
+#### Bedrock AgentCore Gateway Constructs
+
+- Added `@aws-mdaa/bedrock-agentcore-gateway-l3-construct`: an L3 construct that deploys a compliant AgentCore Gateway with always-on customer-managed KMS encryption, CUSTOM_JWT/AWS_IAM inbound authorization, scoped execution-role policies, and a CMK-encrypted audit-log-delivery pipeline.
+- Added `MdaaAgentcoreGateway` and `MdaaAgentcoreGatewayTarget` L2 constructs (`@aws-mdaa/bedrock-constructs`) for the gateway and its tool targets (Lambda tool sources with inline or S3 tool schemas).
 
 ## [1.7.0] - 2026-07-16
 

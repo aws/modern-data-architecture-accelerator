@@ -1,0 +1,88 @@
+# Bedrock Builder module configuration exercising the AWS_IAM branch of AgentCore Gateway
+# orchestration and the option combinations that differ from the canonical CUSTOM_JWT sample
+# (sample-config-gateway.yaml). Everything here is deployable (successful synth); error-only
+# branches live in the construct unit tests.
+#
+# What this sample covers that the CUSTOM_JWT sample does not:
+#   - authorizerConfiguration omitted            -> AWS_IAM (SigV4) inbound auth
+#   - gateway exceptionLevel: DEBUG              -> verbose exception detail (troubleshooting only)
+#   - protocolConfiguration.searchType omitted   -> semantic search disabled (the service accepts
+#                                                   only SEMANTIC; omit the field for non-semantic)
+#   - target lambdaArn as a PLAIN ARN            -> (vs generated-function:<name>)
+#   - target toolSchema via S3                   -> (vs an inline payload) with an explicit
+#                                                   bucketOwnerAccountId (confused-deputy protection)
+#   - credentialProvider omitted                 -> defaults to GATEWAY_IAM_ROLE
+#   - an INLINE lambdaFunction interceptor       -> MDAA deploys the interceptor Lambda itself
+#   - passRequestHeaders: true                   -> forward inbound headers to the interceptor
+#   - a RESPONSE interceptor by PLAIN ARN        -> both REQUEST and RESPONSE interceptors present
+#   - gateway role referenced by arn             -> (vs an auto-created execution role)
+#   - logDelivery.logRetentionDays: 90           -> finite audit-log retention
+
+# Admin roles granted access to Bedrock resources including KMS keys and S3 buckets.
+dataAdminRoles:
+  - name: 'Admin'
+
+# (Optional) AgentCore Gateway target definitions (MCP tool sources), keyed by target name.
+gatewayTargets:
+  claims:
+    description: 'Claims tool source referenced by a plain Lambda ARN, schema loaded from S3'
+    targetConfiguration:
+      lambda:
+        # Plain Lambda ARN (already-deployed function owned elsewhere) — passed through unchanged
+        # (no generated-function: resolution). The gateway role is granted scoped invoke on this ARN.
+        lambdaArn: 'arn:{{partition}}:lambda:{{region}}:{{account}}:function:external-claims-tool'
+        # S3 tool schema: a JSON tool-schema document maintained as a separate artifact in S3.
+        # Mutually exclusive with inlinePayload. bucketOwnerAccountId (cross-account confused-deputy
+        # protection) is set explicitly here; when omitted it defaults to the deploying account
+        # (see the log-delivery sample).
+        toolSchema:
+          s3:
+            uri: 's3://example-tool-schemas/claims/tool-schema.json'
+            # Explicit 12-digit bucket-owner account (cross-account confused-deputy protection). Set a
+            # literal account id (not the {{account}} template token) so this validates at synth; when
+            # omitted MDAA defaults it to the deploying account (see the log-delivery sample).
+            bucketOwnerAccountId: '111122223333'
+    # credentialProvider omitted -> defaults to GATEWAY_IAM_ROLE.
+
+# (Optional) AgentCore Gateway configurations, keyed by gateway name.
+gateways:
+  claims-gateway:
+    description: 'Claims MCP gateway (AWS IAM inbound auth)'
+    # authorizerConfiguration omitted entirely -> AWS_IAM (SigV4). MDAA rejects NONE /
+    # AUTHENTICATE_ONLY, so omission is how AWS IAM is selected.
+    #
+    # exceptionLevel DEBUG raises the verbosity of exception detail the gateway surfaces. Enable only
+    # for troubleshooting; do not leave on in production.
+    exceptionLevel: DEBUG
+    protocolConfiguration:
+      instructions: 'Use the claims tools to service insurance claims.'
+      # searchType omitted -> semantic tool discovery disabled. The AgentCore API accepts only
+      # SEMANTIC (there is no NONE value); omitting the field is how you get a non-semantic gateway.
+    # Reference an existing IAM role for the gateway execution role (by arn; name or id also work).
+    # MDAA attaches the gateway's required permissions (KMS use, interceptor invoke) to this role.
+    role:
+      arn: 'arn:{{partition}}:iam::{{account}}:role/claims-gateway-execution-role'
+    targets:
+      - claims
+    # Both interception points, each supplied a different way:
+    interceptors:
+      # REQUEST: an INLINE Lambda function definition. MDAA deploys this function (encrypted with the
+      # gateway CMK) and wires the gateway to its ARN. passRequestHeaders forwards inbound headers.
+      - interceptionPoints:
+          - REQUEST
+        passRequestHeaders: true
+        lambdaFunction:
+          functionName: claims-request-interceptor
+          description: 'Inline gateway REQUEST interceptor Lambda'
+          srcDir: ./src/function
+          handler: test.lambda_handler
+          runtime: python3.14
+          roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-interceptor-role'
+      # RESPONSE: an already-deployed function referenced by PLAIN ARN (MDAA deploys nothing; it wires
+      # the gateway to this ARN and grants the execution role scoped invoke on it).
+      - interceptionPoints:
+          - RESPONSE
+        lambdaArn: 'arn:{{partition}}:lambda:{{region}}:{{account}}:function:external-response-interceptor'
+    # Finite audit-log retention (90 days) instead of the indefinite default.
+    logDelivery:
+      logRetentionDays: 90

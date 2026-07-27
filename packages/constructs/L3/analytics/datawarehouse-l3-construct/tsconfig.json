@@ -62,10 +62,10 @@
       "path": "../../../L2/redshift-constructs"
     },
     {
-      "path": "../../../../utilities/s3-helpers"
+      "path": "../../../L2/s3-constructs"
     },
     {
-      "path": "../../../L2/s3-constructs"
+      "path": "../../../../utilities/s3-helpers"
     },
     {
       "path": "../../../L2/sns-constructs"

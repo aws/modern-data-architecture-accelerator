@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
+import { createMdaaVendedLogDelivery } from '@aws-mdaa/cloudwatch-constructs';
 import {
   MdaaBoto3LayerVersion,
   MdaaAwsAuthLayerVersion,
@@ -35,7 +35,7 @@ import { IVpc, SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Effect, IRole, ManagedPolicy, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { AuroraCapacityUnit } from 'aws-cdk-lib/aws-rds';
-import { CfnDelivery, CfnDeliveryDestination, CfnDeliverySource, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { Construct } from 'constructs';
 import { join } from 'path';
@@ -1103,30 +1103,22 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
   }
 
   private createKnowledgeBaseLogging(kbName: string, knowledgeBase: bedrock.CfnKnowledgeBase, kmsKey: IKey): void {
-    const kbLogGroup = new MdaaLogGroup(this, `kb-loggroup-${kbName}`, {
+    // Provision the CMK-encrypted vended log-delivery pipeline via the shared helper (also used by
+    // the AgentCore Gateway construct). The `kb-*-${kbName}` construct ids, the log-group path
+    // prefix, and the INFINITE retention are preserved exactly, so existing baselines do not move.
+    // The KB CMK's CloudWatch Logs at-rest grant is provided by the parent bedrock-builder shared
+    // key, so the helper (which adds no KMS grants) needs none added here.
+    createMdaaVendedLogDelivery(this, {
       encryptionKey: kmsKey,
       logGroupNamePathPrefix: '/aws/vendedlogs/bedrock/knowledge-base/',
-      logGroupName: kbName,
+      resourceName: kbName,
+      resourceArn: knowledgeBase.attrKnowledgeBaseArn,
+      logType: 'APPLICATION_LOGS',
       retention: RetentionDays.INFINITE,
       naming: this.props.naming,
+      idPrefix: 'kb-',
+      idSuffix: `-${kbName}`,
     });
-
-    const kbLogSource = new CfnDeliverySource(this, `kb-logsource-${kbName}`, {
-      name: this.props.naming.withResourceType(MdaaResourceType.LOGS_DELIVERY_SOURCE).resourceName(kbName, 60),
-      logType: 'APPLICATION_LOGS',
-      resourceArn: knowledgeBase.attrKnowledgeBaseArn,
-    });
-
-    const kbLogDestination = new CfnDeliveryDestination(this, `kb-logdestination-${kbName}`, {
-      name: this.props.naming.withResourceType(MdaaResourceType.LOGS_DELIVERY_DESTINATION).resourceName(kbName, 60),
-      destinationResourceArn: kbLogGroup.logGroupArn,
-    });
-
-    const cfnDelivery = new CfnDelivery(this, `kb-logdelivery-${kbName}`, {
-      deliveryDestinationArn: kbLogDestination.attrArn,
-      deliverySourceName: kbLogSource.name,
-    });
-    cfnDelivery.addDependency(kbLogSource);
   }
 
   private createDataSources(

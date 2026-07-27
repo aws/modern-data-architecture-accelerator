@@ -1,0 +1,2423 @@
+{
+  "Description": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolAF7B0542": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "QueueName": "test-org-test-env-test-domain-test-bedrock-builder-gateway-logdelivery--6697530b",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-logdelivery"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolPolicyC04D08C1": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:role/test-lambda-role"
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolAF7B0542"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolqueuemetricstooldlqnamessm3F273642": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/queue/metrics-tool-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolAF7B0542",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolqueuemetricstooldlqarnssm317C9312": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/queue/metrics-tool-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolAF7B0542",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolqueuemetricstooldlqurlssmFDC5397E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/queue/metrics-tool-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolAF7B0542"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsmetricstool36540A37": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolAF7B0542",
+              "Arn"
+            ]
+          }
+        },
+        "Description": "MCP tool Lambda fronted by the retention gateway",
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-gat--71b29711",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Role": "arn:test-partition:iam::test-account:role/test-lambda-role",
+        "Runtime": "python3.14",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-logdelivery"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsmetricstoollambdametricstoolnamessm07F41D6B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/lambda/metrics-tool/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsmetricstool36540A37"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsmetricstoollambdametricstoolarnssm6AF2F006": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/lambda/metrics-tool/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockbuilderlambdafunctionsmetricstool36540A37",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsmetricstoollambdametricstoolloggroupssm7B7F3C7D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/lambda/metrics-tool/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsmetricstool36540A37"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:bedrock-agentcore:test-region:test-account:gateway/test-org-test-env-test-domain-test-bedr-1af6738d-*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock-agentcore.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "IAM role for Bedrock AgentCore Gateway: metrics-gateway",
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-gat--3027130c",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-logdelivery"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRolerolebedrockagentcoregatewaymetricsgatewayarnssm16828D8D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/role/bedrock-agentcore-gateway-metrics-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRolerolebedrockagentcoregatewaymetricsgatewayidssm893E8815": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/role/bedrock-agentcore-gateway-metrics-gateway/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRolerolebedrockagentcoregatewaymetricsgatewaynamessm1CD967F1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/role/bedrock-agentcore-gateway-metrics-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50": {
+      "Type": "AWS::BedrockAgentCore::Gateway",
+      "Properties": {
+        "AuthorizerConfiguration": {
+          "CustomJWTAuthorizer": {
+            "DiscoveryUrl": "https://example.com/.well-known/openid-configuration"
+          }
+        },
+        "AuthorizerType": "CUSTOM_JWT",
+        "Description": "Metrics MCP gateway with finite log retention",
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bedr-1af6738d",
+        "ProtocolType": "MCP",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592",
+            "Arn"
+          ]
+        },
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewayarnssm6FAF77B3",
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewaynamessm9B7DF74E",
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewayBC86B30E"
+      ]
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayarnssmC121DA1F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway/metrics-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50",
+            "GatewayArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewayarnssm6FAF77B3",
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewaynamessm9B7DF74E",
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewayBC86B30E"
+      ]
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayidssmDA554664": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway/metrics-gateway/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50",
+            "GatewayIdentifier"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewayarnssm6FAF77B3",
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewaynamessm9B7DF74E",
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewayBC86B30E"
+      ]
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayurlssm86B01CEE": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway/metrics-gateway/url",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50",
+            "GatewayUrl"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewayarnssm6FAF77B3",
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewaynamessm9B7DF74E",
+        "bedrockbuilderbedrockgatewaycmkusagemetricsgatewayBC86B30E"
+      ]
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewayloggroup57C3C4AF": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "LogGroupName": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-gateway-logdelivery-metrics-gateway",
+        "RetentionInDays": 30,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-logdelivery"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewayloggrouploggroupmetricsgatewaynamessm0C49E17C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/loggroup/metrics-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-gateway-logdelivery-metrics-gateway"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaylogsourceBDBF45E1": {
+      "Type": "AWS::Logs::DeliverySource",
+      "Properties": {
+        "LogType": "APPLICATION_LOGS",
+        "Name": "test-org-test-env-test-domain-test-bedrock-builder--1af6738d",
+        "ResourceArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50",
+            "GatewayArn"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-logdelivery"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaylogdestinationF32B1B11": {
+      "Type": "AWS::Logs::DeliveryDestination",
+      "Properties": {
+        "DestinationResourceArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewaygatewayloggroup57C3C4AF",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bedrock-builder--1af6738d",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-logdelivery"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaylogdelivery438A139D": {
+      "Type": "AWS::Logs::Delivery",
+      "Properties": {
+        "DeliveryDestinationArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewaygatewaylogdestinationF32B1B11",
+            "Arn"
+          ]
+        },
+        "DeliverySourceName": "test-org-test-env-test-domain-test-bedrock-builder--1af6738d",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-logdelivery"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaymetricsgatewaygatewaylogsourceBDBF45E1"
+      ]
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaymetricsgatewayrolearnssm96043867": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway/metrics-gateway/role-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaymetricsgatewaykmskeyarnssmF315872E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway/metrics-gateway/kms-key-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicyAF19CFC0": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-gate-55ec2c04",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockbuilderbedrockbuilderlambdafunctionsmetricstool36540A37",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayInvokeTargetLambdas"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetmetricsgatewayarnssmD36ADC49": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/managed-policy/bedrock-agentcore-gateway-target-metrics-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicyAF19CFC0"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetmetricsgatewaynamessm043CB731": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/managed-policy/bedrock-agentcore-gateway-target-metrics-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicyAF19CFC0"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaytargetmetricsAACEC18E": {
+      "Type": "AWS::BedrockAgentCore::GatewayTarget",
+      "Properties": {
+        "CredentialProviderConfigurations": [
+          {
+            "CredentialProviderType": "GATEWAY_IAM_ROLE"
+          }
+        ],
+        "Description": "Metrics tool source (inline schema)",
+        "GatewayIdentifier": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50",
+            "GatewayIdentifier"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bedroc-2785c016",
+        "TargetConfiguration": {
+          "Mcp": {
+            "Lambda": {
+              "LambdaArn": {
+                "Fn::GetAtt": [
+                  "bedrockbuilderbedrockbuilderlambdafunctionsmetricstool36540A37",
+                  "Arn"
+                ]
+              },
+              "ToolSchema": {
+                "InlinePayload": [
+                  {
+                    "Description": "Returns a named metric value",
+                    "InputSchema": {
+                      "Properties": {
+                        "metric": {
+                          "Type": "string"
+                        }
+                      },
+                      "Required": [
+                        "metric"
+                      ],
+                      "Type": "object"
+                    },
+                    "Name": "getMetric"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayarnssmC121DA1F",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayidssmDA554664",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayurlssm86B01CEE",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetmetricsgatewayarnssmD36ADC49",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetmetricsgatewaynamessm043CB731",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicyAF19CFC0"
+      ]
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaytargetmetricsgatewaytargetmetricsarnssm4BA26B2E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway-target/metrics/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewaygatewaytargetmetricsAACEC18E",
+            "GatewayArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayarnssmC121DA1F",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayidssmDA554664",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayurlssm86B01CEE",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetmetricsgatewayarnssmD36ADC49",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetmetricsgatewaynamessm043CB731",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicyAF19CFC0"
+      ]
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaytargetmetricsgatewaytargetmetricsidssmA9AE11DB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway-target/metrics/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaymetricsgatewaygatewaytargetmetricsAACEC18E",
+            "TargetId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayarnssmC121DA1F",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayidssmDA554664",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayurlssm86B01CEE",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetmetricsgatewayarnssmD36ADC49",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetmetricsgatewaynamessm043CB731",
+        "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicyAF19CFC0"
+      ]
+    },
+    "bedrockbuilderbedrockgatewaycmkusagemetricsgatewayBC86B30E": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-gate-4b785f68",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:DescribeKey",
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkEncryptDecrypt"
+            },
+            {
+              "Action": "kms:CreateGrant",
+              "Condition": {
+                "StringEquals": {
+                  "kms:GrantConstraintType": "EncryptionContextSubset"
+                },
+                "ForAllValues:StringEquals": {
+                  "kms:GrantOperations": [
+                    "Decrypt",
+                    "GenerateDataKey"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkCreateGrant"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewayarnssm6FAF77B3": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/managed-policy/bedrock-agentcore-gateway-cmk-metrics-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewaycmkusagemetricsgatewayBC86B30E"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewaynamessm9B7DF74E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/managed-policy/bedrock-agentcore-gateway-cmk-metrics-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewaycmkusagemetricsgatewayBC86B30E"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:bedrock-agentcore:test-region:test-account:gateway/test-org-test-env-test-domain-test-bed-7ff6b777-*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock-agentcore.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "IAM role for Bedrock AgentCore Gateway: reports-gateway",
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-gate-34ebc1f0",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-logdelivery"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayRolerolebedrockagentcoregatewayreportsgatewayarnssm6126D7F1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/role/bedrock-agentcore-gateway-reports-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayRolerolebedrockagentcoregatewayreportsgatewayidssmC7D3E34A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/role/bedrock-agentcore-gateway-reports-gateway/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayRolerolebedrockagentcoregatewayreportsgatewaynamessmFEEACB26": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/role/bedrock-agentcore-gateway-reports-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayFD1A55D0": {
+      "Type": "AWS::BedrockAgentCore::Gateway",
+      "Properties": {
+        "AuthorizerConfiguration": {
+          "CustomJWTAuthorizer": {
+            "DiscoveryUrl": "https://example.com/.well-known/openid-configuration"
+          }
+        },
+        "AuthorizerType": "CUSTOM_JWT",
+        "Description": "Reports MCP gateway with log delivery disabled",
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bed-7ff6b777",
+        "ProtocolType": "MCP",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD",
+            "Arn"
+          ]
+        },
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewayarnssmC59972AC",
+        "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewaynamessm5F43476B",
+        "bedrockbuilderbedrockgatewaycmkusagereportsgateway50003F27"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayarnssm49947CF1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway/reports-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayreportsgatewayGatewayFD1A55D0",
+            "GatewayArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewayarnssmC59972AC",
+        "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewaynamessm5F43476B",
+        "bedrockbuilderbedrockgatewaycmkusagereportsgateway50003F27"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayidssm24A17C2C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway/reports-gateway/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayreportsgatewayGatewayFD1A55D0",
+            "GatewayIdentifier"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewayarnssmC59972AC",
+        "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewaynamessm5F43476B",
+        "bedrockbuilderbedrockgatewaycmkusagereportsgateway50003F27"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayurlssm22292113": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway/reports-gateway/url",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayreportsgatewayGatewayFD1A55D0",
+            "GatewayUrl"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewayarnssmC59972AC",
+        "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewaynamessm5F43476B",
+        "bedrockbuilderbedrockgatewaycmkusagereportsgateway50003F27"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewaygatewayreportsgatewayrolearnssmE158F836": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway/reports-gateway/role-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewaygatewayreportsgatewaykmskeyarnssmECA49772": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway/reports-gateway/kms-key-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicy2702D636": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-gat--4500ff00",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:lambda:test-region:test-account:function:external-reports-tool",
+              "Sid": "GatewayInvokeTargetLambdas"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetreportsgatewayarnssmAA665773": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/managed-policy/bedrock-agentcore-gateway-target-reports-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicy2702D636"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetreportsgatewaynamessm25E1077E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/managed-policy/bedrock-agentcore-gateway-target-reports-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicy2702D636"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewaygatewaytargetreports3B1EB6C2": {
+      "Type": "AWS::BedrockAgentCore::GatewayTarget",
+      "Properties": {
+        "CredentialProviderConfigurations": [
+          {
+            "CredentialProviderType": "GATEWAY_IAM_ROLE"
+          }
+        ],
+        "Description": "Reports tool source (S3 schema, defaulted bucket owner)",
+        "GatewayIdentifier": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayreportsgatewayGatewayFD1A55D0",
+            "GatewayIdentifier"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bedroc-2fcb5112",
+        "TargetConfiguration": {
+          "Mcp": {
+            "Lambda": {
+              "LambdaArn": "arn:test-partition:lambda:test-region:test-account:function:external-reports-tool",
+              "ToolSchema": {
+                "S3": {
+                  "BucketOwnerAccountId": "test-account",
+                  "Uri": "s3://example-tool-schemas/reports/tool-schema.json"
+                }
+              }
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayFD1A55D0",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayarnssm49947CF1",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayidssm24A17C2C",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayurlssm22292113",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetreportsgatewayarnssmAA665773",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetreportsgatewaynamessm25E1077E",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicy2702D636"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewaygatewaytargetreportsgatewaytargetreportsarnssm9FACD649": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway-target/reports/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayreportsgatewaygatewaytargetreports3B1EB6C2",
+            "GatewayArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayFD1A55D0",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayarnssm49947CF1",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayidssm24A17C2C",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayurlssm22292113",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetreportsgatewayarnssmAA665773",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetreportsgatewaynamessm25E1077E",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicy2702D636"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewaygatewaytargetreportsgatewaytargetreportsidssm3A379A8E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/gateway-target/reports/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayreportsgatewaygatewaytargetreports3B1EB6C2",
+            "TargetId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayFD1A55D0",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayarnssm49947CF1",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayidssm24A17C2C",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayurlssm22292113",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetreportsgatewayarnssmAA665773",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetreportsgatewaynamessm25E1077E",
+        "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicy2702D636"
+      ]
+    },
+    "bedrockbuilderbedrockgatewaycmkusagereportsgateway50003F27": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-gat--4f74cb9c",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:DescribeKey",
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkEncryptDecrypt"
+            },
+            {
+              "Action": "kms:CreateGrant",
+              "Condition": {
+                "StringEquals": {
+                  "kms:GrantConstraintType": "EncryptionContextSubset"
+                },
+                "ForAllValues:StringEquals": {
+                  "kms:GrantOperations": [
+                    "Decrypt",
+                    "GenerateDataKey"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkCreateGrant"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewayarnssmC59972AC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/managed-policy/bedrock-agentcore-gateway-cmk-reports-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewaycmkusagereportsgateway50003F27"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewaynamessm5F43476B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/managed-policy/bedrock-agentcore-gateway-cmk-reports-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewaycmkusagereportsgateway50003F27"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "RoleResDataAdmin0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataAdmin-0",
+          "name": "Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "bedrockcmk710EFABC": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataAdmin0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-bedrock-builder-gateway-logdelivery-usage-stmt"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext"
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "kms:EncryptionContext:aws:logs:arn": "arn:test-partition:logs:test-region:test-account:log-group:*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "logs.test-region.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "CloudWatchLogsEncryption"
+            },
+            {
+              "Action": [
+                "kms:GenerateDataKey*",
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowBedrockServiceForAgents"
+            },
+            {
+              "Action": [
+                "kms:CreateGrant",
+                "kms:ListGrants",
+                "kms:RevokeGrant"
+              ],
+              "Condition": {
+                "Bool": {
+                  "kms:GrantIsForAWSResource": "true"
+                },
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account",
+                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowBedrockServiceToManageGrants"
+            },
+            {
+              "Action": [
+                "kms:GenerateDataKey",
+                "kms:Decrypt"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:EncryptionContext:SourceArn": "arn:test-partition:logs:test-region:test-account:*",
+                  "aws:SourceAccount": "test-account"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "delivery.logs.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowGatewayVendedLogDeliveryEncryption"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-logdelivery"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "bedrockcmkAlias64D9B0C4": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-bedrock-builder-gateway-logdelivery",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockcmkkmsarnssm9ABBCC7F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/kms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockcmkkmsidssm418027C6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-logdelivery/kms/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-logdelivery",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockcmk710EFABC"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolqueuemetricstooldlqnameout5303F57C": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolAF7B0542",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:queue:metricstooldlq:name"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolqueuemetricstooldlqarnout3E40C323": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolAF7B0542",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:queue:metricstooldlq:arn"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolqueuemetricstooldlqurlout9364B68A": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsdlqmetricstoolAF7B0542"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:queue:metricstooldlq:url"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsmetricstoollambdametricstoolnameoutECFE5C02": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsmetricstool36540A37"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:lambda:metricstool:name"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsmetricstoollambdametricstoolarnoutA2714253": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockbuilderlambdafunctionsmetricstool36540A37",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:lambda:metricstool:arn"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsmetricstoollambdametricstoolloggroupoutA5B22E32": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsmetricstool36540A37"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:lambda:metricstool:log-group"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRolerolebedrockagentcoregatewaymetricsgatewayarnoutCAF8CDAE": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:role:bedrockagentcoregatewaymetricsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRolerolebedrockagentcoregatewaymetricsgatewayidout4625AFBE": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:role:bedrockagentcoregatewaymetricsgateway:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRolerolebedrockagentcoregatewaymetricsgatewaynameout609D344D": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:role:bedrockagentcoregatewaymetricsgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayarnout67573A7A": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway:metricsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayidoutB90A04AA": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50",
+          "GatewayIdentifier"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway:metricsgateway:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewaygatewaymetricsgatewayurlout4196C2C8": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaymetricsgatewayGateway9CA9EB50",
+          "GatewayUrl"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway:metricsgateway:url"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewayloggrouploggroupmetricsgatewaynameoutC61C37B2": {
+      "Value": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-gateway-logdelivery-metrics-gateway",
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:loggroup:metricsgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaymetricsgatewayrolearnout1043BD9B": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaymetricsgatewayGatewayRole9F48A592",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway:metricsgateway:role-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaymetricsgatewaykmskeyarnout6C15B7EF": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockcmk710EFABC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway:metricsgateway:kms-key-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetmetricsgatewayarnout829D84BB": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicyAF19CFC0"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:managed-policy:bedrockagentcoregatewaytargetmetricsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetmetricsgatewaynameout2D34DF2F": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewaymetricsgatewayGatewayTargetInvokePolicyAF19CFC0"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:managed-policy:bedrockagentcoregatewaytargetmetricsgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaytargetmetricsgatewaytargetmetricsarnoutF64E3630": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaymetricsgatewaygatewaytargetmetricsAACEC18E",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway-target:metrics:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaymetricsgatewaygatewaytargetmetricsgatewaytargetmetricsidoutEC1EA7CA": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaymetricsgatewaygatewaytargetmetricsAACEC18E",
+          "TargetId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway-target:metrics:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewayarnout61F07BC5": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewaycmkusagemetricsgatewayBC86B30E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:managed-policy:bedrockagentcoregatewaycmkmetricsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagemetricsgatewaymanagedpolicybedrockagentcoregatewaycmkmetricsgatewaynameout0DAF871B": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewaycmkusagemetricsgatewayBC86B30E"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:managed-policy:bedrockagentcoregatewaycmkmetricsgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayRolerolebedrockagentcoregatewayreportsgatewayarnout5A325824": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:role:bedrockagentcoregatewayreportsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayRolerolebedrockagentcoregatewayreportsgatewayidoutA1ABF5A0": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:role:bedrockagentcoregatewayreportsgateway:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayRolerolebedrockagentcoregatewayreportsgatewaynameout4EA85CC3": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:role:bedrockagentcoregatewayreportsgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayarnoutD3C39022": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayreportsgatewayGatewayFD1A55D0",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway:reportsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayidout260BBCA2": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayreportsgatewayGatewayFD1A55D0",
+          "GatewayIdentifier"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway:reportsgateway:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewaygatewayreportsgatewayurloutB163E2F9": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayreportsgatewayGatewayFD1A55D0",
+          "GatewayUrl"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway:reportsgateway:url"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewaygatewayreportsgatewayrolearnoutE4B31592": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayreportsgatewayGatewayRole098B97AD",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway:reportsgateway:role-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewaygatewayreportsgatewaykmskeyarnoutDDC9E955": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockcmk710EFABC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway:reportsgateway:kms-key-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetreportsgatewayarnoutD44E206C": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicy2702D636"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:managed-policy:bedrockagentcoregatewaytargetreportsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetreportsgatewaynameoutBF43FAAA": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewayreportsgatewayGatewayTargetInvokePolicy2702D636"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:managed-policy:bedrockagentcoregatewaytargetreportsgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewaygatewaytargetreportsgatewaytargetreportsarnout7577159C": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayreportsgatewaygatewaytargetreports3B1EB6C2",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway-target:reports:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayreportsgatewaygatewaytargetreportsgatewaytargetreportsidout40749EE4": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayreportsgatewaygatewaytargetreports3B1EB6C2",
+          "TargetId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:gateway-target:reports:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewayarnout503B4D6F": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewaycmkusagereportsgateway50003F27"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:managed-policy:bedrockagentcoregatewaycmkreportsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagereportsgatewaymanagedpolicybedrockagentcoregatewaycmkreportsgatewaynameout6EFAAEC5": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewaycmkusagereportsgateway50003F27"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:managed-policy:bedrockagentcoregatewaycmkreportsgateway:name"
+      }
+    },
+    "bedrockcmkkmsarnout0D3BC511": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockcmk710EFABC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:kms:arn"
+      }
+    },
+    "bedrockcmkkmsidout38E894CA": {
+      "Value": {
+        "Ref": "bedrockcmk710EFABC"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-logdelivery:kms:id"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

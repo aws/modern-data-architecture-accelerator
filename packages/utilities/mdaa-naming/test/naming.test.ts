@@ -76,6 +76,13 @@ describe('MdaaDefaultResourceNaming', () => {
       naming.resourceName('bronze'),
     );
     expect(naming.withResourceType(MdaaResourceType.LAMBDA_FUNCTION).resourceName()).toBe(naming.resourceName());
+    // Newer AgentCore resource types also resolve through the no-op default (no naming logic of their own).
+    expect(naming.withResourceType(MdaaResourceType.BEDROCK_AGENTCORE_GATEWAY).resourceName('gw')).toBe(
+      naming.resourceName('gw'),
+    );
+    expect(naming.withResourceType(MdaaResourceType.BEDROCK_AGENTCORE_GATEWAY_TARGET).resourceName('tgt')).toBe(
+      naming.resourceName('tgt'),
+    );
   });
 
   test('ssmOrgPath', () => {

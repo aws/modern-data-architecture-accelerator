@@ -16,7 +16,7 @@ import { MdaaOpensearchServerlessCollection } from '@aws-mdaa/opensearch-constru
 
 import { aws_bedrock as bedrock, aws_kms as kms, aws_opensearchserverless as aoss, Stack } from 'aws-cdk-lib';
 
-import { Effect, PolicyStatement, ServicePrincipal, ArnPrincipal } from 'aws-cdk-lib/aws-iam';
+import { Effect, PolicyStatement, ServicePrincipal, ArnPrincipal, IRole } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
@@ -33,6 +33,13 @@ import {
   SharedVpcEndpointDetails,
 } from '@aws-mdaa/bedrock-knowledge-base-l3-construct';
 import { BedrockGuardrailL3Construct, NamedGuardrailProps } from '@aws-mdaa/bedrock-guardrail-l3-construct';
+import {
+  BedrockAgentcoreGatewayL3Construct,
+  GatewayConfigProps,
+  GatewayInterceptorConfigurationsProperty,
+  GatewayTargetProps,
+  GatewayTargetsMap,
+} from '@aws-mdaa/bedrock-agentcore-gateway-l3-construct';
 import { NamedOpensearchServerlessProps, validateAndGroupVpcEndpoints } from './vpc-endpoint-validator';
 
 /**
@@ -72,6 +79,56 @@ export interface LambdaFunctionProps {
 // Re-export the Named types for backward compatibility
 export { NamedAgentProps, NamedKnowledgeBaseProps, NamedVectorStoreProps, NamedGuardrailProps };
 
+// Re-export the gateway config surface so the app config (and downstream consumers) can import the
+// gateway/target types from the builder package rather than reaching into the gateway L3 directly.
+export { GatewayConfigProps, GatewayInterceptorConfigurationsProperty, GatewayTargetProps, GatewayTargetsMap };
+
+/**
+ * Configuration for a Bedrock AgentCore Gateway, keyed by gateway name in {@link NamedGatewayProps}.
+ * The name-less {@link GatewayConfigProps} plus a flat `targets` list of references into the
+ * top-level `gatewayTargets` map. A target's `lambdaArn` and an interceptor's `lambdaArn` may use the
+ * `generated-function:<name>` form to reference a function defined once under `lambdaFunctions`.
+ *
+ * Use cases: exposing a compliant MCP gateway (and its tools) from the same module that owns the
+ * agents/knowledge bases/Lambdas it fronts
+ *
+ * AWS: Amazon Bedrock AgentCore Gateway (+ GatewayTargets)
+ *
+ * Validation: each `targets` entry must name a key in the top-level `gatewayTargets` map
+ */
+export interface BuilderGatewayProps extends GatewayConfigProps {
+  /**
+   * Names of gateway targets (keys in the top-level `gatewayTargets` map) to register against this
+   * gateway. Each becomes one `AWS::BedrockAgentCore::GatewayTarget`.
+   *
+   * Use cases: attaching MCP tool sources to a gateway by reference, keeping the config flat
+   *
+   * AWS: AWS::BedrockAgentCore::GatewayTarget (one per referenced entry)
+   *
+   * Validation: Optional; each entry must be a key in `gatewayTargets`; a target may be referenced by at most one gateway
+   **/
+  readonly targets?: string[];
+}
+
+/**
+ * Map of gateway name to {@link BuilderGatewayProps}. The key becomes the child construct id suffix
+ * (`bedrock-gateway-<name>`) and the derived, MDAA-named gateway name.
+ */
+export interface NamedGatewayProps {
+  /** @jsii ignore */
+  [gatewayName: string]: BuilderGatewayProps;
+}
+
+/**
+ * Map of target name to {@link GatewayTargetProps}, referenced by name from a gateway's `targets`
+ * list. The key becomes the target's MDAA-named resource name; each target must be referenced by
+ * exactly one gateway.
+ */
+export interface NamedGatewayTargetProps {
+  /** @jsii ignore */
+  [targetName: string]: GatewayTargetProps;
+}
+
 export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
   /**
    * Admin roles granted access to Bedrock agent resources including KMS keys and S3 buckets.
@@ -94,8 +151,12 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
    **/
   readonly agents?: NamedAgentProps;
   /**
-   * Existing KMS key ARN for encrypting Bedrock agent resources.
-   * If omitted, a customer-managed key is created automatically.
+   * Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge
+   * bases, guardrails, and the shared Lambda pool all use this single key.
+   * If omitted, one customer-managed key is created automatically and shared across them.
+   *
+   * When an existing key is provided, its key policy must already grant the required service and
+   * execution-role use (the module cannot mutate an imported key's policy).
    *
    * Use cases: Customer-controlled encryption, security compliance, key reuse
    *
@@ -158,6 +219,30 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
    * Validation: Optional; NamedGuardrailProps (map of guardrail name to config)
    **/
   readonly guardrails?: NamedGuardrailProps;
+  /**
+   * Bedrock AgentCore Gateway configurations (MCP servers), keyed by gateway name. Each gateway
+   * references its tool targets by name from the sibling `gatewayTargets` map.
+   *
+   * Use cases: exposing a unified MCP tool surface with per-tool authorization from the same module
+   * that owns the agents/Lambdas it fronts
+   *
+   * AWS: Amazon Bedrock AgentCore Gateway
+   *
+   * Validation: Optional; NamedGatewayProps (map of gateway name to config)
+   **/
+  readonly gateways?: NamedGatewayProps;
+  /**
+   * Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name. A gateway
+   * attaches a target by naming its key in the gateway's `targets` list; each target must be
+   * referenced by exactly one gateway.
+   *
+   * Use cases: defining MCP tool sources (e.g. Lambda tools) once and referencing them from a gateway
+   *
+   * AWS: AWS::BedrockAgentCore::GatewayTarget
+   *
+   * Validation: Optional; NamedGatewayTargetProps (map of target name to config)
+   **/
+  readonly gatewayTargets?: NamedGatewayTargetProps;
 }
 
 /**
@@ -283,8 +368,263 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       });
     }
 
+    // Create AgentCore gateways (+ their referenced targets). Runs after createLambdaFunctions so
+    // gateway target/interceptor `generated-function:<name>` references resolve against the shared
+    // pool. Gateways reuse the same module CMK as agents/KBs/guardrails.
+    this.createGateways(props, kmsKey);
+
     // Add suppressions for internal CDK constructs
     this.addInternalConstructSuppressions();
+  }
+
+  // ---------------------------------------------
+  // AgentCore Gateway Methods
+  // ---------------------------------------------
+
+  /**
+   * Instantiates one {@link BedrockAgentcoreGatewayL3Construct} per entry in `props.gateways`. For
+   * each gateway it injects the shared module CMK, resolves the flat `targets` name-references into
+   * the inline {@link GatewayTargetsMap} the gateway L3 expects, and rewrites `generated-function:`
+   * Lambda references (in targets and interceptors) to the ARNs built from `lambdaFunctions`.
+   *
+   * The gateway L3 is a pure key consumer (neither creates nor grants the CMK), so the builder owns
+   * the key grants: each gateway role's encryption use is granted via an identity policy (see
+   * {@link grantGatewayRoleKeyUsage}) and the vended-log-delivery service grant is added once by
+   * {@link grantGatewaysKeyUsage}. No-op when no gateways are configured; target references are
+   * validated up front.
+   */
+  private createGateways(props: BedrockBuilderL3ConstructProps, kmsKey: IKey): void {
+    const gatewayEntries = Object.entries(props.gateways || {});
+    if (gatewayEntries.length === 0) {
+      return;
+    }
+
+    this.validateGatewayTargetReferences(props.gateways || {}, props.gatewayTargets || {});
+
+    gatewayEntries.forEach(([gatewayName, gatewayConfig]) => {
+      // Split the flat `targets` name-refs off the rest; the gateway L3 takes an inline targets map.
+      const { targets: targetRefs, ...gatewayRest } = gatewayConfig;
+
+      const resolvedTargets = this.resolveGatewayTargets(targetRefs, props.gatewayTargets || {});
+
+      const resolvedInterceptors = this.resolveInterceptorLambdaReferences(gatewayRest.interceptors);
+
+      const gatewayConstruct = new BedrockAgentcoreGatewayL3Construct(this, `bedrock-gateway-${gatewayName}`, {
+        ...props,
+        ...gatewayRest,
+        interceptors: resolvedInterceptors,
+        gatewayName,
+        targets: resolvedTargets,
+        kmsKey,
+      });
+
+      // Grant the gateway role encryption use of the shared CMK via an identity policy (see
+      // grantGatewayRoleKeyUsage).
+      const cmkUsagePolicy = this.grantGatewayRoleKeyUsage(kmsKey, gatewayConstruct.gatewayRole, gatewayName);
+
+      // Depend on the gateway resource (not the construct — that cycles via the role). Keeps the CMK
+      // grant present through both CreateGateway and DeleteGateway, which each call kms:GenerateDataKey.
+      gatewayConstruct.gateway.node.addDependency(cmkUsagePolicy);
+    });
+
+    // Add the vended-log-delivery service grant once to the shared key (needs no gateway role).
+    this.grantGatewaysKeyUsage(kmsKey);
+  }
+
+  /**
+   * Adds the `delivery.logs.amazonaws.com` grant to the shared module CMK so vended log delivery can
+   * write CMK-encrypted records into each gateway's audit-log destination. Added once regardless of
+   * gateway count (it references no per-gateway resource).
+   *
+   * Based on AWS's documented `AllowKMSDecryptionLogging` example for an encrypted gateway (see
+   * gateway-encryption.html). Two AND-ed conditions, both verified against the live service to be
+   * present on the request and to permit delivery:
+   * - `kms:EncryptionContext:SourceArn` — the request's log-source ARN, scoped to this account/region.
+   *   This is the encryption-context key `delivery.logs.amazonaws.com` actually sends; conditioning on
+   *   `aws:logs:arn` instead (the key used by the CloudWatch Logs at-rest principal
+   *   `logs.<region>.amazonaws.com`) was verified to fail closed — the entry is absent, so KMS silently
+   *   denied every delivery-encryption call and no records were delivered.
+   * - `aws:SourceAccount` — this account caused the call (cross-service confused-deputy protection for
+   *   the shared `delivery.logs.amazonaws.com` principal). Verified sent on the request, so requiring
+   *   it does not block delivery.
+   *
+   * In a KMS key policy `resources: ['*']` means "this key", not a wildcard across keys. When the
+   * module CMK is an imported key (`kmsKeyArn`), this call is a no-op — the customer must pre-grant
+   * the key, as with the module's other service grants.
+   */
+  private grantGatewaysKeyUsage(kmsKey: IKey): void {
+    const logSourceArnPattern = `arn:${this.partition}:logs:${this.region}:${this.account}:*`;
+    kmsKey.addToResourcePolicy(
+      new PolicyStatement({
+        sid: 'AllowGatewayVendedLogDeliveryEncryption',
+        effect: Effect.ALLOW,
+        principals: [new ServicePrincipal('delivery.logs.amazonaws.com')],
+        actions: ['kms:GenerateDataKey', 'kms:Decrypt'],
+        resources: ['*'],
+        conditions: {
+          StringEquals: {
+            'kms:EncryptionContext:SourceArn': logSourceArnPattern,
+            'aws:SourceAccount': this.account,
+          },
+        },
+      }),
+    );
+  }
+
+  /**
+   * Grants a gateway execution role encryption use of the shared module CMK via an identity policy
+   * scoped to the key ARN, with NO condition on the data-key operations. Both tightenings AWS's
+   * gateway-encryption docs show — `kms:ViaService = bedrock-agentcore.<region>.amazonaws.com` and the
+   * `kms:EncryptionContext:aws:bedrock-agentcore-gateway:arn` encryption context — were deploy-tested
+   * and BOTH fail closed here: at CreateGateway AgentCore assumes this role and calls KMS directly on
+   * the target-encryption path (session `…/GenesisMCPTargetTargetEncryption`), where neither the
+   * ViaService key nor that encryption context is present in the request, so any condition on
+   * `kms:GenerateDataKey` denies with "no identity-based policy allows the kms:GenerateDataKey action".
+   * (The documented conditions target the gateway-config path, not this target path.)
+   *
+   * Least privilege therefore rests on: the exact key-ARN scope (no wildcard), the role's trust policy
+   * admitting only the AgentCore service principal scoped to this gateway's ARN, and the CreateGrant
+   * constraints below (GrantConstraintType + GrantOperations, matching the AWS example).
+   *
+   * @returns the managed policy, so the caller can order the gateway resource after it (see
+   *   {@link createGateways}).
+   */
+  private grantGatewayRoleKeyUsage(kmsKey: IKey, role: IRole, gatewayName: string): MdaaManagedPolicy {
+    return new MdaaManagedPolicy(this, `bedrock-gateway-cmk-usage-${gatewayName}`, {
+      managedPolicyName: `bedrock-agentcore-gateway-cmk-${gatewayName}`,
+      naming: this.props.naming,
+      roles: [role],
+      statements: [
+        new PolicyStatement({
+          sid: 'GatewayCmkEncryptDecrypt',
+          effect: Effect.ALLOW,
+          actions: ['kms:DescribeKey', 'kms:Decrypt', 'kms:GenerateDataKey'],
+          resources: [kmsKey.keyArn],
+        }),
+        new PolicyStatement({
+          sid: 'GatewayCmkCreateGrant',
+          effect: Effect.ALLOW,
+          actions: ['kms:CreateGrant'],
+          resources: [kmsKey.keyArn],
+          conditions: {
+            StringEquals: { 'kms:GrantConstraintType': 'EncryptionContextSubset' },
+            'ForAllValues:StringEquals': { 'kms:GrantOperations': ['Decrypt', 'GenerateDataKey'] },
+          },
+        }),
+      ],
+    });
+  }
+
+  /**
+   * Validates the gateway↔target references before any resource is built: every name in a gateway's
+   * `targets` list must be a key in `gatewayTargets`, and each target may be referenced by at most
+   * one gateway.
+   *
+   * @throws Error naming the offending gateway/target on a dangling or shared reference
+   */
+  private validateGatewayTargetReferences(gateways: NamedGatewayProps, gatewayTargets: NamedGatewayTargetProps): void {
+    const targetToGateway = new Map<string, string>();
+    Object.entries(gateways).forEach(([gatewayName, gatewayConfig]) => {
+      (gatewayConfig.targets || []).forEach(targetRef => {
+        if (!(targetRef in gatewayTargets)) {
+          throw new Error(
+            `Gateway "${gatewayName}" references gateway target "${targetRef}", which is not defined in gatewayTargets. ` +
+              `Define it under gatewayTargets or correct the reference.`,
+          );
+        }
+        const existingGateway = targetToGateway.get(targetRef);
+        if (existingGateway !== undefined) {
+          throw new Error(
+            `Gateway target "${targetRef}" is referenced by more than one gateway ("${existingGateway}" and ` +
+              `"${gatewayName}"). A gateway target may be referenced by at most one gateway; define separate targets.`,
+          );
+        }
+        targetToGateway.set(targetRef, gatewayName);
+      });
+    });
+  }
+
+  /**
+   * Resolves a gateway's flat list of target name-references into the inline {@link GatewayTargetsMap}
+   * the gateway L3 expects, rewriting each Lambda target's `lambdaArn` from a `generated-function:`
+   * reference to the concrete ARN. Plain ARNs and non-Lambda targets pass through unchanged; returns
+   * undefined when the gateway references no targets.
+   */
+  private resolveGatewayTargets(
+    targetRefs: string[] | undefined,
+    gatewayTargets: NamedGatewayTargetProps,
+  ): GatewayTargetsMap | undefined {
+    if (!targetRefs || targetRefs.length === 0) {
+      return undefined;
+    }
+    const resolved: { [targetName: string]: GatewayTargetProps } = {};
+    targetRefs.forEach(targetRef => {
+      // Existence is validated up front by validateGatewayTargetReferences.
+      const targetConfig = gatewayTargets[targetRef];
+      const lambda = targetConfig.targetConfiguration.lambda;
+      if (!lambda) {
+        resolved[targetRef] = targetConfig;
+        return;
+      }
+      resolved[targetRef] = {
+        ...targetConfig,
+        targetConfiguration: {
+          ...targetConfig.targetConfiguration,
+          lambda: {
+            ...lambda,
+            lambdaArn: this.resolveGeneratedFunctionRef(lambda.lambdaArn, `gateway target "${targetRef}"`),
+          },
+        },
+      };
+    });
+    return resolved;
+  }
+
+  /**
+   * Rewrites `generated-function:` references in a gateway's interceptors to the concrete ARN of the
+   * function built from `lambdaFunctions` ({@link GatewayInterceptorConfigurationsProperty} with
+   * `lambdaArn` set). Inline `lambdaFunction` and plain `lambdaArn` interceptors pass through
+   * unchanged; returns undefined when there are no interceptors.
+   */
+  private resolveInterceptorLambdaReferences(
+    interceptors?: GatewayInterceptorConfigurationsProperty[],
+  ): GatewayInterceptorConfigurationsProperty[] | undefined {
+    if (!interceptors || interceptors.length === 0) {
+      return interceptors;
+    }
+    return interceptors.map((interceptor, index) => {
+      // Only a generated-function: lambdaArn needs rewriting; the gateway L3 validates the
+      // exactly-one-source rule.
+      if (interceptor.lambdaArn?.startsWith('generated-function:')) {
+        return {
+          ...interceptor,
+          lambdaArn: this.resolveGeneratedFunctionRef(interceptor.lambdaArn, `gateway interceptor at index ${index}`),
+        };
+      }
+      return interceptor;
+    });
+  }
+
+  /**
+   * Resolves a single Lambda reference: a `generated-function:<name>` value is rewritten to the ARN
+   * of the matching function created from `lambdaFunctions` (throwing if the name is unknown); any
+   * other value (a plain ARN) is returned unchanged. Single source of the `generated-function:`
+   * resolution logic, shared by the gateway resolvers as well as
+   * {@link resolveAgentLambdaReferences} and {@link resolveKnowledgeBaseLambdaReferences}.
+   *
+   * @param value - the configured Lambda reference (may be a generated-function ref or a plain ARN)
+   * @param context - human-readable context for the error message (e.g. the target/interceptor name)
+   */
+  private resolveGeneratedFunctionRef(value: string, context: string): string {
+    if (!value.startsWith('generated-function:')) {
+      return value;
+    }
+    const functionName = value.split(':')[1]?.trim();
+    const resolvedArn = functionName ? this.generatedFunctions[functionName] : undefined;
+    if (!resolvedArn) {
+      throw new Error(`${context} references non-existent Generated Lambda function: ${functionName}`);
+    }
+    return resolvedArn;
   }
 
   // ---------------------------------------------
@@ -558,7 +898,8 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
   /**
    * Resolves Lambda function references in agent action groups.
    * This method processes agent configuration and replaces any Lambda function references
-   * that use the 'generated-function:' prefix with the actual ARN of the generated function.
+   * that use the 'generated-function:' prefix with the actual ARN of the generated function
+   * (via {@link resolveGeneratedFunctionRef}).
    */
   private resolveAgentLambdaReferences(agentConfig: BedrockAgentProps): BedrockAgentProps {
     if (!agentConfig.actionGroups) {
@@ -566,28 +907,26 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     }
 
     const resolvedActionGroups = agentConfig.actionGroups.map(actionGroup => {
-      if (!actionGroup.actionGroupExecutor?.lambda) {
+      const lambdaRef = actionGroup.actionGroupExecutor?.lambda;
+      if (!lambdaRef) {
         return actionGroup;
       }
 
-      const lambdaRef = actionGroup.actionGroupExecutor.lambda;
-      if (lambdaRef.startsWith('generated-function:')) {
-        const functionName = lambdaRef.split(':')[1];
-        const lambdaArn = this.generatedFunctions[functionName.trim()];
-        if (lambdaArn) {
-          return {
-            ...actionGroup,
-            actionGroupExecutor: {
-              ...actionGroup.actionGroupExecutor,
-              lambda: lambdaArn,
-            },
-          };
-        } else {
-          throw new Error(`Code references non-existent Generated Lambda function: ${functionName}`);
-        }
+      const resolvedLambda = this.resolveGeneratedFunctionRef(
+        lambdaRef,
+        `agent action group "${actionGroup.actionGroupName}"`,
+      );
+      if (resolvedLambda === lambdaRef) {
+        return actionGroup;
       }
 
-      return actionGroup;
+      return {
+        ...actionGroup,
+        actionGroupExecutor: {
+          ...actionGroup.actionGroupExecutor,
+          lambda: resolvedLambda,
+        },
+      };
     });
 
     return {
@@ -600,7 +939,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
    * Resolves Lambda function references in knowledge base data source configurations.
    * This method processes knowledge base configuration and replaces any Lambda function references
    * in custom transformation configurations that use the 'generated-function:' prefix with the
-   * actual ARN of the generated function.
+   * actual ARN of the generated function (via {@link resolveGeneratedFunctionRef}).
    */
   private resolveKnowledgeBaseLambdaReferences(kbConfig: BedrockKnowledgeBaseProps): BedrockKnowledgeBaseProps {
     if (!kbConfig.s3DataSources) {
@@ -614,18 +953,9 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
         }
 
         const transformConfig = dsConfig.vectorIngestionConfiguration.customTransformationConfiguration;
-        const resolvedLambdaArns = transformConfig.transformLambdaArns.map(lambdaArn => {
-          if (lambdaArn.startsWith('generated-function:')) {
-            const functionName = lambdaArn.split(':')[1];
-            const resolvedArn = this.generatedFunctions[functionName.trim()];
-            if (resolvedArn) {
-              return resolvedArn;
-            } else {
-              throw new Error(`Code references non-existant Generated Lambda function: ${functionName}`);
-            }
-          }
-          return lambdaArn;
-        });
+        const resolvedLambdaArns = transformConfig.transformLambdaArns.map(lambdaArn =>
+          this.resolveGeneratedFunctionRef(lambdaArn, `knowledge base data source "${dsName}"`),
+        );
 
         return [
           dsName,

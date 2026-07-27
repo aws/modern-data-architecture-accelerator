@@ -75,6 +75,8 @@ export enum MdaaResourceType {
   BEDROCK_AGENT = 'bedrock-agent',
   BEDROCK_AGENTCORE_RUNTIME = 'agentcore-runtime',
   BEDROCK_AGENTCORE_ENDPOINT = 'agentcore-ep',
+  BEDROCK_AGENTCORE_GATEWAY = 'agentcore-gw',
+  BEDROCK_AGENTCORE_GATEWAY_TARGET = 'agentcore-gw-target',
   BEDROCK_GUARDRAIL = 'bedrock-guardrail',
   BEDROCK_KNOWLEDGE_BASE = 'bedrock-kb',
   MLFLOW_TRACKING_SERVER = 'mlflow',

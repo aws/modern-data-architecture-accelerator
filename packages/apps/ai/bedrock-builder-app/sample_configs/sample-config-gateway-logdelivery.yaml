@@ -1,0 +1,83 @@
+# Bedrock Builder module configuration exercising the AgentCore Gateway AUDIT LOG-DELIVERY branches
+# that the other gateway samples do not. Two gateways are declared so the mutually-exclusive
+# logDelivery options each get their own gateway (a single gateway can set only one). Everything
+# here is deployable (successful synth).
+#
+# What this sample covers:
+#   - gateway A: logDelivery.logRetentionDays finite (a different value than the IAM sample's 90)
+#   - gateway B: logDelivery.enabled: false          -> opt out of the vended log-delivery pipeline
+#                                                       (no destination log group / delivery created)
+#   - an S3 tool schema WITHOUT bucketOwnerAccountId  -> defaults to the deploying account
+#                                                       (confused-deputy protection default branch)
+#   - CUSTOM_JWT with only discoveryUrl (no allowedAudience / allowedClients) -> minimal JWT config
+
+# Admin roles granted access to Bedrock resources including KMS keys and S3 buckets.
+dataAdminRoles:
+  - name: 'Admin'
+
+lambdaFunctions:
+  functions:
+    # Tool Lambda fronted by gateway A's target (referenced via generated-function:<name>).
+    - functionName: metrics-tool
+      description: 'MCP tool Lambda fronted by the retention gateway'
+      srcDir: ./src/function
+      handler: test.lambda_handler
+      runtime: python3.14
+      roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-lambda-role'
+
+# Targets are single-use (each referenced by at most one gateway), so declare one per gateway.
+gatewayTargets:
+  # Target for gateway A: inline tool schema, generated-function Lambda ref.
+  metrics:
+    description: 'Metrics tool source (inline schema)'
+    targetConfiguration:
+      lambda:
+        lambdaArn: generated-function:metrics-tool
+        toolSchema:
+          inlinePayload:
+            - name: getMetric
+              description: 'Returns a named metric value'
+              inputSchema:
+                type: object
+                properties:
+                  metric:
+                    type: string
+                required:
+                  - metric
+  # Target for gateway B: S3 tool schema WITHOUT bucketOwnerAccountId. MDAA defaults the
+  # bucket-owner account to the deploying account so the cross-account read is still owner-verified.
+  reports:
+    description: 'Reports tool source (S3 schema, defaulted bucket owner)'
+    targetConfiguration:
+      lambda:
+        lambdaArn: 'arn:{{partition}}:lambda:{{region}}:{{account}}:function:external-reports-tool'
+        toolSchema:
+          s3:
+            uri: 's3://example-tool-schemas/reports/tool-schema.json'
+            # bucketOwnerAccountId omitted -> defaults to the deploying account.
+
+gateways:
+  # Gateway A: finite audit-log retention.
+  metrics-gateway:
+    description: 'Metrics MCP gateway with finite log retention'
+    authorizerConfiguration:
+      customJwt:
+        # Minimal CUSTOM_JWT: only the required discoveryUrl (no allowedAudience / allowedClients).
+        discoveryUrl: 'https://example.com/.well-known/openid-configuration'
+    targets:
+      - metrics
+    logDelivery:
+      # A valid CloudWatch Logs RetentionDays value (validated at synth). 30 days here.
+      logRetentionDays: 30
+
+  # Gateway B: opt out of vended log delivery entirely (no log group / source / destination /
+  # delivery are provisioned). Not recommended — audit logs are then not captured — but supported.
+  reports-gateway:
+    description: 'Reports MCP gateway with log delivery disabled'
+    authorizerConfiguration:
+      customJwt:
+        discoveryUrl: 'https://example.com/.well-known/openid-configuration'
+    targets:
+      - reports
+    logDelivery:
+      enabled: false

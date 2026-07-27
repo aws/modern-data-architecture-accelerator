@@ -1,0 +1,1688 @@
+{
+  "Description": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptor824BB697": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "QueueName": "test-org-test-env-test-domain-test-bedrock-builder-gateway-iam-claims-r-1e4d6e7d",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-iam"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptorPolicyF2DBB371": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:role/test-interceptor-role"
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptor824BB697"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptorqueueclaimsrequestinterceptordlqnamessmECF1D696": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/queue/claims-request-interceptor-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptor824BB697",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptorqueueclaimsrequestinterceptordlqarnssm152937CF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/queue/claims-request-interceptor-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptor824BB697",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptorqueueclaimsrequestinterceptordlqurlssm8D2F5D92": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/queue/claims-request-interceptor-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptor824BB697"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptor1FBF0E31": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptor824BB697",
+              "Arn"
+            ]
+          }
+        },
+        "Description": "Inline gateway REQUEST interceptor Lambda",
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-gat--6ed0f29f",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Role": "arn:test-partition:iam::test-account:role/test-interceptor-role",
+        "Runtime": "python3.14",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-iam"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptorlambdaclaimsrequestinterceptornamessm10D13C85": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/lambda/claims-request-interceptor/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptor1FBF0E31"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptorlambdaclaimsrequestinterceptorarnssm3FAC7597": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/lambda/claims-request-interceptor/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptor1FBF0E31",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptorlambdaclaimsrequestinterceptorloggroupssmD326992C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/lambda/claims-request-interceptor/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptor1FBF0E31"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicy6AD0F13C": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-gate-52f9e1df",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptor1FBF0E31",
+                    "Arn"
+                  ]
+                },
+                "arn:test-partition:lambda:test-region:test-account:function:external-response-interceptor"
+              ],
+              "Sid": "GatewayInvokeInterceptors"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          "claims-gateway-execution-role"
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewayarnssm63B99C7B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/managed-policy/bedrock-agentcore-gateway-interceptor-claims-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicy6AD0F13C"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewaynamessm86EFD04F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/managed-policy/bedrock-agentcore-gateway-interceptor-claims-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicy6AD0F13C"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019": {
+      "Type": "AWS::BedrockAgentCore::Gateway",
+      "Properties": {
+        "AuthorizerType": "AWS_IAM",
+        "Description": "Claims MCP gateway (AWS IAM inbound auth)",
+        "ExceptionLevel": "DEBUG",
+        "InterceptorConfigurations": [
+          {
+            "InputConfiguration": {
+              "PassRequestHeaders": true
+            },
+            "InterceptionPoints": [
+              "REQUEST"
+            ],
+            "Interceptor": {
+              "Lambda": {
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptor1FBF0E31",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "InputConfiguration": {
+              "PassRequestHeaders": false
+            },
+            "InterceptionPoints": [
+              "RESPONSE"
+            ],
+            "Interceptor": {
+              "Lambda": {
+                "Arn": "arn:test-partition:lambda:test-region:test-account:function:external-response-interceptor"
+              }
+            }
+          }
+        ],
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bed-13a97142",
+        "ProtocolConfiguration": {
+          "Mcp": {
+            "Instructions": "Use the claims tools to service insurance claims."
+          }
+        },
+        "ProtocolType": "MCP",
+        "RoleArn": "arn:test-partition:iam::test-account:role/claims-gateway-execution-role",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewayarnssm63B99C7B",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewaynamessm86EFD04F",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicy6AD0F13C",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewayarnssm02A4B192",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewaynamessmB6926E06",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewayB63E2687"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayarnssmB6BF7B46": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/gateway/claims-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019",
+            "GatewayArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewayarnssm63B99C7B",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewaynamessm86EFD04F",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicy6AD0F13C",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewayarnssm02A4B192",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewaynamessmB6926E06",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewayB63E2687"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayidssm17661C7B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/gateway/claims-gateway/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019",
+            "GatewayIdentifier"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewayarnssm63B99C7B",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewaynamessm86EFD04F",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicy6AD0F13C",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewayarnssm02A4B192",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewaynamessmB6926E06",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewayB63E2687"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayurlssmFEDD71C6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/gateway/claims-gateway/url",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019",
+            "GatewayUrl"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewayarnssm63B99C7B",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewaynamessm86EFD04F",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicy6AD0F13C",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewayarnssm02A4B192",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewaynamessmB6926E06",
+        "bedrockbuilderbedrockgatewaycmkusageclaimsgatewayB63E2687"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayloggroupA0336027": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "LogGroupName": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-gateway-iam-claims-gateway",
+        "RetentionInDays": 90,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-iam"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayloggrouploggroupclaimsgatewaynamessm5F4E6AB5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/loggroup/claims-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-gateway-iam-claims-gateway"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewaylogsource7D806479": {
+      "Type": "AWS::Logs::DeliverySource",
+      "Properties": {
+        "LogType": "APPLICATION_LOGS",
+        "Name": "test-org-test-env-test-domain-test-bedrock-builder--13a97142",
+        "ResourceArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019",
+            "GatewayArn"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-iam"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewaylogdestinationCBFA5ABF": {
+      "Type": "AWS::Logs::DeliveryDestination",
+      "Properties": {
+        "DestinationResourceArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewaygatewayloggroupA0336027",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bedrock-builder--13a97142",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-iam"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewaylogdeliveryDBFFD9C8": {
+      "Type": "AWS::Logs::Delivery",
+      "Properties": {
+        "DeliveryDestinationArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewaygatewaylogdestinationCBFA5ABF",
+            "Arn"
+          ]
+        },
+        "DeliverySourceName": "test-org-test-env-test-domain-test-bedrock-builder--13a97142",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-iam"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayclaimsgatewaygatewaylogsource7D806479"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayclaimsgatewayrolearnssmB5361AFF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/gateway/claims-gateway/role-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "arn:test-partition:iam::test-account:role/claims-gateway-execution-role"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayclaimsgatewaykmskeyarnssmBF19871D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/gateway/claims-gateway/kms-key-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicyAE11C1E9": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-gate-25c0a141",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:lambda:test-region:test-account:function:external-claims-tool",
+              "Sid": "GatewayInvokeTargetLambdas"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          "claims-gateway-execution-role"
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetclaimsgatewayarnssm3999B534": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/managed-policy/bedrock-agentcore-gateway-target-claims-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicyAE11C1E9"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetclaimsgatewaynamessm7E6E02FF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/managed-policy/bedrock-agentcore-gateway-target-claims-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicyAE11C1E9"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewaytargetclaimsAC1DF6F8": {
+      "Type": "AWS::BedrockAgentCore::GatewayTarget",
+      "Properties": {
+        "CredentialProviderConfigurations": [
+          {
+            "CredentialProviderType": "GATEWAY_IAM_ROLE"
+          }
+        ],
+        "Description": "Claims tool source referenced by a plain Lambda ARN, schema loaded from S3",
+        "GatewayIdentifier": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019",
+            "GatewayIdentifier"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bedro-359763b9",
+        "TargetConfiguration": {
+          "Mcp": {
+            "Lambda": {
+              "LambdaArn": "arn:test-partition:lambda:test-region:test-account:function:external-claims-tool",
+              "ToolSchema": {
+                "S3": {
+                  "BucketOwnerAccountId": "111122223333",
+                  "Uri": "s3://example-tool-schemas/claims/tool-schema.json"
+                }
+              }
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayarnssmB6BF7B46",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayidssm17661C7B",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayurlssmFEDD71C6",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetclaimsgatewayarnssm3999B534",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetclaimsgatewaynamessm7E6E02FF",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicyAE11C1E9"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewaytargetclaimsgatewaytargetclaimsarnssm5A2A1A3B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/gateway-target/claims/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewaygatewaytargetclaimsAC1DF6F8",
+            "GatewayArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayarnssmB6BF7B46",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayidssm17661C7B",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayurlssmFEDD71C6",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetclaimsgatewayarnssm3999B534",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetclaimsgatewaynamessm7E6E02FF",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicyAE11C1E9"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewaytargetclaimsgatewaytargetclaimsidssm6DE41B74": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/gateway-target/claims/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayclaimsgatewaygatewaytargetclaimsAC1DF6F8",
+            "TargetId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayarnssmB6BF7B46",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayidssm17661C7B",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayurlssmFEDD71C6",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetclaimsgatewayarnssm3999B534",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetclaimsgatewaynamessm7E6E02FF",
+        "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicyAE11C1E9"
+      ]
+    },
+    "bedrockbuilderbedrockgatewaycmkusageclaimsgatewayB63E2687": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-gate--8919bbd",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:DescribeKey",
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkEncryptDecrypt"
+            },
+            {
+              "Action": "kms:CreateGrant",
+              "Condition": {
+                "StringEquals": {
+                  "kms:GrantConstraintType": "EncryptionContextSubset"
+                },
+                "ForAllValues:StringEquals": {
+                  "kms:GrantOperations": [
+                    "Decrypt",
+                    "GenerateDataKey"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkCreateGrant"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          "claims-gateway-execution-role"
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewayarnssm02A4B192": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/managed-policy/bedrock-agentcore-gateway-cmk-claims-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewaycmkusageclaimsgatewayB63E2687"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewaynamessmB6926E06": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/managed-policy/bedrock-agentcore-gateway-cmk-claims-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewaycmkusageclaimsgatewayB63E2687"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "RoleResDataAdmin0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataAdmin-0",
+          "name": "Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "bedrockcmk710EFABC": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataAdmin0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-bedrock-builder-gateway-iam-usage-stmt"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext"
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "kms:EncryptionContext:aws:logs:arn": "arn:test-partition:logs:test-region:test-account:log-group:*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "logs.test-region.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "CloudWatchLogsEncryption"
+            },
+            {
+              "Action": [
+                "kms:GenerateDataKey*",
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowBedrockServiceForAgents"
+            },
+            {
+              "Action": [
+                "kms:CreateGrant",
+                "kms:ListGrants",
+                "kms:RevokeGrant"
+              ],
+              "Condition": {
+                "Bool": {
+                  "kms:GrantIsForAWSResource": "true"
+                },
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account",
+                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowBedrockServiceToManageGrants"
+            },
+            {
+              "Action": [
+                "kms:GenerateDataKey",
+                "kms:Decrypt"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:EncryptionContext:SourceArn": "arn:test-partition:logs:test-region:test-account:*",
+                  "aws:SourceAccount": "test-account"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "delivery.logs.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowGatewayVendedLogDeliveryEncryption"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway-iam"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "bedrockcmkAlias64D9B0C4": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-bedrock-builder-gateway-iam",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockcmkkmsarnssm9ABBCC7F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/kms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockcmkkmsidssm418027C6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway-iam/kms/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway-iam",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockcmk710EFABC"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptorqueueclaimsrequestinterceptordlqnameout42F74158": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptor824BB697",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:queue:claimsrequestinterceptordlq:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptorqueueclaimsrequestinterceptordlqarnoutB07CE13B": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptor824BB697",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:queue:claimsrequestinterceptordlq:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptorqueueclaimsrequestinterceptordlqurloutBB0AE30B": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsdlqclaimsrequestinterceptor824BB697"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:queue:claimsrequestinterceptordlq:url"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptorlambdaclaimsrequestinterceptornameoutD03D5D85": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptor1FBF0E31"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:lambda:claimsrequestinterceptor:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptorlambdaclaimsrequestinterceptorarnoutEF2F9AF0": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptor1FBF0E31",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:lambda:claimsrequestinterceptor:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptorlambdaclaimsrequestinterceptorloggroupout1C99588C": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "bedrockbuilderbedrockgatewayclaimsgatewaygatewayinterceptorfunctionsclaimsrequestinterceptor1FBF0E31"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:lambda:claimsrequestinterceptor:log-group"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewayarnoutA84D1A14": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicy6AD0F13C"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:managed-policy:bedrockagentcoregatewayinterceptorclaimsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorclaimsgatewaynameoutC4EF423F": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewayclaimsgatewayGatewayInterceptorInvokePolicy6AD0F13C"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:managed-policy:bedrockagentcoregatewayinterceptorclaimsgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayarnout04803D7A": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:gateway:claimsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayidout764972FF": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019",
+          "GatewayIdentifier"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:gateway:claimsgateway:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewaygatewayclaimsgatewayurloutC58881A4": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayclaimsgatewayGatewayED878019",
+          "GatewayUrl"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:gateway:claimsgateway:url"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayloggrouploggroupclaimsgatewaynameout45BECC8D": {
+      "Value": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-gateway-iam-claims-gateway",
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:loggroup:claimsgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayclaimsgatewayrolearnoutFB9D0C32": {
+      "Value": "arn:test-partition:iam::test-account:role/claims-gateway-execution-role",
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:gateway:claimsgateway:role-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewayclaimsgatewaykmskeyarnout4CFAEA3B": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockcmk710EFABC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:gateway:claimsgateway:kms-key-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetclaimsgatewayarnout4B4413D5": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicyAE11C1E9"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:managed-policy:bedrockagentcoregatewaytargetclaimsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetclaimsgatewaynameoutBFE304CC": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewayclaimsgatewayGatewayTargetInvokePolicyAE11C1E9"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:managed-policy:bedrockagentcoregatewaytargetclaimsgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewaytargetclaimsgatewaytargetclaimsarnoutB85B04EF": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayclaimsgatewaygatewaytargetclaimsAC1DF6F8",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:gateway-target:claims:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayclaimsgatewaygatewaytargetclaimsgatewaytargetclaimsidoutAF67C3AD": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayclaimsgatewaygatewaytargetclaimsAC1DF6F8",
+          "TargetId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:gateway-target:claims:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewayarnoutD19BE7AA": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewaycmkusageclaimsgatewayB63E2687"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:managed-policy:bedrockagentcoregatewaycmkclaimsgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageclaimsgatewaymanagedpolicybedrockagentcoregatewaycmkclaimsgatewaynameout60D707F6": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewaycmkusageclaimsgatewayB63E2687"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:managed-policy:bedrockagentcoregatewaycmkclaimsgateway:name"
+      }
+    },
+    "bedrockcmkkmsarnout0D3BC511": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockcmk710EFABC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:kms:arn"
+      }
+    },
+    "bedrockcmkkmsidout38E894CA": {
+      "Value": {
+        "Ref": "bedrockcmk710EFABC"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway-iam:kms:id"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

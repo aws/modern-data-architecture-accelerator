@@ -52,4 +52,70 @@ describe('Bedrock Builder Baseline Diff Tests', () => {
       },
     ),
   );
+
+  baselineDiffTestApp(
+    'Bedrock Builder Gateway',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockBuilderApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-gateway.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-builder-gateway',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  baselineDiffTestApp(
+    'Bedrock Builder Gateway IAM',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockBuilderApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-gateway-iam.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-builder-gateway-iam',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  baselineDiffTestApp(
+    'Bedrock Builder Gateway Log Delivery',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockBuilderApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-gateway-logdelivery.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-builder-gateway-logdelivery',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
 });

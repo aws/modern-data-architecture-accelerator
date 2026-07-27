@@ -1,0 +1,2421 @@
+{
+  "Description": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolA351F4FE": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "QueueName": "test-org-test-env-test-domain-test-bedrock-builder-gateway-weather-tool-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolPolicy4905A993": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:role/test-lambda-role"
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolA351F4FE"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolqueueweathertooldlqnamessm09B820C1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/queue/weather-tool-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolA351F4FE",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolqueueweathertooldlqarnssm63880B31": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/queue/weather-tool-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolA351F4FE",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolqueueweathertooldlqurlssm7EB82DE4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/queue/weather-tool-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolA351F4FE"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsweathertoolA6B0F39E": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolA351F4FE",
+              "Arn"
+            ]
+          }
+        },
+        "Description": "MCP tool Lambda fronted by the gateway",
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-gat--13a7b817",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Role": "arn:test-partition:iam::test-account:role/test-lambda-role",
+        "Runtime": "python3.14",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsweathertoollambdaweathertoolnamessm1732EAA2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/lambda/weather-tool/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsweathertoolA6B0F39E"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsweathertoollambdaweathertoolarnssmEAC95880": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/lambda/weather-tool/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockbuilderlambdafunctionsweathertoolA6B0F39E",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsweathertoollambdaweathertoolloggroupssmC47100F3": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/lambda/weather-tool/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsweathertoolA6B0F39E"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptor76B99B85": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "QueueName": "test-org-test-env-test-domain-test-bedrock-builder-gateway-authz-inter--54f1a7d2",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptorPolicy357DCD81": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:role/test-interceptor-role"
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptor76B99B85"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptorqueueauthzinterceptordlqnamessmD6CD577F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/queue/authz-interceptor-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptor76B99B85",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptorqueueauthzinterceptordlqarnssmC31FFBB1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/queue/authz-interceptor-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptor76B99B85",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptorqueueauthzinterceptordlqurlssmAE642272": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/queue/authz-interceptor-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptor76B99B85"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptor506C9F19": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptor76B99B85",
+              "Arn"
+            ]
+          }
+        },
+        "Description": "Gateway request interceptor Lambda",
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-gate-67027792",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Role": "arn:test-partition:iam::test-account:role/test-interceptor-role",
+        "Runtime": "python3.14",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptorlambdaauthzinterceptornamessmD1AF8A23": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/lambda/authz-interceptor/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptor506C9F19"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptorlambdaauthzinterceptorarnssm86D76665": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/lambda/authz-interceptor/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptor506C9F19",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptorlambdaauthzinterceptorloggroupssmB8D11B69": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/lambda/authz-interceptor/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptor506C9F19"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:bedrock-agentcore:test-region:test-account:gateway/test-org-test-env-test-domain-test-bed-11f785ad-*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock-agentcore.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "IAM role for Bedrock AgentCore Gateway: weather-gateway",
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-gate-2555b37a",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewayarnssmDF6CD4C1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/role/bedrock-agentcore-gateway-weather-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewayidssm619960AE": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/role/bedrock-agentcore-gateway-weather-gateway/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewaynamessm9FEE5A56": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/role/bedrock-agentcore-gateway-weather-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicyDFA7BC61": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-gat--2041ceae",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptor506C9F19",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayInvokeInterceptors"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewayarnssmCE74B41E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/managed-policy/bedrock-agentcore-gateway-interceptor-weather-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicyDFA7BC61"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewaynamessm00E54D34": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/managed-policy/bedrock-agentcore-gateway-interceptor-weather-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicyDFA7BC61"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035": {
+      "Type": "AWS::BedrockAgentCore::Gateway",
+      "Properties": {
+        "AuthorizerConfiguration": {
+          "CustomJWTAuthorizer": {
+            "AllowedAudience": [
+              "weather-clients",
+              "weather-admin"
+            ],
+            "AllowedClients": [
+              "client-abc123"
+            ],
+            "DiscoveryUrl": "https://example.com/.well-known/openid-configuration"
+          }
+        },
+        "AuthorizerType": "CUSTOM_JWT",
+        "Description": "Weather tools MCP gateway",
+        "InterceptorConfigurations": [
+          {
+            "InputConfiguration": {
+              "PassRequestHeaders": false
+            },
+            "InterceptionPoints": [
+              "REQUEST"
+            ],
+            "Interceptor": {
+              "Lambda": {
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptor506C9F19",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bed-11f785ad",
+        "ProtocolConfiguration": {
+          "Mcp": {
+            "Instructions": "Use the weather tools to answer weather questions.",
+            "SearchType": "SEMANTIC",
+            "SupportedVersions": [
+              "2025-03-26"
+            ]
+          }
+        },
+        "ProtocolType": "MCP",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+            "Arn"
+          ]
+        },
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnssmBD3729B7",
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynamessm6D1258E9",
+        "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewayarnssmCE74B41E",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewaynamessm00E54D34",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicyDFA7BC61"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayarnssmED6FA960": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/gateway/weather-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+            "GatewayArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnssmBD3729B7",
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynamessm6D1258E9",
+        "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewayarnssmCE74B41E",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewaynamessm00E54D34",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicyDFA7BC61"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayidssmCE56CF89": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/gateway/weather-gateway/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+            "GatewayIdentifier"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnssmBD3729B7",
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynamessm6D1258E9",
+        "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewayarnssmCE74B41E",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewaynamessm00E54D34",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicyDFA7BC61"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayurlssmF2D32817": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/gateway/weather-gateway/url",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+            "GatewayUrl"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnssmBD3729B7",
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynamessm6D1258E9",
+        "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewayarnssmCE74B41E",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewaynamessm00E54D34",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicyDFA7BC61"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayloggroupDAE7C19B": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "LogGroupName": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-gateway-weather-gateway",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayloggrouploggroupweathergatewaynamessm0AB07D11": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/loggroup/weather-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-gateway-weather-gateway"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewaylogsourceF6DB3158": {
+      "Type": "AWS::Logs::DeliverySource",
+      "Properties": {
+        "LogType": "APPLICATION_LOGS",
+        "Name": "test-org-test-env-test-domain-test-bedrock-builder--11f785ad",
+        "ResourceArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+            "GatewayArn"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewaylogdestinationE9842699": {
+      "Type": "AWS::Logs::DeliveryDestination",
+      "Properties": {
+        "DestinationResourceArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewaygatewayloggroupDAE7C19B",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bedrock-builder--11f785ad",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewaylogdeliveryEE07ADB2": {
+      "Type": "AWS::Logs::Delivery",
+      "Properties": {
+        "DeliveryDestinationArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewaygatewaylogdestinationE9842699",
+            "Arn"
+          ]
+        },
+        "DeliverySourceName": "test-org-test-env-test-domain-test-bedrock-builder--11f785ad",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayweathergatewaygatewaylogsourceF6DB3158"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayweathergatewayrolearnssm0F069E2B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/gateway/weather-gateway/role-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayweathergatewaykmskeyarnssm24527117": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/gateway/weather-gateway/kms-key-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicy0CE184C8": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-gat--639347c0",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockbuilderbedrockbuilderlambdafunctionsweathertoolA6B0F39E",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayInvokeTargetLambdas"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetweathergatewayarnssm90DE41FF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/managed-policy/bedrock-agentcore-gateway-target-weather-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicy0CE184C8"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetweathergatewaynamessm39038A75": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/managed-policy/bedrock-agentcore-gateway-target-weather-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicy0CE184C8"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewaytargetweather56A5223F": {
+      "Type": "AWS::BedrockAgentCore::GatewayTarget",
+      "Properties": {
+        "CredentialProviderConfigurations": [
+          {
+            "CredentialProviderType": "GATEWAY_IAM_ROLE"
+          }
+        ],
+        "Description": "Weather tool source backed by a Lambda function",
+        "GatewayIdentifier": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+            "GatewayIdentifier"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bedro-656a1324",
+        "TargetConfiguration": {
+          "Mcp": {
+            "Lambda": {
+              "LambdaArn": {
+                "Fn::GetAtt": [
+                  "bedrockbuilderbedrockbuilderlambdafunctionsweathertoolA6B0F39E",
+                  "Arn"
+                ]
+              },
+              "ToolSchema": {
+                "InlinePayload": [
+                  {
+                    "Description": "Returns the current weather for a city",
+                    "InputSchema": {
+                      "Description": "Weather lookup request",
+                      "Properties": {
+                        "city": {
+                          "Description": "City name",
+                          "Type": "string"
+                        },
+                        "units": {
+                          "Description": "Temperature units (metric or imperial)",
+                          "Type": "string"
+                        },
+                        "filters": {
+                          "Description": "Optional result filters",
+                          "Properties": {
+                            "includeHourly": {
+                              "Description": "Include the hourly breakdown",
+                              "Type": "boolean"
+                            }
+                          },
+                          "Type": "object"
+                        }
+                      },
+                      "Required": [
+                        "city"
+                      ],
+                      "Type": "object"
+                    },
+                    "Name": "getWeather",
+                    "OutputSchema": {
+                      "Description": "Weather lookup response",
+                      "Properties": {
+                        "temperature": {
+                          "Description": "Current temperature",
+                          "Type": "number"
+                        },
+                        "conditions": {
+                          "Description": "Active weather conditions",
+                          "Items": {
+                            "Type": "string"
+                          },
+                          "Type": "array"
+                        }
+                      },
+                      "Required": [
+                        "temperature"
+                      ],
+                      "Type": "object"
+                    }
+                  },
+                  {
+                    "Description": "Returns a multi-day forecast for a city",
+                    "InputSchema": {
+                      "Properties": {
+                        "city": {
+                          "Type": "string"
+                        },
+                        "days": {
+                          "Type": "number"
+                        }
+                      },
+                      "Required": [
+                        "city"
+                      ],
+                      "Type": "object"
+                    },
+                    "Name": "getForecast"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayarnssmED6FA960",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayidssmCE56CF89",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayurlssmF2D32817",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetweathergatewayarnssm90DE41FF",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetweathergatewaynamessm39038A75",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicy0CE184C8"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewaytargetweathergatewaytargetweatherarnssmA70BAEA8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/gateway-target/weather/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewaygatewaytargetweather56A5223F",
+            "GatewayArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayarnssmED6FA960",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayidssmCE56CF89",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayurlssmF2D32817",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetweathergatewayarnssm90DE41FF",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetweathergatewaynamessm39038A75",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicy0CE184C8"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewaytargetweathergatewaytargetweatheridssm8EE3E83E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/gateway-target/weather/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewaygatewaytargetweather56A5223F",
+            "TargetId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayarnssmED6FA960",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayidssmCE56CF89",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayurlssmF2D32817",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetweathergatewayarnssm90DE41FF",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetweathergatewaynamessm39038A75",
+        "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicy0CE184C8"
+      ]
+    },
+    "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-gat--3c650c92",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:DescribeKey",
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkEncryptDecrypt"
+            },
+            {
+              "Action": "kms:CreateGrant",
+              "Condition": {
+                "StringEquals": {
+                  "kms:GrantConstraintType": "EncryptionContextSubset"
+                },
+                "ForAllValues:StringEquals": {
+                  "kms:GrantOperations": [
+                    "Decrypt",
+                    "GenerateDataKey"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkCreateGrant"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnssmBD3729B7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/managed-policy/bedrock-agentcore-gateway-cmk-weather-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynamessm6D1258E9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/managed-policy/bedrock-agentcore-gateway-cmk-weather-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "RoleResDataAdmin0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataAdmin-0",
+          "name": "Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "bedrockcmk710EFABC": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataAdmin0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-bedrock-builder-gateway-usage-stmt"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext"
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "kms:EncryptionContext:aws:logs:arn": "arn:test-partition:logs:test-region:test-account:log-group:*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "logs.test-region.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "CloudWatchLogsEncryption"
+            },
+            {
+              "Action": [
+                "kms:GenerateDataKey*",
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowBedrockServiceForAgents"
+            },
+            {
+              "Action": [
+                "kms:CreateGrant",
+                "kms:ListGrants",
+                "kms:RevokeGrant"
+              ],
+              "Condition": {
+                "Bool": {
+                  "kms:GrantIsForAWSResource": "true"
+                },
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account",
+                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowBedrockServiceToManageGrants"
+            },
+            {
+              "Action": [
+                "kms:GenerateDataKey",
+                "kms:Decrypt"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:EncryptionContext:SourceArn": "arn:test-partition:logs:test-region:test-account:*",
+                  "aws:SourceAccount": "test-account"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "delivery.logs.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowGatewayVendedLogDeliveryEncryption"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-gateway"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "bedrockcmkAlias64D9B0C4": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-bedrock-builder-gateway",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockcmkkmsarnssm9ABBCC7F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/kms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockcmkkmsidssm418027C6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-gateway/kms/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-gateway",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockcmk710EFABC"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolqueueweathertooldlqnameout71C3388A": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolA351F4FE",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:queue:weathertooldlq:name"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolqueueweathertooldlqarnout9272204F": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolA351F4FE",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:queue:weathertooldlq:arn"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolqueueweathertooldlqurlout712FFCE4": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsdlqweathertoolA351F4FE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:queue:weathertooldlq:url"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsweathertoollambdaweathertoolnameout3BB55310": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsweathertoolA6B0F39E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:lambda:weathertool:name"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsweathertoollambdaweathertoolarnoutB8C65E6E": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockbuilderlambdafunctionsweathertoolA6B0F39E",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:lambda:weathertool:arn"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsweathertoollambdaweathertoolloggroupoutE92E7DC7": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsweathertoolA6B0F39E"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:lambda:weathertool:log-group"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptorqueueauthzinterceptordlqnameout1A5EF6FA": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptor76B99B85",
+          "QueueName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:queue:authzinterceptordlq:name"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptorqueueauthzinterceptordlqarnout825F0B35": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptor76B99B85",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:queue:authzinterceptordlq:arn"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptorqueueauthzinterceptordlqurlout5DE9A123": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsdlqauthzinterceptor76B99B85"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:queue:authzinterceptordlq:url"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptorlambdaauthzinterceptornameout85B8EA61": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptor506C9F19"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:lambda:authzinterceptor:name"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptorlambdaauthzinterceptorarnoutB7D12C37": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptor506C9F19",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:lambda:authzinterceptor:arn"
+      }
+    },
+    "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptorlambdaauthzinterceptorloggroupout51B804CA": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "bedrockbuilderbedrockbuilderlambdafunctionsauthzinterceptor506C9F19"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:lambda:authzinterceptor:log-group"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewayarnout3E55BAD1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:role:bedrockagentcoregatewayweathergateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewayidout476AA435": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:role:bedrockagentcoregatewayweathergateway:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewaynameoutDC52B31F": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:role:bedrockagentcoregatewayweathergateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewayarnout106ABB3B": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicyDFA7BC61"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:managed-policy:bedrockagentcoregatewayinterceptorweathergateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicymanagedpolicybedrockagentcoregatewayinterceptorweathergatewaynameoutA0D554EB": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayInterceptorInvokePolicyDFA7BC61"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:managed-policy:bedrockagentcoregatewayinterceptorweathergateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayarnout1F926E20": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:gateway:weathergateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayidout3DEE1B02": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+          "GatewayIdentifier"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:gateway:weathergateway:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayurloutC65C0B6D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+          "GatewayUrl"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:gateway:weathergateway:url"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayloggrouploggroupweathergatewaynameoutD4B39D99": {
+      "Value": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-gateway-weather-gateway",
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:loggroup:weathergateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayweathergatewayrolearnoutD2A470A1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:gateway:weathergateway:role-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayweathergatewaykmskeyarnoutFEC39C32": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockcmk710EFABC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:gateway:weathergateway:kms-key-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetweathergatewayarnout631FBECD": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicy0CE184C8"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:managed-policy:bedrockagentcoregatewaytargetweathergateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetweathergatewaynameoutBC00E00B": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayTargetInvokePolicy0CE184C8"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:managed-policy:bedrockagentcoregatewaytargetweathergateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewaytargetweathergatewaytargetweatherarnoutCB389F6E": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewaygatewaytargetweather56A5223F",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:gateway-target:weather:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewaytargetweathergatewaytargetweatheridout25465053": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewaygatewaytargetweather56A5223F",
+          "TargetId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:gateway-target:weather:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnout3537FC08": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:managed-policy:bedrockagentcoregatewaycmkweathergateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynameout73314075": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:managed-policy:bedrockagentcoregatewaycmkweathergateway:name"
+      }
+    },
+    "bedrockcmkkmsarnout0D3BC511": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockcmk710EFABC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:kms:arn"
+      }
+    },
+    "bedrockcmkkmsidout38E894CA": {
+      "Value": {
+        "Ref": "bedrockcmk710EFABC"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-gateway:kms:id"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

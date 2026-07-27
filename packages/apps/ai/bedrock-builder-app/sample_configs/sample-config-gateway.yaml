@@ -1,0 +1,149 @@
+# Bedrock Builder module configuration exercising AgentCore Gateway orchestration — the canonical
+# CUSTOM_JWT example. Deploys a compliant Bedrock AgentCore Gateway (MCP server) with a CUSTOM_JWT
+# (OIDC) inbound authorizer, a Lambda tool target described by a rich inline tool schema, and a
+# Lambda REQUEST interceptor. Both the tool Lambda and the interceptor Lambda are defined ONCE in
+# the shared `lambdaFunctions` pool and referenced by name via `generated-function:<name>` — the
+# same indirection agents and knowledge bases use. Gateways and gateway targets are declared as
+# flat, sibling maps; a gateway attaches a target by naming its key in the gateway's `targets` list.
+#
+# Companion samples cover the other option branches:
+#   - sample-config-gateway-iam.yaml         AWS_IAM auth, plain-ARN target, S3 tool schema,
+#                                            inline + by-ref interceptors, referenced role, DEBUG,
+#                                            searchType omitted, finite log retention.
+#   - sample-config-gateway-logdelivery.yaml log-delivery retention vs opt-out; S3 tool schema
+#                                            defaulting the bucket-owner account.
+# Error-only branches (NONE / AUTHENTICATE_ONLY authorizers, not-yet-supported target types such as
+# openApiSchema / smithyModel / mcpServer / apiGateway, unsupported credential provider types,
+# both/neither validation, dangling or shared target references, name collisions) are covered by the
+# construct unit tests, since they intentionally fail at synth and cannot appear in a deployable sample.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Admin roles granted access to Bedrock resources including KMS keys and S3 buckets.
+dataAdminRoles:
+  - name: 'Admin'
+
+# Lambda functions shared across the module. Here: an MCP tool implementation and a gateway
+# request interceptor. Referenced from the gateway config via generated-function:<name>.
+lambdaFunctions:
+  functions:
+    # Lambda that implements the MCP tool(s) fronted by the gateway target.
+    - functionName: weather-tool
+      description: 'MCP tool Lambda fronted by the gateway'
+      srcDir: ./src/function
+      handler: test.lambda_handler
+      runtime: python3.14
+      roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-lambda-role'
+    # Lambda invoked as the gateway REQUEST interceptor (per-tool authorization / transform).
+    - functionName: authz-interceptor
+      description: 'Gateway request interceptor Lambda'
+      srcDir: ./src/function
+      handler: test.lambda_handler
+      runtime: python3.14
+      roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-interceptor-role'
+
+# (Optional) AgentCore Gateway target definitions (MCP tool sources), keyed by target name.
+# Declared as a sibling of `gateways` so target definitions stay flat and are referenced by
+# name from a gateway's `targets` list. Each target must be referenced by exactly one gateway.
+gatewayTargets:
+  weather:
+    # (Optional) Target description (1-200 chars).
+    description: 'Weather tool source backed by a Lambda function'
+    targetConfiguration:
+      # Lambda tool source. The lambdaArn uses generated-function:<name> to reference the
+      # weather-tool function defined above; a plain Lambda ARN is also accepted (see the IAM sample).
+      lambda:
+        lambdaArn: generated-function:weather-tool
+        # Inline tool schema describing the MCP tools this Lambda exposes (advertised to agents).
+        # Exercises a nested object inputSchema (with a nested object property and an array property
+        # with typed items + required) and an outputSchema — the full recursive schema surface.
+        toolSchema:
+          inlinePayload:
+            - name: getWeather
+              description: 'Returns the current weather for a city'
+              inputSchema:
+                type: object
+                description: 'Weather lookup request'
+                properties:
+                  city:
+                    type: string
+                    description: 'City name'
+                  units:
+                    type: string
+                    description: 'Temperature units (metric or imperial)'
+                  filters:
+                    type: object
+                    description: 'Optional result filters'
+                    properties:
+                      includeHourly:
+                        type: boolean
+                        description: 'Include the hourly breakdown'
+                required:
+                  - city
+              outputSchema:
+                type: object
+                description: 'Weather lookup response'
+                properties:
+                  temperature:
+                    type: number
+                    description: 'Current temperature'
+                  conditions:
+                    type: array
+                    description: 'Active weather conditions'
+                    items:
+                      type: string
+                required:
+                  - temperature
+            - name: getForecast
+              description: 'Returns a multi-day forecast for a city'
+              inputSchema:
+                type: object
+                properties:
+                  city:
+                    type: string
+                  days:
+                    type: number
+                required:
+                  - city
+    # (Optional) Outbound credential provider. Defaults to GATEWAY_IAM_ROLE (the gateway invokes the
+    # tool with its own execution role) when omitted; set explicitly here to document the default.
+    # (OAUTH / API_KEY / CALLER_IAM_CREDENTIALS / JWT_PASSTHROUGH are declared but not yet supported.)
+    credentialProvider:
+      type: GATEWAY_IAM_ROLE
+
+# (Optional) AgentCore Gateway configurations (compliant MCP servers), keyed by gateway name.
+gateways:
+  weather-gateway:
+    # (Optional) Gateway description (1-200 chars).
+    description: 'Weather tools MCP gateway'
+    # Inbound authorization. Provide customJwt for CUSTOM_JWT (OIDC); omit for AWS IAM (see the IAM
+    # sample). MDAA rejects NONE / AUTHENTICATE_ONLY (compliance).
+    authorizerConfiguration:
+      customJwt:
+        # OIDC discovery URL; must end with /.well-known/openid-configuration.
+        discoveryUrl: 'https://example.com/.well-known/openid-configuration'
+        # (Optional) Allowed audiences validated against the token `aud` claim.
+        allowedAudience:
+          - 'weather-clients'
+          - 'weather-admin'
+        # (Optional) Allowed client IDs validated against the token `client_id` claim.
+        allowedClients:
+          - 'client-abc123'
+    # (Optional) MCP protocol configuration. searchType SEMANTIC enables natural-language tool
+    # discovery (immutable after creation); supportedVersions negotiates the MCP protocol version.
+    protocolConfiguration:
+      instructions: 'Use the weather tools to answer weather questions.'
+      searchType: SEMANTIC
+      supportedVersions:
+        - '2025-03-26'
+    # Tool targets to register against this gateway, by name from gatewayTargets above.
+    targets:
+      - weather
+    # (Optional) Lambda interceptors (at most one REQUEST and one RESPONSE). This REQUEST interceptor
+    # is referenced from the shared pool via generated-function:<name>; the IAM sample shows an
+    # inline interceptor and a plain-ARN by-ref interceptor.
+    interceptors:
+      - interceptionPoints:
+          - REQUEST
+        lambdaArn: generated-function:authz-interceptor
+    # Gateway audit log delivery is ON by default (CMK-encrypted vended pipeline, indefinite
+    # retention). Omitted here to show the compliant default; tuning/opt-out is in the log-delivery sample.

@@ -15,13 +15,13 @@ const DISCOVERY_URL_PATTERN = /^.+\/\.well-known\/openid-configuration$/;
  * AgentCore Gateway takes this as an explicit (required) field; AgentCore Runtime has no such
  * field (it infers AWS IAM when no JWT authorizer is configured). MDAA models both with the same
  * {@link AgentcoreAuthorizerConfigProperty} and derives this type via
- * {@link resolveAgentcoreAuthorizerType}, so the customer-facing UX is identical across modules:
+ * {@link resolveAuthorizerType}, so the customer-facing UX is identical across modules:
  * provide `customJwt`, or omit it for AWS IAM.
  *
  * MDAA intentionally does not expose the service's `NONE` (unauthenticated) or `AUTHENTICATE_ONLY`
  * (authenticated but no per-caller authorization) values.
  */
-export type AgentcoreAuthorizerType = 'CUSTOM_JWT' | 'AWS_IAM';
+export type AuthorizerType = 'CUSTOM_JWT' | 'AWS_IAM';
 
 /**
  * Custom JWT (OIDC) inbound authorizer configuration shared by the AgentCore Runtime and Gateway
@@ -35,7 +35,7 @@ export type AgentcoreAuthorizerType = 'CUSTOM_JWT' | 'AWS_IAM';
  *
  * Validation: discoveryUrl required and must end with /.well-known/openid-configuration
  */
-export interface SharedCustomJwtAuthorizerProperty {
+export interface CustomJwtAuthorizerProperty {
   /**
    * OIDC discovery URL used to validate JWTs.
    *
@@ -78,7 +78,7 @@ export interface SharedCustomJwtAuthorizerProperty {
  *
  * AWS: AgentCore inbound authorization (CUSTOM_JWT when customJwt is set; otherwise AWS_IAM)
  *
- * Validation: customJwt optional; when present it must be valid (see {@link validateCustomJwt})
+ * Validation: customJwt optional; when present it must be valid (see {@link validateCustomJwtAuthorizer})
  */
 export interface AgentcoreAuthorizerConfigProperty {
   /**
@@ -89,9 +89,9 @@ export interface AgentcoreAuthorizerConfigProperty {
    *
    * AWS: CustomJWTAuthorizer
    *
-   * Validation: Optional; valid SharedCustomJwtAuthorizerProperty when present
+   * Validation: Optional; valid CustomJwtAuthorizerProperty when present
    **/
-  readonly customJwt?: SharedCustomJwtAuthorizerProperty;
+  readonly customJwt?: CustomJwtAuthorizerProperty;
 }
 
 /**
@@ -101,7 +101,7 @@ export interface AgentcoreAuthorizerConfigProperty {
  * (its L1 has no `authorizerType` — it infers AWS IAM when no JWT authorizer is set) but uses the
  * same model so the two constructs share one config UX.
  */
-export function resolveAgentcoreAuthorizerType(config?: AgentcoreAuthorizerConfigProperty): AgentcoreAuthorizerType {
+export function resolveAuthorizerType(config?: AgentcoreAuthorizerConfigProperty): AuthorizerType {
   return config?.customJwt ? 'CUSTOM_JWT' : 'AWS_IAM';
 }
 
@@ -111,7 +111,7 @@ export function resolveAgentcoreAuthorizerType(config?: AgentcoreAuthorizerConfi
  *
  * @throws Error if discoveryUrl is missing or does not match the OIDC discovery URL pattern
  */
-export function validateCustomJwt(jwtConfig: SharedCustomJwtAuthorizerProperty): void {
+export function validateCustomJwtAuthorizer(jwtConfig: CustomJwtAuthorizerProperty): void {
   if (!jwtConfig.discoveryUrl) {
     throw new Error('DiscoveryUrl is required in CustomJwt authorizer configuration');
   }
@@ -126,12 +126,10 @@ export function validateCustomJwt(jwtConfig: SharedCustomJwtAuthorizerProperty):
  * structurally identical), so callers assign it directly to their typed L1 authorizer property.
  * Empty `allowedAudience` / `allowedClients` arrays are dropped so the template omits them.
  *
- * @throws Error if the JWT configuration is invalid (see {@link validateCustomJwt})
+ * @throws Error if the JWT configuration is invalid (see {@link validateCustomJwtAuthorizer})
  */
-export function buildCustomJwtAuthorizer(
-  jwtConfig: SharedCustomJwtAuthorizerProperty,
-): SharedCustomJwtAuthorizerProperty {
-  validateCustomJwt(jwtConfig);
+export function buildCustomJwtAuthorizer(jwtConfig: CustomJwtAuthorizerProperty): CustomJwtAuthorizerProperty {
+  validateCustomJwtAuthorizer(jwtConfig);
   return {
     discoveryUrl: jwtConfig.discoveryUrl,
     allowedAudience:

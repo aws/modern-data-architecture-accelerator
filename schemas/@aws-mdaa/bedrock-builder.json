@@ -161,6 +161,17 @@
             ],
             "type": "object"
         },
+        "AgentcoreAuthorizerConfigProperty": {
+            "additionalProperties": false,
+            "description": "Inbound authorization configuration shared by the AgentCore Runtime and Gateway L3 constructs.\nThe single customer-facing model: provide a `customJwt` authorizer, or omit it to use AWS IAM\n(SigV4) — there is no separate `awsIam` marker, as IAM is the no-configuration fallback. The\nwhole config (and this property) is optional; absent config means AWS IAM.\n\nUse cases: inbound access control\n\nAWS: AgentCore inbound authorization (CUSTOM_JWT when customJwt is set; otherwise AWS_IAM)\n\nValidation: customJwt optional; when present it must be valid (see {@link validateCustomJwtAuthorizer})",
+            "properties": {
+                "customJwt": {
+                    "$ref": "#/definitions/CustomJwtAuthorizerProperty",
+                    "description": "Custom JWT (OIDC) inbound authorization. When set, maps to `authorizerType: CUSTOM_JWT`.\nWhen omitted, the gateway/runtime fall back to AWS IAM (SigV4).\n\nUse cases: JWT/OIDC inbound authorization\n\nAWS: CustomJWTAuthorizer\n\nValidation: Optional; valid CustomJwtAuthorizerProperty when present"
+                }
+            },
+            "type": "object"
+        },
         "AlarmProps": {
             "additionalProperties": false,
             "description": "Configuration for CloudWatch alarms for Lambda function monitoring and alerting.\n\nDefines alarm conditions, thresholds, and notification actions for both single metric\nand metric math alarms with support for custom and AWS metrics.\n\nUse cases: Error rate alerting; Performance monitoring; Custom metric alarms; Multi-metric conditions\n\nAWS: CloudWatch alarm for Lambda function monitoring with SNS integration\n\nValidation: alarmName required; either metricName/namespace or metrics array required; threshold and evaluationPeriods required",
@@ -515,6 +526,52 @@
                 "role",
                 "vectorStore"
             ],
+            "type": "object"
+        },
+        "BuilderGatewayProps": {
+            "additionalProperties": false,
+            "description": "Configuration for a Bedrock AgentCore Gateway, keyed by gateway name in {@link NamedGatewayProps}.\nThe name-less {@link GatewayConfigProps} plus a flat `targets` list of references into the\ntop-level `gatewayTargets` map. A target's `lambdaArn` and an interceptor's `lambdaArn` may use the\n`generated-function:<name>` form to reference a function defined once under `lambdaFunctions`.\n\nUse cases: exposing a compliant MCP gateway (and its tools) from the same module that owns the\nagents/knowledge bases/Lambdas it fronts\n\nAWS: Amazon Bedrock AgentCore Gateway (+ GatewayTargets)\n\nValidation: each `targets` entry must name a key in the top-level `gatewayTargets` map",
+            "properties": {
+                "authorizerConfiguration": {
+                    "$ref": "#/definitions/AgentcoreAuthorizerConfigProperty",
+                    "description": "Inbound authorization configuration (shared with the AgentCore Runtime module). Provide\n`customJwt` for JWT/OIDC inbound auth, or omit it to use AWS IAM (SigV4). MDAA does not support\n`NONE` or `AUTHENTICATE_ONLY`.\n\nUse cases: inbound access control\n\nAWS: AWS::BedrockAgentCore::Gateway AuthorizerType + AuthorizerConfiguration\n\nValidation: Optional; valid customJwt when present (see {@link AgentcoreAuthorizerConfigProperty})"
+                },
+                "description": {
+                    "description": "Description of the gateway.\n\nUse cases: documentation, operational clarity\n\nAWS: AWS::BedrockAgentCore::Gateway Description\n\nValidation: Optional; String; 1-200 characters (AWS documents no character-set restriction)",
+                    "type": "string"
+                },
+                "exceptionLevel": {
+                    "const": "DEBUG",
+                    "description": "Exception level. Only `DEBUG` is settable; omit to leave the secure service default (INFO).\n`DEBUG` surfaces more exception detail in responses/logs (possibly sensitive internal error and\nrequest context), so use it only for troubleshooting, not in production.\n\nUse cases: troubleshooting\n\nAWS: AWS::BedrockAgentCore::Gateway ExceptionLevel\n\nValidation: Optional; 'DEBUG'",
+                    "type": "string"
+                },
+                "interceptors": {
+                    "description": "Lambda interceptors (at most one REQUEST and one RESPONSE).\n\nUse cases: per-tool authorization, request/response transformation\n\nAWS: AWS::BedrockAgentCore::Gateway InterceptorConfigurations\n\nValidation: Optional; GatewayInterceptorConfigurationsProperty[]; max 2 (one per interception point)",
+                    "items": {
+                        "$ref": "#/definitions/GatewayInterceptorConfigurationsProperty"
+                    },
+                    "type": "array"
+                },
+                "logDelivery": {
+                    "$ref": "#/definitions/GatewayLogDeliveryProperty",
+                    "description": "Gateway audit log delivery. Omit for the compliant default (a CMK-encrypted CloudWatch Logs\ndestination log group plus a vended delivery pipeline on the gateway ARN, indefinite retention).\n\nUse cases: audit logging, retention tuning, opt-out\n\nAWS: CloudWatch Logs vended delivery (DeliverySource / DeliveryDestination / Delivery)\n\nValidation: Optional; {@link GatewayLogDeliveryProperty}"
+                },
+                "protocolConfiguration": {
+                    "$ref": "#/definitions/McpProtocolConfigurationProperty",
+                    "description": "MCP protocol configuration (instructions, search type, supported versions). MCP is the only\nprotocol the service supports, so `protocolType` is always `MCP` (set by the construct). When\nomitted, the gateway applies the service default (semantic search off). Semantic search is\nimmutable after creation, so enable it here at creation time if needed.\n\nUse cases: tool discovery semantics, semantic search\n\nAWS: AWS::BedrockAgentCore::Gateway ProtocolConfiguration.Mcp\n\nValidation: Optional; McpProtocolConfigurationProperty"
+                },
+                "role": {
+                    "$ref": "#/definitions/MdaaRoleRef",
+                    "description": "Reference to an existing IAM role for the gateway execution role (by `name`, `arn`, or `id`).\nIf omitted, MDAA auto-creates an MdaaRole with a scoped trust policy. Either way MDAA attaches\nthe gateway's required execution permissions (interceptor `lambda:InvokeFunction` when\nconfigured; no CloudWatch Logs permissions, as gateways log via vended delivery) — there is no\nseparate \"extra policies\" field. To grant more, add it to the referenced role's own definition.\n\nUse cases: role reuse via a single fully-defined role, or auto-created in place\n\nAWS: AWS::BedrockAgentCore::Gateway RoleArn\n\nValidation: Optional; MdaaRoleRef"
+                },
+                "targets": {
+                    "description": "Names of gateway targets (keys in the top-level `gatewayTargets` map) to register against this\ngateway. Each becomes one `AWS::BedrockAgentCore::GatewayTarget`.\n\nUse cases: attaching MCP tool sources to a gateway by reference, keeping the config flat\n\nAWS: AWS::BedrockAgentCore::GatewayTarget (one per referenced entry)\n\nValidation: Optional; each entry must be a key in `gatewayTargets`; a target may be referenced by at most one gateway",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
             "type": "object"
         },
         "CfnAgent.ActionGroupExecutorProperty": {
@@ -1335,6 +1392,34 @@
             },
             "type": "object"
         },
+        "CustomJwtAuthorizerProperty": {
+            "additionalProperties": false,
+            "description": "Custom JWT (OIDC) inbound authorizer configuration shared by the AgentCore Runtime and Gateway\nL3 constructs. The field set matches both services' `CustomJWTAuthorizerConfiguration` exactly,\nso a built object (see {@link buildCustomJwtAuthorizer}) is assignable to either L1's typed\nauthorizer property.\n\nUse cases: JWT authentication, OIDC integration, token validation\n\nAWS: AWS::BedrockAgentCore::{Runtime,Gateway} CustomJWTAuthorizerConfiguration\n\nValidation: discoveryUrl required and must end with /.well-known/openid-configuration",
+            "properties": {
+                "allowedAudience": {
+                    "description": "Allowed audience values validated against the token `aud` claim.\n\nUse cases: audience validation, access restriction\n\nAWS: CustomJWTAuthorizerConfiguration AllowedAudience\n\nValidation: Optional; String[]",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "allowedClients": {
+                    "description": "Allowed client IDs validated against the token `client_id` claim.\n\nUse cases: client filtering, access control\n\nAWS: CustomJWTAuthorizerConfiguration AllowedClients\n\nValidation: Optional; String[]",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "discoveryUrl": {
+                    "description": "OIDC discovery URL used to validate JWTs.\n\nUse cases: OIDC integration, token validation, identity provider connection\n\nAWS: CustomJWTAuthorizerConfiguration DiscoveryUrl\n\nValidation: Required; String; must end with /.well-known/openid-configuration",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "discoveryUrl"
+            ],
+            "type": "object"
+        },
         "CustomTransformationConfiguration": {
             "additionalProperties": false,
             "properties": {
@@ -1880,6 +1965,310 @@
                 "functionArn",
                 "functionName"
             ],
+            "type": "object"
+        },
+        "GatewayInterceptorConfigurationsProperty": {
+            "additionalProperties": false,
+            "description": "Lambda interceptor configuration. Interceptors run custom code during gateway invocations\n(REQUEST before the target call, RESPONSE after) — the in-scope per-tool authorization mechanism.\n\nUse cases: per-tool/operation/parameter authorization, request/response transformation\n\nAWS: AWS::BedrockAgentCore::Gateway GatewayInterceptorConfiguration\n\nValidation: at most one REQUEST and one RESPONSE interceptor (max 2 total)",
+            "properties": {
+                "interceptionPoints": {
+                    "description": "Interception points at which this interceptor runs.\n\nUse cases: request validation, response transformation\n\nAWS: GatewayInterceptorConfiguration InterceptionPoints\n\nValidation: Required; non-empty subset of ['REQUEST', 'RESPONSE']",
+                    "items": {
+                        "enum": [
+                            "REQUEST",
+                            "RESPONSE"
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "lambdaArn": {
+                    "description": "ARN of an already-deployed interceptor Lambda (alternative to inline `lambdaFunction`). MDAA\ndeploys nothing; it wires the gateway to this ARN and grants scoped `lambda:InvokeFunction`. For\norchestrating modules that own the Lambda in a shared pool.\n\nUse cases: referencing an interceptor Lambda owned by an orchestrating module or defined elsewhere\n\nAWS: LambdaInterceptorConfiguration Arn\n\nValidation: exactly one of lambdaFunction / lambdaArn; when present, a Lambda function ARN",
+                    "type": "string"
+                },
+                "lambdaFunction": {
+                    "$ref": "#/definitions/FunctionProps",
+                    "description": "Inline definition of the interceptor Lambda. MDAA deploys it (via `LambdaFunctionL3Construct`,\nencrypted with the gateway CMK) and wires the gateway to its ARN; its execution role comes from\n`roleArn`. Provide exactly one of `lambdaFunction` or `lambdaArn`.\n\nUse cases: custom interception logic deployed from config\n\nAWS: LambdaInterceptorConfiguration Arn (resolved from the deployed function)\n\nValidation: exactly one of lambdaFunction / lambdaArn; FunctionProps (functionName, srcDir, handler, runtime, roleArn, ...)"
+                },
+                "passRequestHeaders": {
+                    "default": false,
+                    "description": "Whether to pass inbound request headers to the interceptor. Defaults to false, since headers\nmay contain sensitive authorization tokens.\n\nUse cases: header-aware interception\n\nAWS: InterceptorInputConfiguration PassRequestHeaders\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "interceptionPoints"
+            ],
+            "type": "object"
+        },
+        "GatewayLogDeliveryProperty": {
+            "additionalProperties": false,
+            "description": "Gateway audit log-delivery configuration. Controls the CMK-encrypted CloudWatch Logs vended\ndelivery pipeline this construct provisions (the service configures no log destination itself).\n\nUse cases: audit logging, retention tuning, opt-out\n\nAWS: AWS::Logs::DeliverySource / DeliveryDestination / Delivery + a CWL destination log group\n\nValidation: Optional; omit for the compliant default (enabled, indefinite retention)",
+            "properties": {
+                "enabled": {
+                    "default": true,
+                    "description": "Whether to provision the vended log-delivery pipeline. Defaults to `true` (audit-by-default).\nSet `false` to opt out — not recommended, as gateway audit logs are then not captured.\n\nUse cases: opting out of audit log capture\n\nAWS: gates creation of the DeliverySource / DeliveryDestination / Delivery + destination log group\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
+                },
+                "logRetentionDays": {
+                    "default": "RetentionDays.INFINITE (indefinite)",
+                    "description": "Retention (in days) for the destination log group. Must be a valid CloudWatch Logs\n`RetentionDays` value (e.g. 7, 30, 90, 365). Defaults to indefinite (the MDAA audit-log default)\nso logs are never silently dropped; set a finite value for cost or a compliance window.\n\nUse cases: cost control, compliance retention windows\n\nAWS: AWS::Logs::LogGroup RetentionInDays\n\nValidation: Optional; must be a valid CloudWatch Logs RetentionDays value — validated at synth\n(an unsupported value throws from the constructor rather than failing at deploy)",
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "GatewayTargetApiGatewayProperty": {
+            "additionalProperties": false,
+            "description": "API Gateway tool source for a gateway target (a REST API fronted by Amazon API Gateway).\nDeclared for a stable configuration surface; MDAA does not yet build this target type.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget ApiGatewayTargetConfiguration",
+            "properties": {
+                "restApiId": {
+                    "description": "Id of the API Gateway REST API.\n\nAWS: ApiGatewayTargetConfiguration RestApiId\n\nValidation: Required; String",
+                    "type": "string"
+                },
+                "stage": {
+                    "description": "Deployment stage of the REST API.\n\nAWS: ApiGatewayTargetConfiguration Stage\n\nValidation: Required; String",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "restApiId",
+                "stage"
+            ],
+            "type": "object"
+        },
+        "GatewayTargetConfigurationProperty": {
+            "additionalProperties": false,
+            "description": "Tool source (target-type configuration) for a gateway target. Exactly one target type must be\nset. MDAA currently supports only `lambda`; the other types are declared so the configuration\nsurface is stable as support is added, and are rejected as not yet supported at synth.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget TargetConfiguration.Mcp\n\nValidation: exactly one target type; currently must be `lambda`",
+            "properties": {
+                "apiGateway": {
+                    "$ref": "#/definitions/GatewayTargetApiGatewayProperty",
+                    "description": "API Gateway tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.ApiGateway"
+                },
+                "lambda": {
+                    "$ref": "#/definitions/GatewayTargetLambdaProperty",
+                    "description": "Lambda tool source (function ARN + tool schema).\n\nAWS: TargetConfiguration.Mcp.Lambda\n\nValidation: exactly one target type; `lambda` is currently the only supported type"
+                },
+                "mcpServer": {
+                    "$ref": "#/definitions/GatewayTargetMcpServerProperty",
+                    "description": "MCP server tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.McpServer"
+                },
+                "openApiSchema": {
+                    "$ref": "#/definitions/GatewayTargetOpenApiProperty",
+                    "description": "OpenAPI schema tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.OpenApiSchema"
+                },
+                "smithyModel": {
+                    "$ref": "#/definitions/GatewayTargetSmithyProperty",
+                    "description": "Smithy model tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.SmithyModel"
+                }
+            },
+            "type": "object"
+        },
+        "GatewayTargetCredentialProperty": {
+            "additionalProperties": false,
+            "description": "Outbound credential provider for a gateway target.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget CredentialProviderConfiguration",
+            "properties": {
+                "type": {
+                    "description": "Credential provider type. Optional — defaults to `GATEWAY_IAM_ROLE` (the gateway invokes the\ntool with its own execution role). All {@link GatewayTargetCredentialProviderType} values are\naccepted by the type, but MDAA validation currently supports only `GATEWAY_IAM_ROLE` and\nrejects the others as not yet supported.\n\nAWS: CredentialProviderConfiguration CredentialProviderType\n\nValidation: Optional; a {@link GatewayTargetCredentialProviderType}; currently `GATEWAY_IAM_ROLE`",
+                    "enum": [
+                        "API_KEY",
+                        "CALLER_IAM_CREDENTIALS",
+                        "GATEWAY_IAM_ROLE",
+                        "JWT_PASSTHROUGH",
+                        "OAUTH"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "GatewayTargetLambdaProperty": {
+            "additionalProperties": false,
+            "description": "Lambda tool source for a gateway target. The gateway invokes this Lambda (using its execution\nrole) to serve the MCP tools described by `toolSchema`.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget McpLambdaTargetConfiguration",
+            "properties": {
+                "lambdaArn": {
+                    "description": "ARN of the Lambda function that implements the tool(s). The gateway execution role is granted\nscoped `lambda:InvokeFunction` on exactly this ARN (by the L3 orchestration construct).\n\nAWS: McpLambdaTargetConfiguration LambdaArn\n\nValidation: Required; Lambda function ARN",
+                    "type": "string"
+                },
+                "toolSchema": {
+                    "$ref": "#/definitions/GatewayTargetToolSchemaProperty",
+                    "description": "Schema describing the MCP tools the Lambda exposes — the catalog (tool name + JSON-schema of\ninputs/outputs) the gateway advertises to agents and dispatches to this Lambda. For example, a\n`getWeather` tool taking a required `city` string:\n`{ inlinePayload: [{ name: 'getWeather', description: 'Returns the weather for a city',\ninputSchema: { type: 'object', properties: { city: { type: 'string' } }, required: ['city'] } }] }`.\nSee the AWS tool-schema examples\n(https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-add-target-lambda.html#gateway-lambda-example).\n\nAWS: McpLambdaTargetConfiguration ToolSchema\n\nValidation: Required; exactly one of inlinePayload or s3"
+                }
+            },
+            "required": [
+                "lambdaArn",
+                "toolSchema"
+            ],
+            "type": "object"
+        },
+        "GatewayTargetMcpServerProperty": {
+            "additionalProperties": false,
+            "description": "MCP server tool source for a gateway target (an external MCP-compliant server the gateway\nsynchronizes tools from). Declared for a stable configuration surface; MDAA does not yet build\nthis target type.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget McpServerTargetConfiguration",
+            "properties": {
+                "endpoint": {
+                    "description": "HTTPS endpoint of the MCP server.\n\nAWS: McpServerTargetConfiguration Endpoint\n\nValidation: Required; HTTPS URL",
+                    "type": "string"
+                },
+                "listingMode": {
+                    "description": "Tool listing mode.\n\nAWS: McpServerTargetConfiguration ListingMode\n\nValidation: Optional; String",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "endpoint"
+            ],
+            "type": "object"
+        },
+        "GatewayTargetOpenApiProperty": {
+            "additionalProperties": false,
+            "description": "OpenAPI schema tool source for a gateway target (a REST API described by an OpenAPI 3.0 schema).\nDeclared for a stable configuration surface; MDAA does not yet build this target type.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget McpTargetConfiguration OpenApiSchema (ApiSchemaConfiguration)",
+            "properties": {
+                "inlinePayload": {
+                    "description": "OpenAPI schema declared inline (a JSON/YAML document as a string).\n\nAWS: ApiSchemaConfiguration InlinePayload\n\nValidation: Optional; mutually exclusive with `s3`",
+                    "type": "string"
+                },
+                "s3": {
+                    "$ref": "#/definitions/GatewayTargetS3Property",
+                    "description": "Location of an OpenAPI schema document in S3.\n\nAWS: ApiSchemaConfiguration S3\n\nValidation: Optional; mutually exclusive with `inlinePayload`"
+                }
+            },
+            "type": "object"
+        },
+        "GatewayTargetProps": {
+            "additionalProperties": false,
+            "description": "Configuration for a single gateway target (a tool source registered against a gateway).\n\nUse cases: registering a tool source (Lambda, and — as support is added — OpenAPI / Smithy /\nMCP-server / API-Gateway) against a gateway\n\nAWS: AWS::BedrockAgentCore::GatewayTarget\n\nValidation: `targetConfiguration` sets exactly one target type (currently `lambda`);\n`credentialProvider`, when set, must be a supported {@link GatewayTargetCredentialProviderType}",
+            "properties": {
+                "credentialProvider": {
+                    "$ref": "#/definitions/GatewayTargetCredentialProperty",
+                    "description": "Outbound credential provider. Optional — defaults to `GATEWAY_IAM_ROLE`.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget CredentialProviderConfigurations\n\nValidation: Optional; when set, `type` must be a supported {@link GatewayTargetCredentialProviderType}"
+                },
+                "description": {
+                    "description": "Description of the target.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget Description\n\nValidation: Optional; String; 1-200 characters",
+                    "type": "string"
+                },
+                "targetConfiguration": {
+                    "$ref": "#/definitions/GatewayTargetConfigurationProperty",
+                    "description": "Tool source for the target. Exactly one target type is set (currently `lambda`).\n\nAWS: AWS::BedrockAgentCore::GatewayTarget TargetConfiguration\n\nValidation: Required; {@link GatewayTargetConfigurationProperty}"
+                }
+            },
+            "required": [
+                "targetConfiguration"
+            ],
+            "type": "object"
+        },
+        "GatewayTargetS3Property": {
+            "additionalProperties": false,
+            "description": "S3 location of a schema document (a Lambda tool schema, or an OpenAPI / Smithy API schema).\n\nAWS: AWS::BedrockAgentCore::GatewayTarget S3Configuration",
+            "properties": {
+                "bucketOwnerAccountId": {
+                    "description": "Expected owner account id of the S3 bucket (cross-account confused-deputy protection). MDAA\ndefaults this to the deploying account when omitted (or empty), so the gateway verifies the\nbucket owner on the cross-account read. An explicit value is validated at synth: it must be a\n12-digit account id (or an unresolved CDK token).\n\nAWS: S3Configuration BucketOwnerAccountId\n\nValidation: Optional; 12-digit account id; defaults to the deploying account",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "S3 URI of the schema object (`s3://bucket/key`).\n\nAWS: S3Configuration Uri\n\nValidation: Required; S3 URI",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "uri"
+            ],
+            "type": "object"
+        },
+        "GatewayTargetSchemaDefinitionProperty": {
+            "additionalProperties": false,
+            "description": "A JSON-schema definition node (recursive), mirroring the AWS gateway-target SchemaDefinition.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget SchemaDefinition\n(https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_SchemaDefinition.html)",
+            "properties": {
+                "description": {
+                    "description": "Description of this schema node.\n\nAWS: SchemaDefinition Description\n\nValidation: Optional; String",
+                    "type": "string"
+                },
+                "items": {
+                    "$ref": "#/definitions/GatewayTargetSchemaDefinitionProperty",
+                    "description": "Item schema (for `array` types).\n\nAWS: SchemaDefinition Items\n\nValidation: Optional; {@link GatewayTargetSchemaDefinitionProperty}"
+                },
+                "properties": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/GatewayTargetSchemaDefinitionProperty"
+                    },
+                    "description": "Property schemas, keyed by property name (for `object` types).\n\nAWS: SchemaDefinition Properties\n\nValidation: Optional; map of {@link GatewayTargetSchemaDefinitionProperty}",
+                    "type": "object"
+                },
+                "required": {
+                    "description": "Names of required properties (for `object` types).\n\nAWS: SchemaDefinition Required\n\nValidation: Optional; String[]",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "type": {
+                    "description": "JSON-schema type (e.g. `string`, `number`, `object`, `array`, `boolean`).\n\nAWS: SchemaDefinition Type\n\nValidation: Required; String",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "type": "object"
+        },
+        "GatewayTargetSmithyProperty": {
+            "additionalProperties": false,
+            "description": "Smithy model tool source for a gateway target (an AWS service described by a Smithy model).\nDeclared for a stable configuration surface; MDAA does not yet build this target type.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget McpTargetConfiguration SmithyModel (ApiSchemaConfiguration)",
+            "properties": {
+                "inlinePayload": {
+                    "description": "Smithy model declared inline (a JSON document as a string).\n\nAWS: ApiSchemaConfiguration InlinePayload\n\nValidation: Optional; mutually exclusive with `s3`",
+                    "type": "string"
+                },
+                "s3": {
+                    "$ref": "#/definitions/GatewayTargetS3Property",
+                    "description": "Location of a Smithy model document in S3.\n\nAWS: ApiSchemaConfiguration S3\n\nValidation: Optional; mutually exclusive with `inlinePayload`"
+                }
+            },
+            "type": "object"
+        },
+        "GatewayTargetToolDefinitionProperty": {
+            "additionalProperties": false,
+            "description": "A single MCP tool definition for an inline tool schema.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget ToolDefinition\n(https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_ToolDefinition.html)",
+            "properties": {
+                "description": {
+                    "description": "Human-readable description of what the tool does.\n\nAWS: ToolDefinition Description\n\nValidation: Required; String",
+                    "type": "string"
+                },
+                "inputSchema": {
+                    "$ref": "#/definitions/GatewayTargetSchemaDefinitionProperty",
+                    "description": "JSON-schema definition of the tool's input.\n\nAWS: ToolDefinition InputSchema\n(https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_SchemaDefinition.html)\n\nValidation: Required; {@link GatewayTargetSchemaDefinitionProperty}"
+                },
+                "name": {
+                    "description": "Tool name (as surfaced to the agent over MCP).\n\nAWS: ToolDefinition Name\n\nValidation: Required; String",
+                    "type": "string"
+                },
+                "outputSchema": {
+                    "$ref": "#/definitions/GatewayTargetSchemaDefinitionProperty",
+                    "description": "JSON-schema definition of the tool's output.\n\nAWS: ToolDefinition OutputSchema\n(https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_SchemaDefinition.html)\n\nValidation: Optional; {@link GatewayTargetSchemaDefinitionProperty}"
+                }
+            },
+            "required": [
+                "description",
+                "inputSchema",
+                "name"
+            ],
+            "type": "object"
+        },
+        "GatewayTargetToolSchemaProperty": {
+            "additionalProperties": false,
+            "description": "Tool schema for a Lambda gateway target. Exactly one of `inlinePayload` (the tool definitions\ndeclared inline) or `s3` (a JSON tool-schema document in S3) must be provided.\n\nUse cases: declaring the MCP tools a Lambda target exposes\n\nAWS: AWS::BedrockAgentCore::GatewayTarget ToolSchema\n(https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-add-target-lambda.html#gateway-lambda-tool-schema)\n\nValidation: exactly one of inlinePayload (non-empty) or s3",
+            "properties": {
+                "inlinePayload": {
+                    "description": "Tool definitions declared inline. Each entry describes one MCP tool the Lambda implements.\n\nUse cases: small tool sets defined directly in config\n\nAWS: ToolSchema InlinePayload\n\nValidation: Optional; non-empty array when set; mutually exclusive with `s3`",
+                    "items": {
+                        "$ref": "#/definitions/GatewayTargetToolDefinitionProperty"
+                    },
+                    "type": "array"
+                },
+                "s3": {
+                    "$ref": "#/definitions/GatewayTargetS3Property",
+                    "description": "Location of a JSON tool-schema document in S3. To keep a tool schema as a file in the source\ntree, upload it to a bucket you own (e.g. an `MdaaBucket`) and reference the object here.\n\nUse cases: large tool sets maintained as a separate artifact\n\nAWS: ToolSchema S3\n\nValidation: Optional; valid S3 configuration; mutually exclusive with `inlinePayload`"
+                }
+            },
             "type": "object"
         },
         "GroundingFilters": {
@@ -2795,6 +3184,29 @@
                 "logGroupArn",
                 "node"
             ],
+            "type": "object"
+        },
+        "McpProtocolConfigurationProperty": {
+            "additionalProperties": false,
+            "description": "MCP protocol configuration for the gateway.\n\nUse cases: tool discovery semantics, semantic search, MCP version negotiation\n\nAWS: AWS::BedrockAgentCore::Gateway MCPGatewayConfiguration\n\nValidation: searchType, when set, must be SEMANTIC (the only value the service accepts); omit it\nfor a non-semantic gateway. Semantic search is immutable after creation.",
+            "properties": {
+                "instructions": {
+                    "description": "System instructions surfaced to agents via MCP.\n\nUse cases: agent guidance, tool-use instructions\n\nAWS: MCPGatewayConfiguration Instructions\n\nValidation: Optional; String",
+                    "type": "string"
+                },
+                "searchType": {
+                    "const": "SEMANTIC",
+                    "description": "Tool search strategy. `SEMANTIC` (natural-language tool discovery) is the only accepted value\nand is immutable after creation; OMIT the field to run without it (there is no `NONE`).\n\nUse cases: semantic tool discovery\n\nAWS: MCPGatewayConfiguration SearchType\n\nValidation: Optional; must be 'SEMANTIC' when set (omit for non-semantic)",
+                    "type": "string"
+                },
+                "supportedVersions": {
+                    "description": "Supported MCP protocol versions.\n\nUse cases: MCP version negotiation\n\nAWS: MCPGatewayConfiguration SupportedVersions\n\nValidation: Optional; String[]",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
             "type": "object"
         },
         "MdaaCidrPeer": {
@@ -3762,6 +4174,20 @@
             "additionalProperties": {
                 "$ref": "#/definitions/EventBridgeRuleProps"
             },
+            "type": "object"
+        },
+        "NamedGatewayProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/BuilderGatewayProps"
+            },
+            "description": "Map of gateway name to {@link BuilderGatewayProps}. The key becomes the child construct id suffix\n(`bedrock-gateway-<name>`) and the derived, MDAA-named gateway name.",
+            "type": "object"
+        },
+        "NamedGatewayTargetProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/GatewayTargetProps"
+            },
+            "description": "Map of target name to {@link GatewayTargetProps}, referenced by name from a gateway's `targets`\nlist. The key becomes the target's MDAA-named resource name; each target must be referenced by\nexactly one gateway.",
             "type": "object"
         },
         "NamedGuardrailProps": {
@@ -4905,12 +5331,20 @@
             },
             "type": "array"
         },
+        "gatewayTargets": {
+            "$ref": "#/definitions/NamedGatewayTargetProps",
+            "description": "Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name.\nDeclared as a sibling of `gateways` (not nested) to keep the config flat; a gateway attaches a\ntarget by naming its key in the gateway's `targets` list. Each target must be referenced by\nexactly one gateway.\n\nUse cases: defining MCP tool sources (e.g. Lambda tools) once and referencing them from a gateway\n\nAWS: AWS::BedrockAgentCore::GatewayTarget\n\nValidation: Optional; NamedGatewayTargetProps (map of target name to config)"
+        },
+        "gateways": {
+            "$ref": "#/definitions/NamedGatewayProps",
+            "description": "Bedrock AgentCore Gateway configurations (compliant MCP servers), keyed by gateway name.\nEach gateway references its tool targets by name from the sibling `gatewayTargets` map, and may\nreuse Lambdas from `lambdaFunctions` via `generated-function:<name>` references.\n\nUse cases: exposing a unified MCP tool surface with per-tool authorization, agent tool gateways\n\nAWS: Amazon Bedrock AgentCore Gateway\n\nValidation: Optional; NamedGatewayProps (map of gateway name to config)"
+        },
         "guardrails": {
             "$ref": "#/definitions/NamedGuardrailProps",
             "description": "Guardrail configurations for AI safety, content filtering, and responsible AI deployment.\n\nUse cases: AI safety controls, content filtering, responsible AI, content moderation\n\nAWS: Bedrock Guardrails\n\nValidation: Optional; NamedGuardrailProps (map of guardrail name to config)"
         },
         "kmsKeyArn": {
-            "description": "Existing KMS key ARN for encrypting Bedrock agent resources.\nIf omitted, a customer-managed key is created automatically.\n\nUse cases: Customer-controlled encryption, security compliance, key reuse\n\nAWS: KMS key for Bedrock resource encryption\n\nValidation: Optional; String; must be valid KMS key ARN",
+            "description": "Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge\nbases, guardrails, the shared Lambda pool, and AgentCore gateways all use this single key.\nIf omitted, one customer-managed key is created automatically and shared across them.\n\nWhen an existing key is provided, its key policy must already grant the required service and\nexecution-role use (the module cannot mutate an imported key's policy) — including the AgentCore\ngateway grants when gateways are configured.\n\nUse cases: Customer-controlled encryption, security compliance, key reuse\n\nAWS: KMS key for Bedrock resource encryption\n\nValidation: Optional; String; must be valid KMS key ARN",
             "type": "string"
         },
         "knowledgeBases": {

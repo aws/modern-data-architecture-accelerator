@@ -11,6 +11,8 @@ import {
   NamedVectorStoreProps,
   NamedGuardrailProps,
   NamedAgentProps,
+  NamedGatewayProps,
+  NamedGatewayTargetProps,
 } from '@aws-mdaa/bedrock-builder-l3-construct';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
@@ -38,8 +40,13 @@ export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
    **/
   readonly agents?: NamedAgentProps;
   /**
-   * Existing KMS key ARN for encrypting Bedrock agent resources.
-   * If omitted, a customer-managed key is created automatically.
+   * Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge
+   * bases, guardrails, the shared Lambda pool, and AgentCore gateways all use this single key.
+   * If omitted, one customer-managed key is created automatically and shared across them.
+   *
+   * When an existing key is provided, its key policy must already grant the required service and
+   * execution-role use (the module cannot mutate an imported key's policy) — including the AgentCore
+   * gateway grants when gateways are configured.
    *
    * Use cases: Customer-controlled encryption, security compliance, key reuse
    *
@@ -102,6 +109,31 @@ export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
    * Validation: Optional; NamedGuardrailProps (map of guardrail name to config)
    **/
   readonly guardrails?: NamedGuardrailProps;
+  /**
+   * Bedrock AgentCore Gateway configurations (compliant MCP servers), keyed by gateway name.
+   * Each gateway references its tool targets by name from the sibling `gatewayTargets` map, and may
+   * reuse Lambdas from `lambdaFunctions` via `generated-function:<name>` references.
+   *
+   * Use cases: exposing a unified MCP tool surface with per-tool authorization, agent tool gateways
+   *
+   * AWS: Amazon Bedrock AgentCore Gateway
+   *
+   * Validation: Optional; NamedGatewayProps (map of gateway name to config)
+   **/
+  readonly gateways?: NamedGatewayProps;
+  /**
+   * Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name.
+   * Declared as a sibling of `gateways` (not nested) to keep the config flat; a gateway attaches a
+   * target by naming its key in the gateway's `targets` list. Each target must be referenced by
+   * exactly one gateway.
+   *
+   * Use cases: defining MCP tool sources (e.g. Lambda tools) once and referencing them from a gateway
+   *
+   * AWS: AWS::BedrockAgentCore::GatewayTarget
+   *
+   * Validation: Optional; NamedGatewayTargetProps (map of target name to config)
+   **/
+  readonly gatewayTargets?: NamedGatewayTargetProps;
 }
 
 export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuilderConfigContents> {
@@ -145,6 +177,16 @@ export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuild
    */
   public readonly guardrails?: NamedGuardrailProps;
 
+  /**
+   * (Optional) AgentCore Gateway configurations
+   */
+  public readonly gateways?: NamedGatewayProps;
+
+  /**
+   * (Optional) AgentCore Gateway target definitions
+   */
+  public readonly gatewayTargets?: NamedGatewayTargetProps;
+
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
     this.dataAdminRoles = this.configContents.dataAdminRoles;
@@ -155,5 +197,7 @@ export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuild
     this.knowledgeBases = this.configContents.knowledgeBases;
     this.guardrails = this.configContents.guardrails;
     this.vectorStores = this.configContents.vectorStores;
+    this.gateways = this.configContents.gateways;
+    this.gatewayTargets = this.configContents.gatewayTargets;
   }
 }

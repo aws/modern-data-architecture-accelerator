@@ -23,6 +23,7 @@
   "types": "lib/index.d.ts",
   "devDependencies": {
     "@aws-mdaa/bedrock-agent-l3-construct": "1.7.0",
+    "@aws-mdaa/bedrock-agentcore-gateway-l3-construct": "1.7.0",
     "@aws-mdaa/bedrock-guardrail-l3-construct": "1.7.0",
     "@aws-mdaa/bedrock-knowledge-base-l3-construct": "1.7.0",
     "@aws-mdaa/construct": "1.7.0",
@@ -45,6 +46,7 @@
   },
   "peerDependencies": {
     "@aws-mdaa/bedrock-agent-l3-construct": "1.7.0",
+    "@aws-mdaa/bedrock-agentcore-gateway-l3-construct": "1.7.0",
     "@aws-mdaa/bedrock-guardrail-l3-construct": "1.7.0",
     "@aws-mdaa/bedrock-knowledge-base-l3-construct": "1.7.0",
     "@aws-mdaa/construct": "1.7.0",
@@ -56,6 +58,7 @@
     "constructs": "10.6.0"
   },
   "dependencies": {
+    "@aws-mdaa/bedrock-agentcore-gateway-l3-construct": "1.7.0",
     "@aws-mdaa/construct": "1.7.0",
     "@aws-mdaa/iam-constructs": "1.7.0",
     "@aws-mdaa/iam-role-helper": "1.7.0",

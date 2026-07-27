@@ -1127,7 +1127,9 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
       expect(() => {
         new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
-      }).toThrow('Code references non-existant Generated Lambda function: non-existent-function');
+      }).toThrow(
+        'knowledge base data source "testInvalidFunction" references non-existent Generated Lambda function: non-existent-function',
+      );
     });
   });
 
@@ -3188,6 +3190,77 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const clusters = template.findResources('AWS::RDS::DBCluster');
       expect(Object.keys(clusters).length).toBe(2);
     });
+  });
+
+  describe('AgentCore Gateway Compliance', () => {
+    // Validate the new gateway resources — the shared module CMK's consolidated AgentCore gateway-role
+    // and vended-log-delivery grants (grantGatewaysKeyUsage) plus the Gateway, GatewayTarget, and the
+    // scoped lambda:InvokeFunction ManagedPolicies from createGateways — against the AwsSolutions,
+    // NIST, HIPAA, and PCI rulesets. Configures a gateway with a Lambda target (via the shared pool)
+    // and both a by-ref and an inline interceptor so the invoke policies and encryption grants are
+    // all exercised under cdk-nag.
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const constructProps: BedrockBuilderL3ConstructProps = {
+      dataAdminRoles: [dataAdminRoleRef],
+      roleHelper,
+      naming: testApp.naming,
+      lambdaFunctions,
+      gatewayTargets: {
+        weather: {
+          targetConfiguration: {
+            lambda: {
+              lambdaArn: 'generated-function:test-agent-lambda',
+              toolSchema: {
+                inlinePayload: [
+                  {
+                    name: 'getWeather',
+                    description: 'Returns the weather for a city',
+                    inputSchema: { type: 'object', properties: { city: { type: 'string' } }, required: ['city'] },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      gateways: {
+        'weather-gateway': {
+          authorizerConfiguration: {
+            customJwt: { discoveryUrl: 'https://example.com/.well-known/openid-configuration', allowedAudience: ['a'] },
+          },
+          protocolConfiguration: { searchType: 'SEMANTIC' },
+          targets: ['weather'],
+          interceptors: [
+            { interceptionPoints: ['REQUEST'], lambdaArn: 'generated-function:test-agent-lambda' },
+            {
+              interceptionPoints: ['RESPONSE'],
+              lambdaFunction: {
+                functionName: 'gw-inline-interceptor',
+                srcDir: './test/lambda/test',
+                handler: 'test_handler',
+                runtime: 'python3.14',
+                roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role',
+              },
+            },
+          ],
+        },
+      },
+    };
+
+    new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
+
+    // Sanity: the gateway and its target are present in the stack that cdk-nag checks.
+    const template = Template.fromStack(testApp.testStack);
+    test('Gateway and GatewayTarget resources are present', () => {
+      template.resourceCountIs('AWS::BedrockAgentCore::Gateway', 1);
+      template.resourceCountIs('AWS::BedrockAgentCore::GatewayTarget', 1);
+    });
+
+    // checkCdkNagCompliance registers its own nested describe/tests, so it must run at the describe
+    // body level (not inside a test()) — matching the other compliance blocks in this file.
+    testApp.checkCdkNagCompliance(testApp.testStack);
   });
 });
 
