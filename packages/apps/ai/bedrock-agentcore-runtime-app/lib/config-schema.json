@@ -2321,6 +2321,10 @@
                     },
                     "type": "array"
                 },
+                "vpcEndpoint": {
+                    "$ref": "#/definitions/VpcEndpointProperty",
+                    "description": "Optional MDAA-managed creation of the AgentCore interface VPC endpoint\n(com.amazonaws.{region}.bedrock-agentcore) in this VPC. Presence of this\nblock opts in to endpoint creation (an empty object accepts all defaults);\nomitting it means no endpoint is created. The endpoint gives VPC-resident\ncallers a private invocation path and produces the aws:SourceVpc request\ncontext that enforceVpcOnly's resource policy requires — without it, an\nenforceVpcOnly runtime cannot be invoked at all.\n\nCreation is opt-in (interface endpoints carry hourly/per-GB costs). If the\nVPC already has a bedrock-agentcore endpoint (e.g., created by LZA or a\ncentral networking team), omit this block — only one endpoint with Private\nDNS is allowed per service per VPC, and a second one will fail to deploy.\n\nUse cases: Private invocation path, enforceVpcOnly support, no-NAT environments\n\nAWS: Interface VPC endpoint with Private DNS, endpoint policy, and security group\n\nValidation: Optional; VpcEndpointProperty; requires vpcId when present"
+                },
                 "vpcId": {
                     "description": "VPC ID for the network where the runtime is deployed.\nRequired when `enforceVpcOnly` is enabled, to generate the resource-based policy\nrestricting invocations to this VPC.\n\nUse cases: VPC-only enforcement for JWT callers, network boundary identification\n\nAWS: VPC ID for resource-based policy condition\n\nValidation: Optional; String; required when enforceVpcOnly is true",
                     "type": "string"
@@ -3203,6 +3207,35 @@
             "required": [
                 "functionArn"
             ],
+            "type": "object"
+        },
+        "VpcEndpointPolicyProperty": {
+            "additionalProperties": false,
+            "description": "Endpoint policy configuration for the AgentCore interface VPC endpoint.\nThe endpoint policy acts as a firewall rule on the endpoint itself,\ncontrolling which principals and actions are allowed through it.\n\nUse cases: Restricting IAM callers to specific roles, least-privilege endpoint access\n\nAWS: VPC endpoint policy document\n\nValidation: allowPrincipals must be valid IAM principal ARNs if provided",
+            "properties": {
+                "allowPrincipals": {
+                    "description": "IAM principal ARNs allowed to invoke AgentCore through this endpoint.\nWhen omitted, the policy allows any principal (\"*\") — required for\nOAuth/JWT-authenticated runtimes, since OAuth callers have no IAM identity\nvisible to the endpoint policy (access control is then enforced by the\nruntime's resource-based policy and JWT authorizer).\n\nRecommended for SigV4/IAM-authenticated runtimes: set to the specific\ncaller role ARNs for least-privilege endpoint access. Do NOT set on\nJWT-authorized runtimes — OAuth callers cannot match an ARN principal,\nso restricting principals would lock them out entirely.\n\nUse cases: Restricting SigV4 callers to specific roles, defense in depth\n\nAWS: Principal element of the VPC endpoint policy\n\nValidation: Optional; String[]; valid IAM principal ARNs",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "VpcEndpointProperty": {
+            "additionalProperties": false,
+            "description": "Configuration for MDAA-managed creation of the AgentCore interface VPC endpoint.\nPresence of this configuration opts in to endpoint creation (opt-in because\ninterface endpoints carry hourly and per-GB costs); an empty object accepts\nall defaults.\n\nThe endpoint provides VPC-resident callers a private network path to invoke\nAgentCore (no internet/NAT), and is the path that produces the aws:SourceVpc\nrequest context required by VPC-only resource policies (enforceVpcOnly).\n\nIf the VPC already has a bedrock-agentcore endpoint (e.g., created by LZA or\na central networking team), omit this configuration entirely — only one\nendpoint with Private DNS is allowed per service per VPC, and a second one\nwill fail to deploy.\n\nUse cases: Private invocation path, enforceVpcOnly support, no-NAT environments\n\nAWS: Interface VPC endpoint for com.amazonaws.{region}.bedrock-agentcore\n\nValidation: presence of this configuration opts in to endpoint creation",
+            "properties": {
+                "createSupportingEndpoints": {
+                    "description": "Also create supporting interface endpoints commonly required in VPC mode\nwithout internet access: ECR API, ECR Docker, STS, and CloudWatch Logs.\n\nUse cases: Fully private subnets without NAT gateway, firewalled environments\n\nAWS: AWS::EC2::VPCEndpoint (Interface) for ecr.api, ecr.dkr, sts, logs\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
+                },
+                "endpointPolicy": {
+                    "$ref": "#/definitions/VpcEndpointPolicyProperty",
+                    "description": "Endpoint policy controlling access through the endpoint.\nDefaults to allowing any principal (\"*\") restricted to AgentCore invoke\nactions — the correct default for OAuth-authenticated runtimes.\n\nUse cases: Least-privilege endpoint access for IAM callers\n\nAWS: VPC endpoint policy document\n\nValidation: Optional; VpcEndpointPolicyProperty"
+                }
+            },
             "type": "object"
         }
     },

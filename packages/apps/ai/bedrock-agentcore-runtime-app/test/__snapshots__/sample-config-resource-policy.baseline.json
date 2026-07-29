@@ -515,14 +515,28 @@
           "Fn::Join": [
             "",
             [
-              "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"AllowVpcOnly\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":[\"bedrock-agentcore:InvokeAgentRuntime\",\"bedrock-agentcore:InvokeAgentRuntimeForUser\"],\"Resource\":\"",
+              "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"AllowVpcOnly\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":[\"bedrock-agentcore:InvokeAgentRuntime*\"],\"Resource\":\"",
               {
                 "Fn::GetAtt": [
                   "bedrockagentcoreruntimeRuntime84537D71",
                   "AgentRuntimeArn"
                 ]
               },
-              "\",\"Condition\":{\"StringEquals\":{\"aws:SourceVpc\":\"vpc-0123456789abcdef0\"}}}]}"
+              "\",\"Condition\":{\"StringEquals\":{\"aws:SourceVpc\":\"vpc-0123456789abcdef0\"}}},{\"Sid\":\"DenyWrongVpc\",\"Effect\":\"Deny\",\"Principal\":\"*\",\"Action\":[\"bedrock-agentcore:InvokeAgentRuntime*\"],\"Resource\":\"",
+              {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeRuntime84537D71",
+                  "AgentRuntimeArn"
+                ]
+              },
+              "\",\"Condition\":{\"StringNotEqualsIfExists\":{\"aws:SourceVpc\":\"vpc-0123456789abcdef0\"},\"Null\":{\"aws:SourceVpc\":\"false\"},\"BoolIfExists\":{\"aws:ViaAWSService\":\"false\"}}},{\"Sid\":\"DenyNoVpc\",\"Effect\":\"Deny\",\"Principal\":\"*\",\"Action\":[\"bedrock-agentcore:InvokeAgentRuntime*\"],\"Resource\":\"",
+              {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeRuntime84537D71",
+                  "AgentRuntimeArn"
+                ]
+              },
+              "\",\"Condition\":{\"Null\":{\"aws:SourceVpc\":\"true\"},\"BoolIfExists\":{\"aws:ViaAWSService\":\"false\"}}}]}"
             ]
           ]
         }
@@ -530,6 +544,153 @@
       "DependsOn": [
         "bedrockagentcoreruntimeRuntime84537D71"
       ]
+    },
+    "bedrockagentcoreruntimeVpcEndpointSg97A08AE9": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-resource-policy/bedrock-agentcore-runtime/VpcEndpointSg",
+        "GroupName": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-resource-policy-agentcore-vpce",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-resource-policy"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockagentcoreruntimeVpcEndpointSgfromsg12345678tcpPORT4430B38AED0": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "HTTPS from application security group to AgentCore VPC endpoint",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeVpcEndpointSg97A08AE9",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": "sg-12345678",
+        "ToPort": 443
+      }
+    },
+    "bedrockagentcoreruntimeVpcEndpointSgsecuritygroupagentcorevpceidssm296B854D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-resource-policy/security-group/agentcore-vpce/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-resource-policy",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeVpcEndpointSg97A08AE9",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeVpcEndpointEndpoint958D1F4A": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "bedrock-agentcore:InvokeAgentRuntime*",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": "*",
+              "Sid": "AgentCoreInvokeThroughEndpoint"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "bedrockagentcoreruntimeVpcEndpointSg97A08AE9",
+              "GroupId"
+            ]
+          }
+        ],
+        "ServiceName": "com.amazonaws.test-region.bedrock-agentcore",
+        "SubnetIds": [
+          "subnet-12345678",
+          "subnet-87654321"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-resource-policy"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockagentcoreruntimevpcendpointagentcoreidssmB008043F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-resource-policy/vpc-endpoint/agentcore/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-resource-policy",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeVpcEndpointEndpoint958D1F4A"
+        }
+      }
     },
     "bedrockagentcoreruntimeagentRuntimetestAgentRuntimearnssmBD5DB9C8": {
       "Type": "AWS::SSM::Parameter",
@@ -1395,6 +1556,25 @@
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-resource-policy:kms:agentcoreruntimelogstestagentruntime:id"
+      }
+    },
+    "bedrockagentcoreruntimeVpcEndpointSgsecuritygroupagentcorevpceidoutC6E9F0FF": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeVpcEndpointSg97A08AE9",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-resource-policy:security-group:agentcorevpce:id"
+      }
+    },
+    "bedrockagentcoreruntimevpcendpointagentcoreidout223B1D0E": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeVpcEndpointEndpoint958D1F4A"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-resource-policy:vpc-endpoint:agentcore:id"
       }
     },
     "bedrockagentcoreruntimeagentRuntimetestAgentRuntimearnoutA7A7C358": {

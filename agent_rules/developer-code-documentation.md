@@ -79,3 +79,20 @@ Suppression reasons must be specific and reference AWS documentation:
 - Don't comment obvious code (`// increment counter` above `counter++`)
 - Use `// TODO:` for known improvements with a brief description
 - Don't leave commented-out code — remove it (git has history)
+
+## CHANGELOG Entries
+
+Entries are release notes for users, not design documents. Keep them scannable.
+
+- **One or two sentences per entry** (repo convention: most entries are 10–25 words; treat ~50 as the ceiling). Split unrelated changes into separate bullets rather than one long paragraph.
+- State **what changed and the user-visible effect**. Omit the mechanism — no policy-statement names, condition keys, IAM semantics, or verification history.
+- Link to the module README or SCHEMA.md for detail instead of inlining it.
+- Flag behavior changes to already-released features with a short `Breaking change:` or `Upgrade impact:` clause — one sentence, not a paragraph.
+
+```markdown
+<!-- Bad — explains the entire design and its rationale -->
+- **MDAA-managed VPC endpoint** (`@aws-mdaa/x`, `@aws-mdaa/y`): Added optional `foo` configuration to create ... with secure defaults — Private DNS enabled, an endpoint ENI security group scoped to HTTPS (443) from ... . Presence of the block opts in (an empty `{}` accepts all defaults); omit it to ... . Supports `bar` to restrict ... and `baz` to additionally create ... . This provides the private invocation path that `qux` requires, since the resource policy's `aws:SourceVpc` condition is only populated on ... .
+
+<!-- Good — what changed, user-visible effect, link for detail -->
+- Added optional `foo` to create the AgentCore interface VPC endpoint with Private DNS, an app-SG-scoped security group, and an invoke-only endpoint policy. Presence opts in; omit to use a pre-existing endpoint. See the [module README](path/to/README.md).
+```

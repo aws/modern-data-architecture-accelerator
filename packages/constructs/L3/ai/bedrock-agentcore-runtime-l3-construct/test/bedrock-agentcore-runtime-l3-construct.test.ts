@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Match, Template } from 'aws-cdk-lib/assertions';
+import { Annotations, Match, Template } from 'aws-cdk-lib/assertions';
 import {
   BedrockAgentcoreRuntimeL3Construct,
   BedrockAgentcoreRuntimeL3ConstructProps,
@@ -1159,6 +1159,288 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       expect(() => {
         new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'no-vpcid-runtime-construct', constructProps);
       }).toThrow('networkConfiguration.vpcId is required when enforceVpcOnly is true');
+    });
+  });
+
+  describe('VPC Endpoint Creation', () => {
+    const baseNetworkConfiguration: NetworkConfigurationProperty = {
+      vpcId: 'vpc-0123456789abcdef0',
+      securityGroups: ['sg-12345678'],
+      subnets: ['subnet-12345678', 'subnet-87654321'],
+    };
+
+    const baseProps = {
+      agentRuntimeName: 'vpce-runtime',
+      agentRuntimeArtifact: {
+        containerConfiguration: {
+          containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+        },
+      },
+    };
+
+    test('should create AgentCore interface endpoint with Private DNS in the runtime subnets', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: {
+          ...baseNetworkConfiguration,
+          vpcEndpoint: {},
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'vpce-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.resourceCountIs('AWS::EC2::VPCEndpoint', 1);
+      template.hasResourceProperties('AWS::EC2::VPCEndpoint', {
+        ServiceName: 'com.amazonaws.test-region.bedrock-agentcore',
+        VpcEndpointType: 'Interface',
+        PrivateDnsEnabled: true,
+        SubnetIds: ['subnet-12345678', 'subnet-87654321'],
+        VpcId: 'vpc-0123456789abcdef0',
+      });
+    });
+
+    test('should restrict endpoint security group ingress to the runtime security groups on 443', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: {
+          ...baseNetworkConfiguration,
+          vpcEndpoint: {},
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'vpce-sg-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
+        IpProtocol: 'tcp',
+        FromPort: 443,
+        ToPort: 443,
+        SourceSecurityGroupId: 'sg-12345678',
+      });
+    });
+
+    test('should create supporting endpoints when configured', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: {
+          ...baseNetworkConfiguration,
+          vpcEndpoint: { createSupportingEndpoints: true },
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'vpce-supporting-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      // AgentCore + ECR API + ECR Docker + STS + CloudWatch Logs
+      template.resourceCountIs('AWS::EC2::VPCEndpoint', 5);
+    });
+
+    test('should not create VPC endpoint when vpcEndpoint is absent', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: baseNetworkConfiguration,
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'no-vpce-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.resourceCountIs('AWS::EC2::VPCEndpoint', 0);
+    });
+
+    test('should throw error when vpcEndpoint is configured but vpcId is missing', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+          vpcEndpoint: {},
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      expect(() => {
+        new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'vpce-no-vpcid-runtime-construct', constructProps);
+      }).toThrow('networkConfiguration.vpcId is required when networkConfiguration.vpcEndpoint is configured');
+    });
+
+    test('should warn when enforceVpcOnly is enabled without endpoint creation', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: baseNetworkConfiguration,
+        enforceVpcOnly: true,
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'enforce-no-vpce-runtime-construct', constructProps);
+
+      const warnings = Annotations.fromStack(testApp.testStack).findWarning(
+        '*',
+        Match.stringLikeRegexp('.*enforceVpcOnly is enabled but networkConfiguration.vpcEndpoint is not configured.*'),
+      );
+      expect(warnings.length).toBeGreaterThan(0);
+    });
+
+    test('should not warn when enforceVpcOnly is enabled with endpoint creation', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: {
+          ...baseNetworkConfiguration,
+          vpcEndpoint: {},
+        },
+        enforceVpcOnly: true,
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'enforce-vpce-runtime-construct', constructProps);
+
+      const warnings = Annotations.fromStack(testApp.testStack).findWarning(
+        '*',
+        Match.stringLikeRegexp('.*enforceVpcOnly is enabled but networkConfiguration.vpcEndpoint is not configured.*'),
+      );
+      expect(warnings.length).toBe(0);
+    });
+
+    test('should restrict endpoint policy to configured IAM principals', () => {
+      const callerRoleArn = 'arn:aws:iam::123456789012:role/my-caller-role';
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: {
+          ...baseNetworkConfiguration,
+          vpcEndpoint: {
+            endpointPolicy: {
+              allowPrincipals: [callerRoleArn],
+            },
+          },
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'vpce-principals-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::EC2::VPCEndpoint', {
+        PolicyDocument: Match.objectLike({
+          Statement: [
+            Match.objectLike({
+              Sid: 'AgentCoreInvokeThroughEndpoint',
+              Effect: 'Allow',
+              Principal: {
+                AWS: callerRoleArn,
+              },
+            }),
+          ],
+        }),
+      });
+      // The default wildcard principal must not be present when principals are restricted
+      const endpoints = template.findResources('AWS::EC2::VPCEndpoint');
+      Object.values(endpoints).forEach(endpoint => {
+        const statements = endpoint.Properties.PolicyDocument?.Statement ?? [];
+        statements.forEach((statement: { Principal: unknown }) => {
+          expect(statement.Principal).not.toEqual('*');
+        });
+      });
+    });
+
+    test('should warn on wildcard endpoint principal for a SigV4 runtime', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: {
+          ...baseNetworkConfiguration,
+          vpcEndpoint: {},
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'vpce-sigv4-warn-construct', constructProps);
+
+      const warnings = Annotations.fromStack(testApp.testStack).findWarning(
+        '*',
+        Match.stringLikeRegexp('.*allows any principal.*SigV4.*'),
+      );
+      expect(warnings.length).toBeGreaterThan(0);
+    });
+
+    test('should not warn on wildcard endpoint principal when a JWT authorizer is configured', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: {
+          ...baseNetworkConfiguration,
+          vpcEndpoint: {},
+        },
+        authorizerConfiguration: {
+          customJwtAuthorizer: {
+            discoveryUrl: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_test/.well-known/openid-configuration',
+            allowedAudience: ['client-id'],
+          },
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'vpce-jwt-nowarn-construct', constructProps);
+
+      const warnings = Annotations.fromStack(testApp.testStack).findWarning(
+        '*',
+        Match.stringLikeRegexp('.*allows any principal.*SigV4.*'),
+      );
+      expect(warnings.length).toBe(0);
+    });
+
+    test('should not warn when allowPrincipals is set on a SigV4 runtime', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: {
+          ...baseNetworkConfiguration,
+          vpcEndpoint: {
+            endpointPolicy: {
+              allowPrincipals: ['arn:aws:iam::123456789012:role/my-caller-role'],
+            },
+          },
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'vpce-principals-nowarn-construct', constructProps);
+
+      const warnings = Annotations.fromStack(testApp.testStack).findWarning(
+        '*',
+        Match.stringLikeRegexp('.*allows any principal.*SigV4.*'),
+      );
+      expect(warnings.length).toBe(0);
+    });
+
+    test('should create SSM parameter for the endpoint ID', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        ...baseProps,
+        networkConfiguration: {
+          ...baseNetworkConfiguration,
+          vpcEndpoint: {},
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'vpce-ssm-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::SSM::Parameter', {
+        Name: Match.stringLikeRegexp('.*vpc-endpoint.*agentcore.*id'),
+      });
     });
   });
 

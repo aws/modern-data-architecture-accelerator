@@ -690,11 +690,12 @@ AWS: Bedrock AgentCore Runtime VPC network configuration
 
 Validation: Required; NetworkConfigurationProperty; 1-16 security groups and subnets
 
-| Property                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                            |
-| --------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [securityGroups](#networkConfiguration_securityGroups ) | No      | array of string | No         | -          | Security group IDs controlling inbound/outbound traffic for runtime instances.<br /><br />Use cases: Network access control, traffic filtering, security boundaries<br /><br />AWS: VPC security groups for Bedrock AgentCore Runtime<br /><br />Validation: Required; String[]; 1-16 security group IDs                                                                                                                     |
-| + [subnets](#networkConfiguration_subnets )               | No      | array of string | No         | -          | Subnet IDs for runtime instance placement enabling multi-AZ deployment.<br /><br />Use cases: Multi-AZ deployment, network isolation, high availability<br /><br />AWS: VPC subnets for Bedrock AgentCore Runtime<br /><br />Validation: Required; String[]; 1-16 subnet IDs                                                                                                                                                 |
-| - [vpcId](#networkConfiguration_vpcId )                   | No      | string          | No         | -          | VPC ID for the network where the runtime is deployed.<br />Required when \`enforceVpcOnly\` is enabled, to generate the resource-based policy<br />restricting invocations to this VPC.<br /><br />Use cases: VPC-only enforcement for JWT callers, network boundary identification<br /><br />AWS: VPC ID for resource-based policy condition<br /><br />Validation: Optional; String; required when enforceVpcOnly is true |
+| Property                                                  | Pattern | Type            | Deprecated | Definition                           | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| + [securityGroups](#networkConfiguration_securityGroups ) | No      | array of string | No         | -                                    | Security group IDs controlling inbound/outbound traffic for runtime instances.<br /><br />Use cases: Network access control, traffic filtering, security boundaries<br /><br />AWS: VPC security groups for Bedrock AgentCore Runtime<br /><br />Validation: Required; String[]; 1-16 security group IDs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| + [subnets](#networkConfiguration_subnets )               | No      | array of string | No         | -                                    | Subnet IDs for runtime instance placement enabling multi-AZ deployment.<br /><br />Use cases: Multi-AZ deployment, network isolation, high availability<br /><br />AWS: VPC subnets for Bedrock AgentCore Runtime<br /><br />Validation: Required; String[]; 1-16 subnet IDs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| - [vpcEndpoint](#networkConfiguration_vpcEndpoint )       | No      | object          | No         | In #/definitions/VpcEndpointProperty | Optional MDAA-managed creation of the AgentCore interface VPC endpoint<br />(com.amazonaws.{region}.bedrock-agentcore) in this VPC. Presence of this<br />block opts in to endpoint creation (an empty object accepts all defaults);<br />omitting it means no endpoint is created. The endpoint gives VPC-resident<br />callers a private invocation path and produces the aws:SourceVpc request<br />context that enforceVpcOnly's resource policy requires — without it, an<br />enforceVpcOnly runtime cannot be invoked at all.<br /><br />Creation is opt-in (interface endpoints carry hourly/per-GB costs). If the<br />VPC already has a bedrock-agentcore endpoint (e.g., created by LZA or a<br />central networking team), omit this block — only one endpoint with Private<br />DNS is allowed per service per VPC, and a second one will fail to deploy.<br /><br />Use cases: Private invocation path, enforceVpcOnly support, no-NAT environments<br /><br />AWS: Interface VPC endpoint with Private DNS, endpoint policy, and security group<br /><br />Validation: Optional; VpcEndpointProperty; requires vpcId when present |
+| - [vpcId](#networkConfiguration_vpcId )                   | No      | string          | No         | -                                    | VPC ID for the network where the runtime is deployed.<br />Required when \`enforceVpcOnly\` is enabled, to generate the resource-based policy<br />restricting invocations to this VPC.<br /><br />Use cases: VPC-only enforcement for JWT callers, network boundary identification<br /><br />AWS: VPC ID for resource-based policy condition<br /><br />Validation: Optional; String; required when enforceVpcOnly is true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
 ### <a name="networkConfiguration_securityGroups"></a>13.1. Property `root > networkConfiguration > securityGroups`
 
@@ -764,7 +765,122 @@ Validation: Required; String[]; 1-16 subnet IDs
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="networkConfiguration_vpcId"></a>13.3. Property `root > networkConfiguration > vpcId`
+### <a name="networkConfiguration_vpcEndpoint"></a>13.3. Property `root > networkConfiguration > vpcEndpoint`
+
+|                           |                                   |
+| ------------------------- | --------------------------------- |
+| **Type**                  | `object`                          |
+| **Required**              | No                                |
+| **Additional properties** | Not allowed                       |
+| **Defined in**            | #/definitions/VpcEndpointProperty |
+
+**Description:** Optional MDAA-managed creation of the AgentCore interface VPC endpoint
+(com.amazonaws.{region}.bedrock-agentcore) in this VPC. Presence of this
+block opts in to endpoint creation (an empty object accepts all defaults);
+omitting it means no endpoint is created. The endpoint gives VPC-resident
+callers a private invocation path and produces the aws:SourceVpc request
+context that enforceVpcOnly's resource policy requires — without it, an
+enforceVpcOnly runtime cannot be invoked at all.
+
+Creation is opt-in (interface endpoints carry hourly/per-GB costs). If the
+VPC already has a bedrock-agentcore endpoint (e.g., created by LZA or a
+central networking team), omit this block — only one endpoint with Private
+DNS is allowed per service per VPC, and a second one will fail to deploy.
+
+Use cases: Private invocation path, enforceVpcOnly support, no-NAT environments
+
+AWS: Interface VPC endpoint with Private DNS, endpoint policy, and security group
+
+Validation: Optional; VpcEndpointProperty; requires vpcId when present
+
+| Property                                                                                    | Pattern | Type    | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [createSupportingEndpoints](#networkConfiguration_vpcEndpoint_createSupportingEndpoints ) | No      | boolean | No         | -                                          | Also create supporting interface endpoints commonly required in VPC mode<br />without internet access: ECR API, ECR Docker, STS, and CloudWatch Logs.<br /><br />Use cases: Fully private subnets without NAT gateway, firewalled environments<br /><br />AWS: AWS::EC2::VPCEndpoint (Interface) for ecr.api, ecr.dkr, sts, logs<br /><br />Validation: Optional; Boolean                |
+| - [endpointPolicy](#networkConfiguration_vpcEndpoint_endpointPolicy )                       | No      | object  | No         | In #/definitions/VpcEndpointPolicyProperty | Endpoint policy controlling access through the endpoint.<br />Defaults to allowing any principal ("*") restricted to AgentCore invoke<br />actions — the correct default for OAuth-authenticated runtimes.<br /><br />Use cases: Least-privilege endpoint access for IAM callers<br /><br />AWS: VPC endpoint policy document<br /><br />Validation: Optional; VpcEndpointPolicyProperty |
+
+#### <a name="networkConfiguration_vpcEndpoint_createSupportingEndpoints"></a>13.3.1. Property `root > networkConfiguration > vpcEndpoint > createSupportingEndpoints`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Also create supporting interface endpoints commonly required in VPC mode
+without internet access: ECR API, ECR Docker, STS, and CloudWatch Logs.
+
+Use cases: Fully private subnets without NAT gateway, firewalled environments
+
+AWS: AWS::EC2::VPCEndpoint (Interface) for ecr.api, ecr.dkr, sts, logs
+
+Validation: Optional; Boolean
+
+#### <a name="networkConfiguration_vpcEndpoint_endpointPolicy"></a>13.3.2. Property `root > networkConfiguration > vpcEndpoint > endpointPolicy`
+
+|                           |                                         |
+| ------------------------- | --------------------------------------- |
+| **Type**                  | `object`                                |
+| **Required**              | No                                      |
+| **Additional properties** | Not allowed                             |
+| **Defined in**            | #/definitions/VpcEndpointPolicyProperty |
+
+**Description:** Endpoint policy controlling access through the endpoint.
+Defaults to allowing any principal ("*") restricted to AgentCore invoke
+actions — the correct default for OAuth-authenticated runtimes.
+
+Use cases: Least-privilege endpoint access for IAM callers
+
+AWS: VPC endpoint policy document
+
+Validation: Optional; VpcEndpointPolicyProperty
+
+| Property                                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [allowPrincipals](#networkConfiguration_vpcEndpoint_endpointPolicy_allowPrincipals ) | No      | array of string | No         | -          | IAM principal ARNs allowed to invoke AgentCore through this endpoint.<br />When omitted, the policy allows any principal ("*") — required for<br />OAuth/JWT-authenticated runtimes, since OAuth callers have no IAM identity<br />visible to the endpoint policy (access control is then enforced by the<br />runtime's resource-based policy and JWT authorizer).<br /><br />Recommended for SigV4/IAM-authenticated runtimes: set to the specific<br />caller role ARNs for least-privilege endpoint access. Do NOT set on<br />JWT-authorized runtimes — OAuth callers cannot match an ARN principal,<br />so restricting principals would lock them out entirely.<br /><br />Use cases: Restricting SigV4 callers to specific roles, defense in depth<br /><br />AWS: Principal element of the VPC endpoint policy<br /><br />Validation: Optional; String[]; valid IAM principal ARNs |
+
+##### <a name="networkConfiguration_vpcEndpoint_endpointPolicy_allowPrincipals"></a>13.3.2.1. Property `root > networkConfiguration > vpcEndpoint > endpointPolicy > allowPrincipals`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** IAM principal ARNs allowed to invoke AgentCore through this endpoint.
+When omitted, the policy allows any principal ("*") — required for
+OAuth/JWT-authenticated runtimes, since OAuth callers have no IAM identity
+visible to the endpoint policy (access control is then enforced by the
+runtime's resource-based policy and JWT authorizer).
+
+Recommended for SigV4/IAM-authenticated runtimes: set to the specific
+caller role ARNs for least-privilege endpoint access. Do NOT set on
+JWT-authorized runtimes — OAuth callers cannot match an ARN principal,
+so restricting principals would lock them out entirely.
+
+Use cases: Restricting SigV4 callers to specific roles, defense in depth
+
+AWS: Principal element of the VPC endpoint policy
+
+Validation: Optional; String[]; valid IAM principal ARNs
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [allowPrincipals items](#networkConfiguration_vpcEndpoint_endpointPolicy_allowPrincipals_items) | -           |
+
+###### <a name="networkConfiguration_vpcEndpoint_endpointPolicy_allowPrincipals_items"></a>13.3.2.1.1. root > networkConfiguration > vpcEndpoint > endpointPolicy > allowPrincipals > allowPrincipals items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="networkConfiguration_vpcId"></a>13.4. Property `root > networkConfiguration > vpcId`
 
 |              |          |
 | ------------ | -------- |

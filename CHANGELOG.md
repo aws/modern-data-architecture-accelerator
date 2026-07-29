@@ -16,6 +16,7 @@
 #### Athena Workgroup Module
 
 - **S3 Lifecycle Policies** (`@aws-mdaa/athena-workgroup`, `@aws-mdaa/athena-workgroup-l3-construct`): Added optional `lifecycleConfiguration` to the athena-workgroup module, enabling S3 lifecycle rules on the workgroup results bucket. Rules without an explicit prefix are automatically scoped to the `athena-results/` prefix; rules with an explicit prefix are applied as-is. When omitted, the results bucket has no lifecycle rules (existing behavior preserved).
+
 ### Data Science/AI/ML Changes
 
 #### Bedrock Builder Module
@@ -26,6 +27,15 @@
 
 - Added `@aws-mdaa/bedrock-agentcore-gateway-l3-construct`: an L3 construct that deploys a compliant AgentCore Gateway with always-on customer-managed KMS encryption, CUSTOM_JWT/AWS_IAM inbound authorization, scoped execution-role policies, and a CMK-encrypted audit-log-delivery pipeline.
 - Added `MdaaAgentcoreGateway` and `MdaaAgentcoreGatewayTarget` L2 constructs (`@aws-mdaa/bedrock-constructs`) for the gateway and its tool targets (Lambda tool sources with inline or S3 tool schemas).
+
+#### Bedrock AgentCore Runtime Module
+
+- Added optional `networkConfiguration.vpcEndpoint` to create the AgentCore interface VPC endpoint (`com.amazonaws.{region}.bedrock-agentcore`) with Private DNS, an app-SG-scoped security group, and an invoke-only endpoint policy. Presence opts in; omit to use a pre-existing endpoint. Supports `endpointPolicy.allowPrincipals` and `createSupportingEndpoints` (ECR, STS, CloudWatch Logs). Required for `enforceVpcOnly` to be satisfiable. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#aws-service-endpoints).
+- Corrected the documented AgentCore VPC endpoint service name from `bedrock-agent-runtime` to `bedrock-agentcore`.
+
+### Bug Fixes
+
+- Fixed `enforceVpcOnly` not restricting same-account SigV4 callers (1.7.0 regression): the `Allow`-only resource policy could not deny an IAM caller its identity policy already authorized, so out-of-VPC SigV4 invocation succeeded (JWT/OAuth callers were correctly blocked). The policy now adds explicit `DenyWrongVpc`/`DenyNoVpc` statements and covers all invoke variants via `bedrock-agentcore:InvokeAgentRuntime*`. Breaking change: out-of-VPC IAM invocations that previously succeeded are now denied.
 
 ## [1.7.0] - 2026-07-16
 

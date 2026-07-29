@@ -20,6 +20,27 @@ networkConfiguration:
   subnets:
     - subnet-12345678
     - subnet-87654321
+  # Create the AgentCore interface VPC endpoint (com.amazonaws.{region}.bedrock-agentcore).
+  # Presence of this block opts in to endpoint creation; an empty block ({})
+  # accepts all defaults. The endpoint provides the private invocation path that
+  # enforceVpcOnly requires: the resource policy's aws:SourceVpc condition only
+  # exists on requests arriving through a VPC endpoint. If the VPC already has
+  # this endpoint (e.g., created by LZA or a central networking team), omit this
+  # block entirely — only one endpoint with Private DNS is allowed per service
+  # per VPC.
+  vpcEndpoint: {}
+  # To customize, replace the line above with a populated block, e.g.:
+  # vpcEndpoint:
+  #   # Restrict the endpoint policy to specific IAM principals. When omitted,
+  #   # the policy allows any principal ("*") restricted to AgentCore invoke
+  #   # actions — required for OAuth/JWT callers, which have no IAM identity
+  #   # visible to endpoint policies.
+  #   endpointPolicy:
+  #     allowPrincipals:
+  #       - 'arn:aws:iam::{{account}}:role/my-caller-role'
+  #   # Also create supporting endpoints (ECR API, ECR Docker, STS,
+  #   # CloudWatch Logs) for fully private subnets without NAT.
+  #   createSupportingEndpoints: true
 # JWT authentication configuration
 authorizerConfiguration:
   customJwtAuthorizer:

@@ -7,10 +7,15 @@ import { MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
-import { aws_bedrockagentcore as bedrockagentcore, aws_xray as xray, Stack } from 'aws-cdk-lib';
+import { Annotations, aws_bedrockagentcore as bedrockagentcore, aws_xray as xray, Stack } from 'aws-cdk-lib';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaResourceType } from '@aws-mdaa/naming';
-import { createAgentCoreLogProtection, createAgentCoreResourcePolicy } from '@aws-mdaa/agentcore-shared';
+import {
+  createAgentCoreLogProtection,
+  createAgentCoreResourcePolicy,
+  createAgentCoreVpcEndpoint,
+  VpcEndpointProperty,
+} from '@aws-mdaa/agentcore-shared';
 import { DockerImageAsset, Platform } from 'aws-cdk-lib/aws-ecr-assets';
 import { Effect, ManagedPolicy, PolicyDocument, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { DataIdentifier, ResourcePolicy } from 'aws-cdk-lib/aws-logs';
@@ -135,6 +140,27 @@ export interface NetworkConfigurationProperty {
    * Validation: Required; String[]; 1-16 subnet IDs
    **/
   readonly subnets: string[];
+  /**
+   * Optional MDAA-managed creation of the AgentCore interface VPC endpoint
+   * (com.amazonaws.{region}.bedrock-agentcore) in this VPC. Presence of this
+   * block opts in to endpoint creation (an empty object accepts all defaults);
+   * omitting it means no endpoint is created. The endpoint gives VPC-resident
+   * callers a private invocation path and produces the aws:SourceVpc request
+   * context that enforceVpcOnly's resource policy requires — without it, an
+   * enforceVpcOnly runtime cannot be invoked at all.
+   *
+   * Creation is opt-in (interface endpoints carry hourly/per-GB costs). If the
+   * VPC already has a bedrock-agentcore endpoint (e.g., created by LZA or a
+   * central networking team), omit this block — only one endpoint with Private
+   * DNS is allowed per service per VPC, and a second one will fail to deploy.
+   *
+   * Use cases: Private invocation path, enforceVpcOnly support, no-NAT environments
+   *
+   * AWS: Interface VPC endpoint with Private DNS, endpoint policy, and security group
+   *
+   * Validation: Optional; VpcEndpointProperty; requires vpcId when present
+   **/
+  readonly vpcEndpoint?: VpcEndpointProperty;
 }
 
 /**
@@ -807,6 +833,9 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
       resourcePolicy.addDependency(this.runtime);
     }
 
+    // Create the AgentCore interface VPC endpoint if requested
+    this.createVpcEndpoint(props);
+
     // Store runtime information in SSM Parameter Store
     this.storeSSMParameters(props.agentRuntimeName);
   }
@@ -1119,6 +1148,69 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
     endpoint.node.addDependency(this.runtime);
 
     return endpoint;
+  }
+
+  /**
+   * Creates the AgentCore interface VPC endpoint when networkConfiguration.vpcEndpoint
+   * is configured. The endpoint provides VPC-resident callers a private invocation path
+   * and is required for enforceVpcOnly to be satisfiable (the resource policy's
+   * aws:SourceVpc condition only exists on requests arriving through a VPC endpoint).
+   */
+  private createVpcEndpoint(props: BedrockAgentcoreRuntimeL3ConstructProps): void {
+    const vpcEndpointConfig = props.networkConfiguration.vpcEndpoint;
+
+    if (!vpcEndpointConfig) {
+      // enforceVpcOnly without an endpoint in the VPC leaves the runtime uninvokable —
+      // surface this at synth time for users relying on an out-of-band endpoint.
+      if (props.enforceVpcOnly) {
+        Annotations.of(this).addWarningV2(
+          '@aws-mdaa/bedrock-agentcore-runtime:enforceVpcOnlyWithoutVpcEndpoint',
+          `enforceVpcOnly is enabled but networkConfiguration.vpcEndpoint is not configured. ` +
+            `Ensure a bedrock-agentcore interface VPC endpoint exists in ${props.networkConfiguration.vpcId} ` +
+            `(e.g., created by LZA or a central networking team), or the runtime will not be invokable.`,
+        );
+      }
+      return;
+    }
+
+    if (!props.networkConfiguration.vpcId) {
+      throw new Error(
+        'networkConfiguration.vpcId is required when networkConfiguration.vpcEndpoint is configured. ' +
+          'The VPC ID identifies the VPC in which the AgentCore interface endpoint is created.',
+      );
+    }
+
+    // A wildcard endpoint-policy principal is required for JWT/OAuth callers (no IAM
+    // identity for the policy to match), but a SigV4 runtime can and should name its
+    // caller roles.
+    const jwtConfigured = !!(
+      (props.authorizerConfiguration?.customJwtAuthorizer ?? props.authorizerConfiguration?.jwtAuthorizer) // NOSONAR
+    );
+    if (!jwtConfigured && !vpcEndpointConfig.endpointPolicy?.allowPrincipals?.length) {
+      Annotations.of(this).addWarningV2(
+        '@aws-mdaa/bedrock-agentcore-runtime:vpcEndpointWildcardPrincipal',
+        `The AgentCore VPC endpoint policy allows any principal ("*") because ` +
+          `networkConfiguration.vpcEndpoint.endpointPolicy.allowPrincipals is not set. ` +
+          `This runtime uses SigV4 (IAM) inbound auth, so set allowPrincipals to the caller role ARNs ` +
+          `for least-privilege endpoint access. The wildcard is only required for JWT/OAuth callers.`,
+      );
+    }
+
+    const endpoints = createAgentCoreVpcEndpoint(this, 'VpcEndpoint', {
+      vpcId: props.networkConfiguration.vpcId,
+      subnetIds: props.networkConfiguration.subnets,
+      ingressSecurityGroupIds: props.networkConfiguration.securityGroups,
+      vpcEndpointConfig: vpcEndpointConfig,
+      naming: this.props.naming,
+    });
+
+    new MdaaParamAndOutput(this, {
+      resourceType: 'vpc-endpoint',
+      resourceId: 'agentcore',
+      name: 'id',
+      value: endpoints.agentCoreEndpoint.vpcEndpointId,
+      ...this.props,
+    });
   }
 
   private createLogProtection(props: BedrockAgentcoreRuntimeL3ConstructProps): void {

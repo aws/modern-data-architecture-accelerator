@@ -6,3 +6,4 @@
 export * from './authorizer';
 export * from './log-protection';
 export * from './resource-policy';
+export * from './vpc-endpoint';

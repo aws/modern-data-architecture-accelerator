@@ -48,6 +48,26 @@ networkConfiguration:
     - subnet-12345678
     - subnet-87654321
     - subnet-abcdef12
+  # (Optional) MDAA-managed creation of the AgentCore interface VPC endpoint
+  # (com.amazonaws.{region}.bedrock-agentcore). Presence of this block opts in
+  # to endpoint creation (interface endpoints carry hourly/per-GB costs).
+  # The endpoint provides VPC-resident callers a private invocation path and
+  # produces the aws:SourceVpc request context that enforceVpcOnly's resource
+  # policy requires. If the VPC already has this endpoint (e.g., created by LZA
+  # or a central networking team), omit this block — only one endpoint with
+  # Private DNS is allowed per service per VPC.
+  vpcEndpoint:
+    # (Optional) Endpoint policy controlling access through the endpoint.
+    # When omitted, allows any principal ("*") restricted to AgentCore invoke
+    # actions — required for OAuth/JWT callers, which have no IAM identity
+    # visible to endpoint policies.
+    endpointPolicy:
+      # (Optional) Restrict the endpoint to specific IAM principals (SigV4 callers)
+      allowPrincipals:
+        - 'arn:{{partition}}:iam::{{account}}:role/test-caller-role'
+    # (Optional) Also create supporting interface endpoints (ECR API, ECR Docker,
+    # STS, CloudWatch Logs) for fully private subnets without NAT
+    createSupportingEndpoints: true
 # (Optional) Session timeout and maximum lifetime settings for
 # runtime instances (values 60-28800 seconds)
 lifecycleConfiguration:

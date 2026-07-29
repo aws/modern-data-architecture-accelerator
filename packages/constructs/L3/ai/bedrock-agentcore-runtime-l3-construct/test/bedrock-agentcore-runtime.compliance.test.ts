@@ -135,6 +135,62 @@ describe('BedrockAgentcoreRuntimeL3Construct Compliance Tests', () => {
     testApp.checkCdkNagCompliance(stack);
   });
 
+  describe('Runtime with VPC endpoint', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+      agentRuntimeName: 'vpce-compliant-runtime',
+      agentRuntimeArtifact: {
+        containerConfiguration: {
+          containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+        },
+      },
+      networkConfiguration: {
+        vpcId: 'vpc-0123456789abcdef0',
+        securityGroups: ['sg-12345678'],
+        subnets: ['subnet-12345678', 'subnet-87654321'],
+        vpcEndpoint: {},
+      },
+      enforceVpcOnly: true,
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    };
+
+    new BedrockAgentcoreRuntimeL3Construct(stack, 'vpce-compliant-runtime-construct', constructProps);
+
+    testApp.checkCdkNagCompliance(stack);
+  });
+
+  describe('Runtime with VPC endpoint, restricted principals, and supporting endpoints', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+      agentRuntimeName: 'vpce-full-compliant-runtime',
+      agentRuntimeArtifact: {
+        containerConfiguration: {
+          containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+        },
+      },
+      networkConfiguration: {
+        vpcId: 'vpc-0123456789abcdef0',
+        securityGroups: ['sg-12345678'],
+        subnets: ['subnet-12345678', 'subnet-87654321'],
+        vpcEndpoint: {
+          endpointPolicy: {
+            allowPrincipals: ['arn:aws:iam::123456789012:role/my-caller-role'],
+          },
+          createSupportingEndpoints: true,
+        },
+      },
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    };
+
+    new BedrockAgentcoreRuntimeL3Construct(stack, 'vpce-full-compliant-runtime-construct', constructProps);
+
+    testApp.checkCdkNagCompliance(stack);
+  });
+
   describe('Runtime with additional data protection identifiers', () => {
     const testApp = new MdaaTestApp();
     const stack = testApp.testStack;

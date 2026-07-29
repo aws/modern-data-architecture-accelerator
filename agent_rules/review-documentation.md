@@ -24,6 +24,7 @@ Review repo-wide documentation quality — CHANGELOG updates, SCHEMA.md regenera
 - Internal changes (CI/CD, test infrastructure, refactoring, documentation tooling) do NOT require CHANGELOG entries
 - The new entry should match the MR's changes (not stale or copy-pasted)
 - Entry follows the existing format (version header, categorized bullets)
+- Entries are release notes, not design documents: one or two sentences stating what changed and the user-visible effect. Flag entries that inline implementation mechanism (policy statement names, condition keys, IAM semantics), recap review discussion, or run substantially longer than surrounding entries — detail belongs in the module README or SCHEMA.md, linked from the entry
 
 ### SCHEMA.md
 - If `lib/config-schema.json` changed in any app module, the corresponding `SCHEMA.md` should also be updated
@@ -71,7 +72,7 @@ outside the JSON. The file must contain ONLY valid JSON.
 
 - **HIGH:** CHANGELOG not updated for user-impacting changes (new app modules, config property changes, bug fixes, breaking changes), SCHEMA.md out of sync with config-schema.json, broken links in changed docs
 - **MEDIUM:** Starter kit README references outdated module config, MkDocs nav missing new module, CHANGELOG entry doesn't match MR changes
-- **LOW:** Minor formatting issues, stale links in unchanged docs adjacent to changed content
+- **LOW:** Minor formatting issues, stale links in unchanged docs adjacent to changed content, CHANGELOG entry substantially more verbose than repo convention (implementation mechanism or design rationale inlined instead of linked)
 
 ### Rules
 

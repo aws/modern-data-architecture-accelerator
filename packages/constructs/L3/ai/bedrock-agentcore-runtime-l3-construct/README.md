@@ -8,6 +8,7 @@ This construct provides a high-level abstraction for creating Amazon Bedrock Age
 - **Docker Image Management**: Build and push Docker images to ECR or use existing images
 - **IAM Role Management**: Automatic creation of IAM roles with required permissions
 - **VPC Network Configuration**: Secure VPC deployment (required for all runtimes)
+- **AgentCore VPC Endpoint**: Optional MDAA-managed interface endpoint (`com.amazonaws.{region}.bedrock-agentcore`) with Private DNS, least-privilege endpoint policy, and application-SG-scoped security group — the private invocation path required by `enforceVpcOnly`
 - **JWT Authorization**: Configure custom JWT authorizers for access control
 - **Lifecycle Management**: Configure session timeouts and maximum lifetimes
 - **Runtime Endpoints**: Create endpoints for runtime invocation
@@ -72,6 +73,10 @@ const runtime = new BedrockAgentcoreRuntimeL3Construct(this, 'MyRuntime', {
 ### Network Configuration
 - `securityGroups`: Array of security group IDs (1-16 items, required)
 - `subnets`: Array of subnet IDs (1-16 items, required)
+- `vpcId`: VPC ID (required when `enforceVpcOnly` or `vpcEndpoint` is set)
+- `vpcEndpoint`: Create the AgentCore interface VPC endpoint. Presence opts in; omit to use a pre-existing endpoint (only one per service per VPC may enable Private DNS)
+  - `endpointPolicy.allowPrincipals`: Restrict the endpoint policy to specific IAM principal ARNs. Defaults to `*`, which is required for JWT/OAuth callers — do not set on JWT-authorized runtimes
+  - `createSupportingEndpoints`: Also create ECR API, ECR Docker, STS, and CloudWatch Logs endpoints for subnets without NAT
 
 Note: All runtimes are deployed in VPC mode for security. The network mode is automatically set to VPC.
 
