@@ -1,0 +1,34 @@
+# Minimal config for the DataOps MWAA module.
+# Deploys a single MWAA environment with project integration, private web
+# server, and default scaling. Uses the project KMS key and project S3 bucket
+# for Airflow artifacts (DAGs, plugins, requirements).
+# A default placeholder DAG is deployed automatically when no dagPath is specified.
+
+# DataOps project name for shared resource autowiring (KMS key, S3 bucket)
+projectName: dataops-project-sample
+
+# MWAA environment configurations
+environments:
+  # Environment name (becomes the environment identifier after MDAA naming)
+  pipeline:
+    # Apache Airflow version in major.minor.patch format
+    airflowVersion: '2.10.3'
+
+    # IAM execution role ARN for the MWAA environment.
+    # Created in the Roles module with airflow-env.amazonaws.com trust policy.
+    # Must also be configured as an execution role in the DataOps Project module
+    # (so it receives project bucket and KMS key access).
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module>/role/<role_name>/arn
+    executionRoleArn: arn:{{partition}}:iam::{{account}}:role/airflow-execution
+
+    # VPC ID for MWAA environment deployment
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-a1b2c3d4
+
+    # Subnet IDs for the MWAA environment (minimum 2, different AZs)
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnets:
+      - subnet-1a2b3c4d
+      - subnet-5e6f7g8h

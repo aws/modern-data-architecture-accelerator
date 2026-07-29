@@ -1,0 +1,12 @@
+*.ts
+*.tsbuildinfo
+.eslintrc.js
+tsconfig.json
+typedoc.json
+coverage
+test/
+*.tgz
+dist
+!*.js
+!*.d.ts
+jest.config.js

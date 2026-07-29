@@ -13,6 +13,21 @@
 - **S3 Lifecycle Policies** (`@aws-mdaa/dataops-project`, `@aws-mdaa/dataops-project-l3-construct`): Added optional `lifecycleConfiguration` to the dataops-project module, enabling S3 lifecycle rules on the project bucket for automated storage-class transitions, object expiration, incomplete-multipart upload cleanup, and noncurrent-version management. Each rule targets an optional key prefix (e.g. `temp/`, `athena-results/`, `data/`) so transient or cold data can be aged to cheaper storage independently. When omitted, the project bucket has no lifecycle rules (existing behavior preserved).
 - **DataOps Project — Execution Role Permission Levels** (`@aws-mdaa/dataops-project`): `createReadWriteGrantsForProjectExecutionRoles` now accepts the case-sensitive permission-level strings `read`, `write`, and `super` in addition to boolean values. Boolean `true` remains equivalent to `write` and is fully backward compatible. The new `super` level grants ALTER and DROP on tables and DROP on the database, enabling ETL jobs that replace or recreate tables to run within infrastructure-as-code.
 
+#### DataOps MWAA Module
+
+- New `@aws-mdaa/dataops-mwaa` module: Amazon Managed Workflows for Apache Airflow (MWAA) deployment with enterprise security
+  - Supports multiple named MWAA environments per module
+  - Uses DataOps project bucket for Airflow artifacts under `airflow/<env-name>/` prefix
+  - Execution roles created externally in Roles module (same pattern as Glue Jobs)
+  - KMS encryption (project key or dedicated), VPC isolation, private web server by default
+  - Per-environment security group with self-referencing rule for worker communication
+  - All Airflow component logging enabled at INFO minimum (scheduler, worker, webserver, DAG processing, task)
+  - Pre-creates each Airflow component's CloudWatch log group with KMS encryption and default two-year retention (configurable per environment via `logRetentionDays`, `0` for infinite) instead of MWAA's never-expire default
+  - Per-environment access managed policy for web login and CLI access
+  - Configurable scaling (workers, web servers, schedulers), Airflow config overrides, maintenance window
+  - DataOps project integration for shared KMS key auto-wiring via `projectName`
+  - Comprehensive, minimal, and no-project sample configs with inline documentation
+
 #### Athena Workgroup Module
 
 - **S3 Lifecycle Policies** (`@aws-mdaa/athena-workgroup`, `@aws-mdaa/athena-workgroup-l3-construct`): Added optional `lifecycleConfiguration` to the athena-workgroup module, enabling S3 lifecycle rules on the workgroup results bucket. Rules without an explicit prefix are automatically scoped to the `athena-results/` prefix; rules with an explicit prefix are applied as-is. When omitted, the results bucket has no lifecycle rules (existing behavior preserved).
@@ -65,8 +80,6 @@
   - IAM database authentication, CloudWatch log exports, automatic admin password rotation
   - Per-cluster access managed policy with `rds-db:connect`, `rds:Describe*`, and Secrets Manager access
   - Top-level `dataAdminRoles` for cross-cluster admin access, per-cluster `clusterAccessRoles`
-  - DataOps project integration for shared KMS key auto-wiring via `projectName`
-  - Comprehensive, minimal, and no-project sample configs with inline documentation
 
 ### DataOps Module Changes
 

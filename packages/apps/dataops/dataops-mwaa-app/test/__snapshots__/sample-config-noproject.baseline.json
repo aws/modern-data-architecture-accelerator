@@ -1,0 +1,1448 @@
+{
+  "Description": "(SO0320-dataops-mwaa) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-mwaa-noproject/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-mwaa) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructsgstandalone3A0B80F1": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Security group for MWAA environment standalone",
+        "GroupName": "test-org-test-env-test-domain-test-mwaa-noproject-standalone",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-a1b2c3d4"
+      }
+    },
+    "constructsgstandalonefrom1000016tcpPORT4435F494395": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "CidrIp": "10.0.0.0/16",
+        "Description": "HTTPS ingress for 10.0.0.0/16",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "constructsgstandalone3A0B80F1",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "constructsgstandalonefromtestorgtestenvtestdomaintestmwaanoprojectconstructsgstandalone9292BD5EALLTRAFFIC80B66A70": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "Self-Ref",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "constructsgstandalone3A0B80F1",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "constructsgstandalone3A0B80F1",
+            "GroupId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] Ingress/Egress is limited to this security group",
+              "id": "NIST.800.53.R5-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] Ingress/Egress is limited to this security group",
+              "id": "HIPAA.Security-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] Ingress/Egress is limited to this security group",
+              "id": "PCI.DSS.321-EC2RestrictedCommonPorts"
+            }
+          ]
+        }
+      }
+    },
+    "constructsgstandalonetotestorgtestenvtestdomaintestmwaanoprojectconstructsgstandalone9292BD5EALLTRAFFICD7493A5F": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "Self-Ref",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "constructsgstandalone3A0B80F1",
+            "GroupId"
+          ]
+        },
+        "GroupId": {
+          "Fn::GetAtt": [
+            "constructsgstandalone3A0B80F1",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "-1"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] Ingress/Egress is limited to this security group",
+              "id": "NIST.800.53.R5-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] Ingress/Egress is limited to this security group",
+              "id": "HIPAA.Security-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-noproject.yaml] Ingress/Egress is limited to this security group",
+              "id": "PCI.DSS.321-EC2RestrictedCommonPorts"
+            }
+          ]
+        }
+      }
+    },
+    "constructsgstandalonesecuritygroupstandaloneidssmFB272D64": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-noproject/security-group/standalone/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructsgstandalone3A0B80F1",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "constructmwaastandaloneEnvironment06248F1E": {
+      "Type": "AWS::MWAA::Environment",
+      "Properties": {
+        "AirflowVersion": "2.10.3",
+        "DagS3Path": "deployment/airflow/standalone/dags",
+        "EnvironmentClass": "mw1.small",
+        "ExecutionRoleArn": "arn:test-partition:iam::test-account:role/airflow-execution",
+        "KmsKey": "arn:test-partition:kms:test-region:test-account:key/mrk-1234abcd5678efgh",
+        "LoggingConfiguration": {
+          "DagProcessingLogs": {
+            "Enabled": true,
+            "LogLevel": "INFO"
+          },
+          "SchedulerLogs": {
+            "Enabled": true,
+            "LogLevel": "INFO"
+          },
+          "TaskLogs": {
+            "Enabled": true,
+            "LogLevel": "INFO"
+          },
+          "WebserverLogs": {
+            "Enabled": true,
+            "LogLevel": "INFO"
+          },
+          "WorkerLogs": {
+            "Enabled": true,
+            "LogLevel": "INFO"
+          }
+        },
+        "MaxWorkers": 10,
+        "MinWorkers": 1,
+        "Name": "test-org-test-env-test-domain-test-mwaa-noproject-standalone",
+        "NetworkConfiguration": {
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "constructsgstandalone3A0B80F1",
+                "GroupId"
+              ]
+            }
+          ],
+          "SubnetIds": [
+            "subnet-1a2b3c4d",
+            "subnet-5e6f7g8h"
+          ]
+        },
+        "SourceBucketArn": {
+          "Fn::GetAtt": [
+            "mwaadagsbucket63D9B5C6",
+            "Arn"
+          ]
+        },
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-noproject",
+          "mdaa_org": "test-org"
+        },
+        "WebserverAccessMode": "PRIVATE_ONLY"
+      },
+      "DependsOn": [
+        "constructmwaastandaloneLogGroupDAGProcessingABB164F5",
+        "constructmwaastandaloneLogGroupScheduler9C68D179",
+        "constructmwaastandaloneLogGroupTask53433A56",
+        "constructmwaastandaloneLogGroupWebServer67B89C82",
+        "constructmwaastandaloneLogGroupWorker4F859A9B"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaastandaloneLogGroupDAGProcessingABB164F5": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/mrk-1234abcd5678efgh",
+        "LogGroupName": "airflow-test-org-test-env-test-domain-test-mwaa-noproject-standalone-DAGProcessing",
+        "RetentionInDays": 731,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaastandaloneLogGroupScheduler9C68D179": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/mrk-1234abcd5678efgh",
+        "LogGroupName": "airflow-test-org-test-env-test-domain-test-mwaa-noproject-standalone-Scheduler",
+        "RetentionInDays": 731,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaastandaloneLogGroupTask53433A56": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/mrk-1234abcd5678efgh",
+        "LogGroupName": "airflow-test-org-test-env-test-domain-test-mwaa-noproject-standalone-Task",
+        "RetentionInDays": 731,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaastandaloneLogGroupWebServer67B89C82": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/mrk-1234abcd5678efgh",
+        "LogGroupName": "airflow-test-org-test-env-test-domain-test-mwaa-noproject-standalone-WebServer",
+        "RetentionInDays": 731,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaastandaloneLogGroupWorker4F859A9B": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/mrk-1234abcd5678efgh",
+        "LogGroupName": "airflow-test-org-test-env-test-domain-test-mwaa-noproject-standalone-Worker",
+        "RetentionInDays": 731,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaastandalonemwaastandalonearnssm46FE3974": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-noproject/mwaa/standalone/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructmwaastandaloneEnvironment06248F1E",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "constructmwaastandalonemwaastandalonewebserverurlssmECDE0785": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-noproject/mwaa/standalone/webserver-url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructmwaastandaloneEnvironment06248F1E",
+            "WebserverUrl"
+          ]
+        }
+      }
+    },
+    "constructexecpolicystandaloneEEA7033F": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "MWAA execution role policy for environment standalone",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-mwaa-noproject-stan--6872d0f2",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject*",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "mwaadagsbucket63D9B5C6",
+                        "Arn"
+                      ]
+                    },
+                    "/deployment/airflow/standalone/*"
+                  ]
+                ]
+              },
+              "Sid": "AirflowS3ReadObjects"
+            },
+            {
+              "Action": "s3:GetBucket*",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "mwaadagsbucket63D9B5C6",
+                  "Arn"
+                ]
+              },
+              "Sid": "AirflowS3Bucket"
+            },
+            {
+              "Action": "s3:List*",
+              "Condition": {
+                "StringLike": {
+                  "s3:prefix": [
+                    "deployment/airflow/standalone/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "mwaadagsbucket63D9B5C6",
+                  "Arn"
+                ]
+              },
+              "Sid": "AirflowS3List"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/mrk-1234abcd5678efgh",
+              "Sid": "AirflowKmsAccess"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents",
+                "logs:GetLogEvents",
+                "logs:GetLogRecord",
+                "logs:GetLogGroupFields",
+                "logs:GetQueryResults"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:airflow-test-org-test-env-test-domain-test-mwaa-noproject-standalone-*",
+              "Sid": "AirflowLogs"
+            },
+            {
+              "Action": "airflow:PublishMetrics",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "constructmwaastandaloneEnvironment06248F1E",
+                  "Arn"
+                ]
+              },
+              "Sid": "AirflowMetrics"
+            },
+            {
+              "Action": [
+                "sqs:ChangeMessageVisibility",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+                "sqs:ReceiveMessage",
+                "sqs:SendMessage"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:sqs:test-region:*:airflow-celery-*",
+              "Sid": "AirflowCelery"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          "airflow-execution"
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] MWAA execution role wildcards are scoped by a service-specific prefix, not by actions lacking resource-level support. S3 (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html): s3:GetObject* is scoped to the environment object prefix <bucket>/deployment/airflow/<env>/*; s3:List* targets the bucket but is constrained by an s3:prefix condition to deployment/airflow/<env>/* so it cannot enumerate other environments; s3:GetBucket* metadata actions do not support resource-level or prefix scoping and so target the bucket ARN. CloudWatch Logs (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html): logs:Create*/Put*/Get* are scoped to this environment's own log groups via the airflow-<env>-* log-group name prefix. SQS (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonsqs.html): Celery queue actions are scoped to the airflow-celery-* queue-name prefix; the account ID is wildcarded because MWAA provisions the Celery queues in an AWS service-owned account, so the queue account cannot be pinned to this account.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "constructexecpolicystandalonemanagedpolicymwaaexecarnssm0337FB26": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-noproject-standalone/managed-policy/mwaa-exec/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructexecpolicystandaloneEEA7033F"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] MWAA execution role wildcards are scoped by a service-specific prefix, not by actions lacking resource-level support. S3 (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html): s3:GetObject* is scoped to the environment object prefix <bucket>/deployment/airflow/<env>/*; s3:List* targets the bucket but is constrained by an s3:prefix condition to deployment/airflow/<env>/* so it cannot enumerate other environments; s3:GetBucket* metadata actions do not support resource-level or prefix scoping and so target the bucket ARN. CloudWatch Logs (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html): logs:Create*/Put*/Get* are scoped to this environment's own log groups via the airflow-<env>-* log-group name prefix. SQS (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonsqs.html): Celery queue actions are scoped to the airflow-celery-* queue-name prefix; the account ID is wildcarded because MWAA provisions the Celery queues in an AWS service-owned account, so the queue account cannot be pinned to this account.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "constructexecpolicystandalonemanagedpolicymwaaexecnamessm1EDB3B1B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-noproject-standalone/managed-policy/mwaa-exec/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "constructexecpolicystandaloneEEA7033F"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] MWAA execution role wildcards are scoped by a service-specific prefix, not by actions lacking resource-level support. S3 (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html): s3:GetObject* is scoped to the environment object prefix <bucket>/deployment/airflow/<env>/*; s3:List* targets the bucket but is constrained by an s3:prefix condition to deployment/airflow/<env>/* so it cannot enumerate other environments; s3:GetBucket* metadata actions do not support resource-level or prefix scoping and so target the bucket ARN. CloudWatch Logs (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html): logs:Create*/Put*/Get* are scoped to this environment's own log groups via the airflow-<env>-* log-group name prefix. SQS (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonsqs.html): Celery queue actions are scoped to the airflow-celery-* queue-name prefix; the account ID is wildcarded because MWAA provisions the Celery queues in an AWS service-owned account, so the queue account cannot be pinned to this account.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "mwaadagsbucket63D9B5C6": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "BucketKeyEnabled": true,
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": "arn:test-partition:kms:test-region:test-account:key/mrk-1234abcd5678efgh",
+                "SSEAlgorithm": "aws:kms"
+              }
+            }
+          ]
+        },
+        "BucketName": "test-org-test-env-test-domain-test-mwaa-noproject-mwaa-dags",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "Tags": [
+          {
+            "Key": "aws-cdk:cr-owned:deployment/airflow/standalone/dags:8ff83ebf",
+            "Value": "true"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "mwaadagsbucketPolicy9D52AA05": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "mwaadagsbucket63D9B5C6"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "mwaadagsbucket63D9B5C6",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "mwaadagsbucket63D9B5C6",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-server-side-encryption": "AES256"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "mwaadagsbucket63D9B5C6",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "DenyAES"
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringNotLikeIfExists": {
+                  "s3:x-amz-server-side-encryption-aws-kms-key-id": "arn:test-partition:kms:test-region:test-account:key/mrk-1234abcd5678efgh"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "mwaadagsbucket63D9B5C6",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "ForceKMS"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "mwaadagsbucketbucketmwaadagsnamessm417C7365": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-noproject/bucket/mwaa-dags/name",
+        "Tags": {
+          "aws-cdk:cr-owned:deployment/airflow/standalone/dags:8ff83ebf": "true",
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "mwaadagsbucket63D9B5C6"
+        }
+      }
+    },
+    "mwaadagsbucketbucketmwaadagsarnssm3A0C212B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-noproject/bucket/mwaa-dags/arn",
+        "Tags": {
+          "aws-cdk:cr-owned:deployment/airflow/standalone/dags:8ff83ebf": "true",
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-noproject",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "mwaadagsbucket63D9B5C6",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "dagdeploymentstandaloneAwsCliLayer27B5B3F5": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "/opt/awscli/aws"
+      }
+    },
+    "dagdeploymentstandaloneCustomResourceE1FFA2F1": {
+      "Type": "Custom::CDKBucketDeployment",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn"
+          ]
+        },
+        "SourceBucketNames": [
+          "cdk-hnb659fds-assets-test-account-test-region"
+        ],
+        "SourceObjectKeys": [
+          "3108828fa1acf52369fb5a3c8287cef17b57eda1814c492243f76ee4019f2bdb.zip"
+        ],
+        "DestinationBucketName": {
+          "Ref": "mwaadagsbucket63D9B5C6"
+        },
+        "DestinationBucketKeyPrefix": "deployment/airflow/standalone/dags",
+        "WaitForDistributionInvalidation": true,
+        "Extract": true,
+        "Prune": true,
+        "OutputObjectKeys": true
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runtime version is managed by the CDK framework.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The AWSLambdaBasicExecutionRole managed policy is attached to the service role by the CDK framework and cannot be replaced from this construct.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The wildcards are in the CDK-generated service role policy, derived by the framework from grantRead/grantReadWrite on the deployment source and destination buckets: s3:GetObject*/GetBucket*/List* and s3:DeleteObject*/PutObject* scoped to the CDK assets bucket and this module's own artifacts bucket (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html), plus the KMS actions required to write to the CMK-encrypted destination (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html). Emitted by aws-cdk-lib/aws-s3-deployment and not narrowable from this construct.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:s3:::cdk-hnb659fds-assets-test-account-test-region",
+                "arn:test-partition:s3:::cdk-hnb659fds-assets-test-account-test-region/*"
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "mwaadagsbucket63D9B5C6",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "mwaadagsbucket63D9B5C6",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/mrk-1234abcd5678efgh"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "Roles": [
+          {
+            "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runtime version is managed by the CDK framework.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The AWSLambdaBasicExecutionRole managed policy is attached to the service role by the CDK framework and cannot be replaced from this construct.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The wildcards are in the CDK-generated service role policy, derived by the framework from grantRead/grantReadWrite on the deployment source and destination buckets: s3:GetObject*/GetBucket*/List* and s3:DeleteObject*/PutObject* scoped to the CDK assets bucket and this module's own artifacts bucket (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html), plus the KMS actions required to write to the CMK-encrypted destination (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html). Emitted by aws-cdk-lib/aws-s3-deployment and not narrowable from this construct.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+          }
+        },
+        "Handler": "index.handler",
+        "Layers": [
+          {
+            "Ref": "dagdeploymentstandaloneAwsCliLayer27B5B3F5"
+          }
+        ],
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-noproject"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runtime version is managed by the CDK framework.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The AWSLambdaBasicExecutionRole managed policy is attached to the service role by the CDK framework and cannot be replaced from this construct.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The wildcards are in the CDK-generated service role policy, derived by the framework from grantRead/grantReadWrite on the deployment source and destination buckets: s3:GetObject*/GetBucket*/List* and s3:DeleteObject*/PutObject* scoped to the CDK assets bucket and this module's own artifacts bucket (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html), plus the KMS actions required to write to the CMK-encrypted destination (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html). Emitted by aws-cdk-lib/aws-s3-deployment and not narrowable from this construct.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "constructsgstandalonesecuritygroupstandaloneidoutD13FEA0D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructsgstandalone3A0B80F1",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-noproject:security-group:standalone:id"
+      }
+    },
+    "constructmwaastandalonemwaastandalonearnoutDBE77667": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructmwaastandaloneEnvironment06248F1E",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-noproject:mwaa:standalone:arn"
+      }
+    },
+    "constructmwaastandalonemwaastandalonewebserverurloutCC498792": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructmwaastandaloneEnvironment06248F1E",
+          "WebserverUrl"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-noproject:mwaa:standalone:webserver-url"
+      }
+    },
+    "constructexecpolicystandalonemanagedpolicymwaaexecarnout18E5BF70": {
+      "Value": {
+        "Ref": "constructexecpolicystandaloneEEA7033F"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-noproject-standalone:managed-policy:mwaaexec:arn"
+      }
+    },
+    "constructexecpolicystandalonemanagedpolicymwaaexecnameoutCF40937D": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "constructexecpolicystandaloneEEA7033F"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-noproject-standalone:managed-policy:mwaaexec:name"
+      }
+    },
+    "mwaadagsbucketbucketmwaadagsnameoutB1577C4E": {
+      "Value": {
+        "Ref": "mwaadagsbucket63D9B5C6"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-noproject:bucket:mwaadags:name"
+      }
+    },
+    "mwaadagsbucketbucketmwaadagsarnoutC0D0317B": {
+      "Value": {
+        "Fn::GetAtt": [
+          "mwaadagsbucket63D9B5C6",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-noproject:bucket:mwaadags:arn"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

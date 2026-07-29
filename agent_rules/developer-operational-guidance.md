@@ -47,6 +47,24 @@ When creating MRs/PRs:
 
 `code.aws.dev` is a GitLab site. To read or act on anything there (MRs, issues, discussions, files, pipelines), use ONLY the GitLab MCP tools (`mcp__gitlab__*`). Never use the builder-mcp `ReadInternalWebsites` tool (or any web-fetch tool) on a `code.aws.dev` URL. If a GitLab MCP tool fails (e.g. auth/posture errors), stop and tell the user rather than falling back to another tool.
 
+### Paginated results truncate silently
+
+The GitLab MCP list tools (`mr_discussions`, `get_merge_request_notes`, `list_*`) are paginated. A response holding a full page looks identical to a complete result: there is no error and no marker. `per_page: 100` on an MR with 104 discussions returns 100 items and omits the rest.
+
+Before drawing any conclusion from a list result, compare `pagination.x_total` against the number of items received, and keep requesting (`page: 2`, `3`, ...) until `pagination.x_next_page` is `null`.
+
+You MUST NOT report a count, or state that something is absent ("no unresolved threads", "no new findings", "nothing left to fix"), on the basis of a single un-paginated call. Absence claims require having seen every page.
+
+### Review-bot comment mechanics
+
+The MDAA review bot surfaces findings three different ways. Scanning for newly-created unresolved threads catches only the first:
+
+1. **New threads** — a fresh discussion per finding.
+2. **In-place rewrites** — the bot edits the body of an existing thread with new findings and appends "Findings have changed since last review. Please re-acknowledge." The thread keeps its original `created_at` and may still be flagged `resolved`, so filtering on `resolvable && !resolved` misses it. Compare `updated_at` against `created_at` to spot these.
+3. **Non-resolvable summary notes** — per-review roll-ups (`Compliance Review Summary`, `Test Standards Review Summary`, and so on) with `resolvable: false`. They cannot be resolved and do not block merging, but they report thread and finding counts worth reconciling against the threads you found.
+
+A single thread commonly bundles several findings. When reporting review status, distinguish the number of threads from the number of findings inside them, and reconcile your list against the counts in the summary notes.
+
 ## Reviews
 
 When asked to review changes against a story or assess branch alignment, follow the process in `.claude/agents/story-review.md`.

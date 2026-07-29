@@ -107,4 +107,5 @@ export enum MdaaResourceType {
   APIGATEWAY_AUTHORIZER = 'apigw-auth',
   WAF_IP_SET = 'waf-ipset',
   WAF_WEB_ACL = 'waf-acl',
+  MWAA_ENVIRONMENT = 'mwaa',
 }

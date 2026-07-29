@@ -1,0 +1,44 @@
+# Standalone config for the DataOps MWAA module (no project integration).
+# Deploys a single MWAA environment with explicit KMS key ARN. When no
+# projectName or bucketName is provided, a dedicated S3 bucket is created
+# for Airflow artifacts.
+
+# KMS key ARN for encrypting MWAA environment data at rest.
+# Encrypts metadata database, S3 DAG storage, and CloudWatch logs.
+kmsArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/mrk-1234abcd5678efgh
+
+# MWAA environment configurations
+environments:
+  # Environment name (becomes the environment identifier after MDAA naming)
+  standalone:
+    # Apache Airflow version in major.minor.patch format
+    airflowVersion: '2.10.3'
+
+    # Environment class determining container and database sizing
+    # (enum: mw1.small, mw1.medium, mw1.large, mw1.xlarge, mw1.2xlarge)
+    environmentClass: mw1.small
+
+    # IAM execution role ARN for the MWAA environment.
+    # Created in the Roles module with airflow-env.amazonaws.com trust policy.
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module>/role/<role_name>/arn
+    executionRoleArn: arn:{{partition}}:iam::{{account}}:role/airflow-execution
+
+    # VPC ID for MWAA environment deployment
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-a1b2c3d4
+
+    # Subnet IDs for the MWAA environment (minimum 2, different AZs)
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnets:
+      - subnet-1a2b3c4d
+      - subnet-5e6f7g8h
+
+    # Relative path to the DAGs folder under deployment/airflow/<env-name>/ in the bucket
+    dagS3Path: dags
+
+    # Security group ingress rules for web server access
+    securityGroupIngress:
+      ipv4:
+        - 10.0.0.0/16

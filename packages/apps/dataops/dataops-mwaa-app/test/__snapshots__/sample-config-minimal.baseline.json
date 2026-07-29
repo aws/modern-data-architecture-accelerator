@@ -1,0 +1,928 @@
+{
+  "Description": "(SO0320-dataops-mwaa) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsamplesecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/securityConfiguration/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/projectBucket/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/projectTopicArn/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampledeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/deploymentRole/default"
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/dataops-project-sample/kmsArn/default"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-mwaa-minimal/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-mwaa) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructsgpipeline91692CA7": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Security group for MWAA environment pipeline",
+        "GroupName": "test-org-test-env-test-domain-test-mwaa-minimal-pipeline",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-a1b2c3d4"
+      }
+    },
+    "constructsgpipelinefromtestorgtestenvtestdomaintestmwaaminimalconstructsgpipelineB3E76502ALLTRAFFIC1EDD9FD8": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "Self-Ref",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "constructsgpipeline91692CA7",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "constructsgpipeline91692CA7",
+            "GroupId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-minimal.yaml] Ingress/Egress is limited to this security group",
+              "id": "NIST.800.53.R5-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-minimal.yaml] Ingress/Egress is limited to this security group",
+              "id": "HIPAA.Security-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-minimal.yaml] Ingress/Egress is limited to this security group",
+              "id": "PCI.DSS.321-EC2RestrictedCommonPorts"
+            }
+          ]
+        }
+      }
+    },
+    "constructsgpipelinetotestorgtestenvtestdomaintestmwaaminimalconstructsgpipelineB3E76502ALLTRAFFIC7829A640": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "Self-Ref",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "constructsgpipeline91692CA7",
+            "GroupId"
+          ]
+        },
+        "GroupId": {
+          "Fn::GetAtt": [
+            "constructsgpipeline91692CA7",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "-1"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-minimal.yaml] Ingress/Egress is limited to this security group",
+              "id": "NIST.800.53.R5-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-minimal.yaml] Ingress/Egress is limited to this security group",
+              "id": "HIPAA.Security-EC2RestrictedCommonPorts"
+            },
+            {
+              "reason": "[CONFIG:sample_configs/sample-config-minimal.yaml] Ingress/Egress is limited to this security group",
+              "id": "PCI.DSS.321-EC2RestrictedCommonPorts"
+            }
+          ]
+        }
+      }
+    },
+    "constructsgpipelinesecuritygrouppipelineidssm4674BFD5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-minimal/security-group/pipeline/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructsgpipeline91692CA7",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "constructmwaapipelineEnvironment8072A80E": {
+      "Type": "AWS::MWAA::Environment",
+      "Properties": {
+        "AirflowVersion": "2.10.3",
+        "DagS3Path": "deployment/airflow/pipeline/dags",
+        "EnvironmentClass": "mw1.small",
+        "ExecutionRoleArn": "arn:test-partition:iam::test-account:role/airflow-execution",
+        "KmsKey": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "LoggingConfiguration": {
+          "DagProcessingLogs": {
+            "Enabled": true,
+            "LogLevel": "INFO"
+          },
+          "SchedulerLogs": {
+            "Enabled": true,
+            "LogLevel": "INFO"
+          },
+          "TaskLogs": {
+            "Enabled": true,
+            "LogLevel": "INFO"
+          },
+          "WebserverLogs": {
+            "Enabled": true,
+            "LogLevel": "INFO"
+          },
+          "WorkerLogs": {
+            "Enabled": true,
+            "LogLevel": "INFO"
+          }
+        },
+        "MaxWorkers": 10,
+        "MinWorkers": 1,
+        "Name": "test-org-test-env-test-domain-test-mwaa-minimal-pipeline",
+        "NetworkConfiguration": {
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "constructsgpipeline91692CA7",
+                "GroupId"
+              ]
+            }
+          ],
+          "SubnetIds": [
+            "subnet-1a2b3c4d",
+            "subnet-5e6f7g8h"
+          ]
+        },
+        "SourceBucketArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:s3:::",
+              {
+                "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+              }
+            ]
+          ]
+        },
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-minimal",
+          "mdaa_org": "test-org"
+        },
+        "WebserverAccessMode": "PRIVATE_ONLY"
+      },
+      "DependsOn": [
+        "constructmwaapipelineLogGroupDAGProcessingD8AC9F1B",
+        "constructmwaapipelineLogGroupSchedulerDD700E3E",
+        "constructmwaapipelineLogGroupTask225F50F0",
+        "constructmwaapipelineLogGroupWebServer734F956D",
+        "constructmwaapipelineLogGroupWorker42EB333C"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaapipelineLogGroupDAGProcessingD8AC9F1B": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "LogGroupName": "airflow-test-org-test-env-test-domain-test-mwaa-minimal-pipeline-DAGProcessing",
+        "RetentionInDays": 731,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaapipelineLogGroupSchedulerDD700E3E": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "LogGroupName": "airflow-test-org-test-env-test-domain-test-mwaa-minimal-pipeline-Scheduler",
+        "RetentionInDays": 731,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaapipelineLogGroupTask225F50F0": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "LogGroupName": "airflow-test-org-test-env-test-domain-test-mwaa-minimal-pipeline-Task",
+        "RetentionInDays": 731,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaapipelineLogGroupWebServer734F956D": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "LogGroupName": "airflow-test-org-test-env-test-domain-test-mwaa-minimal-pipeline-WebServer",
+        "RetentionInDays": 731,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaapipelineLogGroupWorker42EB333C": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "LogGroupName": "airflow-test-org-test-env-test-domain-test-mwaa-minimal-pipeline-Worker",
+        "RetentionInDays": 731,
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructmwaapipelinemwaapipelinearnssmB6EE5E52": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-minimal/mwaa/pipeline/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructmwaapipelineEnvironment8072A80E",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "constructmwaapipelinemwaapipelinewebserverurlssm17513C2E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-minimal/mwaa/pipeline/webserver-url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructmwaapipelineEnvironment8072A80E",
+            "WebserverUrl"
+          ]
+        }
+      }
+    },
+    "constructexecpolicypipeline1D64A821": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "MWAA execution role policy for environment pipeline",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-mwaa-minimal-pipeli--5b668d1e",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject*",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:s3:::",
+                    {
+                      "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                    },
+                    "/deployment/airflow/pipeline/*"
+                  ]
+                ]
+              },
+              "Sid": "AirflowS3ReadObjects"
+            },
+            {
+              "Action": "s3:GetBucket*",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:s3:::",
+                    {
+                      "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                    }
+                  ]
+                ]
+              },
+              "Sid": "AirflowS3Bucket"
+            },
+            {
+              "Action": "s3:List*",
+              "Condition": {
+                "StringLike": {
+                  "s3:prefix": [
+                    "deployment/airflow/pipeline/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:s3:::",
+                    {
+                      "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+                    }
+                  ]
+                ]
+              },
+              "Sid": "AirflowS3List"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+              },
+              "Sid": "AirflowKmsAccess"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents",
+                "logs:GetLogEvents",
+                "logs:GetLogRecord",
+                "logs:GetLogGroupFields",
+                "logs:GetQueryResults"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:airflow-test-org-test-env-test-domain-test-mwaa-minimal-pipeline-*",
+              "Sid": "AirflowLogs"
+            },
+            {
+              "Action": "airflow:PublishMetrics",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "constructmwaapipelineEnvironment8072A80E",
+                  "Arn"
+                ]
+              },
+              "Sid": "AirflowMetrics"
+            },
+            {
+              "Action": [
+                "sqs:ChangeMessageVisibility",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+                "sqs:ReceiveMessage",
+                "sqs:SendMessage"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:sqs:test-region:*:airflow-celery-*",
+              "Sid": "AirflowCelery"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          "airflow-execution"
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] MWAA execution role wildcards are scoped by a service-specific prefix, not by actions lacking resource-level support. S3 (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html): s3:GetObject* is scoped to the environment object prefix <bucket>/deployment/airflow/<env>/*; s3:List* targets the bucket but is constrained by an s3:prefix condition to deployment/airflow/<env>/* so it cannot enumerate other environments; s3:GetBucket* metadata actions do not support resource-level or prefix scoping and so target the bucket ARN. CloudWatch Logs (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html): logs:Create*/Put*/Get* are scoped to this environment's own log groups via the airflow-<env>-* log-group name prefix. SQS (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonsqs.html): Celery queue actions are scoped to the airflow-celery-* queue-name prefix; the account ID is wildcarded because MWAA provisions the Celery queues in an AWS service-owned account, so the queue account cannot be pinned to this account.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "constructexecpolicypipelinemanagedpolicymwaaexecarnssm13C96667": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-minimal-pipeline/managed-policy/mwaa-exec/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructexecpolicypipeline1D64A821"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] MWAA execution role wildcards are scoped by a service-specific prefix, not by actions lacking resource-level support. S3 (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html): s3:GetObject* is scoped to the environment object prefix <bucket>/deployment/airflow/<env>/*; s3:List* targets the bucket but is constrained by an s3:prefix condition to deployment/airflow/<env>/* so it cannot enumerate other environments; s3:GetBucket* metadata actions do not support resource-level or prefix scoping and so target the bucket ARN. CloudWatch Logs (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html): logs:Create*/Put*/Get* are scoped to this environment's own log groups via the airflow-<env>-* log-group name prefix. SQS (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonsqs.html): Celery queue actions are scoped to the airflow-celery-* queue-name prefix; the account ID is wildcarded because MWAA provisions the Celery queues in an AWS service-owned account, so the queue account cannot be pinned to this account.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "constructexecpolicypipelinemanagedpolicymwaaexecnamessm462C1B2E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-mwaa-minimal-pipeline/managed-policy/mwaa-exec/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-mwaa",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-mwaa-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "constructexecpolicypipeline1D64A821"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] MWAA execution role wildcards are scoped by a service-specific prefix, not by actions lacking resource-level support. S3 (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html): s3:GetObject* is scoped to the environment object prefix <bucket>/deployment/airflow/<env>/*; s3:List* targets the bucket but is constrained by an s3:prefix condition to deployment/airflow/<env>/* so it cannot enumerate other environments; s3:GetBucket* metadata actions do not support resource-level or prefix scoping and so target the bucket ARN. CloudWatch Logs (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html): logs:Create*/Put*/Get* are scoped to this environment's own log groups via the airflow-<env>-* log-group name prefix. SQS (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonsqs.html): Celery queue actions are scoped to the airflow-celery-* queue-name prefix; the account ID is wildcarded because MWAA provisions the Celery queues in an AWS service-owned account, so the queue account cannot be pinned to this account.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "dagdeploymentpipelineAwsCliLayerDBD65C54": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "/opt/awscli/aws"
+      }
+    },
+    "dagdeploymentpipelineCustomResource74240AA0": {
+      "Type": "Custom::CDKBucketDeployment",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn"
+          ]
+        },
+        "SourceBucketNames": [
+          "cdk-hnb659fds-assets-test-account-test-region"
+        ],
+        "SourceObjectKeys": [
+          "3108828fa1acf52369fb5a3c8287cef17b57eda1814c492243f76ee4019f2bdb.zip"
+        ],
+        "DestinationBucketName": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "DestinationBucketKeyPrefix": "deployment/airflow/pipeline/dags",
+        "WaitForDistributionInvalidation": true,
+        "Extract": true,
+        "Prune": true,
+        "OutputObjectKeys": true
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+          }
+        },
+        "Handler": "index.handler",
+        "Layers": [
+          {
+            "Ref": "dagdeploymentpipelineAwsCliLayerDBD65C54"
+          }
+        ],
+        "Role": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsampledeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-mwaa"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-mwaa-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runtime version is managed by the CDK framework.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. DLQ not applicable: errors are surfaced as CloudFormation failures, not async invocations.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Only interacts with S3 over AWS APIs; VPC placement is not required.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. Runs only during stack deployment; reserved concurrency is not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The inline policy is on the service role the CDK framework generates for this Lambda, containing the S3 and KMS grants it derives from the deployment source and destination buckets. Both the role and its policy are emitted by aws-cdk-lib/aws-s3-deployment and cannot be replaced with a managed policy from this construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The AWSLambdaBasicExecutionRole managed policy is attached to the service role by the CDK framework and cannot be replaced from this construct.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-mwaa-l3-construct/lib/dataops-mwaa-l3-construct.ts] This is the shared CDK BucketDeployment framework singleton Lambda (Custom::CDKBucketDeployment), provisioned and controlled entirely by aws-cdk-lib/aws-s3-deployment. It only performs deploy-time S3 asset upload and is not part of the runtime data plane; its runtime, VPC placement, DLQ, and concurrency are not configurable by this construct. The wildcards are in the CDK-generated service role policy, derived by the framework from grantRead/grantReadWrite on the deployment source and destination buckets: s3:GetObject*/GetBucket*/List* and s3:DeleteObject*/PutObject* scoped to the CDK assets bucket and this module's own artifacts bucket (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html), plus the KMS actions required to write to the CMK-encrypted destination (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html). Emitted by aws-cdk-lib/aws-s3-deployment and not narrowable from this construct.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "constructsgpipelinesecuritygrouppipelineidout9740B7EC": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructsgpipeline91692CA7",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-minimal:security-group:pipeline:id"
+      }
+    },
+    "constructmwaapipelinemwaapipelinearnout4EEF267F": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructmwaapipelineEnvironment8072A80E",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-minimal:mwaa:pipeline:arn"
+      }
+    },
+    "constructmwaapipelinemwaapipelinewebserverurlout4C039DED": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructmwaapipelineEnvironment8072A80E",
+          "WebserverUrl"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-minimal:mwaa:pipeline:webserver-url"
+      }
+    },
+    "constructexecpolicypipelinemanagedpolicymwaaexecarnoutE3F00578": {
+      "Value": {
+        "Ref": "constructexecpolicypipeline1D64A821"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-minimal-pipeline:managed-policy:mwaaexec:arn"
+      }
+    },
+    "constructexecpolicypipelinemanagedpolicymwaaexecnameout7F4115F8": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "constructexecpolicypipeline1D64A821"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-mwaa-minimal-pipeline:managed-policy:mwaaexec:name"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

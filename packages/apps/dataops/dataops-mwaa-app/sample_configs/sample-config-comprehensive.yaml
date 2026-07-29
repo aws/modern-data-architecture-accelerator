@@ -1,0 +1,158 @@
+# Comprehensive config for the DataOps MWAA module.
+# Deploys multiple MWAA environments exercising all available configuration
+# options including custom scaling, logging levels, Airflow config overrides,
+# plugins/requirements paths, security group ingress, environment class
+# sizing, weekly maintenance window, and role-based access control.
+
+# (Optional) DataOps project name for shared resource autowiring (KMS key, S3 bucket)
+projectName: dataops-project-sample
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Data admin roles granted Airflow access for ALL environments
+dataAdminRoles:
+  - arn: arn:{{partition}}:iam::{{account}}:role/data-admin
+  - id: generated-role-id:platform-admin
+
+# MWAA environment configurations
+environments:
+  # Production pipeline environment with full configuration
+  production-pipeline:
+    # Apache Airflow version in major.minor.patch format
+    airflowVersion: '2.10.3'
+
+    # Environment class determining container and database sizing
+    # (enum: mw1.small, mw1.medium, mw1.large, mw1.xlarge, mw1.2xlarge)
+    # (default: mw1.small)
+    environmentClass: mw1.medium
+
+    # IAM execution role ARN for the MWAA environment.
+    # Created in the Roles module with airflow-env.amazonaws.com trust policy.
+    # Must also be configured as an execution role in the DataOps Project module
+    # (so it receives project bucket and KMS key access).
+    # Example SSM: ssm:/{{org}}/{{domain}}/<roles_module>/role/<role_name>/arn
+    executionRoleArn: arn:{{partition}}:iam::{{account}}:role/airflow-prod-execution
+
+    # (Optional) Local path to a directory containing DAG files to deploy.
+    # All .py files in this directory are uploaded to deployment/airflow/<env>/dags/.
+    # When omitted, a default placeholder DAG is deployed.
+    dagPath: ./dags/production
+
+    # VPC ID for MWAA environment deployment
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: vpc-a1b2c3d4
+
+    # Subnet IDs for the MWAA environment (minimum 2, different AZs)
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnets:
+      - subnet-1a2b3c4d
+      - subnet-5e6f7g8h
+
+    # (Optional) Web server access mode controlling how the Airflow UI is accessed
+    # (enum: PRIVATE_ONLY, PUBLIC_ONLY)
+    # (default: PRIVATE_ONLY)
+    webserverAccessMode: PRIVATE_ONLY
+
+    # (Optional) Relative path to the DAGs folder under deployment/airflow/<env-name>/ in the project bucket
+    # (default: dags)
+    dagS3Path: dags
+
+    # (Optional) Relative path to the plugins ZIP file under deployment/airflow/<env-name>/
+    pluginsS3Path: plugins/plugins.zip
+
+    # (Optional) Relative path to the requirements.txt file under deployment/airflow/<env-name>/
+    requirementsS3Path: requirements/requirements.txt
+
+    # (Optional) Relative path to the startup shell script under deployment/airflow/<env-name>/
+    startupScriptS3Path: scripts/startup.sh
+
+    # (Optional) Minimum number of workers for auto-scaling
+    # (default: 1)
+    minWorkers: 2
+
+    # (Optional) Maximum number of workers for auto-scaling
+    # (default: 10)
+    maxWorkers: 25
+
+    # (Optional) Minimum number of web servers (Airflow 2.10+)
+    minWebservers: 2
+
+    # (Optional) Maximum number of web servers (Airflow 2.10+)
+    maxWebservers: 5
+
+    # (Optional) Number of Airflow schedulers to run
+    # (default: 2)
+    schedulers: 3
+
+    # (Optional) Logging configuration for each Airflow component
+    # (enum per level: INFO, WARNING, ERROR, CRITICAL, DEBUG)
+    # (default per level: INFO)
+    logging:
+      schedulerLogLevel: WARNING
+      workerLogLevel: INFO
+      webserverLogLevel: INFO
+      dagProcessingLogLevel: INFO
+      taskLogLevel: INFO
+
+    # (Optional) Airflow configuration overrides (section.option format)
+    airflowConfigurationOptions:
+      core.default_timezone: 'utc'
+      celery.worker_autoscale: '10,2'
+      webserver.default_ui_timezone: 'utc'
+
+    # (Optional) Security group ingress rules for web server access
+    securityGroupIngress:
+      # IPv4 CIDR blocks allowed to connect to the environment
+      ipv4:
+        - 10.0.0.0/16
+        - 172.16.0.0/12
+      # (Optional) Security group IDs allowed to connect to the environment
+      sg:
+        - sg-0abc1234def56789a
+
+    # See CONFIGURATION.md for role reference options (name, arn, id).
+    # (Optional) Per-environment roles granted Airflow web login and CLI access
+    airflowAccessRoles:
+      - name: pipeline-operator-role
+      - arn: arn:{{partition}}:iam::{{account}}:role/etl-developer
+
+    # (Optional) Weekly maintenance window start in 'DAY:HH:MM' format (UTC)
+    weeklyMaintenanceWindowStart: 'SUN:03:00'
+
+  # Dev sandbox environment with minimal resources
+  dev-sandbox:
+    airflowVersion: '2.10.3'
+
+    # Smaller environment class for development workloads
+    environmentClass: mw1.small
+
+    # Separate execution role for dev environment with limited permissions
+    # Must also be configured as an execution role in the DataOps Project module.
+    executionRoleArn: arn:{{partition}}:iam::{{account}}:role/airflow-dev-execution
+
+    vpcId: vpc-a1b2c3d4
+
+    subnets:
+      - subnet-1a2b3c4d
+      - subnet-5e6f7g8h
+
+    # Minimal scaling for cost optimization
+    minWorkers: 1
+    maxWorkers: 5
+    schedulers: 2
+
+    # Debug logging for development troubleshooting
+    logging:
+      schedulerLogLevel: DEBUG
+      workerLogLevel: DEBUG
+      webserverLogLevel: INFO
+      dagProcessingLogLevel: DEBUG
+      taskLogLevel: DEBUG
+
+    airflowConfigurationOptions:
+      core.default_timezone: 'utc'
+
+    securityGroupIngress:
+      ipv4:
+        - 10.0.0.0/16
