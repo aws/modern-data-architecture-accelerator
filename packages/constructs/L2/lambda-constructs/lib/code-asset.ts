@@ -27,7 +27,7 @@ export class MdaaPythonCodeAsset extends Construct {
     }
     const pythonVersion = props.pythonVersion || '3.12';
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), TEMP_DIR_PREFIX));
-    fs.copyFileSync(props.pythonRequirementsPath, `${tempDir}/requirements.txt`);
+    fs.copyFileSync(props.pythonRequirementsPath, path.join(tempDir, 'requirements.txt'));
     const dockerCommand = process.env.CDK_DOCKER ?? 'docker';
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -37,11 +37,16 @@ export class MdaaPythonCodeAsset extends Construct {
     if (dockerCommandExists && pythonVersion == '3.12') {
       //Docker build for Python 3.13 not yet available.
       console.log(`Using ${dockerCommand} to build asset`);
-      fs.copyFileSync(`${__dirname}/../src/docker/Dockerfile_${pythonVersion}`, `${tempDir}/Dockerfile`);
+      fs.copyFileSync(
+        path.resolve(__dirname, '..', 'src', 'docker', `Dockerfile_${pythonVersion}`),
+        path.join(tempDir, 'Dockerfile'),
+      );
       this.code = Code.fromDockerBuild(tempDir);
     } else {
       console.log(`Docker command '${dockerCommand}' does not exist. Attempting asset build using Pip in ${tempDir}.`);
-      const cmd = ['sh', `${__dirname}/../src/scripts/build_layer.sh`, tempDir, pythonVersion];
+      const scriptPath = path.resolve(__dirname, '..', 'src', 'scripts', 'build_layer.sh');
+      const isWin = process.platform === 'win32';
+      const cmd = isWin ? ['bash', scriptPath, tempDir, pythonVersion] : ['sh', scriptPath, tempDir, pythonVersion];
       this.code = Code.fromCustomCommand(tempDir, cmd, {
         commandOptions: {
           stdio: 'inherit',

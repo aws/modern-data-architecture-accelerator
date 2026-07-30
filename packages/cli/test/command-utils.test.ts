@@ -3,9 +3,45 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { executeCommandWithCapture, logScriptAnalysis } from '../lib/command-utils';
+import { executeCommand, executeCommandWithCapture, logScriptAnalysis } from '../lib/command-utils';
 import * as fs from 'node:fs';
 import * as childProcess from 'node:child_process';
+
+describe('executeCommand', () => {
+  let mockExecSync: jest.SpyInstance;
+
+  beforeEach(() => {
+    mockExecSync = jest.spyOn(childProcess, 'execSync').mockImplementation(jest.fn());
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should pass the correct shell option based on platform', () => {
+    executeCommand('echo "hello"');
+
+    const expectedShell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
+    expect(mockExecSync).toHaveBeenCalledWith(
+      'echo "hello"',
+      expect.objectContaining({
+        shell: expectedShell,
+        stdio: 'inherit',
+      }),
+    );
+  });
+
+  it('should inherit environment variables', () => {
+    executeCommand('some-command');
+
+    expect(mockExecSync).toHaveBeenCalledWith(
+      'some-command',
+      expect.objectContaining({
+        env: process.env,
+      }),
+    );
+  });
+});
 
 describe('logScriptAnalysis', () => {
   let mockStatSync: jest.SpyInstance;
@@ -67,7 +103,7 @@ describe('executeCommandWithCapture', () => {
     expect(mockSpawnSync).toHaveBeenCalledWith(
       'echo "test"',
       expect.objectContaining({
-        shell: true,
+        shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/sh',
         encoding: 'utf-8',
       }),
     );

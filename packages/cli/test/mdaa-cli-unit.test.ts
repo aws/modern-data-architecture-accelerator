@@ -8,7 +8,10 @@ import { generateContextCdkParams } from '../lib/utils';
 import { MdaaDeploy } from '../lib/mdaa-cli';
 import { HookConfig } from '../lib/mdaa-cli-config-parser';
 import * as childProcess from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 import * as packageHelper from '../lib/package-helper';
+import * as platformUtils from '../lib/platform-utils';
 
 describe('generateContextCdkParams', () => {
   it('should handle empty context object', () => {
@@ -654,6 +657,7 @@ describe('MdaaDeploy.execCmd', () => {
     expect(mockExecSync).toHaveBeenCalledWith(testCommand, {
       stdio: 'inherit',
       env: process.env,
+      shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/sh',
     });
   });
 
@@ -698,6 +702,7 @@ describe('MdaaDeploy.execCmd', () => {
     expect(mockExecSync).toHaveBeenCalledWith(testCommand, {
       stdio: 'inherit',
       env: process.env,
+      shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/sh',
     });
   });
 
@@ -734,6 +739,7 @@ describe('MdaaDeploy.execCmd', () => {
     expect(mockExecSync).toHaveBeenCalledWith(testCommand, {
       stdio: 'inherit',
       env: process.env,
+      shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/sh',
     });
   });
 
@@ -749,6 +755,7 @@ describe('MdaaDeploy.execCmd', () => {
     expect(mockExecSync).toHaveBeenCalledWith(testCommand, {
       stdio: 'inherit',
       env: process.env,
+      shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/sh',
     });
   });
 
@@ -764,6 +771,7 @@ describe('MdaaDeploy.execCmd', () => {
     expect(mockExecSync).toHaveBeenCalledWith(testCommand, {
       stdio: 'inherit',
       env: process.env,
+      shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/sh',
     });
   });
 });
@@ -1323,5 +1331,602 @@ describe('permissions_boundary_arn injection', () => {
     const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes('cdk synth'));
     expect(cdkCall).toBeDefined();
     expect(String(cdkCall![0])).not.toContain('permissions_boundary_arn');
+  });
+});
+
+describe('createTerraformOverride', () => {
+  let mockExistsSync: jest.SpyInstance;
+  let mockUnlinkSync: jest.SpyInstance;
+  let mockWriteFileSync: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+    mockExistsSync = jest.spyOn(fs, 'existsSync');
+    mockUnlinkSync = jest.spyOn(fs, 'unlinkSync').mockImplementation(jest.fn() as unknown as typeof fs.unlinkSync);
+    mockWriteFileSync = jest
+      .spyOn(fs, 'writeFileSync')
+      .mockImplementation(jest.fn() as unknown as typeof fs.writeFileSync);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should write override file with s3 backend enrichment when terraform.override has backend.s3', () => {
+    // Let existsSync return true for the override file so unlinkSync is called,
+    // but return false for anything else that might trip up the constructor
+    mockExistsSync.mockImplementation((p: string) => {
+      if (p.includes('mdaa_override.tf.json')) return true;
+      if (p.includes('mdaa.yaml') || p.includes('caef.yaml')) return true;
+      return false;
+    });
+
+    const mdaaDeploy = new MdaaDeploy({ action: 'synth', testing: 'true' }, [], {
+      organization: 'test-org',
+      domains: {
+        'test-domain': {
+          environments: {
+            'test-env': {
+              modules: {
+                'test-module': {
+                  module_path: '/fake/tf-module',
+                  module_type: 'tf',
+                  terraform: {
+                    override: {
+                      terraform: {
+                        backend: {
+                          s3: {
+                            bucket: 'my-state-bucket',
+                            region: 'us-east-1',
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Access the private method via any cast
+    const moduleConfig = {
+      modulePath: '/fake/tf-module',
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+      terraform: {
+        override: {
+          terraform: {
+            backend: {
+              s3: {
+                bucket: 'my-state-bucket',
+                region: 'us-east-1',
+              },
+            },
+          },
+        },
+      },
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).createTerraformOverride(moduleConfig);
+
+    // Should have unlinked the existing override
+    expect(mockUnlinkSync).toHaveBeenCalledWith(expect.stringContaining('mdaa_override.tf.json'));
+
+    // Should have written the enriched override with encrypt and key
+    expect(mockWriteFileSync).toHaveBeenCalledWith(
+      expect.stringContaining('mdaa_override.tf.json'),
+      expect.any(String),
+    );
+
+    const writtenContent = JSON.parse(mockWriteFileSync.mock.calls[0][1]);
+    expect(writtenContent.terraform.backend.s3.encrypt).toBe(true);
+    expect(writtenContent.terraform.backend.s3.key).toBe('test-org-test-domain-test-env-test-module');
+    expect(writtenContent.terraform.backend.s3.bucket).toBe('my-state-bucket');
+  });
+});
+
+describe('createTerraformCommands command strings', () => {
+  let mockExistsSync: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+    mockExistsSync = jest.spyOn(fs, 'existsSync');
+    jest.spyOn(fs, 'unlinkSync').mockImplementation(jest.fn() as unknown as typeof fs.unlinkSync);
+    jest.spyOn(fs, 'writeFileSync').mockImplementation(jest.fn() as unknown as typeof fs.writeFileSync);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  function createTfDeploy(action: string, region?: string) {
+    mockExistsSync.mockImplementation((p: string) => {
+      if (p.includes('mdaa.yaml') || p.includes('caef.yaml')) return true;
+      return false;
+    });
+
+    return new MdaaDeploy({ action, testing: 'true', working_dir: '/test/working' }, [], {
+      organization: 'test-org',
+      region: region ?? 'us-west-2',
+      domains: {
+        'test-domain': {
+          environments: {
+            'test-env': {
+              modules: {
+                'test-module': {
+                  module_path: '/fake/tf-module',
+                  module_type: 'tf',
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  it('should produce POSIX terraform plan commands with correct region, pythonPathCmd, checkov bin path, and tfplan.binary', () => {
+    const mdaaDeploy = createTfDeploy('diff'); // diff maps to plan
+
+    const moduleConfig = {
+      modulePath: '/fake/tf-module',
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+      mdaaCompliant: true,
+      effectiveModuleConfig: {},
+      effectiveContext: {},
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cmds: string[] = (mdaaDeploy as any).createTerraformCommands(moduleConfig);
+
+    // First cmd: setEnvCmd for region (POSIX format)
+    expect(cmds[0]).toBe("export AWS_DEFAULT_REGION='us-west-2'");
+
+    // Second cmd: terraform init
+    expect(cmds[1]).toBe('terraform init ');
+
+    // Third cmd: checkov with pythonPathCmd — should contain POSIX pythonPathCmd format
+    const workingDir = path.resolve('/test/working');
+    const pythonDir = path.join(workingDir, 'python');
+    const checkovBin = path.join(workingDir, 'python', 'bin', 'checkov');
+    expect(cmds[2]).toContain(`export PYTHONPATH='${pythonDir}'`);
+    expect(cmds[2]).toContain(`${checkovBin} -d /fake/tf-module`);
+    expect(cmds[2]).toContain('--summary-position bottom');
+
+    // Fourth cmd: terraform plan with tfplan.binary path
+    expect(cmds[3]).toContain('terraform plan');
+    expect(cmds[3]).toContain(path.join('/fake/tf-module', 'tfplan.binary'));
+    expect(cmds[3]).toContain('-input=false');
+  });
+
+  it('should produce POSIX terraform commands for default-region path (no setEnvCmd prefix)', () => {
+    const mdaaDeploy = createTfDeploy('synth', 'default'); // synth maps to validate
+
+    const moduleConfig = {
+      modulePath: '/fake/tf-module',
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+      mdaaCompliant: true,
+      effectiveModuleConfig: {},
+      effectiveContext: {},
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cmds: string[] = (mdaaDeploy as any).createTerraformCommands(moduleConfig);
+
+    // No setEnvCmd — first cmd is terraform init
+    expect(cmds[0]).toBe('terraform init ');
+
+    // Second cmd: checkov
+    const workingDir = path.resolve('/test/working');
+    const checkovBin = path.join(workingDir, 'python', 'bin', 'checkov');
+    expect(cmds[1]).toContain(checkovBin);
+
+    // Third cmd: just 'terraform validate' (no plan since action maps to validate)
+    expect(cmds[2]).toContain('terraform validate');
+    // Should NOT contain setEnvCmd since region is 'default'
+    expect(cmds[2]).not.toContain('export AWS_DEFAULT_REGION');
+  });
+
+  it('should use Windows-style commands when platform-utils functions are mocked for Windows', () => {
+    // Mock platform-utils functions to produce Windows output
+    // Note: isWindows const cannot be mocked directly; we verify the function call outputs
+    jest.spyOn(platformUtils, 'setEnvCmd').mockImplementation((key, value) => `set "${key}=${value}"`);
+    jest.spyOn(platformUtils, 'pythonPathCmd').mockImplementation((dir, cmd) => `set "PYTHONPATH=${dir}" && ${cmd}`);
+    jest.spyOn(platformUtils, 'lineContinuation').mockReturnValue(' ');
+    jest.spyOn(platformUtils, 'shellQuote').mockImplementation(p => `"${p}"`);
+
+    const mdaaDeploy = createTfDeploy('diff');
+
+    const moduleConfig = {
+      modulePath: '/fake/tf-module',
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+      mdaaCompliant: true,
+      effectiveModuleConfig: {},
+      effectiveContext: {},
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cmds: string[] = (mdaaDeploy as any).createTerraformCommands(moduleConfig);
+
+    // Verify Windows-style set command for region
+    expect(cmds[0]).toBe('set "AWS_DEFAULT_REGION=us-west-2"');
+
+    // Verify checkov uses mocked pythonPathCmd (Windows-style set command)
+    const workingDir = path.resolve('/test/working');
+    const pythonDir = path.join(workingDir, 'python');
+    expect(cmds[2]).toContain(`set "PYTHONPATH=${pythonDir}"`);
+
+    // Verify lineContinuation is space (Windows) — plan cmd parts joined by space
+    const planCmd = cmds[3];
+    expect(planCmd).toContain('terraform plan');
+    expect(planCmd).toContain('-input=false');
+    // With space-only continuation, no backslash-newline present
+    expect(planCmd).not.toContain(' \\\n\t');
+    // Verify tfplan.binary path is present
+    expect(planCmd).toContain(path.join('/fake/tf-module', 'tfplan.binary'));
+  });
+});
+
+describe('createCdkCommand command strings', () => {
+  let mockExistsSync: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+    mockExistsSync = jest.spyOn(fs, 'existsSync');
+    jest.spyOn(fs, 'unlinkSync').mockImplementation(jest.fn() as unknown as typeof fs.unlinkSync);
+    jest.spyOn(fs, 'writeFileSync').mockImplementation(jest.fn() as unknown as typeof fs.writeFileSync);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  function createCdkDeploy(options: { localModule?: boolean; npmDebug?: boolean; workingDir?: string } = {}) {
+    mockExistsSync.mockImplementation((p: string) => {
+      if (p.includes('mdaa.yaml') || p.includes('caef.yaml')) return true;
+      return false;
+    });
+
+    const opts: Record<string, string> = {
+      action: 'deploy',
+      testing: 'true',
+    };
+    if (options.workingDir) {
+      opts['working_dir'] = options.workingDir;
+    }
+    if (options.npmDebug) {
+      opts['npm_debug'] = 'true';
+    }
+
+    return new MdaaDeploy(opts, [], {
+      organization: 'test-org',
+      domains: {
+        'test-domain': {
+          environments: {
+            'test-env': {
+              modules: {
+                'test-module': {
+                  module_path: '@test/module',
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  it('should produce correct cdk command for non-local module with shellQuoted -a arg and lineContinuation joins', () => {
+    const mdaaDeploy = createCdkDeploy({ localModule: false });
+
+    const moduleConfig = {
+      modulePath: '/installed/module/path',
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+      effectiveModuleConfig: {},
+      effectiveContext: {},
+      effectiveTagConfig: {},
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cmd: string = (mdaaDeploy as any).createCdkCommand(moduleConfig, false);
+
+    // Should contain npx cdk deploy --all
+    expect(cmd).toContain('npx  cdk deploy --all');
+    expect(cmd).toContain('--require-approval never');
+
+    // Non-local module: should have shellQuoted -a arg with module path
+    expect(cmd).toContain(`-a '`);
+    expect(cmd).toContain('/installed/module/path/');
+
+    // Should contain -o with output base path
+    const workingDir = path.resolve('./.mdaa_working');
+    const expectedOutDir = path.join(workingDir, 'cdk.out', 'test-org', 'test-domain/test-env/test-module');
+    expect(cmd).toContain(`-o '${expectedOutDir}'`);
+
+    // Should contain context params
+    expect(cmd).toContain(`-c 'org=test-org'`);
+    expect(cmd).toContain(`-c 'env=test-env'`);
+    expect(cmd).toContain(`-c 'module_name=test-module'`);
+    expect(cmd).toContain(`-c 'domain=test-domain'`);
+
+    // Should use POSIX line continuation (backslash-newline-tab)
+    expect(cmd).toContain(' \\\n\t');
+  });
+
+  it('should produce correct cdk command for local module (no -a arg)', () => {
+    const mdaaDeploy = createCdkDeploy({ localModule: true });
+
+    const moduleConfig = {
+      modulePath: '/local/module/path',
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+      effectiveModuleConfig: {},
+      effectiveContext: {},
+      effectiveTagConfig: {},
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cmd: string = (mdaaDeploy as any).createCdkCommand(moduleConfig, true);
+
+    // Local module: should NOT have -a arg
+    expect(cmd).not.toContain('-a ');
+
+    // Should still have -o and context params
+    expect(cmd).toContain(`-c 'org=test-org'`);
+    expect(cmd).toContain(`-c 'domain=test-domain'`);
+  });
+
+  it('should include -d flag when npmDebug is enabled', () => {
+    const mdaaDeploy = createCdkDeploy({ npmDebug: true });
+
+    const moduleConfig = {
+      modulePath: '/installed/module/path',
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+      effectiveModuleConfig: {},
+      effectiveContext: {},
+      effectiveTagConfig: {},
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cmd: string = (mdaaDeploy as any).createCdkCommand(moduleConfig, false);
+
+    // Should have -d flag for npm debug
+    expect(cmd).toContain('npx -d cdk');
+    // The -a arg should also have -d
+    expect(cmd).toContain(`-a 'npx -d /installed/module/path/'`);
+  });
+
+  it('should use Windows formatting when platform-utils reports Windows', () => {
+    // Mock platform-utils for Windows behavior
+    jest.spyOn(platformUtils, 'shellQuote').mockImplementation(p => `"${p}"`);
+    jest.spyOn(platformUtils, 'lineContinuation').mockReturnValue(' ');
+    jest.spyOn(platformUtils, 'cmdJoin').mockImplementation((...args) => {
+      const cmds = typeof args[0] === 'boolean' ? (args as [boolean, ...string[]]).slice(1) : args;
+      return (cmds as string[]).join(' && ');
+    });
+    jest.spyOn(platformUtils, 'setEnvCmd').mockImplementation((key, value) => `set "${key}=${value}"`);
+
+    const mdaaDeploy = createCdkDeploy({ localModule: false });
+
+    const moduleConfig = {
+      modulePath: '/installed/module/path',
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+      deployRegion: 'us-east-1',
+      effectiveModuleConfig: {},
+      effectiveContext: {},
+      effectiveTagConfig: {},
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cmd: string = (mdaaDeploy as any).createCdkCommand(moduleConfig, false);
+
+    // With Windows shellQuote, should use double quotes
+    expect(cmd).toContain(`-a "npx`);
+    // With Windows lineContinuation (space), no backslash-newline
+    expect(cmd).not.toContain(' \\\n\t');
+    // With deployRegion set, should have setEnvCmd prefix joined with cmdJoin
+    expect(cmd).toContain('set "CDK_DEPLOY_REGION=us-east-1"');
+  });
+});
+
+describe('createTerraformCommands: apply and destroy actions', () => {
+  let mockExistsSync: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+    mockExistsSync = jest.spyOn(fs, 'existsSync');
+    jest.spyOn(fs, 'unlinkSync').mockImplementation(jest.fn() as unknown as typeof fs.unlinkSync);
+    jest.spyOn(fs, 'writeFileSync').mockImplementation(jest.fn() as unknown as typeof fs.writeFileSync);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  function createTfDeploy(action: string, region?: string) {
+    mockExistsSync.mockImplementation((p: string) => {
+      if (p.includes('mdaa.yaml') || p.includes('caef.yaml')) return true;
+      return false;
+    });
+
+    return new MdaaDeploy({ action, testing: 'true', working_dir: '/test/working' }, [], {
+      organization: 'test-org',
+      region: region ?? 'us-west-2',
+      domains: {
+        'test-domain': {
+          environments: {
+            'test-env': {
+              modules: {
+                'test-module': {
+                  module_path: '/fake/tf-module',
+                  module_type: 'tf',
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  it('should produce terraform apply commands with setEnvCmd for non-default region', () => {
+    const mdaaDeploy = createTfDeploy('deploy'); // deploy maps to 'apply'
+
+    const moduleConfig = {
+      modulePath: '/fake/tf-module',
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+      mdaaCompliant: true,
+      effectiveModuleConfig: {},
+      effectiveContext: {},
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cmds: string[] = (mdaaDeploy as any).createTerraformCommands(moduleConfig);
+
+    // Should have setEnvCmd for region
+    expect(cmds[0]).toBe("export AWS_DEFAULT_REGION='us-west-2'");
+
+    // Should contain terraform apply with -auto-approve
+    const applyCmd = cmds.find((c: string) => c.includes('terraform apply'));
+    expect(applyCmd).toBeDefined();
+    expect(applyCmd).toContain('-auto-approve');
+  });
+
+  it('should produce terraform destroy commands with setEnvCmd for non-default region', () => {
+    const mdaaDeploy = createTfDeploy('destroy'); // destroy maps to 'destroy'
+
+    const moduleConfig = {
+      modulePath: '/fake/tf-module',
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+      mdaaCompliant: true,
+      effectiveModuleConfig: {},
+      effectiveContext: {},
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cmds: string[] = (mdaaDeploy as any).createTerraformCommands(moduleConfig);
+
+    // Should have setEnvCmd for region
+    expect(cmds[0]).toBe("export AWS_DEFAULT_REGION='us-west-2'");
+
+    // Should contain 'terraform destroy'
+    const destroyCmd = cmds.find((c: string) => c.includes('terraform destroy'));
+    expect(destroyCmd).toBeDefined();
+  });
+});
+
+describe('addBaselineTemplateParam coverage', () => {
+  let mockExistsSync: jest.SpyInstance;
+  let mockStatSync: jest.SpyInstance;
+  let mockReaddirSync: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+    mockExistsSync = jest.spyOn(fs, 'existsSync');
+    mockStatSync = jest.spyOn(fs, 'statSync');
+    mockReaddirSync = jest.spyOn(fs, 'readdirSync');
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should add --template param with shellQuote when baseline template file is found', () => {
+    mockExistsSync.mockReturnValue(true);
+    mockStatSync.mockReturnValue({ isDirectory: () => true });
+    mockReaddirSync.mockReturnValue(['my-stack.template.json', 'manifest.json']);
+
+    const mdaaDeploy = new MdaaDeploy({ action: 'diff', testing: 'true', baseline: '/baseline/dir' }, [], {
+      organization: 'test-org',
+      domains: {},
+    });
+
+    const cdkCmd: string[] = [];
+    const moduleConfig = {
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).addBaselineTemplateParam(cdkCmd, moduleConfig);
+
+    // Should have added --template with a shellQuoted path
+    expect(cdkCmd.length).toBe(1);
+    expect(cdkCmd[0]).toContain('--template');
+    expect(cdkCmd[0]).toContain('my-stack.template.json');
+  });
+});
+
+describe('installPython coverage', () => {
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should resolve requirementsPath and pythonTargetDir then call pip', () => {
+    const mockExistsSync = jest.spyOn(fs, 'existsSync').mockImplementation((p: fs.PathLike) => {
+      const s = p.toString();
+      if (s.includes('mdaa.yaml') || s.includes('caef.yaml')) return true;
+      return false;
+    });
+
+    const mockExecSync = jest.spyOn(childProcess, 'execSync').mockImplementation(jest.fn());
+
+    // Mock command-exists to return true for pip
+    jest.mock(
+      'command-exists',
+      () => ({
+        sync: (cmd: string) => cmd === 'pip',
+      }),
+      { virtual: true },
+    );
+
+    const mdaaDeploy = new MdaaDeploy({ action: 'deploy', working_dir: '/test/working' }, [], {
+      organization: 'test-org',
+      domains: {},
+    });
+
+    // Call the private method directly
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).installPython();
+
+    // Verify execCmd was called with a pip install command containing resolved paths
+    expect(mockExecSync).toHaveBeenCalledWith(
+      expect.stringContaining('pip install'),
+      expect.objectContaining({ stdio: 'inherit' }),
+    );
+    // The command should use shellQuote for the requirements path
+    const callArg = mockExecSync.mock.calls[0][0] as string;
+    expect(callArg).toContain('requirements.txt');
+    expect(callArg).toContain(path.join('/test/working', 'python'));
+
+    mockExistsSync.mockRestore();
+    mockExecSync.mockRestore();
   });
 });

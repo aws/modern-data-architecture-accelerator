@@ -2,6 +2,10 @@
 
 This package provides the MDAA orchestration layer. Specifically, it provides the `mdaa` command line utility and config parser, which can be used to orchestrate the execution and deployment of multiple MDAA-compliant CDK apps. See the top-level README for more details on MDAA.
 
+## Supported Platforms
+
+The MDAA CLI runs on macOS, Linux, and Windows. On POSIX systems, the CLI can be invoked directly via `./bin/mdaa` (bash) or through npm (`npx mdaa`). On Windows, use `npx mdaa` or `node bin/mdaa.js`.
+
 ## Usage
 
 ```bash

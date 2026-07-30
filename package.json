@@ -1,7 +1,7 @@
 {
   "name": "@aws-mdaa/mdaa",
   "private": true,
-  "bin": "./packages/cli/bin/mdaa",
+  "bin": "./packages/cli/bin/mdaa.js",
   "version": "1.7.0",
   "license": "Apache-2.0",
   "scripts": {

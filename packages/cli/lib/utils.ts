@@ -4,6 +4,7 @@
  */
 
 import { EffectiveConfig } from './config-types';
+import { shellQuote } from './platform-utils';
 
 export function isBoolean(value: unknown): value is boolean {
   return typeof value === 'boolean';
@@ -41,6 +42,7 @@ export function generateContextCdkParams(moduleEffectiveConfig: EffectiveConfig)
     const contextKey = contextEntry[0];
     const contextValue = contextEntry[1];
     const encodedContextValue = encodeContextValue(contextValue);
-    return `-c '${contextKey}=${encodedContextValue}'`;
+    const contextArg = contextKey + '=' + encodedContextValue;
+    return `-c ${shellQuote(contextArg)}`;
   });
 }

@@ -689,7 +689,7 @@ describe('Terraform', () => {
 
     expect(() => mdaa.deploy()).not.toThrow();
     const allCmds = captured.join('\n');
-    expect(allCmds).toContain('export AWS_DEFAULT_REGION=us-east-1');
+    expect(allCmds).toContain("export AWS_DEFAULT_REGION='us-east-1'");
     expect(allCmds).toContain('-var region="us-east-1"');
 
     jest.restoreAllMocks();
@@ -1537,8 +1537,8 @@ describe('Deployment target validation', () => {
 
     expect(() => mdaa.deploy()).not.toThrow();
     const cdkCmd = captured.find(cmd => cmd.includes('CDK_DEPLOY_REGION'));
-    expect(cdkCmd).toContain('export CDK_DEPLOY_REGION=us-east-1');
-    expect(cdkCmd).toContain('export CDK_DEPLOY_ACCOUNT=123456789012');
+    expect(cdkCmd).toContain("export CDK_DEPLOY_REGION='us-east-1'");
+    expect(cdkCmd).toContain("export CDK_DEPLOY_ACCOUNT='123456789012'");
 
     jest.restoreAllMocks();
   });

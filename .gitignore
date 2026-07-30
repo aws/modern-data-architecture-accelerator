@@ -8,6 +8,10 @@ codescan*
 !jest.config.js
 !jest.setup.js
 !eslint.config.js
+!bin/mdaa.js
+!packages/cli/bin/mdaa.js
+!packages/cli/scripts/check_node_version.js
+!scripts/build/build_cli_package.js
 *.d.ts
 *.d.ts.map
 node_modules

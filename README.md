@@ -56,6 +56,7 @@ Additionally, MDAA can be used to build complex, multi-domain and multi-account 
 
 ### Prerequisites
 
+- macOS, Linux, or Windows
 - [Node.js 22.x](https://nodejs.org/) and [npm 10.x](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 - AWS credentials configured with appropriate permissions ([AWS CLI setup](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html))
 

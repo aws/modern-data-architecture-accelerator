@@ -5,13 +5,14 @@
 
 import { ModuleEffectiveConfig } from './config-types';
 import * as fs from 'node:fs';
+import * as path from 'node:path';
 
 export function getMdaaConfig<T>(
   moduleDeployConfig: ModuleEffectiveConfig,
   property: string,
   typeGuard: (value: unknown) => value is T,
 ): T | undefined {
-  const packageJsonPath = `${moduleDeployConfig.modulePath}/package.json`;
+  const packageJsonPath = path.join(moduleDeployConfig.modulePath, 'package.json');
   let packageJson;
   try {
     const content = fs.readFileSync(packageJsonPath, 'utf8');
@@ -26,9 +27,9 @@ export function getMdaaConfig<T>(
   return getPropertyOfType(mdaaConfig as Record<string, unknown>, property, typeGuard);
 }
 
-function getPropertyOfType<TKey extends string, TExpectedType>(
+function getPropertyOfType<TExpectedType>(
   object: Record<string, unknown>,
-  key: TKey,
+  key: string,
   guard: (value: unknown) => value is TExpectedType,
 ): TExpectedType | undefined {
   const value = object[key];

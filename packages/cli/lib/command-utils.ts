@@ -4,6 +4,7 @@
  */
 
 import * as fs from 'node:fs';
+import { defaultShell } from './platform-utils';
 
 export interface ExecutionError {
   /** Numeric status code indicating the exit status of the failed command execution enabling */
@@ -19,6 +20,7 @@ export function executeCommand(cmd: string): void {
   const execOptions = {
     stdio: 'inherit' as const, // inherit all stdio streams for real-time output
     env: process.env, // Inherit all environment variables including AWS credentials
+    shell: defaultShell(),
   };
   execSync(cmd, execOptions); // NOSONAR
 }
@@ -34,7 +36,7 @@ export function executeCommandWithCapture(cmd: string): CapturedOutput {
 
   // Use shell to execute the command
   const spawnOptions = {
-    shell: true,
+    shell: defaultShell(),
     encoding: 'utf-8',
     env: process.env,
     stdio: ['inherit', 'pipe', 'pipe'],

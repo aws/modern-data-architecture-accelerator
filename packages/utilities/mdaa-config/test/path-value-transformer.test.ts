@@ -65,4 +65,16 @@ describe('ConfigConfigPathValueTransformer', () => {
     // Non-relative path should be returned unchanged
     expect(transformer.transformValue('C:\\Windows\\file.txt')).toBe('C:\\Windows\\file.txt');
   });
+
+  test('resolves backslash parent relative path (..\\\\) via path.resolve', () => {
+    const transformer = new ConfigConfigPathValueTransformer(baseDir);
+    const result = transformer.transformValue('..\\sibling\\file.yaml');
+    expect(result).toBe(path.resolve(baseDir, '..\\sibling\\file.yaml'));
+  });
+
+  test('resolves backslash current relative path (.\\\\) via path.resolve', () => {
+    const transformer = new ConfigConfigPathValueTransformer(baseDir);
+    const result = transformer.transformValue('.\\subdir\\file.yaml');
+    expect(result).toBe(path.resolve(baseDir, '.\\subdir\\file.yaml'));
+  });
 });

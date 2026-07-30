@@ -12,14 +12,14 @@ export class ConfigConfigPathValueTransformer implements IMdaaConfigValueTransfo
     this.baseDir = baseDir;
   }
   public transformValue(value: string): string {
-    if (value.startsWith('../')) {
+    if (value.startsWith('../') || value.startsWith('..\\')) {
       // Resolve to baseDir's parent path
       // nosemgrep
       return path.resolve(this.baseDir, value);
-    } else if (value.startsWith('./')) {
+    } else if (value.startsWith('./') || value.startsWith('.\\')) {
       // Resolve relative to baseDir
       // nosemgrep
-      return path.resolve(value.replace(/^\./, this.baseDir));
+      return path.resolve(this.baseDir, value);
     } else {
       return value;
     }
