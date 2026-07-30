@@ -16,9 +16,10 @@ import {
 import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, MdaaKmsKey, USER_ACTIONS } from '@aws-mdaa/kms-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
-import { Stack } from 'aws-cdk-lib';
+import { Fn, Stack } from 'aws-cdk-lib';
 
 import { CfnDomain, CfnEnvironmentBlueprintConfiguration, CfnOwner, CfnUserProfile } from 'aws-cdk-lib/aws-datazone';
+import { CfnSecurityPolicy } from 'aws-cdk-lib/aws-opensearchserverless';
 import {
   ArnPrincipal,
   Conditions,
@@ -411,6 +412,17 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       policies.domainKmsUsagePolicy,
       policies.domainKmsAdminPolicy,
     );
+    // DataZone auto-creates a bedrock-ide AOSS encryption policy at domain setup time
+    // with a broken resource pattern that never matches actual collection names.
+    // Pre-create it here with the tooling CMK. The cross-account path pre-creates the
+    // equivalent policy in each associated account (see
+    // createSageMakerAssociatedAccountStackResources).
+    this.createBedrockIdeAossEncryptionPolicy(
+      domainResources.domain,
+      domainName,
+      domainResources.domain.attrId,
+      toolingResourceParams.KmsKeyArn,
+    );
     const toolingParams = { ...domainProps.tooling?.parameterValues, ...toolingResourceParams };
 
     // Map authorized domain units for tooling blueprint
@@ -736,6 +748,41 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
     return forcedParams;
   }
 
+  /**
+   * Pre-creates the DataZone Bedrock IDE AOSS encryption security policy with a
+   * broad `collection/bedrock-ide-*` pattern and the tooling CMK. DataZone would
+   * otherwise auto-create this policy with a broken resource pattern that never
+   * matches actual collection names, leaving the collection without a working
+   * CMK-backed encryption policy. Enforced unconditionally on the primary-account
+   * path and on the cross-account path (once per associated account, using that
+   * account's tooling CMK) so Bedrock IDE collections are always covered by a
+   * customer-managed encryption policy regardless of where the environment is
+   * provisioned.
+   */
+  private createBedrockIdeAossEncryptionPolicy(
+    scope: Construct,
+    domainName: string,
+    domainId: string,
+    kmsKeyArn: string,
+  ): CfnSecurityPolicy {
+    // DataZone domain IDs are always prefixed with the fixed `dzd-` literal
+    // (e.g. `dzd-abcd1234efgh`); see the domainId field in
+    // https://docs.aws.amazon.com/datazone/latest/APIReference/API_GetDomain.html.
+    // DataZone derives the auto-created encryption policy name from the portion
+    // after that prefix, so we split on `dzd-` and take the suffix to reproduce
+    // the exact same policy name (`bedrock-ide-<domainIdSuffix>`) it would use.
+    const domainIdSuffix = Fn.select(1, Fn.split('dzd-', domainId));
+    return new CfnSecurityPolicy(scope, `${domainName}-bedrock-ide-aoss-encryption`, {
+      name: Fn.join('', ['bedrock-ide-', domainIdSuffix]),
+      type: 'encryption',
+      policy: Stack.of(scope).toJsonString({
+        Rules: [{ Resource: ['collection/bedrock-ide-*'], ResourceType: 'collection' }],
+        AWSOwnedKey: false,
+        KmsARN: kmsKeyArn,
+      }),
+    });
+  }
+
   private createSageMakerAssociatedAccountStackResources(
     domainName: string,
     domainProps: SageMakerDomainProps,
@@ -882,6 +929,28 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
         .map(unit => [unit, crossAccountDomainConfig.getDomainUnitId(unit)]),
     );
 
+    const crossAccountToolingResourceParams = this.createToolingResources(
+      crossAccountStack,
+      domainName,
+      accountProps.account,
+      accountProps.region ?? this.props.region,
+      accountProps.tooling,
+      domainKmsUsagePolicy,
+      domainKmsAdminPolicy,
+    );
+
+    // DataZone auto-creates a bedrock-ide AOSS encryption policy at domain setup time
+    // with a broken resource pattern that never matches actual collection names.
+    // Pre-create it here (cross-account path) with the associated account's tooling CMK,
+    // mirroring the primary-account path, so AmazonBedrockKnowledgeBase environments
+    // provisioned in associated accounts also get a working CMK-backed encryption policy.
+    this.createBedrockIdeAossEncryptionPolicy(
+      crossAccountStack,
+      domainName,
+      crossAccountDomainConfig.domainId,
+      crossAccountToolingResourceParams.KmsKeyArn,
+    );
+
     // Enable Tooling blueprint in cross-account
     this.createManagedBlueprintConfiguration(crossAccountStack, {
       account: accountProps.account,
@@ -893,15 +962,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
       regionalParameters: this.createBlueprintRegionalParams(
         accountProps.tooling,
         accountProps.region ?? this.props.region,
-        this.createToolingResources(
-          crossAccountStack,
-          domainName,
-          accountProps.account,
-          accountProps.region ?? this.props.region,
-          accountProps.tooling,
-          domainKmsUsagePolicy,
-          domainKmsAdminPolicy,
-        ),
+        crossAccountToolingResourceParams,
       ),
       authorizedDomainUnits: toolingAuthorizedDomainUnitIds,
       provisioningRole: toolingProvisioningRole,

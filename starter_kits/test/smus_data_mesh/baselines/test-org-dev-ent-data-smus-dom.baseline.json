@@ -2659,6 +2659,54 @@
         }
       }
     },
+    "datazonedomain1domaindomain1bedrockideaossencryptionAE6B4CC6": {
+      "Type": "AWS::OpenSearchServerless::SecurityPolicy",
+      "Properties": {
+        "Name": {
+          "Fn::Join": [
+            "",
+            [
+              "bedrock-ide-",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      "dzd-",
+                      {
+                        "Fn::GetAtt": [
+                          "datazonedomain1domainEDB3B465",
+                          "Id"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          ]
+        },
+        "Policy": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"Rules\":[{\"Resource\":[\"collection/bedrock-ide-*\"],\"ResourceType\":\"collection\"}],\"AWSOwnedKey\":false,\"KmsARN\":\"",
+              {
+                "Fn::GetAtt": [
+                  "datazonedomain1domaindomain1toolingkms1CD3EA42",
+                  "Arn"
+                ]
+              },
+              "\"}"
+            ]
+          ]
+        },
+        "Type": "encryption"
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-ent-data-smus-dom/datazone/domain1-domain/domain/domain1-bedrock-ide-aoss-encryption"
+      }
+    },
     "datazonedomain1domainenvblueprintconfigdomain1ToolingconfigDC457857": {
       "Type": "AWS::DataZone::EnvironmentBlueprintConfiguration",
       "Properties": {

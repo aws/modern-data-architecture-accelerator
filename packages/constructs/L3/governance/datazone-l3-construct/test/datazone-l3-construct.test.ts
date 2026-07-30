@@ -2969,5 +2969,132 @@ describe('DataZone L3 Construct Tests', () => {
       // data-admin (2) + Tooling/DataLake blueprint auths (2) + custom-resource-role-auth (1) = 5
       template.resourceCountIs('AWS::DataZone::PolicyGrant', 5);
     });
+
+    test('AOSS encryption policy is pre-created with broad collection/bedrock-ide-* pattern and CMK', () => {
+      new DataZoneL3Construct(stack, 'test-aoss-policy', {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        sageMakerDomains: {
+          'test-domain': {
+            description: 'Test domain',
+            dataAdminRole: { name: 'admin' },
+            userAssignment: 'MANUAL',
+            tooling: {
+              vpcId: 'test-vpc',
+              subnetIds: ['subnet-id-1'],
+            },
+          },
+        },
+      });
+      const template = Template.fromStack(stack);
+
+      // Encryption policy is created unconditionally on the primary account path
+      // so DataZone-managed Bedrock IDE collections always get a working CMK policy.
+      template.resourceCountIs('AWS::OpenSearchServerless::SecurityPolicy', 1);
+      template.hasResourceProperties('AWS::OpenSearchServerless::SecurityPolicy', {
+        Type: 'encryption',
+        // Name is derived from the domain id: bedrock-ide-<Fn.select(1, Fn.split('dzd-', domainId))>
+        Name: {
+          'Fn::Join': [
+            '',
+            [
+              'bedrock-ide-',
+              {
+                'Fn::Select': [1, { 'Fn::Split': ['dzd-', Match.anyValue()] }],
+              },
+            ],
+          ],
+        },
+      });
+
+      // Policy body is a Stack.toJsonString token — a Fn::Join over string parts
+      // interleaved with the tooling KMS key ARN token. Assert its contents:
+      //  * broad collection/bedrock-ide-* resource pattern
+      //  * CMK-backed encryption (AWSOwnedKey:false)
+      //  * KmsARN references the tooling KMS key, not an AWS-owned key.
+      const templateJson = template.toJSON() as {
+        Resources: Record<string, { Type: string; Properties: { Policy: unknown } }>;
+      };
+      const [policyLogicalId] = Object.entries(templateJson.Resources).find(
+        ([, r]) => r.Type === 'AWS::OpenSearchServerless::SecurityPolicy',
+      )!;
+      const kmsKeyLogicalId = Object.keys(templateJson.Resources).find(
+        id => templateJson.Resources[id].Type === 'AWS::KMS::Key' && id.toLowerCase().includes('toolingkms'),
+      );
+      expect(kmsKeyLogicalId).toBeDefined();
+      // The Policy value is Stack.toJsonString() → Fn::Join over the string parts
+      // of the serialized JSON with the KMS key ARN token interleaved. The literal
+      // parts already contain the escaped JSON substrings, so match on them directly.
+      const policyBodyStr = JSON.stringify(templateJson.Resources[policyLogicalId].Properties.Policy);
+      expect(policyBodyStr).toContain('collection/bedrock-ide-*');
+      expect(policyBodyStr).toContain('\\"AWSOwnedKey\\":false');
+      expect(policyBodyStr).toContain('\\"KmsARN\\":');
+      expect(policyBodyStr).toContain(kmsKeyLogicalId!);
+    });
+
+    test('AOSS encryption policy is also pre-created on the cross-account (associated account) path', () => {
+      const crossAccountStack = new Stack(testApp, 'cross-account-stack-aoss', { env: { account: '123456789012' } });
+      new DataZoneL3Construct(stack, 'test-aoss-policy-cross-account', {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        crossAccountStacks: { '123456789012': { 'test-region': crossAccountStack } },
+        sageMakerDomains: {
+          'test-domain': {
+            description: 'Test domain',
+            dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
+            userAssignment: 'AUTOMATIC',
+            tooling: {
+              vpcId: 'test-vpc',
+              subnetIds: ['subnet-id-1'],
+            },
+            associatedAccounts: {
+              acc1: {
+                tooling: {
+                  vpcId: 'test-vpc',
+                  subnetIds: ['subnet-id-1'],
+                },
+                account: '123456789012',
+                glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test',
+              },
+            },
+          },
+        },
+      });
+
+      // The associated-account (cross-account) stack must also pre-create the
+      // CMK-backed encryption policy so Bedrock IDE collections provisioned in
+      // associated accounts are not left on DataZone's broken auto-created policy.
+      const crossAccountTemplate = Template.fromStack(crossAccountStack);
+      crossAccountTemplate.resourceCountIs('AWS::OpenSearchServerless::SecurityPolicy', 1);
+      crossAccountTemplate.hasResourceProperties('AWS::OpenSearchServerless::SecurityPolicy', {
+        Type: 'encryption',
+        Name: {
+          'Fn::Join': [
+            '',
+            [
+              'bedrock-ide-',
+              {
+                'Fn::Select': [1, { 'Fn::Split': ['dzd-', Match.anyValue()] }],
+              },
+            ],
+          ],
+        },
+      });
+
+      // Assert the cross-account policy body carries the broad resource pattern and
+      // CMK-backed encryption, mirroring the primary-account policy.
+      const crossAccountJson = crossAccountTemplate.toJSON() as {
+        Resources: Record<string, { Type: string; Properties: { Policy: unknown } }>;
+      };
+      const [crossPolicyLogicalId] = Object.entries(crossAccountJson.Resources).find(
+        ([, r]) => r.Type === 'AWS::OpenSearchServerless::SecurityPolicy',
+      )!;
+      const crossPolicyBodyStr = JSON.stringify(crossAccountJson.Resources[crossPolicyLogicalId].Properties.Policy);
+      expect(crossPolicyBodyStr).toContain('collection/bedrock-ide-*');
+      expect(crossPolicyBodyStr).toContain('\\"AWSOwnedKey\\":false');
+      expect(crossPolicyBodyStr).toContain('\\"KmsARN\\":');
+    });
   });
 });

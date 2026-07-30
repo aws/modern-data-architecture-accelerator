@@ -165,6 +165,7 @@
 - Fixed GAIA v2 REST API missing per-method and per-user throttling
 - Fixed GAIA v2 REST API pagination tokens to be opaque and versioned
 - Fixed GAIA (v1) CDK synth failure caused by unsuppressed `IAMNoInlinePolicy` (NIST/HIPAA/PCI) findings on the CDK-managed S3 bucket-notifications handler for the RAG data-import upload bucket
+- Fixed `AmazonBedrockKnowledgeBase` environment deployment failing with `No matching security policy of encryption type found for collection name: bedrock-ide-<env-id>` by pre-creating the AOSS encryption policy with the correct `collection/bedrock-ide-*` wildcard and tooling CMK on both the primary and associated (cross-account) accounts
 
 ## [1.6.0] - 2026-05-22
 

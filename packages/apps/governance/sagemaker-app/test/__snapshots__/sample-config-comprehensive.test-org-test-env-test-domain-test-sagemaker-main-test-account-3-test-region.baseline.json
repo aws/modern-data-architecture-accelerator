@@ -1966,6 +1966,48 @@
         }
       }
     },
+    "testdomainbedrockideaossencryption": {
+      "Type": "AWS::OpenSearchServerless::SecurityPolicy",
+      "Properties": {
+        "Name": {
+          "Fn::Join": [
+            "",
+            [
+              "bedrock-ide-",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      "dzd-",
+                      {
+                        "Ref": "domainconfigparsertestdomaindomainconfigparsertestdomainssmdomainidParameter808CF8C7"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          ]
+        },
+        "Policy": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"Rules\":[{\"Resource\":[\"collection/bedrock-ide-*\"],\"ResourceType\":\"collection\"}],\"AWSOwnedKey\":false,\"KmsARN\":\"",
+              {
+                "Fn::GetAtt": [
+                  "testdomaintoolingkmsF549BE80",
+                  "Arn"
+                ]
+              },
+              "\"}"
+            ]
+          ]
+        },
+        "Type": "encryption"
+      }
+    },
     "envblueprintconfigtestdomainToolingconfig4192BC24": {
       "Type": "AWS::DataZone::EnvironmentBlueprintConfiguration",
       "Properties": {
