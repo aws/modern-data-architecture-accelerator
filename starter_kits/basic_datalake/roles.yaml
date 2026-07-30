@@ -97,8 +97,6 @@ generateRoles:
     #   - id: "AwsSolutions-IAM4"
     #     reason: "AWSGlueConsoleFullAccess provides the data-admin role with full Glue console access for managing ETL jobs, crawlers, and catalog resources. See https://docs.aws.amazon.com/glue/latest/dg/security-iam-awsmanpol.html"
     trustedPrincipal: this_account
-    additionalTrustedActions:
-      - "sts:TagSession"
     awsManagedPolicies:
       - AWSGlueConsoleFullAccess
     generatedPolicies:

@@ -97,8 +97,6 @@ generateRoles:
     #   - id: "AwsSolutions-IAM4"
     #     reason: "AWSGlueConsoleFullAccess grants the data-admin persona the broad Glue/S3/CloudWatch/CloudWatch Logs access needed to administer Glue databases, tables, crawlers, and jobs from the console in this reference kit. It is intentionally broad for a dev/reference deployment; scope it down for production. See https://docs.aws.amazon.com/glue/latest/dg/console-iam-policy.html"
     trustedPrincipal: this_account
-    additionalTrustedActions:
-      - "sts:TagSession"
     # NOTE: AWSGlueConsoleFullAccess is broad (glue:*, s3:* on Glue paths, logs:*, cloudwatch:*).
     # Consider replacing with a scoped policy for production deployments.
     awsManagedPolicies:

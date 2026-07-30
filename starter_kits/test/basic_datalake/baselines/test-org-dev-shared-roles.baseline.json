@@ -2203,13 +2203,6 @@
               "Principal": {
                 "AWS": "arn:test-partition:iam::test-account:root"
               }
-            },
-            {
-              "Action": "sts:TagSession",
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
-              }
             }
           ],
           "Version": "2012-10-17"
