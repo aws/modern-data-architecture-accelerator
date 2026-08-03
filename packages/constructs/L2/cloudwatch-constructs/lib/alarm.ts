@@ -9,7 +9,7 @@ import { Topic } from 'aws-cdk-lib/aws-sns';
 import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
 import { Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { convertComparisonOperator, convertTreatMissingData } from './alarm-utils';
+import { convertComparisonOperator, convertTreatMissingData, validateAlarmPeriodSeconds } from './alarm-utils';
 import { convertUnit } from './metric-utils';
 import { createSsmParamWithSuppression } from './ssm-utils';
 
@@ -249,6 +249,8 @@ export class MdaaAlarm extends Construct {
       throw new Error('Single metric alarms require metricName, namespace, statistic, and period properties');
     }
 
+    validateAlarmPeriodSeconds(props.period);
+
     // Build metric
     const metric = new Metric({
       metricName: props.metricName,
@@ -338,6 +340,11 @@ export class MdaaAlarm extends Construct {
           ? Object.entries(metric.dimensions).map(([name, value]) => ({ name, value }))
           : undefined;
 
+        // CDK passes MetricDataQuery through to CfnAlarm unvalidated, so an invalid
+        // period here would otherwise survive synth and fail at deploy.
+        const period = metric.period ?? 300;
+        validateAlarmPeriodSeconds(period, `metrics[${metric.id}].period`);
+
         return {
           id: metric.id,
           label: metric.label,
@@ -349,7 +356,7 @@ export class MdaaAlarm extends Construct {
               dimensions,
             },
             stat: metric.statistic,
-            period: metric.period ?? 300,
+            period,
             unit: metric.unit,
           },
         };

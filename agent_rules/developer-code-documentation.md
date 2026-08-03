@@ -13,6 +13,22 @@ Standards for documenting code across the MDAA repository. Apply these when writ
 - All exported symbols (classes, functions, interfaces, types) must have JSDoc.
 - Internal/private code needs comments only when the intent isn't obvious from the code itself.
 - Keep comments concise. One sentence is better than a paragraph when it conveys the same information.
+- **Use only ASCII characters** in comments, JSDoc, and Python docstrings. Config-property JSDoc is the source for the generated `SCHEMA.md`, so a non-ASCII character there propagates into a committed artifact; beyond that, non-ASCII characters are easy to introduce accidentally, hard to spot in review, and render inconsistently across terminals and diff tools.
+
+  The characters that actually show up, and what to write instead. The banned column shows each glyph inside a code span so it is identifiable on sight rather than only by name:
+
+  | Don't use | Codepoint | Write instead |
+  |---|---|---|
+  | `—` | U+2014 em dash | `-` or ` - ` |
+  | `–` | U+2013 en dash | `-` |
+  | `→` | U+2192 arrow | `->` |
+  | `“` `”` | U+201C/U+201D smart double quotes | `"` |
+  | `‘` `’` | U+2018/U+2019 smart single quotes / apostrophe | `'` |
+  | `…` | U+2026 ellipsis | `...` |
+  | `≥` `≤` | U+2265/U+2264 | `>=` `<=` |
+  | ` ` (renders as a space) | U+00A0 non-breaking space | a normal space |
+
+  This applies to comment and docstring text only - not to string literals that must carry a specific character for functional reasons, and not to this table, where the glyphs are the subject rather than punctuation.
 
 ## Construct Classes
 
@@ -79,6 +95,30 @@ Suppression reasons must be specific and reference AWS documentation:
 - Don't comment obvious code (`// increment counter` above `counter++`)
 - Use `// TODO:` for known improvements with a brief description
 - Don't leave commented-out code — remove it (git has history)
+
+### Document the constraint, not the investigation
+
+Comments and JSDoc are read by developers and coding agents who were not present when the code was written. They need the constraint that makes the code non-obvious. They do not need the path that led to it.
+
+Keep a comment when it states something the code cannot: a service behavior that forces this shape, an ordering dependency, a value that must match an external system, a failure mode that is silent.
+
+Remove the surrounding narration:
+
+| Don't | Do |
+|---|---|
+| "An earlier version used `TotalErrors` (taken from the CDK helpers rather than the service) and the alarm could therefore never fire." | "Runtime publishes `SystemErrors` and `UserErrors`; there is no `TotalErrors`." |
+| "Verified on a live deployment: querying with only `Resource` returned 0 datapoints while the full triple returned the real value." | "CloudWatch matches dimensions exactly, so all three must be supplied - a partial set receives no datapoints." |
+| "Verified against delivered CloudTrail logs and the `UpdateAgentRuntimeRequest` shape rather than inferred from the API." | (drop - the surrounding statement of fact already carries the weight) |
+| "This was the exact silent failure this module is meant to avoid, fixed in review." | (drop) |
+
+Specifically avoid:
+
+- **Superseded alternatives.** A reader who never saw the earlier approach gains nothing from being told it was wrong, and now has two designs in their head instead of one.
+- **Verification provenance.** "Verified against X", "confirmed in a live account", "checked across N services" - how a fact was established is not the fact. A brief pointer is fine when the reader may need to re-verify (`// confirm with: aws cloudwatch list-metrics --namespace ...`), but not a narrative.
+- **Review history.** "Addressed in review", "per reviewer feedback", "pinned by a regression test". Git and the MR hold this.
+- **The same rationale repeated.** State a constraint once at the place it binds, not at every site that depends on it.
+
+One long comment justifying a decision is usually a sign the decision belongs in the story or the module README instead.
 
 ## CHANGELOG Entries
 

@@ -164,6 +164,26 @@
               },
               "Resource": "*",
               "Sid": "AllowCloudWatchLogsEncryption"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey*"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:cloudwatch:test-region:test-account:alarm:agentcore-*-testAgentRuntime"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudwatch.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowCloudWatchAlarmsToUseKey"
             }
           ],
           "Version": "2012-10-17"
@@ -656,6 +676,1190 @@
         "Type": "String",
         "Value": {
           "Ref": "bedrockagentcoreruntimeVpcEndpointEndpoint958D1F4A"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeLogGroupKmsKeyAF16CAC2",
+            "Arn"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TopicName": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-main-agent-26c9964e"
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsAlarmTopicPolicy1B2BCFFA": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sns:Publish",
+                "sns:RemovePermission",
+                "sns:SetTopicAttributes",
+                "sns:DeleteTopic",
+                "sns:ListSubscriptionsByTopic",
+                "sns:GetTopicAttributes",
+                "sns:Receive",
+                "sns:AddPermission",
+                "sns:Subscribe"
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sns:Publish",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:cloudwatch:test-region:test-account:alarm:agentcore-*-testAgentRuntime"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudwatch.amazonaws.com"
+              },
+              "Resource": {
+                "Ref": "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE"
+              },
+              "Sid": "AllowCloudWatchAlarmsToPublish"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Topics": [
+          {
+            "Ref": "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE"
+          }
+        ]
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsAlarmTopicTopicagentcorealarmstestAgentRuntimenamessm9633A070": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/topic/agentcore-alarms-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE",
+            "TopicName"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsAlarmTopicTopicagentcorealarmstestAgentRuntimearnssm1F5CC0C5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/topic/agentcore-alarms-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsAlarmTopicagentcoreopsexamplecom26036BB7": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "Endpoint": "agentcore-ops@example.com",
+        "Protocol": "email",
+        "TopicArn": {
+          "Ref": "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsErrorRateAlarm72ACE5B5": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE"
+          }
+        ],
+        "AlarmDescription": "AgentCore error rate exceeds 10% of invocations over 300s",
+        "AlarmName": "agentcore-error-rate-testAgentRuntime",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "DatapointsToAlarm": 2,
+        "EvaluationPeriods": 3,
+        "Metrics": [
+          {
+            "Id": "e0",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "Resource",
+                    "Value": {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntime84537D71",
+                        "AgentRuntimeArn"
+                      ]
+                    }
+                  },
+                  {
+                    "Name": "Operation",
+                    "Value": "InvokeAgentRuntime"
+                  },
+                  {
+                    "Name": "Name",
+                    "Value": "test_org_test_env_test_domain_test_bedr__82df822::test_org_test_env_test_domain_test_bedr_234a2cb0"
+                  }
+                ],
+                "MetricName": "SystemErrors",
+                "Namespace": "AWS/Bedrock-AgentCore"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "e1",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "Resource",
+                    "Value": {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntime84537D71",
+                        "AgentRuntimeArn"
+                      ]
+                    }
+                  },
+                  {
+                    "Name": "Operation",
+                    "Value": "InvokeAgentRuntime"
+                  },
+                  {
+                    "Name": "Name",
+                    "Value": "test_org_test_env_test_domain_test_bedr__82df822::test_org_test_env_test_domain_test_bedr_234a2cb0"
+                  }
+                ],
+                "MetricName": "UserErrors",
+                "Namespace": "AWS/Bedrock-AgentCore"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "invocations",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "Resource",
+                    "Value": {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntime84537D71",
+                        "AgentRuntimeArn"
+                      ]
+                    }
+                  },
+                  {
+                    "Name": "Operation",
+                    "Value": "InvokeAgentRuntime"
+                  },
+                  {
+                    "Name": "Name",
+                    "Value": "test_org_test_env_test_domain_test_bedr__82df822::test_org_test_env_test_domain_test_bedr_234a2cb0"
+                  }
+                ],
+                "MetricName": "Invocations",
+                "Namespace": "AWS/Bedrock-AgentCore"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Expression": "IF(invocations > 0, 100 * (e0 + e1) / invocations, 0)",
+            "Id": "errorRate",
+            "Label": "Error rate (%)",
+            "ReturnData": true
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Threshold": 10,
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsErrorRateAlarmalarmagentcoreerrorratetestAgentRuntimearnssm6005DD32": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/alarm/agentcore-error-rate-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeAlarmsErrorRateAlarm72ACE5B5",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm ARN); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsErrorRateAlarmalarmagentcoreerrorratetestAgentRuntimenamessmC33313B5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/alarm/agentcore-error-rate-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "agentcore-error-rate-testAgentRuntime"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsThrottleCountAlarm4C1A2DE9": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE"
+          }
+        ],
+        "AlarmDescription": "AgentCore throttle count exceeds 100 over 300s",
+        "AlarmName": "agentcore-throttle-count-testAgentRuntime",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "DatapointsToAlarm": 2,
+        "Dimensions": [
+          {
+            "Name": "Name",
+            "Value": "test_org_test_env_test_domain_test_bedr__82df822::test_org_test_env_test_domain_test_bedr_234a2cb0"
+          },
+          {
+            "Name": "Operation",
+            "Value": "InvokeAgentRuntime"
+          },
+          {
+            "Name": "Resource",
+            "Value": {
+              "Fn::GetAtt": [
+                "bedrockagentcoreruntimeRuntime84537D71",
+                "AgentRuntimeArn"
+              ]
+            }
+          }
+        ],
+        "EvaluationPeriods": 3,
+        "MetricName": "Throttles",
+        "Namespace": "AWS/Bedrock-AgentCore",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Threshold": 100,
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsThrottleCountAlarmalarmagentcorethrottlecounttestAgentRuntimearnssm15CB653B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/alarm/agentcore-throttle-count-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeAlarmsThrottleCountAlarm4C1A2DE9",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm ARN); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsThrottleCountAlarmalarmagentcorethrottlecounttestAgentRuntimenamessmD6CE0D10": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/alarm/agentcore-throttle-count-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "agentcore-throttle-count-testAgentRuntime"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailure42157EA8": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Denied AgentCore invocations",
+        "EventPattern": {
+          "source": [
+            "aws.bedrock-agentcore",
+            "aws.bedrock-agentcore-control"
+          ],
+          "detail-type": [
+            "AWS API Call via CloudTrail"
+          ],
+          "detail": {
+            "eventSource": [
+              "bedrock-agentcore.amazonaws.com",
+              "bedrock-agentcore-control.amazonaws.com"
+            ],
+            "$or": [
+              {
+                "requestParameters": {
+                  "agentRuntimeId": [
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntime84537D71",
+                        "AgentRuntimeId"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "requestParameters": {
+                  "agentRuntimeArn": [
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntime84537D71",
+                        "AgentRuntimeArn"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "resources": {
+                  "ARN": [
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntime84537D71",
+                        "AgentRuntimeArn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntimeEndpoint04F7D8AD",
+                        "AgentRuntimeEndpointArn"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "errorCode": [
+              "AccessDenied"
+            ]
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-bedrock-agentcore-r--7bb0f74c",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE"
+            },
+            "Id": "Target0",
+            "InputTransformer": {
+              "InputPathsMap": {
+                "account": "$.account",
+                "region": "$.region",
+                "time": "$.time",
+                "detail-eventName": "$.detail.eventName",
+                "detail-errorCode": "$.detail.errorCode",
+                "detail-errorMessage": "$.detail.errorMessage",
+                "detail-userIdentity-arn": "$.detail.userIdentity.arn",
+                "detail-sourceIPAddress": "$.detail.sourceIPAddress"
+              },
+              "InputTemplate": "\"AgentCore security event: Denied AgentCore invocations\"\n\"Resource: testAgentRuntime\"\n\"Rule: auth-failure\"\n\"Account: <account>\"\n\"Region: <region>\"\n\"Time: <time>\"\n\"Event: <detail-eventName>\"\n\"Error code: <detail-errorCode>\"\n\"Error message: <detail-errorMessage>\"\n\"Principal: <detail-userIdentity-arn>\"\n\"Source IP: <detail-sourceIPAddress>\""
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailureEventsRole213F46D2",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] kms:GenerateDataKey* is an action family required for SNS envelope encryption, not a resource wildcard - the trailing * is part of the action name and resources stay scoped to this topic and its key. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::kms:GenerateDataKey*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailureeventbridgeruleauthfailuretestAgentRuntimenamessmF1CDDDBC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/eventbridge-rule/auth-failure-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailure42157EA8"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] kms:GenerateDataKey* is an action family required for SNS envelope encryption, not a resource wildcard - the trailing * is part of the action name and resources stay scoped to this topic and its key. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::kms:GenerateDataKey*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailureeventbridgeruleauthfailuretestAgentRuntimearnssm0BB44777": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/eventbridge-rule/auth-failure-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailure42157EA8",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] kms:GenerateDataKey* is an action family required for SNS envelope encryption, not a resource wildcard - the trailing * is part of the action name and resources stay scoped to this topic and its key. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::kms:GenerateDataKey*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailureEventsRole213F46D2": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] kms:GenerateDataKey* is an action family required for SNS envelope encryption, not a resource wildcard - the trailing * is part of the action name and resources stay scoped to this topic and its key. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::kms:GenerateDataKey*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailureEventsRoleDefaultPolicyE137EE6E": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sns:Publish",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE"
+              }
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeLogGroupKmsKeyAF16CAC2",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailureEventsRoleDefaultPolicyE137EE6E",
+        "Roles": [
+          {
+            "Ref": "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailureEventsRole213F46D2"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] kms:GenerateDataKey* is an action family required for SNS envelope encryption, not a resource wildcard - the trailing * is part of the action name and resources stay scoped to this topic and its key. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::kms:GenerateDataKey*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeF457F32E": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Out-of-band runtime configuration change",
+        "EventPattern": {
+          "source": [
+            "aws.bedrock-agentcore",
+            "aws.bedrock-agentcore-control"
+          ],
+          "detail-type": [
+            "AWS API Call via CloudTrail"
+          ],
+          "detail": {
+            "eventSource": [
+              "bedrock-agentcore.amazonaws.com",
+              "bedrock-agentcore-control.amazonaws.com"
+            ],
+            "$or": [
+              {
+                "requestParameters": {
+                  "agentRuntimeId": [
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntime84537D71",
+                        "AgentRuntimeId"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "requestParameters": {
+                  "agentRuntimeArn": [
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntime84537D71",
+                        "AgentRuntimeArn"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "resources": {
+                  "ARN": [
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntime84537D71",
+                        "AgentRuntimeArn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntimeEndpoint04F7D8AD",
+                        "AgentRuntimeEndpointArn"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "eventName": [
+              "UpdateAgentRuntime",
+              "DeleteAgentRuntime"
+            ]
+          }
+        },
+        "Name": "test-org-test-env-test-domain-test-bedrock-agentcore-r--33bd14f0",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE"
+            },
+            "Id": "Target0",
+            "InputTransformer": {
+              "InputPathsMap": {
+                "account": "$.account",
+                "region": "$.region",
+                "time": "$.time",
+                "detail-eventName": "$.detail.eventName",
+                "detail-errorCode": "$.detail.errorCode",
+                "detail-errorMessage": "$.detail.errorMessage",
+                "detail-userIdentity-arn": "$.detail.userIdentity.arn",
+                "detail-sourceIPAddress": "$.detail.sourceIPAddress"
+              },
+              "InputTemplate": "\"AgentCore security event: Out-of-band runtime configuration change\"\n\"Resource: testAgentRuntime\"\n\"Rule: config-change\"\n\"Account: <account>\"\n\"Region: <region>\"\n\"Time: <time>\"\n\"Event: <detail-eventName>\"\n\"Error code: <detail-errorCode>\"\n\"Error message: <detail-errorMessage>\"\n\"Principal: <detail-userIdentity-arn>\"\n\"Source IP: <detail-sourceIPAddress>\""
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeEventsRole40394763",
+                "Arn"
+              ]
+            }
+          },
+          {
+            "Arn": "arn:test-partition:lambda:test-region:test-account:function:agentcore-remediation",
+            "Id": "Target1"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] kms:GenerateDataKey* is an action family required for SNS envelope encryption, not a resource wildcard - the trailing * is part of the action name and resources stay scoped to this topic and its key. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::kms:GenerateDataKey*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeeventbridgeruleconfigchangetestAgentRuntimenamessm62DFC739": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/eventbridge-rule/config-change-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeF457F32E"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] kms:GenerateDataKey* is an action family required for SNS envelope encryption, not a resource wildcard - the trailing * is part of the action name and resources stay scoped to this topic and its key. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::kms:GenerateDataKey*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeeventbridgeruleconfigchangetestAgentRuntimearnssm935EF7E4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-main/eventbridge-rule/config-change-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeF457F32E",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] kms:GenerateDataKey* is an action family required for SNS envelope encryption, not a resource wildcard - the trailing * is part of the action name and resources stay scoped to this topic and its key. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::kms:GenerateDataKey*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeEventsRole40394763": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] kms:GenerateDataKey* is an action family required for SNS envelope encryption, not a resource wildcard - the trailing * is part of the action name and resources stay scoped to this topic and its key. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::kms:GenerateDataKey*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeEventsRoleDefaultPolicyD875EB6F": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sns:Publish",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE"
+              }
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeLogGroupKmsKeyAF16CAC2",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeEventsRoleDefaultPolicyD875EB6F",
+        "Roles": [
+          {
+            "Ref": "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeEventsRole40394763"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] Role is created by the CDK EventBridge target solely to publish this rule to its notification topic, so a managed policy would be less scoped, not more. Matches the EventBridge target-role suppression in @aws-mdaa/dataops-stepfunction-l3-construct.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/eventbridge-constructs/lib/cloudtrail-alert-rules.ts] kms:GenerateDataKey* is an action family required for SNS envelope encryption, not a resource wildcard - the trailing * is part of the action name and resources stay scoped to this topic and its key. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                "Action::kms:GenerateDataKey*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeAllowEventRuletestorgtestenvtestdomaintestbedrockagentcoreruntimemainbedrockagentcoreruntimeEventBridgeAlertsRemediationFunctionconfigchangeAF4DB79BDD56DE56": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": "arn:test-partition:lambda:test-region:test-account:function:agentcore-remediation",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeF457F32E",
+            "Arn"
+          ]
         }
       }
     },
@@ -1552,6 +2756,63 @@
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:vpc-endpoint:agentcore:id"
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsAlarmTopicTopicagentcorealarmstestAgentRuntimenameoutEF75FD58": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE",
+          "TopicName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:topic:agentcorealarmstestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeAlarmsAlarmTopicTopicagentcorealarmstestAgentRuntimearnout525B6715": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeAlarmsAlarmTopic76FC8EEE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:topic:agentcorealarmstestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailureeventbridgeruleauthfailuretestAgentRuntimenameout23B8218D": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailure42157EA8"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:eventbridge-rule:authfailuretestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailureeventbridgeruleauthfailuretestAgentRuntimearnout3655FB98": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeEventBridgeAlertsRuleauthfailure42157EA8",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:eventbridge-rule:authfailuretestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeeventbridgeruleconfigchangetestAgentRuntimenameoutCBFE5D88": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeF457F32E"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:eventbridge-rule:configchangetestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeeventbridgeruleconfigchangetestAgentRuntimearnout95C8CD6F": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeEventBridgeAlertsRuleconfigchangeF457F32E",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-main:eventbridge-rule:configchangetestagentruntime:arn"
       }
     },
     "bedrockagentcoreruntimeagentRuntimetestAgentRuntimearnoutA7A7C358": {

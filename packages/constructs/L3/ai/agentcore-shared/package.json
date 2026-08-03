@@ -22,9 +22,14 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
+    "@aws-mdaa/cloudwatch-constructs": "1.7.0",
     "@aws-mdaa/construct": "1.7.0",
     "@aws-mdaa/custom-constructs": "1.7.0",
     "@aws-mdaa/ec2-constructs": "1.7.0",
+    "@aws-mdaa/eventbridge-constructs": "1.7.0",
+    "@aws-mdaa/kms-constructs": "1.7.0",
+    "@aws-mdaa/naming": "1.7.0",
+    "@aws-mdaa/sns-constructs": "1.7.0",
     "@aws-mdaa/testing": "1.7.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
@@ -38,16 +43,26 @@
     "typescript": "5.9.3"
   },
   "peerDependencies": {
+    "@aws-mdaa/cloudwatch-constructs": "1.7.0",
     "@aws-mdaa/construct": "1.7.0",
     "@aws-mdaa/custom-constructs": "1.7.0",
     "@aws-mdaa/ec2-constructs": "1.7.0",
+    "@aws-mdaa/eventbridge-constructs": "1.7.0",
+    "@aws-mdaa/kms-constructs": "1.7.0",
+    "@aws-mdaa/naming": "1.7.0",
+    "@aws-mdaa/sns-constructs": "1.7.0",
     "aws-cdk-lib": "2.258.0",
     "constructs": "10.6.0"
   },
   "dependencies": {
+    "@aws-mdaa/cloudwatch-constructs": "1.7.0",
     "@aws-mdaa/construct": "1.7.0",
     "@aws-mdaa/custom-constructs": "1.7.0",
     "@aws-mdaa/ec2-constructs": "1.7.0",
+    "@aws-mdaa/eventbridge-constructs": "1.7.0",
+    "@aws-mdaa/kms-constructs": "1.7.0",
+    "@aws-mdaa/naming": "1.7.0",
+    "@aws-mdaa/sns-constructs": "1.7.0",
     "aws-cdk-lib": "2.258.0",
     "constructs": "10.6.0"
   },

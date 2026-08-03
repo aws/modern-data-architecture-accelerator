@@ -49,7 +49,7 @@ Enforce and improve testing across all MDAA packages — L2 constructs, L3 const
 - Every sample config has a corresponding `baselineDiffTestApp` call
 - Every sample config has a synth test and snapshot test
 - Schema coverage: every config property exercised through sample configs
-- Mutually exclusive config branches each have dedicated sample configs and tests
+- Mutually exclusive config branches each have dedicated sample configs and tests. Note: a *new* additive field should extend the comprehensive sample config by default — only create a dedicated sample config when the field is mutually exclusive with a field already in the comprehensive config (see user-config-authoring.md section 8).
 
 ### Python Tests
 - Tests co-located in `python-tests/` directories

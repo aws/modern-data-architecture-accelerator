@@ -33,6 +33,32 @@ export function convertComparisonOperator(operator: string): ComparisonOperator 
 }
 
 /**
+ * Periods CloudWatch accepts for an alarm metric, in seconds: 1, 5, 10, 30, or any
+ * multiple of 60.
+ *
+ * Validated up front because CloudFormation does not reject an invalid period at
+ * synth. On a metric-math alarm in particular the period is nested inside a
+ * `MetricDataQuery` that CDK passes through unvalidated, so an invalid value escapes
+ * synth and only fails when `PutMetricAlarm` is called during deployment.
+ *
+ * @param periodSeconds - The alarm period, in seconds, to validate
+ * @param propName - Name used to refer to the offending property in the error
+ *                   message, so a config-driven caller can point at the config key
+ *                   the user actually set
+ * @throws Error if the period is not a value CloudWatch accepts
+ */
+export function validateAlarmPeriodSeconds(periodSeconds: number, propName = 'period'): void {
+  const isValid =
+    [1, 5, 10, 30].includes(periodSeconds) || (periodSeconds >= 60 && Number.isInteger(periodSeconds / 60));
+  if (!isValid) {
+    throw new Error(
+      `${propName} must be 1, 5, 10, 30, or a multiple of 60 seconds (got ${periodSeconds}). ` +
+        'CloudWatch rejects other values.',
+    );
+  }
+}
+
+/**
  * Convert string treat missing data value to TreatMissingData enum.
  * Maps common treat missing data strings to their corresponding CloudWatch TreatMissingData enum values.
  *

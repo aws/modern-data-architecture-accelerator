@@ -1,5 +1,5 @@
 import { ComparisonOperator, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
-import { convertComparisonOperator, convertTreatMissingData } from '../lib/alarm-utils';
+import { convertComparisonOperator, convertTreatMissingData, validateAlarmPeriodSeconds } from '../lib/alarm-utils';
 
 describe('convertComparisonOperator', () => {
   test('converts GreaterThanOrEqualToThreshold correctly', () => {
@@ -93,5 +93,32 @@ describe('convertTreatMissingData', () => {
     expect(() => convertTreatMissingData('BadTreatment')).toThrow(/breaching/);
     expect(() => convertTreatMissingData('BadTreatment')).toThrow(/ignore/);
     expect(() => convertTreatMissingData('BadTreatment')).toThrow(/missing/);
+  });
+});
+
+describe('validateAlarmPeriodSeconds', () => {
+  // The high-resolution values plus the smallest and a large standard period.
+  test.each([1, 5, 10, 30, 60, 300, 3600, 86400])('accepts period %s', periodSeconds => {
+    expect(() => validateAlarmPeriodSeconds(periodSeconds)).not.toThrow();
+  });
+
+  // 45 and 7 are neither high-resolution values nor multiples of 60; 90.5 is
+  // fractional; 0 and negatives are not periods at all.
+  test.each([7, 45, 90.5, 0, -60, 61])('throws on period %s, which CloudWatch rejects', periodSeconds => {
+    expect(() => validateAlarmPeriodSeconds(periodSeconds)).toThrow(/must be 1, 5, 10, 30, or a multiple of 60/);
+  });
+
+  test('reports the offending value', () => {
+    expect(() => validateAlarmPeriodSeconds(45)).toThrow(/got 45/);
+  });
+
+  test('defaults to naming the property "period"', () => {
+    expect(() => validateAlarmPeriodSeconds(45)).toThrow(/^period must be/);
+  });
+
+  // Config-driven callers surface a different property name to the user than the
+  // construct prop, so the message must be able to point at the config key.
+  test('names the caller-supplied property in the message', () => {
+    expect(() => validateAlarmPeriodSeconds(45, 'alarms.periodSeconds')).toThrow(/^alarms\.periodSeconds must be/);
   });
 });

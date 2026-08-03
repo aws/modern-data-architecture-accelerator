@@ -54,12 +54,12 @@ networkConfiguration:
   # The endpoint provides VPC-resident callers a private invocation path and
   # produces the aws:SourceVpc request context that enforceVpcOnly's resource
   # policy requires. If the VPC already has this endpoint (e.g., created by LZA
-  # or a central networking team), omit this block — only one endpoint with
+  # or a central networking team), omit this block - only one endpoint with
   # Private DNS is allowed per service per VPC.
   vpcEndpoint:
     # (Optional) Endpoint policy controlling access through the endpoint.
     # When omitted, allows any principal ("*") restricted to AgentCore invoke
-    # actions — required for OAuth/JWT callers, which have no IAM identity
+    # actions - required for OAuth/JWT callers, which have no IAM identity
     # visible to endpoint policies.
     endpointPolicy:
       # (Optional) Restrict the endpoint to specific IAM principals (SigV4 callers)
@@ -169,8 +169,105 @@ logRetentionDays: 90
 # (EmailAddress, CreditCardNumber, Ssn-US, Name, Address, PhoneNumber-US,
 # IpAddress) is always masked; users with logs:Unmask can still access unmasked data.
 # (Optional) Add extra data identifiers on top of the built-in set. This is
-# additive only — it cannot remove or weaken the built-in masking.
+# additive only - it cannot remove or weaken the built-in masking.
 dataProtection:
   additionalIdentifiers:
     - 'DriversLicense-US'
     - 'PassportNumber-US'
+# (Optional) CloudWatch alarms on the AgentCore service operational metrics.
+# The presence of this block enables alarms (there is no separate `enabled`
+# flag). Provide a notification target via exactly one of notificationTopicArn
+# (existing topic) or createNotificationTopic (module-created CMK-encrypted
+# topic, reusing the module's log-group KMS key), and at least one threshold.
+alarms:
+  # Alarm when the error rate exceeds 10% of invocations over the period.
+  errorRateThreshold: 10
+  # Alarm when the throttle count exceeds 100 over the period.
+  throttleCountThreshold: 100
+  # Have MDAA create a CMK-encrypted SNS topic for notifications.
+  createNotificationTopic: true
+  # Email addresses subscribed to that topic. Each recipient must confirm the SNS
+  # subscription request before delivery starts.
+  #
+  # Strongly recommended whenever createNotificationTopic is true: this topic is the
+  # sole delivery path for BOTH the alarms above and the eventBridgeAlerts rules
+  # below. Without a subscriber, every alarm and rule publishes into a topic nobody
+  # receives - the alerting deploys cleanly and is silently inert, so MDAA emits a
+  # synth-time warning. Only valid with createNotificationTopic; combining it with
+  # notificationTopicArn fails at synth, because MDAA cannot subscribe to a topic it
+  # does not create.
+  notificationEmails:
+    - 'agentcore-ops@example.com'
+  # (Optional) CloudWatch namespace for the service metrics. Defaults to the
+  # AgentCore service namespace; override only if it differs in your account.
+  metricNamespace: 'AWS/Bedrock-AgentCore'
+  # NOTE: `dimensions` is deliberately not set. The module scopes the alarms to
+  # this runtime automatically using the `Resource` dimension the AgentCore
+  # service publishes (its value is the runtime ARN). Setting `dimensions`
+  # replaces that default, and a dimension the service does not publish produces
+  # alarms that receive no data and therefore never fire.
+  # (Optional) Evaluation period in seconds. Must be 1, 5, 10, 30, or a multiple
+  # of 60 (default 300).
+  periodSeconds: 300
+  # (Optional) Number of evaluation periods (default 1). Paired with
+  # datapointsToAlarm below to require 2 of 3 breaching periods, which avoids
+  # paging on a single error in an otherwise quiet 5-minute window.
+  evaluationPeriods: 3
+  # (Optional) Breaching datapoints required to alarm (defaults to
+  # evaluationPeriods, i.e. all of them).
+  datapointsToAlarm: 2
+# (Optional) EventBridge rules alerting on individual AgentCore CloudTrail events.
+# As with `alarms`, the presence of this block enables it - there is no `enabled`
+# flag. Requires the `alarms` block above to supply the SNS topic the rules notify.
+#
+# Prerequisite: a CloudTrail trail in this account/region logging the matched
+# AgentCore events. Management events (the lifecycle APIs below) are logged by
+# default on any trail; data events (invocation) are off by default and must be
+# enabled explicitly. Without a trail covering them, a rule never fires.
+#
+# Config supplies only which events to match (errorCodes / eventNames). MDAA owns
+# the rest of the event pattern - source, detail-type, eventSource, and the scoping
+# to this runtime. A raw pattern passthrough is deliberately not exposed: a
+# hand-written pattern that matches nothing deploys cleanly and never fires.
+eventBridgeAlerts:
+  # Rules are a keyed map. Each key is part of the rule's resource name, so keep
+  # keys stable across deployments.
+  rules:
+    auth-failure:
+      # (Optional) Description, shown in the console and in the notification.
+      description: 'Denied AgentCore invocations'
+      # CloudTrail errorCode values to alert on. Matching any one fires the rule.
+      #
+      # IMPORTANT: these are CloudTrail `errorCode` values, NOT the exception names
+      # the SDK returns. An IAM authorization failure surfaces to the caller as
+      # `AccessDeniedException`, but CloudTrail records it as plain `AccessDenied`.
+      # Verified against real trail records: across 12 services in a live account,
+      # authorization denials are always logged as `AccessDenied`. Configuring
+      # `AccessDeniedException` here produces a rule that deploys cleanly and never
+      # fires, so it is deliberately NOT listed.
+      #
+      # Service-specific API errors do keep their suffix (`ResourceNotFoundException`,
+      # `ValidationException`), so check the exact value in a real record before
+      # adding a code:
+      #   aws cloudtrail lookup-events --lookup-attributes \
+      #     AttributeKey=EventSource,AttributeValue=bedrock-agentcore.amazonaws.com \
+      #     --query 'Events[].CloudTrailEvent' --output text
+      errorCodes:
+        - 'AccessDenied'
+      # Notifies the alarms topic above by default. No Lambda is required (or
+      # created) for notification - SNS already delivers to email/Slack/PagerDuty
+      # via subscription.
+    config-change:
+      description: 'Out-of-band runtime configuration change'
+      # AgentCore API names (CloudTrail eventName) to alert on. Note that setting
+      # both eventNames and errorCodes ANDs them: the rule would then match only
+      # calls to these APIs that also failed with one of those error codes.
+      eventNames:
+        - 'UpdateAgentRuntime'
+        - 'DeleteAgentRuntime'
+      # (Optional) Additionally invoke a customer-supplied Lambda to remediate.
+      # MDAA does not create this function: revoking an execution role or stopping
+      # sessions is destructive and site-specific. The rule grants EventBridge
+      # invoke permission on a same-account function; a cross-account function must
+      # grant that permission on its own side.
+      targetLambdaArn: 'arn:{{partition}}:lambda:{{region}}:{{account}}:function:agentcore-remediation'

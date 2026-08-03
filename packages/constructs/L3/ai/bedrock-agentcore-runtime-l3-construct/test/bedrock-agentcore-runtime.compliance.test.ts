@@ -245,4 +245,72 @@ describe('BedrockAgentcoreRuntimeL3Construct Compliance Tests', () => {
 
     testApp.checkCdkNagCompliance(stack);
   });
+
+  describe('Runtime with alarms and a created notification topic', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+      agentRuntimeName: 'alarm-compliant-runtime',
+      agentRuntimeArtifact: {
+        containerConfiguration: {
+          containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+        },
+      },
+      networkConfiguration: {
+        securityGroups: ['sg-12345678'],
+        subnets: ['subnet-12345678'],
+      },
+      alarms: {
+        errorRateThreshold: 10,
+        throttleCountThreshold: 100,
+        createNotificationTopic: true,
+      },
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    };
+
+    new BedrockAgentcoreRuntimeL3Construct(stack, 'alarm-compliant-runtime-construct', constructProps);
+
+    testApp.checkCdkNagCompliance(stack);
+  });
+
+  describe('Runtime with EventBridge alerts', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+      agentRuntimeName: 'eventbridge-compliant-runtime',
+      agentRuntimeArtifact: {
+        containerConfiguration: {
+          containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+        },
+      },
+      networkConfiguration: {
+        securityGroups: ['sg-12345678'],
+        subnets: ['subnet-12345678'],
+      },
+      alarms: {
+        throttleCountThreshold: 100,
+        createNotificationTopic: true,
+      },
+      eventBridgeAlerts: {
+        rules: {
+          'auth-failure': {
+            description: 'Denied AgentCore invocations',
+            errorCodes: ['AccessDeniedException', 'UnauthorizedException'],
+          },
+          'config-change': {
+            description: 'Out-of-band runtime configuration change',
+            eventNames: ['UpdateAgentRuntime', 'DeleteAgentRuntime'],
+            targetLambdaArn: 'arn:aws:lambda:test-region:test-account:function:agentcore-remediation',
+          },
+        },
+      },
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    };
+
+    new BedrockAgentcoreRuntimeL3Construct(stack, 'eventbridge-compliant-runtime-construct', constructProps);
+
+    testApp.checkCdkNagCompliance(stack);
+  });
 });

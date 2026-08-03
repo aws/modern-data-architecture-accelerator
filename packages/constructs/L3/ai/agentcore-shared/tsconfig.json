@@ -35,6 +35,9 @@
   ],
   "references": [
     {
+      "path": "../../../L2/cloudwatch-constructs"
+    },
+    {
       "path": "../../../L2/construct"
     },
     {
@@ -42,6 +45,18 @@
     },
     {
       "path": "../../../L2/ec2-constructs"
+    },
+    {
+      "path": "../../../L2/eventbridge-constructs"
+    },
+    {
+      "path": "../../../L2/kms-constructs"
+    },
+    {
+      "path": "../../../../utilities/mdaa-naming"
+    },
+    {
+      "path": "../../../L2/sns-constructs"
     },
     {
       "path": "../../../../utilities/mdaa-testing"

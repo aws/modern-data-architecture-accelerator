@@ -4,7 +4,7 @@
  */
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { MdaaAlarm, MdaaAlarmProps } from '../lib';
 
 describe('MDAA Alarm Compliance Tests - Single Metric Alarms', () => {
@@ -506,5 +506,97 @@ describe('MDAA Alarm Compliance Tests - Error Handling', () => {
     expect(() => {
       new MdaaAlarm(testApp.testStack, 'test-alarm-empty-metrics', testConstructProps);
     }).toThrow(/Single metric alarms require/);
+  });
+
+  // CloudWatch accepts only 1, 5, 10, 30, or a multiple of 60 as a period. Asserted
+  // through the construct, not just against validateAlarmPeriodSeconds in isolation:
+  // on the metric-math path CDK passes the period through to CfnAlarm unvalidated, so
+  // a regression that dropped this call would let an invalid period escape synth and
+  // fail at deploy time instead.
+  test('AlarmThrowsErrorForInvalidSingleMetricPeriod', () => {
+    const testApp = new MdaaTestApp();
+
+    const testConstructProps: MdaaAlarmProps = {
+      naming: testApp.naming,
+      createOutputs: false,
+      createParams: true,
+      alarmName: 'test-alarm-invalid-period',
+      metricName: 'test-metric',
+      namespace: 'Test/Namespace',
+      statistic: 'Average',
+      period: 45,
+      evaluationPeriods: 1,
+      threshold: 10,
+      comparisonOperator: 'GreaterThanThreshold',
+    };
+
+    expect(() => {
+      new MdaaAlarm(testApp.testStack, 'test-alarm-invalid-period', testConstructProps);
+    }).toThrow(/period must be 1, 5, 10, 30, or a multiple of 60 seconds \(got 45\)/);
+  });
+
+  // The metric-math path names the offending metric id in the message, so a caller
+  // with several queries can tell which one is wrong.
+  test('AlarmThrowsErrorForInvalidMetricMathPeriod', () => {
+    const testApp = new MdaaTestApp();
+
+    const testConstructProps: MdaaAlarmProps = {
+      naming: testApp.naming,
+      createOutputs: false,
+      createParams: true,
+      alarmName: 'test-alarm-invalid-math-period',
+      evaluationPeriods: 1,
+      threshold: 10,
+      comparisonOperator: 'GreaterThanThreshold',
+      metrics: [
+        {
+          id: 'errors',
+          metricName: 'Errors',
+          namespace: 'Test/Namespace',
+          statistic: 'Sum',
+          period: 45,
+          returnData: true,
+        },
+      ],
+    };
+
+    expect(() => {
+      new MdaaAlarm(testApp.testStack, 'test-alarm-invalid-math-period', testConstructProps);
+    }).toThrow(/metrics\[errors\]\.period must be 1, 5, 10, 30, or a multiple of 60 seconds/);
+  });
+
+  // A metric-math metric stat that omits period falls back to 300, which is a valid
+  // CloudWatch period - so the alarm builds rather than tripping the validation above.
+  test('AlarmDefaultsMetricMathPeriodWhenOmitted', () => {
+    const testApp = new MdaaTestApp();
+
+    new MdaaAlarm(testApp.testStack, 'test-alarm-default-math-period', {
+      naming: testApp.naming,
+      createOutputs: false,
+      createParams: true,
+      alarmName: 'test-alarm-default-math-period',
+      evaluationPeriods: 1,
+      threshold: 10,
+      comparisonOperator: 'GreaterThanThreshold',
+      metrics: [
+        {
+          id: 'errors',
+          metricName: 'Errors',
+          namespace: 'Test/Namespace',
+          statistic: 'Sum',
+          returnData: true,
+        },
+      ],
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+      Metrics: Match.arrayWith([
+        Match.objectLike({
+          Id: 'errors',
+          MetricStat: Match.objectLike({ Period: 300 }),
+        }),
+      ]),
+    });
   });
 });

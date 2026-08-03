@@ -1,0 +1,28 @@
+# Bedrock AgentCore Runtime with CloudWatch alarms notifying an EXISTING SNS topic.
+# Demonstrates the `alarms.notificationTopicArn` path, which is mutually exclusive
+# with `alarms.createNotificationTopic` (used in the comprehensive config). Because
+# the two cannot coexist in one config, this variant has its own sample.
+#
+# Use this when you already manage a central notification/incident SNS topic and
+# want the runtime's alarms to publish to it rather than creating a new topic.
+
+# Unique name for the Bedrock AgentCore Runtime
+agentRuntimeName: testAgentRuntime
+# Container deployment configuration
+agentRuntimeArtifact:
+  containerConfiguration:
+    containerUri: '{{account}}.dkr.ecr.{{region}}.amazonaws.com/test-runtime:latest'
+# VPC network configuration for secure runtime deployment
+networkConfiguration:
+  securityGroups:
+    - sg-12345678
+  subnets:
+    - subnet-12345678
+# CloudWatch alarms notifying an existing SNS topic.
+alarms:
+  # Alarm when the error rate exceeds 5% of invocations over the period.
+  errorRateThreshold: 5
+  # Alarm when the throttle count exceeds 50 over the period.
+  throttleCountThreshold: 50
+  # Notify an existing SNS topic (mutually exclusive with createNotificationTopic).
+  notificationTopicArn: 'arn:{{partition}}:sns:{{region}}:{{account}}:agentcore-alerts'

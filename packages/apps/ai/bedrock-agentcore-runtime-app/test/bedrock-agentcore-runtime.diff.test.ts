@@ -118,4 +118,26 @@ describe('Bedrock Agentcore Runtime Baseline Diff Tests', () => {
       },
     ),
   );
+
+  baselineDiffTestApp(
+    'Bedrock Agentcore Runtime Alarms Existing Topic',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockAgentcoreRuntimeApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-alarms-existing-topic.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-agentcore-runtime-alarms-existing-topic',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
 });

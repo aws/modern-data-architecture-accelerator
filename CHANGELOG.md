@@ -55,6 +55,9 @@
 
 - Added optional `networkConfiguration.vpcEndpoint` to create the AgentCore interface VPC endpoint (`com.amazonaws.{region}.bedrock-agentcore`) with Private DNS, an app-SG-scoped security group, and an invoke-only endpoint policy. Presence opts in; omit to use a pre-existing endpoint. Supports `endpointPolicy.allowPrincipals` and `createSupportingEndpoints` (ECR, STS, CloudWatch Logs). Required for `enforceVpcOnly` to be satisfiable. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#aws-service-endpoints).
 - Corrected the documented AgentCore VPC endpoint service name from `bedrock-agent-runtime` to `bedrock-agentcore`.
+- Added optional `alarms` configuration to create CloudWatch alarms on the AgentCore error-rate and throttle-count metrics, notifying either an existing or a module-created CMK-encrypted SNS topic. Opt-in; omitting the block deploys no alarms. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#cloudwatch-alarms).
+- Added optional `alarms.notificationEmails` to subscribe email addresses to a module-created alarm topic, so notifications reach an operator. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#subscribing-to-the-notification-topic).
+- Added optional `eventBridgeAlerts` configuration to create EventBridge rules alerting on individual AgentCore CloudTrail events (auth failures, out-of-band configuration changes), notifying the `alarms` topic and optionally a customer-supplied remediation Lambda. Requires a CloudTrail trail logging the matched events. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#eventbridge-alerting).
 
 ### Bug Fixes
 

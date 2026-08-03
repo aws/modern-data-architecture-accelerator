@@ -66,6 +66,21 @@ Score each module against the required structure from CONTRIBUTING.md:
 - Sample config descriptions use user-facing language
 - All `sample_configs/*.yaml` files are represented in the README
 
+#### Written for a first-time reader, not for the MR
+
+A module README is read by someone adopting the module at a release boundary. They did not see the MR that produced it, the alternatives considered, or the defects fixed along the way. Text that only makes sense with that context confuses them.
+
+Flag README prose that:
+
+- **Narrates the development process** — "we initially used X but switched to Y", "this was only discovered by testing against a live account", "pinned by a regression test", "verified across 12 services". The resulting fact is what the reader needs; how it was established is not.
+- **Argues against an alternative the reader never saw** — "do not set X, it replaces the derived default" reads as a warning about a trap when the reader has no idea anyone set X. State what the property does and when to use it.
+- **Repeats a rationale as emphasis.** A caveat stated once informs; the same warning restated four or five times reads as relitigating a bug the reader never hit. Keep it where a reader must act on it.
+- **Contradicts the code it documents.** README assertions about behavior go stale when the code changes and nothing checks them. Verify each claim about validation, defaults, or failure modes against the current construct source — a README that states a limitation the code no longer has is worse than one that omits it.
+
+A constraint the reader must respect belongs in the README. The investigation behind it does not belong anywhere — not in the README, and not relocated into a code comment. See "Document the constraint, not the investigation" in `developer-code-documentation.md`, which applies the same standard to comments and JSDoc.
+
+This mirrors the CHANGELOG rule in `review-documentation.md` ("entries are release notes, not design documents"), applied to module READMEs.
+
 ### 3. Assess Sample Config Coverage
 
 #### Schema Coverage Exclusions
@@ -191,7 +206,7 @@ outside the JSON. The file must contain ONLY valid JSON.
   "findings": [
     {
       "risk": "HIGH | MEDIUM | LOW",
-      "category": "readme_gap | schema_coverage | config_usability | schema_design | sample_config | jsdoc",
+      "category": "readme_gap | readme_audience | schema_coverage | config_usability | schema_design | sample_config | jsdoc",
       "file": "path/to/file",
       "property": "propertyName (if applicable, empty string otherwise)",
       "detail": "What's wrong and what should be done."
@@ -318,8 +333,8 @@ Do not add `govcloudMode`, `regionMode`, or similar boolean/enum flags that gate
 
 ### Severity Classification for CI Agent
 
-- **HIGH:** Missing README, missing comprehensive sample config, required README section missing (Deployed Resources, Security/Compliance, MDAA Config), required config property with no JSDoc (users can't configure without reading source), required property that should have a default, use of `any`/`unknown`/untyped `object` in a config-exposed interface where a specific type is feasible
-- **MEDIUM:** README section non-conforming (wrong format, compliance language in Deployed Resources), schema property not exercised in any sample config, sample config not referenced in README, inconsistent property naming, missing template variables (hardcoded account/region), sample config missing inline documentation comments, array-with-name-property pattern where a named map would be more user-friendly, missing schema-level validation for constraints that are currently only enforced in code, `additionalProperties: true` on objects that have a known fixed set of keys, singular config object pattern (`clusterConfig`) where a named map (`clusters:`) should support multiple resources, property names missing units (`queryTimeout` instead of `queryTimeoutMs`), redundant `Config` suffix on property names, raw ARN arrays where MDAA Role Refs should be used, infrastructure properties (VPC/subnets) at root level instead of nested in resource config, regional service-availability gating flags (`govcloudMode`)
+- **HIGH:** Missing README, missing comprehensive sample config, required README section missing (Deployed Resources, Security/Compliance, MDAA Config), required config property with no JSDoc (users can't configure without reading source), required property that should have a default, use of `any`/`unknown`/untyped `object` in a config-exposed interface where a specific type is feasible, README states a behavior the construct source contradicts (a limitation the code no longer has, a validation it does not perform, a default it does not apply)
+- **MEDIUM:** README section non-conforming (wrong format, compliance language in Deployed Resources), README prose written for the MR rather than a first-time reader (narrates the development process, argues against an alternative the reader never saw, or repeats one rationale as emphasis), schema property not exercised in any sample config, sample config not referenced in README, inconsistent property naming, missing template variables (hardcoded account/region), sample config missing inline documentation comments, array-with-name-property pattern where a named map would be more user-friendly, missing schema-level validation for constraints that are currently only enforced in code, `additionalProperties: true` on objects that have a known fixed set of keys, singular config object pattern (`clusterConfig`) where a named map (`clusters:`) should support multiple resources, property names missing units (`queryTimeout` instead of `queryTimeoutMs`), redundant `Config` suffix on property names, raw ARN arrays where MDAA Role Refs should be used, infrastructure properties (VPC/subnets) at root level instead of nested in resource config, regional service-availability gating flags (`govcloudMode`)
 - **LOW:** Missing architecture diagram, missing Related Modules section, style issues in sample config comments, enum value not exercised (but covered by other configs), weak JSDoc that restates the property name, opportunities to tighten string types to enums or patterns
 
 ### Rules for CI Agent Findings

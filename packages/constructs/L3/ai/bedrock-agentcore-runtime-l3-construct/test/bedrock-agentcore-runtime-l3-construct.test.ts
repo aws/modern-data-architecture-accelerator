@@ -1785,4 +1785,340 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       template.resourceCountIs('AWS::XRay::TransactionSearchConfig', 0);
     });
   });
+
+  describe('CloudWatch Alarms', () => {
+    const baseProps = (): BedrockAgentcoreRuntimeL3ConstructProps => ({
+      agentRuntimeName: 'alarm-runtime',
+      agentRuntimeArtifact: {
+        containerConfiguration: {
+          containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+        },
+      },
+      networkConfiguration: {
+        securityGroups: ['sg-12345678'],
+        subnets: ['subnet-12345678'],
+      },
+      enableTransactionSearch: false,
+      naming: testApp.naming,
+      roleHelper,
+    });
+
+    test('creates no alarms when the alarms block is omitted', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'no-alarm-construct', baseProps());
+      const template = Template.fromStack(testApp.testStack);
+      template.resourceCountIs('AWS::CloudWatch::Alarm', 0);
+    });
+
+    test('creates error-rate and throttle alarms with a referenced topic', () => {
+      const topicArn = 'arn:aws:sns:us-east-1:123456789012:existing-topic';
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'alarm-construct', {
+        ...baseProps(),
+        alarms: {
+          errorRateThreshold: 10,
+          throttleCountThreshold: 100,
+          notificationTopicArn: topicArn,
+        },
+      });
+      const template = Template.fromStack(testApp.testStack);
+      template.resourceCountIs('AWS::CloudWatch::Alarm', 2);
+      // No topic created when referencing an existing one.
+      template.resourceCountIs('AWS::SNS::Topic', 0);
+      template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+        MetricName: 'Throttles',
+        Namespace: 'AWS/Bedrock-AgentCore',
+        AlarmActions: [topicArn],
+      });
+    });
+
+    // MDAA cannot verify an external topic's encryption, policy, or subscribers at
+    // synth, so it says so rather than implying the alerting is fully configured.
+    // Mirrors the equivalent advisory on the EventBridge imported-topic path.
+    test('warns that an existing alarm topic should be CMK-encrypted', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'imported-topic-warn-construct', {
+        ...baseProps(),
+        alarms: {
+          throttleCountThreshold: 100,
+          notificationTopicArn: 'arn:aws:sns:test-region:test-account:existing-topic',
+        },
+      });
+
+      const warnings = Annotations.fromStack(testApp.testStack).findWarning(
+        '*',
+        Match.stringLikeRegexp('encrypted with a customer-managed'),
+      );
+      expect(warnings.length).toBeGreaterThan(0);
+    });
+
+    // The inverse: a module-created topic is CMK-encrypted by construction, so the
+    // advisory would be noise.
+    test('does not warn about encryption when the topic is module-created', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'created-topic-no-warn-construct', {
+        ...baseProps(),
+        alarms: { throttleCountThreshold: 100, createNotificationTopic: true, notificationEmails: ['ops@example.com'] },
+      });
+
+      const warnings = Annotations.fromStack(testApp.testStack).findWarning(
+        '*',
+        Match.stringLikeRegexp('encrypted with a customer-managed'),
+      );
+      expect(warnings).toHaveLength(0);
+    });
+
+    test('creates a CMK-encrypted topic reusing the log-group key when requested', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'alarm-topic-construct', {
+        ...baseProps(),
+        alarms: {
+          throttleCountThreshold: 100,
+          createNotificationTopic: true,
+        },
+      });
+      const template = Template.fromStack(testApp.testStack);
+      template.resourceCountIs('AWS::SNS::Topic', 1);
+      template.hasResourceProperties('AWS::SNS::Topic', {
+        KmsMasterKeyId: Match.anyValue(),
+      });
+      // The module creates exactly one KMS key (log-group key, reused for the topic).
+      template.resourceCountIs('AWS::KMS::Key', 1);
+    });
+
+    test('subscribes notificationEmails to the created topic', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'alarm-email-construct', {
+        ...baseProps(),
+        alarms: {
+          throttleCountThreshold: 100,
+          createNotificationTopic: true,
+          notificationEmails: ['ops@example.com', 'oncall@example.com'],
+        },
+      });
+      const template = Template.fromStack(testApp.testStack);
+      template.resourceCountIs('AWS::SNS::Subscription', 2);
+      template.hasResourceProperties('AWS::SNS::Subscription', {
+        Protocol: 'email',
+        Endpoint: 'ops@example.com',
+      });
+    });
+
+    // An unsubscribed topic swallows every alarm and EventBridge notification, so the
+    // whole alerting feature is inert while still deploying cleanly.
+    test('warns when a created topic has no subscribers', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'alarm-nosub-construct', {
+        ...baseProps(),
+        alarms: { throttleCountThreshold: 100, createNotificationTopic: true },
+      });
+
+      const warnings = Annotations.fromStack(testApp.testStack).findWarning(
+        '*',
+        Match.stringLikeRegexp('has no subscribers'),
+      );
+      expect(warnings.length).toBeGreaterThan(0);
+    });
+
+    test('does not warn when notificationEmails are supplied', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'alarm-sub-construct', {
+        ...baseProps(),
+        alarms: {
+          throttleCountThreshold: 100,
+          createNotificationTopic: true,
+          notificationEmails: ['ops@example.com'],
+        },
+      });
+
+      const warnings = Annotations.fromStack(testApp.testStack).findWarning(
+        '*',
+        Match.stringLikeRegexp('has no subscribers'),
+      );
+      expect(warnings).toHaveLength(0);
+    });
+
+    test('throws when notificationEmails is combined with an existing topic ARN', () => {
+      expect(
+        () =>
+          new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'alarm-email-conflict-construct', {
+            ...baseProps(),
+            alarms: {
+              throttleCountThreshold: 100,
+              notificationTopicArn: 'arn:aws:sns:us-east-1:123456789012:existing-topic',
+              notificationEmails: ['ops@example.com'],
+            },
+          }),
+      ).toThrow(/cannot be combined with alarms.notificationTopicArn/);
+    });
+
+    test('throws when alarms are configured without a notification target', () => {
+      expect(
+        () =>
+          new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'bad-alarm-construct', {
+            ...baseProps(),
+            alarms: { throttleCountThreshold: 100 },
+          }),
+      ).toThrow(/notification target/);
+    });
+  });
+
+  describe('EventBridge Alerts', () => {
+    const baseProps = (): BedrockAgentcoreRuntimeL3ConstructProps => ({
+      agentRuntimeName: 'alert-runtime',
+      agentRuntimeArtifact: {
+        containerConfiguration: {
+          containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+        },
+      },
+      networkConfiguration: {
+        securityGroups: ['sg-12345678'],
+        subnets: ['subnet-12345678'],
+      },
+      enableTransactionSearch: false,
+      naming: testApp.naming,
+      roleHelper,
+    });
+
+    test('creates no rules when the eventBridgeAlerts block is omitted', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'no-alert-construct', baseProps());
+      const template = Template.fromStack(testApp.testStack);
+      template.resourceCountIs('AWS::Events::Rule', 0);
+    });
+
+    test('creates rules targeting the module-created alarm topic', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'alert-construct', {
+        ...baseProps(),
+        alarms: { throttleCountThreshold: 100, createNotificationTopic: true },
+        eventBridgeAlerts: {
+          rules: {
+            'auth-failure': { errorCodes: ['AccessDeniedException', 'UnauthorizedException'] },
+            'config-change': { eventNames: ['UpdateAgentRuntime', 'DeleteAgentRuntime'] },
+          },
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.resourceCountIs('AWS::Events::Rule', 2);
+      // The alarms topic is reused as the rule target rather than a second topic
+      // being created - this is the wiring the L3 previously discarded.
+      template.resourceCountIs('AWS::SNS::Topic', 1);
+      // Each rule publishes through its own delivery role scoped to that topic, so the
+      // topic policy gains no events.amazonaws.com grant. Assert the targets point at
+      // the single topic via a role rather than asserting a topic-policy statement.
+      const rules = Object.values(template.findResources('AWS::Events::Rule'));
+      expect(rules).toHaveLength(2);
+      rules.forEach(rule => {
+        expect(rule.Properties.Targets[0].RoleArn).toBeDefined();
+      });
+    });
+
+    // Scoped to this runtime by every identity form CloudTrail may record. The
+    // resources.ARN branch is load-bearing: InvokeAgentRuntime carries a null
+    // requestParameters, so without it an auth-failure rule matches nothing.
+    test('scopes rules to this runtime by id, ARN, and resources.ARN', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'scoped-alert-construct', {
+        ...baseProps(),
+        alarms: { throttleCountThreshold: 100, createNotificationTopic: true },
+        eventBridgeAlerts: {
+          rules: { 'auth-failure': { errorCodes: ['AccessDeniedException'] } },
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::Events::Rule', {
+        EventPattern: Match.objectLike({
+          detail: Match.objectLike({
+            $or: [
+              { requestParameters: { agentRuntimeId: Match.anyValue() } },
+              { requestParameters: { agentRuntimeArn: Match.anyValue() } },
+              { resources: { ARN: Match.anyValue() } },
+            ],
+          }),
+        }),
+      });
+    });
+
+    test('attaches a customer remediation Lambda with invoke permission', () => {
+      const lambdaArn = 'arn:aws:lambda:test-region:test-account:function:agentcore-remediation';
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'lambda-alert-construct', {
+        ...baseProps(),
+        alarms: { throttleCountThreshold: 100, createNotificationTopic: true },
+        eventBridgeAlerts: {
+          rules: {
+            'config-change': { eventNames: ['UpdateAgentRuntime'], targetLambdaArn: lambdaArn },
+          },
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::Lambda::Permission', {
+        Action: 'lambda:InvokeFunction',
+        FunctionName: lambdaArn,
+        Principal: 'events.amazonaws.com',
+      });
+      // MDAA never creates the remediation function, only references it. (The stack
+      // does contain the always-on log-protection custom-resource Lambdas, so this
+      // asserts no function is created *for the alert* rather than a stack-wide zero.)
+      const functionNames = Object.values(template.findResources('AWS::Lambda::Function')).map(
+        fn => fn.Properties?.FunctionName,
+      );
+      expect(functionNames).not.toContain(lambdaArn);
+    });
+
+    test('targets an existing alarm topic referenced by ARN', () => {
+      const topicArn = 'arn:aws:sns:test-region:test-account:existing-topic';
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'existing-topic-alert-construct', {
+        ...baseProps(),
+        alarms: { throttleCountThreshold: 100, notificationTopicArn: topicArn },
+        eventBridgeAlerts: {
+          rules: { 'auth-failure': { errorCodes: ['AccessDeniedException'] } },
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.resourceCountIs('AWS::SNS::Topic', 0);
+      template.hasResourceProperties('AWS::Events::Rule', {
+        Targets: Match.arrayWith([Match.objectLike({ Arn: topicArn })]),
+      });
+    });
+
+    // CDK cannot attach a resource policy to an imported topic, so the publish grant
+    // is silently skipped and the rule would match but deliver nothing.
+    test('warns that an imported topic must grant EventBridge publish itself', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'warn-alert-construct', {
+        ...baseProps(),
+        alarms: {
+          throttleCountThreshold: 100,
+          notificationTopicArn: 'arn:aws:sns:test-region:test-account:existing-topic',
+        },
+        eventBridgeAlerts: {
+          rules: { 'auth-failure': { errorCodes: ['AccessDeniedException'] } },
+        },
+      });
+
+      const warnings = Annotations.fromStack(testApp.testStack).findWarning(
+        '*',
+        Match.stringLikeRegexp('events.amazonaws.com service principal to sns:Publish'),
+      );
+      expect(warnings.length).toBeGreaterThan(0);
+    });
+
+    // The rules' only notification target is the alarms topic. Without one they
+    // would deploy cleanly and notify nothing, so this must fail at synth.
+    test('throws when eventBridgeAlerts is set without an alarms block', () => {
+      expect(
+        () =>
+          new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'no-topic-alert-construct', {
+            ...baseProps(),
+            eventBridgeAlerts: {
+              rules: { 'auth-failure': { errorCodes: ['AccessDeniedException'] } },
+            },
+          }),
+      ).toThrow(/eventBridgeAlerts requires an alarms block/);
+    });
+
+    test('throws when a rule matches neither an error code nor an event name', () => {
+      expect(
+        () =>
+          new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'empty-rule-construct', {
+            ...baseProps(),
+            alarms: { throttleCountThreshold: 100, createNotificationTopic: true },
+            eventBridgeAlerts: { rules: { empty: {} } },
+          }),
+      ).toThrow(/must set errorCodes and\/or eventNames/);
+    });
+  });
 });

@@ -50,6 +50,64 @@
             ],
             "type": "object"
         },
+        "AlarmsConfiguration": {
+            "additionalProperties": false,
+            "description": "Optional CloudWatch Alarms configuration for the runtime.\n\nWhen this block is present, MDAA creates CloudWatch alarms on the AgentCore\nservice operational metrics (namespace `AWS/Bedrock-AgentCore`) and notifies\nan SNS topic on alarm. The presence of the block enables alarms - there is no\nseparate `enabled` flag (consistent with the rest of the module config).\n\nProvide a notification target via exactly one of `notificationTopicArn`\n(reference an existing topic) or `createNotificationTopic: true` (have MDAA\ncreate a CMK-encrypted topic, reusing the module's log-group KMS key). At\nleast one threshold (`errorRateThreshold` and/or `throttleCountThreshold`)\nmust be supplied.\n\nUse cases: production incident detection, error-rate and throttle alerting,\nauth-failure burst detection (via the error-rate alarm)\n\nAWS: CloudWatch Alarms on AWS/Bedrock-AgentCore metrics + SNS notification\n\nValidation: requires a notification target and at least one threshold",
+            "properties": {
+                "createNotificationTopic": {
+                    "description": "When true, MDAA creates a CMK-encrypted SNS topic for alarm notifications\n(reusing the module's log-group KMS key) and exports its ARN to SSM.\nMutually exclusive with `notificationTopicArn`.\n\nUse cases: self-contained alerting without a pre-existing topic\n\nAWS: MDAA-created CMK-encrypted SNS topic\n\nValidation: Optional; Boolean; mutually exclusive with notificationTopicArn",
+                    "type": "boolean"
+                },
+                "datapointsToAlarm": {
+                    "default": "evaluationPeriods",
+                    "description": "Number of breaching datapoints within `evaluationPeriods` required to move\nthe alarm to ALARM (an \"M of N\" alarm). Defaults to `evaluationPeriods`, so\nevery period must breach. On low-traffic runtimes a single 5-minute period\ncontaining one error out of one invocation is a 100% error rate, so consider\nraising `evaluationPeriods` and setting this lower to suppress noise.\n\nUse cases: reducing false positives on low-traffic runtimes\n\nAWS: CloudWatch alarm datapointsToAlarm\n\nValidation: Optional; Number; must not exceed evaluationPeriods",
+                    "type": "number"
+                },
+                "dimensions": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": "{ Resource: <runtime ARN> }",
+                    "description": "Dimensions scoping the metrics to this specific runtime. Leave unset - the\nmodule scopes the alarms to this runtime automatically using the `Resource`\ndimension the AgentCore service publishes (whose value is the runtime ARN).\nSetting this replaces that default entirely, and a dimension the service\ndoes not publish yields alarms that never fire.\n\nUse cases: correcting a service-side change to the published dimension\n\nAWS: CloudWatch metric dimensions\n\nValidation: Optional; map of dimension name to value",
+                    "type": "object"
+                },
+                "errorRateThreshold": {
+                    "description": "Error-rate alarm threshold as a percentage of invocations over the\nevaluation period (e.g. 10 = alarm when TotalErrors/Invocations > 10%).\nImplemented as a CloudWatch metric-math alarm over the `TotalErrors` and\n`Invocations` metrics. Omit to skip the error-rate alarm.\n\nUse cases: error-rate spike detection, prompt-injection/model-drift signals\n\nAWS: CloudWatch metric-math alarm (100 * TotalErrors / Invocations)\n\nValidation: Optional; Number; percentage (0-100)",
+                    "type": "number"
+                },
+                "evaluationPeriods": {
+                    "default": 1,
+                    "description": "Number of evaluation periods over which the metric is compared to the\nthreshold.\n\nUse cases: requiring sustained breaches before alarming\n\nAWS: CloudWatch alarm evaluation periods\n\nValidation: Optional; Number",
+                    "type": "number"
+                },
+                "metricNamespace": {
+                    "default": "AWS/Bedrock-AgentCore",
+                    "description": "CloudWatch namespace for the service metrics. Defaults to the AgentCore\nservice namespace. Override only if the published namespace differs in your\naccount/region.\n\nUse cases: correcting a namespace mismatch without a code change\n\nAWS: CloudWatch metric namespace\n\nValidation: Optional; String",
+                    "type": "string"
+                },
+                "notificationEmails": {
+                    "description": "Email addresses subscribed to the module-created notification topic. Each\naddress receives an SNS confirmation request and must confirm before delivery\nbegins.\n\nStrongly recommended whenever `createNotificationTopic` is true: this topic is\nthe sole delivery path for both the CloudWatch alarms and the EventBridge rules\nfrom `eventBridgeAlerts`. With no subscriber, every alarm and every rule\npublishes into a topic nobody receives - the alerting deploys cleanly and is\nsilently inert. MDAA emits a synth-time warning in that case.\n\nOnly valid with `createNotificationTopic`. Combining this with\n`notificationTopicArn` fails at synth: MDAA does not modify a topic it did not\ncreate, and the deploying role would not hold `sns:Subscribe` on an\nexternally-owned one. Subscribe on the owning side instead.\n\nUse cases: operator paging, routing alarms to a team distribution list\n\nAWS: SNS email subscriptions on the created topic\n\nValidation: Optional; String[]; valid email addresses; mutually exclusive with notificationTopicArn",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "notificationTopicArn": {
+                    "description": "ARN of an existing SNS topic to notify on alarm. Mutually exclusive with\n`createNotificationTopic`.\n\nMDAA cannot verify or modify a topic it did not create, so the topic's\nconfiguration is your responsibility: it should be encrypted with a\ncustomer-managed KMS key so alarm notifications are protected at rest, must\nallow the `cloudwatch.amazonaws.com` service principal to `sns:Publish` (and to\nuse that key), and needs at least one subscriber or notifications are accepted\nand discarded. MDAA emits a synth-time warning restating this. Use\n`createNotificationTopic: true` instead to get a CMK-encrypted topic MDAA\nmanages for you.\n\nUse cases: routing alarms to an existing notification/incident topic\n\nAWS: SNS topic ARN used as the CloudWatch alarm action\n\nValidation: Optional; String; valid SNS topic ARN; mutually exclusive with createNotificationTopic",
+                    "type": "string"
+                },
+                "periodSeconds": {
+                    "default": 300,
+                    "description": "Evaluation period in seconds. Must be 1, 5, 10, 30, or a multiple of 60;\nCloudWatch rejects other values.\n\nUse cases: tuning alarm sensitivity vs. noise\n\nAWS: CloudWatch alarm period\n\nValidation: Optional; Number; 1, 5, 10, 30, or a multiple of 60 seconds",
+                    "type": "number"
+                },
+                "throttleCountThreshold": {
+                    "description": "Throttle-count alarm threshold (sum of the `Throttles` metric over the\nevaluation period). Omit to skip the throttle alarm.\n\nUse cases: throttle/quota-exhaustion detection, abuse/runaway-agent signals\n\nAWS: CloudWatch alarm on the Throttles metric (Sum)\n\nValidation: Optional; Number",
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
         "Architecture": {
             "additionalProperties": false,
             "description": "Architectures supported by AWS Lambda",
@@ -557,10 +615,10 @@
         },
         "DataProtectionProperty": {
             "additionalProperties": false,
-            "description": "CloudWatch Data Protection configuration for the runtime log groups.\n\nData Protection (PII masking) and customer-managed KMS encryption are always-on,\nbuilt-in behavior for this module and cannot be disabled — sensitive data (emails,\nSSNs, credit card numbers, etc.) is automatically masked in log events on ingestion.\nThis optional configuration only allows tightening the posture (adding identifiers);\nit can never reduce the built-in compliance baseline.\n\nUse cases: extending PII masking with additional identifiers, future protection options\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; additionalIdentifiers only adds to the built-in identifier set",
+            "description": "CloudWatch Data Protection configuration for the runtime log groups.\n\nData Protection (PII masking) and customer-managed KMS encryption are always-on,\nbuilt-in behavior for this module and cannot be disabled - sensitive data (emails,\nSSNs, credit card numbers, etc.) is automatically masked in log events on ingestion.\nThis optional configuration only allows tightening the posture (adding identifiers);\nit can never reduce the built-in compliance baseline.\n\nUse cases: extending PII masking with additional identifiers, future protection options\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; additionalIdentifiers only adds to the built-in identifier set",
             "properties": {
                 "additionalIdentifiers": {
-                    "description": "Additional AWS-managed data identifiers to mask, on top of the built-in\ncomprehensive set (EmailAddress, CreditCardNumber, Ssn-US, Name, Address,\nPhoneNumber-US, IpAddress). Each entry is a name matching an AWS-managed data\nidentifier (e.g., \"DriversLicense-US\", \"PassportNumber-US\").\n\nThis field is additive only — it cannot remove or override the built-in\nidentifiers, so it can never reduce the masking baseline.\n\nUse cases: stricter PII masking, organization-specific identifier requirements\n\nAWS: CloudWatch Logs managed data identifiers\n\nValidation: Optional; String[]; must be valid AWS data identifier names",
+                    "description": "Additional AWS-managed data identifiers to mask, on top of the built-in\ncomprehensive set (EmailAddress, CreditCardNumber, Ssn-US, Name, Address,\nPhoneNumber-US, IpAddress). Each entry is a name matching an AWS-managed data\nidentifier (e.g., \"DriversLicense-US\", \"PassportNumber-US\").\n\nThis field is additive only - it cannot remove or override the built-in\nidentifiers, so it can never reduce the masking baseline.\n\nUse cases: stricter PII masking, organization-specific identifier requirements\n\nAWS: CloudWatch Logs managed data identifiers\n\nValidation: Optional; String[]; must be valid AWS data identifier names",
                     "items": {
                         "type": "string"
                     },
@@ -801,6 +859,52 @@
                 "components",
                 "unit"
             ],
+            "type": "object"
+        },
+        "EventBridgeConfiguration": {
+            "additionalProperties": false,
+            "description": "Optional EventBridge alerting configuration for the runtime.\n\nWhen this block is present, MDAA creates EventBridge rules matching AgentCore\nCloudTrail events for this runtime and notifies the `alarms` SNS topic. As with\n`alarms`, the presence of the block enables it - there is no separate `enabled`\nflag.\n\n**Requires an `alarms` block** that either creates a notification topic\n(`createNotificationTopic: true`) or references one (`notificationTopicArn`):\nthat topic is the default rule target. Configuring `eventBridgeAlerts` without\none fails at synth rather than deploying rules with no target.\n\n**Prerequisite:** a CloudTrail trail in the account/region logging the relevant\nAgentCore events. Management events (the lifecycle APIs such as\n`UpdateAgentRuntime`) are logged by default on any trail; data events\n(invocation) are off by default and must be enabled explicitly. Without a trail\ncovering the events a rule matches, that rule never fires.\n\nUse cases: real-time security alerting, auth-failure and config-change detection\n\nAWS: EventBridge rules on AgentCore CloudTrail events -> SNS (+ optional Lambda)\n\nValidation: requires a `rules` map with at least one entry, and an `alarms` topic",
+            "properties": {
+                "rules": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/EventBridgeRuleConfiguration"
+                    },
+                    "description": "The rules to create, keyed by a short name (e.g. `auth-failure`). The key is\npart of the rule's resource name, so it should be stable across deployments.\n\nUse cases: multiple independent detections on one runtime\n\nAWS: EventBridge rules\n\nValidation: Required; map of rule name to EventBridgeRuleConfiguration; at least one entry",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "rules"
+            ],
+            "type": "object"
+        },
+        "EventBridgeRuleConfiguration": {
+            "additionalProperties": false,
+            "description": "A single EventBridge alerting rule for the runtime.\n\nMDAA owns every structural field of the generated event pattern - the `source`,\n`detail-type` (`AWS API Call via CloudTrail`), `eventSource`, and the scoping to\nthis runtime. Configuration supplies only which events to match, via\n`errorCodes` and/or `eventNames`. A raw `pattern` passthrough is deliberately not\nexposed: a hand-written pattern that matches nothing deploys cleanly and never\nfires, which is worse than no alerting because it reads as covered.\n\nUse cases: auth-failure detection, out-of-band configuration-change detection\n\nAWS: EventBridge rule on AgentCore CloudTrail events, targeting SNS\n\nValidation: requires at least one of errorCodes or eventNames",
+            "properties": {
+                "description": {
+                    "description": "Human-readable description of what the rule detects. Shown in the EventBridge\nconsole and included in the notification message.\n\nUse cases: rule documentation, operational clarity in alerts\n\nAWS: EventBridge rule description\n\nValidation: Optional; String",
+                    "type": "string"
+                },
+                "errorCodes": {
+                    "description": "CloudTrail `errorCode` values to alert on (e.g. `AccessDenied`,\n`UnauthorizedException`). The rule fires when any one of them matches.\n\nThese are CloudTrail `errorCode` values, NOT the SDK exception names. An IAM\nauthorization failure returns `AccessDeniedException` to the caller but is\nrecorded by CloudTrail as plain `AccessDenied` - verified against real trail\nrecords, where every authorization denial across 12 services used the\nunsuffixed form. Configuring `AccessDeniedException` yields a rule that deploys\ncleanly and never fires.\n\nService-specific API errors do keep the suffix (`ResourceNotFoundException`,\n`ValidationException`), so the split is between IAM's normalized denial and a\nservice's own errors. Confirm any code against a real trail record.\n\nNote that setting both `errorCodes` and `eventNames` ANDs them: the rule then\nmatches only calls to one of those APIs that failed with one of those codes.\n\nUse cases: repeated auth failures, credential-stuffing detection\n\nAWS: EventBridge `detail.errorCode` pattern match\n\nValidation: Optional; String[]; at least one of errorCodes or eventNames required",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "eventNames": {
+                    "description": "AgentCore API names (CloudTrail `eventName`) to alert on (e.g.\n`UpdateAgentRuntime`, `DeleteAgentRuntime`). The rule fires when any one of them\nmatches.\n\nUse cases: out-of-band configuration changes made outside IaC\n\nAWS: EventBridge `detail.eventName` pattern match\n\nValidation: Optional; String[]; at least one of errorCodes or eventNames required",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "targetLambdaArn": {
+                    "description": "ARN of an existing, customer-supplied Lambda function to invoke in addition to\nthe SNS notification, for automated remediation (e.g. revoking credentials or\ndisabling a target). MDAA does not create this function - revoking an execution\nrole or stopping sessions is destructive and site-specific.\n\nThe rule grants EventBridge `lambda:InvokeFunction` on a same-account target. A\ncross-account function must grant that permission on its own side.\n\nUse cases: auto-remediation, kill-switch on anomalous activity\n\nAWS: EventBridge Lambda target with invoke permission\n\nValidation: Optional; String; valid Lambda function ARN in this account",
+                    "type": "string"
+                }
+            },
             "type": "object"
         },
         "FunctionReference": {
@@ -2323,7 +2427,7 @@
                 },
                 "vpcEndpoint": {
                     "$ref": "#/definitions/VpcEndpointProperty",
-                    "description": "Optional MDAA-managed creation of the AgentCore interface VPC endpoint\n(com.amazonaws.{region}.bedrock-agentcore) in this VPC. Presence of this\nblock opts in to endpoint creation (an empty object accepts all defaults);\nomitting it means no endpoint is created. The endpoint gives VPC-resident\ncallers a private invocation path and produces the aws:SourceVpc request\ncontext that enforceVpcOnly's resource policy requires — without it, an\nenforceVpcOnly runtime cannot be invoked at all.\n\nCreation is opt-in (interface endpoints carry hourly/per-GB costs). If the\nVPC already has a bedrock-agentcore endpoint (e.g., created by LZA or a\ncentral networking team), omit this block — only one endpoint with Private\nDNS is allowed per service per VPC, and a second one will fail to deploy.\n\nUse cases: Private invocation path, enforceVpcOnly support, no-NAT environments\n\nAWS: Interface VPC endpoint with Private DNS, endpoint policy, and security group\n\nValidation: Optional; VpcEndpointProperty; requires vpcId when present"
+                    "description": "Optional MDAA-managed creation of the AgentCore interface VPC endpoint\n(com.amazonaws.{region}.bedrock-agentcore) in this VPC. Presence of this\nblock opts in to endpoint creation (an empty object accepts all defaults);\nomitting it means no endpoint is created. The endpoint gives VPC-resident\ncallers a private invocation path and produces the aws:SourceVpc request\ncontext that enforceVpcOnly's resource policy requires - without it, an\nenforceVpcOnly runtime cannot be invoked at all.\n\nCreation is opt-in (interface endpoints carry hourly/per-GB costs). If the\nVPC already has a bedrock-agentcore endpoint (e.g., created by LZA or a\ncentral networking team), omit this block - only one endpoint with Private\nDNS is allowed per service per VPC, and a second one will fail to deploy.\n\nUse cases: Private invocation path, enforceVpcOnly support, no-NAT environments\n\nAWS: Interface VPC endpoint with Private DNS, endpoint policy, and security group\n\nValidation: Optional; VpcEndpointProperty; requires vpcId when present"
                 },
                 "vpcId": {
                     "description": "VPC ID for the network where the runtime is deployed.\nRequired when `enforceVpcOnly` is enabled, to generate the resource-based policy\nrestricting invocations to this VPC.\n\nUse cases: VPC-only enforcement for JWT callers, network boundary identification\n\nAWS: VPC ID for resource-based policy condition\n\nValidation: Optional; String; required when enforceVpcOnly is true",
@@ -3248,6 +3352,10 @@
             "description": "Unique name for the Bedrock AgentCore Runtime.\n\nUse cases: Runtime identification, agent organization, configuration management\n\nAWS: Bedrock AgentCore Runtime name\n\nValidation: Required; String",
             "type": "string"
         },
+        "alarms": {
+            "$ref": "#/definitions/AlarmsConfiguration",
+            "description": "Optional CloudWatch Alarms configuration. When present, MDAA creates alarms\non AgentCore service metrics (error rate, throttle count) and notifies an\nSNS topic. Provide a notification target via exactly one of\nnotificationTopicArn (existing topic) or createNotificationTopic: true\n(module-created CMK-encrypted topic), and at least one threshold. Omit the\nblock entirely to deploy no alarms.\n\nUse cases: production incident detection, error-rate and throttle alerting\n\nAWS: CloudWatch Alarms + SNS notification\n\nValidation: Optional; AlarmsConfiguration; requires a notification target and at least one threshold"
+        },
         "allowedModelArns": {
             "description": "IAM resource ARN patterns for Bedrock model invocation permissions.\nWhen specified, scopes the bedrock:InvokeModel and bedrock:InvokeModelWithResponseStream\npermissions to only the listed patterns. Follows IAM Resource element syntax\n(supports wildcards, e.g. \"arn:aws:bedrock:us-east-1::foundation-model/anthropic.*\").\nWhen omitted, the broad default permissions are preserved (all foundation models).\n\nUse cases: Least privilege model access, cost control, compliance, blast radius reduction\n\nAWS: IAM Resource element patterns for bedrock:InvokeModel policy statements\n\nValidation: Optional; String[]; IAM resource ARN patterns (wildcards allowed)",
             "items": {
@@ -3262,7 +3370,7 @@
         },
         "dataProtection": {
             "$ref": "#/definitions/DataProtectionProperty",
-            "description": "CloudWatch Data Protection configuration for the runtime log groups.\n\nPII masking and customer-managed KMS encryption are always-on, built-in behavior\nfor this module and cannot be disabled — sensitive data (emails, SSNs, credit card\nnumbers, etc.) is automatically masked in log events on ingestion. Users with\nlogs:Unmask permission can still access unmasked data. This optional configuration\nonly allows tightening the posture (adding identifiers); it can never reduce the\nbuilt-in compliance baseline.\n\nUse cases: extending PII masking with additional identifiers\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; DataProtectionProperty; additive only"
+            "description": "CloudWatch Data Protection configuration for the runtime log groups.\n\nPII masking and customer-managed KMS encryption are always-on, built-in behavior\nfor this module and cannot be disabled - sensitive data (emails, SSNs, credit card\nnumbers, etc.) is automatically masked in log events on ingestion. Users with\nlogs:Unmask permission can still access unmasked data. This optional configuration\nonly allows tightening the posture (adding identifiers); it can never reduce the\nbuilt-in compliance baseline.\n\nUse cases: extending PII masking with additional identifiers\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; DataProtectionProperty; additive only"
         },
         "description": {
             "description": "Description of the agent runtime's purpose and functionality.\n\nUse cases: Runtime documentation, operational clarity\n\nAWS: Bedrock AgentCore Runtime description\n\nValidation: Optional; String",
@@ -3283,6 +3391,10 @@
             },
             "description": "Key-value environment variables passed to the agent runtime container.\n\nUse cases: Runtime configuration, environment customization, behavior control\n\nAWS: Bedrock AgentCore Runtime container environment variables\n\nValidation: Optional; Record<string, string>",
             "type": "object"
+        },
+        "eventBridgeAlerts": {
+            "$ref": "#/definitions/EventBridgeConfiguration",
+            "description": "Optional EventBridge alerting configuration. When present, MDAA creates\nEventBridge rules matching this runtime's AgentCore CloudTrail events and\nnotifies the `alarms` SNS topic, optionally also invoking a customer-supplied\nremediation Lambda (`targetLambdaArn`). Rules supply only `errorCodes` and/or\n`eventNames` - MDAA owns the rest of the event pattern. Omit the block entirely\nto create no rules.\n\nRequires an `alarms` block supplying a notification topic, and a CloudTrail\ntrail in the account/region logging the matched AgentCore events.\n\nUse cases: real-time auth-failure and out-of-band configuration-change alerting\n\nAWS: EventBridge rules on AgentCore CloudTrail events -> SNS\n\nValidation: Optional; EventBridgeConfiguration; requires an alarms topic and at least one rule"
         },
         "lifecycleConfiguration": {
             "$ref": "#/definitions/LifecycleConfigurationProperty",

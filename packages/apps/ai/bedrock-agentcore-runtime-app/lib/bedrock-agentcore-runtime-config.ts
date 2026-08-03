@@ -13,6 +13,8 @@ import {
   PolicyProperty,
   RuntimeEndpointProperty,
   DataProtectionProperty,
+  AlarmsConfiguration,
+  EventBridgeConfiguration,
 } from '@aws-mdaa/bedrock-agentcore-runtime-l3-construct';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
@@ -230,7 +232,7 @@ export interface BedrockAgentcoreRuntimeConfigContents extends MdaaBaseConfigCon
    * CloudWatch Data Protection configuration for the runtime log groups.
    *
    * PII masking and customer-managed KMS encryption are always-on, built-in behavior
-   * for this module and cannot be disabled — sensitive data (emails, SSNs, credit card
+   * for this module and cannot be disabled - sensitive data (emails, SSNs, credit card
    * numbers, etc.) is automatically masked in log events on ingestion. Users with
    * logs:Unmask permission can still access unmasked data. This optional configuration
    * only allows tightening the posture (adding identifiers); it can never reduce the
@@ -243,6 +245,39 @@ export interface BedrockAgentcoreRuntimeConfigContents extends MdaaBaseConfigCon
    * Validation: Optional; DataProtectionProperty; additive only
    **/
   readonly dataProtection?: DataProtectionProperty;
+  /**
+   * Optional CloudWatch Alarms configuration. When present, MDAA creates alarms
+   * on AgentCore service metrics (error rate, throttle count) and notifies an
+   * SNS topic. Provide a notification target via exactly one of
+   * notificationTopicArn (existing topic) or createNotificationTopic: true
+   * (module-created CMK-encrypted topic), and at least one threshold. Omit the
+   * block entirely to deploy no alarms.
+   *
+   * Use cases: production incident detection, error-rate and throttle alerting
+   *
+   * AWS: CloudWatch Alarms + SNS notification
+   *
+   * Validation: Optional; AlarmsConfiguration; requires a notification target and at least one threshold
+   **/
+  readonly alarms?: AlarmsConfiguration;
+  /**
+   * Optional EventBridge alerting configuration. When present, MDAA creates
+   * EventBridge rules matching this runtime's AgentCore CloudTrail events and
+   * notifies the `alarms` SNS topic, optionally also invoking a customer-supplied
+   * remediation Lambda (`targetLambdaArn`). Rules supply only `errorCodes` and/or
+   * `eventNames` - MDAA owns the rest of the event pattern. Omit the block entirely
+   * to create no rules.
+   *
+   * Requires an `alarms` block supplying a notification topic, and a CloudTrail
+   * trail in the account/region logging the matched AgentCore events.
+   *
+   * Use cases: real-time auth-failure and out-of-band configuration-change alerting
+   *
+   * AWS: EventBridge rules on AgentCore CloudTrail events -> SNS
+   *
+   * Validation: Optional; EventBridgeConfiguration; requires an alarms topic and at least one rule
+   **/
+  readonly eventBridgeAlerts?: EventBridgeConfiguration;
 }
 
 export class BedrockAgentcoreRuntimeConfigParser extends MdaaAppConfigParser<BedrockAgentcoreRuntimeConfigContents> {
@@ -263,6 +298,8 @@ export class BedrockAgentcoreRuntimeConfigParser extends MdaaAppConfigParser<Bed
   public readonly enableTransactionSearch?: boolean;
   public readonly logRetentionDays?: LogRetentionDays;
   public readonly dataProtection?: DataProtectionProperty;
+  public readonly alarms?: AlarmsConfiguration;
+  public readonly eventBridgeAlerts?: EventBridgeConfiguration;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -284,5 +321,7 @@ export class BedrockAgentcoreRuntimeConfigParser extends MdaaAppConfigParser<Bed
     this.enableTransactionSearch = this.configContents.enableTransactionSearch;
     this.logRetentionDays = this.configContents.logRetentionDays;
     this.dataProtection = this.configContents.dataProtection;
+    this.alarms = this.configContents.alarms;
+    this.eventBridgeAlerts = this.configContents.eventBridgeAlerts;
   }
 }

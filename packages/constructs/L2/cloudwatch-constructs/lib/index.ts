@@ -9,3 +9,5 @@ export * from './log-insights-query';
 export * from './metric-filter';
 export * from './alarm';
 export * from './dashboard';
+export * from './alarm-utils';
+export * from './alarm-topic-utils';
