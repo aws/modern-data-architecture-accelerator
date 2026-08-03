@@ -1,0 +1,29 @@
+# HealthLake FHIR R4 Datastore - SMART on FHIR Configuration
+# Deploys a HealthLake FHIR R4 datastore with SMART on FHIR authorization for
+# clinical application access (patient portals, EHR integrations, third-party SMART apps).
+
+# Roles granted administer/use on the auto-created KMS key. Required when the key is
+# auto-created (kmsKeyArn omitted): the key is retained on stack teardown, so at least
+# one scoped admin role must be provided to keep it manageable.
+dataAdminRoles:
+  - arn: arn:{{partition}}:iam::{{account}}:role/example-data-admin
+
+# Named map of HealthLake datastores. Each map key is the datastore name suffix.
+datastores:
+  primary:
+    # S3 bucket ARN for HealthLake data access (required)
+    rawBucketArn: arn:{{partition}}:s3:::example-raw-bucket
+
+    # Identity provider configuration for SMART on FHIR authorization
+    identityProviderConfiguration:
+      # Authorization strategy (enum: AWS_AUTH, SMART_ON_FHIR_V1, SMART_ON_FHIR)
+      # SMART_ON_FHIR supports both V1 and V2 with full CRUD+search permissions
+      authorizationStrategy: SMART_ON_FHIR
+      # (Optional) Enable fine-grained authorization for scoped access per patient/resource
+      fineGrainedAuthorizationEnabled: true
+      # ARN of the Lambda function that decodes OAuth2 access tokens from your authorization server
+      idpLambdaArn: arn:{{partition}}:lambda:{{region}}:{{account}}:function:smart-token-decoder
+      # JSON metadata for SMART App Launch specification
+      # Must include: authorization_endpoint, grant_types_supported, token_endpoint,
+      # capabilities, code_challenge_methods_supported (must include S256)
+      metadata: '{"authorization_endpoint":"https://auth.example.com/authorize","token_endpoint":"https://auth.example.com/token","grant_types_supported":["authorization_code","client_credentials"],"capabilities":["launch-standalone","client-public","client-confidential-symmetric","permission-v2","context-standalone-patient"],"code_challenge_methods_supported":["S256"]}'

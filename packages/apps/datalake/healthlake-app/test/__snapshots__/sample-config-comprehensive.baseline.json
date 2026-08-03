@@ -1,0 +1,1986 @@
+{
+  "Description": "(SO0320-healthlake) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-healthlake-app/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-healthlake) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "constructprimarydatastoreReplacementGuard08A37DCB": {
+      "Type": "Custom::HealthLakeDatastoreReplacementGuard",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customHealthLakeDatastoreReplacementGuardproviderframeworkonEventE6B76D82",
+            "Arn"
+          ]
+        },
+        "datastoreName": "test-org-test-env-test-domain-test-healthlake-app-primary",
+        "kmsKeyArn": "arn:test-partition:kms:test-region:test-account:key/example-key-id",
+        "identityProviderConfiguration": "{\"authorizationStrategy\":\"SMART_ON_FHIR\",\"fineGrainedAuthorizationEnabled\":true,\"idpLambdaArn\":\"arn:test-partition:lambda:test-region:test-account:function:smart-token-decoder\",\"metadata\":\"{\\\"authorization_endpoint\\\":\\\"https://auth.example.com/authorize\\\",\\\"token_endpoint\\\":\\\"https://auth.example.com/token\\\",\\\"grant_types_supported\\\":[\\\"authorization_code\\\",\\\"client_credentials\\\"],\\\"capabilities\\\":[\\\"launch-standalone\\\",\\\"client-public\\\",\\\"client-confidential-symmetric\\\",\\\"permission-v2\\\",\\\"context-standalone-patient\\\"],\\\"code_challenge_methods_supported\\\":[\\\"S256\\\"]}\"}",
+        "preloadSynthea": "true",
+        "acknowledgeReplacement": "false"
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "constructprimarydatastoreFHIRDatastore3B53A89D": {
+      "Type": "AWS::HealthLake::FHIRDatastore",
+      "Properties": {
+        "DatastoreName": "test-org-test-env-test-domain-test-healthlake-app-primary",
+        "DatastoreTypeVersion": "R4",
+        "IdentityProviderConfiguration": {
+          "AuthorizationStrategy": "SMART_ON_FHIR",
+          "FineGrainedAuthorizationEnabled": true,
+          "IdpLambdaArn": "arn:test-partition:lambda:test-region:test-account:function:smart-token-decoder",
+          "Metadata": "{\"authorization_endpoint\":\"https://auth.example.com/authorize\",\"token_endpoint\":\"https://auth.example.com/token\",\"grant_types_supported\":[\"authorization_code\",\"client_credentials\"],\"capabilities\":[\"launch-standalone\",\"client-public\",\"client-confidential-symmetric\",\"permission-v2\",\"context-standalone-patient\"],\"code_challenge_methods_supported\":[\"S256\"]}"
+        },
+        "PreloadDataConfig": {
+          "PreloadDataType": "SYNTHEA"
+        },
+        "SseConfiguration": {
+          "KmsEncryptionConfig": {
+            "CmkType": "CUSTOMER_MANAGED_KMS_KEY",
+            "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/example-key-id"
+          }
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "healthlake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-healthlake-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "constructprimarydatastoreReplacementGuard08A37DCB"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructprimarydatastorehealthlakeprimarydatastoreidssmAAF7C3F1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/primary/datastore-id",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructprimarydatastoreFHIRDatastore3B53A89D",
+            "DatastoreId"
+          ]
+        }
+      }
+    },
+    "constructprimarydatastorehealthlakeprimarydatastorearnssm73C2492E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/primary/datastore-arn",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructprimarydatastoreFHIRDatastore3B53A89D",
+            "DatastoreArn"
+          ]
+        }
+      }
+    },
+    "constructprimarydatastorehealthlakeprimarydatastoreendpointssm516F78EF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/primary/datastore-endpoint",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructprimarydatastoreFHIRDatastore3B53A89D",
+            "DatastoreEndpoint"
+          ]
+        }
+      }
+    },
+    "constructprimarydataaccessroleDataAccessRole2D4B5AF9": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "constructprimarydatastoreFHIRDatastore3B53A89D",
+                      "DatastoreArn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "healthlake.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "s3:GetObject",
+                    "s3:PutObject"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "arn:test-partition:s3:::example-raw-bucket-primary/*"
+                },
+                {
+                  "Action": [
+                    "s3:ListBucket",
+                    "s3:GetBucketPublicAccessBlock",
+                    "s3:GetEncryptionConfiguration"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "arn:test-partition:s3:::example-raw-bucket-primary"
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "PolicyName": "HealthLakeS3Access"
+          },
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "kms:DescribeKey",
+                    "kms:GenerateDataKey*",
+                    "kms:Encrypt",
+                    "kms:ReEncrypt*",
+                    "kms:Decrypt"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "arn:test-partition:kms:test-region:test-account:key/example-key-id"
+                },
+                {
+                  "Action": "kms:CreateGrant",
+                  "Condition": {
+                    "Bool": {
+                      "kms:GrantIsForAWSResource": "true"
+                    }
+                  },
+                  "Effect": "Allow",
+                  "Resource": "arn:test-partition:kms:test-region:test-account:key/example-key-id"
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "PolicyName": "HealthLakeKmsAccess"
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-healthlake-app-prim--21e2013c",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "healthlake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-healthlake-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] S3 object actions require /* suffix on bucket ARNs per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html. KMS actions kms:GenerateDataKey* and kms:ReEncrypt* are standard patterns scoped to a specific key ARN per https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                {
+                  "regex": "/^Resource::.+\\/\\*$/"
+                },
+                "Action::kms:GenerateDataKey*",
+                "Action::kms:ReEncrypt*"
+              ]
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "constructprimarydataaccessroleDataAccessRoleroleprimarydataaccessarnssmBAD67998": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/role/primary-data-access/arn",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructprimarydataaccessroleDataAccessRole2D4B5AF9",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] S3 object actions require /* suffix on bucket ARNs per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html. KMS actions kms:GenerateDataKey* and kms:ReEncrypt* are standard patterns scoped to a specific key ARN per https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                {
+                  "regex": "/^Resource::.+\\/\\*$/"
+                },
+                "Action::kms:GenerateDataKey*",
+                "Action::kms:ReEncrypt*"
+              ]
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "constructprimarydataaccessroleDataAccessRoleroleprimarydataaccessidssm2480BFB8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/role/primary-data-access/id",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructprimarydataaccessroleDataAccessRole2D4B5AF9",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] S3 object actions require /* suffix on bucket ARNs per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html. KMS actions kms:GenerateDataKey* and kms:ReEncrypt* are standard patterns scoped to a specific key ARN per https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                {
+                  "regex": "/^Resource::.+\\/\\*$/"
+                },
+                "Action::kms:GenerateDataKey*",
+                "Action::kms:ReEncrypt*"
+              ]
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "constructprimarydataaccessroleDataAccessRoleroleprimarydataaccessnamessm9D1A2860": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/role/primary-data-access/name",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructprimarydataaccessroleDataAccessRole2D4B5AF9"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] S3 object actions require /* suffix on bucket ARNs per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html. KMS actions kms:GenerateDataKey* and kms:ReEncrypt* are standard patterns scoped to a specific key ARN per https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                {
+                  "regex": "/^Resource::.+\\/\\*$/"
+                },
+                "Action::kms:GenerateDataKey*",
+                "Action::kms:ReEncrypt*"
+              ]
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "constructprimarydataaccessrolehealthlakeprimarydataaccessrolearnssm52C3E8CC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/primary-data-access-role-arn",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructprimarydataaccessroleDataAccessRole2D4B5AF9",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "constructprimarygluedatabasehealthlaketestorgtestenvtestdomaintesthealthlakeappprimarygluedatabasenamessmE81E68F1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/test-org-test-env-test-domain-test-healthlake-app-primary/glue-database-name",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "_",
+            [
+              "test_org_test_env_test_domain_test_healthlake_app_primary",
+              {
+                "Fn::GetAtt": [
+                  "constructprimarydatastoreFHIRDatastore3B53A89D",
+                  "DatastoreId"
+                ]
+              },
+              "healthlake_view"
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "constructprimarydatastoreFHIRDatastore3B53A89D",
+        "constructprimarydatastorehealthlakeprimarydatastorearnssm73C2492E",
+        "constructprimarydatastorehealthlakeprimarydatastoreendpointssm516F78EF",
+        "constructprimarydatastorehealthlakeprimarydatastoreidssmAAF7C3F1",
+        "constructprimarydatastoreReplacementGuard08A37DCB"
+      ]
+    },
+    "constructprimarygluedatabasehealthlaketestorgtestenvtestdomaintesthealthlakeappprimarygluecatalogidssm72A1D01E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/test-org-test-env-test-domain-test-healthlake-app-primary/glue-catalog-id",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-account"
+      },
+      "DependsOn": [
+        "constructprimarydatastoreFHIRDatastore3B53A89D",
+        "constructprimarydatastorehealthlakeprimarydatastorearnssm73C2492E",
+        "constructprimarydatastorehealthlakeprimarydatastoreendpointssm516F78EF",
+        "constructprimarydatastorehealthlakeprimarydatastoreidssmAAF7C3F1",
+        "constructprimarydatastoreReplacementGuard08A37DCB"
+      ]
+    },
+    "constructsecondarydatastoreReplacementGuard13C64456": {
+      "Type": "Custom::HealthLakeDatastoreReplacementGuard",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customHealthLakeDatastoreReplacementGuardproviderframeworkonEventE6B76D82",
+            "Arn"
+          ]
+        },
+        "datastoreName": "test-org-test-env-test-domain-test-healthlake-app-secondary",
+        "kmsKeyArn": "arn:test-partition:kms:test-region:test-account:key/example-key-id",
+        "preloadSynthea": "false",
+        "acknowledgeReplacement": "false"
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "constructsecondarydatastoreFHIRDatastore17405071": {
+      "Type": "AWS::HealthLake::FHIRDatastore",
+      "Properties": {
+        "DatastoreName": "test-org-test-env-test-domain-test-healthlake-app-secondary",
+        "DatastoreTypeVersion": "R4",
+        "SseConfiguration": {
+          "KmsEncryptionConfig": {
+            "CmkType": "CUSTOMER_MANAGED_KMS_KEY",
+            "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/example-key-id"
+          }
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "healthlake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-healthlake-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "constructsecondarydatastoreReplacementGuard13C64456"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "constructsecondarydatastorehealthlakesecondarydatastoreidssmBC7B0A32": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/secondary/datastore-id",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructsecondarydatastoreFHIRDatastore17405071",
+            "DatastoreId"
+          ]
+        }
+      }
+    },
+    "constructsecondarydatastorehealthlakesecondarydatastorearnssm7D126D91": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/secondary/datastore-arn",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructsecondarydatastoreFHIRDatastore17405071",
+            "DatastoreArn"
+          ]
+        }
+      }
+    },
+    "constructsecondarydatastorehealthlakesecondarydatastoreendpointssm3CCD429B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/secondary/datastore-endpoint",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructsecondarydatastoreFHIRDatastore17405071",
+            "DatastoreEndpoint"
+          ]
+        }
+      }
+    },
+    "constructsecondarydataaccessroleDataAccessRole07E0A2B3": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "constructsecondarydatastoreFHIRDatastore17405071",
+                      "DatastoreArn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "healthlake.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "s3:GetObject",
+                    "s3:PutObject"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "arn:test-partition:s3:::example-raw-bucket-secondary/*"
+                },
+                {
+                  "Action": [
+                    "s3:ListBucket",
+                    "s3:GetBucketPublicAccessBlock",
+                    "s3:GetEncryptionConfiguration"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "arn:test-partition:s3:::example-raw-bucket-secondary"
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "PolicyName": "HealthLakeS3Access"
+          },
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "kms:DescribeKey",
+                    "kms:GenerateDataKey*",
+                    "kms:Encrypt",
+                    "kms:ReEncrypt*",
+                    "kms:Decrypt"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "arn:test-partition:kms:test-region:test-account:key/example-key-id"
+                },
+                {
+                  "Action": "kms:CreateGrant",
+                  "Condition": {
+                    "Bool": {
+                      "kms:GrantIsForAWSResource": "true"
+                    }
+                  },
+                  "Effect": "Allow",
+                  "Resource": "arn:test-partition:kms:test-region:test-account:key/example-key-id"
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "PolicyName": "HealthLakeKmsAccess"
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-healthlake-app-seco--3b96e2ca",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "healthlake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-healthlake-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] S3 object actions require /* suffix on bucket ARNs per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html. KMS actions kms:GenerateDataKey* and kms:ReEncrypt* are standard patterns scoped to a specific key ARN per https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                {
+                  "regex": "/^Resource::.+\\/\\*$/"
+                },
+                "Action::kms:GenerateDataKey*",
+                "Action::kms:ReEncrypt*"
+              ]
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "constructsecondarydataaccessroleDataAccessRolerolesecondarydataaccessarnssmB9783D59": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/role/secondary-data-access/arn",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructsecondarydataaccessroleDataAccessRole07E0A2B3",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] S3 object actions require /* suffix on bucket ARNs per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html. KMS actions kms:GenerateDataKey* and kms:ReEncrypt* are standard patterns scoped to a specific key ARN per https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                {
+                  "regex": "/^Resource::.+\\/\\*$/"
+                },
+                "Action::kms:GenerateDataKey*",
+                "Action::kms:ReEncrypt*"
+              ]
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "constructsecondarydataaccessroleDataAccessRolerolesecondarydataaccessidssm2F39CD9E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/role/secondary-data-access/id",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructsecondarydataaccessroleDataAccessRole07E0A2B3",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] S3 object actions require /* suffix on bucket ARNs per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html. KMS actions kms:GenerateDataKey* and kms:ReEncrypt* are standard patterns scoped to a specific key ARN per https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                {
+                  "regex": "/^Resource::.+\\/\\*$/"
+                },
+                "Action::kms:GenerateDataKey*",
+                "Action::kms:ReEncrypt*"
+              ]
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "constructsecondarydataaccessroleDataAccessRolerolesecondarydataaccessnamessm6A45E692": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/role/secondary-data-access/name",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructsecondarydataaccessroleDataAccessRole07E0A2B3"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] S3 object actions require /* suffix on bucket ARNs per https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html. KMS actions kms:GenerateDataKey* and kms:ReEncrypt* are standard patterns scoped to a specific key ARN per https://docs.aws.amazon.com/service-authorization/latest/reference/list_awskeymanagementservice.html.",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                {
+                  "regex": "/^Resource::.+\\/\\*$/"
+                },
+                "Action::kms:GenerateDataKey*",
+                "Action::kms:ReEncrypt*"
+              ]
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/healthlake-constructs/lib/healthlake-data-access-role.ts] Inline policy is intentional: two small, resource-scoped policy documents (S3 and KMS), each with two statements scoped to specific bucket and key ARNs, not intended for reuse across principals. Using inline rather than managed policy ties the policy lifecycle to this single-purpose role.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "constructsecondarydataaccessrolehealthlakesecondarydataaccessrolearnssm9398EA5E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/secondary-data-access-role-arn",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructsecondarydataaccessroleDataAccessRole07E0A2B3",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "constructsecondarygluedatabasehealthlaketestorgtestenvtestdomaintesthealthlakeappsecondarygluedatabasenamessmF4ACF12A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/test-org-test-env-test-domain-test-healthlake-app-secondary/glue-database-name",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "_",
+            [
+              "test_org_test_env_test_domain_test_healthlake_app_secondary",
+              {
+                "Fn::GetAtt": [
+                  "constructsecondarydatastoreFHIRDatastore17405071",
+                  "DatastoreId"
+                ]
+              },
+              "healthlake_view"
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "constructsecondarydatastoreFHIRDatastore17405071",
+        "constructsecondarydatastorehealthlakesecondarydatastorearnssm7D126D91",
+        "constructsecondarydatastorehealthlakesecondarydatastoreendpointssm3CCD429B",
+        "constructsecondarydatastorehealthlakesecondarydatastoreidssmBC7B0A32",
+        "constructsecondarydatastoreReplacementGuard13C64456"
+      ]
+    },
+    "constructsecondarygluedatabasehealthlaketestorgtestenvtestdomaintesthealthlakeappsecondarygluecatalogidssm8B99850A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/healthlake/test-org-test-env-test-domain-test-healthlake-app-secondary/glue-catalog-id",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-account"
+      },
+      "DependsOn": [
+        "constructsecondarydatastoreFHIRDatastore17405071",
+        "constructsecondarydatastorehealthlakesecondarydatastorearnssm7D126D91",
+        "constructsecondarydatastorehealthlakesecondarydatastoreendpointssm3CCD429B",
+        "constructsecondarydatastorehealthlakesecondarydatastoreidssmBC7B0A32",
+        "constructsecondarydatastoreReplacementGuard13C64456"
+      ]
+    },
+    "customHealthLakeDatastoreReplacementGuardhandlerroleED427659": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-healthlake-app-healt-48fef264",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "healthlake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-healthlake-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardhandlerroleDefaultPolicyD4876E09": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-healthlake-app-healt-48fef264*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-healthlake-app-healt-48fef264*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customHealthLakeDatastoreReplacementGuardhandlerroleDefaultPolicyD4876E09",
+        "Roles": [
+          {
+            "Ref": "customHealthLakeDatastoreReplacementGuardhandlerroleED427659"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardhandlerpolicy13BDD17A": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "healthlake:ListFHIRDatastores",
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "HealthLakeDatastoreReplacementGuard-handler",
+        "Roles": [
+          {
+            "Ref": "customHealthLakeDatastoreReplacementGuardhandlerroleED427659"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] healthlake:ListFHIRDatastores does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonhealthlake.html). It is used only to detect a pre-existing datastore by name on Create; the guard never mutates HealthLake resources.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardhandlerfunction35C3A609": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-healthlake-app-healt-48fef264",
+        "Handler": "datastore_replacement_guard.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "customHealthLakeDatastoreReplacementGuardhandlerroleED427659",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.14",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "healthlake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-healthlake-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 30
+      },
+      "DependsOn": [
+        "customHealthLakeDatastoreReplacementGuardhandlerpolicy13BDD17A",
+        "customHealthLakeDatastoreReplacementGuardhandlerroleDefaultPolicyD4876E09",
+        "customHealthLakeDatastoreReplacementGuardhandlerroleED427659"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardhandlerfunctionlambdaHealthLakeDatastoreReplacementGuardhandlernamessmEB6CA5DB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/lambda/healthlakedatastorereplacementguard-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customHealthLakeDatastoreReplacementGuardhandlerfunction35C3A609"
+        }
+      },
+      "DependsOn": [
+        "customHealthLakeDatastoreReplacementGuardhandlerpolicy13BDD17A"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardhandlerfunctionlambdaHealthLakeDatastoreReplacementGuardhandlerarnssmEBFB4549": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/lambda/healthlakedatastorereplacementguard-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customHealthLakeDatastoreReplacementGuardhandlerfunction35C3A609",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "customHealthLakeDatastoreReplacementGuardhandlerpolicy13BDD17A"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardhandlerfunctionlambdaHealthLakeDatastoreReplacementGuardhandlerloggroupssm4E24C66D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-healthlake-app/lambda/healthlakedatastorereplacementguard-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "healthlake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-healthlake-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customHealthLakeDatastoreReplacementGuardhandlerfunction35C3A609"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "customHealthLakeDatastoreReplacementGuardhandlerpolicy13BDD17A"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardproviderrole7F081848": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-healthlake-app-heal--641c31e9",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "healthlake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-healthlake-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardproviderroleDefaultPolicyDEC6B353": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-healthlake-app-heal--641c31e9*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-healthlake-app-heal--641c31e9*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customHealthLakeDatastoreReplacementGuardhandlerfunction35C3A609",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customHealthLakeDatastoreReplacementGuardhandlerfunction35C3A609",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customHealthLakeDatastoreReplacementGuardhandlerfunction35C3A609",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customHealthLakeDatastoreReplacementGuardproviderroleDefaultPolicyDEC6B353",
+        "Roles": [
+          {
+            "Ref": "customHealthLakeDatastoreReplacementGuardproviderrole7F081848"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardproviderframeworkonEventE6B76D82": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-healthlake-app/custom-HealthLakeDatastoreReplacementGuard-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customHealthLakeDatastoreReplacementGuardhandlerfunction35C3A609",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-healthlake-app-heal--641c31e9",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customHealthLakeDatastoreReplacementGuardproviderrole7F081848",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs22.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "healthlake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-healthlake-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customHealthLakeDatastoreReplacementGuardproviderroleDefaultPolicyDEC6B353",
+        "customHealthLakeDatastoreReplacementGuardproviderrole7F081848"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "constructprimarydatastorehealthlakeprimarydatastoreidout654DD5B8": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructprimarydatastoreFHIRDatastore3B53A89D",
+          "DatastoreId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:primary:datastore-id"
+      }
+    },
+    "constructprimarydatastorehealthlakeprimarydatastorearnoutA78B5E1D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructprimarydatastoreFHIRDatastore3B53A89D",
+          "DatastoreArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:primary:datastore-arn"
+      }
+    },
+    "constructprimarydatastorehealthlakeprimarydatastoreendpointout4283290C": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructprimarydatastoreFHIRDatastore3B53A89D",
+          "DatastoreEndpoint"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:primary:datastore-endpoint"
+      }
+    },
+    "constructprimarydataaccessroleDataAccessRoleroleprimarydataaccessarnout2A2E7482": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructprimarydataaccessroleDataAccessRole2D4B5AF9",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:role:primarydataaccess:arn"
+      }
+    },
+    "constructprimarydataaccessroleDataAccessRoleroleprimarydataaccessidout8FE0AC48": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructprimarydataaccessroleDataAccessRole2D4B5AF9",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:role:primarydataaccess:id"
+      }
+    },
+    "constructprimarydataaccessroleDataAccessRoleroleprimarydataaccessnameoutF5280E83": {
+      "Value": {
+        "Ref": "constructprimarydataaccessroleDataAccessRole2D4B5AF9"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:role:primarydataaccess:name"
+      }
+    },
+    "constructprimarydataaccessrolehealthlakeprimarydataaccessrolearnout164F8DE1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructprimarydataaccessroleDataAccessRole2D4B5AF9",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:primary-data-access-role-arn"
+      }
+    },
+    "constructprimarygluedatabasehealthlaketestorgtestenvtestdomaintesthealthlakeappprimarygluedatabasenameout7BBAD8EB": {
+      "Value": {
+        "Fn::Join": [
+          "_",
+          [
+            "test_org_test_env_test_domain_test_healthlake_app_primary",
+            {
+              "Fn::GetAtt": [
+                "constructprimarydatastoreFHIRDatastore3B53A89D",
+                "DatastoreId"
+              ]
+            },
+            "healthlake_view"
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:testorgtestenvtestdomaintesthealthlakeappprimary:glue-database-name"
+      }
+    },
+    "constructprimarygluedatabasehealthlaketestorgtestenvtestdomaintesthealthlakeappprimarygluecatalogidout205B5FF9": {
+      "Value": "test-account",
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:testorgtestenvtestdomaintesthealthlakeappprimary:glue-catalog-id"
+      }
+    },
+    "constructsecondarydatastorehealthlakesecondarydatastoreidoutBB45B58B": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructsecondarydatastoreFHIRDatastore17405071",
+          "DatastoreId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:secondary:datastore-id"
+      }
+    },
+    "constructsecondarydatastorehealthlakesecondarydatastorearnout4411DA93": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructsecondarydatastoreFHIRDatastore17405071",
+          "DatastoreArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:secondary:datastore-arn"
+      }
+    },
+    "constructsecondarydatastorehealthlakesecondarydatastoreendpointoutAD9FDB8E": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructsecondarydatastoreFHIRDatastore17405071",
+          "DatastoreEndpoint"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:secondary:datastore-endpoint"
+      }
+    },
+    "constructsecondarydataaccessroleDataAccessRolerolesecondarydataaccessarnout600530E9": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructsecondarydataaccessroleDataAccessRole07E0A2B3",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:role:secondarydataaccess:arn"
+      }
+    },
+    "constructsecondarydataaccessroleDataAccessRolerolesecondarydataaccessidoutC9D24D36": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructsecondarydataaccessroleDataAccessRole07E0A2B3",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:role:secondarydataaccess:id"
+      }
+    },
+    "constructsecondarydataaccessroleDataAccessRolerolesecondarydataaccessnameout4DADDA0F": {
+      "Value": {
+        "Ref": "constructsecondarydataaccessroleDataAccessRole07E0A2B3"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:role:secondarydataaccess:name"
+      }
+    },
+    "constructsecondarydataaccessrolehealthlakesecondarydataaccessrolearnout37392E72": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructsecondarydataaccessroleDataAccessRole07E0A2B3",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:secondary-data-access-role-arn"
+      }
+    },
+    "constructsecondarygluedatabasehealthlaketestorgtestenvtestdomaintesthealthlakeappsecondarygluedatabasenameoutC0EF3409": {
+      "Value": {
+        "Fn::Join": [
+          "_",
+          [
+            "test_org_test_env_test_domain_test_healthlake_app_secondary",
+            {
+              "Fn::GetAtt": [
+                "constructsecondarydatastoreFHIRDatastore17405071",
+                "DatastoreId"
+              ]
+            },
+            "healthlake_view"
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:testorgtestenvtestdomaintesthealthlakeappsecondary:glue-database-name"
+      }
+    },
+    "constructsecondarygluedatabasehealthlaketestorgtestenvtestdomaintesthealthlakeappsecondarygluecatalogidout0BEB22E2": {
+      "Value": "test-account",
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:healthlake:testorgtestenvtestdomaintesthealthlakeappsecondary:glue-catalog-id"
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardhandlerfunctionlambdaHealthLakeDatastoreReplacementGuardhandlernameoutE9E75903": {
+      "Value": {
+        "Ref": "customHealthLakeDatastoreReplacementGuardhandlerfunction35C3A609"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:lambda:healthlakedatastorereplacementguardhandler:name"
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardhandlerfunctionlambdaHealthLakeDatastoreReplacementGuardhandlerarnout8BF288A0": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customHealthLakeDatastoreReplacementGuardhandlerfunction35C3A609",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:lambda:healthlakedatastorereplacementguardhandler:arn"
+      }
+    },
+    "customHealthLakeDatastoreReplacementGuardhandlerfunctionlambdaHealthLakeDatastoreReplacementGuardhandlerloggroupout38ACC2AA": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customHealthLakeDatastoreReplacementGuardhandlerfunction35C3A609"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-healthlake-app:lambda:healthlakedatastorereplacementguardhandler:log-group"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

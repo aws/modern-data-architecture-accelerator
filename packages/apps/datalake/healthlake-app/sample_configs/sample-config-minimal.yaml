@@ -1,0 +1,15 @@
+# HealthLake FHIR R4 Datastore - Minimal Configuration
+# Deploys a single HealthLake FHIR R4 datastore with auto-created customer-managed KMS encryption.
+# A KMS key is created automatically when kmsKeyArn is not specified.
+
+# Roles granted administer/use on the auto-created KMS key. Required when the key is
+# auto-created (kmsKeyArn omitted): the key is retained on stack teardown, so at least
+# one scoped admin role must be provided to keep it manageable.
+dataAdminRoles:
+  - arn: arn:{{partition}}:iam::{{account}}:role/example-data-admin
+
+# Named map of HealthLake datastores. Each map key is the datastore name suffix.
+datastores:
+  primary:
+    # S3 bucket ARN for HealthLake data access (required)
+    rawBucketArn: arn:{{partition}}:s3:::example-raw-bucket

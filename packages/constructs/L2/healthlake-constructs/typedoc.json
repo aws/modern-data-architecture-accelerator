@@ -1,0 +1,6 @@
+{
+    "includeVersion": true,
+    "entryPoints": [
+        "lib/index.ts"
+    ]
+}

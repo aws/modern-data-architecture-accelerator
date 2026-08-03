@@ -8,6 +8,10 @@
 
 - **MDAA CLI - Windows Compatibility**: All shell commands are now generated using cross-platform utilities that emit the correct syntax for both POSIX and Windows (`cmd.exe`). Added `platform-utils.ts` module and cross-platform Node.js CLI entrypoints for Windows support.
 
+#### HealthLake Module
+
+- New `@aws-mdaa/healthlake` module: Amazon HealthLake FHIR R4 datastore with CMK encryption, least-privilege data-access IAM role, auto-derived Glue database metadata, optional Synthea preload, and optional SMART on FHIR authorization
+
 #### Naming
 
 - Added the `@mdaaIncludeEnvInSsmPath` opt-in flag, which enables deploying multiple MDAA environments to the same AWS account by including `env` in SSM parameter paths and CloudFormation export names. Defaults to `false`; enabling it on an existing deployment is **not backwards compatible** — see [packages/utilities/mdaa-naming/README.md](packages/utilities/mdaa-naming/README.md) for migration steps.

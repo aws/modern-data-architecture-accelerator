@@ -1,0 +1,33 @@
+# HealthLake FHIR R4 Datastore - Comprehensive Configuration
+# Demonstrates multiple named datastores in a single stack, with all available options
+# exercised on the primary datastore. A single shared KMS key is used across datastores.
+
+# (Optional) KMS key ARN shared across all datastores.
+# If not provided, a customer-managed KMS key is created automatically.
+kmsKeyArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/example-key-id
+
+# Named map of HealthLake datastores. Each map key is the datastore name suffix.
+datastores:
+  primary:
+    # S3 bucket ARN for HealthLake data access (required)
+    rawBucketArn: arn:{{partition}}:s3:::example-raw-bucket-primary
+    # (Optional) Whether to preload Synthea sample FHIR data (default: false)
+    preloadSynthea: true
+    # (Optional) Identity provider configuration for SMART on FHIR authorization.
+    # When omitted, defaults to AWS_AUTH (IAM Signature v4).
+    identityProviderConfiguration:
+      # Authorization strategy (enum: AWS_AUTH, SMART_ON_FHIR_V1, SMART_ON_FHIR)
+      authorizationStrategy: SMART_ON_FHIR
+      # (Optional) Enable fine-grained authorization (default: false)
+      fineGrainedAuthorizationEnabled: true
+      # (Optional) ARN of Lambda to decode OAuth2 access tokens
+      idpLambdaArn: arn:{{partition}}:lambda:{{region}}:{{account}}:function:smart-token-decoder
+      # (Optional) JSON metadata for SMART App Launch specification
+      metadata: '{"authorization_endpoint":"https://auth.example.com/authorize","token_endpoint":"https://auth.example.com/token","grant_types_supported":["authorization_code","client_credentials"],"capabilities":["launch-standalone","client-public","client-confidential-symmetric","permission-v2","context-standalone-patient"],"code_challenge_methods_supported":["S256"]}'
+    # (Optional) Set to true only on the deploy that intentionally changes datastoreName,
+    # kmsKeyArn, identityProviderConfiguration, or preloadSynthea on an existing datastore.
+    # These changes cause AWS::HealthLake::FHIRDatastore to be replaced (deleted and
+    # recreated); this module blocks such changes by default (default: false).
+    acknowledgeReplacement: false
+  secondary:
+    rawBucketArn: arn:{{partition}}:s3:::example-raw-bucket-secondary
