@@ -655,6 +655,46 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       template.resourceCountIs('AWS::IAM::Role', 2);
     });
 
+    test('should scope GetAgentAccessToken to the default workload-identity directory', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'workload-identity-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'workload-identity-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'GetAgentAccessToken',
+              Effect: 'Allow',
+              Action: [
+                'bedrock-agentcore:GetWorkloadAccessToken',
+                'bedrock-agentcore:GetWorkloadAccessTokenForJWT',
+                'bedrock-agentcore:GetWorkloadAccessTokenForUserId',
+              ],
+              Resource: [
+                'arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default',
+                'arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default/workload-identity/*',
+              ],
+            }),
+          ]),
+        },
+      });
+    });
+
     test('should attach custom policies to role', () => {
       const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
         agentRuntimeName: 'policy-runtime',

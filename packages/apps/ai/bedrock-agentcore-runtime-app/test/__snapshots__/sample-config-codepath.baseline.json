@@ -92,7 +92,7 @@
               "Effect": "Allow",
               "Resource": [
                 "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default",
-                "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default/workload-identity/hosted_agent_*"
+                "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default/workload-identity/*"
               ],
               "Sid": "GetAgentAccessToken"
             },

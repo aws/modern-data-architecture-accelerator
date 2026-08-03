@@ -99,6 +99,7 @@
 
 #### Bedrock AgentCore Runtime Module
 
+- Fixed `GetAgentAccessToken` IAM statement to use `workload-identity/*` instead of the `hosted_agent_*` prefix so the runtime can resolve its own workload identity (name is derived from `AgentRuntimeName`)
 - Added optional `allowedModelArns` configuration parameter to scope execution role Bedrock model invocation permissions to specific model ARNs for least-privilege access
 - Added optional `enforceVpcOnly` configuration to restrict JWT/OAuth callers to VPC-only invocation via an auto-generated resource-based policy
 - Added optional `networkConfiguration.vpcId` field (required when `enforceVpcOnly` is true) to identify the VPC for the resource policy condition
