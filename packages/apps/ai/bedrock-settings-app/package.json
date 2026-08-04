@@ -37,7 +37,7 @@
     "@aws-mdaa/bedrock-settings-l3-construct": "1.7.0",
     "@aws-mdaa/l3-construct": "1.7.0",
     "ajv": "8.18.0",
-    "aws-cdk-lib": "2.258.0",
+    "aws-cdk-lib": "2.261.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.6.0",
     "source-map-support": "0.5.21",

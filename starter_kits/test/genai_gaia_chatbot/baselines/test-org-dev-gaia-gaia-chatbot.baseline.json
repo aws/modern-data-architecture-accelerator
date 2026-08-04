@@ -8289,7 +8289,7 @@
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Handler": "index.handler",
-        "Runtime": "nodejs22.x",
+        "Runtime": "nodejs24.x",
         "Timeout": 900,
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-test-account-test-region",
@@ -9564,7 +9564,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs22.x",
+        "Runtime": "nodejs24.x",
         "Tags": [
           {
             "Key": "costcentre",
@@ -9721,7 +9721,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-test-account-test-region",
-          "S3Key": "3aaf77a5aa62e4a6f119d1974fdd9193df6a04b2c9367b22b9d05a4bd45e823e.zip"
+          "S3Key": "f8b7112ff78fd0b6fab4c6b048fc1da9945198135db9a1e6b1d5cb4599d5a3d2.zip"
         },
         "Timeout": 900,
         "MemorySize": 128,
@@ -9732,14 +9732,14 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs22.x"
+        "Runtime": "nodejs24.x"
       },
       "DependsOn": [
         "CustomCrossRegionExportReaderCustomResourceProviderRole10531BBD"
       ],
       "Metadata": {
         "aws:cdk:path": "test-org-dev-gaia-gaia-chatbot/Custom::CrossRegionExportReaderCustomResourceProvider/Handler",
-        "aws:asset:path": "asset.3aaf77a5aa62e4a6f119d1974fdd9193df6a04b2c9367b22b9d05a4bd45e823e",
+        "aws:asset:path": "asset.f8b7112ff78fd0b6fab4c6b048fc1da9945198135db9a1e6b1d5cb4599d5a3d2",
         "aws:asset:property": "Code"
       }
     }

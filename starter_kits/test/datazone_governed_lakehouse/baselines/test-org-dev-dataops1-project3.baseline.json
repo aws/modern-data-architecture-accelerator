@@ -3483,7 +3483,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs22.x",
+        "Runtime": "nodejs24.x",
         "Tags": [
           {
             "Key": "costcentre",

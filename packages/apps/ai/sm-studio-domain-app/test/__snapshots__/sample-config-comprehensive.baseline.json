@@ -1814,7 +1814,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs22.x",
+        "Runtime": "nodejs24.x",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -2577,7 +2577,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs22.x",
+        "Runtime": "nodejs24.x",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",

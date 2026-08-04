@@ -6732,7 +6732,7 @@
               {
                 "Ref": "AWS::URLSuffix"
               },
-              "/cdk-hnb659fds-assets-test-account-test-region/1b3e389e41fb1d2921427e8af3bb042b57357351e4eb7c79fab51da0c0814013.json"
+              "/cdk-hnb659fds-assets-test-account-test-region/94b99e025a1c0fdd11e46b555dc6b8b25605f65628070c164b2781835f739328.json"
             ]
           ]
         }
@@ -6876,7 +6876,7 @@
               {
                 "Ref": "AWS::URLSuffix"
               },
-              "/cdk-hnb659fds-assets-test-account-test-region/d6499125713f318da864defe4af5fa5d7153a7689c28344baf53c584be6c1df8.json"
+              "/cdk-hnb659fds-assets-test-account-test-region/72ce96b288f811f1129e9dac2986087a894a65c1354dd1a9c0df52ec1e62d1d2.json"
             ]
           ]
         }
@@ -6992,7 +6992,7 @@
               {
                 "Ref": "AWS::URLSuffix"
               },
-              "/cdk-hnb659fds-assets-test-account-test-region/65427f62f49456e98394ca2549d465276d2ddd4ca645fd31f5089ff2fe48ec99.json"
+              "/cdk-hnb659fds-assets-test-account-test-region/9e9dd2f8483477b4da8d0d62f35998fc3874f626f62033a09321251d4dc266ab.json"
             ]
           ]
         }
@@ -7117,7 +7117,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs22.x"
+        "Runtime": "nodejs24.x"
       },
       "DependsOn": [
         "CustomAWSCDKOpenIdConnectProviderCustomResourceProviderRole517FED65"
@@ -7161,7 +7161,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs22.x"
+        "Runtime": "nodejs24.x"
       },
       "DependsOn": [
         "AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867"

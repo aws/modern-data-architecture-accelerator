@@ -1066,7 +1066,7 @@
                     "description": "The principal to grant permissions to"
                 },
                 "isBoundToVpc": {
-                    "description": "Whether or not this Lambda function was bound to a VPC\n\nIf this is is `false`, trying to access the `connections` object will fail.",
+                    "description": "Whether or not this Lambda function was bound to a VPC\n\nIf this is `false`, trying to access the `connections` object will fail.",
                     "type": "boolean"
                 },
                 "latestVersion": {
@@ -1576,7 +1576,7 @@
                     "description": "The principal to grant permissions to"
                 },
                 "isBoundToVpc": {
-                    "description": "Whether or not this Lambda function was bound to a VPC\n\nIf this is is `false`, trying to access the `connections` object will fail.",
+                    "description": "Whether or not this Lambda function was bound to a VPC\n\nIf this is `false`, trying to access the `connections` object will fail.",
                     "type": "boolean"
                 },
                 "lambda": {
@@ -2048,7 +2048,7 @@
                 },
                 "hashMixins": {},
                 "isBoundToVpc": {
-                    "description": "Whether or not this Lambda function was bound to a VPC\n\nIf this is is `false`, trying to access the `connections` object will fail.",
+                    "description": "Whether or not this Lambda function was bound to a VPC\n\nIf this is `false`, trying to access the `connections` object will fail.",
                     "type": "boolean"
                 },
                 "isPrincipalWithConditions": {},
@@ -4139,7 +4139,7 @@
                     "description": "The principal this Lambda Function is running as"
                 },
                 "isBoundToVpc": {
-                    "description": "Whether or not this Lambda function was bound to a VPC\n\nIf this is is `false`, trying to access the `connections` object will fail.",
+                    "description": "Whether or not this Lambda function was bound to a VPC\n\nIf this is `false`, trying to access the `connections` object will fail.",
                     "type": "boolean"
                 },
                 "isPrincipalWithConditions": {},
