@@ -95,6 +95,13 @@ before_script:
     KUBERNETES_MEMORY_LIMIT: 2Gi
     KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 1Gi
 
+# SONAR_NODE_MAXSPACE sizes the SonarQube JS/TS analyzer's Node.js heap
+# (sonar.javascript.node.maxspace, in MB) to ~75% of the pod's memory limit.
+# The remaining headroom covers the scanner JVM (Xmx1024m) and Node engine
+# overhead so the analyzer does not OOM. Only SonarQube jobs read this var;
+# other jobs extending these templates ignore it. Keep it in lockstep with
+# KUBERNETES_MEMORY_LIMIT — bumping the pod size alone leaves the Node heap
+# pinned at its old default and the analyzer OOMs at the same limit.
 .size_medium:
   variables:
     KUBERNETES_CPU_REQUEST: '2'
@@ -102,6 +109,7 @@ before_script:
     KUBERNETES_MEMORY_REQUEST: 4Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
     KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 4Gi
+    SONAR_NODE_MAXSPACE: '3072' # 75% of 4Gi
 
 .size_large:
   variables:
@@ -110,6 +118,7 @@ before_script:
     KUBERNETES_MEMORY_REQUEST: 8Gi
     KUBERNETES_MEMORY_LIMIT: 8Gi
     KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 8Gi
+    SONAR_NODE_MAXSPACE: '6144' # 75% of 8Gi
 
 .size_xlarge:
   variables:
@@ -118,6 +127,7 @@ before_script:
     KUBERNETES_MEMORY_REQUEST: 16Gi
     KUBERNETES_MEMORY_LIMIT: 16Gi
     KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 16Gi
+    SONAR_NODE_MAXSPACE: '12288' # 75% of 16Gi
 
 .size_2xlarge:
   variables:
@@ -126,6 +136,7 @@ before_script:
     KUBERNETES_MEMORY_REQUEST: 32Gi
     KUBERNETES_MEMORY_LIMIT: 32Gi
     KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 32Gi
+    SONAR_NODE_MAXSPACE: '24576' # 75% of 32Gi
 
 .size_3xlarge:
   variables:
@@ -134,6 +145,7 @@ before_script:
     KUBERNETES_MEMORY_REQUEST: 64Gi
     KUBERNETES_MEMORY_LIMIT: 64Gi
     KUBERNETES_EPHEMERAL_STORAGE_REQUEST: 64Gi
+    SONAR_NODE_MAXSPACE: '49152' # 75% of 64Gi
 
 # -----------------------------------------------------------------------------
 # Retry on infrastructure failure (merge-pipeline jobs)
@@ -810,7 +822,7 @@ feature_merge_starter_kit_quality_review:
 # that MR changes are correctly classified as "new code".
 feature_merge_sonarqube_target:
   extends:
-    - .size_xlarge
+    - .size_2xlarge
     - .retry_on_infra_failure
   interruptible: true
   tags:
@@ -840,7 +852,7 @@ feature_merge_sonarqube_target:
 # Run SonarQube analysis
 feature_merge_sonarqube:
   extends:
-    - .size_xlarge
+    - .size_2xlarge
     - .retry_on_infra_failure
   interruptible: true
   tags:
@@ -1285,7 +1297,7 @@ prerelease_baseline_review:
 
 # Run SonarQube analysis
 prerelease_analyze:
-  extends: .size_xlarge
+  extends: .size_2xlarge
   tags:
     - arch:amd64
   only:
