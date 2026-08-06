@@ -96,6 +96,8 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
         EnvironmentVariables: {
           ENVIRONMENT: 'test',
           LOG_LEVEL: 'DEBUG',
+          // Added by the construct alongside the configured variables
+          UNIFIED_TRACES_DESTINATION_ENABLED: 'true',
         },
         LifecycleConfiguration: {
           IdleRuntimeSessionTimeout: 3600,
@@ -1783,6 +1785,185 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       // Should have 2 runtimes but no TransactionSearchConfig
       template.resourceCountIs('AWS::BedrockAgentCore::Runtime', 2);
       template.resourceCountIs('AWS::XRay::TransactionSearchConfig', 0);
+    });
+  });
+
+  describe('Span Destination', () => {
+    const baseProps = (): BedrockAgentcoreRuntimeL3ConstructProps => ({
+      agentRuntimeName: 'span-runtime',
+      agentRuntimeArtifact: {
+        containerConfiguration: {
+          containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+        },
+      },
+      networkConfiguration: {
+        securityGroups: ['sg-12345678'],
+        subnets: ['subnet-12345678'],
+      },
+      enableTransactionSearch: false,
+      naming: testApp.naming,
+      roleHelper,
+    });
+
+    test('routes spans to the runtime log group by default', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'span-default-construct', baseProps());
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::BedrockAgentCore::Runtime', {
+        EnvironmentVariables: {
+          UNIFIED_TRACES_DESTINATION_ENABLED: 'true',
+        },
+      });
+    });
+
+    test('applies the default when no environmentVariables are configured at all', () => {
+      // The primary use case: the variable must appear even though the config sets no
+      // environment variables, so EnvironmentVariables goes from absent to present.
+      const props = baseProps();
+      expect(props.environmentVariables).toBeUndefined();
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'span-no-env-construct', props);
+      const template = Template.fromStack(testApp.testStack);
+
+      const runtimes = template.findResources('AWS::BedrockAgentCore::Runtime');
+      const envVars = Object.values(runtimes)[0].Properties.EnvironmentVariables;
+      expect(envVars).toEqual({ UNIFIED_TRACES_DESTINATION_ENABLED: 'true' });
+    });
+
+    test('a customer-supplied opt-out wins over the module default', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'span-optout-construct', {
+        ...baseProps(),
+        environmentVariables: { UNIFIED_TRACES_DESTINATION_ENABLED: 'false' },
+      });
+      const template = Template.fromStack(testApp.testStack);
+
+      const runtimes = template.findResources('AWS::BedrockAgentCore::Runtime');
+      const envVars = Object.values(runtimes)[0].Properties.EnvironmentVariables;
+      // Rendered as the customer's value, with the default not re-applied on top
+      expect(envVars).toEqual({ UNIFIED_TRACES_DESTINATION_ENABLED: 'false' });
+    });
+
+    test('preserves unrelated configured variables and sets no OTEL_* variable', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'span-preserve-construct', {
+        ...baseProps(),
+        environmentVariables: { ENVIRONMENT: 'test', LOG_LEVEL: 'DEBUG' },
+      });
+      const template = Template.fromStack(testApp.testStack);
+
+      const runtimes = template.findResources('AWS::BedrockAgentCore::Runtime');
+      const envVars = Object.values(runtimes)[0].Properties.EnvironmentVariables as Record<string, string>;
+      expect(envVars).toEqual({
+        ENVIRONMENT: 'test',
+        LOG_LEVEL: 'DEBUG',
+        UNIFIED_TRACES_DESTINATION_ENABLED: 'true',
+      });
+      // The ADOT variables are the AgentCore service's to set inside the container.
+      // MDAA setting any of them - OTEL_SERVICE_NAME especially - would override a
+      // service-maintained configuration and change the agent's reported identity.
+      expect(Object.keys(envVars).filter(k => k.startsWith('OTEL_'))).toEqual([]);
+    });
+
+    test('grants logs:PutResourcePolicy scoped to this runtime, not to all runtimes', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'span-iam-construct', baseProps());
+      const template = Template.fromStack(testApp.testStack);
+
+      const policies = template.findResources('AWS::IAM::ManagedPolicy');
+      const statements = Object.values(policies).flatMap(
+        p => p.Properties.PolicyDocument.Statement as Record<string, unknown>[],
+      );
+      const grants = statements.filter(s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy'));
+
+      expect(grants).toHaveLength(1);
+      const rendered = JSON.stringify(grants[0].Resource);
+      // Scoped to this agent's own log groups by sanitized runtime name...
+      expect(rendered).toMatch(/log-group:\/aws\/bedrock-agentcore\/runtimes\/test_org_test_env_test_domain_.*-\*/);
+      // ...and specifically NOT the module-wide wildcard, which would let this agent's
+      // role rewrite the resource policy of every other agent's log group.
+      expect(rendered).not.toContain('log-group:/aws/bedrock-agentcore/runtimes/*');
+    });
+
+    test('grants logs:PutResourcePolicy on no resource wider than the runtime prefix', () => {
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'span-iam-narrow-construct', baseProps());
+      const template = Template.fromStack(testApp.testStack);
+
+      const policies = template.findResources('AWS::IAM::ManagedPolicy');
+      const statements = Object.values(policies).flatMap(
+        p => p.Properties.PolicyDocument.Statement as Record<string, unknown>[],
+      );
+
+      // No statement anywhere in the policy grants PutResourcePolicy on '*'
+      const wildcardGrants = statements.filter(
+        s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy') && s.Resource === '*',
+      );
+      expect(wildcardGrants).toEqual([]);
+    });
+
+    test('grants no PutResourcePolicy when the span destination is opted out', () => {
+      // Least privilege: an opt-out deployment sends spans to the shared aws/spans group,
+      // which the separate XRayResourcePolicy authorizes, so the permission would be unused.
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'span-iam-optout-construct', {
+        ...baseProps(),
+        environmentVariables: { UNIFIED_TRACES_DESTINATION_ENABLED: 'false' },
+      });
+      const template = Template.fromStack(testApp.testStack);
+
+      const policies = template.findResources('AWS::IAM::ManagedPolicy');
+      const statements = Object.values(policies).flatMap(
+        p => p.Properties.PolicyDocument.Statement as Record<string, unknown>[],
+      );
+      expect(statements.filter(s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy'))).toEqual([]);
+    });
+
+    test('grants PutResourcePolicy when unrelated variables are configured', () => {
+      // The grant keys off the merged map, so configuring other variables must not
+      // suppress it - only an explicit 'false' does.
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'span-iam-unrelated-construct', {
+        ...baseProps(),
+        environmentVariables: { ENVIRONMENT: 'test' },
+      });
+      const template = Template.fromStack(testApp.testStack);
+
+      const policies = template.findResources('AWS::IAM::ManagedPolicy');
+      const statements = Object.values(policies).flatMap(
+        p => p.Properties.PolicyDocument.Statement as Record<string, unknown>[],
+      );
+      expect(statements.filter(s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy'))).toHaveLength(1);
+    });
+
+    test('grants no PutResourcePolicy when an existing execution role is supplied', () => {
+      // With roleArn the module creates no policy, so there is nothing to grant on -
+      // the permission is the operator's to add to their own role.
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'span-iam-imported-construct', {
+        ...baseProps(),
+        roleArn: 'arn:aws:iam::123456789012:role/existing-runtime-role',
+      });
+      const template = Template.fromStack(testApp.testStack);
+
+      const policies = template.findResources('AWS::IAM::ManagedPolicy');
+      const statements = Object.values(policies).flatMap(
+        p => p.Properties.PolicyDocument.Statement as Record<string, unknown>[],
+      );
+      expect(statements.filter(s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy'))).toEqual([]);
+    });
+
+    test('scopes the grant to the same runtime name the log protection resource targets', () => {
+      // Both the IAM grant and the log-protection Custom Resource must point at the same
+      // agent. The grant keys off the synth-time sanitized name while the CR keys off the
+      // deploy-time AgentRuntimeId, so this asserts the grant matches the runtime that
+      // was actually created rather than a stale or differently-truncated name.
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'span-iam-match-construct', baseProps());
+      const template = Template.fromStack(testApp.testStack);
+
+      const runtimes = template.findResources('AWS::BedrockAgentCore::Runtime');
+      const runtimeName = Object.values(runtimes)[0].Properties.AgentRuntimeName as string;
+
+      const policies = template.findResources('AWS::IAM::ManagedPolicy');
+      const statements = Object.values(policies).flatMap(
+        p => p.Properties.PolicyDocument.Statement as Record<string, unknown>[],
+      );
+      const grant = statements.find(s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy'));
+
+      expect(JSON.stringify(grant?.Resource)).toContain(`/aws/bedrock-agentcore/runtimes/${runtimeName}-*`);
     });
   });
 

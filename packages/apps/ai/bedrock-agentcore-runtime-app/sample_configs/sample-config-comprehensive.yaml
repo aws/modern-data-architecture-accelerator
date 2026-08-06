@@ -23,7 +23,9 @@ agentRuntimeArtifact:
     # (default: linux/arm64)
     platform: 'linux/amd64'
 # (Optional) Key-value environment variables passed to the agent
-# runtime container
+# runtime container. MDAA injects UNIFIED_TRACES_DESTINATION_ENABLED:
+# 'true' (spans go to this agent's own protected log group); a value
+# set here wins. See SCHEMA.md for the full contract.
 environmentVariables:
   ENVIRONMENT: test
   LOG_LEVEL: DEBUG

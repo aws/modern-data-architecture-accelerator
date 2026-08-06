@@ -53,6 +53,7 @@ This module is designed in alignment with MDAA security/compliance principles an
   - Runtimes deployed in VPC mode with no public internet access unless explicitly configured via VPC routing
   - JWT authentication (custom or standard) controls runtime endpoint access
 - **Observability & Monitoring**:
+  - Agent spans are routed to the runtime's own log group rather than the account-shared `aws/spans` group, bringing span content (prompts, model I/O, tool arguments and results) inside the same CMK encryption, retention, and PII-masking boundary as the agent's logs (see [Observability & Tracing](#observability--tracing))
   - Optional CloudWatch alarms on error rate and throttle count for production incident detection (see [Alarms](#cloudwatch-alarms))
   - Optional EventBridge rules alerting on individual security events — auth failures and out-of-band configuration changes — with optional customer-supplied remediation (see [EventBridge Alerting](#eventbridge-alerting))
   - A module-created alarm SNS topic is CMK-encrypted and enforces TLS for delivery
@@ -63,17 +64,17 @@ This module is designed in alignment with MDAA security/compliance principles an
 
 The following VPC endpoints may be required if public AWS service endpoint connectivity is unavailable (e.g., private subnets without NAT gateway, firewalled environments, or PrivateLink-only architectures):
 
-| AWS Service         | Endpoint Service Name                     | Type      |
-| ------------------- | ----------------------------------------- | --------- |
+| AWS Service         | Endpoint Service Name                      | Type      |
+| ------------------- | ------------------------------------------ | --------- |
 | Bedrock AgentCore   | `com.amazonaws.{region}.bedrock-agentcore` | Interface |
-| Bedrock Runtime     | `com.amazonaws.{region}.bedrock-runtime`  | Interface |
-| ECR API             | `com.amazonaws.{region}.ecr.api`          | Interface |
-| ECR Docker          | `com.amazonaws.{region}.ecr.dkr`          | Interface |
-| CloudWatch Logs     | `com.amazonaws.{region}.logs`             | Interface |
-| SSM Parameter Store | `com.amazonaws.{region}.ssm`              | Interface |
-| STS                 | `com.amazonaws.{region}.sts`              | Interface |
-| S3                  | `com.amazonaws.{region}.s3`               | Gateway   |
-| X-Ray               | `com.amazonaws.{region}.xray`             | Interface |
+| Bedrock Runtime     | `com.amazonaws.{region}.bedrock-runtime`   | Interface |
+| ECR API             | `com.amazonaws.{region}.ecr.api`           | Interface |
+| ECR Docker          | `com.amazonaws.{region}.ecr.dkr`           | Interface |
+| CloudWatch Logs     | `com.amazonaws.{region}.logs`              | Interface |
+| SSM Parameter Store | `com.amazonaws.{region}.ssm`               | Interface |
+| STS                 | `com.amazonaws.{region}.sts`               | Interface |
+| S3                  | `com.amazonaws.{region}.s3`                | Gateway   |
+| X-Ray               | `com.amazonaws.{region}.xray`              | Interface |
 
 > **Note:** The AgentCore endpoint service name is `bedrock-agentcore` — not `bedrock-agent-runtime` (the older Bedrock Agents endpoint) or `bedrock-runtime` (foundation model invocation). Using the wrong service name is the most common AgentCore VPC configuration mistake and results in DNS resolution failures or timeouts when invoking the runtime. The single `bedrock-agentcore` endpoint serves AgentCore Runtime, Tools, Memory, and Identity.
 
@@ -200,7 +201,7 @@ Two guardrails:
 - If `createNotificationTopic: true` and no `notificationEmails` are supplied, MDAA emits a **synth-time warning** — the topic will receive notifications that go nowhere. It is a warning rather than an error because subscriptions can legitimately be managed out-of-band (a chatbot integration, or an existing distribution list attached outside MDAA) using the topic ARN exported to SSM.
 - `notificationEmails` combined with `notificationTopicArn` **fails at synth**. MDAA does not modify a topic it did not create, and the deploying role would not hold `sns:Subscribe` on an externally-owned one. Subscribe on the existing topic directly, or switch to `createNotificationTopic: true`.
 
-Alarms are scoped to the deployed runtime automatically, using the **full dimension set the AgentCore service publishes** — `Resource` (the runtime ARN), `Operation` (`InvokeAgentRuntime`), and `Name` (`<runtime-name>::<qualifier>`). All three are required: CloudWatch matches dimensions *exactly* rather than as a subset, so an alarm naming only some of them receives zero datapoints and stays in `OK`. There is normally no reason to set `dimensions` yourself — doing so replaces the whole derived set.
+Alarms are scoped to the deployed runtime automatically, using the **full dimension set the AgentCore service publishes** — `Resource` (the runtime ARN), `Operation` (`InvokeAgentRuntime`), and `Name` (`<runtime-name>::<qualifier>`). All three are required: CloudWatch matches dimensions _exactly_ rather than as a subset, so an alarm naming only some of them receives zero datapoints and stays in `OK`. There is normally no reason to set `dimensions` yourself — doing so replaces the whole derived set.
 
 Note that because the `Name` dimension embeds the endpoint qualifier, the service emits a **separate metric stream per endpoint**. The alarms observe the endpoint this module creates (or `DEFAULT` when no `runtimeEndpoint` is configured); invocations through a different endpoint are not counted. CloudWatch's `SEARCH()` would span all qualifiers but is not supported on alarms.
 
@@ -241,7 +242,7 @@ Note that MDAA cannot inspect or modify a topic it does not own, so it emits a s
 
 ### EventBridge Alerting
 
-Where alarms detect *statistical* conditions (a rate or a count over a period), EventBridge rules detect *individual* events as they happen. Add an optional `eventBridgeAlerts` block to create rules matching this runtime's AgentCore CloudTrail events. As with `alarms`, the presence of the block enables it — there is no separate `enabled` flag. The comprehensive config above includes a populated block.
+Where alarms detect _statistical_ conditions (a rate or a count over a period), EventBridge rules detect _individual_ events as they happen. Add an optional `eventBridgeAlerts` block to create rules matching this runtime's AgentCore CloudTrail events. As with `alarms`, the presence of the block enables it — there is no separate `enabled` flag. The comprehensive config above includes a populated block.
 
 **`eventBridgeAlerts` requires an `alarms` block** that either creates a notification topic (`createNotificationTopic: true`) or references one (`notificationTopicArn`). That topic is the default target for every rule; configuring `eventBridgeAlerts` without one fails at synth rather than deploying rules that notify nothing.
 
@@ -253,7 +254,7 @@ Rules are a **keyed map**. Each key becomes part of the rule's resource name, so
 
   > **These are CloudTrail `errorCode` values, not SDK exception names — and for authorization failures the two differ.** An IAM denial is returned to the caller as `AccessDeniedException`, but CloudTrail records it as plain **`AccessDenied`**. **Do not configure `AccessDeniedException`** — a rule using it will never match.
   >
-  > Service-specific API errors *do* keep the suffix (`ResourceNotFoundException`, `ValidationException`), so the distinction is between IAM's normalized denial and a service's own error — not a per-error quirk. Confirm the exact value in a real record before adding a code:
+  > Service-specific API errors _do_ keep the suffix (`ResourceNotFoundException`, `ValidationException`), so the distinction is between IAM's normalized denial and a service's own error — not a per-error quirk. Confirm the exact value in a real record before adding a code:
   >
   > ```bash
   > aws cloudtrail lookup-events \
@@ -264,6 +265,7 @@ Rules are a **keyed map**. Each key becomes part of the rule's resource name, so
   > ```
   >
   > Note `InvokeAgentRuntime` is a CloudTrail **data** event, so it never appears in `lookup-events` — read those records from the trail's S3 bucket instead.
+
 - `eventNames` — AgentCore API names (e.g. `UpdateAgentRuntime`, `DeleteAgentRuntime`), for detecting configuration changes made outside IaC.
 
 At least one of the two is required. Note that setting **both ANDs them**: the rule then matches only calls to one of those APIs that failed with one of those error codes.
@@ -272,7 +274,7 @@ Configuration supplies only those two fields. MDAA owns the rest of the event pa
 
 Two details of the generated pattern are worth knowing, because they explain how the rules find your runtime:
 
-- **Rules are scoped by every identity form CloudTrail records** — `requestParameters.agentRuntimeId`, `requestParameters.agentRuntimeArn`, and `resources[].ARN` — combined with `$or`. All three are needed because the field carrying the runtime's identity differs per API: `InvokeAgentRuntime` events carry a **null** `requestParameters` and identify the runtime *only* in the `resources` array, while the lifecycle APIs use `requestParameters`. An EventBridge pattern naming a field the event lacks does not match.
+- **Rules are scoped by every identity form CloudTrail records** — `requestParameters.agentRuntimeId`, `requestParameters.agentRuntimeArn`, and `resources[].ARN` — combined with `$or`. All three are needed because the field carrying the runtime's identity differs per API: `InvokeAgentRuntime` events carry a **null** `requestParameters` and identify the runtime _only_ in the `resources` array, while the lifecycle APIs use `requestParameters`. An EventBridge pattern naming a field the event lacks does not match.
 - **The AgentCore CloudTrail source is matched, with a forward-compatible fallback.** AgentCore is served by two endpoints (control plane and data plane), but CloudTrail records both under the single `eventSource` `bedrock-agentcore.amazonaws.com`. The `bedrock-agentcore-control` variant is also listed in case the service later splits them; since an EventBridge list is an OR, a value that never appears cannot narrow matching.
 
 Notification is **EventBridge → SNS**, with an input transformer rendering a readable message (principal, error code, source IP, event name). No Lambda is created for notification — SNS already delivers to email, Slack, or PagerDuty via subscription.
@@ -296,6 +298,75 @@ eventBridgeAlerts:
       # (Optional) Also invoke a customer-supplied remediation function
       targetLambdaArn: 'arn:aws:lambda:us-east-1:123456789012:function:agentcore-remediation'
 ```
+
+### Observability & Tracing
+
+Traces come from two places that are easy to confuse: **spans are emitted by your container** and **routed by this module**. The module cannot emit them on your behalf, and the container cannot choose where they land.
+
+#### Container prerequisites — required, and silent when missing
+
+Emitting spans at all requires two things inside your image:
+
+```dockerfile
+# 1. The ADOT SDK, in pyproject.toml / requirements.txt
+#    aws-opentelemetry-distro>=0.18.0
+#    boto3
+
+# 2. An entrypoint that runs under opentelemetry-instrument
+CMD ["opentelemetry-instrument", "python", "main.py"]
+```
+
+> **Without both, the runtime deploys successfully, reports healthy, and emits no traces.** The CloudWatch console cannot distinguish this from an agent receiving no traffic — there is no error, no failed deployment, and no empty-state warning. If you expect traces and see none, check these two things first.
+>
+> The `>=0.18.0` floor is what makes the span destination below take effect. Earlier versions install and run fine but ignore the setting and deliver to the shared `aws/spans` log group, so spans land outside the protections described here.
+
+#### What this module provides
+
+- **Span destination** — MDAA sets `UNIFIED_TRACES_DESTINATION_ENABLED: 'true'` on every runtime, so spans go to the `spans` log stream of the agent's own log group (`/aws/bedrock-agentcore/runtimes/{agentId}-{qualifier}`) rather than the account-shared `aws/spans` group.
+
+  This matters because a span tree records the agent's decision path — prompts, model inputs and outputs, tool arguments, and tool results — which is the most PII-dense telemetry an agent produces. The per-agent log group already carries this module's always-on CMK encryption, retention policy, and PII masking; `aws/spans` carries **none** of them, and any principal with read access to that one shared group can read span data from every agent in the account.
+
+  MDAA sets this explicitly rather than relying on the service default, which is not stable: per AWS, agents in Regions that support the unified destination default to the agent's log group, while agents created before their Region supported it keep `aws/spans`. Left unset, a deployment's span destination depends on Region and creation date rather than on configuration.
+
+- **Execution-role permission** — the role is granted `logs:PutResourcePolicy`, which AgentCore uses to authorize X-Ray to deliver spans to the log group. It is scoped to **this agent's own log groups** (`/aws/bedrock-agentcore/runtimes/{thisRuntimeName}-*`), not to all runtimes, so one agent's role cannot rewrite another agent's log-group policy. Granted only when the span destination is in use — opt out and the statement is omitted entirely. If you supply your own role via `roleArn`, add this permission yourself — MDAA cannot modify a role it did not create.
+
+- **Transaction Search** — enabled by default via `enableTransactionSearch` (a singleton per account per Region; see [Configuration](#configuration)). Span delivery to the agent's log group requires it.
+
+#### What the service provides — do not override
+
+AgentCore Runtime configures the ADOT SDK's `OTEL_*` variables inside the container. **You do not need to set them, and MDAA deliberately sets none.**
+
+Overriding them replaces a service-maintained configuration with a hand-copied one. `OTEL_SERVICE_NAME` is the sharpest example: per the OpenTelemetry specification it takes precedence over the `service.name` resource attribute the service supplies, so setting it changes the service identity shown in the CloudWatch GenAI Observability console — breaking dashboards, alarms, and saved queries keyed on the previous name.
+
+Recipes that list `OTEL_RESOURCE_ATTRIBUTES`, `OTEL_EXPORTER_OTLP_*`, `AGENT_OBSERVABILITY_ENABLED`, and similar variables are for agents hosted **outside** AgentCore Runtime, which have no service configuring anything for them. They do not apply to this module.
+
+#### Escape hatches
+
+Both are set through `environmentVariables`, where a value you supply always wins over the MDAA default:
+
+```yaml
+environmentVariables:
+  # Centralize on the shared aws/spans log group instead of this agent's own.
+  # Note this forfeits the CMK encryption, retention, and PII masking above.
+  UNIFIED_TRACES_DESTINATION_ENABLED: 'false'
+
+  # Unset the service's ADOT defaults entirely, for a third-party observability platform.
+  DISABLE_ADOT_OBSERVABILITY: 'true'
+```
+
+Changing the destination does not move spans already delivered; only new spans are affected. If you have consumers reading `aws/spans` directly — dashboards, SIEM ingestion, saved Logs Insights queries — repoint them at the per-agent log group. Note also that spans and application logs then share one log group, so that group's retention policy governs both signals and its ingestion volume rises.
+
+#### Trace context propagation
+
+Pass these headers when invoking the runtime to correlate traces across services:
+
+| Header                                        | Purpose                                                                            |
+| --------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `traceparent`                                 | W3C standard trace context — cross-service correlation with modern tracing systems |
+| `X-Amzn-Trace-Id`                             | X-Ray format equivalent (`Root=…;Parent=…;Sampled=1`)                              |
+| `X-Amzn-Bedrock-AgentCore-Runtime-Session-Id` | Session identifier, for session-based analytics and troubleshooting                |
+
+> **Never put credentials, tokens, or PII in `baggage` values.** The `baggage` header propagates as cleartext HTTP headers across every downstream service and third-party API your agent calls, with no integrity checking and no encryption. Unlike log content, baggage is not covered by the PII masking on the log group — it leaves the boundary entirely. Use it only for non-sensitive routing context.
 
 ### Troubleshooting
 

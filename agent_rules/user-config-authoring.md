@@ -53,12 +53,33 @@ catalogKeyAlias: glue-catalog-key
 catalogKeyAlias: glue-catalog-key
 ```
 
+### Keep them short, and don't restate the schema
+
+One or two lines per property. The config interface's JSDoc is the canonical description — it generates `config-schema.json` and `SCHEMA.md`, so a comment that paraphrases it creates a second copy that goes stale on the next schema change.
+
+A sample-config comment answers only "what do I set here, and what happens if I do?" Rationale, security background, version prerequisites, and warnings about neighbouring properties belong in the JSDoc and the module README.
+
+```yaml
+# Good — actionable at the point of use, points at the canonical source
+# (Optional) Env vars for the container. MDAA injects
+# UNIFIED_TRACES_DESTINATION_ENABLED: 'true' (spans -> this agent's own
+# protected log group); a value set here wins. See SCHEMA.md for the full contract.
+environmentVariables:
+  ENVIRONMENT: test
+
+# Bad — 15 lines restating the JSDoc: why the default exists, which PII it
+# protects, the ADOT version floor, and a warning about OTEL_* variables.
+# All of that is already in the config interface and the README.
+```
+
+Signs a comment has outgrown a sample config: it explains _why_ a default was chosen, names a threat or compliance control, cites a dependency version, or warns against a property that isn't in this file. Cut to the actionable sentence and let the schema carry the rest.
+
 For module entries in `mdaa.yaml`, include a comment describing the module's purpose:
 
 ```yaml
 # Deploys S3 data lake buckets with three-zone layout (raw, transformed, curated)
 datalake:
-  module_path: "@aws-mdaa/datalake"
+  module_path: '@aws-mdaa/datalake'
   module_configs:
     - ./datalake/datalake.yaml
 ```
@@ -103,6 +124,7 @@ If multiple domains share an account, deploy the account-level module in one dom
 ## 5. Role References
 
 Roles are referenced using the MdaaRoleRef format:
+
 - `name: RoleName` — simplest, expands to full ARN in deployment account
 - `arn: arn:aws:iam::123456789012:role/Role` — cross-account or SSM-stored ARNs
 - `id: AROA...` — immutable role ID reference
@@ -125,4 +147,4 @@ When you add a new optional config field to a module, **add it to the existing c
 
 **Only create a new dedicated sample config when the new field is incompatible with the comprehensive sample** — i.e. it is mutually exclusive with at least one field already present there, so the two cannot coexist in one valid config. Examples in the AgentCore Runtime module: `codePath` (mutually exclusive with the comprehensive config's `containerUri`) and `enforceVpcOnly` variants. In those cases the standalone config + its own `baselineDiffTestApp` entry + baseline are required, because the branch cannot be exercised from the comprehensive config.
 
-This complements the testing-standards rule "mutually exclusive config branches each have dedicated sample configs and tests": that rule is the *exception*, and extending the comprehensive config is the *default*. Internal mutually-exclusive branches of an otherwise-additive field (e.g. `alarms.notificationTopicArn` vs `alarms.createNotificationTopic`) are covered by L3 construct unit tests, not by separate app-level sample configs.
+This complements the testing-standards rule "mutually exclusive config branches each have dedicated sample configs and tests": that rule is the _exception_, and extending the comprehensive config is the _default_. Internal mutually-exclusive branches of an otherwise-additive field (e.g. `alarms.notificationTopicArn` vs `alarms.createNotificationTopic`) are covered by L3 construct unit tests, not by separate app-level sample configs.

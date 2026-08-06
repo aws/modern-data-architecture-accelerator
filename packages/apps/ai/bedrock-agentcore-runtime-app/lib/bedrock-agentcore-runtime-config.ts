@@ -84,6 +84,15 @@ export interface BedrockAgentcoreRuntimeConfigContents extends MdaaBaseConfigCon
   /**
    * Key-value environment variables passed to the agent runtime container.
    *
+   * MDAA injects `UNIFIED_TRACES_DESTINATION_ENABLED: 'true'`, routing agent spans to this
+   * agent's own log group, which carries the module's CMK encryption, retention, and PII
+   * masking (requires `aws-opentelemetry-distro>=0.18.0` in the image). A value set here
+   * wins: `'false'` sends spans to the account-shared `aws/spans` group instead, which has
+   * none of those protections.
+   *
+   * Do not set `OTEL_*` variables here - AgentCore Runtime configures the ADOT SDK inside
+   * the container. See the module README's "Observability & Tracing" section.
+   *
    * Use cases: Runtime configuration, environment customization, behavior control
    *
    * AWS: Bedrock AgentCore Runtime container environment variables

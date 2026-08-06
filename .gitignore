@@ -78,6 +78,7 @@ dist/
 .claude/*
 !.claude/agents/
 !.claude/rules/
+!.claude/skills/
 CLAUDE.local.md
 
 e2e

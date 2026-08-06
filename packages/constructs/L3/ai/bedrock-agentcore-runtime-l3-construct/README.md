@@ -58,7 +58,7 @@ const runtime = new BedrockAgentcoreRuntimeL3Construct(this, 'MyRuntime', {
 - `description`: Optional description
 - `agentRuntimeArtifact`: Container configuration (required)
 - `networkConfiguration`: VPC network configuration (required)
-- `environmentVariables`: Environment variables for the container
+- `environmentVariables`: Environment variables for the container. The construct adds `UNIFIED_TRACES_DESTINATION_ENABLED: 'true'` underneath these (see [Span Destination](#span-destination)); a value supplied here takes precedence
 - `lifecycleConfiguration`: Session timeout and lifetime settings
 - `authorizerConfiguration`: JWT authorizer configuration
 - `requestHeaderConfiguration`: HTTP header forwarding configuration
@@ -118,11 +118,20 @@ const runtime2 = new BedrockAgentcoreRuntimeL3Construct(this, 'Runtime2', {
 });
 ```
 
+## Span Destination
+
+The construct sets `UNIFIED_TRACES_DESTINATION_ENABLED: 'true'` on every runtime, delivering agent spans to the `spans` log stream of the runtime's own log group (`/aws/bedrock-agentcore/runtimes/{agentId}-{qualifier}`) instead of the account-shared `aws/spans` group. The per-agent group already carries the construct's always-on CMK encryption, retention, and PII masking; `aws/spans` carries none of them, and span content (prompts, model I/O, tool arguments and results) is the most PII-dense telemetry an agent produces.
+
+Set explicitly rather than left to the service default, which varies by region and agent creation date. Requires `aws-opentelemetry-distro>=0.18.0` in the container image — earlier versions ignore it and keep using `aws/spans`.
+
+Pass `UNIFIED_TRACES_DESTINATION_ENABLED: 'false'` in `environmentVariables` to opt out. The construct sets no `OTEL_*` variables; those are configured inside the container by AgentCore Runtime.
+
 ## IAM Permissions
 
 The construct automatically creates IAM roles with permissions for:
 - ECR image access (GetAuthorizationToken, BatchGetImage, GetDownloadUrlForLayer)
 - CloudWatch Logs (CreateLogGroup, CreateLogStream, PutLogEvents)
+- CloudWatch Logs resource policy (PutResourcePolicy), scoped to this runtime's own log groups — AgentCore uses it to authorize X-Ray to deliver spans there. Omitted when the span destination is opted out. Supply your own role via `roleArn` and you must add this permission yourself
 - X-Ray tracing (PutTraceSegments, PutTelemetryRecords)
 - CloudWatch Metrics (PutMetricData for bedrock-agentcore namespace)
 - Bedrock AgentCore workload identity tokens

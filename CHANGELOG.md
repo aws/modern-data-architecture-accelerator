@@ -58,6 +58,7 @@
 - Added optional `alarms` configuration to create CloudWatch alarms on the AgentCore error-rate and throttle-count metrics, notifying either an existing or a module-created CMK-encrypted SNS topic. Opt-in; omitting the block deploys no alarms. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#cloudwatch-alarms).
 - Added optional `alarms.notificationEmails` to subscribe email addresses to a module-created alarm topic, so notifications reach an operator. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#subscribing-to-the-notification-topic).
 - Added optional `eventBridgeAlerts` configuration to create EventBridge rules alerting on individual AgentCore CloudTrail events (auth failures, out-of-band configuration changes), notifying the `alarms` topic and optionally a customer-supplied remediation Lambda. Requires a CloudTrail trail logging the matched events. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#eventbridge-alerting).
+- Agent spans are now routed to the runtime's own log group instead of the account-shared `aws/spans` group, so span content inherits the module's CMK encryption, retention, and PII masking. Set `UNIFIED_TRACES_DESTINATION_ENABLED: 'false'` in `environmentVariables` to opt out. **Upgrade impact:** requires `aws-opentelemetry-distro>=0.18.0` in the container image, and creates a new runtime version on deploy. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#observability--tracing).
 
 ### Bug Fixes
 
@@ -165,6 +166,7 @@
 - Updated dependencies to address CVEs (`cryptography`, `requests`, `yaml`, `fast-xml-parser`, `follow-redirects`, `tmp`, `pytest`)
 
 ### Bug Fixes
+
 - Added allowlist validation of `region` (`^[a-z0-9-]+$`) and `account` (12-digit) config values before they are interpolated into CLI shell commands, at both config-parse time (for concrete values) and after reference resolution. Dynamic references (`{{...}}`) and the `default` sentinel are unaffected.
 - Fixed intermittent deployment failures caused by concurrent `AWS::DataZone::Owner` creation triggering DynamoDB transaction collisions (`Transaction cancelled ... ConditionalCheckFailed ... AlreadyExists`). `CfnOwner` resources that target the same domain unit are now chained sequentially via CloudFormation `DependsOn`, eliminating the race; owners on different domain units remain parallel. The chain order is derived from the owner construct id, so reordering a config's owner list produces no template change.
 - Fixed cross-account SMUS deploy failure in DataZone v2 domain config handler due to insufficient IAM authorization after recent AWS service update

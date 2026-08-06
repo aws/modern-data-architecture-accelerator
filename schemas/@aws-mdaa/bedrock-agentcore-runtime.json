@@ -3389,7 +3389,7 @@
             "additionalProperties": {
                 "type": "string"
             },
-            "description": "Key-value environment variables passed to the agent runtime container.\n\nUse cases: Runtime configuration, environment customization, behavior control\n\nAWS: Bedrock AgentCore Runtime container environment variables\n\nValidation: Optional; Record<string, string>",
+            "description": "Key-value environment variables passed to the agent runtime container.\n\nMDAA injects `UNIFIED_TRACES_DESTINATION_ENABLED: 'true'`, routing agent spans to this\nagent's own log group, which carries the module's CMK encryption, retention, and PII\nmasking (requires `aws-opentelemetry-distro>=0.18.0` in the image). A value set here\nwins: `'false'` sends spans to the account-shared `aws/spans` group instead, which has\nnone of those protections.\n\nDo not set `OTEL_*` variables here - AgentCore Runtime configures the ADOT SDK inside\nthe container. See the module README's \"Observability & Tracing\" section.\n\nUse cases: Runtime configuration, environment customization, behavior control\n\nAWS: Bedrock AgentCore Runtime container environment variables\n\nValidation: Optional; Record<string, string>",
             "type": "object"
         },
         "eventBridgeAlerts": {

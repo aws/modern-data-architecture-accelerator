@@ -463,6 +463,18 @@ export interface RuntimeEndpointProperty {
 }
 
 /**
+ * Environment variable read by the AgentCore Runtime service to select where the
+ * agent's spans are delivered. Set to `'true'` by default so spans land in the
+ * agent's own protected log group rather than the account-shared `aws/spans` group;
+ * see {@link BedrockAgentcoreRuntimeL3Construct.buildEnvironmentVariables}.
+ *
+ * This is a service-read variable, not one of the ADOT SDK's `OTEL_*` variables -
+ * those are configured inside the container by AgentCore Runtime and MDAA does not
+ * set them.
+ */
+const UNIFIED_TRACES_DESTINATION_ENV_VAR = 'UNIFIED_TRACES_DESTINATION_ENABLED';
+
+/**
  * Built-in set of AWS-managed data identifiers that are always masked on the runtime
  * log groups. This is the mandatory compliance floor - it is applied to every deployment
  * and cannot be reduced. Configuration may only add identifiers on top of this set.
@@ -860,6 +872,12 @@ export interface BedrockAgentcoreRuntimeProps {
   /**
    * Key-value environment variables passed to the runtime container.
    *
+   * The construct adds `UNIFIED_TRACES_DESTINATION_ENABLED: 'true'` underneath these,
+   * routing agent spans to the runtime's own log group, which carries the construct's CMK
+   * encryption, retention, and PII masking. A value supplied here takes precedence: `'false'`
+   * sends spans to the account-shared `aws/spans` group instead, which has none of those
+   * protections. See {@link BedrockAgentcoreRuntimeL3Construct.buildEnvironmentVariables}.
+   *
    * Use cases: Runtime configuration, environment customization, behavior control
    *
    * AWS: Bedrock AgentCore Runtime container environment variables
@@ -1045,18 +1063,33 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
   protected readonly props: BedrockAgentcoreRuntimeL3ConstructProps;
   /** KMS key created for log-group encryption; reused for the alarm SNS topic when one is created. */
   private logGroupKmsKey?: MdaaKmsKey;
-  /**
-   * Sanitized runtime name, which is the prefix of the `Name` metric dimension the
-   * AgentCore service publishes (`<name>::<qualifier>`). Assigned in the constructor
-   * before the alarms are created.
-   */
-  private readonly sanitizedRuntimeName: string;
+  /** Memoized backing field for {@link sanitizedRuntimeName}. */
+  private _sanitizedRuntimeName?: string;
   /**
    * Sanitized endpoint name, which is the qualifier in the `Name` metric dimension.
    * Undefined when no runtimeEndpoint is configured, in which case the service
    * records metrics under the DEFAULT qualifier.
    */
   private sanitizedEndpointName?: string;
+
+  /**
+   * Sanitized runtime name: the value given to the CfnRuntime, the prefix of the `Name`
+   * metric dimension the AgentCore service publishes (`<name>::<qualifier>`), and the
+   * log-group prefix the execution role's `logs:PutResourcePolicy` grant is scoped to.
+   *
+   * Computed on first access rather than in the constructor so the several call sites
+   * that need it cannot be broken by reordering. It is a pure function of the naming
+   * module and `agentRuntimeName` - it creates no constructs - so the first caller wins
+   * and every later caller gets the identical string.
+   */
+  private get sanitizedRuntimeName(): string {
+    this._sanitizedRuntimeName ??= sanitizeBedrockAgentcoreName(
+      this.props.naming
+        .withResourceType(MdaaResourceType.BEDROCK_AGENTCORE_RUNTIME)
+        .resourceName(this.props.agentRuntimeName, 48),
+    );
+    return this._sanitizedRuntimeName;
+  }
 
   constructor(scope: Construct, id: string, props: BedrockAgentcoreRuntimeL3ConstructProps) {
     super(scope, id, props);
@@ -1080,25 +1113,16 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
       );
     }
 
-    // The sanitized runtime name is also the prefix of the `Name` metric dimension
-    // the service publishes (`<name>::<qualifier>`), so it is retained for the alarms.
-    const sanitizedRuntimeName = sanitizeBedrockAgentcoreName(
-      this.props.naming
-        .withResourceType(MdaaResourceType.BEDROCK_AGENTCORE_RUNTIME)
-        .resourceName(props.agentRuntimeName, 48),
-    );
-    this.sanitizedRuntimeName = sanitizedRuntimeName;
-
     // Build typed runtime properties for CloudFormation
     const runtimeProps: bedrockagentcore.CfnRuntimeProps = {
-      agentRuntimeName: sanitizedRuntimeName,
+      agentRuntimeName: this.sanitizedRuntimeName,
       agentRuntimeArtifact: artifactProperty,
       roleArn: roleArn,
       networkConfiguration: buildNetworkConfiguration(props.networkConfiguration),
       // Optional properties - left undefined when not configured so the synthesized
       // template omits them entirely (matching the prior passthrough behavior).
       description: props.description,
-      environmentVariables: props.environmentVariables,
+      environmentVariables: this.buildEnvironmentVariables(props.environmentVariables),
       protocolConfiguration: props.protocolConfiguration,
       lifecycleConfiguration: props.lifecycleConfiguration
         ? buildLifecycleConfiguration(props.lifecycleConfiguration)
@@ -1198,6 +1222,27 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
 
     // Store runtime information in SSM Parameter Store
     this.storeSSMParameters(props.agentRuntimeName);
+  }
+
+  /**
+   * Applies the {@link UNIFIED_TRACES_DESTINATION_ENV_VAR} default beneath the configured
+   * variables. Keep the default first: moving it after the spread would silently override
+   * a customer's opt-out.
+   */
+  private buildEnvironmentVariables(configured?: { [key: string]: string }): { [key: string]: string } {
+    return {
+      [UNIFIED_TRACES_DESTINATION_ENV_VAR]: 'true',
+      ...configured,
+    };
+  }
+
+  /**
+   * Whether spans are routed to the runtime's own log group, which is what the execution
+   * role's `logs:PutResourcePolicy` grant is for. Derived from the same merged map the
+   * runtime receives so the grant cannot disagree with the variable it depends on.
+   */
+  private spanDestinationEnabled(configured?: { [key: string]: string }): boolean {
+    return this.buildEnvironmentVariables(configured)[UNIFIED_TRACES_DESTINATION_ENV_VAR] !== 'false';
   }
 
   /**
@@ -1525,6 +1570,27 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
       }),
     ];
 
+    // Span destination: AgentCore calls PutResourcePolicy on the agent's log group to
+    // authorize X-Ray to deliver spans there. Granted only when the destination is in use -
+    // an opt-out deployment sends spans to the shared aws/spans group, which the separate
+    // XRayResourcePolicy already authorizes, so this permission would go unused.
+    //
+    // Scoped to this runtime's own log groups rather than the /runtimes/* wildcard the
+    // statements above use: PutResourcePolicy rewrites a log group's resource policy, so a
+    // wildcard would let one agent's execution role alter every other agent's.
+    if (this.spanDestinationEnabled(props.environmentVariables)) {
+      policyStatements.push(
+        new PolicyStatement({
+          sid: 'SpanDestinationResourcePolicy',
+          effect: Effect.ALLOW,
+          actions: ['logs:PutResourcePolicy'],
+          resources: [
+            `arn:${stack.partition}:logs:${region}:${accountId}:log-group:/aws/bedrock-agentcore/runtimes/${this.sanitizedRuntimeName}-*`,
+          ],
+        }),
+      );
+    }
+
     // ECR Image Access - specific repository if Docker image was built or containerUri provided
     if (this.repositoryArn) {
       policyStatements.push(
@@ -1578,7 +1644,9 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
         {
           id: 'AwsSolutions-IAM5',
           reason:
-            'Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models',
+            'Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models. ' +
+            "logs:PutResourcePolicy uses a wildcard suffix because AgentCore appends the endpoint qualifier to the log group name at runtime; it is scoped to this runtime's own log-group prefix (/aws/bedrock-agentcore/runtimes/<runtimeName>-*), not to all runtimes. " +
+            'See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html',
         },
       ],
       true,
@@ -1591,7 +1659,9 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
         {
           id: 'AwsSolutions-IAM5',
           reason:
-            'Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models',
+            'Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models. ' +
+            "logs:PutResourcePolicy uses a wildcard suffix because AgentCore appends the endpoint qualifier to the log group name at runtime; it is scoped to this runtime's own log-group prefix (/aws/bedrock-agentcore/runtimes/<runtimeName>-*), not to all runtimes. " +
+            'See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html',
         },
       ],
       true,

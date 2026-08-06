@@ -2,6 +2,10 @@
 # Builds the container image from a local Dockerfile instead of
 # referencing a pre-built ECR image. Use this approach when
 # developing custom agent runtimes from source code.
+#
+# Also covers the span-destination opt-out, which fits this variant:
+# when you build the image you control its ADOT version, so this is
+# where deliberately centralizing on aws/spans is a real choice.
 
 # Unique name for the Bedrock AgentCore Runtime
 agentRuntimeName: testAgentRuntimeCodePath
@@ -15,6 +19,11 @@ agentRuntimeArtifact:
     # (Optional) Target platform architecture for Docker image builds
     # (default: linux/arm64)
     platform: 'linux/arm64'
+# (Optional) Env vars for the container. Opts out of the injected
+# UNIFIED_TRACES_DESTINATION_ENABLED default, sending spans to the shared
+# aws/spans log group instead of this agent's own protected one.
+environmentVariables:
+  UNIFIED_TRACES_DESTINATION_ENABLED: 'false'
 # VPC network configuration for secure runtime deployment
 networkConfiguration:
   # Security group IDs (1-16 items)
@@ -30,7 +39,7 @@ networkConfiguration:
 # (Optional) Protocol-level configuration for agent runtime
 # communication. Defines which protocol the agent runtime uses
 # to communicate with clients.
-  # Valid values: MCP | HTTP | A2A
+# Valid values: MCP | HTTP | A2A
 protocolConfiguration: 'MCP'
 # (Optional) Authentication via jwtAuthorizer (alternative to
 # customJwtAuthorizer)

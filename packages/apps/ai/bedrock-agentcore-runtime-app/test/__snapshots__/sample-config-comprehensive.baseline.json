@@ -51,6 +51,7 @@
         },
         "Description": "Test agent runtime for unit testing",
         "EnvironmentVariables": {
+          "UNIFIED_TRACES_DESTINATION_ENABLED": "true",
           "ENVIRONMENT": "test",
           "LOG_LEVEL": "DEBUG"
         },

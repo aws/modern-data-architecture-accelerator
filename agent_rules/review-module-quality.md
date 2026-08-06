@@ -114,6 +114,19 @@ Stop recursion at leaf types, `additionalProperties` with no fixed keys, circula
 
 Detect from the schema: `oneOf`/`anyOf` blocks, `if`/`then`/`else`, `not` constraints, and inline config comments. Each branch needs its own sample config file.
 
+#### Comment Length and Schema Duplication
+
+Sample configs are commented per `user-config-authoring.md` §2, but a comment that restates the config interface's JSDoc creates a second copy of the canonical description — one that goes stale the next time the schema changes and nothing checks it.
+
+Flag any sample-config comment that:
+
+- **Runs beyond ~4 lines for a single property.** Length is the symptom, not the defect — use it to find the ones worth reading, then judge the content.
+- **Paraphrases the JSDoc.** Compare against the property's description in `config-schema.json`. If the comment carries the same facts in the same order, cut it to the actionable sentence and point at `SCHEMA.md`.
+- **Explains why a default was chosen**, names a threat model or compliance control, or cites a dependency version floor. That belongs in the JSDoc and the module README.
+- **Warns against a property absent from this file.** Same failure as the README rule in "Written for a first-time reader" — it reads as a warning about a trap the reader has no context for.
+
+The test: a config author reads this to decide what to set. Text that instead justifies the module's design is in the wrong file. This is the sample-config counterpart to "Written for a first-time reader, not for the MR" above, and to "Document the constraint, not the investigation" in `developer-code-documentation.md`.
+
 ### 4. Produce Report
 
 ```
@@ -128,6 +141,7 @@ Sample Config Coverage: M/N (X%)
   Subtree gaps: [grouped by parent]
   Partially covered enums: [list]
   Mutually exclusive groups: [list]
+  Over-long / JSDoc-duplicating comments: [file:line — property]
 ```
 
 ### 5. Implement Fixes
@@ -143,6 +157,7 @@ Sample Config Coverage: M/N (X%)
 #### Sample Config Fixes
 
 - Add missing properties to existing configs where compatible
+- Cut comments that duplicate the JSDoc or carry design rationale down to the actionable sentence, pointing at `SCHEMA.md` for the rest — do not delete the comment entirely, since every property still needs one
 - Create new `sample-config-{variant}.yaml` for mutually exclusive branches
 - Follow all standards from CONTRIBUTING.md (naming, template variables, inline docs, role refs, cross-module refs)
 - Create corresponding synth, snapshot, and diff baseline tests for every new config
@@ -224,6 +239,7 @@ When reviewing config interfaces and generated schemas, check for these user-fri
 Prefer `Record<string, T>` (renders as `additionalProperties` in JSON Schema) over `Array<T & { name: string }>`. Named maps let users reference resources by key in YAML, avoid ordering issues, and make diffs cleaner.
 
 Bad (array with name property):
+
 ```yaml
 buckets:
   - name: raw-data
@@ -233,6 +249,7 @@ buckets:
 ```
 
 Good (named map):
+
 ```yaml
 buckets:
   raw-data:
@@ -252,6 +269,7 @@ Modules should be designed to deploy multiple named instances of their primary r
 This applies to all primary resources a module manages. Supporting infrastructure that is genuinely shared (e.g., a single KMS key, a single VPC reference) can remain singular, but the core resources the user is deploying should always use named maps.
 
 Bad (singular object — limits to one resource):
+
 ```yaml
 clusterConfig:
   engineVersion: '1.3.2.1'
@@ -260,6 +278,7 @@ instanceConfig:
 ```
 
 Good (named maps — supports multiple resources):
+
 ```yaml
 clusters:
   my-cluster:
@@ -294,12 +313,14 @@ An optional boolean config property should default (when omitted) to the safer, 
 When a config property accepts IAM principal ARNs (for granting access, specifying execution roles, or listing read principals), use MDAA Role Ref format (`MdaaRoleRef[]`) rather than raw ARN string arrays. Role Refs support `name:`, `arn:`, `id:`, `generated-role-id:`, and `ssm:` prefixed values, providing flexibility and consistency with other MDAA modules.
 
 Bad (raw ARN array):
+
 ```yaml
 ssmReadPrincipals:
   - arn:aws:iam::123456789012:role/my-role
 ```
 
 Good (MDAA Role Refs):
+
 ```yaml
 ssmReadPrincipals:
   - name: my-role
@@ -311,6 +332,7 @@ ssmReadPrincipals:
 Properties that describe the deployment target (VPC ID, subnet IDs, security group IDs) should be nested inside the resource config that uses them, not floating at the app config root level. When a module supports multiple named resources, each resource may need different network configuration. Shared base properties that genuinely apply to all resources in the module can use a top-level `network:` or similar named section.
 
 Bad (flat at root — doesn't scale to multiple resources):
+
 ```yaml
 subnetIds: [subnet-1, subnet-2]
 vpcId: vpc-123
@@ -319,6 +341,7 @@ clusterConfig:
 ```
 
 Good (nested inside resource config):
+
 ```yaml
 clusters:
   my-cluster:
@@ -334,7 +357,7 @@ Do not add `govcloudMode`, `regionMode`, or similar boolean/enum flags that gate
 ### Severity Classification for CI Agent
 
 - **HIGH:** Missing README, missing comprehensive sample config, required README section missing (Deployed Resources, Security/Compliance, MDAA Config), required config property with no JSDoc (users can't configure without reading source), required property that should have a default, use of `any`/`unknown`/untyped `object` in a config-exposed interface where a specific type is feasible, README states a behavior the construct source contradicts (a limitation the code no longer has, a validation it does not perform, a default it does not apply)
-- **MEDIUM:** README section non-conforming (wrong format, compliance language in Deployed Resources), README prose written for the MR rather than a first-time reader (narrates the development process, argues against an alternative the reader never saw, or repeats one rationale as emphasis), schema property not exercised in any sample config, sample config not referenced in README, inconsistent property naming, missing template variables (hardcoded account/region), sample config missing inline documentation comments, array-with-name-property pattern where a named map would be more user-friendly, missing schema-level validation for constraints that are currently only enforced in code, `additionalProperties: true` on objects that have a known fixed set of keys, singular config object pattern (`clusterConfig`) where a named map (`clusters:`) should support multiple resources, property names missing units (`queryTimeout` instead of `queryTimeoutMs`), redundant `Config` suffix on property names, raw ARN arrays where MDAA Role Refs should be used, infrastructure properties (VPC/subnets) at root level instead of nested in resource config, regional service-availability gating flags (`govcloudMode`)
+- **MEDIUM:** README section non-conforming (wrong format, compliance language in Deployed Resources), README prose written for the MR rather than a first-time reader (narrates the development process, argues against an alternative the reader never saw, or repeats one rationale as emphasis), schema property not exercised in any sample config, sample config not referenced in README, inconsistent property naming, missing template variables (hardcoded account/region), sample config missing inline documentation comments, sample config comment that duplicates the property's JSDoc or explains design rationale rather than what to set (see "Comment Length and Schema Duplication"), array-with-name-property pattern where a named map would be more user-friendly, missing schema-level validation for constraints that are currently only enforced in code, `additionalProperties: true` on objects that have a known fixed set of keys, singular config object pattern (`clusterConfig`) where a named map (`clusters:`) should support multiple resources, property names missing units (`queryTimeout` instead of `queryTimeoutMs`), redundant `Config` suffix on property names, raw ARN arrays where MDAA Role Refs should be used, infrastructure properties (VPC/subnets) at root level instead of nested in resource config, regional service-availability gating flags (`govcloudMode`)
 - **LOW:** Missing architecture diagram, missing Related Modules section, style issues in sample config comments, enum value not exercised (but covered by other configs), weak JSDoc that restates the property name, opportunities to tighten string types to enums or patterns
 
 ### Rules for CI Agent Findings
