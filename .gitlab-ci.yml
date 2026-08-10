@@ -743,6 +743,43 @@ feature_merge_architecture_review:
       codequality: architecture-review/codequality-report.json
     when: always
 
+# Review CLI shell-safety invariants (parameter validation, sink quoting, and their tests)
+feature_merge_cli_architecture_review:
+  extends:
+    - .size_medium
+    - .retry_on_infra_failure
+  interruptible: true
+  tags:
+    - arch:amd64
+  only:
+    - merge_requests
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+    - feature_check_target
+  cache:
+    key: feature-merge-build-$CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+      - .nx/
+    policy: pull
+  allow_failure: false
+  variables:
+    GIT_DEPTH: '0'
+    KIRO_API_KEY: '${KIRO_API_KEY}'
+  script:
+    - python3 ./scripts/review/cli_architecture/cli_architecture_review.py --output-dir cli-architecture-review
+    - python3 ./scripts/review/cli_architecture/post_cli_architecture_threads.py --report cli-architecture-review/report.json
+  artifacts:
+    paths:
+      - cli-architecture-review/report.json
+    reports:
+      codequality: cli-architecture-review/codequality-report.json
+    when: always
+
 # Review repo-wide documentation quality (CHANGELOG, SCHEMA.md, cross-references)
 feature_merge_doc_quality_review:
   extends:

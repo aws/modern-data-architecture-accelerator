@@ -17,17 +17,21 @@ Enforce and improve testing across all MDAA packages — L2 constructs, L3 const
 - **L2 construct tests**: `packages/constructs/L2/*/test/`
 - **L3 construct tests**: `packages/constructs/L3/*/*/test/`
 - **App module tests**: `packages/apps/*/*/test/`
+- **CLI tests**: `packages/cli/test/`
+- **Starter kit tests**: `starter_kits/test/`
 - **Python tests**: `*/python-tests/`
 - **Integration tests**: `packages/constructs/*/test/integ/`
 - **Diff baselines**: `*/test/__snapshots__/*.baseline.json`
+- **CLI command baselines**: `packages/cli/test/__snapshots__/cli-commands-*.baseline.json`, `starter_kits/test/*/baselines/cli-commands.baseline.json`
 
 ## Standards Summary
 
-- 80% branch and 80% statement coverage, enforced via Jest
+- 80% branch and 80% statement coverage, enforced via Jest (CLI: 75% branch)
 - All compliance controls must have explicit test assertions
 - CDK Nag rulesets validated via `MdaaTestApp.checkCdkNagCompliance()`
 - Diff baselines committed to the repo and reviewed as part of code changes
 - Non-deterministic test values: `test-account`, `test-region`, `test-partition`
+- CLI changes are covered by command baselines: golden shell command strings, not templates
 
 ## What to Review
 
@@ -50,6 +54,17 @@ Enforce and improve testing across all MDAA packages — L2 constructs, L3 const
 - Every sample config has a synth test and snapshot test
 - Schema coverage: every config property exercised through sample configs
 - Mutually exclusive config branches each have dedicated sample configs and tests. Note: a *new* additive field should extend the comprehensive sample config by default — only create a dedicated sample config when the field is mutually exclusive with a field already in the comprehensive config (see user-config-authoring.md section 8).
+
+### CLI Tests
+- Any change to command assembly, config resolution, or `{{...}}` reference handling has a command baseline diff. A CLI change with no baseline movement means the behavior is unpinned.
+- Baseline coverage is for composition-emergent behavior (assembled command text, module ordering, merge outcomes). Field validation, parsing, and error handling stay in unit tests — do not duplicate them as baselines.
+- New behavior extends the `sample_configs/sample-config-{usecase}.yaml` that owns the concern; a new config file is warranted only for a genuinely new concern, and must be registered in `SAMPLE_CASES`.
+- A regenerated baseline must be attributable: every changed line traces to the diff, including semantically inert changes (requoting, path normalization).
+- Hand-edited baselines are a defect. Baselines are generated output.
+
+### Starter Kit Tests
+- A CLI change must select the kit CLI command baselines. `scripts/test/test_starter_kit.py` detection path 5 matches `@aws-mdaa/cli` in the nx affected set — without it, kit baselines go stale while module synths pass.
+- A CLI change that alters command format requires regenerated kit baselines in the same MR.
 
 ### Python Tests
 - Tests co-located in `python-tests/` directories
@@ -103,6 +118,36 @@ Review the diff output before committing. Do NOT update baselines blindly.
 4. Commit the `.baseline.json` files
 5. Run `npm run test` to verify zero differences
 
+## CLI Command Baseline Testing
+
+The CLI emits a shell command per module. That command — not a CloudFormation template — is its contract, and it is fully determined before any template exists. App diff tests build CDK context in-process and never exercise the encode-to-argv step, so a command-assembly change leaves every template baseline passing.
+
+### How It Works
+
+1. A sample config is staged into a temp directory
+2. The CLI runs with `--testing`, which prints each command instead of executing it (no AWS, CDK, network, Terraform, Checkov, or pip)
+3. `parseCliCommands` folds line-continued output into one entry per logical command
+4. `compareCliBaseline` diffs against the committed baseline; paths normalize to `/TEMP_DIR` and `/REPO_ROOT` so baselines are portable
+
+Two consumers: `packages/cli/test/cli-commands.diff.test.ts` (one config per concern) and `starter_kits/test/starter-kit.diff.test.ts` (each kit's real `mdaa.yaml`).
+
+### Key Rules
+
+- One sample config per concern, not per schema variant: hierarchy, env-templates, refs, shell-values, orchestration, npm-version, terraform
+- Configs are fixtures, not user-facing examples. Deliberately invalid or unsafe values are correct in `sample-config-shell-values.yaml`; app sample-config standards (minimal/comprehensive, inline schema docs) do not apply
+- No SSM refs (`{{ssm-org:...}}`, `{{resolve:ssm:...}}`) — they resolve in a construct scope during synth and throw during CLI config resolution
+- Baselines record current behavior including known defects; each defect is documented in the header of the config that exercises it
+- Never hand-edit a baseline — change the CLI and regenerate
+
+### Updating Command Baselines
+
+```bash
+npm run test:update-baselines                          # from packages/cli
+UPDATE_BASELINES=true npm run test:starter-kits:all    # kit baselines, from repo root
+```
+
+Commands are inert text under `--testing`, so an unreviewed baseline can hide a defect no template diff would surface. A quoting change that looks cosmetic can alter what the shell delivers to the app. Read every changed line.
+
 ## Adding Tests Checklist
 
 ### New L2 Construct
@@ -125,6 +170,13 @@ Review the diff output before committing. Do NOT update baselines blindly.
 4. Generate and commit initial baselines
 5. Ensure 80% branch and statement coverage
 
+### New CLI Behavior
+1. Add the case to the `sample_configs/sample-config-{usecase}.yaml` that owns the concern, or create a new config and register it in `SAMPLE_CASES`
+2. Cover only composition-emergent behavior; field validation and parsing go in unit tests
+3. Run `npm run test:update-baselines` from `packages/cli` and read every changed command line
+4. If command format changed, regenerate kit baselines with `UPDATE_BASELINES=true npm run test:starter-kits:all`
+5. Commit baselines with the code change
+
 ## Validation
 
 After making test changes:
@@ -133,6 +185,7 @@ After making test changes:
 2. `npm run lint` — no linting errors
 3. If baselines were updated, review the diff to confirm changes are intentional
 4. If new sample configs were added, verify corresponding diff, synth, and snapshot tests exist
+5. If the CLI changed, verify command baselines moved and every changed line is attributable; run `npm run test:starter-kits` to confirm kit baselines are current
 
 
 ## CI Agent Usage
@@ -163,8 +216,8 @@ outside the JSON. The file must contain ONLY valid JSON.
 
 ### Risk Classification for CI Agent
 
-- **HIGH:** Missing compliance test assertions for new security-related code (encryption, IAM policies, access controls, security groups, logging). Missing `checkCdkNagCompliance()` call in a construct test. Missing `baselineDiffTestApp` for a sample config in an app module.
-- **MEDIUM:** Missing functional test assertions for new non-security code (resource composition, constructor validation, cross-account logic). Test file naming violations. Hardcoded test values (`us-east-1` instead of `test-region`). Coverage threshold misconfiguration.
+- **HIGH:** Missing compliance test assertions for new security-related code (encryption, IAM policies, access controls, security groups, logging). Missing `checkCdkNagCompliance()` call in a construct test. Missing `baselineDiffTestApp` for a sample config in an app module. A CLI command-assembly or config-resolution change with no CLI command baseline movement. A hand-edited baseline.
+- **MEDIUM:** Missing functional test assertions for new non-security code (resource composition, constructor validation, cross-account logic). Test file naming violations. Hardcoded test values (`us-east-1` instead of `test-region`). Coverage threshold misconfiguration. A CLI change altering command format without regenerated starter kit baselines. A CLI baseline case duplicating what unit tests already assert.
 - **LOW:** Missing test assertions for non-functional changes (tags, descriptions, metadata). Missing `test:update-baselines` script. Minor style issues.
 
 ### Rules for CI Agent Findings
@@ -178,5 +231,6 @@ outside the JSON. The file must contain ONLY valid JSON.
 - Only flag gaps related to code that was CHANGED in this MR. Do not flag pre-existing test gaps.
 - For app modules, cross-reference sample config filenames against `baselineDiffTestApp` calls in diff test files.
 - For constructs, check that new/changed classes in `lib/` have corresponding test assertions.
+- For `packages/cli`, cross-reference `sample_configs/sample-config-*.yaml` filenames against `SAMPLE_CASES` entries in `test/cli-commands.diff.test.ts`. Flag a changed CLI `lib/` file whose behavior no baseline pins.
 - Order findings: HIGH first, then MEDIUM, then LOW.
 - Use only ASCII characters in all string values.

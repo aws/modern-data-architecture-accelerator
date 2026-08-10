@@ -1,110 +1,110 @@
 [
   {
     "index": 0,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/bootstrap --loglevel warn && cd '/TEMP_DIR/smus_research_environment'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/smus_research_environment' && cd ."
   },
   {
     "index": 1,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/glue-catalog --loglevel warn && cd '/TEMP_DIR/smus_research_environment'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/glue-catalog' --loglevel warn && cd '/TEMP_DIR/smus_research_environment' && cd ."
   },
   {
     "index": 2,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/roles --loglevel warn && cd '/TEMP_DIR/smus_research_environment'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR/smus_research_environment' && cd ."
   },
   {
     "index": 3,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/lakeformation-settings --loglevel warn && cd '/TEMP_DIR/smus_research_environment'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/lakeformation-settings' --loglevel warn && cd '/TEMP_DIR/smus_research_environment' && cd ."
   },
   {
     "index": 4,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/audit --loglevel warn && cd '/TEMP_DIR/smus_research_environment'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit' --loglevel warn && cd '/TEMP_DIR/smus_research_environment' && cd ."
   },
   {
     "index": 5,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/audit-trail --loglevel warn && cd '/TEMP_DIR/smus_research_environment'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit-trail' --loglevel warn && cd '/TEMP_DIR/smus_research_environment' && cd ."
   },
   {
     "index": 6,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 7,
-    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 8,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/glue-catalog' -c 'org=test-org' -c 'env=dev' -c 'module_name=glue-catalog' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/glue-catalog' -c 'org=test-org' -c 'env=dev' -c 'module_name=glue-catalog' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 9,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/glue-catalog-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/glue-catalog' -c 'org=test-org' -c 'env=dev' -c 'module_name=glue-catalog' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "cd '/REPO_ROOT/packages/apps/governance/glue-catalog-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/glue-catalog' -c 'org=test-org' -c 'env=dev' -c 'module_name=glue-catalog' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 10,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/roles' -c 'org=test-org' -c 'env=dev' -c 'module_name=roles' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/roles.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/roles' -c 'org=test-org' -c 'env=dev' -c 'module_name=roles' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/roles.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 11,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/roles' -c 'org=test-org' -c 'env=dev' -c 'module_name=roles' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/roles.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/roles' -c 'org=test-org' -c 'env=dev' -c 'module_name=roles' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/roles.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 12,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/lakeformation-settings' -c 'org=test-org' -c 'env=dev' -c 'module_name=lakeformation-settings' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/lakeformation-settings.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/lakeformation-settings' -c 'org=test-org' -c 'env=dev' -c 'module_name=lakeformation-settings' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/lakeformation-settings.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 13,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/lakeformation-settings-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/lakeformation-settings' -c 'org=test-org' -c 'env=dev' -c 'module_name=lakeformation-settings' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/lakeformation-settings.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "cd '/REPO_ROOT/packages/apps/governance/lakeformation-settings-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/lakeformation-settings' -c 'org=test-org' -c 'env=dev' -c 'module_name=lakeformation-settings' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/lakeformation-settings.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 14,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/audit' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/audit.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/audit' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/audit.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 15,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/audit-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/audit' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/audit.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "cd '/REPO_ROOT/packages/apps/governance/audit-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/audit' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/audit.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 16,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/audit-trail' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit-trail' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/audit-trail.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/audit-trail' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit-trail' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/audit-trail.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 17,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/audit-trail-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/audit-trail' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit-trail' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/audit-trail.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "cd '/REPO_ROOT/packages/apps/governance/audit-trail-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/shared/dev/audit-trail' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit-trail' -c 'domain=shared' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/shared/audit-trail.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 18,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/bootstrap --loglevel warn && cd '/TEMP_DIR/smus_research_environment'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/smus_research_environment' && cd ."
   },
   {
     "index": 19,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/sagemaker --loglevel warn && cd '/TEMP_DIR/smus_research_environment'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/sagemaker' --loglevel warn && cd '/TEMP_DIR/smus_research_environment' && cd ."
   },
   {
     "index": 20,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/sagemaker-project --loglevel warn && cd '/TEMP_DIR/smus_research_environment'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/sagemaker-project' --loglevel warn && cd '/TEMP_DIR/smus_research_environment' && cd ."
   },
   {
     "index": 21,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 22,
-    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 23,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/domain' -c 'org=test-org' -c 'env=dev' -c 'module_name=domain' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/sagemaker/domain.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/domain' -c 'org=test-org' -c 'env=dev' -c 'module_name=domain' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/sagemaker/domain.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 24,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/sagemaker-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/domain' -c 'org=test-org' -c 'env=dev' -c 'module_name=domain' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/sagemaker/domain.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "cd '/REPO_ROOT/packages/apps/governance/sagemaker-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/domain' -c 'org=test-org' -c 'env=dev' -c 'module_name=domain' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/sagemaker/domain.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 25,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/projects' -c 'org=test-org' -c 'env=dev' -c 'module_name=projects' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/sagemaker/projects.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/projects' -c 'org=test-org' -c 'env=dev' -c 'module_name=projects' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/sagemaker/projects.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   },
   {
     "index": 26,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/sagemaker-project-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/projects' -c 'org=test-org' -c 'env=dev' -c 'module_name=projects' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/sagemaker/projects.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
+    "command": "cd '/REPO_ROOT/packages/apps/governance/sagemaker-project-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/sagemaker/dev/projects' -c 'org=test-org' -c 'env=dev' -c 'module_name=projects' -c 'domain=sagemaker' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/smus_research_environment/sagemaker/projects.yaml\"' -c 'team1-group-sso-id=test-team1-sso-group-id' -c 'team2-group-sso-id=test-team2-sso-group-id' -c 'vpc_id=test-vpc-id' -c 'private_subnet_id1=test-subnet-id-1' -c 'private_subnet_id2=test-subnet-id-2'"
   }
 ]

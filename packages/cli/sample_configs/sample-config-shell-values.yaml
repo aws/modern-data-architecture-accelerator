@@ -1,0 +1,138 @@
+# CLI sample config: shell-metacharacter values through every quote-only sink.
+#
+# The CLI assembles one shell string per module and runs it via child_process, so any
+# config value containing a metacharacter is a potential corruption site. No kit in the
+# e2e matrix contains one, so these sinks have no other end-to-end coverage.
+#
+# Every value below is routed through the ShellCommand builder, which single-quotes the
+# whole `key=value` token and encodes an embedded apostrophe as '\''. The baseline is the
+# regression guard: each token must split into exactly [flag] + [one value], and
+# module_config_data must be single-layer JSON that JSON.parse-es back to the YAML values
+# byte-identically, with $(...) and backticks unexecuted.
+#
+# Payloads are inert by design ($(echo hi), `id`) so the config is safe to run while
+# still proving whether expansion happens. Never use a side-effecting payload such as
+# `> /tmp/file`: if the defense regressed, it would fire mid-test-run.
+#
+# Every QUOTE_ONLY field in config-field-policy.ts carries a metacharacter payload here --
+# context, module_path, cdk_app, module_configs, tag_configs, module_config_data,
+# tag_config_data, app_configs, app_config_data, naming_module, aspect_module,
+# aspect_props -- except:
+#   * devops -- needs --devops, which changes the whole emission path; deferred.
+#   * additional_accounts -- re-validated at the CDK sink, so a metacharacter is rejected
+#     rather than quoted; a well-formed value pins the coercion instead (see below).
+#   * naming_props -- set below, but reaches no command (see the note there).
+# The VALIDATED_* fields (naming_class, aspect_class, mdaa_version, region, account,
+# permissions_boundary_arn, organization) REJECT a metacharacter rather than quoting it,
+# so they belong to config-field-policy.test.ts, not here.
+region: us-east-1
+organization: test-org
+
+# --- sink: generateContextCdkParams -> -c '<key>=<encoded>' (lib/utils.ts) ---
+context:
+  ctx_spaces: 'ctx value with spaces'
+  ctx_single_quote: "ctx with 'apostrophes' inside"
+  ctx_double_quote: 'ctx with "double quotes" inside'
+  ctx_dollar_var: 'ctx with $HOME and ${HOME}'
+  ctx_cmd_subst: 'ctx with $(echo hi)'
+  ctx_backtick: 'ctx with `id` backticks'
+  ctx_semicolon: 'ctx with ; semicolon'
+  ctx_ampersand: 'ctx with && and & ampersands'
+  ctx_pipe: 'ctx with | pipe'
+  ctx_redirect: 'ctx with > and >> redirects'
+  ctx_newline_esc: 'ctx with \n literal backslash-n'
+  ctx_non_ascii: 'ctx with non-ascii: café 日本語 ümläut'
+  ctx_glob: 'ctx with * and ? globs'
+  ctx_brace_curly: 'ctx with {braces} and {{not-a-ref}}'
+  # Encoded via the "list:"/"obj:" prefixes, whose literal double quotes are part
+  # of the gate the app-side transformer keys off.
+  ctx_list_with_meta:
+    - "list item with 'quote'"
+    - 'list item with $(echo hi)'
+  ctx_object_with_meta:
+    key_with_quote: "obj value with 'quote'"
+    key_with_subst: 'obj value with $(echo hi)'
+
+# --- sink: addOptionalCdkContextObjParam -> -c 'tag_config_data'=... ---
+tag_config_data:
+  tag_spaces: 'tag value with spaces'
+  tag_single_quote: "tag with 'apostrophes'"
+  tag_cmd_subst: 'tag with $(echo hi)'
+
+# --- sink: -c 'tag_configs="<comma-joined resolved paths>"' ---
+# Nested double quotes inside the single-quoted token: a different escaping shape from
+# the plain key=value params.
+tag_configs:
+  - "./tags with 'quote' $(echo hi).yaml"
+
+domains:
+  shell-domain:
+    environments:
+      shell-env:
+        account: default
+        use_bootstrap: false
+        modules:
+          shell-mod:
+            # --- sink: module_path -> `cd '<path>'`, `-a 'npx <path>/'`,
+            # `npm install '<pkg>@<ver>'`, and the install-prefix hash ---
+            # The broadest value in the CLI, and the only one landing in a `cd` that
+            # changes the execution directory. Non-workspace name, so the npm branch runs.
+            module_path: "@not-a-real-scope/mod-with'quote"
+            # --- sink: -c 'module_configs="<comma-joined resolved paths>"' ---
+            # Paths are resolved but never read under --testing, so they need not exist.
+            module_configs:
+              - "./cfg with 'quote' $(echo hi)/roles.yaml"
+            # --- legacy aliases: app_configs is concatenated ahead of module_configs;
+            # app_config_data is spread under module_config_data, so shared_key below
+            # resolves to the module_config_data value. Set nowhere else in the repo. ---
+            app_configs:
+              - "./app cfg with 'quote' $(echo hi).yaml"
+            app_config_data:
+              acd_subst: 'acd with $(echo hi)'
+              shared_key: from-app-config-data-LOSES
+            # --- sink: addOptionalCdkContextObjParam -> -c 'module_config_data'=... ---
+            module_config_data:
+              mcd_spaces: 'mcd value with spaces'
+              mcd_single_quote: "mcd with 'apostrophes'"
+              mcd_double_quote: 'mcd with "double quotes"'
+              mcd_cmd_subst: 'mcd with $(echo hi)'
+              mcd_backtick: 'mcd with `id`'
+              mcd_semicolon: 'mcd with ; semicolon'
+              mcd_nested:
+                deep_key: "nested with 'quote' and $(echo hi)"
+                deep_list:
+                  - 'item with && ampersand'
+              # Proves module_config_data wins over app_config_data (see above).
+              shared_key: from-module-config-data-WINS
+            # --- sink: aspect_module and aspect_props, both serialized into the
+            # -c 'custom_aspects'=<json> payload (aspect_props is classified NOT_SHELL but
+            # still reaches the shell this way). aspect_class is VALIDATED, so it stays a
+            # plain identifier -- a metacharacter there is rejected, not quoted. ---
+            custom_aspects:
+              - aspect_module: "./aspects/a'b $(echo hi).js"
+                aspect_class: MyAspect
+                aspect_props:
+                  p: "aspect prop with 'quote' and $(echo hi)"
+            # --- sink: additional_accounts -> coerced into the additional_stacks JSON.
+            # Re-validated at the CDK sink, so only a well-formed account is accepted;
+            # a metacharacter here is rejected, not quoted. ---
+            additional_accounts:
+              - '210987654321'
+
+          # --- sink: cdk_app, the deprecated alias for module_path (`module_path ??
+          # cdk_app`), reaching the same four sinks. Mutually exclusive with module_path,
+          # hence its own module. Set nowhere else in the repo. ---
+          legacy-cdk-app-mod:
+            cdk_app: "@not-a-real-scope/legacy-app-with'quote"
+
+# --- sink: -c 'naming_module=...' / -c 'naming_class=...' ---
+# Must be set together or the CLI throws "Both 'naming_module' and 'naming_class' must be
+# specified together."
+naming_module: "./naming with 'quote' $(echo hi)/naming.js"
+naming_class: CustomNaming
+# NOT a sink: naming_props is threaded into the customNaming object but never emitted,
+# and no app or construct reads it. These values reach no command, so this baseline is
+# not evidence that naming_props is quoted safely.
+naming_props:
+  prop_single_quote: "naming prop with 'apostrophes'"
+  prop_cmd_subst: 'naming prop with $(echo hi)'

@@ -11,6 +11,7 @@ MDAA employs a layered testing strategy that mirrors the construct architecture.
 - Tests run with `jest --passWithNoTests --coverage` as a single unified command
 - Diff baselines are committed to the repository and reviewed as part of code changes
 - Non-deterministic test values use `test-account`, `test-region`, `test-partition` for stable, reproducible output
+- The CLI is covered by command baselines — golden shell command strings — because its output is a command, not a template
 
 ## Quick Reference
 
@@ -23,10 +24,14 @@ npm run test:all               # All TS tests, no cache
 npm run test:python            # Python tests on affected packages
 npm run test:python:all        # Python tests on all packages
 npm run test:update-baselines  # Regenerate diff baselines after intentional changes
+npm run test:starter-kits      # Starter kit tests, scoped to what the change affects
+npm run test:starter-kits:all  # All starter kit tests for all kits
 
 # From any package directory:
 npm test                       # Run that package's tests with coverage
 ```
+
+Starter kit tests are a separate command because they run the real CLI end to end per kit; `npm test` does not include them.
 
 ### Pre-push Validation
 
@@ -374,6 +379,91 @@ New `NagPackSuppression` entries — whether in construct code or config-level `
 
 > **Kiro:** The `diff-risk-assessment` steering file automates reviewing baseline diffs for breaking changes, data loss risks, and construct ID scoping issues. It activates automatically when baseline files are modified.
 
+## CLI
+
+The CLI (`packages/cli`) resolves the config hierarchy, transforms `{{...}}` references, and interpolates the result into one shell command per module, which it then executes in a child process. Its observable contract is therefore **the command string**, not a CloudFormation template — every step runs before any template exists.
+
+Template baselines cannot cover this. App-level diff tests build their CDK context in-process, so they never exercise the encode-to-argv step where quoting, escaping, and reference interpolation happen. A change to command assembly leaves every template baseline passing.
+
+### How to Test: CLI Command Baseline Testing
+
+Sample configs run through the real CLI in `--testing` mode, which prints each command instead of executing it. No AWS credentials, CDK, network, Terraform, Checkov, or pip is needed, so the whole suite runs in seconds:
+
+1. A sample config is staged into a temp directory
+2. The CLI runs with `--testing`, printing every command it would execute
+3. `parseCliCommands` folds line-continued output into one entry per logical command
+4. `compareCliBaseline` diffs the result against the committed baseline
+
+Paths are normalized to `/TEMP_DIR` and `/REPO_ROOT`, so baselines are portable between local runs and CI.
+
+The mechanism is used in two places:
+
+| Where | Configs | Baseline | What it pins |
+|---|---|---|---|
+| `packages/cli/test/cli-commands.diff.test.ts` | `packages/cli/sample_configs/sample-config-{usecase}.yaml` | `packages/cli/test/__snapshots__/cli-commands-{usecase}.baseline.json` | CLI behavior per use case — one config per concern |
+| `starter_kits/test/starter-kit.diff.test.ts` | each kit's `mdaa.yaml` | `starter_kits/test/{kit}/baselines/cli-commands.baseline.json` | The commands a real kit produces end to end |
+
+### Sample Configs
+
+Unlike app modules, which vary a single schema, CLI sample configs are partitioned **one file per concern**. Each isolates one aspect of command assembly so a baseline diff points at a single cause:
+
+| Config | Concern |
+|---|---|
+| `sample-config-hierarchy.yaml` | Global → domain → env → module resolution; which fields merge, accumulate, or replace |
+| `sample-config-env-templates.yaml` | `env_templates` at global and domain scope; template module ordering and overrides |
+| `sample-config-refs.yaml` | `{{org}}`, `{{context:...}}`, `{{env_var:...}}` resolution, and `{{region}}`/`{{account}}`/`{{partition}}` pass-through |
+| `sample-config-shell-values.yaml` | Adversarial values (spaces, quotes, `$`, `$(...)`, backticks, `&&`, `;`) through every quote-only config sink |
+| `sample-config-orchestration.yaml` | Staging, bootstrap toggles, stage grouping and module ordering |
+| `sample-config-npm-version.yaml` | The npm install branch: `module_path@version` composition and `--tag` |
+| `sample-config-terraform.yaml` | `module_type: tf` — Terraform action mapping and `-var` arguments |
+
+Add a case to the existing config that owns the concern. Only add a new config when the concern is genuinely new, and add its name to `SAMPLE_CASES` in the diff test.
+
+Choose baseline coverage for behavior that is **emergent from composition** — the assembled command text, ordering, and merge outcomes. Field-level validation, parsing, and error handling belong in unit tests; do not duplicate them here.
+
+Configs may deliberately contain values that are invalid or unsafe in a real deployment — that is the point of `sample-config-shell-values.yaml`. They are test fixtures, not user-facing examples, so the sample-config standards for app modules (minimal/comprehensive, inline schema documentation) do not apply.
+
+SSM references (`{{ssm-org:...}}`, `{{resolve:ssm:...}}`) must not appear: they resolve inside a construct scope during synth and throw when the CLI resolves a config.
+
+### Baseline Files
+
+Baselines record **current** behavior, including known defects. A defect is documented in the header comment of the config that exercises it, so a reader is not misled into treating the output as correct.
+
+Never hand-edit a baseline. Change the CLI and regenerate, so the diff is the evidence of the change:
+
+```bash
+# From packages/cli
+npm run test:update-baselines
+
+# Compare a different CLI build against the committed baselines
+MDAA_CLI_ENTRYPOINT_OVERRIDE=/path/to/packages/cli/lib/mdaa.js npx jest --testPathPattern=cli-commands
+```
+
+Because commands are inert text under `--testing`, an unreviewed baseline can hide a defect that a template diff would never surface. Read every changed line: a quoting change that looks cosmetic can alter what the shell delivers to the app.
+
+### File Naming
+
+- `test/cli-commands.diff.test.ts` for the CLI's own command baselines
+- `test/__snapshots__/cli-commands-{usecase}.baseline.json` for committed command baselines
+- `sample_configs/sample-config-{usecase}.yaml` for the configs that drive them
+
+### Coverage
+
+The CLI requires 80% statement and 75% branch coverage (`packages/cli/jest.config.js`).
+
+### Starter Kit Test Selection
+
+Starter kit tests are selected per kit by `scripts/test/test_starter_kit.py`, which runs only what a change affects. A CLI change selects every kit's CLI command baseline (detection path 5, matched on `@aws-mdaa/cli` in the nx affected set) but no module synths — command-string changes cannot alter template output.
+
+This gate is required for correctness, not just speed. The CLI is never a kit `module_path`, and a CLI change touches no kit `mdaa.yaml`, so without it the module synth baselines still run and pass while the CLI baselines silently go stale.
+
+When a CLI change intentionally alters command format, regenerate the kit baselines too:
+
+```bash
+npm run test:starter-kits            # verify: affected kits only
+UPDATE_BASELINES=true npm run test:starter-kits:all   # regenerate all kits
+```
+
 ## Testing Python Code
 
 MDAA includes Python testing for Lambda functions, Glue jobs, and other Python components.
@@ -444,10 +534,14 @@ The CI pipeline runs tests at multiple stages:
 | prebuild | `feature_merge_lint`         | ESLint on affected packages |
 | prebuild | `feature_merge_lint_python`  | Ruff on Python tools |
 | prebuild | `feature_validate_packages`  | Package structure validation |
-| build    | `feature_merge_build_test`   | Build + unit tests + diff tests with coverage |
+| build    | `feature_merge_build_test`   | Build + unit tests + diff tests (incl. CLI command baselines) with coverage |
 | test     | `feature_merge_python_test`  | Python tests (reuses build cache) |
+| test     | `feature_merge_starter_kit_generate` | Generates a child pipeline with one job per starter kit |
+| test     | `sk_{kit}` (child pipeline)  | Per-kit CLI command baseline + affected module synth baselines |
 | test     | `feature_merge_test_docs`    | Documentation build validation |
 | analyze  | `feature_merge_sonarqube`    | SonarQube analysis |
+
+Each `sk_{kit}` job self-filters to what the change affects via `scripts/test/test_starter_kit.py`, so an unaffected kit runs nothing.
 
 ## Adding Tests
 
@@ -475,6 +569,13 @@ The CI pipeline runs tests at multiple stages:
 5. Commit the baseline JSON files
 6. Ensure 80% statement coverage
 
+### New CLI Behaviour
+
+1. Add the case to the `sample_configs/sample-config-{usecase}.yaml` that owns the concern, or create a new config and register it in `SAMPLE_CASES`
+2. Cover only composition-emergent behavior here; put field validation and parsing in unit tests
+3. Run `npm run test:update-baselines` from `packages/cli` and read every changed command line
+4. Commit the baseline alongside the code change
+
 ### Updating Infrastructure
 
 When a construct change intentionally modifies CloudFormation output:
@@ -483,3 +584,13 @@ When a construct change intentionally modifies CloudFormation output:
 2. Confirm the changes are expected
 3. Run `npm run test:update-baselines` to accept the new baselines
 4. Commit the updated baseline files alongside the code change
+
+### Updating Command Baselines
+
+When a CLI change intentionally modifies emitted commands:
+
+1. Run `npm test` in `packages/cli` and review the failures
+2. Regenerate with `npm run test:update-baselines` from `packages/cli`
+3. Regenerate the kit baselines with `UPDATE_BASELINES=true npm run test:starter-kits:all`
+4. Verify each diff hunk is explained by the change; a semantically inert diff (requoting, path normalization) still needs to be attributed
+5. Commit both sets of baselines with the code change

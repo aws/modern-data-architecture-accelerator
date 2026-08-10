@@ -1,0 +1,84 @@
+# CLI sample config: the Terraform (module_type: tf) command path.
+#
+# createTerraformCommands builds a different command set from the CDK path: a working-dir
+# copy, `terraform init`, a checkov scan, then a terraform action from TF_ACTION_MAPPINGS.
+# --testing skips the pip install and the checkov existence check, so no python, checkov
+# or terraform binary is needed.
+#
+# The driver runs this config with `diff` (-> plan), because the -var arguments are only
+# appended on the plan/apply branches.
+#
+# Pins the ASSEMBLED command text: the diff -> plan mapping and the plan --out path;
+# mdaa_compliant defaulting to true (injecting -var org/domain/env/module_name/region) and
+# false suppressing it; each module_config_data entry as a `-var '<key>=<json>'` argument;
+# and the `cp -r <module_path>/* <workingDir>` copy, the only command carrying module_path.
+# Note the -var arguments never reach terraform at runtime -- see the first defect below --
+# so this baseline pins how they are built, not that they take effect.
+#
+# DEFECTS pinned by this baseline (fix the CLI and regenerate, never edit a baseline):
+#   * THE TERRAFORM PATH IS NON-FUNCTIONAL whenever a global region is set: `terraform` is
+#     only ever invoked with `init`. createTerraformCommands joins the region export and
+#     the terraform action with lineContinuation() and no `&&`, so `export` absorbs every
+#     following token as a variable assignment and the command aborts:
+#       sh: line 0: export: `-input=false': not a valid identifier   -> exit 1
+#     Established by execution, not code reading: running these commands against stub
+#     binaries on PATH captures exactly two terraform invocations, both `init`. `plan`
+#     never reaches the binary, so all 12 `-var` arguments below -- the values this config
+#     exists to pin -- are dead. The apply branch differs only in the action verb, so it
+#     fails identically; validate/destroy go through the same else branch.
+#   * The region export is a no-op regardless: it is a separate moduleCmds entry, and
+#     deployModule runs each entry in its own execSync, so the variable dies with that
+#     shell before `terraform init` starts. The two standalone
+#     `cd … && export AWS_DEFAULT_REGION` entries are those orphans -- they exit 0 and
+#     have no effect.
+#
+# Note: mdaa-cli-unit.test.ts asserts cmds[0] IS the standalone export and passes, so it
+# certifies both defects as correct. It inspects the returned array, not the per-entry
+# execSync boundary where they occur.
+#
+# NOT covered:
+#   * apply (-auto-approve) and the validate/destroy branch -- one action per config.
+#   * `terraform` at two config levels. computeEffectiveTerraformConfig calls
+#     `_.mergeWith(child, parent.terraform)` with arguments inverted relative to every
+#     other merge helper, so the parent overwrites the child, and it mutates the caller's
+#     object in place (determineEnvEffectiveConfig guards the same hazard with
+#     `mergeWith({}, …)`; this call site does not). Needs `terraform:` at two levels,
+#     which requires terraform.override.
+#   * `terraform.override` -- crashes under --testing with ENOENT, because
+#     createTerraformOverride writes mdaa_override.tf.json into a directory whose
+#     `mkdir -p` goes through execCmd, which testMode no-ops.
+region: us-east-1
+organization: test-org
+
+domains:
+  tf-domain:
+    environments:
+      tf-env:
+        account: default
+        use_bootstrap: false
+        modules:
+          # mdaa_compliant unset -> defaults to true, so the standard -var block is
+          # emitted alongside the module_config_data vars.
+          tf-compliant:
+            module_type: tf
+            module_path: ./tf-module
+            module_config_data:
+              tf_plain: plain-value
+              # Whitespace in a -var value: must arrive as ONE argv entry.
+              tf_with_spaces: 'value with spaces'
+              tf_number: 42
+              tf_bool: true
+              tf_list:
+                - a
+                - b
+              tf_object:
+                nested: nested-value
+
+          # mdaa_compliant: false suppresses the standard -var block; only the
+          # module_config_data vars remain.
+          tf-non-compliant:
+            module_type: tf
+            module_path: ./tf-module
+            mdaa_compliant: false
+            module_config_data:
+              tf_plain: plain-value

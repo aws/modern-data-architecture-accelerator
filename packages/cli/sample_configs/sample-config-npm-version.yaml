@@ -1,0 +1,82 @@
+# CLI sample config: the NPM install branch and mdaa_version composition.
+#
+# prepNpmPackage takes the npm branch when module_path is not a local workspace package,
+# emitting `npm install --tag <tag> --prefix <hashed dir> <pkg>@<version>`. The packages
+# here do not exist; --testing only prints the command, so nothing is fetched.
+#
+# Pins: `<modulePath>@<effectiveVersion>` composition across all four config levels; the
+# passthrough for a module_path that already carries an @version; the deterministic
+# install-prefix hash; and `-c log_suppressions`.
+#
+# DEFECTS pinned by this baseline (fix the CLI and regenerate, never edit a baseline):
+#   * mdaa_version at DOMAIN level is ignored -- computeDomainEffectiveConfig passes
+#     `this.config.contents.mdaa_version` where every sibling field passes
+#     `domain.<field>`, so module-a resolves to 1.0.0-global, not 2.0.0-domain.
+#   * An npm-packaged custom_naming.naming_module is installed, then discarded:
+#     createCdkCommand (inside prepCdkModule) emits the raw package name because it runs
+#     before computeEnvDeployStages builds the installed path. The CDK app receives a
+#     name it cannot require().
+#   * `--tag ''` when no --tag is passed (see sample-config-hierarchy.yaml; this config
+#     passes one). npm receives the empty string as a real argv element and tolerates it.
+#
+# Cosmetic: the `-a` value carries a double space (`npx  <path>/`) from the empty
+# `${npmDebug ? '-d' : ''}` slot in createCdkCommand. Harmless -- cdk re-splits the value
+# on whitespace -- but it is why the baseline shows two spaces there.
+region: us-east-1
+organization: test-org
+
+mdaa_version: '1.0.0-global'
+
+# -c naming_module / -c naming_class are emitted only when the GLOBAL pair is set, but
+# carry the effective (possibly overridden) value. This pair is a relative path; the
+# env-level override below is an npm package, so the baseline shows both shapes.
+naming_module: ./naming/global-naming.js
+naming_class: GlobalNaming
+
+# Global-only field, read straight from config.contents with no hierarchy.
+log_suppressions: true
+
+domains:
+  npm-domain:
+    # Ignored by the CLI -- see the domain-level defect above.
+    mdaa_version: '2.0.0-domain'
+    environments:
+      env-inherits-domain:
+        account: default
+        use_bootstrap: false
+        modules:
+          # Resolves to 1.0.0-global, not the 2.0.0-domain set above.
+          mod-inherits-domain:
+            module_path: '@not-a-real-scope/module-a'
+          # Module level wins over domain and global.
+          mod-own-version:
+            module_path: '@not-a-real-scope/module-b'
+            mdaa_version: '3.0.0-module'
+          # Already versioned after the scope: used verbatim, no second @version.
+          mod-pinned-inline:
+            module_path: '@not-a-real-scope/module-c@9.9.9-inline'
+
+      env-own-version:
+        account: default
+        use_bootstrap: false
+        # Env level, between domain and module.
+        mdaa_version: '4.0.0-env'
+        modules:
+          mod-inherits-env:
+            module_path: '@not-a-real-scope/module-d'
+            # naming_module as an npm package: any value starting with `@` is routed
+            # through prepNpmPackage, adding a second install line to the baseline. The
+            # emitted -c naming_module is the raw package name (see defects above).
+            custom_naming:
+              naming_module: '@not-a-real-scope/naming-mod'
+              naming_class: NpmProvidedNaming
+
+  # No domain override: modules fall through to the global version.
+  npm-domain-global:
+    environments:
+      env-plain:
+        account: default
+        use_bootstrap: false
+        modules:
+          mod-inherits-global:
+            module_path: '@not-a-real-scope/module-e'

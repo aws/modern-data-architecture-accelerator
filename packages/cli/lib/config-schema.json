@@ -836,15 +836,15 @@
             "additionalProperties": false,
             "properties": {
                 "after_success": {
-                    "description": "Flag restricting hook execution to successful deployment scenarios only",
+                    "description": "Whether to execute the hook command only after successful completion of the main deployment operation",
                     "type": "boolean"
                 },
                 "command": {
-                    "description": "Shell command to execute during deployment lifecycle hook enabling custom validation,",
+                    "description": "Shell command to execute during the deployment lifecycle hook for custom validation, setup, or cleanup operations",
                     "type": "string"
                 },
                 "exit_if_fail": {
-                    "description": "Flag controlling deployment termination behavior when hook execution fails",
+                    "description": "Whether to exit the deployment process if the hook command fails controlling deployment failure behavior",
                     "type": "boolean"
                 }
             },

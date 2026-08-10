@@ -9,6 +9,8 @@ globs:
 
 When creating or editing MDAA configuration files (`mdaa.yaml`, module configs, starter kits), follow these guidelines. Full reference: #[[file:CONFIGURATION.md]].
 
+**Not applicable to `packages/cli/sample_configs/`.** Those files are CLI command baseline fixtures, not deployable configs. They deliberately hardcode values and carry adversarial shell payloads, and must not use SSM references — those resolve inside a construct scope during synth and throw during CLI config resolution. See [CLI](../TESTING.md#cli) in `TESTING.md` before editing one.
+
 ## Finding the Right Module
 
 When you need a new capability, consult the MDAA README for the full module catalog organized by category (Governance, Data Lake, Data Ops, Analytics, AI, Utility). Each entry links to a module README with details on what it deploys and related modules.

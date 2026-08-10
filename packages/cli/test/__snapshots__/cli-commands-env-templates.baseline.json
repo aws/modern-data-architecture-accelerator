@@ -1,0 +1,58 @@
+[
+  {
+    "index": 0,
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+  },
+  {
+    "index": 1,
+    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-a/uses-global/tmpl-mod-first' -c 'org=test-org' -c 'env=uses-global' -c 'module_name=tmpl-mod-first' -c 'domain=domain-a' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles.yaml\"' -c 'from_global_template=yes-global'"
+  },
+  {
+    "index": 2,
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+  },
+  {
+    "index": 3,
+    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-a/uses-domain/tmpl-mod-first' -c 'org=test-org' -c 'env=uses-domain' -c 'module_name=tmpl-mod-first' -c 'domain=domain-a' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles-from-domain-template.yaml\"' -c 'from_domain_template=yes-domain'"
+  },
+  {
+    "index": 4,
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+  },
+  {
+    "index": 5,
+    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-a/uses-shared-name/shared-name-mod' -c 'org=test-org' -c 'env=uses-shared-name' -c 'module_name=shared-name-mod' -c 'domain=domain-a' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles-from-domain-shared.yaml\"' -c 'marked_by=domain-wins'"
+  },
+  {
+    "index": 6,
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+  },
+  {
+    "index": 7,
+    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-a/overrides-template/tmpl-mod-first' -c 'org=test-org' -c 'env=overrides-template' -c 'module_name=tmpl-mod-first' -c 'domain=domain-a' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles-overridden.yaml\"' -c 'from_global_template=overridden-by-env'"
+  },
+  {
+    "index": 8,
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+  },
+  {
+    "index": 9,
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+  },
+  {
+    "index": 10,
+    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-a/extends-template/tmpl-mod-first' -c 'org=test-org' -c 'env=extends-template' -c 'module_name=tmpl-mod-first' -c 'domain=domain-a' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles.yaml\"' -c 'from_global_template=yes-global'"
+  },
+  {
+    "index": 11,
+    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-a/extends-template/env-added-mod' -c 'org=test-org' -c 'env=extends-template' -c 'module_name=env-added-mod' -c 'domain=domain-a' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles-added.yaml\"' -c 'from_global_template=yes-global'"
+  },
+  {
+    "index": 12,
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+  },
+  {
+    "index": 13,
+    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-a/no-template/plain-mod' -c 'org=test-org' -c 'env=no-template' -c 'module_name=plain-mod' -c 'domain=domain-a' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles.yaml\"'"
+  }
+]

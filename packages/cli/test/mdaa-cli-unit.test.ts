@@ -7,11 +7,13 @@ import { EffectiveConfig, ModuleDeploymentConfig } from '../lib/config-types';
 import { generateContextCdkParams } from '../lib/utils';
 import { MdaaDeploy } from '../lib/mdaa-cli';
 import { HookConfig } from '../lib/mdaa-cli-config-parser';
+import { shellQuote } from '../lib/platform-utils';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as packageHelper from '../lib/package-helper';
 import * as platformUtils from '../lib/platform-utils';
+import { staticCommand, unsafeCommand } from '../lib/safe-command';
 
 describe('generateContextCdkParams', () => {
   it('should handle empty context object', () => {
@@ -173,7 +175,7 @@ describe('MdaaDeploy.deployModule', () => {
       envName: 'test-env',
       moduleName: 'test-module',
       modulePath: '/test/path',
-      moduleCmds: ['npm run build', 'npm run deploy'],
+      moduleCmds: [staticCommand('npm run build'), staticCommand('npm run deploy')],
       localModule: false,
       useBootstrap: true,
       effectiveContext: {},
@@ -225,7 +227,7 @@ describe('MdaaDeploy.deployModule', () => {
   describe('basic deployment functionality', () => {
     it('should execute module commands in correct order', () => {
       const moduleConfig = createMockModuleConfig({
-        moduleCmds: ['command1', 'command2', 'command3'],
+        moduleCmds: [staticCommand('command1'), staticCommand('command2'), staticCommand('command3')],
       });
 
       mdaaDeploy.deployModule(moduleConfig);
@@ -262,7 +264,7 @@ describe('MdaaDeploy.deployModule', () => {
       const mockDestroyExecCmd = jest.spyOn(destroyMdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
 
       const moduleConfig = createMockModuleConfig({
-        moduleCmds: ['command1', 'command2', 'command3'],
+        moduleCmds: [staticCommand('command1'), staticCommand('command2'), staticCommand('command3')],
       });
 
       destroyMdaaDeploy.deployModule(moduleConfig);
@@ -283,7 +285,7 @@ describe('MdaaDeploy.deployModule', () => {
 
       const moduleConfig = createMockModuleConfig({
         predeploy: predeployHook,
-        moduleCmds: ['main-command'],
+        moduleCmds: [staticCommand('main-command')],
       });
 
       mdaaDeploy.deployModule(moduleConfig);
@@ -324,7 +326,7 @@ describe('MdaaDeploy.deployModule', () => {
 
       const moduleConfig = createMockModuleConfig({
         predeploy: predeployHook,
-        moduleCmds: ['main-command'],
+        moduleCmds: [staticCommand('main-command')],
       });
 
       synthMdaaDeploy.deployModule(moduleConfig);
@@ -340,7 +342,7 @@ describe('MdaaDeploy.deployModule', () => {
 
       const moduleConfig = createMockModuleConfig({
         predeploy: predeployHook,
-        moduleCmds: ['main-command'],
+        moduleCmds: [staticCommand('main-command')],
       });
 
       expect(() => mdaaDeploy.deployModule(moduleConfig)).toThrow('predeploy hook defined but no command specified');
@@ -354,7 +356,7 @@ describe('MdaaDeploy.deployModule', () => {
 
       const moduleConfig = createMockModuleConfig({
         predeploy: predeployHook,
-        moduleCmds: ['main-command'],
+        moduleCmds: [staticCommand('main-command')],
       });
 
       // Mock execCmd to throw error on predeploy hook
@@ -376,7 +378,7 @@ describe('MdaaDeploy.deployModule', () => {
 
       const moduleConfig = createMockModuleConfig({
         predeploy: predeployHook,
-        moduleCmds: ['main-command'],
+        moduleCmds: [staticCommand('main-command')],
       });
 
       // Mock execCmd to throw error on predeploy hook
@@ -400,7 +402,7 @@ describe('MdaaDeploy.deployModule', () => {
 
       const moduleConfig = createMockModuleConfig({
         postdeploy: postdeployHook,
-        moduleCmds: ['main-command'],
+        moduleCmds: [staticCommand('main-command')],
       });
 
       mdaaDeploy.deployModule(moduleConfig);
@@ -418,7 +420,7 @@ describe('MdaaDeploy.deployModule', () => {
 
       const moduleConfig = createMockModuleConfig({
         postdeploy: postdeployHook,
-        moduleCmds: ['failing-command'],
+        moduleCmds: [staticCommand('failing-command')],
       });
 
       // Mock execCmd to throw error on main command
@@ -440,7 +442,7 @@ describe('MdaaDeploy.deployModule', () => {
 
       const moduleConfig = createMockModuleConfig({
         postdeploy: postdeployHook,
-        moduleCmds: ['failing-command'],
+        moduleCmds: [staticCommand('failing-command')],
       });
 
       // Mock execCmd to throw error on main command but not postdeploy
@@ -485,7 +487,7 @@ describe('MdaaDeploy.deployModule', () => {
 
       const moduleConfig = createMockModuleConfig({
         postdeploy: postdeployHook,
-        moduleCmds: ['main-command'],
+        moduleCmds: [staticCommand('main-command')],
       });
 
       diffMdaaDeploy.deployModule(moduleConfig);
@@ -501,7 +503,7 @@ describe('MdaaDeploy.deployModule', () => {
 
       const moduleConfig = createMockModuleConfig({
         postdeploy: postdeployHook,
-        moduleCmds: ['main-command'],
+        moduleCmds: [staticCommand('main-command')],
       });
 
       expect(() => mdaaDeploy.deployModule(moduleConfig)).toThrow('postdeploy hook defined but no command specified');
@@ -514,7 +516,7 @@ describe('MdaaDeploy.deployModule', () => {
 
       const moduleConfig = createMockModuleConfig({
         postdeploy: postdeployHook,
-        moduleCmds: ['main-command'],
+        moduleCmds: [staticCommand('main-command')],
         effectiveContext: {
           my_group: 'readers',
           my_region: 'us-west-2',
@@ -540,7 +542,7 @@ describe('MdaaDeploy.deployModule', () => {
       const moduleConfig = createMockModuleConfig({
         predeploy: predeployHook,
         postdeploy: postdeployHook,
-        moduleCmds: ['main-command'],
+        moduleCmds: [staticCommand('main-command')],
       });
 
       mdaaDeploy.deployModule(moduleConfig);
@@ -566,7 +568,7 @@ describe('MdaaDeploy.deployModule', () => {
       const moduleConfig = createMockModuleConfig({
         predeploy: predeployHook,
         postdeploy: postdeployHook,
-        moduleCmds: ['failing-main-command'],
+        moduleCmds: [staticCommand('failing-main-command')],
       });
 
       // Mock execCmd to throw errors on predeploy and main command
@@ -595,7 +597,7 @@ describe('MdaaDeploy.deployModule', () => {
       const moduleConfig = createMockModuleConfig({
         predeploy: predeployHook,
         postdeploy: postdeployHook,
-        moduleCmds: ['main-command'],
+        moduleCmds: [staticCommand('main-command')],
       });
 
       mdaaDeploy.deployModule(moduleConfig);
@@ -650,7 +652,7 @@ describe('MdaaDeploy.execCmd', () => {
   });
 
   it('should execute command in normal mode', () => {
-    const testCommand = 'echo "test command"';
+    const testCommand = staticCommand('echo "test command"');
 
     mdaaDeploy.execCmd(testCommand);
 
@@ -683,7 +685,7 @@ describe('MdaaDeploy.execCmd', () => {
       },
     });
 
-    const testCommand = 'echo "test command"';
+    const testCommand = staticCommand('echo "test command"');
 
     testMdaaDeploy.execCmd(testCommand);
 
@@ -691,7 +693,7 @@ describe('MdaaDeploy.execCmd', () => {
   });
 
   it('should handle command execution errors when noFail is false', () => {
-    const testCommand = 'failing-command';
+    const testCommand = staticCommand('failing-command');
     const testError = { status: 1, signal: null, message: 'Command failed' };
 
     mockExecSync.mockImplementation(() => {
@@ -728,7 +730,7 @@ describe('MdaaDeploy.execCmd', () => {
       },
     });
 
-    const testCommand = 'failing-command';
+    const testCommand = staticCommand('failing-command');
     const testError = { status: 1, signal: null, message: 'Command failed' };
 
     mockExecSync.mockImplementation(() => {
@@ -744,7 +746,7 @@ describe('MdaaDeploy.execCmd', () => {
   });
 
   it('should handle shell script commands ending with .sh', () => {
-    const testCommand = './scripts/deploy.sh';
+    const testCommand = staticCommand('./scripts/deploy.sh');
     const testError = { status: 1, signal: null, message: 'Script failed' };
 
     mockExecSync.mockImplementation(() => {
@@ -760,7 +762,7 @@ describe('MdaaDeploy.execCmd', () => {
   });
 
   it('should handle regular Error objects', () => {
-    const testCommand = 'failing-command';
+    const testCommand = staticCommand('failing-command');
     const testError = new Error('Regular error message');
 
     mockExecSync.mockImplementation(() => {
@@ -828,22 +830,27 @@ describe('addOptionalCdkContextObjParam', () => {
     jest.restoreAllMocks();
   });
 
-  it('should add double-stringified JSON for object values', () => {
+  // The object param is now emitted as a single-JSON `key=value` token that is
+  // shell-single-quoted by ShellCommand (previously it was a *double*-stringified
+  // value in bare double quotes, which let shell metacharacters inside the JSON be
+  // interpreted). The CDK app decodes it with a single JSON.parse (getNodeValue),
+  // so the single-layer encoding is the correct receiver contract.
+  it('should add single-quoted single-JSON for object values', () => {
     const cdkCmd: string[] = [];
     const testObj = { key: 'value', nested: { a: 1 } };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (mdaaDeploy as any).addOptionalCdkContextObjParam(cdkCmd, 'config', testObj);
-    const expected = JSON.stringify(JSON.stringify(testObj));
-    expect(cdkCmd).toEqual([`-c 'config'=${expected}`]);
+    const expected = shellQuote(`config=${JSON.stringify(testObj)}`);
+    expect(cdkCmd).toEqual([`-c ${expected}`]);
   });
 
-  it('should add double-stringified JSON for array values', () => {
+  it('should add single-quoted single-JSON for array values', () => {
     const cdkCmd: string[] = [];
     const testArray = [{ name: 'item1' }, { name: 'item2' }];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (mdaaDeploy as any).addOptionalCdkContextObjParam(cdkCmd, 'items', testArray);
-    const expected = JSON.stringify(JSON.stringify(testArray));
-    expect(cdkCmd).toEqual([`-c 'items'=${expected}`]);
+    const expected = shellQuote(`items=${JSON.stringify(testArray)}`);
+    expect(cdkCmd).toEqual([`-c ${expected}`]);
   });
 
   it('should not add param when value is undefined', () => {
@@ -1222,7 +1229,7 @@ describe('permissions_boundary_arn injection', () => {
     const mockExecCmd = jest.spyOn(mdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
     mdaaDeploy.deploy();
 
-    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes('cdk synth'));
+    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes("cdk 'synth'"));
     expect(cdkCall).toBeDefined();
     expect(String(cdkCall![0])).toContain(
       'permissions_boundary_arn="arn:aws:iam::123456789012:policy/top-level-boundary"',
@@ -1249,7 +1256,7 @@ describe('permissions_boundary_arn injection', () => {
     const mockExecCmd = jest.spyOn(mdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
     mdaaDeploy.deploy();
 
-    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes('cdk synth'));
+    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes("cdk 'synth'"));
     expect(cdkCall).toBeDefined();
     expect(String(cdkCall![0])).toContain(
       'permissions_boundary_arn="arn:aws:iam::123456789012:policy/domain-boundary"',
@@ -1278,7 +1285,7 @@ describe('permissions_boundary_arn injection', () => {
     const mockExecCmd = jest.spyOn(mdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
     mdaaDeploy.deploy();
 
-    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes('cdk synth'));
+    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes("cdk 'synth'"));
     expect(cdkCall).toBeDefined();
     expect(String(cdkCall![0])).toContain('permissions_boundary_arn="arn:aws:iam::123456789012:policy/env-boundary"');
     expect(String(cdkCall![0])).not.toContain('domain-boundary');
@@ -1303,7 +1310,7 @@ describe('permissions_boundary_arn injection', () => {
     const mockExecCmd = jest.spyOn(mdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
     mdaaDeploy.deploy();
 
-    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes('cdk synth'));
+    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes("cdk 'synth'"));
     expect(cdkCall).toBeDefined();
     expect(String(cdkCall![0])).toContain(
       'permissions_boundary_arn="arn:aws:iam::123456789012:policy/top-level-boundary"',
@@ -1328,7 +1335,7 @@ describe('permissions_boundary_arn injection', () => {
     const mockExecCmd = jest.spyOn(mdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
     mdaaDeploy.deploy();
 
-    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes('cdk synth'));
+    const cdkCall = mockExecCmd.mock.calls.find((call: unknown[]) => String(call[0]).includes("cdk 'synth'"));
     expect(cdkCall).toBeDefined();
     expect(String(cdkCall![0])).not.toContain('permissions_boundary_arn');
   });
@@ -1497,7 +1504,9 @@ describe('createTerraformCommands command strings', () => {
     const pythonDir = path.join(workingDir, 'python');
     const checkovBin = path.join(workingDir, 'python', 'bin', 'checkov');
     expect(cmds[2]).toContain(`export PYTHONPATH='${pythonDir}'`);
-    expect(cmds[2]).toContain(`${checkovBin} -d /fake/tf-module`);
+    // checkovBin (working-dir derived) and the module path (config derived) are
+    // both shell-quoted at the sink; `-d` is literal structure between them.
+    expect(cmds[2]).toContain(`${shellQuote(checkovBin)} -d ${shellQuote('/fake/tf-module')}`);
     expect(cmds[2]).toContain('--summary-position bottom');
 
     // Fourth cmd: terraform plan with tfplan.binary path
@@ -1530,8 +1539,9 @@ describe('createTerraformCommands command strings', () => {
     const checkovBin = path.join(workingDir, 'python', 'bin', 'checkov');
     expect(cmds[1]).toContain(checkovBin);
 
-    // Third cmd: just 'terraform validate' (no plan since action maps to validate)
-    expect(cmds[2]).toContain('terraform validate');
+    // Third cmd: just 'terraform validate' (no plan since action maps to validate);
+    // the verb is quoted at the sink (quoting a bareword is a shell no-op).
+    expect(cmds[2]).toContain("terraform 'validate'");
     // Should NOT contain setEnvCmd since region is 'default'
     expect(cmds[2]).not.toContain('export AWS_DEFAULT_REGION');
   });
@@ -1539,8 +1549,13 @@ describe('createTerraformCommands command strings', () => {
   it('should use Windows-style commands when platform-utils functions are mocked for Windows', () => {
     // Mock platform-utils functions to produce Windows output
     // Note: isWindows const cannot be mocked directly; we verify the function call outputs
-    jest.spyOn(platformUtils, 'setEnvCmd').mockImplementation((key, value) => `set "${key}=${value}"`);
-    jest.spyOn(platformUtils, 'pythonPathCmd').mockImplementation((dir, cmd) => `set "PYTHONPATH=${dir}" && ${cmd}`);
+    // These mocks stand in for platform-utils helpers that legitimately brand a
+    // runtime-interpolated string as SafeCommand; staticCommand is literal-only,
+    // so use the runtime-accepting brand (test code, not a lib sink).
+    jest.spyOn(platformUtils, 'setEnvCmd').mockImplementation((key, value) => unsafeCommand(`set "${key}=${value}"`));
+    jest
+      .spyOn(platformUtils, 'pythonPathCmd')
+      .mockImplementation((dir, cmd) => unsafeCommand(`set "PYTHONPATH=${dir}" && ${cmd}`));
     jest.spyOn(platformUtils, 'lineContinuation').mockReturnValue(' ');
     jest.spyOn(platformUtils, 'shellQuote').mockImplementation(p => `"${p}"`);
 
@@ -1643,8 +1658,8 @@ describe('createCdkCommand command strings', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const cmd: string = (mdaaDeploy as any).createCdkCommand(moduleConfig, false);
 
-    // Should contain npx cdk deploy --all
-    expect(cmd).toContain('npx  cdk deploy --all');
+    // Should contain npx cdk deploy --all (verb quoted at the sink)
+    expect(cmd).toContain("npx cdk 'deploy' --all");
     expect(cmd).toContain('--require-approval never');
 
     // Non-local module: should have shellQuoted -a arg with module path
@@ -1717,10 +1732,10 @@ describe('createCdkCommand command strings', () => {
     jest.spyOn(platformUtils, 'shellQuote').mockImplementation(p => `"${p}"`);
     jest.spyOn(platformUtils, 'lineContinuation').mockReturnValue(' ');
     jest.spyOn(platformUtils, 'cmdJoin').mockImplementation((...args) => {
-      const cmds = typeof args[0] === 'boolean' ? (args as [boolean, ...string[]]).slice(1) : args;
-      return (cmds as string[]).join(' && ');
+      const cmds = typeof args[0] === 'boolean' ? args.slice(1) : args;
+      return unsafeCommand((cmds as string[]).join(' && '));
     });
-    jest.spyOn(platformUtils, 'setEnvCmd').mockImplementation((key, value) => `set "${key}=${value}"`);
+    jest.spyOn(platformUtils, 'setEnvCmd').mockImplementation((key, value) => unsafeCommand(`set "${key}=${value}"`));
 
     const mdaaDeploy = createCdkDeploy({ localModule: false });
 
@@ -1831,8 +1846,8 @@ describe('createTerraformCommands: apply and destroy actions', () => {
     // Should have setEnvCmd for region
     expect(cmds[0]).toBe("export AWS_DEFAULT_REGION='us-west-2'");
 
-    // Should contain 'terraform destroy'
-    const destroyCmd = cmds.find((c: string) => c.includes('terraform destroy'));
+    // Should contain 'terraform destroy' (verb quoted at the sink)
+    const destroyCmd = cmds.find((c: string) => c.includes("terraform 'destroy'"));
     expect(destroyCmd).toBeDefined();
   });
 });

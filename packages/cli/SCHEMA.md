@@ -8812,11 +8812,11 @@ Must be one of:
 
 **Description:** Post-deployment hook configuration for custom validation and cleanup operations after module deployment
 
-| Property                                                                                                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                     |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------- |
-| - [after_success](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_postdeploy_after_success ) | No      | boolean | No         | -          | Flag restricting hook execution to successful deployment scenarios only               |
-| - [command](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_postdeploy_command )             | No      | string  | No         | -          | Shell command to execute during deployment lifecycle hook enabling custom validation, |
-| - [exit_if_fail](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_postdeploy_exit_if_fail )   | No      | boolean | No         | -          | Flag controlling deployment termination behavior when hook execution fails            |
+| Property                                                                                                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------- |
+| - [after_success](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_postdeploy_after_success ) | No      | boolean | No         | -          | Whether to execute the hook command only after successful completion of the main deployment operation             |
+| - [command](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_postdeploy_command )             | No      | string  | No         | -          | Shell command to execute during the deployment lifecycle hook for custom validation, setup, or cleanup operations |
+| - [exit_if_fail](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_postdeploy_exit_if_fail )   | No      | boolean | No         | -          | Whether to exit the deployment process if the hook command fails controlling deployment failure behavior          |
 
 ###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_postdeploy_after_success"></a>5.1.5.1.6.1.17.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > postdeploy > after_success`
 
@@ -8825,7 +8825,7 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Flag restricting hook execution to successful deployment scenarios only
+**Description:** Whether to execute the hook command only after successful completion of the main deployment operation
 
 ###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_postdeploy_command"></a>5.1.5.1.6.1.17.2. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > postdeploy > command`
 
@@ -8834,7 +8834,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Shell command to execute during deployment lifecycle hook enabling custom validation,
+**Description:** Shell command to execute during the deployment lifecycle hook for custom validation, setup, or cleanup operations
 
 ###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_postdeploy_exit_if_fail"></a>5.1.5.1.6.1.17.3. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > postdeploy > exit_if_fail`
 
@@ -8843,7 +8843,7 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Flag controlling deployment termination behavior when hook execution fails
+**Description:** Whether to exit the deployment process if the hook command fails controlling deployment failure behavior
 
 ###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_predeploy"></a>5.1.5.1.6.1.18. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > predeploy`
 

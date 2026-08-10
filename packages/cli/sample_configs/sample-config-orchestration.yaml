@@ -1,0 +1,83 @@
+# CLI sample config: deploy staging, ordering and use_bootstrap.
+#
+# This baseline is primarily a record of command ORDER and of which modules get a
+# bootstrap entry. Pins:
+#
+#   useStaging: false  computeEnvDeployStages puts every module in the default stage '1'
+#                      instead of reading each module package's `mdaa.deployStage`. Set
+#                      false so the baseline does not churn when an unrelated module
+#                      package changes its stage.
+#   use_bootstrap      AND-ed down the levels: env.use_bootstrap &&
+#                      (module.use_bootstrap ?? true). When effectively true, a synthetic
+#                      'caef-bootstrap' module is spread FIRST into the env's modules.
+#   module order       declaration order within an env is preserved; `reverse()` flips
+#                      domains/envs/stages/modules only for the destroy action.
+region: us-east-1
+organization: test-org
+
+# Pin every module to the default stage so ordering is purely declaration order.
+useStaging: false
+
+domains:
+  # bootstrap-on: env leaves use_bootstrap unset (defaults true), so this env gets
+  # the synthetic caef-bootstrap module emitted before its own modules -- except
+  # for the module that opts out individually.
+  bootstrap-on:
+    environments:
+      env-default:
+        account: default
+        modules:
+          mod-first:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./roles.yaml
+          # Opts out at module level while the env keeps bootstrap on.
+          mod-opts-out:
+            module_path: '@aws-mdaa/roles'
+            use_bootstrap: false
+            module_configs:
+              - ./roles.yaml
+          mod-last:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./roles.yaml
+
+  # bootstrap-off: env disables bootstrap, so no caef-bootstrap module appears
+  # regardless of the module-level value (the two are AND-ed).
+  bootstrap-off:
+    environments:
+      env-no-bootstrap:
+        account: default
+        use_bootstrap: false
+        modules:
+          mod-alpha:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./roles.yaml
+          # use_bootstrap: true here must NOT re-enable it -- env wins via AND.
+          mod-tries-to-enable:
+            module_path: '@aws-mdaa/roles'
+            use_bootstrap: true
+            module_configs:
+              - ./roles.yaml
+
+  # order-check: several modules in a known declaration order, so a regression in
+  # ordering shows up as a reordered baseline rather than a changed command.
+  order-check:
+    environments:
+      env-order:
+        account: default
+        use_bootstrap: false
+        modules:
+          step-1:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./roles.yaml
+          step-2:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./roles.yaml
+          step-3:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./roles.yaml

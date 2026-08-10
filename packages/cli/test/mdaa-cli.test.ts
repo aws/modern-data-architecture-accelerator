@@ -690,7 +690,7 @@ describe('Terraform', () => {
     expect(() => mdaa.deploy()).not.toThrow();
     const allCmds = captured.join('\n');
     expect(allCmds).toContain("export AWS_DEFAULT_REGION='us-east-1'");
-    expect(allCmds).toContain('-var region="us-east-1"');
+    expect(allCmds).toContain("-var 'region=us-east-1'");
 
     jest.restoreAllMocks();
   });

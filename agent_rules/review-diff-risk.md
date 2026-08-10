@@ -9,6 +9,8 @@ globs:
 
 Assess infrastructure diff risks when baseline changes are detected. This steering file activates automatically when baseline files or diff tests are modified, and guides review of changes that could cause deployment failures or data loss.
 
+Two kinds of baseline exist. Risk categories 1-9 below cover **CloudFormation template baselines** (`test/__snapshots__/*.baseline.json` under `packages/apps/`, `packages/constructs/`), which record synthesized resources. **CLI command baselines** (`packages/cli/test/__snapshots__/cli-commands-*.baseline.json`, `starter_kits/test/*/baselines/cli-commands.baseline.json`) record shell command strings and are assessed under category 10 instead — the resource-oriented categories do not apply to them.
+
 #[[file:TESTING.md]]
 #[[file:CONTRIBUTING.md]]
 
@@ -190,12 +192,33 @@ Wide impact changes warrant escalation because:
 
 **Action:** Escalate the root cause thread to the appropriate level and require explicit acknowledgment. The reviewer should verify the author intended the change to propagate this widely and that all affected modules have been considered.
 
+### 10. CLI Command Baseline Diffs
+
+CLI command baselines record the shell command strings the CLI emits. They contain no CloudFormation resources, so categories 1-9 do not apply. Assess what the shell would do differently with the new command text:
+
+- **Blocking — argument boundaries change.** A quoting change that splits one argument into several, or merges several into one, silently changes what the app receives. Verify each token still delivers exactly one flag plus one value.
+- **Blocking — a value is corrupted in transit.** Unquoted or mis-escaped metacharacters (`'`, `"`, `$`, `` ` ``, `$(...)`, `&&`, `;`, `|`) mean the app receives something other than what the YAML declared. Shell expansion of a config value is a defect, not a formatting choice.
+- **High — a command disappears or is added.** A dropped command means a module is no longer orchestrated; an added one means new work runs on every invocation. Both must trace to an intentional change.
+- **High — a command is joined to or split from its neighbour.** Command separators (`&&`, newline, line continuation) determine process boundaries and whether a failure halts the run. A changed separator changes failure semantics even when the text looks equivalent.
+- **Low — semantically inert reformatting.** Quoting a bareword with no metacharacters, normalizing a path to the same directory, or an equivalent env-var assignment form. Still requires attribution: state which code change produced it.
+
+**Action:** Attribute every changed line to a specific code change before approving. Never approve a CLI baseline diff as "just formatting" without naming the cause — inert-looking requoting and argument-boundary corruption are visually similar. Where the change is wide (all kits), attribute the root cause once and confirm the pattern is uniform, rather than spot-checking.
+
+Note that category 9 (wide impact) escalation does not apply mechanically here: a CLI change legitimately touches every kit baseline at once. Escalate on the nature of the change, not the file count.
+
 ## Review Process
 
 ### 1. Identify Changed Baselines
 
 ```bash
 git diff --name-only | grep '\.baseline\.json$'
+```
+
+Separate the two kinds — they are reviewed differently:
+
+```bash
+git diff --name-only | grep 'cli-commands.*\.baseline\.json$'   # command baselines -> category 10
+git diff --name-only | grep '\.baseline\.json$' | grep -v cli-commands   # template baselines -> categories 1-9
 ```
 
 ### 2. For Each Changed Baseline, Inspect the Diff
@@ -206,12 +229,19 @@ git diff -- path/to/test/__snapshots__/sample-config-comprehensive.baseline.json
 
 ### 3. Classify Each Resource Change
 
-For every resource in the diff, determine:
+For every resource in a **template** baseline diff, determine:
 
 - **What changed?** — Property update, addition, deletion, or logical ID rename
 - **Is it stateful?** — Does this resource contain data (S3, DynamoDB, RDS, etc.)?
 - **Does it require replacement?** — Check the [CloudFormation resource reference](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) for the property's update behavior
 - **Is it a logical ID change?** — Same resource type and properties at a different logical ID
+
+For every changed line in a **CLI command** baseline diff, determine instead:
+
+- **What changed?** — A command added, removed, reordered, or its text altered
+- **Do the argument boundaries still hold?** — Does each token still deliver exactly one flag plus one value?
+- **Is any value now shell-interpreted?** — Would the shell expand or strip anything the YAML declared literally?
+- **Did a command separator change?** — `&&`, newline, or line continuation, which determine process and failure boundaries
 
 ### 4. Root Cause Attribution
 

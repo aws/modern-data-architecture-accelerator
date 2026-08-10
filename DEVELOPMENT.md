@@ -12,7 +12,7 @@ MDAA development follows a working-backwards process, starting from the user exp
 
 4. **Implement constructs following the architecture.** Build from the bottom up — L2 constructs enforce compliance (encryption, access controls, CDK Nag rules) as reusable building blocks, L3 constructs compose them into compliant architectural patterns, and the App layer wires configuration to L3 props. See [Architecture Overview](#architecture-overview) for layer responsibilities.
 
-5. **Ensure full testing compliance.** Every layer requires tests — L2/L3 constructs need CDK Assertions and CDK Nag compliance tests, Apps need diff baseline tests covering every config property. All packages must meet coverage thresholds. See [TESTING.md](TESTING.md) for requirements.
+5. **Ensure full testing compliance.** Every layer requires tests — L2/L3 constructs need CDK Assertions and CDK Nag compliance tests, Apps need diff baseline tests covering every config property, and the CLI needs command baselines pinning the shell commands it emits. All packages must meet coverage thresholds. See [TESTING.md](TESTING.md) for requirements.
 
 ## Architecture Overview
 
@@ -90,7 +90,11 @@ npm run test:all               # All TS tests (no cache)
 npm run test:python            # Python tests on affected packages
 npm run test:python:all        # Python tests on all packages
 npm run test:update-baselines  # Regenerate diff baselines
+npm run test:starter-kits      # Starter kit tests, scoped to what the change affects
+npm run test:starter-kits:all  # All starter kit tests for all kits
 ```
+
+Starter kit tests run the real CLI end to end per kit and are not included in `npm test`. Run them when changing the CLI or a kit config.
 
 For test types, coverage requirements, how to write tests, and CI pipeline details, see [TESTING.md](TESTING.md).
 

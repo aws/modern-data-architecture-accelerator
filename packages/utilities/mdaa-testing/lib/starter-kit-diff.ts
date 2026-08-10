@@ -136,8 +136,26 @@ export function findFiles(dir: string, pattern: RegExp, excludeDirs: string[] = 
 export function normalizeTemporaryPaths(json: string): string {
   // Strip temp directory paths — everything up to and including the mdaa-kit-<name> segment
   // Handles /tmp/, /private/tmp/, /var/folders/... across macOS and Linux
+  //
+  // The match begins at a quote or `/` and runs up to the `mdaa-kit-<name>` segment,
+  // so the character class has to stop it from running THROUGH surrounding command
+  // text into a later path. Two exclusions beyond the quotes:
+  //
+  //   `=`  keeps the key prefix of a CDK context argument. Without it,
+  //        `-c 'key=/var/folders/.../mdaa-kit-x/file'` matches from the opening quote
+  //        through `key=` and collapses to `-c '/TEMP_DIR/file'`, losing which
+  //        context key was being set.
+  //   `\s` keeps whole commands intact when one temp path is followed by another.
+  //        Without it, `export PYTHONPATH='<tmp>/python' && <tmp>/python/bin/checkov
+  //        -d <tmp>/terraform/m` matches from the CLOSING quote across ` && ` into the
+  //        second path, deleting `&& `, `bin/checkov`, `-d` and every following flag —
+  //        silently dropping the entire checkov invocation from the baseline.
+  //
+  // A space inside a quoted path (e.g. `'…/config dir with spaces/roles.yaml'`) is
+  // unaffected: that match starts at the OPENING quote and reaches `mdaa-kit-` before
+  // any space, so the excluded `\s` is never encountered.
   // prettier-ignore
-  let normalized = json.replace(/['"/][^'"]*\/mdaa-kit-[a-zA-Z0-9_-]+/g, match => { // NOSONAR
+  let normalized = json.replace(/['"/][^'"=\s]*\/mdaa-kit-[a-zA-Z0-9_-]+/g, match => { // NOSONAR
     const prefix = match[0];
     return prefix === '/' ? '/TEMP_DIR' : `${prefix}/TEMP_DIR`;
   });
@@ -239,6 +257,9 @@ const SYNTH_ENV = {
  * mdaa in --testing mode (which prints the command it would run, prefixed with
  * `cd '<modulePath>' && npx cdk synth ...`) without executing any synth.
  * CDK reads cdk.context.json from this directory.
+ *
+ * The action verb may be quoted (`cdk 'synth'`) or bare (`cdk synth`) depending on how
+ * the CLI assembles the command, so the match accepts either.
  */
 export function discoverModuleCdkDir(
   kitWorkDir: string,
@@ -259,8 +280,9 @@ export function discoverModuleCdkDir(
     },
   );
   const output = `${probe.stdout ?? ''}`;
-  // Match the cd that immediately precedes the `npx ... cdk synth` invocation.
-  const match = /cd '([^']+)'\s*&&\s*npx[^\n]*cdk synth/.exec(output);
+  // Match the cd that immediately precedes the `npx ... cdk synth` invocation. The verb
+  // is optionally single-quoted, which is a shell no-op but changes the text.
+  const match = /cd '([^']+)'\s*&&\s*npx[^\n]*cdk '?synth'?/.exec(output);
   return match?.[1];
 }
 
@@ -397,7 +419,31 @@ export function diffCliCommands(
  * etc.), so they must be folded into one logical command before diffing —
  * otherwise the baseline only captures the first line and cannot detect drift in
  * any context parameter.
+ *
+ * A logical command is recognised by its leading token — see {@link COMMAND_OPENERS}.
+ * Any emitted command whose opener is not listed there is SILENTLY DROPPED from the
+ * baseline, which under-records the CLI's actual behaviour, so the list must cover
+ * every shape mdaa can print.
  */
+
+/**
+ * Leading tokens that begin a logical command in `mdaa --testing` output.
+ *
+ * `npx` / `cd ` cover the CDK path (`cd '<modulePath>' && npx cdk ...`) and the local
+ * lerna build. The other two exist because the CLI has paths the starter kits never
+ * take, so they would otherwise vanish from a baseline:
+ *
+ *   `mkdir ` — the NPM-install branch of prepNpmPackage emits
+ *              `mkdir -p '<prefix>' && npm install ... '<package>@<version>'`, the only
+ *              place the resolved `mdaa_version` is composed into a package specifier.
+ *              Starter kits all resolve to local workspace packages, so they never
+ *              emit it.
+ *   `cp `    — createModuleTfWorkingConfig emits `cp -r <modulePath>/* <workingDir>`
+ *              when staging a Terraform module. This is the ONLY place the configured
+ *              Terraform `module_path` appears in a command, so without it a broken or
+ *              changed module source is invisible.
+ */
+const COMMAND_OPENERS = ['npx', 'cd ', 'mkdir ', 'cp '] as const;
 export function parseCliCommands(output: string): Array<{ index: number; command: string }> {
   const commands: Array<{ index: number; command: string }> = [];
   let index = 0;
@@ -407,7 +453,7 @@ export function parseCliCommands(output: string): Array<{ index: number; command
     if (trimmed.startsWith('Testing Mode:')) {
       continue;
     }
-    if (trimmed.startsWith('npx') || trimmed.startsWith('cd ')) {
+    if (COMMAND_OPENERS.some(opener => trimmed.startsWith(opener))) {
       // Fold backslash-continued lines into a single logical command. Strip the
       // trailing backslash from each continued segment and the leading tabs from
       // the next, joining with a single space for a stable, readable baseline.

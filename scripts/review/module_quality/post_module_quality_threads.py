@@ -49,6 +49,7 @@ from review.lib.thread_lifecycle import (
     check_unresolved_and_exit,
     UnresolvedThreadsError,
     _format_thread_footer,
+    escape_markdown_math,
 )
 
 SUMMARY_MARKER = "<!-- module-quality-summary -->"
@@ -190,7 +191,7 @@ def format_module_thread(
 
         for f in findings:
             risk = f.get("risk", "UNKNOWN")
-            detail = f.get("detail", "")
+            detail = escape_markdown_math(f.get("detail", ""))
             file_path = f.get("file", "")
             prop = f.get("property", "")
             ref = ""

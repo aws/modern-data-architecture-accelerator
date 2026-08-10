@@ -73,8 +73,8 @@ Rules activate automatically based on the files you're working with (e.g., confi
 | `config-authoring` | MDAA config editing: dynamic references, role refs, schema lookup, module discovery |
 | `coding-standards` | Config schema JSDoc auditing and improvement |
 | `compliance-review` | Compliance controls, CDK Nag validation, nag suppression documentation |
-| `testing-standards` | Testing strategy, diff baselines, coverage requirements, Python test patterns |
-| `diff-risk-assessment` | Baseline diffs: breaking changes, data loss risks, construct ID scoping |
+| `testing-standards` | Testing strategy, diff baselines, CLI command baselines, coverage requirements, Python test patterns |
+| `diff-risk-assessment` | Baseline diffs: breaking changes, data loss risks, construct ID scoping, CLI command changes |
 | `module-quality` | Module README documentation and sample config schema coverage |
 | `module-creation` | Scaffolding new app modules and constructs |
 | `code-documentation` | Code documentation standards for all MDAA code |
@@ -85,6 +85,8 @@ In Kiro, reference a rule by name (e.g., `#module-quality`) to activate it manua
 ## Sample Configuration Standards
 
 Every app module under `packages/apps/` must include sample configuration files that demonstrate the module's capabilities and exercise its config schema. Sample configs serve as both test fixtures and user-facing reference examples.
+
+This section applies to app module sample configs only. The CLI's `packages/cli/sample_configs/` are pure test fixtures for command baselines — never shown to users, partitioned one file per concern rather than minimal/comprehensive, and deliberately containing adversarial values. See [CLI](TESTING.md#cli) in `TESTING.md`.
 
 ### File Naming
 

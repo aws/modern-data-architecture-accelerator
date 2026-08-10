@@ -16,6 +16,7 @@ import {
   pythonPathCmd,
   defaultShell,
 } from '../lib/platform-utils';
+import { staticCommand } from '../lib/safe-command';
 
 describe('platform-utils (POSIX)', () => {
   const win = false;
@@ -41,7 +42,7 @@ describe('platform-utils (POSIX)', () => {
   });
 
   test('cpRCmd uses cp -r with glob', () => {
-    expect(cpRCmd('/src', '/dest', win)).toBe('cp -r /src/* /dest');
+    expect(cpRCmd('/src', '/dest', win)).toBe("cp -r '/src'/* '/dest'");
   });
 
   test('devNull returns /dev/null', () => {
@@ -63,19 +64,21 @@ describe('platform-utils (POSIX)', () => {
   });
 
   test('cmdJoin uses &&', () => {
-    expect(cmdJoin(win, 'cmd1', 'cmd2', 'cmd3')).toBe('cmd1 && cmd2 && cmd3');
+    expect(cmdJoin(win, staticCommand('cmd1'), staticCommand('cmd2'), staticCommand('cmd3'))).toBe(
+      'cmd1 && cmd2 && cmd3',
+    );
   });
 
   test('cmdJoin with single command', () => {
-    expect(cmdJoin(win, 'only')).toBe('only');
+    expect(cmdJoin(win, staticCommand('only'))).toBe('only');
   });
 
   test('cdAndRun uses single-quoted cd', () => {
-    expect(cdAndRun('/my/dir', 'ls', win)).toBe("cd '/my/dir' && ls");
+    expect(cdAndRun('/my/dir', staticCommand('ls'), win)).toBe("cd '/my/dir' && ls");
   });
 
   test('cdAndRun preserves command with arguments', () => {
-    expect(cdAndRun('/project', 'npm run build --scope @test/pkg', win)).toBe(
+    expect(cdAndRun('/project', staticCommand('npm run build --scope @test/pkg'), win)).toBe(
       "cd '/project' && npm run build --scope @test/pkg",
     );
   });
@@ -85,11 +88,11 @@ describe('platform-utils (POSIX)', () => {
   });
 
   test('pythonPathCmd uses export', () => {
-    expect(pythonPathCmd('/py', 'checkov -d .', win)).toBe("export PYTHONPATH='/py' && checkov -d .");
+    expect(pythonPathCmd('/py', staticCommand('checkov -d .'), win)).toBe("export PYTHONPATH='/py' && checkov -d .");
   });
 
   test('pythonPathCmd preserves full command string', () => {
-    expect(pythonPathCmd('/usr/local/python', 'python main.py --verbose', win)).toBe(
+    expect(pythonPathCmd('/usr/local/python', staticCommand('python main.py --verbose'), win)).toBe(
       "export PYTHONPATH='/usr/local/python' && python main.py --verbose",
     );
   });
@@ -142,21 +145,37 @@ describe('platform-utils (Windows)', () => {
     expect(shellQuote('say "hello" to "world"', win)).toBe('"say ""hello"" to ""world"""');
   });
 
+  // KNOWN GAP documented on shellQuote: cmd.exe expands %VAR% inside double quotes and
+  // `%` has no command-line escape. Pinned so it stays a recorded decision — if the
+  // Windows branch ever neutralizes `%`, this fails and the doc comment gets revisited.
+  test('shellQuote does NOT neutralize %VAR% expansion on Windows (known gap)', () => {
+    expect(shellQuote('%USERPROFILE%\\x', win)).toBe('"%USERPROFILE%\\x"');
+    expect(shellQuote('%PATH%', win)).toBe('"%PATH%"');
+  });
+
+  // Break-out, by contrast, IS closed: operators stay inside the quoted region.
+  test('shellQuote keeps cmd.exe operators inert inside quotes', () => {
+    expect(shellQuote('a & del /q *', win)).toBe('"a & del /q *"');
+    expect(shellQuote('a | whoami', win)).toBe('"a | whoami"');
+  });
+
   test('cmdJoin uses &&', () => {
-    expect(cmdJoin(win, 'cmd1', 'cmd2', 'cmd3')).toBe('cmd1 && cmd2 && cmd3');
+    expect(cmdJoin(win, staticCommand('cmd1'), staticCommand('cmd2'), staticCommand('cmd3'))).toBe(
+      'cmd1 && cmd2 && cmd3',
+    );
   });
 
   test('cmdJoin with single command', () => {
-    expect(cmdJoin(win, 'only')).toBe('only');
+    expect(cmdJoin(win, staticCommand('only'))).toBe('only');
   });
 
   test('cdAndRun uses cd /d with double quotes', () => {
-    const result = cdAndRun('/my/dir', 'ls', win);
+    const result = cdAndRun('/my/dir', staticCommand('ls'), win);
     expect(result).toMatch(/^cd \/d ".*" && ls$/);
   });
 
   test('cdAndRun preserves command with arguments', () => {
-    const result = cdAndRun('/project', 'npm run build --scope @test/pkg', win);
+    const result = cdAndRun('/project', staticCommand('npm run build --scope @test/pkg'), win);
     expect(result).toMatch(/^cd \/d ".*" && npm run build --scope @test\/pkg$/);
   });
 
@@ -165,11 +184,11 @@ describe('platform-utils (Windows)', () => {
   });
 
   test('pythonPathCmd uses set', () => {
-    expect(pythonPathCmd('/py', 'checkov -d .', win)).toBe('set "PYTHONPATH=/py" && checkov -d .');
+    expect(pythonPathCmd('/py', staticCommand('checkov -d .'), win)).toBe('set "PYTHONPATH=/py" && checkov -d .');
   });
 
   test('pythonPathCmd preserves full command string', () => {
-    expect(pythonPathCmd('C:\\python\\lib', 'python main.py --verbose', win)).toBe(
+    expect(pythonPathCmd('C:\\python\\lib', staticCommand('python main.py --verbose'), win)).toBe(
       'set "PYTHONPATH=C:\\python\\lib" && python main.py --verbose',
     );
   });

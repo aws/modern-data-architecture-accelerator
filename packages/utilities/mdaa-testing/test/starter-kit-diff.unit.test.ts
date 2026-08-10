@@ -50,6 +50,35 @@ describe('normalizeTemporaryPaths', () => {
     expect(result).not.toContain('mdaa-kit-basic_datalake-AbC123');
   });
 
+  test('preserves the context key prefix of a -c key=<temp path> argument', () => {
+    // Regression: the match starts at the opening quote, so a character class of
+    // [^'"] greedily consumed `naming_module=` and rewrote the whole argument to
+    // `-c '/TEMP_DIR/naming.js'`, losing which context key was being set.
+    const input = "-c 'naming_module=/var/folders/xx/mdaa-kit-cli-shell-values-AbC123/naming.js'";
+    const result = normalizeTemporaryPaths(input);
+    expect(result).toBe("-c 'naming_module=/TEMP_DIR/naming.js'");
+  });
+
+  test('does not swallow command text between two temp paths', () => {
+    // Regression: the match can start at a CLOSING quote, so without `\s` excluded it
+    // ran across ` && ` into the next absolute path — deleting `bin/checkov`, `-d` and
+    // every following flag, which silently dropped the whole checkov invocation
+    // (and the terraform `--out tfplan.binary` path) from the terraform baseline.
+    const tmp = '/var/folders/xx/mdaa-kit-cli-terraform-AbC123/.mdaa_working';
+    const input = `export PYTHONPATH='${tmp}/python' && ${tmp}/python/bin/checkov -d ${tmp}/terraform/m --quiet`;
+    expect(normalizeTemporaryPaths(input)).toBe(
+      "export PYTHONPATH='/TEMP_DIR/.mdaa_working/python' && /TEMP_DIR/.mdaa_working/python/bin/checkov " +
+        '-d /TEMP_DIR/.mdaa_working/terraform/m --quiet',
+    );
+  });
+
+  test('normalizes a quoted temp path that itself contains spaces', () => {
+    // The `\s` exclusion must not break paths with spaces: that match starts at the
+    // OPENING quote and reaches `mdaa-kit-` before any space.
+    const input = '-c \'module_configs="/var/folders/xx/mdaa-kit-cli-shell-values-AbC123/dir with spaces/r.yaml"\'';
+    expect(normalizeTemporaryPaths(input)).toBe('-c \'module_configs="/TEMP_DIR/dir with spaces/r.yaml"\'');
+  });
+
   test('normalizes CDK file-asset content hashes in S3 asset URLs', () => {
     const hash = 'a'.repeat(64);
     const input = `https://s3.test-region.amazonaws.com/cdk-hnb659fds-assets-111111111111-test-region/${hash}.json`;
@@ -290,6 +319,32 @@ describe('parseCliCommands', () => {
     expect(parseCliCommands('nothing here\njust text')).toEqual([]);
   });
 
+  test('captures the npm-install branch so mdaa_version composition is baselined', () => {
+    // prepNpmPackage's install branch emits `mkdir -p '<prefix>' && npm install ...
+    // '<pkg>@<version>'` — the only place the resolved mdaa_version is composed into
+    // a package specifier. Starter kits always resolve to local workspace packages,
+    // so this line only appears for non-workspace module_paths.
+    const output = [
+      'Testing Mode:',
+      " mkdir -p '/tmp/prefix' && npm install --no-fund --tag 'dist-tag' --prefix '/tmp/prefix' '@scope/mod@1.2.3'  > /dev/null",
+    ].join('\n');
+    const commands = parseCliCommands(output);
+    expect(commands).toHaveLength(1);
+    expect(commands[0].command).toContain("'@scope/mod@1.2.3'");
+    expect(commands[0].command).toContain("--tag 'dist-tag'");
+  });
+
+  test('captures the terraform working-dir copy so the tf module source is baselined', () => {
+    // createModuleTfWorkingConfig emits `cp -r <modulePath>/* <workingDir>` — the only
+    // command carrying the configured Terraform module_path. Without `cp ` as an opener
+    // the line vanished, so a broken/nonexistent module source was invisible in the
+    // baseline (the terraform config recorded 10 of the 12 commands actually emitted).
+    const output = ['Testing Mode:', ' cp -r /tmp/src/tf-module/* /tmp/work/terraform/d/e/m'].join('\n');
+    const commands = parseCliCommands(output);
+    expect(commands).toHaveLength(1);
+    expect(commands[0].command).toBe('cp -r /tmp/src/tf-module/* /tmp/work/terraform/d/e/m');
+  });
+
   test('folds backslash-continued lines into a single logical command', () => {
     // mdaa prints each cdk command joined with " \\\n\t" — the continuation
     // lines carry the meaningful context params and must be folded in.
@@ -461,11 +516,11 @@ describe('normalizeAssemblyTemplates', () => {
  * the real CLI or CDK. It prints a Testing Mode command line so discoverModuleCdkDir
  * can parse the module directory, and exits 0 (or non-zero when told to).
  */
-function writeFakeCli(moduleDir: string, exitCode = 0): string {
+function writeFakeCli(moduleDir: string, exitCode = 0, verb = 'synth'): string {
   const script = path.join(tmp, 'fake-cli.js');
   const body = [
     `const moduleDir = ${JSON.stringify(moduleDir)};`,
-    `process.stdout.write("Testing Mode:\\n cd '" + moduleDir + "' && npx  cdk synth --all\\n");`,
+    `process.stdout.write("Testing Mode:\\n cd '" + moduleDir + "' && npx  cdk ${verb} --all\\n");`,
     `process.exit(${exitCode});`,
   ].join('\n');
   fs.writeFileSync(script, body);
@@ -482,6 +537,19 @@ describe('discoverModuleCdkDir', () => {
     fs.mkdirSync(kitWorkDir, { recursive: true });
     const result = discoverModuleCdkDir(kitWorkDir, path.join(tmp, 'work'), 'test-account', '--domain d --module m');
     expect(result).toBe(moduleDir);
+  });
+
+  test('parses the module directory when the action verb is quoted', () => {
+    // The CLI emits `npx cdk 'synth'` (quoting a bareword verb is a shell no-op). A
+    // pattern expecting only the unquoted `cdk synth` fails to match, and the starter-kit
+    // synth tests then abort with "Could not determine module CDK directory".
+    const moduleDir = path.join(tmp, 'modules', 'quoted-verb');
+    fs.mkdirSync(moduleDir, { recursive: true });
+    process.env.MDAA_CLI_ENTRYPOINT_OVERRIDE = writeFakeCli(moduleDir, 0, "'synth'");
+
+    const kitWorkDir = path.join(tmp, 'kit');
+    fs.mkdirSync(kitWorkDir, { recursive: true });
+    expect(discoverModuleCdkDir(kitWorkDir, path.join(tmp, 'work'), 'test-account', '')).toBe(moduleDir);
   });
 
   test('returns undefined when the output has no cd ... cdk synth line', () => {

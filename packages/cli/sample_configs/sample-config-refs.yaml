@@ -1,0 +1,75 @@
+# CLI sample config: {{...}} reference resolution at CLI level.
+#
+# prepModule runs MdaaConfigRefValueTransformer over each module's effective config with
+# no naming or scope context and, for modules, no awsEnvironment. That splits references
+# into three groups; this config pins the boundary between them.
+#
+#   Resolved by the CLI:
+#     {{org}} {{domain}} {{env}} {{module_name}}
+#     {{context:key}}   -- scalar, plus "naked" list/object refs that resolve to real
+#                          JSON arrays/objects rather than strings
+#     {{env_var:NAME}}  -- incl. a JSON-array value parsed into a real array
+#
+#   Passed through as literal text, for the app to resolve later inside a construct
+#   scope (only executeHook supplies an awsEnvironment):
+#     {{region}} {{account}} {{partition}}
+#
+#   Unusable here, so deliberately absent: {{ssm-org:}} {{ssm-domain:}} {{ssm-env:}}
+#     {{resolve:ssm:}} all throw "Unable to resolve ssm param outside of a Construct" --
+#     resolveSsmPartialPathReference needs props.naming, resolveDirectSsm needs a
+#     Construct. An app-layer concern, not a CLI one.
+#
+# The driver sets MDAA_REFS_SCALAR / MDAA_REFS_JSON_LIST so the env_var cases are
+# deterministic.
+region: us-east-1
+account: '123456789012'
+organization: test-org
+
+context:
+  ctx_scalar: scalar-from-context
+  ctx_list:
+    - list-item-a
+    - list-item-b
+  ctx_object:
+    nested_key: nested-value
+    nested_num: 42
+  # A context value containing a ref. Substitution is single-pass and does not re-resolve
+  # substituted text, so the two sinks disagree:
+  #   -c 'ctx_indirect=wraps->scalar-from-context<-wraps'   resolved
+  #   module_config_data ctx_indirect_ref:
+  #     "wraps->{{context:ctx_scalar}}<-wraps"              not resolved
+  # Whether single-pass is the intended contract is a design question, so this is
+  # recorded rather than asserted as a defect.
+  ctx_indirect: 'wraps->{{context:ctx_scalar}}<-wraps'
+
+domains:
+  refs-domain:
+    environments:
+      refs-env:
+        use_bootstrap: false
+        modules:
+          refs-mod:
+            module_path: '@aws-mdaa/roles'
+            module_config_data:
+              # --- resolved by the CLI ---
+              simple_all: '{{org}}/{{domain}}/{{env}}/{{module_name}}'
+              ctx_scalar_ref: '{{context:ctx_scalar}}'
+              # Naked refs: the whole value is one ref, so these come back as a
+              # real JSON array / object, not a stringified one.
+              ctx_list_naked: '{{context:ctx_list}}'
+              ctx_object_naked: '{{context:ctx_object}}'
+              # Only scalars can be interpolated into a surrounding string. An embedded
+              # array/object ref such as 'prefix-{{context:ctx_list}}-suffix' is rejected
+              # with "Cannot embed array or object context value in string" -- a negative
+              # case for the validation tests, not this baseline.
+              ctx_scalar_embedded: 'prefix-{{context:ctx_scalar}}-suffix'
+              ctx_indirect_ref: '{{context:ctx_indirect}}'
+              env_var_scalar: '{{env_var:MDAA_REFS_SCALAR}}'
+              # Naked env_var holding JSON: parsed into a real array.
+              env_var_json_list: '{{env_var:MDAA_REFS_JSON_LIST}}'
+
+              # --- passed through as literal text (see header) ---
+              region_passthrough: '{{region}}'
+              account_passthrough: '{{account}}'
+              partition_passthrough: '{{partition}}'
+              mixed_passthrough: '{{org}}-in-{{region}}'

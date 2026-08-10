@@ -1,0 +1,46 @@
+[
+  {
+    "index": 0,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/7399c5c9' && npm install --no-fund --save-exact --tag 'test-dist-tag' --prefix '/TEMP_DIR/mdaa_working/nodejs/7399c5c9' '@not-a-real-scope/module-a@1.0.0-global' > '/dev/null'"
+  },
+  {
+    "index": 1,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/1c502f2f' && npm install --no-fund --save-exact --tag 'test-dist-tag' --prefix '/TEMP_DIR/mdaa_working/nodejs/1c502f2f' '@not-a-real-scope/module-b@3.0.0-module' > '/dev/null'"
+  },
+  {
+    "index": 2,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/11ca56a3' && npm install --no-fund --save-exact --tag 'test-dist-tag' --prefix '/TEMP_DIR/mdaa_working/nodejs/11ca56a3' '@not-a-real-scope/module-c@9.9.9-inline' > '/dev/null'"
+  },
+  {
+    "index": 3,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/7399c5c9/node_modules/@not-a-real-scope/module-a' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/7399c5c9/node_modules/@not-a-real-scope/module-a/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/npm-domain/env-inherits-domain/mod-inherits-domain' -c 'org=test-org' -c 'env=env-inherits-domain' -c 'module_name=mod-inherits-domain' -c 'domain=npm-domain' -c 'naming_module=/TEMP_DIR/naming/global-naming.js' -c 'naming_class=GlobalNaming' -c 'use_bootstrap=\"false\"' -c 'log_suppressions=\"true\"' -r 'arn:aws:iam::123456789012:role/test-deploy-role'"
+  },
+  {
+    "index": 4,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/1c502f2f/node_modules/@not-a-real-scope/module-b' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/1c502f2f/node_modules/@not-a-real-scope/module-b/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/npm-domain/env-inherits-domain/mod-own-version' -c 'org=test-org' -c 'env=env-inherits-domain' -c 'module_name=mod-own-version' -c 'domain=npm-domain' -c 'naming_module=/TEMP_DIR/naming/global-naming.js' -c 'naming_class=GlobalNaming' -c 'use_bootstrap=\"false\"' -c 'log_suppressions=\"true\"' -r 'arn:aws:iam::123456789012:role/test-deploy-role'"
+  },
+  {
+    "index": 5,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/11ca56a3/node_modules/@not-a-real-scope/module-c' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/11ca56a3/node_modules/@not-a-real-scope/module-c/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/npm-domain/env-inherits-domain/mod-pinned-inline' -c 'org=test-org' -c 'env=env-inherits-domain' -c 'module_name=mod-pinned-inline' -c 'domain=npm-domain' -c 'naming_module=/TEMP_DIR/naming/global-naming.js' -c 'naming_class=GlobalNaming' -c 'use_bootstrap=\"false\"' -c 'log_suppressions=\"true\"' -r 'arn:aws:iam::123456789012:role/test-deploy-role'"
+  },
+  {
+    "index": 6,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/6f2fcd31' && npm install --no-fund --save-exact --tag 'test-dist-tag' --prefix '/TEMP_DIR/mdaa_working/nodejs/6f2fcd31' '@not-a-real-scope/module-d@4.0.0-env' > '/dev/null'"
+  },
+  {
+    "index": 7,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/7c8da613' && npm install --no-fund --save-exact --tag 'test-dist-tag' --prefix '/TEMP_DIR/mdaa_working/nodejs/7c8da613' '@not-a-real-scope/naming-mod' > '/dev/null'"
+  },
+  {
+    "index": 8,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/6f2fcd31/node_modules/@not-a-real-scope/module-d' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/6f2fcd31/node_modules/@not-a-real-scope/module-d/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/npm-domain/env-own-version/mod-inherits-env' -c 'org=test-org' -c 'env=env-own-version' -c 'module_name=mod-inherits-env' -c 'domain=npm-domain' -c 'naming_module=@not-a-real-scope/naming-mod' -c 'naming_class=NpmProvidedNaming' -c 'use_bootstrap=\"false\"' -c 'log_suppressions=\"true\"' -r 'arn:aws:iam::123456789012:role/test-deploy-role'"
+  },
+  {
+    "index": 9,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/71aa7d3b' && npm install --no-fund --save-exact --tag 'test-dist-tag' --prefix '/TEMP_DIR/mdaa_working/nodejs/71aa7d3b' '@not-a-real-scope/module-e@1.0.0-global' > '/dev/null'"
+  },
+  {
+    "index": 10,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/71aa7d3b/node_modules/@not-a-real-scope/module-e' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'synth' --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/71aa7d3b/node_modules/@not-a-real-scope/module-e/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/npm-domain-global/env-plain/mod-inherits-global' -c 'org=test-org' -c 'env=env-plain' -c 'module_name=mod-inherits-global' -c 'domain=npm-domain-global' -c 'naming_module=/TEMP_DIR/naming/global-naming.js' -c 'naming_class=GlobalNaming' -c 'use_bootstrap=\"false\"' -c 'log_suppressions=\"true\"' -r 'arn:aws:iam::123456789012:role/test-deploy-role'"
+  }
+]

@@ -1,170 +1,170 @@
 [
   {
     "index": 0,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/bootstrap --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 1,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/roles --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 2,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/glue-catalog --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/glue-catalog' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 3,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/lakeformation-settings --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/lakeformation-settings' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 4,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/audit --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 5,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/audit-trail --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit-trail' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 6,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/datazone --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/datazone' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 7,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 8,
-    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 9,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/roles' -c 'org=test-org' -c 'env=dev' -c 'module_name=roles' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/roles.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/roles' -c 'org=test-org' -c 'env=dev' -c 'module_name=roles' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/roles.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 10,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/roles' -c 'org=test-org' -c 'env=dev' -c 'module_name=roles' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/roles.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/roles' -c 'org=test-org' -c 'env=dev' -c 'module_name=roles' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/roles.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 11,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/glue-catalog' -c 'org=test-org' -c 'env=dev' -c 'module_name=glue-catalog' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/glue-catalog' -c 'org=test-org' -c 'env=dev' -c 'module_name=glue-catalog' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 12,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/glue-catalog-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/glue-catalog' -c 'org=test-org' -c 'env=dev' -c 'module_name=glue-catalog' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/governance/glue-catalog-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/glue-catalog' -c 'org=test-org' -c 'env=dev' -c 'module_name=glue-catalog' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 13,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/lakeformation-settings' -c 'org=test-org' -c 'env=dev' -c 'module_name=lakeformation-settings' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/lakeformation-settings.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/lakeformation-settings' -c 'org=test-org' -c 'env=dev' -c 'module_name=lakeformation-settings' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/lakeformation-settings.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 14,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/lakeformation-settings-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/lakeformation-settings' -c 'org=test-org' -c 'env=dev' -c 'module_name=lakeformation-settings' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/lakeformation-settings.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/governance/lakeformation-settings-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/lakeformation-settings' -c 'org=test-org' -c 'env=dev' -c 'module_name=lakeformation-settings' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/lakeformation-settings.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 15,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/audit' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/audit.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/audit' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/audit.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 16,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/audit-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/audit' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/audit.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/governance/audit-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/audit' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/audit.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 17,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/datazone' -c 'org=test-org' -c 'env=dev' -c 'module_name=datazone' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/governance/datazone.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/datazone' -c 'org=test-org' -c 'env=dev' -c 'module_name=datazone' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/governance/datazone.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 18,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/datazone-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/datazone' -c 'org=test-org' -c 'env=dev' -c 'module_name=datazone' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/governance/datazone.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/governance/datazone-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/datazone' -c 'org=test-org' -c 'env=dev' -c 'module_name=datazone' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/governance/datazone.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 19,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/audit-trail' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit-trail' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/audit-trail.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/audit-trail' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit-trail' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/audit-trail.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 20,
-    "command": "cd '/REPO_ROOT/packages/apps/governance/audit-trail-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/audit-trail' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit-trail' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/audit-trail.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/governance/audit-trail-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/govern1/dev/audit-trail' -c 'org=test-org' -c 'env=dev' -c 'module_name=audit-trail' -c 'domain=govern1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/common/governance/audit-trail.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 21,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/bootstrap --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 22,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/datalake --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/datalake' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 23,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/data1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=data1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/data1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=data1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 24,
-    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/data1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=data1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/data1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=data1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 25,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/data1/dev/datalake' -c 'org=test-org' -c 'env=dev' -c 'module_name=datalake' -c 'domain=data1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/data/datalake.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/data1/dev/datalake' -c 'org=test-org' -c 'env=dev' -c 'module_name=datalake' -c 'domain=data1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/data/datalake.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 26,
-    "command": "cd '/REPO_ROOT/packages/apps/datalake/datalake-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/data1/dev/datalake' -c 'org=test-org' -c 'env=dev' -c 'module_name=datalake' -c 'domain=data1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/data/datalake.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/datalake/datalake-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/data1/dev/datalake' -c 'org=test-org' -c 'env=dev' -c 'module_name=datalake' -c 'domain=data1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/data/datalake.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 27,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/bootstrap --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 28,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/dataops-project --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-project' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 29,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/dataops-crawler --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-crawler' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 30,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/dataops-project --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-project' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 31,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/dataops-project --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-project' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 32,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 33,
-    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 34,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project1' -c 'org=test-org' -c 'env=dev' -c 'module_name=project1' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project1.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project1' -c 'org=test-org' -c 'env=dev' -c 'module_name=project1' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project1.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 35,
-    "command": "cd '/REPO_ROOT/packages/apps/dataops/dataops-project-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project1' -c 'org=test-org' -c 'env=dev' -c 'module_name=project1' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project1.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/dataops/dataops-project-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project1' -c 'org=test-org' -c 'env=dev' -c 'module_name=project1' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project1.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 36,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project2' -c 'org=test-org' -c 'env=dev' -c 'module_name=project2' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project2.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project2' -c 'org=test-org' -c 'env=dev' -c 'module_name=project2' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project2.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 37,
-    "command": "cd '/REPO_ROOT/packages/apps/dataops/dataops-project-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project2' -c 'org=test-org' -c 'env=dev' -c 'module_name=project2' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project2.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/dataops/dataops-project-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project2' -c 'org=test-org' -c 'env=dev' -c 'module_name=project2' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project2.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 38,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project3' -c 'org=test-org' -c 'env=dev' -c 'module_name=project3' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project3.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project3' -c 'org=test-org' -c 'env=dev' -c 'module_name=project3' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project3.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 39,
-    "command": "cd '/REPO_ROOT/packages/apps/dataops/dataops-project-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project3' -c 'org=test-org' -c 'env=dev' -c 'module_name=project3' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project3.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/dataops/dataops-project-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/project3' -c 'org=test-org' -c 'env=dev' -c 'module_name=project3' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/project3.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 40,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/crawler1' -c 'org=test-org' -c 'env=dev' -c 'module_name=crawler1' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/crawler1.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/crawler1' -c 'org=test-org' -c 'env=dev' -c 'module_name=crawler1' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/crawler1.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   },
   {
     "index": 41,
-    "command": "cd '/REPO_ROOT/packages/apps/dataops/dataops-crawler-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/crawler1' -c 'org=test-org' -c 'env=dev' -c 'module_name=crawler1' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/crawler1.yaml\"' -c 'tag_config_data'=\"{\\\"costcentre\\\":\\\"123456\\\",\\\"project\\\":\\\"lakehouse-ecosystem\\\"}\""
+    "command": "cd '/REPO_ROOT/packages/apps/dataops/dataops-crawler-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/dataops1/dev/crawler1' -c 'org=test-org' -c 'env=dev' -c 'module_name=crawler1' -c 'domain=dataops1' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/datazone_governed_lakehouse/domain1/dataops/crawler1.yaml\"' -c 'tag_config_data={\"costcentre\":\"123456\",\"project\":\"lakehouse-ecosystem\"}'"
   }
 ]

@@ -9,6 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from test_starter_kit import (
+    CLI_PACKAGE,
     compute_affected,
     discover_kits,
     find_context_keys_in_file,
@@ -21,8 +22,54 @@ from test_starter_kit import (
     modules_affected_by_config_changes,
     modules_affected_by_context_changes,
     parse_args,
+    parse_nx_projects,
     select_kit,
 )
+
+
+class TestParseNxProjects:
+    """Tests for parse_nx_projects — reading `nx show projects` output.
+
+    nx emits a single-line JSON array. A line-based parse silently yields an
+    empty set, which disables the nx detection paths entirely (module synths
+    and the CLI baseline gate) while the runner still exits 0.
+    """
+
+    def test_parses_single_line_json_array(self):
+        """The real nx output format."""
+        stdout = '["@aws-mdaa/cli","@aws-mdaa/starter-kits","@aws-mdaa/roles"]'
+        assert parse_nx_projects(stdout) == {
+            "@aws-mdaa/cli",
+            "@aws-mdaa/starter-kits",
+            "@aws-mdaa/roles",
+        }
+
+    def test_json_array_with_trailing_newline_and_spaces(self):
+        stdout = '  ["@aws-mdaa/cli", "@aws-mdaa/roles"]  \n'
+        assert parse_nx_projects(stdout) == {"@aws-mdaa/cli", "@aws-mdaa/roles"}
+
+    def test_pretty_printed_json_array(self):
+        stdout = '[\n  "@aws-mdaa/cli",\n  "@aws-mdaa/roles"\n]'
+        assert parse_nx_projects(stdout) == {"@aws-mdaa/cli", "@aws-mdaa/roles"}
+
+    def test_filters_non_mdaa_entries(self):
+        stdout = '["@aws-mdaa/cli","some-other-project","@scope/thing"]'
+        assert parse_nx_projects(stdout) == {"@aws-mdaa/cli"}
+
+    def test_falls_back_to_line_based_output(self):
+        """Non-JSON output is parsed one name per line."""
+        stdout = "@aws-mdaa/cli\n@aws-mdaa/roles\n"
+        assert parse_nx_projects(stdout) == {"@aws-mdaa/cli", "@aws-mdaa/roles"}
+
+    def test_empty_output(self):
+        assert parse_nx_projects("") == set()
+        assert parse_nx_projects("   \n  ") == set()
+
+    def test_empty_json_array(self):
+        assert parse_nx_projects("[]") == set()
+
+    def test_ignores_non_list_json(self):
+        assert parse_nx_projects('{"projects":["@aws-mdaa/cli"]}') == set()
 
 
 class TestGetKitModules:
@@ -517,6 +564,44 @@ class TestComputeAffected:
         run_cli, affected = compute_affected(kit, tmp_path, ["unrelated/file.ts"], modules, set())
         assert run_cli is False
         assert affected == set()
+
+    def test_cli_package_change_sets_cli_baseline(self, tmp_path):
+        """A CLI-only change selects the CLI baseline for every kit.
+
+        The CLI is not a kit module_path and a CLI change touches no kit
+        mdaa.yaml, so paths 1-3 cannot select the baseline. Regression test for
+        stale baselines surviving a CLI command-format change.
+        """
+        kit = self._kit(tmp_path)
+        modules = [{"domain": "shared", "module": "roles", "module_path": "@aws-mdaa/roles", "config_files": ["./roles.yaml"]}]
+        changed = ["packages/cli/lib/mdaa-cli.ts"]
+
+        run_cli, affected = compute_affected(kit, tmp_path, changed, modules, {CLI_PACKAGE})
+        assert run_cli is True
+        # No module synths: the CLI is not a module, so no module is affected.
+        assert affected == set()
+
+    def test_cli_package_change_does_not_suppress_module_synths(self, tmp_path):
+        """A change affecting both the CLI and a module selects both."""
+        kit = self._kit(tmp_path)
+        modules = [{"domain": "shared", "module": "roles", "module_path": "@aws-mdaa/roles", "config_files": ["./roles.yaml"]}]
+
+        run_cli, affected = compute_affected(
+            kit, tmp_path, [], modules, {CLI_PACKAGE, "@aws-mdaa/roles"}
+        )
+        assert run_cli is True
+        assert affected == {("shared", "roles")}
+
+    def test_cli_package_not_treated_as_module_path(self, tmp_path):
+        """CLI_PACKAGE in the affected set never registers a module synth test.
+
+        Guards against the CLI being matched by path 3 if a kit ever declared it.
+        """
+        kit = self._kit(tmp_path)
+        modules = [{"domain": "shared", "module": "roles", "module_path": "@aws-mdaa/roles", "config_files": ["./roles.yaml"]}]
+
+        _run_cli, affected = compute_affected(kit, tmp_path, [], modules, {CLI_PACKAGE})
+        assert ("shared", "roles") not in affected
 
 
 class TestSelectKit:

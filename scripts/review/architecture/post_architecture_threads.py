@@ -36,91 +36,26 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from review.lib.gitlab_threads import (
-    get_mr_discussions,
-    compute_hash,
-    _build_diff_position,
-)
+from review.lib.gitlab_threads import get_mr_discussions
 from review.lib.thread_lifecycle import (
     _steering_link,
     _action_context,
-    compute_line_anchor,
-    compute_file_source_hash,
+    build_source_groups,
+    compute_structural_hash,
+    make_get_position,
+    orphan_source_file,
     post_or_update_summary,
     post_detail_threads,
     resolve_orphaned_threads,
     check_unresolved_and_exit,
     UnresolvedThreadsError,
     _format_thread_footer,
+    escape_markdown_math,
 )
 
 SUMMARY_MARKER = "<!-- architecture-summary -->"
 SOURCE_PATTERN = re.compile(r"<!-- architecture-source:(.+?) -->")
 ICON_MAP = {"HIGH": "\u26a0\ufe0f", "MEDIUM": "\u26a0\ufe0f", "LOW": "\u2139\ufe0f", "UNKNOWN": "\u2753"}
-
-
-def _orphan_source_file(key: str) -> str:
-    """Derive the source file path from an architecture thread key (file:chunk_hash)."""
-    return key.rsplit(":", 1)[0] if ":" in key else key
-
-
-def build_source_groups(entries: list[dict]) -> dict[str, dict]:
-    """Group findings by stable chunk content hash across all packages.
-
-    Key is file:chunk_content_hash when source_hash is available (from pre-parsed
-    diff chunks). Falls back to file:line_content_hash via compute_line_anchor
-    for legacy findings without source_hash.
-
-    Returns dict keyed by stable anchor string, each containing:
-      - source: display string (file:line for human readability)
-      - risk_level: highest risk among findings in the group
-      - findings: list of (package_name, finding) tuples
-      - source_hash: per-chunk content hash (or package-level fallback)
-    """
-    risk_rank = {"HIGH": 0, "MEDIUM": 1, "LOW": 2, "UNKNOWN": 1}
-    groups: dict[str, dict] = {}
-
-    for entry in entries:
-        pkg_name = entry.get("package", "unknown")
-        pkg_source_hash = entry.get("source_hash", "")
-        for finding in entry.get("findings", []):
-            file_path = finding.get("file", "Unknown")
-            line = finding.get("line", 0)
-            finding_risk = finding.get("risk", "UNKNOWN").upper()
-            finding_source_hash = finding.get("source_hash", "")
-
-            # Display source for human readability
-            display_source = f"{file_path}:{line}" if line else file_path
-
-            # Use file:chunk_content_hash as stable key when available
-            if finding_source_hash:
-                key = f"{file_path}:{finding_source_hash}"
-            else:
-                # Fallback to line content hash for legacy findings
-                key = compute_line_anchor(file_path, line)
-
-            # Source-hash marker is a per-file content hash so the orphan
-            # safety net (_file_unchanged_since) can compare the file's current
-            # content to what it was when the thread was written. Falls back to
-            # the package-level hash if the file can't be read.
-            effective_source_hash = compute_file_source_hash(file_path) or pkg_source_hash
-
-            if key not in groups:
-                groups[key] = {
-                    "source": display_source,
-                    "risk_level": finding_risk,
-                    "findings": [],
-                    "source_hash": effective_source_hash,
-                }
-
-            current_rank = risk_rank.get(groups[key]["risk_level"], 1)
-            finding_rank = risk_rank.get(finding_risk, 1)
-            if finding_rank < current_rank:
-                groups[key]["risk_level"] = finding_risk
-
-            groups[key]["findings"].append((pkg_name, finding))
-
-    return groups
 
 
 def format_summary_body(entries: list[dict]) -> str:
@@ -197,7 +132,7 @@ def format_source_thread(
     for pkg_name, finding in group["findings"]:
         risk = finding.get("risk", "UNKNOWN")
         cat = finding.get("category", "")
-        detail = finding.get("detail", "")
+        detail = escape_markdown_math(finding.get("detail", ""))
         line_num = finding.get("line", "")
         loc = f" (L{line_num})" if line_num else ""
         lines.append(f"- **{risk}** [{cat}]{loc} ({pkg_name}): {detail}")
@@ -205,29 +140,6 @@ def format_source_thread(
     lines.append("")
     lines.append(_format_thread_footer())
     return "\n".join(lines)
-
-
-def _compute_structural_hash(key: str, group: dict) -> str:
-    """Compute structural hash for an architecture finding group."""
-    structural = sorted(
-        (f.get("category", ""), f.get("risk", ""), f.get("file", ""), str(f.get("line", "")))
-        for _, f in group["findings"]
-    )
-    return compute_hash(json.dumps(structural, sort_keys=True))
-
-
-def _make_get_position(groups: dict[str, dict]):
-    """Create a position callback that uses the first finding's line number."""
-    def _get_pos(key: str) -> dict | None:
-        group = groups.get(key)
-        if group and group.get("findings"):
-            _, first_finding = group["findings"][0]
-            file_path = first_finding.get("file", "")
-            line = first_finding.get("line", 0) or 0
-            if file_path and line:
-                return _build_diff_position(file_path, line)
-        return None
-    return _get_pos
 
 
 def main():
@@ -273,7 +185,7 @@ def main():
     if groups:
         processed_keys = post_detail_threads(
             project_id, mr_iid, token, discussions, groups,
-            SOURCE_PATTERN, format_source_thread, _compute_structural_hash, _make_get_position(groups),
+            SOURCE_PATTERN, format_source_thread, compute_structural_hash, make_get_position(groups),
         )
     else:
         print("  No architecture findings to post.")
@@ -285,7 +197,7 @@ def main():
     resolve_orphaned_threads(
         project_id, mr_iid, token, discussions, SOURCE_PATTERN, processed_keys,
         source_hashes=source_hashes,
-        source_file_resolver=_orphan_source_file,
+        source_file_resolver=orphan_source_file,
     )
 
     try:

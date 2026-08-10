@@ -51,6 +51,7 @@ from review.lib.thread_lifecycle import (
     check_unresolved_and_exit,
     UnresolvedThreadsError,
     _format_thread_footer,
+    escape_markdown_math,
 )
 
 SUMMARY_MARKER = "<!-- test-standards-summary -->"
@@ -195,7 +196,7 @@ def format_package_thread(
 
         for f in findings:
             risk = f.get("risk", "UNKNOWN")
-            detail = f.get("detail", "")
+            detail = escape_markdown_math(f.get("detail", ""))
             file_path = f.get("file", "")
             file_ref = f" (`{file_path}`)" if file_path else ""
             lines.append(f"- **{risk}**{file_ref}: {detail}")

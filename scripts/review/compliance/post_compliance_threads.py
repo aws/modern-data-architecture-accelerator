@@ -54,6 +54,7 @@ from review.lib.thread_lifecycle import (
     check_unresolved_and_exit,
     UnresolvedThreadsError,
     _format_thread_footer,
+    escape_markdown_math,
 )
 
 SUMMARY_MARKER = "<!-- compliance-summary -->"
@@ -273,7 +274,8 @@ def format_finding_thread(source: str, group: dict, content_hash: str, is_update
         risk = finding.get("risk", "UNKNOWN")
         category = finding.get("category", "")
         resource = finding.get("resource", "")
-        detail = finding.get("detail", "")
+        # Escape $ (KaTeX math) and | (would break the table cell) in free-text detail.
+        detail = escape_markdown_math(finding.get("detail", "")).replace("|", "\\|")
         lines.append(f"| {risk} | {category} | {resource} | {detail} |")
 
     lines.append("")

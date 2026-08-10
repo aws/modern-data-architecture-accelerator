@@ -4,6 +4,7 @@
  */
 
 import { executeCommand, executeCommandWithCapture, logScriptAnalysis } from '../lib/command-utils';
+import { staticCommand } from '../lib/safe-command';
 import * as fs from 'node:fs';
 import * as childProcess from 'node:child_process';
 
@@ -19,7 +20,7 @@ describe('executeCommand', () => {
   });
 
   it('should pass the correct shell option based on platform', () => {
-    executeCommand('echo "hello"');
+    executeCommand(staticCommand('echo "hello"'));
 
     const expectedShell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
     expect(mockExecSync).toHaveBeenCalledWith(
@@ -32,7 +33,7 @@ describe('executeCommand', () => {
   });
 
   it('should inherit environment variables', () => {
-    executeCommand('some-command');
+    executeCommand(staticCommand('some-command'));
 
     expect(mockExecSync).toHaveBeenCalledWith(
       'some-command',
@@ -96,7 +97,7 @@ describe('executeCommandWithCapture', () => {
       status: 0,
     });
 
-    const result = executeCommandWithCapture('echo "test"');
+    const result = executeCommandWithCapture(staticCommand('echo "test"'));
 
     expect(result.stdout).toBe('command output');
     expect(result.exitCode).toBe(0);
@@ -116,7 +117,7 @@ describe('executeCommandWithCapture', () => {
       status: 0,
     });
 
-    const result = executeCommandWithCapture('some-command');
+    const result = executeCommandWithCapture(staticCommand('some-command'));
 
     expect(result.stdout).toBe('stdout contentstderr content');
     expect(result.exitCode).toBe(0);
@@ -129,7 +130,7 @@ describe('executeCommandWithCapture', () => {
       status: 1,
     });
 
-    const result = executeCommandWithCapture('failing-command');
+    const result = executeCommandWithCapture(staticCommand('failing-command'));
 
     expect(result.stdout).toBe('partial outputerror message');
     expect(result.exitCode).toBe(1);
@@ -142,7 +143,7 @@ describe('executeCommandWithCapture', () => {
       status: 0,
     });
 
-    const result = executeCommandWithCapture('silent-command');
+    const result = executeCommandWithCapture(staticCommand('silent-command'));
 
     expect(result.stdout).toBe('');
     expect(result.exitCode).toBe(0);
@@ -155,7 +156,7 @@ describe('executeCommandWithCapture', () => {
       status: null,
     });
 
-    const result = executeCommandWithCapture('command');
+    const result = executeCommandWithCapture(staticCommand('command'));
 
     expect(result.exitCode).toBe(0);
   });

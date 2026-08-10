@@ -4,19 +4,37 @@
  */
 
 import * as path from 'node:path';
+import { SafeCommand, brandSafe } from './safe-command';
 
 export const isWindows = process.platform === 'win32';
 
-/** Generate a command to set an environment variable for the current shell invocation */
-export function setEnvCmd(key: string, value: string, win = isWindows): string {
+/**
+ * The single shell-quoting implementation for the whole CLI — every helper below
+ * and the {@link ./shell-command.ShellCommand} builder route values through it so
+ * an embedded quote in a config-derived value cannot break out.
+ *
+ * POSIX: single-quote escaping, the only special case being a literal `'` encoded
+ * as `'\''`; the empty string maps to `''`. Single quotes suppress everything, so
+ * this is total.
+ *
+ * Windows: double-quote escaping for cmd.exe (`"` -> `""`). Break-out is blocked
+ * (`&`/`|`/`<`/`>` are inert inside quotes, and doubling every input quote keeps
+ * quote-state parity), but this is **not** total — KNOWN GAP: cmd.exe expands
+ * `%VAR%` inside double quotes, so a value containing `%PATH%` arrives expanded
+ * rather than literal. Value corruption, not command substitution (that needs
+ * `FOR /F` or `!VAR!`, neither reachable here). Unfixed because `%` has no
+ * command-line escape (`%%` works only in batch files); the real fix is to stop
+ * routing values through `shell: cmd.exe` — argv array or PowerShell — which is
+ * outside this layer. Pinned by tests in platform-utils.test.ts.
+ */
+export function shellQuote(p: string, win = isWindows): string {
   if (win) {
-    // cmd.exe set "key=value" — escape embedded double-quotes
-    const escapedValue = value.replace(/"/g, '""');
-    return `set "${key}=${escapedValue}"`;
+    return `"${p.replace(/"/g, '""')}"`;
   }
-  // POSIX: single-quote the value to prevent shell interpretation
-  const escapedValue = value.replace(/'/g, String.raw`'\''`);
-  return `export ${key}='${escapedValue}'`;
+  // A literal `'` inside single quotes is encoded as `'\''`; extracted to a
+  // variable to avoid nesting a template literal inside another (typescript:S4624).
+  const escaped = p.replace(/'/g, String.raw`'\''`);
+  return `'${escaped}'`;
 }
 
 /** Return the default shell for command execution */
@@ -24,23 +42,46 @@ export function defaultShell(win = isWindows): string {
   return win ? 'cmd.exe' : '/bin/sh';
 }
 
-/** Generate a cross-platform rm -rf command */
-export function rmRfCmd(target: string, win = isWindows): string {
-  const resolved = path.resolve(target);
-  return win ? `if exist "${resolved}" rmdir /s /q "${resolved}"` : `rm -rf '${target}'`;
+/**
+ * Set an environment variable, value shell-quoted: `export NAME='<value>'` on
+ * POSIX; `set "NAME=<value>"` on Windows (cmd.exe quotes the whole token as a unit).
+ */
+export function setEnvCmd(key: string, value: string, win = isWindows): SafeCommand {
+  if (win) {
+    return brandSafe(`set "${key}=${value.replace(/"/g, '""')}"`);
+  }
+  return brandSafe(`export ${key}=${shellQuote(value, win)}`);
 }
 
-/** Generate a cross-platform mkdir -p command */
-export function mkdirpCmd(target: string, win = isWindows): string {
-  const resolved = path.resolve(target);
-  return win ? `if not exist "${resolved}" mkdir "${resolved}"` : `mkdir -p '${target}'`;
+/** Generate a cross-platform rm -rf command with the target path shell-quoted */
+export function rmRfCmd(target: string, win = isWindows): SafeCommand {
+  if (win) {
+    const quoted = shellQuote(path.resolve(target), win);
+    return brandSafe(`if exist ${quoted} rmdir /s /q ${quoted}`);
+  }
+  return brandSafe(`rm -rf ${shellQuote(target, win)}`);
 }
 
-/** Generate a cross-platform recursive copy command */
-export function cpRCmd(src: string, dest: string, win = isWindows): string {
-  const resolvedSrc = path.resolve(src);
-  const resolvedDest = path.resolve(dest);
-  return win ? `xcopy "${resolvedSrc}" "${resolvedDest}" /s /e /i /y /q` : `cp -r ${src}/* ${dest}`;
+/** Generate a cross-platform mkdir -p command with the target path shell-quoted */
+export function mkdirpCmd(target: string, win = isWindows): SafeCommand {
+  if (win) {
+    const quoted = shellQuote(path.resolve(target), win);
+    return brandSafe(`if not exist ${quoted} mkdir ${quoted}`);
+  }
+  return brandSafe(`mkdir -p ${shellQuote(target, win)}`);
+}
+
+/** Generate a cross-platform recursive copy command with src/dest shell-quoted */
+export function cpRCmd(src: string, dest: string, win = isWindows): SafeCommand {
+  if (win) {
+    return brandSafe(
+      `xcopy ${shellQuote(path.resolve(src), win)} ${shellQuote(path.resolve(dest), win)} /s /e /i /y /q`,
+    );
+  }
+  // POSIX: shell-quote src/dest so a metacharacter in the (config-derived) path
+  // cannot be interpreted, but keep the `/*` glob outside the quotes so the shell
+  // still expands it to the directory's contents.
+  return brandSafe(`cp -r ${shellQuote(src, win)}/* ${shellQuote(dest, win)}`);
 }
 
 /** Return the platform-appropriate null device */
@@ -48,35 +89,25 @@ export function devNull(win = isWindows): string {
   return win ? 'NUL' : '/dev/null';
 }
 
-/** Quote a path for the current platform's shell, escaping embedded quote characters */
-export function shellQuote(p: string, win = isWindows): string {
-  if (win) {
-    // Escape embedded double-quotes for cmd.exe
-    const escaped = p.replace(/"/g, '""');
-    return `"${escaped}"`;
-  }
-  // POSIX: single-quote context — replace embedded ' with '\'' (end quote, escaped quote, reopen)
-  const escaped = p.replace(/'/g, String.raw`'\''`);
-  return `'${escaped}'`;
+/**
+ * Join already-safe commands with `&&` for sequential execution. The optional
+ * leading boolean is accepted for signature parity with the other helpers only —
+ * both cmd.exe and POSIX use `&&`.
+ */
+export function cmdJoin(...args: [...SafeCommand[]] | [boolean, ...SafeCommand[]]): SafeCommand {
+  const cmds = typeof args[0] === 'boolean' ? (args.slice(1) as SafeCommand[]) : (args as SafeCommand[]);
+  return brandSafe(cmds.join(' && '));
 }
 
-/** Join multiple commands for sequential execution (&& short-circuits on failure) */
-export function cmdJoin(...args: [...string[]] | [boolean, ...string[]]): string {
-  // An optional leading boolean platform flag is accepted for signature
-  // consistency with the other helpers, but both cmd.exe and POSIX shells
-  // use && so that a failed command aborts the rest of the chain.
-  const cmds = typeof args[0] === 'boolean' ? (args.slice(1) as string[]) : (args as string[]);
-  return cmds.join(' && ');
-}
-
-/** Generate a cross-platform cd + command */
-export function cdAndRun(dir: string, cmd: string, win = isWindows): string {
+/**
+ * Generate a `cd <dir> && <cmd>` command. The directory is shell-quoted; `cmd`
+ * is an already-assembled {@link SafeCommand} appended verbatim.
+ */
+export function cdAndRun(dir: string, cmd: SafeCommand, win = isWindows): SafeCommand {
   if (win) {
-    const escaped = path.resolve(dir).replace(/"/g, '""');
-    return `cd /d "${escaped}" && ${cmd}`;
+    return brandSafe(`cd /d ${shellQuote(path.resolve(dir), win)} && ${cmd}`);
   }
-  const escaped = dir.replace(/'/g, String.raw`'\''`);
-  return `cd '${escaped}' && ${cmd}`;
+  return brandSafe(`cd ${shellQuote(dir, win)} && ${cmd}`);
 }
 
 /** Line continuation for multi-line commands */
@@ -84,12 +115,10 @@ export function lineContinuation(win = isWindows): string {
   return win ? ' ' : ' \\\n\t';
 }
 
-/** Generate a PYTHONPATH prefix for a command */
-export function pythonPathCmd(pythonDir: string, cmd: string, win = isWindows): string {
-  if (win) {
-    const escaped = pythonDir.replace(/"/g, '""');
-    return `set "PYTHONPATH=${escaped}" && ${cmd}`;
-  }
-  const escaped = pythonDir.replace(/'/g, String.raw`'\''`);
-  return `export PYTHONPATH='${escaped}' && ${cmd}`;
+/**
+ * Prefix an already-safe command with a `PYTHONPATH` export. The directory is
+ * shell-quoted via {@link setEnvCmd}; `cmd` is appended verbatim.
+ */
+export function pythonPathCmd(pythonDir: string, cmd: SafeCommand, win = isWindows): SafeCommand {
+  return brandSafe(`${setEnvCmd('PYTHONPATH', pythonDir, win)} && ${cmd}`);
 }

@@ -4,7 +4,8 @@
  */
 
 import { EffectiveConfig } from './config-types';
-import { shellQuote } from './platform-utils';
+import { ShellCommand } from './shell-command';
+import { SafeCommand } from './safe-command';
 
 export function isBoolean(value: unknown): value is boolean {
   return typeof value === 'boolean';
@@ -37,12 +38,17 @@ function encodeContextValue(contextValue: unknown): string {
   throw new Error(`Don't know how to handle type ${typeof contextValue}: ${String(contextValue)}`);
 }
 
-export function generateContextCdkParams(moduleEffectiveConfig: EffectiveConfig): string[] {
+export function generateContextCdkParams(moduleEffectiveConfig: EffectiveConfig): SafeCommand[] {
   return Object.entries(moduleEffectiveConfig.effectiveContext).map(contextEntry => {
     const contextKey = contextEntry[0];
     const contextValue = contextEntry[1];
     const encodedContextValue = encodeContextValue(contextValue);
-    const contextArg = contextKey + '=' + encodedContextValue;
-    return `-c ${shellQuote(contextArg)}`;
+    // Arriving token: `<key>=<encoded>` (the CDK context param the receiver must
+    // see after the shell strips quoting). Quoting the whole `key=encoded` token
+    // preserves the previous `-c '<key>=<encoded>'` bytes for quote-free values
+    // and neutralizes shell metacharacters in either the key or the value. The
+    // `obj:`/`list:` literal double quotes are inert inside the single quotes,
+    // matching the gate the config ref-value-transformer keys off.
+    return ShellCommand.args().option('-c', `${contextKey}=${encodedContextValue}`).build();
   });
 }

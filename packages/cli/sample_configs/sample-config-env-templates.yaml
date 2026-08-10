@@ -1,0 +1,114 @@
+# CLI sample config: env_templates resolution.
+#
+# determineEnvEffectiveConfig lodash-merges an env over the template it names, spreading
+# template modules FIRST so they hold their position ahead of env-declared ones:
+#
+#   modules: { ...template.modules, ...env.modules }
+#
+# Pins that ordering, templates at both global and domain scope (domain merged over
+# global), a name collision resolving in the domain's favour, an env overriding a template
+# module, and an env adding a module alongside the template's.
+#
+# An env naming an unknown template throws "references invalid template name" -- a
+# negative case for the validation tests, not this baseline.
+region: us-east-1
+organization: test-org
+
+# Global-scope templates, visible to every domain.
+env_templates:
+  global-template:
+    account: default
+    use_bootstrap: false
+    context:
+      from_global_template: yes-global
+    modules:
+      tmpl-mod-first:
+        module_path: '@aws-mdaa/roles'
+        module_configs:
+          - ./roles.yaml
+  # Same name as a domain-scope template below. computeDomainEffectiveConfig merges
+  # `{ ...globalEffectiveConfig.envTemplates, ...domain.env_templates }`, so the domain
+  # entry must WIN for this name -- an env referencing `shared-name` should get the
+  # domain body (marked_by: domain), never this one.
+  shared-name:
+    account: default
+    use_bootstrap: false
+    context:
+      marked_by: global-loses
+    modules:
+      shared-name-mod:
+        module_path: '@aws-mdaa/roles'
+        module_configs:
+          - ./roles-from-global-shared.yaml
+
+domains:
+  domain-a:
+    # Domain-scope templates. `shared-name` deliberately collides with the global
+    # template of the same name above, to pin domain-over-global precedence.
+    env_templates:
+      domain-template:
+        account: default
+        use_bootstrap: false
+        context:
+          from_domain_template: yes-domain
+        modules:
+          tmpl-mod-first:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./roles-from-domain-template.yaml
+      shared-name:
+        account: default
+        use_bootstrap: false
+        context:
+          marked_by: domain-wins
+        modules:
+          shared-name-mod:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./roles-from-domain-shared.yaml
+    environments:
+      # Straight template use, no overrides: expect exactly the template's module.
+      uses-global:
+        template: global-template
+
+      # Template use with a domain-scope template.
+      uses-domain:
+        template: domain-template
+
+      # Name collision: `shared-name` is declared at BOTH global and domain scope.
+      # Expect the DOMAIN body to win -- baseline should show marked_by=domain-wins and
+      # module_configs pointing at roles-from-domain-shared.yaml.
+      uses-shared-name:
+        template: shared-name
+
+      # Overrides a field the template sets AND replaces the template module's
+      # module_configs. Expect env values to win, module still emitted first.
+      overrides-template:
+        template: global-template
+        context:
+          from_global_template: overridden-by-env
+        modules:
+          tmpl-mod-first:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./roles-overridden.yaml
+
+      # Adds a module on top of the template's. Expect tmpl-mod-first BEFORE
+      # env-added-mod in the command order (template modules spread first).
+      extends-template:
+        template: global-template
+        modules:
+          env-added-mod:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./roles-added.yaml
+
+      # No template at all: control case.
+      no-template:
+        account: default
+        use_bootstrap: false
+        modules:
+          plain-mod:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./roles.yaml

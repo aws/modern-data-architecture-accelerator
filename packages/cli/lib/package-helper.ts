@@ -7,7 +7,7 @@ import Ajv, { JSONSchemaType } from 'ajv';
 import { Workspace } from '@aws-mdaa/config';
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';
-import { shellQuote } from './platform-utils';
+import { ShellCommand } from './shell-command';
 
 const workSpaceSchema: JSONSchemaType<Workspace[]> = {
   type: 'array',
@@ -28,8 +28,10 @@ const validateWorkSpace = ajv.compile(workSpaceSchema);
 export function loadLocalPackages() {
   // nosemgrep
   const repoRoot = path.resolve(__dirname, '..', '..', '..');
-  const prefix = shellQuote(repoRoot);
-  const workspaceQueryJson = execSync(`npm query .workspace --prefix ${prefix}`).toString(); // NOSONAR
+  // Route the repo-root path through ShellCommand so it is quoted at the sink
+  // like every other value the CLI interpolates into a shell command.
+  const npmQueryCmd = ShellCommand.for('npm').flags('query', '.workspace').option('--prefix', repoRoot).build();
+  const workspaceQueryJson = execSync(npmQueryCmd).toString(); // NOSONAR
   const workspaces: Workspace[] = JSON.parse(workspaceQueryJson);
   const valid = validateWorkSpace(workspaces);
   if (!valid) {

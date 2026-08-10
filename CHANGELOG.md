@@ -62,6 +62,7 @@
 
 ### Bug Fixes
 
+- Standardized validation of CLI config fields, giving earlier and clearer errors for malformed values. Config values passed to the CDK and Terraform commands the CLI runs are now preserved intact, so values containing spaces, quotes, or other special characters (including Terraform `-var` values, which were previously corrupted) reach those commands unchanged.
 - Fixed `enforceVpcOnly` not restricting same-account SigV4 callers (1.7.0 regression): the `Allow`-only resource policy could not deny an IAM caller its identity policy already authorized, so out-of-VPC SigV4 invocation succeeded (JWT/OAuth callers were correctly blocked). The policy now adds explicit `DenyWrongVpc`/`DenyNoVpc` statements and covers all invoke variants via `bedrock-agentcore:InvokeAgentRuntime*`. Breaking change: out-of-VPC IAM invocations that previously succeeded are now denied.
 
 ## [1.7.0] - 2026-07-16

@@ -28,7 +28,6 @@ import {
   mkdirpCmd,
   cpRCmd,
   devNull,
-  shellQuote,
   cmdJoin,
   lineContinuation,
   pythonPathCmd,
@@ -60,6 +59,8 @@ import {
   validateDeployments,
 } from './deployment-target-validator';
 import { findDuplicates, generateContextCdkParams, isBoolean } from './utils';
+import { ShellCommand } from './shell-command';
+import { SafeCommand, staticCommand, unsafeCommand, joinCommands } from './safe-command';
 
 /** Default MDAA configuration file name */
 const DEFAULT_CONFIG_FILE = './mdaa.yaml';
@@ -162,11 +163,19 @@ export class MdaaDeploy {
     const pythonTargetDir = path.join(this.workingDir, 'python');
     /* istanbul ignore next */
     if (pipCommandExists) {
-      const pipCmd = `pip install --upgrade -q -r ${shellQuote(requirementsPath)} -t ${shellQuote(pythonTargetDir)}`;
+      const pipCmd = ShellCommand.for('pip')
+        .flags('install', '--upgrade', '-q')
+        .option('-r', requirementsPath)
+        .option('-t', pythonTargetDir)
+        .build();
       console.log(`Found pip. Installing python with cmd: ${pipCmd}`);
       this.execCmd(pipCmd);
     } else if (pip3CommandExists) {
-      const pipCmd = `pip3 install --upgrade -q -r ${shellQuote(requirementsPath)} -t ${shellQuote(pythonTargetDir)}`;
+      const pipCmd = ShellCommand.for('pip3')
+        .flags('install', '--upgrade', '-q')
+        .option('-r', requirementsPath)
+        .option('-t', pythonTargetDir)
+        .build();
       console.log(`Found pip3. Installing python with cmd: ${pipCmd}`);
       this.execCmd(pipCmd);
     } else {
@@ -576,54 +585,65 @@ export class MdaaDeploy {
     };
   }
 
-  private createTerraformCommands(moduleConfig: ModuleEffectiveConfig): string[] {
+  private createTerraformCommands(moduleConfig: ModuleEffectiveConfig): SafeCommand[] {
     const tfAction = MdaaDeploy.TF_ACTION_MAPPINGS[this.action] ?? this.action;
 
     this.createTerraformOverride(moduleConfig);
     const region = this.validatedTerraformRegion();
-    const tfCmds: string[] = [];
+    const lc = lineContinuation();
+    const tfCmds: SafeCommand[] = [];
     if (region) {
       tfCmds.push(setEnvCmd('AWS_DEFAULT_REGION', region));
     }
-    tfCmds.push(`terraform init `);
+    tfCmds.push(staticCommand('terraform init '));
     const checkovBin = path.join(this.workingDir, 'python', isWindows ? 'Scripts' : 'bin', 'checkov');
-    const checkovCmd: string[] = [];
     const pythonDir = path.join(this.workingDir, 'python');
-    checkovCmd.push(
-      pythonPathCmd(pythonDir, `${checkovBin} -d ${moduleConfig.modulePath}`),
-      '--summary-position bottom',
-      '--quiet',
-      '--compact',
-      '--download-external-modules true',
-    );
-    tfCmds.push(checkovCmd.join(lineContinuation()));
+    // checkovBin (working-dir derived) and modulePath (config derived) are routed
+    // through ShellCommand so both are shell-quoted at the sink; `-d` is literal
+    // structure. pythonPathCmd wraps the whole thing in the PYTHONPATH export.
+    const checkovInvocation = ShellCommand.args().arg(checkovBin).flags('-d').arg(moduleConfig.modulePath).build();
+    const checkovCmd: SafeCommand[] = [
+      pythonPathCmd(pythonDir, checkovInvocation),
+      staticCommand('--summary-position bottom'),
+      staticCommand('--quiet'),
+      staticCommand('--compact'),
+      staticCommand('--download-external-modules true'),
+    ];
+    tfCmds.push(joinCommands(checkovCmd, lc));
     if (tfAction == 'plan') {
-      const tfPlanCmd: string[] = [];
+      const tfPlanCmd: SafeCommand[] = [];
       if (region) {
         tfPlanCmd.push(setEnvCmd('AWS_DEFAULT_REGION', region));
       }
       tfPlanCmd.push(
-        'terraform plan',
+        staticCommand('terraform plan'),
         ...this.createTerraformPlanApplyCmdArgs(moduleConfig),
-        `--out ${path.join(moduleConfig.modulePath, 'tfplan.binary')}`,
+        // The tfplan output path is config-derived (modulePath) — quote it at the
+        // sink; `--out` is literal structure.
+        ShellCommand.args().option('--out', path.join(moduleConfig.modulePath, 'tfplan.binary')).build(),
       );
-      tfCmds.push(tfPlanCmd.join(lineContinuation()));
+      tfCmds.push(joinCommands(tfPlanCmd, lc));
     } else if (tfAction == 'apply') {
-      const tfApplyCmd: string[] = [];
+      const tfApplyCmd: SafeCommand[] = [];
       if (region) {
         tfApplyCmd.push(setEnvCmd('AWS_DEFAULT_REGION', region));
       }
-      tfApplyCmd.push('terraform apply');
-      tfApplyCmd.push('-auto-approve');
-      tfApplyCmd.push(...this.createTerraformPlanApplyCmdArgs(moduleConfig));
-      tfCmds.push(tfApplyCmd.join(lineContinuation()));
+      tfApplyCmd.push(
+        staticCommand('terraform apply'),
+        staticCommand('-auto-approve'),
+        ...this.createTerraformPlanApplyCmdArgs(moduleConfig),
+      );
+      tfCmds.push(joinCommands(tfApplyCmd, lc));
     } else {
-      const tfCmd: string[] = [];
+      const tfCmd: SafeCommand[] = [];
       if (region) {
         tfCmd.push(setEnvCmd('AWS_DEFAULT_REGION', region));
       }
-      tfCmd.push(`terraform ${tfAction}`);
-      tfCmds.push(tfCmd.join(lineContinuation()));
+      // `terraform` is the literal command name; the action verb is quoted as a
+      // value so nothing is interpolated into raw text (quoting a bareword verb is
+      // a shell no-op, so Terraform still receives e.g. `validate`).
+      tfCmd.push(ShellCommand.for('terraform').arg(tfAction).build());
+      tfCmds.push(joinCommands(tfCmd, lc));
     }
     return tfCmds;
   }
@@ -642,19 +662,35 @@ export class MdaaDeploy {
     return validateDeployRegionResolved(region, 'terraform region');
   }
 
-  private createTerraformPlanApplyCmdArgs(moduleConfig: ModuleEffectiveConfig): string[] {
-    const tfCmd: string[] = [];
-    tfCmd.push('-input=false');
+  private createTerraformPlanApplyCmdArgs(moduleConfig: ModuleEffectiveConfig): SafeCommand[] {
+    const tfCmd: SafeCommand[] = [];
+    tfCmd.push(staticCommand('-input=false'));
     if (moduleConfig.mdaaCompliant == undefined || moduleConfig.mdaaCompliant) {
-      tfCmd.push(`-var org="${this.config.contents.organization}"`);
-      tfCmd.push(`-var domain="${moduleConfig.domainName}"`);
-      tfCmd.push(`-var env="${moduleConfig.envName}"`);
-      tfCmd.push(`-var module_name="${moduleConfig.moduleName}"`);
+      // org/domain/env/module_name/region are quoted at the sink like every other
+      // value, so the command is safe by construction — it does not depend on the
+      // upstream format validation still holding. The shell strips the quoting and
+      // Terraform receives `<key>=<value>` exactly as before.
+      tfCmd.push(
+        ShellCommand.args().option('-var', `org=${this.config.contents.organization}`).build(),
+        ShellCommand.args().option('-var', `domain=${moduleConfig.domainName}`).build(),
+        ShellCommand.args().option('-var', `env=${moduleConfig.envName}`).build(),
+        ShellCommand.args().option('-var', `module_name=${moduleConfig.moduleName}`).build(),
+      );
       const region = this.validatedTerraformRegion();
       if (region) {
-        tfCmd.push(`-var region="${region}"`);
+        tfCmd.push(ShellCommand.args().option('-var', `region=${region}`).build());
       } else {
-        tfCmd.push('-var region="${AWS_DEFAULT_REGION}"');
+        // Deliberate shell parameter expansion of AWS_DEFAULT_REGION (the operator's
+        // ambient env — this branch runs only when no config region is set, so MDAA
+        // emits no `export`, and the config region path above never reaches here).
+        // This is a static string literal with no TS interpolation, so no value is
+        // baked into it. It is also injection-safe even if the env var holds shell
+        // metacharacters: POSIX shells expand `${VAR}` but do NOT re-scan the result
+        // for command substitution or word operators (unlike `eval`), so a value
+        // like `$(cmd)` arrives as literal bytes. The `"..."` additionally keeps it
+        // a single argument. Hence `shellSyntax()` (the audited literal-shell-text
+        // escape hatch) here is safe.
+        tfCmd.push(ShellCommand.args().shellSyntax('-var region="${AWS_DEFAULT_REGION}"').build());
       }
     }
     const transformRefsProps: MdaaConfigRefValueTransformerProps = {
@@ -666,11 +702,18 @@ export class MdaaDeploy {
     };
     const refsTransformer = new MdaaConfigRefValueTransformer(transformRefsProps);
     Object.entries(moduleConfig.effectiveModuleConfig).forEach(([configKey, configValue]) => {
+      // Arriving token: `<key>=<JSON.stringify(value)>` — Terraform decodes the
+      // value with a single `jsondecode`. The whole token is single-quoted by the
+      // builder, so an arbitrary key or value cannot break out of the argument.
+      // (Previously this double-stringified the value inside bare double quotes,
+      // which delivered the same single-layer JSON to Terraform but let a `$(...)`
+      // in the value be expanded by the shell.)
+      // TYPE_WARNING: see if there is a guarantee that `configEntry` value is a string
+      const transformedValue = refsTransformer.transformValue(configValue as string);
       tfCmd.push(
-        `-var ${configKey}="${JSON.stringify(
-          // TYPE_WARNING: see if there is a guarantee that `configEntry` value is a string
-          JSON.stringify(refsTransformer.transformValue(configValue as string)),
-        )}"`,
+        ShellCommand.args()
+          .option('-var', `${configKey}=${JSON.stringify(transformedValue)}`)
+          .build(),
       );
     });
     return tfCmd;
@@ -700,12 +743,19 @@ export class MdaaDeploy {
     console.log(`Module ${logPrefix}: Package ${npmPackageNoVersion} found in local codebase. Running build.`);
     // Set MDAA_BUILD_CODE_ONLY so the package build scripts (build_package.sh on
     // POSIX / build_cli_package.js for the CLI) compile TypeScript only, skipping
-    // schema generation and documentation not needed at deploy time.
+    // schema generation and documentation not needed at deploy time. Platform-utils
+    // helpers keep the `cd`/env/join structure OS-portable; the config-derived
+    // `--scope` package name is routed through ShellCommand so it is quoted at the
+    // sink and cannot inject shell syntax.
     const buildEnv = setEnvCmd('MDAA_BUILD_CODE_ONLY', 'true');
-    const buildCmd = `npx lerna run build --scope ${npmPackageNoVersion} --loglevel warn`;
+    const buildCmd = ShellCommand.for('npx')
+      .flags('lerna', 'run', 'build')
+      .option('--scope', npmPackageNoVersion)
+      .flags('--loglevel', 'warn')
+      .build();
     const repoRoot = path.resolve(__dirname, '..', '..', '..');
     const buildChain = cdAndRun(repoRoot, cmdJoin(buildEnv, buildCmd));
-    const returnToCwd = cdAndRun(this.cwd, 'cd .');
+    const returnToCwd = cdAndRun(this.cwd, staticCommand('cd .'));
     const fullBuildCmd = cmdJoin(buildChain, returnToCwd);
     console.log(`Running Lerna Build: ${fullBuildCmd}`);
     this.execCmd(fullBuildCmd);
@@ -728,23 +778,44 @@ export class MdaaDeploy {
     if (fs.existsSync(path.join(prefix, 'package.json'))) {
       console.log(`Module ${logPrefix}: Install prefix ${prefix} already exists. Attempting update instead.`);
       if (!this.updateCache[prefix]) {
-        const q = shellQuote;
-        const redirectSuffix = this.npmDebug ? '-d' : ` > ${devNull()}`;
-        const npmUpdateCmd = `npm update --no-fund --save-exact --tag ${q(this.npmTag ?? '')} --prefix ${q(prefix)} ${redirectSuffix}`;
-        this.execCmd(npmUpdateCmd);
+        // tag/prefix are shell-quoted values; the `-d` flag and the ` > /dev/null`
+        // redirect are literal shell structure kept outside the quoting. The
+        // trailing choice is a runtime branch, so it is spelled out explicitly
+        // rather than smuggled through a single literal-typed argument: `-d` is a
+        // plain flag; the redirect is deliberate shell syntax (devNull() returns a
+        // per-platform literal-typed constant).
+        const npmUpdateCmd = ShellCommand.for('npm')
+          .flags('update', '--no-fund', '--save-exact')
+          .option('--tag', this.npmTag ?? '')
+          .option('--prefix', prefix);
+        if (this.npmDebug) {
+          npmUpdateCmd.flags('-d');
+        } else {
+          npmUpdateCmd.shellSyntax('>').arg(devNull());
+        }
+        this.execCmd(npmUpdateCmd.build());
         this.updateCache[prefix] = true;
       } else {
         console.log(`Module ${logPrefix}: Skipping update. Already updated this prefix.`);
       }
     } else {
       console.log(`Module ${logPrefix}: Installing ${npmPackage} to ${prefix}.`);
-      //Install the module CDK App NPM package
-      const q = shellQuote;
-      const redirectSuffix = this.npmDebug ? '-d' : ` > ${devNull()}`;
-      const npmInstallCmd = `npm install --no-fund --save-exact --tag ${q(
-        this.npmTag ?? '',
-      )} --prefix ${q(prefix)} ${q(npmPackage)} ${redirectSuffix}`;
-      this.execCmd(cmdJoin(mkdirpCmd(prefix), npmInstallCmd));
+      // Install the module CDK App NPM package. tag/prefix/package are each
+      // shell-quoted values (config-derived module path included); the `-d` flag
+      // and the ` > /dev/null` redirect are literal shell structure kept outside
+      // the quoting. The trailing choice is a runtime branch, spelled out
+      // explicitly rather than smuggled through a single literal-typed argument.
+      const npmInstallCmd = ShellCommand.for('npm')
+        .flags('install', '--no-fund', '--save-exact')
+        .option('--tag', this.npmTag ?? '')
+        .option('--prefix', prefix)
+        .arg(npmPackage);
+      if (this.npmDebug) {
+        npmInstallCmd.flags('-d');
+      } else {
+        npmInstallCmd.shellSyntax('>').arg(devNull());
+      }
+      this.execCmd(cmdJoin(mkdirpCmd(prefix), npmInstallCmd.build()));
     }
     return path.join(prefix, 'node_modules', npmPackageNoVersion);
   }
@@ -843,7 +914,10 @@ export class MdaaDeploy {
     }
   }
 
-  private execModuleCmd(moduleCmd: string, moduleDeploymentConfig: ModuleDeploymentConfig): void {
+  private execModuleCmd(moduleCmd: SafeCommand, moduleDeploymentConfig: ModuleDeploymentConfig): void {
+    // `cd '<modulePath>' && <moduleCmd>`: cdAndRun quotes the module path for the
+    // current platform; the already-assembled module command is trusted literal
+    // text appended verbatim.
     const cmd = cdAndRun(moduleDeploymentConfig.modulePath, moduleCmd);
     if (this.action === 'diff' && this.diffOutDir) {
       this.execCmdWithDiffCapture(cmd, moduleDeploymentConfig);
@@ -852,7 +926,7 @@ export class MdaaDeploy {
     }
   }
 
-  private execCmdWithDiffCapture(cmd: string, moduleDeploymentConfig: ModuleDeploymentConfig): void {
+  private execCmdWithDiffCapture(cmd: SafeCommand, moduleDeploymentConfig: ModuleDeploymentConfig): void {
     if (this.testMode) {
       console.log(`Testing Mode (diff capture):\n ${cmd}`);
       return;
@@ -889,6 +963,20 @@ export class MdaaDeploy {
     }
   }
 
+  /**
+   * Execute a module `predeploy`/`postdeploy` hook command.
+   *
+   * TRUST BOUNDARY: the hook `command` is arbitrary shell that runs verbatim by
+   * design — it is intentionally *not* routed through the {@link ShellCommand}
+   * quoting builder that protects every other config-derived value, because the
+   * whole point of a hook is to let the config author run their own shell. This
+   * is safe only because the MDAA config is a trusted input: the CLI must never
+   * be run against a config from an untrusted source. Do not "harden" this path
+   * by quoting the command — that would break legitimate hooks and give a false
+   * sense of a boundary that does not exist. See `HOOK_FIELD_POLICY` in
+   * config-field-policy.ts (the hook `command` is classified `not-shell` for
+   * exactly this reason).
+   */
   private executeHook(moduleDeploymentConfig: ModuleDeploymentConfig, hookType: HookType, hookConfig: HookConfig) {
     const modulePrefix = this.modulePrefix(moduleDeploymentConfig);
 
@@ -922,7 +1010,11 @@ export class MdaaDeploy {
     console.log(`Module ${modulePrefix}: Executing ${hookType} hook command: ${transformedHookCommand}`);
 
     try {
-      this.execCmd(transformedHookCommand);
+      // TRUST BOUNDARY (see the doc comment above): the hook command is arbitrary
+      // shell run verbatim by design, so it uses the audited unsafeCommand escape
+      // hatch rather than the quoting builder. Safe only because the MDAA config
+      // is a trusted input.
+      this.execCmd(unsafeCommand(transformedHookCommand));
       console.log(`Module ${modulePrefix}: ${hookType} hook completed successfully`);
     } catch (error) {
       if (hookConfig.exit_if_fail) {
@@ -940,30 +1032,58 @@ export class MdaaDeploy {
     }
   }
 
-  private createCdkCommand(moduleEffectiveConfig: ModuleEffectiveConfig, localModule: boolean): string {
-    const action = this.action == 'deploy' || this.action == 'destroy' ? `${this.action} --all` : this.action;
-    const q = shellQuote;
+  private createCdkCommand(moduleEffectiveConfig: ModuleEffectiveConfig, localModule: boolean): SafeCommand {
     const lc = lineContinuation();
 
-    const cdkEnv: string[] = this.createCdkCommandEnv(moduleEffectiveConfig);
-    const cdkCmd: string[] = [];
-    cdkCmd.push(
-      `npx ${this.npmDebug ? '-d' : ''} cdk ${action} ${this.cdkVerbose ? '-v' : ''} --require-approval never`,
-    );
+    const cdkEnv: SafeCommand[] = this.createCdkCommandEnv(moduleEffectiveConfig);
+    const cdkCmd: SafeCommand[] = [];
+    // `npx`/`cdk`, the debug/verbose flags, `--all`, and `--require-approval never`
+    // are literal command structure; the action verb is quoted as a value so no
+    // runtime value is interpolated into raw text (quoting a bareword verb is a
+    // shell no-op). `--all` stays a separate literal flag rather than being folded
+    // into the quoted verb, so it is not swallowed into a single argument.
+    const cdkHeader = ShellCommand.for('npx');
+    if (this.npmDebug) {
+      cdkHeader.flags('-d');
+    }
+    cdkHeader.flags('cdk').arg(this.action);
+    if (this.action == 'deploy' || this.action == 'destroy') {
+      cdkHeader.flags('--all');
+    }
+    if (this.cdkVerbose) {
+      cdkHeader.flags('-v');
+    }
+    cdkCmd.push(cdkHeader.flags('--require-approval', 'never').build());
 
     if (!localModule) {
-      const appArg = `npx ${this.npmDebug ? '-d' : ''} ${moduleEffectiveConfig.modulePath}/`;
-      cdkCmd.push(`-a ${q(appArg)}`);
+      // Arriving token: `npx <dbg> <modulePath>/` as one `-a` argument. The `/`
+      // suffix is part of the value; ShellCommand quotes the whole thing (via the
+      // platform-aware shellQuote) so a metacharacter in the module path cannot
+      // break out — byte-identical to the old single-quoting for quote-free paths.
+      cdkCmd.push(
+        ShellCommand.args()
+          .option('-a', `npx ${this.npmDebug ? '-d' : ''} ${moduleEffectiveConfig.modulePath}/`)
+          .build(),
+      );
     }
 
-    // Use cdkOutDir if provided, otherwise use default workingDir
+    // Use cdkOutDir if provided, otherwise use default workingDir. path.join keeps
+    // the output directory correct on Windows; ShellCommand quotes it at the sink.
     const cdkOutBase = this.cdkOutDir ?? path.join(this.workingDir, 'cdk.out');
+    // First the -o output dir, then org/env/module_name/domain (all allowlist-validated).
+    // Merged into one push() call — routed through the builder for uniformity so no
+    // context sink stays outside the quoting.
     cdkCmd.push(
-      `-o ${q(path.join(cdkOutBase, this.config.contents.organization, this.modulePrefix(moduleEffectiveConfig)))}`,
-      `-c ${q('org=' + this.config.contents.organization)}`,
-      `-c ${q('env=' + moduleEffectiveConfig.envName)}`,
-      `-c ${q('module_name=' + moduleEffectiveConfig.moduleName)}`,
-      `-c ${q('domain=' + moduleEffectiveConfig.domainName)}`,
+      ShellCommand.args()
+        .option(
+          '-o',
+          path.join(cdkOutBase, this.config.contents.organization, this.modulePrefix(moduleEffectiveConfig)),
+        )
+        .build(),
+      ShellCommand.args().option('-c', `org=${this.config.contents.organization}`).build(),
+      ShellCommand.args().option('-c', `env=${moduleEffectiveConfig.envName}`).build(),
+      ShellCommand.args().option('-c', `module_name=${moduleEffectiveConfig.moduleName}`).build(),
+      ShellCommand.args().option('-c', `domain=${moduleEffectiveConfig.domainName}`).build(),
     );
 
     // Injected as a dedicated param so domain/env/module context blocks cannot override it
@@ -975,8 +1095,8 @@ export class MdaaDeploy {
 
     if (this.config.contents.naming_module && this.config.contents.naming_class) {
       cdkCmd.push(
-        `-c ${q('naming_module=' + moduleEffectiveConfig.customNaming?.naming_module)}`,
-        `-c ${q('naming_class=' + moduleEffectiveConfig.customNaming?.naming_class)}`,
+        ShellCommand.args().option('-c', `naming_module=${moduleEffectiveConfig.customNaming?.naming_module}`).build(),
+        ShellCommand.args().option('-c', `naming_class=${moduleEffectiveConfig.customNaming?.naming_class}`).build(),
       );
     } else if (this.config.contents.naming_module || this.config.contents.naming_class) {
       throw new Error("Both 'naming_module' and 'naming_class' must be specified together.");
@@ -1011,7 +1131,7 @@ export class MdaaDeploy {
     this.addOptionalCdkContextObjParam(cdkCmd, 'tag_config_data', moduleEffectiveConfig.effectiveTagConfig);
 
     if (this.roleArn) {
-      cdkCmd.push(`-r ${q(this.roleArn)}`);
+      cdkCmd.push(ShellCommand.args().option('-r', this.roleArn).build());
     }
 
     cdkCmd.push(...generateContextCdkParams(moduleEffectiveConfig));
@@ -1022,15 +1142,20 @@ export class MdaaDeploy {
           moduleEffectiveConfig.moduleName
         }: CDK Pushdown Options: ${JSON.stringify(this.cdkPushdown, undefined, 2)}`,
       );
-      cdkCmd.push(...this.cdkPushdown);
+      // --cdk-pushdown args are operator-supplied CLI arguments (a trusted input,
+      // like the hook command): passed through to `cdk` verbatim by design, so
+      // they use the audited unsafeCommand escape hatch rather than the quoting
+      // builder, which would break legitimate multi-token cdk flags.
+      cdkCmd.push(...this.cdkPushdown.map(arg => unsafeCommand(arg)));
     }
 
     this.addBaselineTemplateParam(cdkCmd, moduleEffectiveConfig);
 
-    return cdkEnv.length > 0 ? cmdJoin(...cdkEnv, cdkCmd.join(lc)) : cdkCmd.join(lc);
+    const cdkCmdLine = joinCommands(cdkCmd, lc);
+    return cdkEnv.length > 0 ? cmdJoin(...cdkEnv, cdkCmdLine) : cdkCmdLine;
   }
 
-  private addBaselineTemplateParam(cdkCmd: string[], moduleEffectiveConfig: ModuleEffectiveConfig): void {
+  private addBaselineTemplateParam(cdkCmd: SafeCommand[], moduleEffectiveConfig: ModuleEffectiveConfig): void {
     if (this.action !== 'diff' || !this.baselineDir) {
       return;
     }
@@ -1041,7 +1166,7 @@ export class MdaaDeploy {
     );
     const templateFile = this.findTemplateFile(baselineTemplatePath);
     if (templateFile) {
-      cdkCmd.push(`--template ${shellQuote(templateFile)}`);
+      cdkCmd.push(ShellCommand.args().option('--template', templateFile).build());
     } else {
       throw new Error(
         `No baseline template found for module ${moduleEffectiveConfig.domainName}/${moduleEffectiveConfig.envName}/${moduleEffectiveConfig.moduleName} at ${baselineTemplatePath}. ` +
@@ -1050,29 +1175,45 @@ export class MdaaDeploy {
     }
   }
 
-  private addOptionalCdkContextStringParam(cdkCmd: string[], context_key: string, context_value?: string) {
+  private addOptionalCdkContextStringParam(cdkCmd: SafeCommand[], context_key: string, context_value?: string) {
     if (context_value) {
-      const contextArg = context_key + '="' + context_value + '"';
-      cdkCmd.push(`-c ${shellQuote(contextArg)}`);
+      // Arriving token: `<key>="<value>"` (the literal double quotes are part of
+      // the CDK context value the receiver expects). ShellCommand quotes the whole
+      // token, preserving the previous `-c '<key>="<value>"'` bytes for quote-free
+      // values while neutralizing any shell metacharacter in the value.
+      cdkCmd.push(ShellCommand.args().option('-c', `${context_key}="${context_value}"`).build());
     }
   }
 
   private addOptionalCdkContextObjParam(
-    cdkCmd: string[],
+    cdkCmd: SafeCommand[],
     context_key: string,
     context_value?: MdaaCustomAspect[] | TagElement | ConfigurationElement | Deployment[],
   ) {
     if (context_value) {
       if (Object.keys(context_value).length > 0) {
-        const context_string_value = JSON.stringify(JSON.stringify(context_value));
-        cdkCmd.push(`-c ${shellQuote(context_key)}=${context_string_value}`);
+        // Arriving token: `<key>=<JSON.stringify(value)>` — the CDK app decodes
+        // it with a single `JSON.parse` (getNodeValue). Previously this used a
+        // *double* JSON.stringify wrapped in bare double quotes, so a `$(...)` or
+        // backtick inside the JSON was interpreted by the shell. Routing the
+        // single-layer token through the builder single-quotes the whole thing,
+        // so the value arrives byte-for-byte at the receiver but the shell treats
+        // every metacharacter in it as literal.
+        cdkCmd.push(
+          ShellCommand.args()
+            .option('-c', `${context_key}=${JSON.stringify(context_value)}`)
+            .build(),
+        );
       }
     }
   }
 
-  private createCdkCommandEnv(moduleEffectiveConfig: ModuleEffectiveConfig): string[] {
-    const cdkEnv: string[] = [];
+  private createCdkCommandEnv(moduleEffectiveConfig: ModuleEffectiveConfig): SafeCommand[] {
+    const cdkEnv: SafeCommand[] = [];
     const modulePrefix = this.modulePrefix(moduleEffectiveConfig);
+    // region/account are allowlist-validated here (they contain no shell
+    // metacharacters); setEnvCmd emits the platform-appropriate env-assignment
+    // (`export NAME='<value>'` on POSIX, `set "NAME=<value>"` on Windows).
     if (moduleEffectiveConfig.deployRegion && moduleEffectiveConfig.deployRegion.toLowerCase() != 'default') {
       const region = validateDeployRegionResolved(moduleEffectiveConfig.deployRegion, `module ${modulePrefix}`);
       cdkEnv.push(setEnvCmd('CDK_DEPLOY_REGION', region), setEnvCmd('AWS_DEFAULT_REGION', region));
@@ -1226,7 +1367,7 @@ export class MdaaDeploy {
   }
 
   /* istanbul ignore next */
-  public execCmd(cmd: string) {
+  public execCmd(cmd: SafeCommand) {
     if (this.testMode) {
       console.log(`Testing Mode:\n ${cmd}`);
       return;
@@ -1239,7 +1380,7 @@ export class MdaaDeploy {
     }
   }
 
-  private handleCommandError(cmd: string, error: unknown) {
+  private handleCommandError(cmd: SafeCommand, error: unknown) {
     console.error(`\n=== Command Execution Failed ===`);
     console.error(`Command: ${cmd}`);
 

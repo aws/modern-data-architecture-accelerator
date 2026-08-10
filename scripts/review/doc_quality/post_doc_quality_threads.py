@@ -37,6 +37,7 @@ from review.lib.thread_lifecycle import (
     check_unresolved_and_exit,
     UnresolvedThreadsError,
     _format_thread_footer,
+    escape_markdown_math,
 )
 
 SUMMARY_MARKER = "<!-- docs-quality-summary -->"
@@ -156,7 +157,7 @@ def format_file_thread(file_path: str, group: dict, content_hash: str, is_update
     for finding in group["findings"]:
         risk = finding.get("risk", "UNKNOWN")
         cat = finding.get("category", "")
-        detail = finding.get("detail", "")
+        detail = escape_markdown_math(finding.get("detail", ""))
         lines.append(f"- **{risk}** [{cat}]: {detail}")
     lines.append("")
     lines.append(_format_thread_footer())

@@ -1,0 +1,50 @@
+[
+  {
+    "index": 0,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-compliant'"
+  },
+  {
+    "index": 1,
+    "command": "cp -r '/TEMP_DIR/tf-module'/* '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-compliant'"
+  },
+  {
+    "index": 2,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-non-compliant'"
+  },
+  {
+    "index": 3,
+    "command": "cp -r '/TEMP_DIR/tf-module'/* '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-non-compliant'"
+  },
+  {
+    "index": 4,
+    "command": "cd '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-compliant' && export AWS_DEFAULT_REGION='us-east-1'"
+  },
+  {
+    "index": 5,
+    "command": "cd '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-compliant' && terraform init"
+  },
+  {
+    "index": 6,
+    "command": "cd '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-compliant' && export PYTHONPATH='/TEMP_DIR/mdaa_working/python' && '/TEMP_DIR/mdaa_working/python/bin/checkov' -d '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-compliant' --summary-position bottom --quiet --compact --download-external-modules true"
+  },
+  {
+    "index": 7,
+    "command": "cd '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-compliant' && export AWS_DEFAULT_REGION='us-east-1' terraform plan -input=false -var 'org=test-org' -var 'domain=tf-domain' -var 'env=tf-env' -var 'module_name=tf-compliant' -var 'region=us-east-1' -var 'tf_plain=\"plain-value\"' -var 'tf_with_spaces=\"value with spaces\"' -var 'tf_number=42' -var 'tf_bool=true' -var 'tf_list=[\"a\",\"b\"]' -var 'tf_object={\"nested\":\"nested-value\"}' --out '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-compliant/tfplan.binary'"
+  },
+  {
+    "index": 8,
+    "command": "cd '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-non-compliant' && export AWS_DEFAULT_REGION='us-east-1'"
+  },
+  {
+    "index": 9,
+    "command": "cd '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-non-compliant' && terraform init"
+  },
+  {
+    "index": 10,
+    "command": "cd '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-non-compliant' && export PYTHONPATH='/TEMP_DIR/mdaa_working/python' && '/TEMP_DIR/mdaa_working/python/bin/checkov' -d '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-non-compliant' --summary-position bottom --quiet --compact --download-external-modules true"
+  },
+  {
+    "index": 11,
+    "command": "cd '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-non-compliant' && export AWS_DEFAULT_REGION='us-east-1' terraform plan -input=false -var 'tf_plain=\"plain-value\"' --out '/TEMP_DIR/mdaa_working/terraform/tf-domain/tf-env/tf-non-compliant/tfplan.binary'"
+  }
+]

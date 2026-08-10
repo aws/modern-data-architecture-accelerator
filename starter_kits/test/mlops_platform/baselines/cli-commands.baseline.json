@@ -1,26 +1,26 @@
 [
   {
     "index": 0,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/bootstrap --loglevel warn && cd '/TEMP_DIR/mlops_platform'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/mlops_platform' && cd ."
   },
   {
     "index": 1,
-    "command": "cd '/REPO_ROOT/packages/cli/lib/../../../' && MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/sagemaker-mlops --loglevel warn && cd '/TEMP_DIR/mlops_platform'"
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/sagemaker-mlops' --loglevel warn && cd '/TEMP_DIR/mlops_platform' && cd ."
   },
   {
     "index": 2,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/mlops/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=mlops' -c 'use_bootstrap=\"true\"' -c 'tag_config_data'=\"{\\\"cost-center\\\":\\\"123456\\\",\\\"project\\\":\\\"mlops-platform\\\",\\\"environment\\\":\\\"dev\\\"}\" -c 'sagemaker_project_name=test-project-name' -c 'vpc_id=test-vpc-id' -c 'subnet_ids=\"list:[\"test-subnet-id-1\",\"test-subnet-id-2\"]\"' -c 'security_group_ids=\"list:[\"test-security-group-id\"]\"'"
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/mlops/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=mlops' -c 'use_bootstrap=\"true\"' -c 'tag_config_data={\"cost-center\":\"123456\",\"project\":\"mlops-platform\",\"environment\":\"dev\"}' -c 'sagemaker_project_name=test-project-name' -c 'vpc_id=test-vpc-id' -c 'subnet_ids=\"list:[\"test-subnet-id-1\",\"test-subnet-id-2\"]\"' -c 'security_group_ids=\"list:[\"test-security-group-id\"]\"'"
   },
   {
     "index": 3,
-    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/mlops/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=mlops' -c 'use_bootstrap=\"true\"' -c 'tag_config_data'=\"{\\\"cost-center\\\":\\\"123456\\\",\\\"project\\\":\\\"mlops-platform\\\",\\\"environment\\\":\\\"dev\\\"}\" -c 'sagemaker_project_name=test-project-name' -c 'vpc_id=test-vpc-id' -c 'subnet_ids=\"list:[\"test-subnet-id-1\",\"test-subnet-id-2\"]\"' -c 'security_group_ids=\"list:[\"test-security-group-id\"]\"'"
+    "command": "cd '/REPO_ROOT/packages/apps/core/bootstrap' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/mlops/dev/caef-bootstrap' -c 'org=test-org' -c 'env=dev' -c 'module_name=caef-bootstrap' -c 'domain=mlops' -c 'use_bootstrap=\"true\"' -c 'tag_config_data={\"cost-center\":\"123456\",\"project\":\"mlops-platform\",\"environment\":\"dev\"}' -c 'sagemaker_project_name=test-project-name' -c 'vpc_id=test-vpc-id' -c 'subnet_ids=\"list:[\"test-subnet-id-1\",\"test-subnet-id-2\"]\"' -c 'security_group_ids=\"list:[\"test-security-group-id\"]\"'"
   },
   {
     "index": 4,
-    "command": "npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/mlops/dev/core' -c 'org=test-org' -c 'env=dev' -c 'module_name=core' -c 'domain=mlops' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/mlops_platform/mlops/mlops.yaml\"' -c 'tag_config_data'=\"{\\\"cost-center\\\":\\\"123456\\\",\\\"project\\\":\\\"mlops-platform\\\",\\\"environment\\\":\\\"dev\\\"}\" -c 'sagemaker_project_name=test-project-name' -c 'vpc_id=test-vpc-id' -c 'subnet_ids=\"list:[\"test-subnet-id-1\",\"test-subnet-id-2\"]\"' -c 'security_group_ids=\"list:[\"test-security-group-id\"]\"'"
+    "command": "npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/mlops/dev/core' -c 'org=test-org' -c 'env=dev' -c 'module_name=core' -c 'domain=mlops' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/mlops_platform/mlops/mlops.yaml\"' -c 'tag_config_data={\"cost-center\":\"123456\",\"project\":\"mlops-platform\",\"environment\":\"dev\"}' -c 'sagemaker_project_name=test-project-name' -c 'vpc_id=test-vpc-id' -c 'subnet_ids=\"list:[\"test-subnet-id-1\",\"test-subnet-id-2\"]\"' -c 'security_group_ids=\"list:[\"test-security-group-id\"]\"'"
   },
   {
     "index": 5,
-    "command": "cd '/REPO_ROOT/packages/apps/ai/sagemaker-mlops-app' && npx  cdk synth  --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/mlops/dev/core' -c 'org=test-org' -c 'env=dev' -c 'module_name=core' -c 'domain=mlops' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/mlops_platform/mlops/mlops.yaml\"' -c 'tag_config_data'=\"{\\\"cost-center\\\":\\\"123456\\\",\\\"project\\\":\\\"mlops-platform\\\",\\\"environment\\\":\\\"dev\\\"}\" -c 'sagemaker_project_name=test-project-name' -c 'vpc_id=test-vpc-id' -c 'subnet_ids=\"list:[\"test-subnet-id-1\",\"test-subnet-id-2\"]\"' -c 'security_group_ids=\"list:[\"test-security-group-id\"]\"'"
+    "command": "cd '/REPO_ROOT/packages/apps/ai/sagemaker-mlops-app' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/mlops/dev/core' -c 'org=test-org' -c 'env=dev' -c 'module_name=core' -c 'domain=mlops' -c 'use_bootstrap=\"true\"' -c 'module_configs=\"/TEMP_DIR/mlops_platform/mlops/mlops.yaml\"' -c 'tag_config_data={\"cost-center\":\"123456\",\"project\":\"mlops-platform\",\"environment\":\"dev\"}' -c 'sagemaker_project_name=test-project-name' -c 'vpc_id=test-vpc-id' -c 'subnet_ids=\"list:[\"test-subnet-id-1\",\"test-subnet-id-2\"]\"' -c 'security_group_ids=\"list:[\"test-security-group-id\"]\"'"
   }
 ]

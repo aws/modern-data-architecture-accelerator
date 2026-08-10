@@ -12,7 +12,8 @@ determines which tests need to run based on what changed:
   3. Module config file changed → that module's synth test runs
   4. Upstream module code changed (via nx affected) → synth tests for modules
      using that package run
-  5. NX_RUN_ALL=true or UPDATE_BASELINES=true → run all tests for all kits
+  5. @aws-mdaa/cli changed (via nx affected) → CLI baseline test runs
+  6. NX_RUN_ALL=true or UPDATE_BASELINES=true → run all tests for all kits
 
 Each kit's diff test file lives at starter_kits/test/<kit>/<kit>.diff.test.ts.
 Jest is invoked per affected kit, scoped to that kit's test file path (test
@@ -36,6 +37,7 @@ Environment:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import subprocess
@@ -95,6 +97,25 @@ def get_file_diff(file_path: str) -> str:
         return ""
 
 
+def parse_nx_projects(stdout: str) -> set[str]:
+    """Extract @aws-mdaa package names from `nx show projects` output.
+
+    nx emits a single-line JSON array (`["@aws-mdaa/cli",...]`), so parse JSON
+    first. Falls back to one-name-per-line for other output formats.
+    """
+    out = stdout.strip()
+    if not out:
+        return set()
+    try:
+        parsed = json.loads(out)
+    except json.JSONDecodeError:
+        pass
+    else:
+        if isinstance(parsed, list):
+            return {p for p in parsed if isinstance(p, str) and p.startswith("@aws-mdaa/")}
+    return {line.strip() for line in out.split("\n") if line.strip().startswith("@aws-mdaa/")}
+
+
 def get_nx_affected_packages(repo_root: Path) -> set[str]:
     """Get the full list of affected @aws-mdaa packages from nx.
 
@@ -114,11 +135,7 @@ def get_nx_affected_packages(repo_root: Path) -> set[str]:
             cwd=str(repo_root),
         )
         if result.returncode == 0:
-            packages = {
-                line.strip() for line in result.stdout.strip().split("\n")
-                if line.strip().startswith("@aws-mdaa/")
-            }
-            return packages
+            return parse_nx_projects(result.stdout)
         print(f"WARNING: nx show projects --affected exited with code {result.returncode}", file=sys.stderr)
         if result.stderr.strip():
             print(f"  stderr: {result.stderr.strip()[:200]}", file=sys.stderr)
@@ -351,6 +368,12 @@ def kit_test_file(kits_root: Path, kit: str) -> Path:
     return kits_root / "test" / kit / f"{kit}.diff.test.ts"
 
 
+# The package whose code assembles the shell commands the CLI baseline records.
+# Matched against the nx affected set, so transitive changes (e.g. a config
+# utility the CLI depends on) select the baseline too.
+CLI_PACKAGE = "@aws-mdaa/cli"
+
+
 def compute_affected(
     kit_dir: Path,
     repo_root: Path,
@@ -395,6 +418,15 @@ def compute_affected(
         if code_affected:
             names = [f"{m['domain']}/{m['module']}" for m in code_affected]
             print(f"[{kit_dir.name}] upstream code changes (nx affected): {', '.join(names)}")
+
+    # 5. CLI change -> command assembly changed -> CLI baseline must run.
+    # CLI_PACKAGE is never a kit module_path, so path 3 cannot select it, and a
+    # CLI-only change touches no kit mdaa.yaml, so path 1 cannot either. Without
+    # this the module synth baselines still run and pass (template output is
+    # unaffected by command-string changes) while the CLI baseline goes stale.
+    if CLI_PACKAGE in affected_packages:
+        run_cli_baseline = True
+        print(f"[{kit_dir.name}] {CLI_PACKAGE} affected: CLI baseline test will run")
 
     return run_cli_baseline, affected_module_set
 

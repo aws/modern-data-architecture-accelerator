@@ -5,6 +5,7 @@
 
 import { MdaaDeploy } from '../lib/mdaa-cli';
 import { ModuleDeploymentConfig } from '../lib/config-types';
+import { staticCommand } from '../lib/safe-command';
 import { itintegration } from './testing_utils';
 import { DuplicateAccountLevelModulesException } from '../lib/exceptions';
 
@@ -66,7 +67,7 @@ describe('MdaaDeploy.execCmd integration tests', () => {
   itintegration('should execute successful commands (exit 0)', () => {
     // Test simple successful command - should not throw
     expect(() => {
-      mdaaDeploy.execCmd("echo 'hello'");
+      mdaaDeploy.execCmd(staticCommand("echo 'hello'"));
     }).not.toThrow();
   });
 
@@ -74,7 +75,7 @@ describe('MdaaDeploy.execCmd integration tests', () => {
     // Test command that fails - cat a non-existent file
     // This will output error to stderr and exit with non-zero code
     expect(() => {
-      mdaaDeploy.execCmd('cat foobar.txt');
+      mdaaDeploy.execCmd(staticCommand('cat foobar.txt'));
     }).toThrow();
 
     // The enhanced error reporting will show details in console.error
@@ -87,7 +88,7 @@ describe('MdaaDeploy.execCmd integration tests', () => {
       envName: 'test-env',
       moduleName: 'test-module',
       modulePath: '/tmp',
-      moduleCmds: ["echo 'main-cmd'"],
+      moduleCmds: [staticCommand("echo 'main-cmd'")],
       localModule: false,
       useBootstrap: true,
       effectiveContext: {
@@ -120,7 +121,7 @@ describe('MdaaDeploy.execCmd integration tests', () => {
       // Test that the command can access the environment variable
       // This should succeed and the echo command will output the value
       expect(() => {
-        mdaaDeploy.execCmd(`echo $${testEnvVar}`);
+        mdaaDeploy.execCmd(staticCommand(`echo $${testEnvVar}`));
       }).not.toThrow();
 
       // The command should execute successfully, proving env vars are passed

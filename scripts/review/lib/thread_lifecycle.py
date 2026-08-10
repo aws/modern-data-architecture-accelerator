@@ -11,6 +11,7 @@ This module handles the GitLab API interactions and lifecycle logic.
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import re
 from datetime import datetime, timezone
@@ -26,6 +27,8 @@ from review.lib.gitlab_threads import (
     add_note_to_discussion,
     edit_note,
     resolve_discussion,
+    compute_hash,
+    _build_diff_position,
 )
 
 
@@ -51,6 +54,39 @@ _SOURCE_HASH_PATTERN = re.compile(r"<!-- source-hash:(\w+) -->")
 def _now() -> str:
     """Return current UTC timestamp string."""
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
+
+# Splits a string on inline code spans so we can escape prose but leave code
+# untouched. Matches runs of backticks and the balanced span they open (GitLab /
+# CommonMark: a span opened by N backticks closes at the next run of exactly N).
+_CODE_SPAN_PATTERN = re.compile(r"(`+)(.*?)\1", re.DOTALL)
+
+
+def escape_markdown_math(text: str) -> str:
+    r"""Escape ``$`` in free-text prose so GitLab does not render it as KaTeX math.
+
+    GitLab renders paired ``$...$`` as inline math and ``$$...$$`` as a math block.
+    Review-finding ``detail`` text is dense with literal dollar signs (shell command
+    substitution ``$(...)``, parameter expansion ``${...}``, variables ``$VAR``,
+    values like ``$Factory``), so an even number of them silently turns the prose
+    into garbled math. Escaping each ``$`` as ``\$`` renders it literally.
+
+    Dollar signs inside inline code spans (`` `...` ``) are left untouched: GitLab
+    already does not treat ``$`` as math inside code, and a backslash there would
+    render literally (`` `\$(id)` ``), corrupting the code. Only the prose segments
+    between code spans are escaped.
+    """
+    if "$" not in text:
+        return text
+
+    out: list[str] = []
+    pos = 0
+    for match in _CODE_SPAN_PATTERN.finditer(text):
+        out.append(text[pos:match.start()].replace("$", r"\$"))
+        out.append(match.group(0))  # code span verbatim
+        pos = match.end()
+    out.append(text[pos:].replace("$", r"\$"))
+    return "".join(out)
 
 
 def _steering_link(steering_file: str) -> str:
@@ -203,6 +239,100 @@ def compute_file_source_hash(file_path: str) -> str:
         return hashlib.sha256(full_path.read_bytes()).hexdigest()[:12]
     except Exception:
         return ""
+
+
+def orphan_source_file(key: str) -> str:
+    """Derive the source file path from a thread key (``file:chunk_hash``).
+
+    Thread keys are ``file_path:content_hash`` (or a bare file path when no line
+    anchor was available). The orphan-resolution safety net uses this to map a key
+    back to the file whose content it should compare.
+    """
+    return key.rsplit(":", 1)[0] if ":" in key else key
+
+
+def build_source_groups(entries: list[dict]) -> dict[str, dict]:
+    """Group findings by stable chunk content hash across all packages.
+
+    Key is ``file:chunk_content_hash`` when a per-chunk ``source_hash`` is
+    available (from pre-parsed diff chunks). Falls back to a line-content hash via
+    :func:`compute_line_anchor` for findings without one (e.g. findings in a
+    full-source file that is not part of a diff chunk).
+
+    Returns a dict keyed by the stable anchor string, each value containing:
+      - ``source``: display string (``file:line``) for human readability
+      - ``risk_level``: highest risk among findings in the group
+      - ``findings``: list of ``(package_name, finding)`` tuples
+      - ``source_hash``: per-file content hash (or package-level fallback) used by
+        the orphan safety net to tell a genuine fix from LLM variance
+    """
+    risk_rank = {"HIGH": 0, "MEDIUM": 1, "LOW": 2, "UNKNOWN": 1}
+    groups: dict[str, dict] = {}
+
+    for entry in entries:
+        pkg_name = entry.get("package", "unknown")
+        pkg_source_hash = entry.get("source_hash", "")
+        for finding in entry.get("findings", []):
+            file_path = finding.get("file", "Unknown")
+            line = finding.get("line", 0)
+            finding_risk = finding.get("risk", "UNKNOWN").upper()
+            finding_source_hash = finding.get("source_hash", "")
+
+            display_source = f"{file_path}:{line}" if line else file_path
+
+            if finding_source_hash:
+                key = f"{file_path}:{finding_source_hash}"
+            else:
+                key = compute_line_anchor(file_path, line)
+
+            # Per-file content hash so the orphan safety net can compare the file's
+            # current content to what it was when the thread was written. Falls back
+            # to the package-level hash if the file can't be read.
+            effective_source_hash = compute_file_source_hash(file_path) or pkg_source_hash
+
+            if key not in groups:
+                groups[key] = {
+                    "source": display_source,
+                    "risk_level": finding_risk,
+                    "findings": [],
+                    "source_hash": effective_source_hash,
+                }
+
+            current_rank = risk_rank.get(groups[key]["risk_level"], 1)
+            finding_rank = risk_rank.get(finding_risk, 1)
+            if finding_rank < current_rank:
+                groups[key]["risk_level"] = finding_risk
+
+            groups[key]["findings"].append((pkg_name, finding))
+
+    return groups
+
+
+def compute_structural_hash(key: str, group: dict) -> str:
+    """Compute a structural hash for a finding group, excluding prose ``detail``.
+
+    Only category/risk/file/line participate, so LLM re-wording of the same
+    finding does not churn the hash (which would spuriously reopen a thread).
+    """
+    structural = sorted(
+        (f.get("category", ""), f.get("risk", ""), f.get("file", ""), str(f.get("line", "")))
+        for _, f in group["findings"]
+    )
+    return compute_hash(json.dumps(structural, sort_keys=True))
+
+
+def make_get_position(groups: dict[str, dict]) -> Callable[[str], dict | None]:
+    """Build a position callback that anchors a thread on its first finding's line."""
+    def _get_pos(key: str) -> dict | None:
+        group = groups.get(key)
+        if group and group.get("findings"):
+            _, first_finding = group["findings"][0]
+            file_path = first_finding.get("file", "")
+            line = first_finding.get("line", 0) or 0
+            if file_path and line:
+                return _build_diff_position(file_path, line)
+        return None
+    return _get_pos
 
 
 def _extract_markers(notes: list[dict]) -> tuple[str | None, str | None]:

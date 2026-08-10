@@ -23,6 +23,7 @@ from review.lib.thread_lifecycle import (
     _was_auto_resolved,
     _is_human_locked,
     _format_thread_footer,
+    escape_markdown_math,
 )
 from review.lib.gitlab_threads import _build_diff_position
 from review.lib.kiro_integration import load_preamble
@@ -692,3 +693,36 @@ class TestComputeFileSourceHash:
         f.write_text("second")
         h2 = compute_file_source_hash(str(f))
         assert h1 != h2
+
+
+class TestEscapeMarkdownMath:
+    """escape_markdown_math prevents GitLab from rendering finding detail as KaTeX."""
+
+    def test_no_dollar_returned_unchanged(self):
+        text = "A plain finding with no special chars."
+        assert escape_markdown_math(text) is text
+
+    def test_escapes_paired_dollars_in_prose(self):
+        # The exact shape that broke rendering: prose $...$ pairs became math.
+        assert escape_markdown_math("allows the ' char, $ leads $(...)") == (
+            "allows the ' char, \\$ leads \\$(...)"
+        )
+
+    def test_escapes_every_dollar(self):
+        assert escape_markdown_math("$a $b $c") == "\\$a \\$b \\$c"
+
+    def test_leaves_dollars_inside_code_spans_untouched(self):
+        # Inside `...` GitLab does not treat $ as math; a backslash there would
+        # render literally and corrupt the code span, so it must stay verbatim.
+        assert escape_markdown_math("use `$(id)` here") == "use `$(id)` here"
+
+    def test_escapes_prose_dollars_but_not_code_span_dollars(self):
+        assert escape_markdown_math("bare $VAR and `${x}` span") == (
+            "bare \\$VAR and `${x}` span"
+        )
+
+    def test_handles_multi_backtick_code_spans(self):
+        assert escape_markdown_math("$x ``a `$` b`` $y") == "\\$x ``a `$` b`` \\$y"
+
+    def test_empty_string(self):
+        assert escape_markdown_math("") == ""

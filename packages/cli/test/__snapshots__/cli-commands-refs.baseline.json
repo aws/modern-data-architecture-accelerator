@@ -1,0 +1,10 @@
+[
+  {
+    "index": 0,
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+  },
+  {
+    "index": 1,
+    "command": "cd '/REPO_ROOT/packages/apps/governance/roles-app' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && export CDK_DEPLOY_ACCOUNT='123456789012' && npx cdk 'synth' --require-approval never -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/refs-domain/refs-env/refs-mod' -c 'org=test-org' -c 'env=refs-env' -c 'module_name=refs-mod' -c 'domain=refs-domain' -c 'use_bootstrap=\"false\"' -c 'module_config_data={\"simple_all\":\"test-org/refs-domain/refs-env/refs-mod\",\"ctx_scalar_ref\":\"scalar-from-context\",\"ctx_list_naked\":[\"list-item-a\",\"list-item-b\"],\"ctx_object_naked\":{\"nested_key\":\"nested-value\",\"nested_num\":42},\"ctx_scalar_embedded\":\"prefix-scalar-from-context-suffix\",\"ctx_indirect_ref\":\"wraps->{{context:ctx_scalar}}<-wraps\",\"env_var_scalar\":\"env-scalar-value\",\"env_var_json_list\":[\"ev-a\",\"ev-b\"],\"region_passthrough\":\"{{region}}\",\"account_passthrough\":\"{{account}}\",\"partition_passthrough\":\"{{partition}}\",\"mixed_passthrough\":\"test-org-in-{{region}}\"}' -c 'ctx_scalar=scalar-from-context' -c 'ctx_list=\"list:[\"list-item-a\",\"list-item-b\"]\"' -c 'ctx_object=\"obj:{\"nested_key\":\"nested-value\",\"nested_num\":42}\"' -c 'ctx_indirect=wraps->scalar-from-context<-wraps'"
+  }
+]

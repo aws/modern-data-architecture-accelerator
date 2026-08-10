@@ -5,6 +5,7 @@
 
 import * as fs from 'node:fs';
 import { defaultShell } from './platform-utils';
+import { SafeCommand } from './safe-command';
 
 export interface ExecutionError {
   /** Numeric status code indicating the exit status of the failed command execution enabling */
@@ -14,7 +15,7 @@ export interface ExecutionError {
   readonly message?: string;
 }
 
-export function executeCommand(cmd: string): void {
+export function executeCommand(cmd: SafeCommand): void {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { execSync } = require('node:child_process'); // NOSONAR
   const execOptions = {
@@ -30,7 +31,7 @@ export interface CapturedOutput {
   exitCode: number;
 }
 
-export function executeCommandWithCapture(cmd: string): CapturedOutput {
+export function executeCommandWithCapture(cmd: SafeCommand): CapturedOutput {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { spawnSync } = require('node:child_process');
 

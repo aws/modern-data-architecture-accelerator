@@ -56,6 +56,7 @@
         "{projectRoot}/test/*.ts",
         "{projectRoot}/test/**/*.yaml",
         "{projectRoot}/test/**/*.json",
+        "{projectRoot}/test/**/*.tf",
         "{projectRoot}/sample_configs/**/*.yaml",
         {
           "dependencies": true,
@@ -85,7 +86,9 @@
         "{projectRoot}/bin/*.ts",
         "{projectRoot}/lib/**/*.ts",
         "{projectRoot}/test/*.ts",
+        "{projectRoot}/test/**/*.yaml",
         "{projectRoot}/test/**/*.json",
+        "{projectRoot}/test/**/*.tf",
         "{projectRoot}/sample_configs/**/*.yaml",
         {
           "dependencies": true,

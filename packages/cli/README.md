@@ -112,3 +112,27 @@ mdaa diff -B ./baselines -D ./diff-results
 # Deploy with specific MDAA version
 mdaa deploy -u 1.4.0
 ```
+
+## Testing
+
+The CLI's observable contract is the shell command it emits per module: config hierarchy resolution, `{{...}}` reference transformation, and argv encoding all complete before any CloudFormation template exists. Tests therefore pin the command string.
+
+### Command Baselines
+
+`test/cli-commands.diff.test.ts` runs each `sample_configs/sample-config-{usecase}.yaml` through the real CLI in `--testing` mode — which prints every command instead of executing it, so no AWS credentials, CDK, network, Terraform, Checkov, or pip is required — and diffs the result against `test/__snapshots__/cli-commands-{usecase}.baseline.json`.
+
+One config per concern: `hierarchy`, `env-templates`, `refs`, `shell-values`, `orchestration`, `npm-version`, `terraform`. Baselines record current behavior including known defects, each documented in the header of the config that exercises it.
+
+```bash
+npm test                                 # verify no drift
+npm run test:update-baselines            # regenerate after an intentional change
+
+# Compare a different CLI build against the committed baselines
+MDAA_CLI_ENTRYPOINT_OVERRIDE=/path/to/packages/cli/lib/mdaa.js npx jest --testPathPattern=cli-commands
+```
+
+Never hand-edit a baseline — change the CLI and regenerate, so the diff is the evidence of the change. A CLI change that alters command format also requires regenerating the starter kit baselines (`UPDATE_BASELINES=true npm run test:starter-kits:all` from the repo root).
+
+Use baselines for behavior emergent from composition — assembled command text, module ordering, merge outcomes. Field validation, parsing, and error handling belong in the unit tests alongside them.
+
+See [TESTING.md](../../TESTING.md#cli) for the full approach.
