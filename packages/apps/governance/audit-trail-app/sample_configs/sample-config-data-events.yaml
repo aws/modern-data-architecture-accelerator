@@ -1,0 +1,73 @@
+# Data events sample config for the Audit Trail module.
+# Demonstrates 'dataEventSelectors', which captures CloudTrail data events for any
+# supported resource type via advanced event selectors.
+#
+# This is a separate sample config rather than part of the comprehensive one because
+# CloudTrail accepts either basic event selectors ('eventSelectors', S3-only) or advanced
+# event selectors ('dataEventSelectors', any resource type) on a trail, never both.
+# Setting both on one trail fails at synth.
+#
+# Cost warning: data events are billed per event and can be high volume on a busy
+# resource. Scope with 'resourceArns' rather than capturing a whole resource type
+# wherever practical.
+
+trails:
+  # Trail capturing Bedrock AgentCore runtime activity. This is the prerequisite for the
+  # AgentCore Runtime module's 'eventBridgeAlerts' rules: EventBridge only receives
+  # 'AWS API Call via CloudTrail' events if a trail in this account and region logs them.
+  agentcore-audit:
+    # (Required) S3 bucket name where CloudTrail audit logs are stored.
+    cloudTrailAuditBucketName: ssm:/sample-org/shared/audit/bucket/name
+    # (Required) KMS key ARN for encrypting CloudTrail logs written to S3.
+    cloudTrailAuditKmsKeyArn: ssm:/sample-org/shared/audit/kms/cmk/arn
+    # (Optional, boolean) Capture management events alongside the data events below.
+    # Keep this true when alerting on control plane calls such as UpdateAgentRuntime or
+    # DeleteAgentRuntime: advanced event selectors REPLACE a trail's default selectors,
+    # so a trail carrying only data selectors captures no control plane events at all.
+    includeManagementEvents: true
+    # (Optional) Data event selectors, rendered as advanced event selectors.
+    # Each key becomes the selector's name on the trail.
+    # Mutually exclusive with 'eventSelectors'.
+    dataEventSelectors:
+      # Runtime invocations. This is what makes InvokeAgentRuntime — and the
+      # AccessDenied on a denied invocation — visible to EventBridge.
+      AgentCore runtime data events:
+        # (Required) The CloudTrail resources.type to capture. CloudTrail accepts exactly
+        # one resource type per selector, so covering the runtime endpoint as well means
+        # a second entry below rather than a second value here.
+        resourceType: AWS::BedrockAgentCore::Runtime
+        # (Optional) Scope to specific resources, matched as ARN prefixes. Omit to capture
+        # every resource of the type in the account.
+        #
+        # The path is <runtime-module-name>/agentruntime/<agentRuntimeName>/arn, where the
+        # first segment is the runtime module's name in mdaa.yaml and the last is its
+        # agentRuntimeName lowercased. Replace both placeholders below.
+        resourceArns:
+          - ssm-domain:/bedrock-agentcore-runtime/agentruntime/my-agent-runtime/arn
+        # (Optional) Capture read events, write events, or both. Omit for both.
+        # 'All' is the explicit form of the default.
+        readWriteType: All
+      # Runtime endpoint activity, captured as a separate selector per the one
+      # resources.type per selector rule noted above.
+      # Pointing this at the RUNTIME ARN is deliberate: an endpoint ARN is
+      # <runtime ARN>/runtime-endpoint/<name>, so the runtime ARN prefixes it.
+      AgentCore runtime endpoint data events:
+        resourceType: AWS::BedrockAgentCore::RuntimeEndpoint
+        resourceArns:
+          - ssm-domain:/bedrock-agentcore-runtime/agentruntime/my-agent-runtime/arn
+
+  # Trail capturing Lambda invocations, showing that this feature is not AgentCore
+  # specific — any resources.type CloudTrail supports for data events works here.
+  lambda-audit:
+    cloudTrailAuditBucketName: ssm:/sample-org/shared/audit/bucket/name
+    cloudTrailAuditKmsKeyArn: ssm:/sample-org/shared/audit/kms/cmk/arn
+    # Management events are not needed on this trail; the AgentCore trail above already
+    # captures them for the account and region, and duplicating them doubles the cost.
+    includeManagementEvents: false
+    dataEventSelectors:
+      # Whole-resource-type capture, with no resourceArns scoping. Convenient, but the
+      # broadest and most expensive option — every Lambda invocation in the account.
+      All Lambda function invocations:
+        resourceType: AWS::Lambda::Function
+        # Only mutating calls, halving volume where reads are not of interest.
+        readWriteType: WriteOnly

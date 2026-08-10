@@ -57,7 +57,7 @@
         },
         "AuditTrailProps": {
             "additionalProperties": false,
-            "description": "CloudTrail audit trail configuration for S3 data event logging with KMS encryption.\nLogs are written to the specified S3 bucket encrypted with the specified KMS key.\nOptionally includes management/control plane events.\n\nUse cases: Compliance auditing; S3 data access logging; Security monitoring; Regulatory compliance\n\nAWS: CloudTrail trail with S3 data events, KMS encryption, and optional management events\n\nValidation: cloudTrailAuditBucketName and cloudTrailAuditKmsKeyArn required",
+            "description": "CloudTrail audit trail configuration for data event logging with KMS encryption.\nLogs are written to the specified S3 bucket encrypted with the specified KMS key.\nOptionally includes management/control plane events.\n\nUse cases: Compliance auditing; S3 data access logging; Security monitoring; Regulatory compliance\n\nAWS: CloudTrail trail with data events, KMS encryption, and optional management events\n\nValidation: cloudTrailAuditBucketName and cloudTrailAuditKmsKeyArn required",
             "properties": {
                 "cloudTrailAuditBucketName": {
                     "description": "S3 bucket name where CloudTrail audit logs are stored.\nAccepts bucket names or SSM parameter references.\n\nUse cases: Centralized audit log collection; Compliance log storage\n\nAWS: CloudTrail S3 destination bucket\n\nValidation: Required; must be existing S3 bucket name or SSM parameter path",
@@ -67,15 +67,22 @@
                     "description": "KMS key ARN for encrypting CloudTrail logs written to S3.\nAccepts key ARNs or SSM parameter references.\n\nUse cases: Audit log encryption; Data protection compliance\n\nAWS: KMS key for CloudTrail log encryption\n\nValidation: Required; must be valid KMS key ARN or SSM parameter path",
                     "type": "string"
                 },
+                "dataEventSelectors": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/DataEventSelectorConfig"
+                    },
+                    "description": "Optional list of data event selectors for any CloudTrail-supported resource type,\nrendered as advanced event selectors. Use this for non-S3 data events, such as\n`AWS::BedrockAgentCore::Runtime` invocations.\n\nMutually exclusive with `eventSelectors`: CloudTrail accepts either basic or advanced\nevent selectors on a trail, never both. Setting both fails at synth.\n\nData events are billed per event and can be high volume, so scope with `resourceArns`\nwhere practical.\n\nUse cases: AgentCore invocation auditing; EventBridge alerting on invocation auth failures; Lambda or DynamoDB data events\n\nAWS: CloudTrail advanced event selectors (AdvancedEventSelectors on the trail)\n\nValidation: Optional; keys become the CloudTrail selector names; values must be valid DataEventSelectorConfig",
+                    "type": "object"
+                },
                 "eventSelectors": {
-                    "description": "Optional list of S3 event selectors to scope CloudTrail data event capture\nto specific buckets and prefixes. If omitted, the trail captures all S3 data\nevents in the account.\n\nUse cases: Audit specific data lake buckets; Reduce CloudTrail costs; Targeted compliance logging\n\nAWS: CloudTrail S3 data event selectors (DataResources on the trail)\n\nValidation: Optional; array of EventSelectorConfig objects with required bucketName",
+                    "description": "Optional list of S3 event selectors to scope CloudTrail data event capture\nto specific buckets and prefixes. If omitted, the trail captures all S3 data\nevents in the account.\n\nMutually exclusive with `dataEventSelectors`.\n\nUse cases: Audit specific data lake buckets; Reduce CloudTrail costs; Targeted compliance logging\n\nAWS: CloudTrail S3 data event selectors (DataResources on the trail)\n\nValidation: Optional; array of EventSelectorConfig objects with required bucketName",
                     "items": {
                         "$ref": "#/definitions/EventSelectorConfig"
                     },
                     "type": "array"
                 },
                 "includeManagementEvents": {
-                    "description": "If true, management/control plane events will be included in trail.\nOtherwise, only S3 Data Events will be included.",
+                    "description": "If true, management/control plane events will be included in trail.\nOtherwise, only Data Events will be included.\n\nThis matters most alongside `dataEventSelectors`: advanced event selectors replace a\ntrail's default selectors outright, so without this flag such a trail captures no\ncontrol plane events at all.",
                     "type": "boolean"
                 }
             },
@@ -505,6 +512,36 @@
                 "remoteRule",
                 "securityGroups",
                 "skip"
+            ],
+            "type": "object"
+        },
+        "DataEventSelectorConfig": {
+            "additionalProperties": false,
+            "description": "Data event selector for any CloudTrail-supported resource type, rendered as an advanced\nevent selector. Where `eventSelectors` covers S3 only, this covers any `resources.type`\nCloudTrail supports -- Lambda, DynamoDB, Bedrock AgentCore, and so on.\n\nMutually exclusive with `eventSelectors` on the same trail: CloudTrail accepts either\nbasic or advanced event selectors, never both.\n\nUse cases: AgentCore runtime invocation auditing; Lambda or DynamoDB data events; EventBridge detection of invocation-level auth failures\n\nAWS: CloudTrail advanced event selector (eventCategory Data with resources.type)\n\nValidation: resourceType required; resourceArns and readWriteType optional",
+            "properties": {
+                "readWriteType": {
+                    "description": "Whether to capture read events, write events, or both. Omit for both.\n\nUse cases: Capturing only mutating calls; Reducing data event volume\n\nAWS: CloudTrail advanced event selector readOnly field\n\nValidation: Optional; one of 'All', 'ReadOnly', 'WriteOnly'",
+                    "enum": [
+                        "All",
+                        "ReadOnly",
+                        "WriteOnly"
+                    ],
+                    "type": "string"
+                },
+                "resourceArns": {
+                    "description": "Resource ARNs to scope the selector to, matched as prefixes. If omitted, data events\nfor every resource of the type are captured, which can be costly on busy resources.\n\nUse cases: Scoping capture to one runtime; Controlling data event costs\n\nAWS: CloudTrail advanced event selector resources.ARN field (StartsWith)\n\nValidation: Optional; ARNs or SSM parameter references",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "resourceType": {
+                    "description": "The CloudTrail `resources.type` whose data events will be captured, such as\n`AWS::BedrockAgentCore::Runtime` or `AWS::Lambda::Function`. See the CloudTrail\n\"Data events\" documentation for the supported values.\n\nCloudTrail accepts exactly one resource type per selector, so capturing several\ntypes means several entries in `dataEventSelectors`.\n\nUse cases: Capturing AgentCore runtime invocations; Auditing Lambda invocations\n\nAWS: CloudTrail advanced event selector resources.type field\n\nValidation: Required; must be a resource type CloudTrail supports for data events, otherwise the deploy is rejected",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "resourceType"
             ],
             "type": "object"
         },

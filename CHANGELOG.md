@@ -40,6 +40,12 @@
 
 - **S3 Lifecycle Policies** (`@aws-mdaa/athena-workgroup`, `@aws-mdaa/athena-workgroup-l3-construct`): Added optional `lifecycleConfiguration` to the athena-workgroup module, enabling S3 lifecycle rules on the workgroup results bucket. Rules without an explicit prefix are automatically scoped to the `athena-results/` prefix; rules with an explicit prefix are applied as-is. When omitted, the results bucket has no lifecycle rules (existing behavior preserved).
 
+#### Audit Trail Module
+
+- **Non-S3 Data Events** (`@aws-mdaa/audit-trail`, `@aws-mdaa/audit-trail-l3-construct`): Added optional `dataEventSelectors` to each trail, capturing CloudTrail data events for any supported `resources.type` — such as `AWS::BedrockAgentCore::Runtime`, `AWS::Lambda::Function`, or `AWS::DynamoDB::Table` — rather than S3 only. Each map key becomes the CloudTrail selector name; each entry takes a required `resourceType`, with optional `resourceArns` (prefix-matched, to scope capture and control cost) and `readWriteType`. CloudTrail accepts exactly one resource type per selector, so covering several types means several entries. This makes the trail prerequisite for the AgentCore Runtime module's `eventBridgeAlerts` expressible in MDAA config: invocation-level data events are off by default, so rules matching them previously deployed cleanly and never fired.
+- **Mutually exclusive with `eventSelectors`** (`@aws-mdaa/audit-trail`): `dataEventSelectors` renders CloudTrail advanced event selectors while the existing S3-only `eventSelectors` renders basic ones, and CloudTrail accepts only one style per trail. Setting both on a single trail now fails at synth with an actionable error; split the two styles across separate trails instead. Trails using `eventSelectors` alone are unchanged.
+- **`includeManagementEvents` on the advanced-selector path** (`@aws-mdaa/audit-trail`): When set alongside `dataEventSelectors`, a management event selector is now rendered explicitly. Advanced event selectors replace a trail's default selectors outright, so a trail carrying only data selectors captures no control plane events at all — set `includeManagementEvents: true` when the same trail should also cover lifecycle calls such as `UpdateAgentRuntime`.
+
 ### Data Science/AI/ML Changes
 
 #### Bedrock Builder Module

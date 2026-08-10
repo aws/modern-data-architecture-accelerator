@@ -80,6 +80,42 @@ describe('MDAA Audit Trail with Event Selectors - Compliance', () => {
   testApp.checkCdkNagCompliance(testApp.testStack);
 });
 
+describe('MDAA Audit Trail with Data Event Selectors - Compliance', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const constructProps: AuditTrailL3ConstructProps = {
+    trails: {
+      // Management events on: the advanced-selector trail carries both a management
+      // and a data selector.
+      'agentcore-audit': {
+        cloudTrailAuditBucketName: 'agentcore-audit-bucket',
+        cloudTrailAuditKmsKeyArn: 'arn:test-partition:kms:test-region:test-account:key/agentcore-key-id',
+        includeManagementEvents: true,
+        dataEventSelectors: {
+          'AgentCore runtime data events': {
+            resourceType: 'AWS::BedrockAgentCore::Runtime',
+            resourceArns: ['arn:test-partition:bedrock-agentcore:test-region:test-account:runtime/test-runtime'],
+          },
+        },
+      },
+      // Management events off: data selectors only, which is the configuration that
+      // captures no control plane events at all.
+      'lambda-audit': {
+        cloudTrailAuditBucketName: 'lambda-audit-bucket',
+        cloudTrailAuditKmsKeyArn: 'arn:test-partition:kms:test-region:test-account:key/lambda-key-id',
+        dataEventSelectors: { 'Lambda write events': { resourceType: 'AWS::Lambda::Function' } },
+      },
+    },
+
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+  };
+
+  new AuditTrailL3Construct(stack, 'teststack', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+});
+
 describe('MDAA Audit Trail with Multiple Named Trails - Compliance', () => {
   const testApp = new MdaaTestApp();
   const stack = testApp.testStack;
